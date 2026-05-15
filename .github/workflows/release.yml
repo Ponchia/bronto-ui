@@ -1,0 +1,46 @@
+# Release is tag-driven and explicit. It triggers ONLY on a pushed
+# `v*` tag — never on a branch or main push. Cutting a release is a
+# deliberate `git tag vX.Y.Z && git push --tags`, not a side effect of
+# merging to main.
+#
+# Consumers depend on GitHub's auto-generated source tarball
+# (archive/refs/tags/vX.Y.Z.tar.gz), which exists for any tag. This
+# workflow gates the tag on the same checks as CI and publishes a
+# GitHub Release with generated notes for visibility.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run check
+
+      - name: Verify tag matches package.json version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pkg="$(node -p "require('./package.json').version")"
+          if [ "$tag" != "$pkg" ]; then
+            echo "::error::tag v$tag does not match package.json version $pkg"
+            exit 1
+          fi
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true

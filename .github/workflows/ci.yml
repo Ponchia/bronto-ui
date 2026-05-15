@@ -1,0 +1,29 @@
+# Validation only. Runs on every branch push and PR.
+# This workflow NEVER publishes or creates a release — see release.yml,
+# which is gated on `v*` tags. A push to main does not ship anything.
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Stylelint + zero-dep exports/import-graph integrity check.
+      - run: npm run check
