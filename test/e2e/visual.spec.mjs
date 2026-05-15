@@ -44,7 +44,13 @@ test('RTL actually mirrors interactive controls (not just box model)', async ({ 
   expect(ltr.tx).toBeGreaterThan(0); // checked thumb moves toward inline-end
 
   await page.evaluate(() => document.documentElement.setAttribute('dir', 'rtl'));
-  await page.waitForTimeout(50);
+  // The thumb has a `transform` transition — wait for the mirrored end
+  // state rather than racing a fixed sleep (this is about final CSS, not
+  // the animation). A genuinely unmirrored build times out here = fail.
+  await page.waitForFunction(
+    (s) => new DOMMatrixReadOnly(getComputedStyle(document.querySelector(s)).transform).m41 < 0,
+    sel
+  );
   const rtl = await read();
   expect(rtl.tx).toBeLessThan(0); // …and mirrors under RTL
   expect(rtl.bg).not.toBe(ltr.bg); // select marker flips side too

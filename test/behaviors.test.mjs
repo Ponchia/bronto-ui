@@ -278,6 +278,28 @@ test('initTabs: nested groups are isolated (own [data-bronto-tabs] only)', () =>
   assert.equal(o2.getAttribute('aria-selected'), 'true', 'outer untouched by inner');
 });
 
+test('initTabs: a root that IS the tab group initialises + wires APG', () => {
+  const d = mount(
+    '<div data-bronto-tabs id="g"><div class="ui-tabs__list">' +
+      '<button class="ui-tab is-active" data-tab="a">A</button>' +
+      '<button class="ui-tab" data-tab="b">B</button></div>' +
+      '<div class="ui-tabs__panel" data-panel="a">PA</div>' +
+      '<div class="ui-tabs__panel" data-panel="b">PB</div></div>'
+  );
+  const group = d.getElementById('g');
+  initTabs({ root: group }); // root === the [data-bronto-tabs] element itself
+  const [a, b] = [...group.querySelectorAll('.ui-tab')];
+  const pa = group.querySelector('[data-panel="a"]');
+
+  assert.equal(a.getAttribute('aria-selected'), 'true', 'root-self group initialised');
+  // APG: tab↔panel cross-links, ids minted where absent.
+  assert.ok(a.id && pa.id);
+  assert.equal(a.getAttribute('aria-controls'), pa.id);
+  assert.equal(pa.getAttribute('aria-labelledby'), a.id);
+  b.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(b.getAttribute('aria-selected'), 'true');
+});
+
 test('toast is SSR-safe and returns a usable cleanup', () => {
   for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
   const dismiss = toast('x');

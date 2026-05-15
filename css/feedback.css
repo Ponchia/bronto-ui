@@ -106,7 +106,10 @@
 .ui-toast-stack {
   display: grid;
   gap: 0.5rem;
-  inset: auto 1.25rem 1.25rem auto;
+
+  /* Logical so the stack anchors bottom inline-end and mirrors in RTL. */
+  inset-block: auto 1.25rem;
+  inset-inline: auto 1.25rem;
   justify-items: end;
   max-inline-size: min(22rem, calc(100vw - 2rem));
   pointer-events: none;
