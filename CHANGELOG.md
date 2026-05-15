@@ -1,5 +1,32 @@
 # Changelog
 
+## Unreleased
+
+Component + mobile expansion. No token/selector changes to existing
+classes — purely additive; existing consumers are unaffected.
+
+- **Dot loaders**: new orbital `ui-dotspinner` (the Nothing-signature
+  ring loader, `--sm`/`--lg`), `ui-dotbar--indeterminate` sweep, and a
+  linear `ui-progress` (determinate via `--value`, plus
+  `ui-progress--indeterminate`).
+- **feedback.css**: `ui-alert` / callout (tones + dismissible), `ui-toast`
+  + `ui-toast-stack`, CSS-only `ui-tooltip`.
+- **overlay.css**: `ui-modal` + `ui-modal--drawer` on native `<dialog>`
+  (bottom-sheet on mobile), `ui-menu` dropdown.
+- **disclosure.css**: `ui-tabs` (ARIA + `.is-active` contract, scrollable
+  on mobile), `ui-accordion` (styled `<details>`), `:has()`-driven
+  `ui-segmented`, `ui-breadcrumb`, `ui-pagination`, `ui-avatar` /
+  `ui-avatar-group`.
+- **Behaviors**: `initDialog` (native `<dialog>` open/close + backdrop
+  light-dismiss) and `toast()`. SSR-safe; covered by the test suite.
+- **Mobile**: 44px touch targets for buttons/inputs/checkboxes on coarse
+  pointers; component-level breakpoints for modal/drawer/menu/tabs.
+- **Contract**: 53 new classes added to the typed `cls` registry + recipes
+  (`ui.alert`, `ui.toast`, `ui.progress`, `ui.dotspinner`, `ui.modal`,
+  `ui.tab`, `ui.avatar`); `npm run check` and the 20-test suite stay green.
+- **Docs**: removed the stale "not published yet" install note (the
+  package is live on npm); documented the new layers and behaviors.
+
 ## 0.2.1 — 2026-05-15
 
 - Remove private project names and personal paths from docs and CSS

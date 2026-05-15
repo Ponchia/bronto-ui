@@ -17,6 +17,9 @@
 @import url('./typography.css') layer(bronto);
 @import url('./primitives.css') layer(bronto);
 @import url('./forms.css') layer(bronto);
+@import url('./feedback.css') layer(bronto);
+@import url('./overlay.css') layer(bronto);
+@import url('./disclosure.css') layer(bronto);
 @import url('./table.css') layer(bronto);
 @import url('./cards.css') layer(bronto);
 @import url('./app.css') layer(bronto);

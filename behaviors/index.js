@@ -117,6 +117,85 @@ export function dismissible({ root } = {}) {
 }
 
 /**
+ * Wire native <dialog> open/close glue (the one bit <dialog> can't do
+ * declaratively). Click `[data-bronto-open="dialogId"]` calls
+ * `showModal()` on `#dialogId`; click `[data-bronto-close]` closes the
+ * nearest enclosing <dialog>. Clicking the backdrop of a dialog that has
+ * `[data-bronto-dialog-light]` closes it too. SSR-safe; returns cleanup.
+ */
+export function initDialog({ root } = {}) {
+  if (!hasDom()) return noop;
+  const host = root || document;
+  const onClick = (e) => {
+    const opener = e.target.closest('[data-bronto-open]');
+    if (opener && host.contains(opener)) {
+      const dlg = document.getElementById(opener.getAttribute('data-bronto-open'));
+      if (dlg && typeof dlg.showModal === 'function' && !dlg.open) dlg.showModal();
+      return;
+    }
+    const closer = e.target.closest('[data-bronto-close]');
+    if (closer && host.contains(closer)) {
+      const dlg = closer.closest('dialog');
+      if (dlg && dlg.open) dlg.close();
+      return;
+    }
+    // Light-dismiss: a click whose target is the <dialog> itself is the
+    // backdrop (content sits in child elements).
+    const dlg = e.target;
+    if (
+      dlg.tagName === 'DIALOG' &&
+      dlg.open &&
+      dlg.hasAttribute('data-bronto-dialog-light') &&
+      host.contains(dlg)
+    ) {
+      dlg.close();
+    }
+  };
+  host.addEventListener('click', onClick);
+  return () => host.removeEventListener('click', onClick);
+}
+
+/**
+ * Push a transient toast into a shared, screen-anchored stack (created
+ * once and appended to <body>, `aria-live="polite"`). `tone` is one of
+ * accent/success/warning/danger; `title` is an optional uppercase label;
+ * `duration` ms before auto-dismiss (0 keeps it until dismissed). Returns
+ * a function that dismisses the toast early. SSR-safe (no-op).
+ */
+export function toast(message, { tone, title, duration = 4000 } = {}) {
+  if (!hasDom()) return noop;
+  let stack = document.querySelector('.ui-toast-stack');
+  if (!stack) {
+    stack = document.createElement('div');
+    stack.className = 'ui-toast-stack';
+    stack.setAttribute('aria-live', 'polite');
+    document.body.appendChild(stack);
+  }
+  const el = document.createElement('div');
+  el.className = tone ? `ui-toast ui-toast--${tone}` : 'ui-toast';
+  el.setAttribute('role', 'status');
+  if (title) {
+    const t = document.createElement('p');
+    t.className = 'ui-toast__title';
+    t.textContent = title;
+    el.appendChild(t);
+  }
+  const body = document.createElement('div');
+  body.textContent = message;
+  el.appendChild(body);
+  stack.appendChild(el);
+
+  let timer;
+  const dismiss = () => {
+    if (timer) clearTimeout(timer);
+    el.remove();
+    if (stack && !stack.childElementCount) stack.remove();
+  };
+  if (duration > 0) timer = setTimeout(dismiss, duration);
+  return dismiss;
+}
+
+/**
  * Disclosure: a `[data-bronto-disclosure]` trigger toggles the element
  * referenced by its `aria-controls` id, keeping `aria-expanded` and the
  * panel's `hidden` attribute in sync.
