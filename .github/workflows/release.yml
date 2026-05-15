@@ -3,21 +3,29 @@
 # deliberate `git tag vX.Y.Z && git push --tags`, not a side effect of
 # merging to main.
 #
-# Consumers depend on GitHub's auto-generated source tarball
-# (archive/refs/tags/vX.Y.Z.tar.gz), which exists for any tag. This
-# workflow gates the tag on the same checks as CI and publishes a
-# GitHub Release with generated notes for visibility.
+# IMPORTANT: this workflow does NOT gate the installable artifact.
+# Consumers resolve GitHub's auto-generated source tarball
+# (archive/refs/tags/vX.Y.Z.tar.gz), which GitHub creates for ANY pushed
+# tag the instant it exists — independent of, and before, this workflow.
+# So a failing check here does not prevent a bad tag from being
+# installable. The real safeguard is process: only tag from a green
+# main. This job re-runs the checks and the version match as a loud
+# post-tag tripwire and publishes a GitHub Release for visibility; it is
+# not a hard gate. For a true gate, use protected tags or a release
+# branch (see docs/architecture.md).
 name: Release
 
 on:
   push:
     tags: ['v*']
 
+# Default to read-only; only the publish job is granted write, and only
+# after validation passes. The npm ci / check steps never see a write token.
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  release:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,6 +47,14 @@ jobs:
             echo "::error::tag v$tag does not match package.json version $pkg"
             exit 1
           fi
+
+  publish:
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
