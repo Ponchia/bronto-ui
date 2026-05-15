@@ -57,6 +57,17 @@ fills — follows automatically, in both light and dark.
   `base.css`: state that was signalled only by a fill (progress, status
   dots, switch, segmented) is re-asserted with system colors.
 
+## Design-token interop (DTCG)
+
+`@ponchia/ui/tokens.dtcg.json` is the token model in the W3C Design
+Tokens Community Group format, for Style Dictionary / Figma / other
+tooling. Generated from `tokens/index.js` and drift-checked by
+`npm run check`. Resolvable primitives (the scale, `--accent`, literal
+palette) carry real `$value`s; the CSS-runtime-derived family
+(`accent-soft`, `focus-ring`, aliases) is spec-shaped with
+`$value: null` + the CSS in `$extensions["com.ponchia.css"]` rather than
+fabricating a number — the resolvable knob is `color.<theme>.accent`.
+
 ## Reading tokens from JS
 
 `@ponchia/ui/tokens` exposes the model as data. `--accent` and the

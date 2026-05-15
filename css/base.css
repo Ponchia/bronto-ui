@@ -247,3 +247,80 @@ textarea:focus-visible,
     outline: 2px solid Highlight;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Print — ink on white, no chrome, no page-break scars. The framework
+   dresses content sites too, so a clean printout / PDF matters.
+   -------------------------------------------------------------------------- */
+@media print {
+  html,
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  /* Decorative / interactive chrome never prints. */
+  .ui-dotfield,
+  .ui-toast-stack,
+  .app-rail,
+  .app-topbar,
+  .site-nav,
+  .theme-toggle__button,
+  .site-menu,
+  .ui-spinner,
+  .ui-dotloader,
+  .ui-dotspinner,
+  dialog.ui-modal::backdrop {
+    display: none !important;
+  }
+
+  /* Flat ink: drop shadows/fills, keep hairlines as real rules. */
+  *,
+  *::before,
+  *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .ui-card,
+  .ui-panel,
+  .ui-surface,
+  .ui-alert,
+  .ui-table-wrap {
+    border: 1px solid #999;
+  }
+
+  /* Scroll containers must spill on paper, not clip. */
+  .ui-table-wrap,
+  .ui-prose table,
+  .ui-tabs__list,
+  pre {
+    overflow: visible !important;
+  }
+
+  /* Do not split atomic blocks across pages. */
+  .ui-card,
+  .ui-panel,
+  .ui-alert,
+  figure,
+  blockquote,
+  pre,
+  tr {
+    break-inside: avoid;
+  }
+
+  :is(h1, h2, h3, h4, h5, h6) {
+    break-after: avoid;
+  }
+
+  /* Long-form: surface link targets when printed. */
+  .ui-prose a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+
+  @page {
+    margin: 18mm;
+  }
+}

@@ -241,6 +241,43 @@ test('initTabs: roving tabindex, click + Arrow/Home/End, panel sync', () => {
   assert.equal(c.getAttribute('aria-selected'), 'true', 'no-op after cleanup');
 });
 
+test('initTabs: nested groups are isolated (own [data-bronto-tabs] only)', () => {
+  const d = mount(
+    '<div data-bronto-tabs id="outer">' +
+      '<div class="ui-tabs__list">' +
+      '<button class="ui-tab is-active" data-tab="o1">O1</button>' +
+      '<button class="ui-tab" data-tab="o2">O2</button></div>' +
+      '<div class="ui-tabs__panel" data-panel="o1">' +
+      '<div data-bronto-tabs id="inner"><div class="ui-tabs__list">' +
+      '<button class="ui-tab is-active" data-tab="i1">I1</button>' +
+      '<button class="ui-tab" data-tab="i2">I2</button></div>' +
+      '<div class="ui-tabs__panel" data-panel="i1">PI1</div>' +
+      '<div class="ui-tabs__panel" data-panel="i2">PI2</div></div>' +
+      '</div>' +
+      '<div class="ui-tabs__panel" data-panel="o2">PO2</div></div>'
+  );
+  initTabs();
+  const tab = (id, t) => d.querySelector(`#${id} .ui-tab[data-tab="${t}"]`);
+  const o1 = tab('outer', 'o1');
+  const o2 = tab('outer', 'o2');
+  const i1 = tab('inner', 'i1');
+  const i2 = tab('inner', 'i2');
+
+  // Both groups initialise independently.
+  assert.equal(o1.getAttribute('aria-selected'), 'true');
+  assert.equal(i1.getAttribute('aria-selected'), 'true');
+
+  // ArrowRight on the outer group cycles outer only (o1 → o2), never i1.
+  o1.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+  assert.equal(o2.getAttribute('aria-selected'), 'true');
+  assert.equal(i1.getAttribute('aria-selected'), 'true', 'inner untouched by outer nav');
+
+  // Selecting an inner tab does not change the outer selection.
+  i2.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(i2.getAttribute('aria-selected'), 'true');
+  assert.equal(o2.getAttribute('aria-selected'), 'true', 'outer untouched by inner');
+});
+
 test('toast is SSR-safe and returns a usable cleanup', () => {
   for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
   const dismiss = toast('x');

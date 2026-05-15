@@ -63,6 +63,26 @@ finding against the code first:
   by design); `scripts/serve.mjs` binds loopback + strict path
   containment; fixed an invalid selector in `docs/theming.md`.
 
+### Discovered follow-ups
+
+Closed the remaining items surfaced across the review/verification:
+
+- **Regression tests for the review fixes**: `serve.mjs` refactored to a
+  pure exported `safePath()` with a traversal/sibling-prefix unit test;
+  `initTabs` nested-isolation test — which **caught a real bug in the
+  first nested fix** (the outer group's delegated click still fired for
+  nested tabs); now gated on owned membership, not DOM containment. New
+  e2e assertion that RTL truly mirrors the switch transform + select
+  marker (not just box model).
+- **Print** (`@media print` in `base.css`): ink-on-white, chrome hidden,
+  `break-inside` guards, prose link URLs surfaced, `@page` margin.
+- **prefers-reduced-data**: points `--display`/`--dot-font` at the mono
+  stack so the Doto webfont is never fetched for data-saver users.
+- **DTCG export**: `@ponchia/ui/tokens.dtcg.json` (W3C Design Tokens
+  format) generated from the model, drift-checked (`check:dtcg`), built
+  in `prepack`. Runtime-derived tokens are spec-shaped with
+  `$value:null` + `$extensions` rather than fabricated numbers.
+
 ### Earlier in this cycle
 
 Component + mobile expansion. No token/selector changes to existing
