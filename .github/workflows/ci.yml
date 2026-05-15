@@ -35,13 +35,20 @@ jobs:
       # node:test — pure modules + jsdom behavior tests.
       - run: npm test
 
-  # Visual + a11y regression. Pinned to the same Playwright container the
-  # committed baselines were authored in, so screenshots are byte-stable
-  # across machines (no cross-OS font flake).
-  visual:
+  # End-to-end regression: visual snapshots (chromium) + axe a11y incl.
+  # best-practice both themes + cross-engine firefox/webkit behavioural
+  # + forced-colors/reduced-motion/print + no-console-error/404. Pinned
+  # to the container the committed baselines were authored in, so
+  # screenshots are byte-stable across machines (no cross-OS font flake).
+  e2e:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.60.0-jammy
+    # The job container runs as root but GitHub sets $HOME=/github/home
+    # (uid 1001); Firefox refuses to launch unless $HOME is owned by the
+    # current user. Documented Playwright-on-GHA workaround.
+    env:
+      HOME: /root
     steps:
       - uses: actions/checkout@v4
 
