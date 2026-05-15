@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.2 — 2026-05-15
 
 Component + mobile expansion, then a framework-grade hardening pass
 (RTL, a11y, theming contract, Markdown content layer). Additive — no
