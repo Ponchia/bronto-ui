@@ -2,55 +2,11 @@
    @bronto/ui — design tokens
    Nothing-inspired: monochrome surfaces, single red accent, dot-matrix type.
    Dual light/dark. Variable names are stable so semantic classes inherit.
+   The Doto @font-face declarations live in fonts.css (bundled by
+   core.css/index.css) so font hosting is decoupled from these tokens —
+   a consumer can self-host Doto and still use the token layer by
+   overriding --display / --dot-font.
    ========================================================================== */
-
-@font-face {
-  font-family: Doto;
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/doto-400.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: Doto;
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('/fonts/doto-500.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: Doto;
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/fonts/doto-600.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: Doto;
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/doto-700.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: Doto;
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-  src: url('/fonts/doto-800.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: Doto;
-  font-style: normal;
-  font-weight: 900;
-  font-display: swap;
-  src: url('/fonts/doto-900.ttf') format('truetype');
-}
 
 :root {
   /* Sharp, near-zero radii — Nothing surfaces are crisp, not pill-soft. */
