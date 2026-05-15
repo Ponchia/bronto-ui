@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@bronto/ui — kitchen sink</title>
+    <link rel="stylesheet" href="../css/index.css" />
+    <style>
+      /* Demo serves fonts from the package's own ../fonts so this file
+         works opened directly or from a static server at package root. */
+      @font-face {
+        font-family: 'Doto';
+        font-weight: 400 900;
+        font-display: swap;
+        src: url('../fonts/doto-700.ttf') format('truetype');
+      }
+      body {
+        margin: 0;
+      }
+      .wrap {
+        margin: 0 auto;
+        max-width: 1100px;
+        padding: 2rem 1.25rem 5rem;
+      }
+      section {
+        margin-top: 2.5rem;
+      }
+      .swatches {
+        display: grid;
+        gap: 0.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+      }
+      .sw {
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        font-family: var(--mono);
+        font-size: var(--text-2xs);
+        overflow: hidden;
+      }
+      .sw i {
+        display: block;
+        height: 3rem;
+      }
+      .sw span {
+        display: block;
+        padding: 0.4rem 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ui-dotfield" aria-hidden="true"></div>
+    <div class="wrap">
+      <header class="ui-cluster ui-cluster--between">
+        <div>
+          <p class="ui-eyebrow">@bronto/ui</p>
+          <h1>Nothing<br />Kitchen&nbsp;Sink</h1>
+        </div>
+        <button class="theme-toggle__button" id="themeBtn" type="button">
+          <span class="theme-toggle__prefix">Theme</span>
+          <span class="theme-toggle__label" id="themeLabel">Dark</span>
+          <span class="theme-toggle__track"><span class="theme-toggle__thumb"></span></span>
+        </button>
+      </header>
+
+      <section>
+        <p class="ui-eyebrow ui-eyebrow--muted">Palette</p>
+        <div class="swatches">
+          <div class="sw"><i style="background: var(--bg)"></i><span>--bg</span></div>
+          <div class="sw"><i style="background: var(--panel)"></i><span>--panel</span></div>
+          <div class="sw"><i style="background: var(--panel-soft)"></i><span>--panel-soft</span></div>
+          <div class="sw"><i style="background: var(--accent)"></i><span>--accent</span></div>
+          <div class="sw"><i style="background: var(--success)"></i><span>--success</span></div>
+          <div class="sw"><i style="background: var(--danger)"></i><span>--danger</span></div>
+        </div>
+      </section>
+
+      <section class="ui-stack">
+        <p class="ui-eyebrow ui-eyebrow--muted">Buttons</p>
+        <div class="ui-cluster">
+          <button class="ui-button">Primary</button>
+          <button class="ui-button ui-button--ghost">Ghost</button>
+          <button class="ui-button ui-button--subtle">Subtle</button>
+          <button class="ui-button ui-button--danger">Danger</button>
+          <button class="ui-button" disabled>Disabled</button>
+          <button class="ui-button ui-button--icon" aria-label="dot">•</button>
+        </div>
+      </section>
+
+      <section class="ui-stack">
+        <p class="ui-eyebrow ui-eyebrow--muted">Badges · Chips · Dots</p>
+        <div class="ui-cluster">
+          <span class="ui-badge">Default</span>
+          <span class="ui-badge ui-badge--accent">Accent</span>
+          <span class="ui-badge ui-badge--success">Success</span>
+          <span class="ui-badge ui-badge--warning">Warning</span>
+          <span class="ui-badge ui-badge--danger">Danger</span>
+          <span class="ui-chip">Chip</span>
+          <span class="ui-chip ui-chip--accent">Active</span>
+        </div>
+        <div class="ui-cluster">
+          <span class="ui-status"><span class="ui-dot ui-dot--live"></span> Online</span>
+          <span class="ui-status"><span class="ui-dot ui-dot--warning"></span> Degraded</span>
+          <span class="ui-status"><span class="ui-dot ui-dot--danger"></span> Down</span>
+          <span class="ui-dotloader"><span></span><span></span><span></span></span>
+          <span class="ui-spinner"></span>
+          <span class="ui-caret">typing</span>
+        </div>
+        <div class="ui-dotbar" style="max-width: 18rem">
+          <i class="is-on"></i><i class="is-on"></i><i class="is-on"></i><i class="is-on"></i><i></i
+          ><i></i><i></i><i></i>
+        </div>
+      </section>
+
+      <section class="ui-grid" style="--grid-min: 15rem">
+        <article class="ui-card ui-card--interactive">
+          <p class="ui-eyebrow">Card</p>
+          <h3>Interactive surface</h3>
+          <p>Flat, hairline border, lifts on hover. Colour stays rationed.</p>
+          <a class="ui-link ui-link--arrow" href="#">Open</a>
+        </article>
+        <article class="ui-card ui-card--accent ui-dotgrid">
+          <p class="ui-eyebrow">Card · accent</p>
+          <h3>Dot-grid backdrop</h3>
+          <p>The signature texture as a background utility.</p>
+        </article>
+        <div class="ui-panel">
+          <p class="ui-eyebrow ui-eyebrow--muted">Key / value</p>
+          <dl class="ui-key-value">
+            <div><dt>Runtime</dt><dd>k3s · the host</dd></div>
+            <div><dt>Status</dt><dd>Reconciled</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="ui-stack">
+        <p class="ui-eyebrow ui-eyebrow--muted">Form</p>
+        <div class="ui-grid" style="--grid-min: 14rem">
+          <label class="ui-field"
+            ><span class="ui-label">Pair</span
+            ><input class="ui-input" value="BTC/EUR" /></label>
+          <label class="ui-field"
+            ><span class="ui-label">Mode</span
+            ><select class="ui-select">
+              <option>Paper</option>
+              <option>Live</option>
+            </select></label
+          >
+          <div class="ui-search"><input placeholder="Search decisions…" /></div>
+        </div>
+        <label class="ui-switch"
+          ><input type="checkbox" checked /><span class="ui-switch__track"
+            ><span class="ui-switch__thumb"></span></span
+          ><span class="ui-label" style="text-transform: none">Auto-execute</span></label
+        >
+      </section>
+
+      <section class="ui-stack">
+        <p class="ui-eyebrow ui-eyebrow--muted">Table · dense</p>
+        <div class="ui-table-wrap">
+          <table class="ui-table ui-table--dense">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Pair</th>
+                <th class="is-num">Size</th>
+                <th class="is-num">P/L</th>
+                <th>State</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>09:42:01</td>
+                <td class="is-key">BTC/EUR</td>
+                <td class="is-num">0.014</td>
+                <td class="is-num is-pos">+€38.20</td>
+                <td><span class="ui-badge ui-badge--success">Filled</span></td>
+              </tr>
+              <tr>
+                <td>09:38:55</td>
+                <td class="is-key">ETH/EUR</td>
+                <td class="is-num">0.62</td>
+                <td class="is-num is-neg">−€11.04</td>
+                <td><span class="ui-badge ui-badge--danger">Stopped</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="ui-stack">
+        <p class="ui-eyebrow ui-eyebrow--muted">Metrics</p>
+        <div class="app-metrics">
+          <div class="app-metric">
+            <span class="app-metric__label">Equity</span>
+            <span class="app-metric__value">€12,408</span>
+            <span class="app-metric__delta is-pos">+2.4% / 24h</span>
+          </div>
+          <div class="app-metric">
+            <span class="app-metric__label">Open</span><span class="app-metric__value">3</span>
+            <span class="app-metric__delta">positions</span>
+          </div>
+          <div class="app-metric">
+            <span class="app-metric__label">Win rate</span
+            ><span class="app-metric__value">61%</span>
+            <span class="app-metric__delta is-neg">−4pt / wk</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="ui-stack">
+        <p class="ui-eyebrow ui-eyebrow--muted">Motion</p>
+        <div class="ui-grid ui-stagger--auto" style="--grid-min: 9rem">
+          <div class="ui-card">Rise 1</div>
+          <div class="ui-card">Rise 2</div>
+          <div class="ui-card">Rise 3</div>
+          <div class="ui-card">Rise 4</div>
+        </div>
+        <div class="ui-skeleton" style="height: 1.4rem; max-width: 22rem"></div>
+        <hr class="ui-dotrule" />
+      </section>
+    </div>
+
+    <script>
+      const root = document.documentElement;
+      const btn = document.getElementById('themeBtn');
+      const label = document.getElementById('themeLabel');
+      btn.addEventListener('click', () => {
+        const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        label.textContent = next[0].toUpperCase() + next.slice(1);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,102 @@
+/* ==========================================================================
+   table — ui-table, dense + comfortable
+   Built for admin dashboards (a SvelteKit admin) as well as content tables.
+   ========================================================================== */
+
+.ui-table-wrap {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: auto;
+}
+
+.ui-table {
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  min-width: 100%;
+  width: 100%;
+}
+
+.ui-table th,
+.ui-table td {
+  border-bottom: 1px solid var(--line);
+  overflow-wrap: anywhere;
+  padding: 0.7rem 0.85rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.ui-table th {
+  background: var(--panel);
+  color: var(--text-dim);
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  position: sticky;
+  text-transform: uppercase;
+  top: 0;
+}
+
+.ui-table td {
+  color: var(--text-soft);
+}
+
+.ui-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.ui-table tbody tr {
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .ui-table tbody tr:hover td {
+    background: var(--bg-accent);
+  }
+}
+
+.ui-table--dense th,
+.ui-table--dense td {
+  font-size: var(--text-xs);
+  padding: 0.42rem 0.6rem;
+}
+
+.ui-table--comfortable th,
+.ui-table--comfortable td {
+  padding: 0.95rem 1.1rem;
+}
+
+.ui-table--lined td {
+  border-right: 1px solid var(--line);
+}
+
+.ui-table--lined td:last-child {
+  border-right: 0;
+}
+
+/* Numeric / right-aligned cells. */
+.ui-table .is-num,
+.ui-table th.is-num {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.ui-table .is-pos {
+  color: var(--success);
+}
+
+.ui-table .is-neg {
+  color: var(--danger);
+}
+
+.ui-table .is-key {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Empty state row. */
+.ui-table__empty td {
+  color: var(--text-dim);
+  padding: 2rem;
+  text-align: center;
+}

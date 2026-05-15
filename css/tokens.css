@@ -1,0 +1,217 @@
+/* ==========================================================================
+   @bronto/ui — design tokens
+   Nothing-inspired: monochrome surfaces, single red accent, dot-matrix type.
+   Dual light/dark. Variable names are stable so semantic classes inherit.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Doto';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/doto-400.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Doto';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/doto-500.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Doto';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/doto-600.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Doto';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/doto-700.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Doto';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/doto-800.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Doto';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('/fonts/doto-900.ttf') format('truetype');
+}
+
+:root {
+  /* Sharp, near-zero radii — Nothing surfaces are crisp, not pill-soft. */
+  --radius-xl: 4px;
+  --radius-lg: 3px;
+  --radius-md: 2px;
+  --radius-sm: 1px;
+  --radius-pill: 999px;
+
+  /* Spacing scale */
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.35rem;
+  --space-xl: 1.75rem;
+  --space-2xl: 2.5rem;
+
+  /* Type — Doto is the dot-matrix display face; body stays mono-grotesque. */
+  --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', ui-monospace, monospace;
+  --sans:
+    'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --display: 'Doto', var(--mono);
+  --dot-font: 'Doto', var(--mono);
+
+  --text-2xs: 0.68rem;
+  --text-xs: 0.76rem;
+  --text-sm: 0.86rem;
+  --text-base: 0.95rem;
+  --text-lg: 1.15rem;
+  --text-xl: 1.45rem;
+  --tracking-wide: 0.14em;
+  --tracking-wider: 0.22em;
+
+  /* Motion — restrained, spring-tipped. */
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+  --duration-fast: 130ms;
+  --duration-base: 200ms;
+  --duration-slow: 360ms;
+
+  /* Dot-matrix motif sizing */
+  --dot-size: 2px;
+  --dot-gap: 14px;
+
+  /* Aliases kept for back-compat with existing semantic classes */
+  --surface: var(--panel);
+  --surface-raised: var(--panel-strong);
+  --surface-muted: var(--panel-soft);
+  --border: var(--line);
+  --border-strong: var(--line-strong);
+}
+
+/* --------------------------------------------------------------------------
+   Light — paper white / ink. Color is rationed: red accent only.
+   -------------------------------------------------------------------------- */
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f4f4f2;
+  --bg-elevated: #fbfbfa;
+  --bg-accent: rgba(215, 25, 33, 0.06);
+  --panel: #ffffff;
+  --panel-strong: #ffffff;
+  --panel-soft: #ececea;
+  --line: #d8d8d4;
+  --line-strong: #a8a8a2;
+  --text: #0a0a0a;
+  --text-soft: #353533;
+  --text-dim: #7a7a75;
+  --accent: #d71921;
+  --accent-strong: #b3141b;
+  --accent-soft: rgba(215, 25, 33, 0.1);
+  --success: #2f7d4f;
+  --success-soft: rgba(47, 125, 79, 0.12);
+  --warning: #8a6d1c;
+  --warning-soft: rgba(138, 109, 28, 0.13);
+  --orange: #a85f32;
+  --orange-soft: rgba(168, 95, 50, 0.13);
+  --danger: #c01622;
+  --danger-soft: rgba(192, 22, 34, 0.1);
+  --code-bg: rgba(10, 10, 10, 0.05);
+  --button-text: #ffffff;
+  --field-dot: rgba(10, 10, 10, 0.16);
+  --field-dot-hot: rgba(10, 10, 10, 0.4);
+  --field-dot-accent: rgba(215, 25, 33, 0.78);
+  --focus-ring: rgba(215, 25, 33, 0.5);
+  --shadow: none;
+  --shadow-raised: 0 0 0 1px var(--line-strong);
+}
+
+/* --------------------------------------------------------------------------
+   Dark — true black. The Nothing default.
+   -------------------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #000000;
+    --bg-elevated: #0a0a0a;
+    --bg-accent: rgba(255, 59, 65, 0.08);
+    --panel: #0c0c0c;
+    --panel-strong: #141414;
+    --panel-soft: #1a1a1a;
+    --line: #2a2a2a;
+    --line-strong: #444444;
+    --text: #f2f2f2;
+    --text-soft: #c4c4c4;
+    --text-dim: #7d7d7d;
+    --accent: #ff3b41;
+    --accent-strong: #ff5b60;
+    --accent-soft: rgba(255, 59, 65, 0.14);
+    --success: #4ec27e;
+    --success-soft: rgba(78, 194, 126, 0.14);
+    --warning: #d8bd72;
+    --warning-soft: rgba(216, 189, 114, 0.14);
+    --orange: #d08c5b;
+    --orange-soft: rgba(208, 140, 91, 0.15);
+    --danger: #ff4d54;
+    --danger-soft: rgba(255, 77, 84, 0.15);
+    --code-bg: rgba(255, 255, 255, 0.05);
+    --button-text: #000000;
+    --field-dot: rgba(242, 242, 242, 0.14);
+    --field-dot-hot: rgba(242, 242, 242, 0.36);
+    --field-dot-accent: rgba(255, 59, 65, 0.82);
+    --focus-ring: rgba(255, 59, 65, 0.55);
+    --shadow: none;
+    --shadow-raised: 0 0 0 1px var(--line-strong);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #000000;
+  --bg-elevated: #0a0a0a;
+  --bg-accent: rgba(255, 59, 65, 0.08);
+  --panel: #0c0c0c;
+  --panel-strong: #141414;
+  --panel-soft: #1a1a1a;
+  --line: #2a2a2a;
+  --line-strong: #444444;
+  --text: #f2f2f2;
+  --text-soft: #c4c4c4;
+  --text-dim: #7d7d7d;
+  --accent: #ff3b41;
+  --accent-strong: #ff5b60;
+  --accent-soft: rgba(255, 59, 65, 0.14);
+  --success: #4ec27e;
+  --success-soft: rgba(78, 194, 126, 0.14);
+  --warning: #d8bd72;
+  --warning-soft: rgba(216, 189, 114, 0.14);
+  --orange: #d08c5b;
+  --orange-soft: rgba(208, 140, 91, 0.15);
+  --danger: #ff4d54;
+  --danger-soft: rgba(255, 77, 84, 0.15);
+  --code-bg: rgba(255, 255, 255, 0.05);
+  --button-text: #000000;
+  --field-dot: rgba(242, 242, 242, 0.14);
+  --field-dot-hot: rgba(242, 242, 242, 0.36);
+  --field-dot-accent: rgba(255, 59, 65, 0.82);
+  --focus-ring: rgba(255, 59, 65, 0.55);
+  --shadow: none;
+  --shadow-raised: 0 0 0 1px var(--line-strong);
+}
