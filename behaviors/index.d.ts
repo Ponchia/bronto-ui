@@ -1,4 +1,4 @@
-/** @bronto/ui — optional, framework-agnostic behaviors. */
+/** @ponchia/ui — optional, framework-agnostic behaviors. */
 
 /** Cleanup function returned by every initializer. */
 export type Cleanup = () => void;
