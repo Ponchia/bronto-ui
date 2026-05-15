@@ -4,8 +4,8 @@ Status: accepted · 2026-05-15 · applies from v0.2.0
 
 ## Context
 
-`@ponchia/ui` is the shared design layer for several personal projects on
-different stacks: Astro (`an Astro site`), SvelteKit (`a SvelteKit admin`), and an
+`@ponchia/ui` is the shared design layer for several projects on
+different stacks: Astro, SvelteKit, and an
 open-ended set of future apps (React, Solid, plain HTML, server-rendered
 templates). The question driving this document: is plain CSS the right
 universal substrate, or should the framework ship per-framework components?
@@ -101,8 +101,7 @@ The npm scope `@bronto` is not ownable, so the package name is
 - **CSS cascade layer**: `@layer bronto` and `data-bronto-*` behavior
   attributes (the design-system namespace — unchanged; renaming gains
   nothing and risks consumer overrides).
-- **Workspace / brand**: "Bronto" (`the workspace`, repo
-  `Ponchia/bronto-ui`) — unchanged.
+- **Workspace / brand**: "Bronto" (repo `Ponchia/bronto-ui`) — unchanged.
 
 This split is deliberate; the README states it so the apparent mismatch is
 explained, not surprising.
@@ -123,10 +122,9 @@ Remaining (npm-account side, cannot be done in-repo):
 
 - **`@ponchia` scope + `NPM_TOKEN`** — create the scope on npm, add an
   automation token with publish rights as the `NPM_TOKEN` repo secret.
-- **Consumers** — `an Astro site` / `a SvelteKit admin` switch their
-  dependency specifier from the tarball URL to `@ponchia/ui` after the
-  first publish (separate repos; not changed here per workspace VCS
-  rules).
+- **Consumers** — the consuming apps switch their dependency specifier
+  from the tarball URL to `@ponchia/ui` after the first publish
+  (separate repos; not changed here).
 
 `publishConfig` is set (`access: public`, `provenance: true`) and
 `private` is removed so the gated workflow can publish; local accidental

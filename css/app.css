@@ -1,6 +1,6 @@
 /* ==========================================================================
    app — admin shell (sidebar + topbar + panels + metrics)
-   Adopted by a SvelteKit admin and future operator UIs.
+   For admin / operator dashboards.
    ========================================================================== */
 
 .app-shell {

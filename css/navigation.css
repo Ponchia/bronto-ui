@@ -1,6 +1,6 @@
 /* ==========================================================================
    navigation — site nav, menu, theme toggle (Nothing flat, dot indicator)
-   Class names preserved for an Astro site compatibility.
+   Class names kept stable for site-nav compatibility.
    ========================================================================== */
 
 .site-menu {
