@@ -133,18 +133,30 @@ python3 -m http.server -d . 8080   # then open http://localhost:8080/demo/
 
 ```bash
 npm install        # stylelint + jsdom (test only)
-npm run check      # lint + 4 integrity checks (exports, tokens, classes, pack)
+npm run check      # lint + 5 integrity checks (exports, tokens, classes, dist, pack)
 npm test           # node:test — pure modules + jsdom behavior tests
-npm run lint:fix   # auto-fix the safe stylistic rules
+npm run lint:fix   # auto-fix the safe stylistic rules + logical properties
 npm run tokens:build  # regenerate tokens/index.json from tokens/index.js
+npm run dist:build    # rebuild the flattened dist/ bundles
 ```
 
 `npm run check` enforces that the data mirrors cannot drift from the CSS:
 exports/import-graph integrity, `tokens.css` ⇄ `tokens/index.{js,json}`, the
-`classes` registry ⇄ the `.ui-*` selectors, and that the published tarball
-ships only the intended files. CI
-(`.github/workflows/ci.yml`) runs it on every branch push and PR. It never
-publishes — a push to `main` ships nothing.
+`classes` registry ⇄ the `.ui-*` selectors, `dist/` ⇄ `css/` (fresh + in
+budget), and that the published tarball ships only the intended files.
+
+Visual + a11y regression is a separate suite (real browser, so not in the
+zero-dep core check):
+
+```bash
+npx playwright test   # demo screenshots (light/dark/RTL) + axe-core WCAG
+```
+
+It is pinned to a Playwright container so baselines are byte-stable; the
+committed baselines under `test/e2e/__screenshots__` were authored in that
+same image. CI (`.github/workflows/ci.yml`) runs both the `check` job and a
+containerised `visual` job on every branch push and PR. It never publishes —
+a push to `main` ships nothing.
 
 ## Release
 
