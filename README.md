@@ -6,11 +6,16 @@ flat hairline borders, restrained motion. CSS-first and framework-agnostic.
 
 ## Use
 
-Pin a tagged GitHub release tarball (reproducible, no registry needed):
+Pin a tagged GitHub release tarball (reproducible, no registry needed) —
+replace `vX.Y.Z` with the latest tag:
 
 ```json
-{ "dependencies": { "@bronto/ui": "https://github.com/Ponchia/bronto-ui/archive/refs/tags/v0.1.0.tar.gz" } }
+{ "dependencies": { "@bronto/ui": "https://github.com/Ponchia/bronto-ui/archive/refs/tags/vX.Y.Z.tar.gz" } }
 ```
+
+> The `tokens`, `classes`, and `behaviors` entrypoints below are
+> **unreleased** — they ship from the next tag after `v0.1.0` (which is
+> CSS-only). Pin that tag, or use a `file:`/commit-sha link, to get them.
 
 For local iteration against a checkout, swap to a `file:` link instead:
 
@@ -38,6 +43,10 @@ font instead, import everything except `fonts.css` and override `--display` /
 
 Everything ships inside a single `@layer bronto`, so any un-layered CSS in
 your app overrides the framework without a specificity fight or `!important`.
+The layer is applied by the `css` and `css/core.css` bundles only —
+importing an individual leaf such as `@bronto/ui/css/primitives.css`
+directly is **unlayered** (full specificity), which is an intentional
+escape hatch, not the default path.
 
 Set `data-theme="light"` or `data-theme="dark"` on `<html>`; defaults follow
 `prefers-color-scheme`.
@@ -120,6 +129,13 @@ The tag triggers `.github/workflows/release.yml`, which re-runs the checks,
 verifies the tag matches `package.json`, and publishes a GitHub Release.
 Consumers resolve the auto-generated `archive/refs/tags/vX.Y.Z.tar.gz`, so
 bump their pinned URL to adopt the new version.
+
+**The workflow is a post-tag tripwire, not a hard gate.** GitHub generates
+that tarball for any pushed tag the moment it exists — a failing check does
+not stop a bad tag from being installable. The real safeguard is process:
+only tag from a green `main`. Bump `package.json` and let CI go green there
+*before* tagging. For a true gate, use protected tags or a release branch
+(see [`docs/architecture.md`](docs/architecture.md)).
 
 ## Consumers
 
