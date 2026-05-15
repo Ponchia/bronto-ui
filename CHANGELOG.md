@@ -1,5 +1,31 @@
 # Changelog
 
+## Unreleased
+
+Content-site layer — promotes the proven, hand-rolled site shell into
+the first-class typed contract so consumers stop reimplementing it.
+Feature-sized; warrants a **0.3.0** when released. Legacy `site-*` /
+`.tag-list` classes are kept as undocumented back-compat (removal slated
+for a future major).
+
+- **`site.css`**: `ui-container` (+`--narrow`), `ui-siteheader`
+  (`__brand`/`__actions`), `ui-sitenav` (active via `aria-current`, dot
+  cue, responsive collapse into `ui-sitemenu` — native `<details>`, no
+  JS), `ui-sitefooter` (`__links`), `ui-skiplink`, `ui-tags`/`ui-tag`
+  (`--accent`; neutral content labels, distinct from interactive
+  `ui-chip`), `ui-meta` (dot-separated meta row).
+- **`ui-quote`** (+ `__cite`) in `content.css`: a pull-quote companion
+  to `.ui-prose` — emphasis by scale + a short accent rule, not a box.
+- **Shiki**: `@ponchia/ui/shiki/nothing.json` — a documented optional
+  VS Code/TextMate theme (rationed: brand accent + greyscale),
+  drift-checked (`check:shiki` keeps it on-palette and in sync with the
+  dark `--accent`). Bring-your-own-highlighter, like `tokens.dtcg.json`.
+- Full contract treatment: 18 classes + `ui.container`/`ui.tag` recipes
+  + `.d.ts` (guarded), cascade/exports/dist wired, demo + docs. The
+  `not-a-gap` items from the source review (theme-toggle CSS already
+  exists in `navigation.css`; `ui-timeline` too consumer-specific) were
+  deliberately excluded.
+
 ## 0.2.2 — 2026-05-15
 
 Component + mobile expansion, then a framework-grade hardening pass

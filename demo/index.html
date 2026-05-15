@@ -495,6 +495,72 @@ ui.button({ variant: 'ghost' });</code></pre>
           </figure>
         </article>
       </section>
+
+      <section class="ui-stack">
+        <h2 class="ui-eyebrow ui-eyebrow--muted">Site shell — content-site layer</h2>
+
+        <div class="ui-siteheader" style="border: 1px solid var(--line); padding-inline: 1rem">
+          <span class="ui-siteheader__brand">Bronto</span>
+          <nav class="ui-sitenav" aria-label="Demo site">
+            <a href="#" aria-current="page">Home</a>
+            <a href="#">Work</a>
+            <a href="#">Writing</a>
+            <a href="#">About</a>
+          </nav>
+          <span class="ui-siteheader__actions">
+            <button class="ui-button ui-button--ghost" type="button">Contact</button>
+          </span>
+          <details class="ui-sitemenu">
+            <summary>Menu ▾</summary>
+            <div class="ui-sitemenu__panel">
+              <nav class="ui-sitenav" aria-label="Demo site (mobile)">
+                <a href="#" aria-current="page">Home</a>
+                <a href="#">Work</a>
+                <a href="#">Writing</a>
+                <a href="#">About</a>
+              </nav>
+            </div>
+          </details>
+        </div>
+
+        <article class="ui-prose ui-container ui-container--narrow" style="padding-inline: 0">
+          <ol class="ui-meta">
+            <li class="ui-meta__item">2026-05-15</li>
+            <li class="ui-meta__item">Aldo</li>
+            <li class="ui-meta__item">6 min read</li>
+          </ol>
+          <h3>On restraint</h3>
+          <p>A short content page using the narrow container + meta row + tags.</p>
+          <figure class="ui-quote">
+            <blockquote>Color is rationed. Structure carries the meaning.</blockquote>
+            <figcaption class="ui-quote__cite">— the Nothing brief</figcaption>
+          </figure>
+          <ul class="ui-tags">
+            <li class="ui-tag ui-tag--accent">design</li>
+            <li class="ui-tag">systems</li>
+            <li class="ui-tag">css</li>
+          </ul>
+        </article>
+
+        <p class="ui-eyebrow ui-eyebrow--muted" style="margin-block-start: 1rem">
+          Code — @ponchia/ui/shiki/nothing theme
+        </p>
+        <!-- Faithful render of the @ponchia/ui/shiki/nothing (dark) theme:
+             it carries its own editor.background (#0c0c0c), so it stays a
+             self-contained dark code surface in either page theme. -->
+        <pre style="background: #0c0c0c; border: 1px solid #2a2a2a; border-radius: var(--radius-md); padding: 1rem; overflow-x: auto"><code style="font-family: var(--mono); color: #f2f2f2"><span style="color:#858585">// rationed colour: one accent, the rest greyscale</span>
+<span style="color:#ff3b41">import</span> ui <span style="color:#ff3b41">from</span> <span style="color:#c4c4c4">'@ponchia/ui/classes'</span>;
+<span style="color:#ff3b41">const</span> cls = ui.<span style="color:#f2f2f2">button</span>({ variant: <span style="color:#c4c4c4">'ghost'</span> });</code></pre>
+
+        <div class="ui-sitefooter">
+          <span>© 2026 Bronto — built with @ponchia/ui</span>
+          <span class="ui-sitefooter__links">
+            <a href="#">GitHub</a>
+            <a href="#">npm</a>
+            <a href="#">RSS</a>
+          </span>
+        </div>
+      </section>
     </main>
 
     <!-- The demo drives itself with the package's own shipped modules,

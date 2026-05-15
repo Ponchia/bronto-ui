@@ -142,6 +142,25 @@ export const cls = Object.freeze({
   eyebrowMuted: 'ui-eyebrow--muted',
   prose: 'ui-prose',
   proseCompact: 'ui-prose--compact',
+  quote: 'ui-quote',
+  quoteCite: 'ui-quote__cite',
+  // site shell
+  container: 'ui-container',
+  containerNarrow: 'ui-container--narrow',
+  skiplink: 'ui-skiplink',
+  siteheader: 'ui-siteheader',
+  siteheaderBrand: 'ui-siteheader__brand',
+  siteheaderActions: 'ui-siteheader__actions',
+  sitenav: 'ui-sitenav',
+  sitemenu: 'ui-sitemenu',
+  sitemenuPanel: 'ui-sitemenu__panel',
+  sitefooter: 'ui-sitefooter',
+  sitefooterLinks: 'ui-sitefooter__links',
+  tags: 'ui-tags',
+  tag: 'ui-tag',
+  tagAccent: 'ui-tag--accent',
+  meta: 'ui-meta',
+  metaItem: 'ui-meta__item',
   display: 'ui-display',
   mono: 'ui-mono',
   muted: 'ui-muted',
@@ -239,6 +258,8 @@ export const ui = {
   avatar: ({ size } = {}) =>
     j(cls.avatar, size === 'sm' && cls.avatarSm, size === 'lg' && cls.avatarLg),
   prose: ({ compact } = {}) => j(cls.prose, compact && cls.proseCompact),
+  container: ({ narrow } = {}) => j(cls.container, narrow && cls.containerNarrow),
+  tag: ({ accent } = {}) => j(cls.tag, accent && cls.tagAccent),
 };
 
 export default ui;
