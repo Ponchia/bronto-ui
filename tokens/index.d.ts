@@ -1,4 +1,4 @@
-/** @bronto/ui — design token data types. */
+/** @ponchia/ui — design token data types. */
 
 export type ThemeName = 'light' | 'dark';
 

@@ -1,4 +1,4 @@
-# @bronto/ui
+# @ponchia/ui
 
 Shared UI framework for Bronto personal projects. Nothing-inspired:
 monochrome surfaces, a single red accent, dot-matrix display type (Doto),
@@ -6,33 +6,40 @@ flat hairline borders, restrained motion. CSS-first and framework-agnostic.
 
 ## Use
 
-Pin a tagged GitHub release tarball (reproducible, no registry needed) —
-replace `vX.Y.Z` with the latest tag:
+Install from npm (public, no registry config):
 
-```json
-{ "dependencies": { "@bronto/ui": "https://github.com/Ponchia/bronto-ui/archive/refs/tags/vX.Y.Z.tar.gz" } }
+```bash
+npm i @ponchia/ui
 ```
 
-> The `tokens`, `classes`, and `behaviors` entrypoints below are
-> **unreleased** — they ship from the next tag after `v0.1.0` (which is
-> CSS-only). Pin that tag, or use a `file:`/commit-sha link, to get them.
+> Naming: the **npm package** is `@ponchia/ui` (the `@bronto` scope isn't
+> ownable). The **CSS layer** and behavior attributes stay `bronto`
+> (`@layer bronto`, `data-bronto-*`) — that's the design-system namespace,
+> deliberately distinct from the package name. See
+> [`docs/architecture.md`](docs/architecture.md).
 
-For local iteration against a checkout, swap to a `file:` link instead:
-
-```json
-{ "dependencies": { "@bronto/ui": "file:../bronto-ui" } }
-```
+> Not published yet — the npm scope, a `LICENSE`, and a version bump are
+> pending (see [Release](#release)). Until the first publish, depend on a
+> `file:` link to a checkout or a pinned git tag:
+>
+> ```json
+> { "dependencies": { "@ponchia/ui": "file:../bronto-ui" } }
+> ```
+>
+> ```json
+> { "dependencies": { "@ponchia/ui": "github:Ponchia/bronto-ui#semver:^0.2.0" } }
+> ```
 
 Import the full theme (includes responsive breakpoints):
 
 ```css
-@import '@bronto/ui/css';
+@import '@ponchia/ui/css';
 ```
 
 Or the core bundle if the app manages its own responsive layer:
 
 ```css
-@import '@bronto/ui/css/core.css';
+@import '@ponchia/ui/css/core.css';
 ```
 
 The Doto `@font-face` ships in `css/fonts.css` (bundled by both `css` and
@@ -44,7 +51,7 @@ font instead, import everything except `fonts.css` and override `--display` /
 Everything ships inside a single `@layer bronto`, so any un-layered CSS in
 your app overrides the framework without a specificity fight or `!important`.
 The layer is applied by the `css` and `css/core.css` bundles only —
-importing an individual leaf such as `@bronto/ui/css/primitives.css`
+importing an individual leaf such as `@ponchia/ui/css/primitives.css`
 directly is **unlayered** (full specificity), which is an intentional
 escape hatch, not the default path.
 
@@ -58,9 +65,9 @@ on top of it — none pull in a UI framework. See
 [`docs/architecture.md`](docs/architecture.md) for the rationale.
 
 ```js
-import tokens, { cssVars, themeColor } from '@bronto/ui/tokens'; // tokens as data (+ /tokens.json)
-import { ui, cx } from '@bronto/ui/classes'; // typed class-name recipes
-import { initThemeToggle, dismissible } from '@bronto/ui/behaviors'; // vanilla, SSR-safe
+import tokens, { cssVars, themeColor } from '@ponchia/ui/tokens'; // tokens as data (+ /tokens.json)
+import { ui, cx } from '@ponchia/ui/classes'; // typed class-name recipes
+import { initThemeToggle, dismissible } from '@ponchia/ui/behaviors'; // vanilla, SSR-safe
 ```
 
 ```js
@@ -118,30 +125,32 @@ publishes — a push to `main` ships nothing.
 
 ## Release
 
-Releases are tag-driven and explicit:
+Releases publish to npm and are tag-driven:
 
 ```bash
-# bump "version" in package.json to X.Y.Z first, then:
+# 1. bump "version" in package.json, land on main, let CI go green
 git tag vX.Y.Z && git push origin vX.Y.Z
 ```
 
-The tag triggers `.github/workflows/release.yml`, which re-runs the checks,
-verifies the tag matches `package.json`, and publishes a GitHub Release.
-Consumers resolve the auto-generated `archive/refs/tags/vX.Y.Z.tar.gz`, so
-bump their pinned URL to adopt the new version.
+The tag triggers `.github/workflows/release.yml`: `validate` (read-only
+checks + tag↔version match) → `publish-npm` (only if validate passes) +
+`release-notes`. **The npm publish is the gate** — a failing check means
+the version never reaches npm, so consumers never resolve it. GitHub also
+serves the raw tag tarball ungated, but that is a legacy/fallback path, not
+the documented install. See [`docs/architecture.md`](docs/architecture.md).
 
-**The workflow is a post-tag tripwire, not a hard gate.** GitHub generates
-that tarball for any pushed tag the moment it exists — a failing check does
-not stop a bad tag from being installable. The real safeguard is process:
-only tag from a green `main`. Bump `package.json` and let CI go green there
-*before* tagging. For a true gate, use protected tags or a release branch
-(see [`docs/architecture.md`](docs/architecture.md)).
+**Before the first real publish** (one-time blockers, by design):
+
+- Add a `LICENSE` file — none exists; `package.json` says
+  `"SEE LICENSE IN LICENSE"`. The license choice is the owner's.
+- Create the `@ponchia` npm scope and add an `NPM_TOKEN` repo secret.
+- Bump `version` to `0.2.0` (0.1.0 predates the new entrypoints) and
+  retitle the CHANGELOG `Unreleased` section.
 
 ## Consumers
 
-- `personal-site` — imports `@bronto/ui/css/core.css`
-- `polpo-admin` — imports `@bronto/ui/css`
+- `personal-site` — imports `@ponchia/ui/css/core.css`
+- `polpo-admin` — imports `@ponchia/ui/css`
 
-Both pin a tagged release tarball, so a change ships only after a new tag is
-cut. Promote to a published package once a third app adopts it or versioning
-friction appears.
+Both still pin the old tarball URL; they switch their dependency to
+`@ponchia/ui` once it is published (separate repos — not changed here).
