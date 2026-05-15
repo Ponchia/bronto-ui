@@ -8,6 +8,16 @@
     "css",
     "fonts"
   ],
+  "scripts": {
+    "lint": "stylelint \"css/**/*.css\"",
+    "lint:fix": "stylelint \"css/**/*.css\" --fix",
+    "check:exports": "node scripts/check-exports.mjs",
+    "check": "npm run lint && npm run check:exports"
+  },
+  "devDependencies": {
+    "stylelint": "^16.10.0",
+    "stylelint-config-standard": "^36.0.1"
+  },
   "exports": {
     "./css": "./css/index.css",
     "./css/index.css": "./css/index.css",
