@@ -10,6 +10,9 @@ test-results/
 blob-report/
 .last-run.json
 
+# GitHub Pages assembly dir (built in CI only)
+_site/
+
 # agent / reviewer tool caches — never commit
 .aider*
 .ruff_cache/
