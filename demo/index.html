@@ -91,6 +91,40 @@
       </section>
 
       <section class="ui-stack">
+        <p class="ui-eyebrow ui-eyebrow--muted">Theming contract — one knob re-brands</p>
+        <div class="ui-cluster">
+          <button class="ui-button ui-button--subtle" type="button" data-accent="#d71921">
+            Red
+          </button>
+          <button class="ui-button ui-button--subtle" type="button" data-accent="#2f6df6">
+            Blue
+          </button>
+          <button class="ui-button ui-button--subtle" type="button" data-accent="#16a34a">
+            Green
+          </button>
+          <button class="ui-button ui-button--subtle" type="button" data-accent="#a855f7">
+            Violet
+          </button>
+          <span class="ui-segmented" role="radiogroup" aria-label="Density">
+            <label class="ui-segmented__option"
+              ><input type="radio" name="dens" value="compact" />Compact</label
+            >
+            <label class="ui-segmented__option"
+              ><input type="radio" name="dens" value="" checked />Default</label
+            >
+            <label class="ui-segmented__option"
+              ><input type="radio" name="dens" value="comfortable" />Roomy</label
+            >
+          </span>
+          <label class="ui-switch"
+            ><input type="checkbox" id="contrastChk" /><span class="ui-switch__track"
+              ><span class="ui-switch__thumb"></span></span
+            ><span class="ui-label" style="text-transform: none">High contrast</span></label
+          >
+        </div>
+      </section>
+
+      <section class="ui-stack">
         <p class="ui-eyebrow ui-eyebrow--muted">Buttons</p>
         <div class="ui-cluster">
           <button class="ui-button">Primary</button>
@@ -406,6 +440,23 @@
 
       document.getElementById('toastBtn').addEventListener('click', () => {
         toast('Order filled — BTC/EUR', { tone: 'success', title: 'Done' });
+      });
+
+      // Theming contract: one --accent knob re-brands; density/contrast
+      // are data-attribute presets. All set on <html> (or any subtree).
+      const docEl = document.documentElement;
+      for (const b of document.querySelectorAll('[data-accent]'))
+        b.addEventListener('click', () =>
+          docEl.style.setProperty('--accent', b.dataset.accent)
+        );
+      for (const r of document.querySelectorAll('input[name="dens"]'))
+        r.addEventListener('change', () => {
+          if (r.value) docEl.dataset.density = r.value;
+          else delete docEl.dataset.density;
+        });
+      document.getElementById('contrastChk').addEventListener('change', (e) => {
+        if (e.target.checked) docEl.dataset.contrast = 'high';
+        else delete docEl.dataset.contrast;
       });
 
       // RTL toggle — proves the logical-properties sweep mirrors cleanly.

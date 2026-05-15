@@ -46,6 +46,11 @@ escape hatch, not the default path.
 Set `data-theme="light"` or `data-theme="dark"` on `<html>`; defaults follow
 `prefers-color-scheme`.
 
+**Re-brand with one knob:** `--accent` drives the whole accent family
+(`color-mix`-derived). `:root { --accent: #2f6df6 }` — or scope it to a
+subtree — restyles everything, both themes. Plus `data-density` and
+`data-contrast` presets. Full contract: [`docs/theming.md`](docs/theming.md).
+
 ## Entrypoints
 
 The CSS is the framework. These optional sibling entrypoints are thin layers
