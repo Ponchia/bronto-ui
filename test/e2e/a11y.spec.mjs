@@ -6,12 +6,31 @@ import AxeBuilder from '@axe-core/playwright';
  * pixels). Fails CI on any serious/critical WCAG 2.1 A/AA violation in
  * the demo — which exercises every component — in both themes, plus the
  * modal open state (focus-trapped) and a keyboard-driven tab switch.
+ *
+ * `best-practice` is included so the structural issues Lighthouse flags
+ * (these are axe rules too) are gated here per theme with zero extra
+ * deps. Best-practice rules are often `moderate` impact, so they would
+ * slip past the serious/critical filter — a curated STRUCTURAL set is
+ * always blocking regardless of impact.
  */
-const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
+const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'];
+const STRUCTURAL = new Set([
+  'heading-order',
+  'landmark-one-main',
+  'landmark-unique',
+  'landmark-no-duplicate-banner',
+  'landmark-no-duplicate-contentinfo',
+  'region',
+  'scrollable-region-focusable',
+  'duplicate-id',
+  'tabindex',
+]);
 
 function blocking(results) {
   return results.violations
-    .filter((v) => v.impact === 'serious' || v.impact === 'critical')
+    .filter(
+      (v) => v.impact === 'serious' || v.impact === 'critical' || STRUCTURAL.has(v.id)
+    )
     .map((v) => ({
       id: v.id,
       impact: v.impact,
