@@ -38,3 +38,32 @@ export declare function dismissible(opts?: DelegateOpts): Cleanup;
 
 /** Wire `[data-bronto-disclosure]` triggers. Returns a cleanup function. */
 export declare function initDisclosure(opts?: DelegateOpts): Cleanup;
+
+/**
+ * Wire `[data-bronto-tabs]` groups with the WAI-ARIA Tabs keyboard
+ * pattern (roving tabindex, Arrow/Home/End, aria-selected, panel sync).
+ * Returns a cleanup function.
+ */
+export declare function initTabs(opts?: DelegateOpts): Cleanup;
+
+/**
+ * Wire native <dialog> open/close glue: `[data-bronto-open="id"]`,
+ * `[data-bronto-close]`, and backdrop light-dismiss for dialogs marked
+ * `[data-bronto-dialog-light]`. Returns a cleanup function.
+ */
+export declare function initDialog(opts?: DelegateOpts): Cleanup;
+
+export interface ToastOpts {
+  /** Status tone — maps to `ui-toast--<tone>`. */
+  tone?: 'accent' | 'success' | 'warning' | 'danger';
+  /** Optional uppercase label rendered above the message. */
+  title?: string;
+  /** Auto-dismiss delay in ms. 0 keeps it until dismissed. Default: 4000. */
+  duration?: number;
+}
+
+/**
+ * Push a transient toast into a shared, body-anchored stack. Returns a
+ * function that dismisses it early. No-op (returns noop) without a DOM.
+ */
+export declare function toast(message: string, opts?: ToastOpts): Cleanup;

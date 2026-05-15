@@ -24,7 +24,7 @@ body {
   background: var(--bg);
   color: var(--text);
   margin: 0;
-  min-height: 100vh;
+  min-block-size: 100vh;
   position: relative;
 }
 
@@ -58,7 +58,7 @@ textarea {
 img,
 svg {
   display: block;
-  max-width: 100%;
+  max-inline-size: 100%;
 }
 
 p,
@@ -134,13 +134,13 @@ pre code {
 
 hr {
   border: 0;
-  border-top: 1px solid var(--line);
+  border-block-start: 1px solid var(--line);
   margin: var(--space-lg) 0;
 }
 
 ::-webkit-scrollbar {
-  height: 10px;
-  width: 10px;
+  block-size: 10px;
+  inline-size: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -170,15 +170,15 @@ textarea:focus-visible,
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-md);
   color: var(--text);
-  left: 1rem;
+  inset-inline-start: 1rem;
   padding: 0.7rem 1rem;
   position: fixed;
-  top: -4rem;
+  inset-block-start: -4rem;
   z-index: 40;
 }
 
 .skip-link:focus {
-  top: 1rem;
+  inset-block-start: 1rem;
 }
 
 /* Small global helpers reused across apps. */
@@ -198,9 +198,129 @@ textarea:focus-visible,
 .ui-visually-hidden {
   clip: rect(0 0 0 0);
   clip-path: inset(50%);
-  height: 1px;
+  block-size: 1px;
   overflow: hidden;
   position: absolute;
   white-space: nowrap;
-  width: 1px;
+  inline-size: 1px;
+}
+
+/* --------------------------------------------------------------------------
+   Forced colors (Windows High Contrast). The OS replaces the palette and
+   strips backgrounds/shadows, so any state signalled only by a fill goes
+   invisible. Re-assert those with system colors so meaning survives.
+   -------------------------------------------------------------------------- */
+@media (forced-colors: active) {
+  .ui-progress__bar,
+  .ui-dotbar i.is-on,
+  .ui-dotspinner i {
+    background: Highlight;
+  }
+
+  .ui-dot,
+  .ui-dot--accent,
+  .ui-dot--success,
+  .ui-dot--warning,
+  .ui-dot--danger,
+  .ui-switch__thumb {
+    background: CanvasText;
+  }
+
+  .ui-dot--live::after {
+    border-color: CanvasText;
+  }
+
+  .ui-switch input:checked + .ui-switch__track,
+  .ui-segmented__option:has(input:checked) {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+
+  /* Keyboard focus must never depend on a colour that gets overridden. */
+  a:focus-visible,
+  button:focus-visible,
+  summary:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid Highlight;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Print — ink on white, no chrome, no page-break scars. The framework
+   dresses content sites too, so a clean printout / PDF matters.
+   -------------------------------------------------------------------------- */
+@media print {
+  html,
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  /* Decorative / interactive chrome never prints. */
+  .ui-dotfield,
+  .ui-toast-stack,
+  .app-rail,
+  .app-topbar,
+  .site-nav,
+  .theme-toggle__button,
+  .site-menu,
+  .ui-spinner,
+  .ui-dotloader,
+  .ui-dotspinner,
+  dialog.ui-modal::backdrop {
+    display: none !important;
+  }
+
+  /* Flat ink: drop shadows/fills, keep hairlines as real rules. */
+  *,
+  *::before,
+  *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .ui-card,
+  .ui-panel,
+  .ui-surface,
+  .ui-alert,
+  .ui-table-wrap {
+    border: 1px solid #999;
+  }
+
+  /* Scroll containers must spill on paper, not clip. */
+  .ui-table-wrap,
+  .ui-prose table,
+  .ui-tabs__list,
+  pre {
+    overflow: visible !important;
+  }
+
+  /* Do not split atomic blocks across pages. */
+  .ui-card,
+  .ui-panel,
+  .ui-alert,
+  figure,
+  blockquote,
+  pre,
+  tr {
+    break-inside: avoid;
+  }
+
+  :is(h1, h2, h3, h4, h5, h6) {
+    break-after: avoid;
+  }
+
+  /* Long-form: surface link targets when printed. */
+  .ui-prose a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+
+  @page {
+    margin: 18mm;
+  }
 }

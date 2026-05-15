@@ -117,6 +117,178 @@ export function dismissible({ root } = {}) {
 }
 
 /**
+ * Wire `[data-bronto-tabs]` groups for full keyboard a11y. The framework
+ * ships the look + the ARIA/`.is-active` contract; this adds the WAI-ARIA
+ * Tabs pattern: roving `tabindex`, `aria-selected`, Arrow/Home/End
+ * navigation with automatic activation, and panel `hidden` sync. Tabs are
+ * `.ui-tab[data-tab]`; panels are `.ui-tabs__panel[data-panel]` with
+ * matching values. SSR-safe; returns a cleanup function.
+ */
+export function initTabs({ root } = {}) {
+  if (!hasDom()) return noop;
+  const host = root || document;
+  const cleanups = [];
+  let uid = 0;
+  // querySelectorAll only matches descendants, so a `root` that *is* a
+  // tab group would be skipped — include it explicitly.
+  const groups = [];
+  if (host !== document && host.matches?.('[data-bronto-tabs]')) groups.push(host);
+  groups.push(...host.querySelectorAll('[data-bronto-tabs]'));
+  for (const group of groups) {
+    // Own group only — a tab/panel inside a nested [data-bronto-tabs]
+    // belongs to that inner group, not this one.
+    const owned = (el) => el.closest('[data-bronto-tabs]') === group;
+    const tabs = [...group.querySelectorAll('.ui-tab')].filter(owned);
+    const panels = [...group.querySelectorAll('.ui-tabs__panel')].filter(owned);
+    if (!tabs.length) continue;
+    const list = group.querySelector('.ui-tabs__list');
+    if (list) list.setAttribute('role', 'tablist');
+
+    // APG: bind each tab to its panel (aria-controls) and back
+    // (aria-labelledby), minting stable ids only where absent.
+    for (const t of tabs) {
+      const p = panels.find((x) => x.dataset.panel === t.dataset.tab);
+      if (!p) continue;
+      const n = ++uid;
+      if (!t.id) t.id = `bronto-tab-${n}`;
+      if (!p.id) p.id = `bronto-tabpanel-${n}`;
+      t.setAttribute('aria-controls', p.id);
+      p.setAttribute('aria-labelledby', t.id);
+    }
+
+    const select = (tab) => {
+      for (const t of tabs) {
+        const on = t === tab;
+        t.classList.toggle('is-active', on);
+        t.setAttribute('role', 'tab');
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+      }
+      for (const p of panels) {
+        p.setAttribute('role', 'tabpanel');
+        p.hidden = p.dataset.panel !== tab.dataset.tab;
+      }
+    };
+    const onClick = (e) => {
+      // `tabs` is filtered to this group, so membership (not mere DOM
+      // containment) is what isolates nested [data-bronto-tabs] groups.
+      const tab = e.target.closest('.ui-tab');
+      if (tab && tabs.includes(tab)) {
+        select(tab);
+        tab.focus();
+      }
+    };
+    const onKey = (e) => {
+      const i = tabs.indexOf(e.target.closest('.ui-tab'));
+      if (i < 0) return;
+      let n = i;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') n = (i + 1) % tabs.length;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') n = (i - 1 + tabs.length) % tabs.length;
+      else if (e.key === 'Home') n = 0;
+      else if (e.key === 'End') n = tabs.length - 1;
+      else return;
+      e.preventDefault();
+      select(tabs[n]);
+      tabs[n].focus();
+    };
+    group.addEventListener('click', onClick);
+    group.addEventListener('keydown', onKey);
+    select(tabs.find((t) => t.classList.contains('is-active')) || tabs[0]);
+    cleanups.push(() => {
+      group.removeEventListener('click', onClick);
+      group.removeEventListener('keydown', onKey);
+    });
+  }
+  return () => cleanups.forEach((fn) => fn());
+}
+
+/**
+ * Wire native <dialog> open/close glue (the one bit <dialog> can't do
+ * declaratively). Click `[data-bronto-open="dialogId"]` calls
+ * `showModal()` on `#dialogId`; click `[data-bronto-close]` closes the
+ * nearest enclosing <dialog>. Clicking the backdrop of a dialog that has
+ * `[data-bronto-dialog-light]` closes it too. SSR-safe; returns cleanup.
+ *
+ * `root` scopes which triggers are delegated (default `document`); the
+ * dialog itself is still resolved by id document-wide, because a modal
+ * <dialog> is promoted to the top layer and is inherently document-global
+ * (same model as `initThemeToggle`, where `root` scopes controls but the
+ * theme applies to <html>).
+ */
+export function initDialog({ root } = {}) {
+  if (!hasDom()) return noop;
+  const host = root || document;
+  const onClick = (e) => {
+    const opener = e.target.closest('[data-bronto-open]');
+    if (opener && host.contains(opener)) {
+      const dlg = document.getElementById(opener.getAttribute('data-bronto-open'));
+      if (dlg && typeof dlg.showModal === 'function' && !dlg.open) dlg.showModal();
+      return;
+    }
+    const closer = e.target.closest('[data-bronto-close]');
+    if (closer && host.contains(closer)) {
+      const dlg = closer.closest('dialog');
+      if (dlg && dlg.open) dlg.close();
+      return;
+    }
+    // Light-dismiss: a click whose target is the <dialog> itself is the
+    // backdrop (content sits in child elements).
+    const dlg = e.target;
+    if (
+      dlg.tagName === 'DIALOG' &&
+      dlg.open &&
+      dlg.hasAttribute('data-bronto-dialog-light') &&
+      host.contains(dlg)
+    ) {
+      dlg.close();
+    }
+  };
+  host.addEventListener('click', onClick);
+  return () => host.removeEventListener('click', onClick);
+}
+
+/**
+ * Push a transient toast into a shared, screen-anchored stack (created
+ * once and appended to <body>, `aria-live="polite"`). `tone` is one of
+ * accent/success/warning/danger; `title` is an optional uppercase label;
+ * `duration` ms before auto-dismiss (0 keeps it until dismissed). Returns
+ * a function that dismisses the toast early. SSR-safe (no-op).
+ */
+export function toast(message, { tone, title, duration = 4000 } = {}) {
+  if (!hasDom()) return noop;
+  let stack = document.querySelector('.ui-toast-stack');
+  if (!stack) {
+    stack = document.createElement('div');
+    stack.className = 'ui-toast-stack';
+    stack.setAttribute('aria-live', 'polite');
+    document.body.appendChild(stack);
+  }
+  const el = document.createElement('div');
+  el.className = tone ? `ui-toast ui-toast--${tone}` : 'ui-toast';
+  // No per-item role: the stack is already aria-live=polite; a nested
+  // status live region risks double announcement in some SRs.
+  if (title) {
+    const t = document.createElement('p');
+    t.className = 'ui-toast__title';
+    t.textContent = title;
+    el.appendChild(t);
+  }
+  const body = document.createElement('div');
+  body.textContent = message;
+  el.appendChild(body);
+  stack.appendChild(el);
+
+  let timer;
+  const dismiss = () => {
+    if (timer) clearTimeout(timer);
+    el.remove();
+    if (stack && !stack.childElementCount) stack.remove();
+  };
+  if (duration > 0) timer = setTimeout(dismiss, duration);
+  return dismiss;
+}
+
+/**
  * Disclosure: a `[data-bronto-disclosure]` trigger toggles the element
  * referenced by its `aria-controls` id, keeping `aria-expanded` and the
  * panel's `hidden` attribute in sync.

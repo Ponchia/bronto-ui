@@ -49,6 +49,34 @@ export interface ClusterOpts {
 export interface StaggerOpts {
   auto?: boolean;
 }
+export type Tone = 'accent' | 'success' | 'warning' | 'danger';
+export interface AlertOpts {
+  tone?: Tone;
+}
+export interface ToastOpts {
+  tone?: Tone;
+}
+export interface ProgressOpts {
+  indeterminate?: boolean;
+}
+export interface DotspinnerOpts {
+  size?: 'sm' | 'lg';
+}
+export interface DotbarOpts {
+  indeterminate?: boolean;
+}
+export interface ModalOpts {
+  drawer?: boolean;
+}
+export interface TabOpts {
+  active?: boolean;
+}
+export interface AvatarOpts {
+  size?: 'sm' | 'lg';
+}
+export interface ProseOpts {
+  compact?: boolean;
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -63,6 +91,15 @@ export interface Ui {
   hint(opts?: HintOpts): string;
   cluster(opts?: ClusterOpts): string;
   stagger(opts?: StaggerOpts): string;
+  alert(opts?: AlertOpts): string;
+  toast(opts?: ToastOpts): string;
+  progress(opts?: ProgressOpts): string;
+  dotspinner(opts?: DotspinnerOpts): string;
+  dotbar(opts?: DotbarOpts): string;
+  modal(opts?: ModalOpts): string;
+  tab(opts?: TabOpts): string;
+  avatar(opts?: AvatarOpts): string;
+  prose(opts?: ProseOpts): string;
 }
 
 export declare const ui: Ui;

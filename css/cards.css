@@ -39,7 +39,7 @@
   font-family: var(--display);
   font-size: 1.85rem;
   letter-spacing: 0;
-  margin-top: 0.35rem;
+  margin-block-start: 0.35rem;
 }
 
 .metric-tile p,
@@ -58,8 +58,8 @@
 
 .notes-strip {
   align-items: center;
-  border-bottom: 1px solid var(--line);
-  border-top: 1px solid var(--line);
+  border-block-end: 1px solid var(--line);
+  border-block-start: 1px solid var(--line);
   display: grid;
   gap: 1.2rem;
   grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
@@ -77,11 +77,11 @@
 }
 
 .notes-strip__latest {
-  border-left: 1px solid var(--line);
+  border-inline-start: 1px solid var(--line);
   display: grid;
   gap: 0.45rem;
-  min-width: 0;
-  padding-left: 1.2rem;
+  min-inline-size: 0;
+  padding-inline-start: 1.2rem;
 }
 
 .notes-strip__topline {
@@ -106,7 +106,7 @@
 
 .section-head p {
   margin: 0;
-  max-width: 60ch;
+  max-inline-size: 60ch;
 }
 
 .section-head--stacked {
@@ -116,7 +116,7 @@
 
 .project-card__category {
   color: var(--text-dim);
-  margin-top: 0.15rem;
+  margin-block-start: 0.15rem;
 }
 
 .project-category-label {
@@ -129,12 +129,12 @@
   display: inline-block;
   fill: none;
   flex: 0 0 auto;
-  height: 1em;
+  block-size: 1em;
   stroke: currentColor;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 2;
-  width: 1em;
+  inline-size: 1em;
 }
 
 .project-card__summary,
@@ -167,10 +167,10 @@
 }
 
 .misc-card__boundary {
-  border-top: 1px solid var(--line);
+  border-block-start: 1px solid var(--line);
   display: grid;
   gap: 0.35rem;
-  padding-top: 0.85rem;
+  padding-block-start: 0.85rem;
 }
 
 .misc-card__boundary p {
@@ -186,7 +186,7 @@
 
 .post-card h3 {
   font-size: 1.45rem;
-  margin-top: 0.35rem;
+  margin-block-start: 0.35rem;
 }
 
 .post-card p {
@@ -194,7 +194,7 @@
 }
 
 .contact-stub-card {
-  max-width: 48rem;
+  max-inline-size: 48rem;
 }
 
 .project-pager {
@@ -215,9 +215,9 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
-  min-height: 6rem;
+  min-block-size: 6rem;
   padding: 1rem 1.05rem;
-  width: 100%;
+  inline-size: 100%;
 }
 
 .project-pager__link strong {
@@ -226,7 +226,7 @@
 }
 
 .project-pager__link--next {
-  text-align: right;
+  text-align: end;
 }
 
 @media (hover: hover) {
@@ -297,11 +297,11 @@
   display: grid;
   gap: 0.75rem;
   margin: 0;
-  padding-left: 1.1rem;
+  padding-inline-start: 1.1rem;
 }
 
 .focus-list--dense {
-  margin-top: 0.2rem;
+  margin-block-start: 0.2rem;
 }
 
 .focus-list li,
@@ -316,10 +316,10 @@
 }
 
 .profile-link-list div {
-  border-top: 1px solid var(--line);
+  border-block-start: 1px solid var(--line);
   display: grid;
   gap: 0.25rem;
-  padding-top: 0.75rem;
+  padding-block-start: 0.75rem;
 }
 
 .profile-link-list dd {

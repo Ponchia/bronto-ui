@@ -58,3 +58,14 @@
   font-display: swap;
   src: url('../fonts/doto-900.ttf') format('truetype');
 }
+
+/* Data-saver: never *use* Doto, so the browser never fetches it. The
+   webfont is only requested when matched to rendered text, so pointing
+   --display / --dot-font at the system mono stack opts the whole
+   payload out under prefers-reduced-data (same lever as self-hosting). */
+@media (prefers-reduced-data: reduce) {
+  :root {
+    --display: var(--mono);
+    --dot-font: var(--mono);
+  }
+}
