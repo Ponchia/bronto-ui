@@ -140,6 +140,8 @@ export const cls = Object.freeze({
   // typography / utilities
   eyebrow: 'ui-eyebrow',
   eyebrowMuted: 'ui-eyebrow--muted',
+  prose: 'ui-prose',
+  proseCompact: 'ui-prose--compact',
   display: 'ui-display',
   mono: 'ui-mono',
   muted: 'ui-muted',
@@ -236,6 +238,7 @@ export const ui = {
   tab: ({ active } = {}) => j(cls.tab, active && 'is-active'),
   avatar: ({ size } = {}) =>
     j(cls.avatar, size === 'sm' && cls.avatarSm, size === 'lg' && cls.avatarLg),
+  prose: ({ compact } = {}) => j(cls.prose, compact && cls.proseCompact),
 };
 
 export default ui;
