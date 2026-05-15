@@ -1,5 +1,5 @@
 /**
- * @bronto/ui — design tokens as data.
+ * @ponchia/ui — design tokens as data.
  *
  * For consumers that need token values in JS rather than CSS: charting,
  * canvas, inline styles, theme-aware logic, Style Dictionary / Figma sync.
