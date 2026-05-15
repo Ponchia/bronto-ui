@@ -3,3 +3,8 @@ node_modules/
 demo/_preview-*.png
 *.log
 *.tgz
+
+# agent / reviewer tool caches — never commit
+.aider*
+.ruff_cache/
+.pytest_cache/
