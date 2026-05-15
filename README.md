@@ -30,17 +30,46 @@ Or the core bundle if the app manages its own responsive layer:
 @import '@bronto/ui/css/core.css';
 ```
 
-Serve the Doto fonts from the app's own `/fonts` directory (the token layer
-references `/fonts/doto-*.ttf`), or override `--display` / `--dot-font`.
+The Doto `@font-face` ships in `css/fonts.css` (bundled by both `css` and
+`css/core.css`) with URLs relative to the package, so it resolves through a
+bundler or static serving with no `/fonts` path assumption. To self-host the
+font instead, import everything except `fonts.css` and override `--display` /
+`--dot-font`.
+
+Everything ships inside a single `@layer bronto`, so any un-layered CSS in
+your app overrides the framework without a specificity fight or `!important`.
 
 Set `data-theme="light"` or `data-theme="dark"` on `<html>`; defaults follow
 `prefers-color-scheme`.
+
+## Entrypoints
+
+The CSS is the framework. These optional sibling entrypoints are thin layers
+on top of it — none pull in a UI framework. See
+[`docs/architecture.md`](docs/architecture.md) for the rationale.
+
+```js
+import tokens, { cssVars, themeColor } from '@bronto/ui/tokens'; // tokens as data (+ /tokens.json)
+import { ui, cx } from '@bronto/ui/classes'; // typed class-name recipes
+import { initThemeToggle, dismissible } from '@bronto/ui/behaviors'; // vanilla, SSR-safe
+```
+
+```js
+ui.button({ variant: 'ghost' }); // → "ui-button ui-button--ghost"
+themeColor('dark').accent; // → "#ff3b41"
+```
+
+`behaviors` wires `[data-bronto-theme-toggle]`, `[data-bronto-dismiss]` /
+`[data-bronto-dismissible]`, and `[data-bronto-disclosure]`. Each initializer
+is SSR-safe and returns a cleanup function. `demo/index.html` drives itself
+with these modules, so it is also a live integration test.
 
 ## Layout
 
 | File             | Contents                                                      |
 | ---------------- | ------------------------------------------------------------- |
 | `tokens.css`     | palette (dual light/dark), spacing, type, motion, dot tokens  |
+| `fonts.css`      | Doto `@font-face` (relative URLs; optional if self-hosting)    |
 | `base.css`       | reset, element defaults, focus, scrollbars                    |
 | `motion.css`     | keyframes + animation utilities + reduced-motion              |
 | `dots.css`       | dot-grid, dot rule, status dot, dot loader/bar, matrix reveal |
@@ -66,13 +95,17 @@ python3 -m http.server -d . 8080   # then open http://localhost:8080/demo/
 ## Develop
 
 ```bash
-npm install      # stylelint is the only toolchain
-npm run check    # lint + exports/import-graph integrity (what CI runs)
-npm run lint:fix # auto-fix the safe stylistic rules
+npm install        # stylelint is the only toolchain
+npm run check      # lint + 3 drift checks (exports, tokens, classes) — what CI runs
+npm run lint:fix   # auto-fix the safe stylistic rules
+npm run tokens:build  # regenerate tokens/index.json from tokens/index.js
 ```
 
-CI (`.github/workflows/ci.yml`) runs `npm run check` on every branch push
-and PR. It never publishes — a push to `main` ships nothing.
+`npm run check` enforces that the data mirrors cannot drift from the CSS:
+exports/import-graph integrity, `tokens.css` ⇄ `tokens/index.{js,json}`, and
+the `classes` registry ⇄ the `.ui-*` selectors. CI
+(`.github/workflows/ci.yml`) runs it on every branch push and PR. It never
+publishes — a push to `main` ships nothing.
 
 ## Release
 

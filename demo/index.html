@@ -6,14 +6,9 @@
     <title>@bronto/ui — kitchen sink</title>
     <link rel="stylesheet" href="../css/index.css" />
     <style>
-      /* Demo serves fonts from the package's own ../fonts so this file
-         works opened directly or from a static server at package root. */
-      @font-face {
-        font-family: 'Doto';
-        font-weight: 400 900;
-        font-display: swap;
-        src: url('../fonts/doto-700.ttf') format('truetype');
-      }
+      /* No local @font-face: Doto now ships in css/fonts.css (bundled by
+         index.css) with URLs relative to the package, so it resolves here
+         with zero demo-side setup — that is the portability fix in action. */
       body {
         margin: 0;
       }
@@ -55,12 +50,28 @@
           <p class="ui-eyebrow">@bronto/ui</p>
           <h1>Nothing<br />Kitchen&nbsp;Sink</h1>
         </div>
-        <button class="theme-toggle__button" id="themeBtn" type="button">
+        <button
+          class="theme-toggle__button"
+          id="themeBtn"
+          type="button"
+          data-bronto-theme-toggle
+        >
           <span class="theme-toggle__prefix">Theme</span>
           <span class="theme-toggle__label" id="themeLabel">Dark</span>
           <span class="theme-toggle__track"><span class="theme-toggle__thumb"></span></span>
         </button>
       </header>
+
+      <div
+        class="ui-panel ui-cluster ui-cluster--between"
+        data-bronto-dismissible
+        style="margin-top: 1rem"
+      >
+        <span><span class="ui-dot ui-dot--accent"></span> Dismissible — wired via behaviors</span>
+        <button class="ui-button ui-button--subtle" type="button" data-bronto-dismiss>
+          Dismiss
+        </button>
+      </div>
 
       <section>
         <p class="ui-eyebrow ui-eyebrow--muted">Palette</p>
@@ -220,15 +231,32 @@
       </section>
     </div>
 
-    <script>
+    <!-- The demo drives itself with the package's own shipped modules,
+         so it doubles as a live integration test of behaviors + classes. -->
+    <script type="module">
+      import { initThemeToggle, dismissible } from '../behaviors/index.js';
+      import { ui, cx } from '../classes/index.js';
+
+      initThemeToggle();
+      dismissible();
+
+      // Keep the demo's label in sync (cosmetic; the shared module does
+      // the real work — persistence, data-theme, aria-pressed).
       const root = document.documentElement;
-      const btn = document.getElementById('themeBtn');
       const label = document.getElementById('themeLabel');
-      btn.addEventListener('click', () => {
-        const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        root.setAttribute('data-theme', next);
-        label.textContent = next[0].toUpperCase() + next.slice(1);
-      });
+      const sync = () => {
+        const t = root.getAttribute('data-theme') === 'light' ? 'Light' : 'Dark';
+        label.textContent = t;
+      };
+      sync();
+      document.getElementById('themeBtn').addEventListener('click', sync);
+
+      // Smoke-check the typed class recipes resolve to real classes.
+      console.assert(
+        ui.button({ variant: 'ghost' }) === 'ui-button ui-button--ghost',
+        'classes recipe mismatch'
+      );
+      console.log('demo wired via @bronto/ui modules', cx('ok'));
     </script>
   </body>
 </html>
