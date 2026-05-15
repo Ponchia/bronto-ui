@@ -4,15 +4,25 @@
   "private": true,
   "type": "module",
   "description": "Shared Bronto UI framework — Nothing-inspired monochrome CSS theme, dot-matrix motifs, admin shell.",
+  "sideEffects": [
+    "**/*.css"
+  ],
   "files": [
     "css",
-    "fonts"
+    "fonts",
+    "tokens",
+    "classes",
+    "behaviors"
   ],
   "scripts": {
     "lint": "stylelint \"css/**/*.css\"",
     "lint:fix": "stylelint \"css/**/*.css\" --fix",
+    "tokens:build": "node scripts/gen-tokens-json.mjs",
     "check:exports": "node scripts/check-exports.mjs",
-    "check": "npm run lint && npm run check:exports"
+    "check:tokens": "node scripts/check-tokens.mjs",
+    "check:classes": "node scripts/check-classes.mjs",
+    "check": "npm run lint && npm run check:exports && npm run check:tokens && npm run check:classes",
+    "prepack": "npm run tokens:build"
   },
   "devDependencies": {
     "stylelint": "^16.10.0",
@@ -23,6 +33,7 @@
     "./css/index.css": "./css/index.css",
     "./css/core.css": "./css/core.css",
     "./css/tokens.css": "./css/tokens.css",
+    "./css/fonts.css": "./css/fonts.css",
     "./css/base.css": "./css/base.css",
     "./css/motion.css": "./css/motion.css",
     "./css/dots.css": "./css/dots.css",
@@ -35,6 +46,19 @@
     "./css/cards.css": "./css/cards.css",
     "./css/app.css": "./css/app.css",
     "./css/responsive.css": "./css/responsive.css",
+    "./tokens": {
+      "types": "./tokens/index.d.ts",
+      "default": "./tokens/index.js"
+    },
+    "./tokens.json": "./tokens/index.json",
+    "./classes": {
+      "types": "./classes/index.d.ts",
+      "default": "./classes/index.js"
+    },
+    "./behaviors": {
+      "types": "./behaviors/index.d.ts",
+      "default": "./behaviors/index.js"
+    },
     "./fonts/*": "./fonts/*"
   }
 }

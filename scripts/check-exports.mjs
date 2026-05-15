@@ -16,15 +16,26 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const errors = [];
 
+// Flatten conditional exports ({ types, default, ... }) to [key, target] leaves.
+function exportTargets() {
+  const out = [];
+  for (const [key, val] of Object.entries(pkg.exports ?? {})) {
+    if (typeof val === 'string') out.push([key, val]);
+    else for (const [cond, t] of Object.entries(val)) out.push([`${key} (${cond})`, t]);
+  }
+  return out;
+}
+
 // 1. exports → real files (skip glob targets like ./fonts/*)
-for (const [key, target] of Object.entries(pkg.exports ?? {})) {
+for (const [key, target] of exportTargets()) {
   if (target.includes('*')) continue;
   const abs = resolve(root, target);
   if (!existsSync(abs)) errors.push(`exports["${key}"] → missing file ${target}`);
 }
 
-// 2. @import graph of the entrypoints
-const importRe = /@import\s+['"]([^'"]+)['"]/g;
+// 2. @import graph of the entrypoints.
+// Matches both `@import './x.css'` and `@import url('./x.css') layer(...)`.
+const importRe = /@import\s+(?:url\(\s*)?['"]([^'"]+)['"]/g;
 for (const entry of ['css/core.css', 'css/index.css']) {
   const abs = resolve(root, entry);
   if (!existsSync(abs)) {
@@ -40,7 +51,7 @@ for (const entry of ['css/core.css', 'css/index.css']) {
 
 // 3. exported files fall under the `files` allowlist
 const allow = pkg.files ?? [];
-for (const [key, target] of Object.entries(pkg.exports ?? {})) {
+for (const [key, target] of exportTargets()) {
   const rel = target.replace(/^\.\//, '').replace(/\*.*$/, '');
   if (!allow.some((f) => rel === f || rel.startsWith(`${f}/`))) {
     errors.push(`exports["${key}"] → ${target} not covered by "files" ${JSON.stringify(allow)}`);
