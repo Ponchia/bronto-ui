@@ -3,7 +3,7 @@
 ## 0.1.0 — 2026-05-15
 
 First standalone release. Promoted out of `personal-site/bronto-ui` into its
-own package at `/Users/zeno/bronto/bronto-ui`.
+own standalone package.
 
 - Re-skinned to a Nothing-inspired design language: monochrome dual
   light/dark palette, single red accent, Doto dot-matrix display type, flat
