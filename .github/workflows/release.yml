@@ -57,6 +57,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.60.0-jammy
+    # Firefox needs $HOME owned by the run user; GHA sets /github/home.
+    env:
+      HOME: /root
     steps:
       - uses: actions/checkout@v4
 

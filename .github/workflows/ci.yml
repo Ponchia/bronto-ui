@@ -44,6 +44,11 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.60.0-jammy
+    # The job container runs as root but GitHub sets $HOME=/github/home
+    # (uid 1001); Firefox refuses to launch unless $HOME is owned by the
+    # current user. Documented Playwright-on-GHA workaround.
+    env:
+      HOME: /root
     steps:
       - uses: actions/checkout@v4
 
