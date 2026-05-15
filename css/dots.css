@@ -39,9 +39,9 @@
   background-position: 0 50%;
   background-size: 9px 9px;
   border: 0;
-  height: 3px;
+  block-size: 3px;
   margin: var(--space-md) 0;
-  width: 100%;
+  inline-size: 100%;
 }
 
 /* Status dot — the glyph-style state indicator. */
@@ -50,8 +50,8 @@
   border-radius: 50%;
   display: inline-block;
   flex: 0 0 auto;
-  height: 0.55rem;
-  width: 0.55rem;
+  block-size: 0.55rem;
+  inline-size: 0.55rem;
 }
 
 .ui-dot--accent {
@@ -108,8 +108,8 @@
   animation: pulseDot 1s var(--ease-standard) infinite;
   background: var(--accent);
   border-radius: 50%;
-  height: 0.42rem;
-  width: 0.42rem;
+  block-size: 0.42rem;
+  inline-size: 0.42rem;
 }
 
 .ui-dotloader span:nth-child(2) {
@@ -132,19 +132,19 @@
   animation: uiSpin 1s steps(8) infinite;
   display: inline-block;
   flex: 0 0 auto;
-  height: var(--ds-box);
+  block-size: var(--ds-box);
   position: relative;
-  width: var(--ds-box);
+  inline-size: var(--ds-box);
 }
 
 .ui-dotspinner i {
   background: var(--accent);
   border-radius: 50%;
-  height: var(--ds-dot);
+  block-size: var(--ds-dot);
   inset: 0;
   margin: auto;
   position: absolute;
-  width: var(--ds-dot);
+  inline-size: var(--ds-dot);
 }
 
 .ui-dotspinner i:nth-child(1) {
@@ -207,7 +207,7 @@
   background: var(--field-dot);
   border-radius: 1px;
   flex: 1;
-  height: 0.5rem;
+  block-size: 0.5rem;
 }
 
 .ui-dotbar i.is-on {

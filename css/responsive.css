@@ -55,7 +55,7 @@
 
   .site-header__actions {
     align-items: center;
-    margin-left: auto;
+    margin-inline-start: auto;
   }
 
   .site-menu {
@@ -63,7 +63,7 @@
   }
 
   .site-menu[open] {
-    min-width: 0;
+    min-inline-size: 0;
   }
 
   .site-menu[open] .site-nav--mobile {
@@ -77,22 +77,22 @@
     box-shadow: var(--shadow-raised);
     display: none;
     gap: 0.35rem;
-    margin-top: 0;
+    margin-block-start: 0;
     padding: 0.6rem;
     position: absolute;
-    right: 0;
-    top: calc(100% + 0.7rem);
-    width: min(12rem, calc(100vw - 1.8rem));
+    inset-inline-end: 0;
+    inset-block-start: calc(100% + 0.7rem);
+    inline-size: min(12rem, calc(100vw - 1.8rem));
     z-index: 20;
   }
 
   .site-nav--mobile a {
-    width: 100%;
+    inline-size: 100%;
   }
 
   .hero--home .problem-panel {
-    border-left: 0;
-    border-top: 1px solid var(--line);
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--line);
     padding: 1rem 0 0;
   }
 
@@ -114,10 +114,10 @@
   }
 
   .notes-strip__latest {
-    border-left: 0;
-    border-top: 1px solid var(--line);
-    padding-left: 0;
-    padding-top: 1rem;
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--line);
+    padding-inline-start: 0;
+    padding-block-start: 1rem;
   }
 
   .hero--home .hero__panel {
@@ -152,6 +152,6 @@
   }
 
   .theme-toggle__button {
-    min-width: 4.2rem;
+    min-inline-size: 4.2rem;
   }
 }

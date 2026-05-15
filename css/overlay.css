@@ -13,11 +13,11 @@
   box-shadow: var(--shadow-raised);
   color: var(--text);
   margin: auto;
-  max-height: min(85vh, 44rem);
-  max-width: min(32rem, calc(100vw - 2rem));
+  max-block-size: min(85vh, 44rem);
+  max-inline-size: min(32rem, calc(100vw - 2rem));
   overflow: hidden;
   padding: 0;
-  width: 100%;
+  inline-size: 100%;
 }
 
 .ui-modal::backdrop {
@@ -33,7 +33,7 @@
 
 .ui-modal__head {
   align-items: flex-start;
-  border-bottom: 1px solid var(--line);
+  border-block-end: 1px solid var(--line);
   display: flex;
   gap: var(--space-sm);
   justify-content: space-between;
@@ -55,7 +55,7 @@
 }
 
 .ui-modal__foot {
-  border-top: 1px solid var(--line);
+  border-block-start: 1px solid var(--line);
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-xs);
@@ -75,14 +75,17 @@
   padding: 0.34rem 0.5rem;
 }
 
-/* Drawer — full-height panel slid in from the trailing edge. */
+/* Drawer — full-height panel slid in from the inline-end edge
+   (right in LTR, left in RTL). */
 .ui-modal--drawer {
-  height: 100vh;
-  margin: 0 0 0 auto;
-  max-height: 100vh;
-  max-width: min(26rem, 100vw);
+  block-size: 100vh;
+  margin: 0;
+  margin-inline-start: auto;
+  max-block-size: 100vh;
+  max-inline-size: min(26rem, 100vw);
   border-radius: 0;
-  border-width: 0 0 0 1px;
+  border-width: 0;
+  border-inline-start-width: 1px;
 }
 
 @media (hover: hover) {
@@ -101,11 +104,11 @@
   box-shadow: var(--shadow-raised);
   display: grid;
   gap: 1px;
-  min-width: 11rem;
+  min-inline-size: 11rem;
   padding: 0.3rem;
   position: absolute;
-  right: 0;
-  top: calc(100% + 0.4rem);
+  inset-inline-end: 0;
+  inset-block-start: calc(100% + 0.4rem);
   z-index: 30;
 }
 
@@ -130,23 +133,23 @@
   font-size: var(--text-sm);
   gap: 0.5rem;
   padding: 0.5rem 0.55rem;
-  text-align: left;
-  width: 100%;
+  text-align: start;
+  inline-size: 100%;
 }
 
 .ui-menu__item::before {
   background: currentColor;
   border-radius: 50%;
   content: '';
-  height: 0.3rem;
+  block-size: 0.3rem;
   opacity: 0.4;
-  width: 0.3rem;
+  inline-size: 0.3rem;
 }
 
 .ui-menu__sep {
   background: var(--line);
   border: 0;
-  height: 1px;
+  block-size: 1px;
   margin: 0.2rem 0;
 }
 
@@ -167,25 +170,24 @@
   .ui-modal {
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     margin: auto auto 0;
-    max-height: 88vh;
-    max-width: 100vw;
-    width: 100vw;
+    max-block-size: 88vh;
+    max-inline-size: 100vw;
+    inline-size: 100vw;
   }
 
   .ui-modal--drawer {
     border-radius: 0;
     border-width: 1px 0 0;
-    height: 88vh;
+    block-size: 88vh;
     margin: auto 0 0;
-    max-height: 88vh;
-    max-width: 100vw;
-    width: 100vw;
+    max-block-size: 88vh;
+    max-inline-size: 100vw;
+    inline-size: 100vw;
   }
 
   .ui-menu {
-    left: 0;
-    min-width: 0;
-    right: 0;
+    inset-inline: 0;
+    min-inline-size: 0;
   }
 }
 

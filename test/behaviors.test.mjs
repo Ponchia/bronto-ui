@@ -7,6 +7,7 @@ import {
   dismissible,
   initDisclosure,
   initDialog,
+  initTabs,
   toast,
 } from '../behaviors/index.js';
 
@@ -193,6 +194,51 @@ test('toast mounts a shared stack, applies tone/title, and dismisses', () => {
 
   dismiss();
   assert.equal(d.querySelector('.ui-toast-stack'), null, 'empty stack is removed');
+});
+
+test('initTabs: roving tabindex, click + Arrow/Home/End, panel sync', () => {
+  const d = mount(
+    '<div data-bronto-tabs><div class="ui-tabs__list">' +
+      '<button class="ui-tab is-active" data-tab="a">A</button>' +
+      '<button class="ui-tab" data-tab="b">B</button>' +
+      '<button class="ui-tab" data-tab="c">C</button></div>' +
+      '<div class="ui-tabs__panel" data-panel="a">PA</div>' +
+      '<div class="ui-tabs__panel" data-panel="b">PB</div>' +
+      '<div class="ui-tabs__panel" data-panel="c">PC</div></div>'
+  );
+  const stop = initTabs();
+  const [a, b, c] = [...d.querySelectorAll('.ui-tab')];
+  const panel = (k) => d.querySelector(`[data-panel="${k}"]`);
+
+  // Initial: a selected, roving tabindex, only panel a visible.
+  assert.equal(a.getAttribute('aria-selected'), 'true');
+  assert.equal(a.tabIndex, 0);
+  assert.equal(b.tabIndex, -1);
+  assert.equal(panel('a').hidden, false);
+  assert.equal(panel('b').hidden, true);
+  assert.equal(d.querySelector('.ui-tabs__list').getAttribute('role'), 'tablist');
+
+  // Click selects b.
+  b.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(b.getAttribute('aria-selected'), 'true');
+  assert.equal(a.getAttribute('aria-selected'), 'false');
+  assert.equal(panel('b').hidden, false);
+  assert.equal(panel('a').hidden, true);
+
+  // ArrowRight from b → c (automatic activation).
+  b.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+  assert.equal(c.getAttribute('aria-selected'), 'true');
+  assert.equal(panel('c').hidden, false);
+
+  // ArrowRight wraps c → a; Home → a; End → c.
+  c.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+  assert.equal(a.getAttribute('aria-selected'), 'true');
+  a.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'End', bubbles: true }));
+  assert.equal(c.getAttribute('aria-selected'), 'true');
+
+  stop();
+  a.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(c.getAttribute('aria-selected'), 'true', 'no-op after cleanup');
 });
 
 test('toast is SSR-safe and returns a usable cleanup', () => {

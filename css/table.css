@@ -13,16 +13,16 @@
   border-collapse: collapse;
   font-family: var(--mono);
   font-size: var(--text-sm);
-  min-width: 100%;
-  width: 100%;
+  min-inline-size: 100%;
+  inline-size: 100%;
 }
 
 .ui-table th,
 .ui-table td {
-  border-bottom: 1px solid var(--line);
+  border-block-end: 1px solid var(--line);
   overflow-wrap: anywhere;
   padding: 0.7rem 0.85rem;
-  text-align: left;
+  text-align: start;
   vertical-align: top;
 }
 
@@ -34,7 +34,7 @@
   letter-spacing: var(--tracking-wide);
   position: sticky;
   text-transform: uppercase;
-  top: 0;
+  inset-block-start: 0;
 }
 
 .ui-table td {
@@ -42,7 +42,7 @@
 }
 
 .ui-table tbody tr:last-child td {
-  border-bottom: 0;
+  border-block-end: 0;
 }
 
 .ui-table tbody tr {
@@ -67,18 +67,18 @@
 }
 
 .ui-table--lined td {
-  border-right: 1px solid var(--line);
+  border-inline-end: 1px solid var(--line);
 }
 
 .ui-table--lined td:last-child {
-  border-right: 0;
+  border-inline-end: 0;
 }
 
 /* Numeric / right-aligned cells. */
 .ui-table .is-num,
 .ui-table th.is-num {
   font-variant-numeric: tabular-nums;
-  text-align: right;
+  text-align: end;
 }
 
 .ui-table .is-pos {

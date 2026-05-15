@@ -117,6 +117,69 @@ export function dismissible({ root } = {}) {
 }
 
 /**
+ * Wire `[data-bronto-tabs]` groups for full keyboard a11y. The framework
+ * ships the look + the ARIA/`.is-active` contract; this adds the WAI-ARIA
+ * Tabs pattern: roving `tabindex`, `aria-selected`, Arrow/Home/End
+ * navigation with automatic activation, and panel `hidden` sync. Tabs are
+ * `.ui-tab[data-tab]`; panels are `.ui-tabs__panel[data-panel]` with
+ * matching values. SSR-safe; returns a cleanup function.
+ */
+export function initTabs({ root } = {}) {
+  if (!hasDom()) return noop;
+  const host = root || document;
+  const cleanups = [];
+  for (const group of host.querySelectorAll('[data-bronto-tabs]')) {
+    const tabs = [...group.querySelectorAll('.ui-tab')];
+    const panels = [...group.querySelectorAll('.ui-tabs__panel')];
+    if (!tabs.length) continue;
+    const list = group.querySelector('.ui-tabs__list');
+    if (list) list.setAttribute('role', 'tablist');
+
+    const select = (tab) => {
+      for (const t of tabs) {
+        const on = t === tab;
+        t.classList.toggle('is-active', on);
+        t.setAttribute('role', 'tab');
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+      }
+      for (const p of panels) {
+        p.setAttribute('role', 'tabpanel');
+        p.hidden = p.dataset.panel !== tab.dataset.tab;
+      }
+    };
+    const onClick = (e) => {
+      const tab = e.target.closest('.ui-tab');
+      if (tab && group.contains(tab)) {
+        select(tab);
+        tab.focus();
+      }
+    };
+    const onKey = (e) => {
+      const i = tabs.indexOf(e.target.closest('.ui-tab'));
+      if (i < 0) return;
+      let n = i;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') n = (i + 1) % tabs.length;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') n = (i - 1 + tabs.length) % tabs.length;
+      else if (e.key === 'Home') n = 0;
+      else if (e.key === 'End') n = tabs.length - 1;
+      else return;
+      e.preventDefault();
+      select(tabs[n]);
+      tabs[n].focus();
+    };
+    group.addEventListener('click', onClick);
+    group.addEventListener('keydown', onKey);
+    select(tabs.find((t) => t.classList.contains('is-active')) || tabs[0]);
+    cleanups.push(() => {
+      group.removeEventListener('click', onClick);
+      group.removeEventListener('keydown', onKey);
+    });
+  }
+  return () => cleanups.forEach((fn) => fn());
+}
+
+/**
  * Wire native <dialog> open/close glue (the one bit <dialog> can't do
  * declaratively). Click `[data-bronto-open="dialogId"]` calls
  * `showModal()` on `#dialogId`; click `[data-bronto-close]` closes the

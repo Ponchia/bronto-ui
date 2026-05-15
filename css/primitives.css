@@ -69,7 +69,7 @@
 
 .ui-divider {
   border: 0;
-  border-top: 1px solid var(--line);
+  border-block-start: 1px solid var(--line);
   margin: 0;
 }
 
@@ -106,8 +106,8 @@
   justify-content: center;
   letter-spacing: var(--tracking-wide);
   line-height: 1;
-  min-height: 2.4rem;
-  min-width: 2.4rem;
+  min-block-size: 2.4rem;
+  min-inline-size: 2.4rem;
   padding: 0.66rem 1rem;
   text-transform: uppercase;
   transition:
@@ -137,7 +137,7 @@
 
 .ui-button--icon {
   aspect-ratio: 1;
-  min-width: 2.4rem;
+  min-inline-size: 2.4rem;
   padding: 0;
 }
 
@@ -172,13 +172,13 @@
 }
 
 .ui-link--arrow::after {
-  border-right: 1px solid currentColor;
-  border-top: 1px solid currentColor;
+  border-inline-end: 1px solid currentColor;
+  border-block-start: 1px solid currentColor;
   content: '';
-  height: 0.42rem;
+  block-size: 0.42rem;
   transform: rotate(45deg);
   transition: transform var(--duration-fast) var(--ease-standard);
-  width: 0.42rem;
+  inline-size: 0.42rem;
 }
 
 /* --- Chip / tag --- */
@@ -195,7 +195,7 @@
   gap: 0.36rem;
   letter-spacing: var(--tracking-wide);
   line-height: 1;
-  min-height: 1.7rem;
+  min-block-size: 1.7rem;
   padding: 0.32rem 0.55rem;
   text-transform: uppercase;
 }
@@ -257,10 +257,10 @@
 }
 
 .ui-key-value div {
-  border-top: 1px solid var(--line);
+  border-block-start: 1px solid var(--line);
   display: grid;
   gap: 0.16rem;
-  padding-top: 0.6rem;
+  padding-block-start: 0.6rem;
 }
 
 .ui-key-value dt {
@@ -324,11 +324,11 @@
 
 @media (pointer: coarse) {
   .ui-button {
-    min-height: 2.9rem;
-    min-width: 2.9rem;
+    min-block-size: 2.9rem;
+    min-inline-size: 2.9rem;
   }
 
   .ui-button--icon {
-    min-width: 2.9rem;
+    min-inline-size: 2.9rem;
   }
 }

@@ -29,7 +29,7 @@
   transition:
     border-color var(--duration-fast) var(--ease-standard),
     background-color var(--duration-fast) var(--ease-standard);
-  width: 100%;
+  inline-size: 100%;
 }
 
 .ui-input::placeholder,
@@ -38,7 +38,7 @@
 }
 
 .ui-textarea {
-  min-height: 6rem;
+  min-block-size: 6rem;
   resize: vertical;
 }
 
@@ -48,7 +48,7 @@
   background-position: right 0.75rem center;
   background-repeat: no-repeat;
   background-size: 5px 5px;
-  padding-right: 1.8rem;
+  padding-inline-end: 1.8rem;
 }
 
 .ui-input:focus,
@@ -103,8 +103,8 @@
   border-radius: 50%;
   content: '';
   flex: 0 0 auto;
-  height: 0.42rem;
-  width: 0.42rem;
+  block-size: 0.42rem;
+  inline-size: 0.42rem;
 }
 
 .ui-search:focus-within {
@@ -123,7 +123,7 @@
   font-size: var(--text-sm);
   outline: none;
   padding: 0.6rem 0;
-  width: 100%;
+  inline-size: 100%;
 }
 
 /* Toggle switch — square Nothing-style track. */
@@ -145,22 +145,22 @@
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-pill);
   display: inline-flex;
-  height: 1.05rem;
+  block-size: 1.05rem;
   padding: 2px;
   transition:
     background-color var(--duration-fast) var(--ease-standard),
     border-color var(--duration-fast) var(--ease-standard);
-  width: 1.95rem;
+  inline-size: 1.95rem;
 }
 
 .ui-switch__thumb {
   background: var(--text-dim);
   border-radius: 50%;
-  height: 100%;
+  block-size: 100%;
   transition:
     transform var(--duration-fast) var(--ease-spring),
     background-color var(--duration-fast) var(--ease-standard);
-  width: 0.78rem;
+  inline-size: 0.78rem;
 }
 
 .ui-switch input:checked + .ui-switch__track {
@@ -189,8 +189,8 @@
 
 .ui-check input {
   accent-color: var(--accent);
-  height: 1rem;
-  width: 1rem;
+  block-size: 1rem;
+  inline-size: 1rem;
 }
 
 /* Touch: comfortable hit targets on coarse pointers. */
@@ -198,15 +198,15 @@
   .ui-input,
   .ui-select,
   .ui-textarea {
-    min-height: 2.9rem;
+    min-block-size: 2.9rem;
   }
 
   .ui-search {
-    min-height: 2.9rem;
+    min-block-size: 2.9rem;
   }
 
   .ui-check input {
-    height: 1.15rem;
-    width: 1.15rem;
+    block-size: 1.15rem;
+    inline-size: 1.15rem;
   }
 }
