@@ -241,15 +241,15 @@
       dismissible();
 
       // Keep the demo's label in sync (cosmetic; the shared module does
-      // the real work — persistence, data-theme, aria-pressed).
+      // the real work). Driven by the bronto:themechange event so it
+      // never races the delegated click handler.
       const root = document.documentElement;
       const label = document.getElementById('themeLabel');
       const sync = () => {
-        const t = root.getAttribute('data-theme') === 'light' ? 'Light' : 'Dark';
-        label.textContent = t;
+        label.textContent = root.getAttribute('data-theme') === 'light' ? 'Light' : 'Dark';
       };
       sync();
-      document.getElementById('themeBtn').addEventListener('click', sync);
+      document.addEventListener('bronto:themechange', sync);
 
       // Smoke-check the typed class recipes resolve to real classes.
       console.assert(

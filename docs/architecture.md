@@ -52,8 +52,11 @@ on top of the CSS, none of which require a framework commitment**:
 
 ## Drift control
 
-Every data mirror is backed by a check wired into `npm run check` (CI on
-every push/PR, and gating the release tag):
+Every data mirror is backed by a check wired into `npm run check`, run by CI
+on every push/PR. Note this is a *branch/PR* gate: the consumable artifact is
+GitHub's tag tarball, which exists for any pushed tag regardless of
+`release.yml` (see "Release gating" below), so the practical safeguard is
+"only tag from a green `main`".
 
 | Invariant                                   | Enforced by              |
 | ------------------------------------------- | ------------------------ |
@@ -61,6 +64,23 @@ every push/PR, and gating the release tag):
 | `tokens.css` ⇄ `tokens/index.js` ⇄ `.json`  | `check-tokens.mjs`       |
 | `classes` `cls` ⇄ `.ui-*` selectors         | `check-classes.mjs`      |
 | CSS style/correctness                       | Stylelint                |
+
+## Release gating
+
+`release.yml` re-runs the checks and the tag↔version match on a pushed
+`v*` tag, but **this does not gate the installable artifact**. GitHub
+serves `archive/refs/tags/vX.Y.Z.tar.gz` for any tag the instant it is
+pushed — independently of, and before, Actions. A failing workflow does not
+retract a bad tag. It is therefore a loud post-tag tripwire (and the source
+of the GitHub Release for visibility), not a hard gate. The job is split so
+validation runs read-only and only the release-publishing job holds
+`contents: write`.
+
+The hard guarantee comes from process: bump `package.json`, land it on
+`main`, let CI go green, *then* tag. A true artifact gate would need
+protected tags, a release branch, or shipping a checked release asset /
+registry package instead of the tag archive — folded into the distribution
+decision below.
 
 ## Open decision — distribution
 

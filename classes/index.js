@@ -102,10 +102,10 @@ export const cls = Object.freeze({
   animateMatrix: 'ui-animate-matrix',
 });
 
-/** classnames-style joiner: skips falsy, flattens arrays. */
+/** classnames-style joiner: skips falsy, flattens nested arrays of any depth. */
 export function cx(...parts) {
   const out = [];
-  for (const p of parts.flat()) if (p) out.push(p);
+  for (const p of parts.flat(Infinity)) if (p) out.push(p);
   return out.join(' ');
 }
 
