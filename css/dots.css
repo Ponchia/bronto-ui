@@ -6,6 +6,7 @@
    Use --dot-color / --dot-gap / --dot-size to tune density. */
 .ui-dotgrid {
   --_dot: var(--dot-color, var(--field-dot));
+
   background-image: radial-gradient(var(--_dot) var(--dot-size), transparent var(--dot-size));
   background-position: 0 0;
   background-size: var(--dot-gap) var(--dot-gap);
@@ -22,6 +23,7 @@
 /* Fixed full-bleed backdrop layer (sits behind a relative shell). */
 .ui-dotfield {
   --_dot: var(--dot-color, var(--field-dot));
+
   background-image: radial-gradient(var(--_dot) var(--dot-size), transparent var(--dot-size));
   background-size: var(--dot-gap) var(--dot-gap);
   inset: 0;
@@ -55,12 +57,15 @@
 .ui-dot--accent {
   background: var(--accent);
 }
+
 .ui-dot--success {
   background: var(--success);
 }
+
 .ui-dot--warning {
   background: var(--warning);
 }
+
 .ui-dot--danger {
   background: var(--danger);
 }
