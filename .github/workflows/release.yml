@@ -3,24 +3,23 @@
 # deliberate `git tag vX.Y.Z && git push --tags`, not a side effect of
 # merging to main.
 #
-# IMPORTANT: this workflow does NOT gate the installable artifact.
-# Consumers resolve GitHub's auto-generated source tarball
-# (archive/refs/tags/vX.Y.Z.tar.gz), which GitHub creates for ANY pushed
-# tag the instant it exists — independent of, and before, this workflow.
-# So a failing check here does not prevent a bad tag from being
-# installable. The real safeguard is process: only tag from a green
-# main. This job re-runs the checks and the version match as a loud
-# post-tag tripwire and publishes a GitHub Release for visibility; it is
-# not a hard gate. For a true gate, use protected tags or a release
-# branch (see docs/architecture.md).
+# GATING: the npm publish IS the gate for the documented install path.
+# `validate` runs read-only checks + the tag↔version match; `publish-npm`
+# only runs if validate passes, so a failing check means the version is
+# never on npm and consumers never resolve it. (GitHub still serves the
+# raw tag tarball `archive/refs/tags/vX.Y.Z.tar.gz` for any tag,
+# ungated — that path is legacy/fallback, not the documented install;
+# see docs/architecture.md.)
+#
+# Requires repo secret NPM_TOKEN (npm automation token for the @ponchia
+# scope) and a committed LICENSE file before the first successful publish.
 name: Release
 
 on:
   push:
     tags: ['v*']
 
-# Default to read-only; only the publish job is granted write, and only
-# after validation passes. The npm ci / check steps never see a write token.
+# Default read-only. Each job opts into exactly the scope it needs.
 permissions:
   contents: read
 
@@ -48,7 +47,28 @@ jobs:
             exit 1
           fi
 
-  publish:
+  publish-npm:
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # npm provenance (publishConfig.provenance)
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - run: npm ci
+
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  release-notes:
     needs: validate
     runs-on: ubuntu-latest
     permissions:

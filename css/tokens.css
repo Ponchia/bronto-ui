@@ -1,5 +1,5 @@
 /* ==========================================================================
-   @bronto/ui — design tokens
+   @ponchia/ui — design tokens
    Nothing-inspired: monochrome surfaces, single red accent, dot-matrix type.
    Dual light/dark. Variable names are stable so semantic classes inherit.
    The Doto @font-face declarations live in fonts.css (bundled by

@@ -4,7 +4,7 @@ Status: accepted · 2026-05-15 · applies from v0.1.0
 
 ## Context
 
-`@bronto/ui` is the shared design layer for several personal projects on
+`@ponchia/ui` is the shared design layer for several personal projects on
 different stacks: Astro (`an Astro site`), SvelteKit (`a SvelteKit admin`), and an
 open-ended set of future apps (React, Solid, plain HTML, server-rendered
 templates). The question driving this document: is plain CSS the right
@@ -22,7 +22,7 @@ unavoidable JS, and distribution — are addressed as **thin, optional layers
 on top of the CSS, none of which require a framework commitment**:
 
 ```
-@bronto/ui
+@ponchia/ui
 ├── css/         canonical universal layer (the framework)         [required]
 ├── tokens/      design tokens as JS/JSON, for JS/canvas/tooling    [optional]
 ├── classes/     typed class-name contract + recipe builders         [optional]
@@ -53,10 +53,8 @@ on top of the CSS, none of which require a framework commitment**:
 ## Drift control
 
 Every data mirror is backed by a check wired into `npm run check`, run by CI
-on every push/PR. Note this is a *branch/PR* gate: the consumable artifact is
-GitHub's tag tarball, which exists for any pushed tag regardless of
-`release.yml` (see "Release gating" below), so the practical safeguard is
-"only tag from a green `main`".
+on every push/PR and again by `release.yml` before publish (see "Release
+gating" below), so a version that fails any invariant never reaches npm.
 
 | Invariant                                   | Enforced by              |
 | ------------------------------------------- | ------------------------ |
@@ -67,37 +65,63 @@ GitHub's tag tarball, which exists for any pushed tag regardless of
 
 ## Release gating
 
-`release.yml` re-runs the checks and the tag↔version match on a pushed
-`v*` tag, but **this does not gate the installable artifact**. GitHub
-serves `archive/refs/tags/vX.Y.Z.tar.gz` for any tag the instant it is
-pushed — independently of, and before, Actions. A failing workflow does not
-retract a bad tag. It is therefore a loud post-tag tripwire (and the source
-of the GitHub Release for visibility), not a hard gate. The job is split so
-validation runs read-only and only the release-publishing job holds
-`contents: write`.
+`release.yml` (on a pushed `v*` tag) splits into three jobs:
 
-The hard guarantee comes from process: bump `package.json`, land it on
-`main`, let CI go green, *then* tag. A true artifact gate would need
-protected tags, a release branch, or shipping a checked release asset /
-registry package instead of the tag archive — folded into the distribution
-decision below.
+- `validate` — read-only: `npm run check` + tag↔version match.
+- `publish-npm` — `needs: validate`: `npm publish` with provenance.
+- `release-notes` — `needs: validate`: a GitHub Release for visibility.
 
-## Open decision — distribution
+Because the documented install path is the npm package, **the npm publish
+is a real gate**: if `validate` fails, `publish-npm` never runs, the version
+never reaches the registry, and consumers never resolve it. Permissions are
+least-privilege per job (only `release-notes` gets `contents: write`; only
+`publish-npm` gets `id-token: write` for provenance).
 
-Consumers currently pin a GitHub release tarball
-(`archive/refs/tags/vX.Y.Z.tar.gz`). It is reproducible but every upgrade is a
-hand-edited URL, and `package.json` is still `private: true` as a safety.
+GitHub still serves the raw tag tarball `archive/refs/tags/vX.Y.Z.tar.gz`
+for any tag, ungated — that path is legacy/fallback, deliberately *not* the
+documented install, so it is no longer the safeguard-critical surface.
+Process still applies: bump `package.json`, land on `main`, go green, tag.
 
-Moving to a published package is the biggest "easily available everywhere"
-lever, but it needs an account/registry decision that is intentionally **not**
-made here:
+## Decision — distribution: npm public `@ponchia/ui`
 
-- **npm public** under a real scope — simplest for consumers (`npm i`,
-  semver, Renovate), requires reserving the scope. Note `@bronto` may not be
-  available; the package may need to be renamed (e.g. `@ponchia/ui`).
-- **GitHub Packages** — no extra account, but requires the scope to match the
-  GitHub owner (`@ponchia/...`) and consumers to configure an `.npmrc`.
-- **Status quo** — keep the tarball pin; fine until upgrade friction bites.
+Decided 2026-05-15. The framework is consumed by a growing set of
+heterogeneous web frontends (Astro, SvelteKit, future React/Solid/vanilla),
+several deploying via third-party CI. The only option where onboarding a new
+frontend is `npm i @ponchia/ui` with zero per-consumer config is **npm
+public**, and it uniquely also closes the release-gating gap (publish *is*
+the gate). GitHub Packages was rejected: it requires auth to install even
+public packages, i.e. an `.npmrc` + token on every frontend and CI runner —
+the exact friction to avoid. The raw tag tarball is kept as an ungated
+legacy/fallback only.
 
-Until this is decided, `private: true` stays and the tarball flow is
-documented in the README. `publishConfig` is intentionally unset.
+The npm scope `@bronto` is not ownable, so the package name is
+**`@ponchia/ui`**. Naming layers, intentionally distinct:
+
+- **npm package**: `@ponchia/ui` (registry identity).
+- **CSS cascade layer**: `@layer bronto` and `data-bronto-*` behavior
+  attributes (the design-system namespace — unchanged; renaming gains
+  nothing and risks consumer overrides).
+- **Workspace / brand**: "Bronto" (`the workspace`, repo
+  `Ponchia/bronto-ui`) — unchanged.
+
+This split is deliberate; the README states it so the apparent mismatch is
+explained, not surprising.
+
+### Pre-publish checklist (blockers before the first real `npm publish`)
+
+1. **LICENSE** — none exists. `package.json` declares
+   `"license": "SEE LICENSE IN LICENSE"`; a `LICENSE` file must be added.
+   The license choice is the owner's and is intentionally not made here.
+2. **`NPM_TOKEN`** repo secret — an npm automation token for the
+   `@ponchia` scope (scope must be created on npm first).
+3. **Version** — `package.json` is still `0.1.0`, which predates the
+   `tokens`/`classes`/`behaviors` entrypoints. Bump to `0.2.0` (and
+   retitle the CHANGELOG `Unreleased` section) before tagging, so the
+   published version honestly reflects its contents.
+4. **Consumers** — `an Astro site` / `a SvelteKit admin` must switch their
+   dependency specifier from the tarball URL to `@ponchia/ui` (separate
+   repos; not changed here per workspace VCS rules).
+
+`publishConfig` is set (`access: public`, `provenance: true`) and
+`private` is removed so the gated workflow can publish; local accidental
+publish still fails without auth.

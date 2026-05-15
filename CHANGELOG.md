@@ -13,17 +13,23 @@ changed — existing consumers are visually unaffected.
 - **Fonts**: `@font-face` moved from `tokens.css` to `css/fonts.css` with
   package-relative URLs (`../fonts/*`) — no more absolute `/fonts`
   assumption. Bundled into `core.css`/`index.css`; exported standalone.
-- **`@bronto/ui/tokens`**: design tokens as data (`index.js` canonical,
+- **`@ponchia/ui/tokens`**: design tokens as data (`index.js` canonical,
   `index.json` generated, `themeColor()` helper, typed).
-- **`@bronto/ui/classes`**: typed class-name contract — `cls` registry,
+- **`@ponchia/ui/classes`**: typed class-name contract — `cls` registry,
   `ui.*` recipe builders, `cx()`. Framework-agnostic, returns strings.
-- **`@bronto/ui/behaviors`**: vanilla, SSR-safe, dependency-free helpers —
+- **`@ponchia/ui/behaviors`**: vanilla, SSR-safe, dependency-free helpers —
   `applyStoredTheme`, `initThemeToggle`, `dismissible`, `initDisclosure`.
 - **Drift control**: `npm run check` adds `check-tokens` and
   `check-classes`; the demo now drives itself via the shipped modules.
 - **Packaging**: `exports` for the new entrypoints (with `types`),
-  `sideEffects` for tree-shaking, `files` widened. Still `private: true`;
-  distribution decision deferred (documented in `docs/architecture.md`).
+  `sideEffects` for tree-shaking, `files` widened.
+- **Distribution decided**: published to npm as **`@ponchia/ui`** (the
+  `@bronto` scope isn't ownable; the `@layer bronto` / `data-bronto-*`
+  namespace is unchanged). `private` removed, `publishConfig`
+  (`access: public`, `provenance: true`), `repository`/`homepage`/`bugs`
+  added. `release.yml` now gates on a real `npm publish` job
+  (`validate` → `publish-npm`). Rationale + pre-publish blockers
+  (LICENSE, `NPM_TOKEN`, version bump) in `docs/architecture.md`.
 
 ## 0.1.0 — 2026-05-15
 

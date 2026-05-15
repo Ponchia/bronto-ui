@@ -1,11 +1,11 @@
 /**
- * @bronto/ui — typed class-name contract.
+ * @ponchia/ui — typed class-name contract.
  *
  * The framework's real API is its class vocabulary. Hand-writing
  * "ui-button ui-button--ghost" everywhere is untyped and typo-prone, so
  * this module turns that contract into data + tiny recipe builders:
  *
- *   import { ui, cx } from '@bronto/ui/classes';
+ *   import { ui, cx } from '@ponchia/ui/classes';
  *   <button class={ui.button({ variant: 'ghost' })}>
  *   <span class={cx(ui.dot({ tone: 'success' }), 'my-extra')}>
  *
@@ -15,7 +15,7 @@
  * stylesheet — so this file cannot drift from the CSS.
  */
 
-/** Every class @bronto/ui defines. The single source the recipes draw from. */
+/** Every class @ponchia/ui defines. The single source the recipes draw from. */
 export const cls = Object.freeze({
   // primitives
   button: 'ui-button',

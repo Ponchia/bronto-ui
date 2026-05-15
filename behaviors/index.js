@@ -1,5 +1,5 @@
 /**
- * @bronto/ui — optional behaviors.
+ * @ponchia/ui — optional behaviors.
  *
  * The framework is CSS-first. This is the sanctioned home for the small
  * amount of JS that genuinely needs scripting (theme persistence, dismiss,
@@ -9,7 +9,7 @@
  * SSR-safe (every entry no-ops without a DOM). Each initializer uses event
  * delegation off a root and returns a cleanup function.
  *
- *   import { applyStoredTheme, initThemeToggle } from '@bronto/ui/behaviors';
+ *   import { applyStoredTheme, initThemeToggle } from '@ponchia/ui/behaviors';
  *   applyStoredTheme();                 // before paint, avoids theme flash
  *   const stop = initThemeToggle();     // wire [data-bronto-theme-toggle]
  */

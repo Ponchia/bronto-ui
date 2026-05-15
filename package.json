@@ -1,9 +1,19 @@
 {
-  "name": "@bronto/ui",
+  "name": "@ponchia/ui",
   "version": "0.1.0",
-  "private": true,
   "type": "module",
   "description": "Shared Bronto UI framework — Nothing-inspired monochrome CSS theme, dot-matrix motifs, admin shell.",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ponchia/bronto-ui.git"
+  },
+  "homepage": "https://github.com/Ponchia/bronto-ui#readme",
+  "bugs": "https://github.com/Ponchia/bronto-ui/issues",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "sideEffects": [
     "**/*.css"
   ],

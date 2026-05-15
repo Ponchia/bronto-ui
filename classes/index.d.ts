@@ -1,8 +1,8 @@
-/** @bronto/ui — typed class-name contract. */
+/** @ponchia/ui — typed class-name contract. */
 
 export type ClassValue = string | false | null | undefined | ClassValue[];
 
-/** The flat registry of every class @bronto/ui defines. */
+/** The flat registry of every class @ponchia/ui defines. */
 export declare const cls: Readonly<Record<string, string>>;
 
 /** classnames-style joiner: skips falsy, flattens arrays. */
