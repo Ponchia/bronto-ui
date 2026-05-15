@@ -4,6 +4,9 @@ Shared UI framework for Bronto personal projects. Nothing-inspired:
 monochrome surfaces, a single red accent, dot-matrix display type (Doto),
 flat hairline borders, restrained motion. CSS-first and framework-agnostic.
 
+**[Live demo →](https://ponchia.github.io/bronto-ui/)** — the kitchen
+sink (every component, light/dark, RTL, theming) deployed from `demo/`.
+
 ## Use
 
 Install from npm (public, no registry config):
