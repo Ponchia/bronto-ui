@@ -1,0 +1,84 @@
+# Release is tag-driven and explicit. It triggers ONLY on a pushed
+# `v*` tag — never on a branch or main push. Cutting a release is a
+# deliberate `git tag vX.Y.Z && git push --tags`, not a side effect of
+# merging to main.
+#
+# GATING: the npm publish IS the gate for the documented install path.
+# `validate` runs read-only checks + the tag↔version match; `publish-npm`
+# only runs if validate passes, so a failing check means the version is
+# never on npm and consumers never resolve it. (GitHub still serves the
+# raw tag tarball `archive/refs/tags/vX.Y.Z.tar.gz` for any tag,
+# ungated — that path is legacy/fallback, not the documented install;
+# see docs/architecture.md.)
+#
+# Requires repo secret NPM_TOKEN (npm automation token for the @ponchia
+# scope) and a committed LICENSE file before the first successful publish.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+# Default read-only. Each job opts into exactly the scope it needs.
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run check
+
+      - run: npm test
+
+      - name: Verify tag matches package.json version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pkg="$(node -p "require('./package.json').version")"
+          if [ "$tag" != "$pkg" ]; then
+            echo "::error::tag v$tag does not match package.json version $pkg"
+            exit 1
+          fi
+
+  publish-npm:
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # npm provenance (publishConfig.provenance)
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - run: npm ci
+
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  release-notes:
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true

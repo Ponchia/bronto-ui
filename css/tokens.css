@@ -1,56 +1,12 @@
 /* ==========================================================================
-   @bronto/ui — design tokens
+   @ponchia/ui — design tokens
    Nothing-inspired: monochrome surfaces, single red accent, dot-matrix type.
    Dual light/dark. Variable names are stable so semantic classes inherit.
+   The Doto @font-face declarations live in fonts.css (bundled by
+   core.css/index.css) so font hosting is decoupled from these tokens —
+   a consumer can self-host Doto and still use the token layer by
+   overriding --display / --dot-font.
    ========================================================================== */
-
-@font-face {
-  font-family: 'Doto';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/doto-400.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Doto';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('/fonts/doto-500.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Doto';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/fonts/doto-600.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Doto';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/doto-700.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Doto';
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-  src: url('/fonts/doto-800.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Doto';
-  font-style: normal;
-  font-weight: 900;
-  font-display: swap;
-  src: url('/fonts/doto-900.ttf') format('truetype');
-}
 
 :root {
   /* Sharp, near-zero radii — Nothing surfaces are crisp, not pill-soft. */
@@ -75,7 +31,6 @@
     'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --display: 'Doto', var(--mono);
   --dot-font: 'Doto', var(--mono);
-
   --text-2xs: 0.68rem;
   --text-xs: 0.76rem;
   --text-sm: 0.86rem;
@@ -111,6 +66,7 @@
 :root,
 :root[data-theme='light'] {
   color-scheme: light;
+
   --bg: #f4f4f2;
   --bg-elevated: #fbfbfa;
   --bg-accent: rgba(215, 25, 33, 0.06);
@@ -145,10 +101,18 @@
 
 /* --------------------------------------------------------------------------
    Dark — true black. The Nothing default.
+
+   The palette below is intentionally written twice: once under
+   `prefers-color-scheme: dark` (system default, unless overridden to light)
+   and once under `[data-theme='dark']` (explicit opt-in). Vanilla CSS can't
+   share one declaration block between a media query and a top-level selector
+   without a build step or nesting, neither of which this zero-dep package
+   has. Keep the two blocks in sync when editing dark tokens.
    -------------------------------------------------------------------------- */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
+
     --bg: #000000;
     --bg-elevated: #0a0a0a;
     --bg-accent: rgba(255, 59, 65, 0.08);
@@ -184,6 +148,7 @@
 
 :root[data-theme='dark'] {
   color-scheme: dark;
+
   --bg: #000000;
   --bg-elevated: #0a0a0a;
   --bg-accent: rgba(255, 59, 65, 0.08);

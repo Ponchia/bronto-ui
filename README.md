@@ -1,4 +1,4 @@
-# @bronto/ui
+# @ponchia/ui
 
 Shared UI framework for Bronto personal projects. Nothing-inspired:
 monochrome surfaces, a single red accent, dot-matrix display type (Doto),
@@ -6,35 +6,87 @@ flat hairline borders, restrained motion. CSS-first and framework-agnostic.
 
 ## Use
 
-Depend on it via a local `file:` link (until published):
+Install from npm (public, no registry config):
 
-```json
-{ "dependencies": { "@bronto/ui": "file:../bronto-ui" } }
+```bash
+npm i @ponchia/ui
 ```
+
+> Naming: the **npm package** is `@ponchia/ui` (the `@bronto` scope isn't
+> ownable). The **CSS layer** and behavior attributes stay `bronto`
+> (`@layer bronto`, `data-bronto-*`) — that's the design-system namespace,
+> deliberately distinct from the package name. See
+> [`docs/architecture.md`](docs/architecture.md).
+
+> Not published yet — the only remaining blocker is npm-account side
+> (create the `@ponchia` scope + `NPM_TOKEN`; see [Release](#release)).
+> Until the first publish, depend on a `file:` link to a checkout or a
+> pinned git tag:
+>
+> ```json
+> { "dependencies": { "@ponchia/ui": "file:../bronto-ui" } }
+> ```
+>
+> ```json
+> { "dependencies": { "@ponchia/ui": "github:Ponchia/bronto-ui#semver:^0.2.0" } }
+> ```
 
 Import the full theme (includes responsive breakpoints):
 
 ```css
-@import '@bronto/ui/css';
+@import '@ponchia/ui/css';
 ```
 
 Or the core bundle if the app manages its own responsive layer:
 
 ```css
-@import '@bronto/ui/css/core.css';
+@import '@ponchia/ui/css/core.css';
 ```
 
-Serve the Doto fonts from the app's own `/fonts` directory (the token layer
-references `/fonts/doto-*.ttf`), or override `--display` / `--dot-font`.
+The Doto `@font-face` ships in `css/fonts.css` (bundled by both `css` and
+`css/core.css`) with URLs relative to the package, so it resolves through a
+bundler or static serving with no `/fonts` path assumption. To self-host the
+font instead, import everything except `fonts.css` and override `--display` /
+`--dot-font`.
+
+Everything ships inside a single `@layer bronto`, so any un-layered CSS in
+your app overrides the framework without a specificity fight or `!important`.
+The layer is applied by the `css` and `css/core.css` bundles only —
+importing an individual leaf such as `@ponchia/ui/css/primitives.css`
+directly is **unlayered** (full specificity), which is an intentional
+escape hatch, not the default path.
 
 Set `data-theme="light"` or `data-theme="dark"` on `<html>`; defaults follow
 `prefers-color-scheme`.
+
+## Entrypoints
+
+The CSS is the framework. These optional sibling entrypoints are thin layers
+on top of it — none pull in a UI framework. See
+[`docs/architecture.md`](docs/architecture.md) for the rationale.
+
+```js
+import tokens, { cssVars, themeColor } from '@ponchia/ui/tokens'; // tokens as data (+ /tokens.json)
+import { ui, cx } from '@ponchia/ui/classes'; // typed class-name recipes
+import { initThemeToggle, dismissible } from '@ponchia/ui/behaviors'; // vanilla, SSR-safe
+```
+
+```js
+ui.button({ variant: 'ghost' }); // → "ui-button ui-button--ghost"
+themeColor('dark').accent; // → "#ff3b41"
+```
+
+`behaviors` wires `[data-bronto-theme-toggle]`, `[data-bronto-dismiss]` /
+`[data-bronto-dismissible]`, and `[data-bronto-disclosure]`. Each initializer
+is SSR-safe and returns a cleanup function. `demo/index.html` drives itself
+with these modules, so it is also a live integration test.
 
 ## Layout
 
 | File             | Contents                                                      |
 | ---------------- | ------------------------------------------------------------- |
 | `tokens.css`     | palette (dual light/dark), spacing, type, motion, dot tokens  |
+| `fonts.css`      | Doto `@font-face` (relative URLs; optional if self-hosting)    |
 | `base.css`       | reset, element defaults, focus, scrollbars                    |
 | `motion.css`     | keyframes + animation utilities + reduced-motion              |
 | `dots.css`       | dot-grid, dot rule, status dot, dot loader/bar, matrix reveal |
@@ -57,10 +109,52 @@ Serve the package root and open `/demo/`:
 python3 -m http.server -d . 8080   # then open http://localhost:8080/demo/
 ```
 
+## Develop
+
+```bash
+npm install        # stylelint + jsdom (test only)
+npm run check      # lint + 4 integrity checks (exports, tokens, classes, pack)
+npm test           # node:test — pure modules + jsdom behavior tests
+npm run lint:fix   # auto-fix the safe stylistic rules
+npm run tokens:build  # regenerate tokens/index.json from tokens/index.js
+```
+
+`npm run check` enforces that the data mirrors cannot drift from the CSS:
+exports/import-graph integrity, `tokens.css` ⇄ `tokens/index.{js,json}`, the
+`classes` registry ⇄ the `.ui-*` selectors, and that the published tarball
+ships only the intended files. CI
+(`.github/workflows/ci.yml`) runs it on every branch push and PR. It never
+publishes — a push to `main` ships nothing.
+
+## Release
+
+Releases publish to npm and are tag-driven:
+
+```bash
+# 1. bump "version" in package.json, land on main, let CI go green
+git tag vX.Y.Z && git push origin vX.Y.Z
+```
+
+The tag triggers `.github/workflows/release.yml`: `validate` (read-only
+checks + tag↔version match) → `publish-npm` (only if validate passes) +
+`release-notes`. **The npm publish is the gate** — a failing check means
+the version never reaches npm, so consumers never resolve it. GitHub also
+serves the raw tag tarball ungated, but that is a legacy/fallback path, not
+the documented install. See [`docs/architecture.md`](docs/architecture.md).
+
+**Before the first real publish** — one npm-account step remains:
+
+- Create the `@ponchia` npm scope and add an `NPM_TOKEN` repo secret
+  (an npm automation token with publish rights to the scope).
+
+Done already: MIT `LICENSE`, `version` `0.2.0`, `publishConfig`, the
+gated publish workflow. After publishing, switch the consumer repos'
+dependency specifier to `@ponchia/ui`.
+
 ## Consumers
 
-- `an Astro site` — imports `@bronto/ui/css/core.css`
-- `a SvelteKit admin` — imports `@bronto/ui/css`
+- `an Astro site` — imports `@ponchia/ui/css/core.css`
+- `a SvelteKit admin` — imports `@ponchia/ui/css`
 
-Both link via `file:`. Promote to a published package once a third app adopts
-it or versioning friction appears.
+Both still pin the old tarball URL; they switch their dependency to
+`@ponchia/ui` once it is published (separate repos — not changed here).
