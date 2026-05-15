@@ -77,6 +77,12 @@ export interface AvatarOpts {
 export interface ProseOpts {
   compact?: boolean;
 }
+export interface ContainerOpts {
+  narrow?: boolean;
+}
+export interface TagOpts {
+  accent?: boolean;
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -100,6 +106,8 @@ export interface Ui {
   tab(opts?: TabOpts): string;
   avatar(opts?: AvatarOpts): string;
   prose(opts?: ProseOpts): string;
+  container(opts?: ContainerOpts): string;
+  tag(opts?: TagOpts): string;
 }
 
 export declare const ui: Ui;
