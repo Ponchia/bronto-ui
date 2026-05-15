@@ -38,6 +38,8 @@ jobs:
 
       - run: npm run check
 
+      - run: npm test
+
       - name: Verify tag matches package.json version
         run: |
           tag="${GITHUB_REF_NAME#v}"

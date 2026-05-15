@@ -29,5 +29,8 @@ jobs:
 
       - run: npm ci
 
-      # Stylelint + zero-dep exports/import-graph integrity check.
+      # Stylelint + integrity checks (exports, tokens, classes, pack).
       - run: npm run check
+
+      # node:test — pure modules + jsdom behavior tests.
+      - run: npm test
