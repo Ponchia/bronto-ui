@@ -63,6 +63,31 @@ Serve the package root and open `/demo/`:
 python3 -m http.server -d . 8080   # then open http://localhost:8080/demo/
 ```
 
+## Develop
+
+```bash
+npm install      # stylelint is the only toolchain
+npm run check    # lint + exports/import-graph integrity (what CI runs)
+npm run lint:fix # auto-fix the safe stylistic rules
+```
+
+CI (`.github/workflows/ci.yml`) runs `npm run check` on every branch push
+and PR. It never publishes — a push to `main` ships nothing.
+
+## Release
+
+Releases are tag-driven and explicit:
+
+```bash
+# bump "version" in package.json to X.Y.Z first, then:
+git tag vX.Y.Z && git push origin vX.Y.Z
+```
+
+The tag triggers `.github/workflows/release.yml`, which re-runs the checks,
+verifies the tag matches `package.json`, and publishes a GitHub Release.
+Consumers resolve the auto-generated `archive/refs/tags/vX.Y.Z.tar.gz`, so
+bump their pinned URL to adopt the new version.
+
 ## Consumers
 
 - `an Astro site` — imports `@bronto/ui/css/core.css`
