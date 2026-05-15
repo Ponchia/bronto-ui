@@ -148,6 +148,30 @@
   }
 }
 
+/* Indeterminate progress: a short segment sweeps the track. */
+@keyframes uiTrack {
+  0% {
+    left: -45%;
+  }
+
+  100% {
+    left: 100%;
+  }
+}
+
+/* Toast / overlay entrance: rise + fade, spring-tipped. */
+@keyframes uiToastIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 /* --- Utilities --- */
 
 .ui-animate-in {

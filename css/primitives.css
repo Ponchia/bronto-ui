@@ -319,3 +319,16 @@
     background: var(--accent-soft);
   }
 }
+
+/* --- Touch: comfortable hit targets on coarse pointers --- */
+
+@media (pointer: coarse) {
+  .ui-button {
+    min-height: 2.9rem;
+    min-width: 2.9rem;
+  }
+
+  .ui-button--icon {
+    min-width: 2.9rem;
+  }
+}

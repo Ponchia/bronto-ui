@@ -192,3 +192,21 @@
   height: 1rem;
   width: 1rem;
 }
+
+/* Touch: comfortable hit targets on coarse pointers. */
+@media (pointer: coarse) {
+  .ui-input,
+  .ui-select,
+  .ui-textarea {
+    min-height: 2.9rem;
+  }
+
+  .ui-search {
+    min-height: 2.9rem;
+  }
+
+  .ui-check input {
+    height: 1.15rem;
+    width: 1.15rem;
+  }
+}

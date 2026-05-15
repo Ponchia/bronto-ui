@@ -18,19 +18,6 @@ npm i @ponchia/ui
 > deliberately distinct from the package name. See
 > [`docs/architecture.md`](docs/architecture.md).
 
-> Not published yet — the only remaining blocker is npm-account side
-> (create the `@ponchia` scope + `NPM_TOKEN`; see [Release](#release)).
-> Until the first publish, depend on a `file:` link to a checkout or a
-> pinned git tag:
->
-> ```json
-> { "dependencies": { "@ponchia/ui": "file:../bronto-ui" } }
-> ```
->
-> ```json
-> { "dependencies": { "@ponchia/ui": "github:Ponchia/bronto-ui#semver:^0.2.0" } }
-> ```
-
 Import the full theme (includes responsive breakpoints):
 
 ```css
@@ -77,9 +64,12 @@ themeColor('dark').accent; // → "#ff3b41"
 ```
 
 `behaviors` wires `[data-bronto-theme-toggle]`, `[data-bronto-dismiss]` /
-`[data-bronto-dismissible]`, and `[data-bronto-disclosure]`. Each initializer
-is SSR-safe and returns a cleanup function. `demo/index.html` drives itself
-with these modules, so it is also a live integration test.
+`[data-bronto-dismissible]`, `[data-bronto-disclosure]`, and native
+`<dialog>` glue (`initDialog`: `[data-bronto-open]` / `[data-bronto-close]`
+/ `[data-bronto-dialog-light]`). `toast(message, { tone, title, duration })`
+pushes into a shared, body-anchored stack. Each initializer is SSR-safe and
+returns a cleanup function. `demo/index.html` drives itself with these
+modules, so it is also a live integration test.
 
 ## Layout
 
@@ -89,9 +79,12 @@ with these modules, so it is also a live integration test.
 | `fonts.css`      | Doto `@font-face` (relative URLs; optional if self-hosting)    |
 | `base.css`       | reset, element defaults, focus, scrollbars                    |
 | `motion.css`     | keyframes + animation utilities + reduced-motion              |
-| `dots.css`       | dot-grid, dot rule, status dot, dot loader/bar, matrix reveal |
+| `dots.css`       | dot-grid, dot rule, status dot, dot loader, orbital dot spinner, dot bar (+ indeterminate), matrix reveal |
 | `primitives.css` | `ui-*` buttons, cards, chips, badges, links, key/value        |
 | `forms.css`      | inputs, select, textarea, search, switch, checkbox            |
+| `feedback.css`   | alert / callout, toast, tooltip, linear progress              |
+| `overlay.css`    | modal + drawer (native `<dialog>`), dropdown menu             |
+| `disclosure.css` | tabs, accordion (`<details>`), segmented, breadcrumb, pagination, avatar |
 | `table.css`      | `ui-table` dense / comfortable                                |
 | `app.css`        | admin shell: rail, topbar, toolbar, panel, metrics            |
 | `navigation.css` | site nav, menu, theme toggle (dot indicator)                  |
@@ -142,14 +135,9 @@ the version never reaches npm, so consumers never resolve it. GitHub also
 serves the raw tag tarball ungated, but that is a legacy/fallback path, not
 the documented install. See [`docs/architecture.md`](docs/architecture.md).
 
-**Before the first real publish** — one npm-account step remains:
-
-- Create the `@ponchia` npm scope and add an `NPM_TOKEN` repo secret
-  (an npm automation token with publish rights to the scope).
-
-Done already: MIT `LICENSE`, `version` `0.2.0`, `publishConfig`, the
-gated publish workflow. After publishing, switch the consumer repos'
-dependency specifier to `@ponchia/ui`.
+Published: `@ponchia/ui` is live on npm (latest `0.2.1`), released by CI
+with provenance. The `@ponchia` scope and the `NPM_TOKEN` repo secret are
+in place, so a pushed `vX.Y.Z` tag is all a release needs.
 
 ## Consumers
 
