@@ -30,6 +30,27 @@ Or the core bundle if the app manages its own responsive layer:
 @import '@ponchia/ui/css/core.css';
 ```
 
+**Prebuilt single file (recommended for apps without a CSS bundler).**
+`@ponchia/ui/css` is a 17-deep `@import` graph — fine through a bundler,
+a load waterfall over plain HTTP. The package also ships flattened,
+minified bundles with no `@import` chain:
+
+```css
+@import '@ponchia/ui';               /* → dist/bronto.css, full   */
+@import '@ponchia/ui/dist/bronto-core.css';   /* core, no responsive */
+```
+
+~62 kB raw / ~11 kB gzip, one request, same `@layer bronto`. Source CSS,
+tokens/classes/behaviors entrypoints are unchanged — use whichever fits.
+
+### Browser support
+
+Evergreen only — the framework relies on cascade layers (`@layer`),
+`:has()`, `color-mix()`, CSS logical properties and native `<dialog>`.
+Floor: **Chrome/Edge 111+, Safari 16.4+, Firefox 121+** (early 2023
+onward). No build-time fallback is shipped; pin an older tag if you must
+support below this.
+
 The Doto `@font-face` ships in `css/fonts.css` (bundled by both `css` and
 `css/core.css`) with URLs relative to the package, so it resolves through a
 bundler or static serving with no `/fonts` path assumption. To self-host the
