@@ -32,8 +32,11 @@ function typeOf(name, v) {
   if (/^duration/.test(name)) return 'duration';
   if (name === 'mono' || name === 'sans' || name === 'display' || name === 'dot-font')
     return 'fontFamily';
-  if (isHex(v) || isRgb(v) || /color|accent|bg|panel|line|text|surface|border|focus|field|shadow/.test(name))
-    return v.startsWith('0 0 0') ? 'shadow' : 'color';
+  // Classify shadows by name first — `--shadow: none` must not fall
+  // through to `color` just because the name matches the colour regex.
+  if (/shadow/.test(name)) return 'shadow';
+  if (isHex(v) || isRgb(v) || /color|accent|bg|panel|line|text|surface|border|focus|field/.test(name))
+    return 'color';
   if (/(rem|px|em)$/.test(v) || name.startsWith('radius') || name.startsWith('space') || name.startsWith('text') || name.startsWith('tracking') || name.startsWith('dot'))
     return 'dimension';
   if (/^[0-9.]+$/.test(v)) return 'number';

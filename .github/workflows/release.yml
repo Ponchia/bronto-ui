@@ -92,7 +92,10 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   release-notes:
-    needs: [validate, visual]
+    # Gate on a successful publish — never announce a GitHub Release for
+    # a version that failed to reach npm (no split-brain). publish-npm
+    # itself needs [validate, visual], so the gate is transitive.
+    needs: publish-npm
     runs-on: ubuntu-latest
     permissions:
       contents: write

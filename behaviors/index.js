@@ -128,7 +128,13 @@ export function initTabs({ root } = {}) {
   if (!hasDom()) return noop;
   const host = root || document;
   const cleanups = [];
-  for (const group of host.querySelectorAll('[data-bronto-tabs]')) {
+  let uid = 0;
+  // querySelectorAll only matches descendants, so a `root` that *is* a
+  // tab group would be skipped — include it explicitly.
+  const groups = [];
+  if (host !== document && host.matches?.('[data-bronto-tabs]')) groups.push(host);
+  groups.push(...host.querySelectorAll('[data-bronto-tabs]'));
+  for (const group of groups) {
     // Own group only — a tab/panel inside a nested [data-bronto-tabs]
     // belongs to that inner group, not this one.
     const owned = (el) => el.closest('[data-bronto-tabs]') === group;
@@ -137,6 +143,18 @@ export function initTabs({ root } = {}) {
     if (!tabs.length) continue;
     const list = group.querySelector('.ui-tabs__list');
     if (list) list.setAttribute('role', 'tablist');
+
+    // APG: bind each tab to its panel (aria-controls) and back
+    // (aria-labelledby), minting stable ids only where absent.
+    for (const t of tabs) {
+      const p = panels.find((x) => x.dataset.panel === t.dataset.tab);
+      if (!p) continue;
+      const n = ++uid;
+      if (!t.id) t.id = `bronto-tab-${n}`;
+      if (!p.id) p.id = `bronto-tabpanel-${n}`;
+      t.setAttribute('aria-controls', p.id);
+      p.setAttribute('aria-labelledby', t.id);
+    }
 
     const select = (tab) => {
       for (const t of tabs) {
@@ -247,7 +265,8 @@ export function toast(message, { tone, title, duration = 4000 } = {}) {
   }
   const el = document.createElement('div');
   el.className = tone ? `ui-toast ui-toast--${tone}` : 'ui-toast';
-  el.setAttribute('role', 'status');
+  // No per-item role: the stack is already aria-live=polite; a nested
+  // status live region risks double announcement in some SRs.
   if (title) {
     const t = document.createElement('p');
     t.className = 'ui-toast__title';

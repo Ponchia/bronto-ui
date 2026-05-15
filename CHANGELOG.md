@@ -63,6 +63,32 @@ finding against the code first:
   by design); `scripts/serve.mjs` binds loopback + strict path
   containment; fixed an invalid selector in `docs/theming.md`.
 
+### Second review pass (PR #3)
+
+Independent Opus review said SHIP; the AgentMix `deep` mix flagged
+more — verified each, fixed the real ones:
+
+- **Release hygiene**: `package-lock.json` synced to `0.2.2`;
+  `release.yml` `release-notes` now `needs: publish-npm` (no GitHub
+  Release for a version that failed to publish — no split-brain).
+- **RTL**: `.ui-toast-stack` used physical `inset` → logical
+  `inset-block`/`inset-inline` so the stack mirrors in RTL.
+- **`initTabs`**: a `root` that *is* the `[data-bronto-tabs]` element is
+  now initialised (querySelectorAll only sees descendants); tabs are
+  cross-linked to panels via `aria-controls`/`aria-labelledby`
+  (APG-complete), ids minted only where absent.
+- **Toast**: dropped the per-item `role="status"` nested inside the
+  `aria-live` stack (double-announcement risk).
+- **DTCG**: `--shadow: none` was typed `color` (name matched the colour
+  regex, value failed the shadow test) — shadows are now classified by
+  name first → `$type: "shadow"`.
+- **Tests**: new `ui.*` recipe-output coverage + a `.d.ts`-declaration
+  assertion; `initTabs` root-self/APG test; `tokens.dtcg.json` shape
+  test (shadow typing + the null-+-extension invariant); `serve.mjs`
+  `safePath` traversal unit test. The RTL e2e now waits for the
+  mirrored end-state instead of racing a fixed sleep (the CSS was
+  correct; the old test read mid-transition).
+
 ### Discovered follow-ups
 
 Closed the remaining items surfaced across the review/verification:

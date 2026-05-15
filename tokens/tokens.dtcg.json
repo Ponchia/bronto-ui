@@ -391,7 +391,7 @@
       },
       "shadow": {
         "DEFAULT": {
-          "$type": "color",
+          "$type": "shadow",
           "$value": "none"
         },
         "raised": {
@@ -559,7 +559,7 @@
       },
       "shadow": {
         "DEFAULT": {
-          "$type": "color",
+          "$type": "shadow",
           "$value": "none"
         },
         "raised": {
