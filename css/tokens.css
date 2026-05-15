@@ -69,7 +69,7 @@
 
   --bg: #f4f4f2;
   --bg-elevated: #fbfbfa;
-  --bg-accent: rgba(215, 25, 33, 0.06);
+  --bg-accent: color-mix(in srgb, var(--accent) 6%, transparent);
   --panel: #ffffff;
   --panel-strong: #ffffff;
   --panel-soft: #ececea;
@@ -79,8 +79,8 @@
   --text-soft: #353533;
   --text-dim: #686863;
   --accent: #d71921;
-  --accent-strong: #b3141b;
-  --accent-soft: rgba(215, 25, 33, 0.1);
+  --accent-strong: color-mix(in srgb, var(--accent) 83%, #000);
+  --accent-soft: color-mix(in srgb, var(--accent) 10%, transparent);
   --success: #2f7d4f;
   --success-soft: rgba(47, 125, 79, 0.12);
   --warning: #806414;
@@ -93,8 +93,8 @@
   --button-text: #ffffff;
   --field-dot: rgba(10, 10, 10, 0.16);
   --field-dot-hot: rgba(10, 10, 10, 0.4);
-  --field-dot-accent: rgba(215, 25, 33, 0.78);
-  --focus-ring: rgba(215, 25, 33, 0.5);
+  --field-dot-accent: color-mix(in srgb, var(--accent) 78%, transparent);
+  --focus-ring: color-mix(in srgb, var(--accent) 50%, transparent);
   --shadow: none;
   --shadow-raised: 0 0 0 1px var(--line-strong);
 }
@@ -115,7 +115,7 @@
 
     --bg: #000000;
     --bg-elevated: #0a0a0a;
-    --bg-accent: rgba(255, 59, 65, 0.08);
+    --bg-accent: color-mix(in srgb, var(--accent) 8%, transparent);
     --panel: #0c0c0c;
     --panel-strong: #141414;
     --panel-soft: #1a1a1a;
@@ -125,8 +125,8 @@
     --text-soft: #c4c4c4;
     --text-dim: #858585;
     --accent: #ff3b41;
-    --accent-strong: #ff5b60;
-    --accent-soft: rgba(255, 59, 65, 0.14);
+    --accent-strong: color-mix(in srgb, var(--accent) 84%, #fff);
+    --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
     --success: #4ec27e;
     --success-soft: rgba(78, 194, 126, 0.14);
     --warning: #d8bd72;
@@ -139,8 +139,8 @@
     --button-text: #000000;
     --field-dot: rgba(242, 242, 242, 0.14);
     --field-dot-hot: rgba(242, 242, 242, 0.36);
-    --field-dot-accent: rgba(255, 59, 65, 0.82);
-    --focus-ring: rgba(255, 59, 65, 0.55);
+    --field-dot-accent: color-mix(in srgb, var(--accent) 82%, transparent);
+    --focus-ring: color-mix(in srgb, var(--accent) 55%, transparent);
     --shadow: none;
     --shadow-raised: 0 0 0 1px var(--line-strong);
   }
@@ -151,7 +151,7 @@
 
   --bg: #000000;
   --bg-elevated: #0a0a0a;
-  --bg-accent: rgba(255, 59, 65, 0.08);
+  --bg-accent: color-mix(in srgb, var(--accent) 8%, transparent);
   --panel: #0c0c0c;
   --panel-strong: #141414;
   --panel-soft: #1a1a1a;
@@ -161,8 +161,8 @@
   --text-soft: #c4c4c4;
   --text-dim: #858585;
   --accent: #ff3b41;
-  --accent-strong: #ff5b60;
-  --accent-soft: rgba(255, 59, 65, 0.14);
+  --accent-strong: color-mix(in srgb, var(--accent) 84%, #fff);
+  --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
   --success: #4ec27e;
   --success-soft: rgba(78, 194, 126, 0.14);
   --warning: #d8bd72;
@@ -175,8 +175,65 @@
   --button-text: #000000;
   --field-dot: rgba(242, 242, 242, 0.14);
   --field-dot-hot: rgba(242, 242, 242, 0.36);
-  --field-dot-accent: rgba(255, 59, 65, 0.82);
-  --focus-ring: rgba(255, 59, 65, 0.55);
+  --field-dot-accent: color-mix(in srgb, var(--accent) 82%, transparent);
+  --focus-ring: color-mix(in srgb, var(--accent) 55%, transparent);
   --shadow: none;
   --shadow-raised: 0 0 0 1px var(--line-strong);
+}
+
+/* --------------------------------------------------------------------------
+   Theming contract — the public override surface.
+
+   Re-brand a whole project (or a subtree) by setting ONE knob; the rest
+   of the accent family derives from it via color-mix:
+
+     :root { --accent: #2f6df6; }          // brand it blue, everywhere
+     .promo { --accent: #16a34a; }          // or just a subtree
+
+   --accent-strong/-soft, --bg-accent, --field-dot-accent and --focus-ring
+   all follow. The other documented knobs: the --space-* scale (or the
+   [data-density] presets below), --radius-*, and the font vars
+   (--display / --mono / --sans). docs/theming.md is the full contract.
+
+   Density and contrast are CSS-only presets (not part of the JS token
+   model): opt in with [data-density] / [data-contrast] on any element.
+   -------------------------------------------------------------------------- */
+
+[data-density='compact'] {
+  --space-2xs: 0.2rem;
+  --space-xs: 0.4rem;
+  --space-sm: 0.6rem;
+  --space-md: 0.8rem;
+  --space-lg: 1.05rem;
+  --space-xl: 1.35rem;
+  --space-2xl: 1.9rem;
+}
+
+[data-density='comfortable'] {
+  --space-2xs: 0.3rem;
+  --space-xs: 0.6rem;
+  --space-sm: 0.95rem;
+  --space-md: 1.25rem;
+  --space-lg: 1.7rem;
+  --space-xl: 2.2rem;
+  --space-2xl: 3.1rem;
+}
+
+/* High contrast — manual opt-in and the OS `prefers-contrast` signal.
+   Both collapse the soft greys toward the strong end; theme-agnostic
+   because they reference the per-theme *-strong / -soft tokens. */
+[data-contrast='high'] {
+  --line: var(--line-strong);
+  --text-dim: var(--text-soft);
+  --focus-ring: var(--accent);
+  --shadow-raised: 0 0 0 1px var(--text);
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --line: var(--line-strong);
+    --text-dim: var(--text-soft);
+    --focus-ring: var(--accent);
+    --shadow-raised: 0 0 0 1px var(--text);
+  }
 }
