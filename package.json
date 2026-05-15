@@ -30,15 +30,17 @@
     "lint": "stylelint \"css/**/*.css\"",
     "lint:fix": "stylelint \"css/**/*.css\" --fix",
     "tokens:build": "node scripts/gen-tokens-json.mjs",
+    "dtcg:build": "node scripts/gen-dtcg.mjs",
     "dist:build": "node scripts/build-dist.mjs",
     "check:exports": "node scripts/check-exports.mjs",
     "check:tokens": "node scripts/check-tokens.mjs",
     "check:classes": "node scripts/check-classes.mjs",
+    "check:dtcg": "node scripts/check-dtcg.mjs",
     "check:dist": "node scripts/check-dist.mjs",
     "check:pack": "node scripts/check-pack.mjs",
-    "check": "npm run lint && npm run check:exports && npm run check:tokens && npm run check:classes && npm run check:dist && npm run check:pack",
+    "check": "npm run lint && npm run check:exports && npm run check:tokens && npm run check:classes && npm run check:dtcg && npm run check:dist && npm run check:pack",
     "test": "node --test \"test/*.test.mjs\"",
-    "prepack": "npm run tokens:build && npm run dist:build"
+    "prepack": "npm run tokens:build && npm run dtcg:build && npm run dist:build"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
@@ -78,6 +80,7 @@
       "default": "./tokens/index.js"
     },
     "./tokens.json": "./tokens/index.json",
+    "./tokens.dtcg.json": "./tokens/tokens.dtcg.json",
     "./classes": {
       "types": "./classes/index.d.ts",
       "default": "./classes/index.js"

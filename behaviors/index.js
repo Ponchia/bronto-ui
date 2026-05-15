@@ -152,8 +152,10 @@ export function initTabs({ root } = {}) {
       }
     };
     const onClick = (e) => {
+      // `tabs` is filtered to this group, so membership (not mere DOM
+      // containment) is what isolates nested [data-bronto-tabs] groups.
       const tab = e.target.closest('.ui-tab');
-      if (tab && group.contains(tab)) {
+      if (tab && tabs.includes(tab)) {
         select(tab);
         tab.focus();
       }
