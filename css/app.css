@@ -1,0 +1,309 @@
+/* ==========================================================================
+   app — admin shell (sidebar + topbar + panels + metrics)
+   Adopted by a SvelteKit admin and future operator UIs.
+   ========================================================================== */
+
+.app-shell {
+  display: grid;
+  grid-template-columns: var(--app-rail, 14rem) minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.app-shell--full {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* --- Sidebar rail --- */
+
+.app-rail {
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.app-rail__brand {
+  align-items: center;
+  color: var(--text);
+  display: flex;
+  font-family: var(--display);
+  font-size: 1.05rem;
+  gap: 0.5rem;
+  letter-spacing: var(--tracking-wide);
+  padding: 0.35rem 0.5rem;
+  text-transform: uppercase;
+}
+
+.app-rail__brand::before {
+  background: var(--accent);
+  border-radius: 50%;
+  content: '';
+  height: 0.5rem;
+  width: 0.5rem;
+}
+
+.app-nav {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.app-nav__section {
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  margin: var(--space-sm) 0 0.3rem;
+  padding: 0 0.5rem;
+  text-transform: uppercase;
+}
+
+.app-nav a {
+  align-items: center;
+  border-left: 2px solid transparent;
+  color: var(--text-soft);
+  display: flex;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  gap: 0.55rem;
+  padding: 0.5rem 0.6rem;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.app-nav a::before {
+  background: currentColor;
+  border-radius: 50%;
+  content: '';
+  height: 0.34rem;
+  opacity: 0.45;
+  width: 0.34rem;
+}
+
+.app-nav a:hover {
+  background: var(--bg-accent);
+  color: var(--text);
+}
+
+.app-nav a.is-active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  color: var(--accent);
+}
+
+.app-nav a.is-active::before {
+  opacity: 1;
+}
+
+.app-rail__foot {
+  border-top: 1px solid var(--line);
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  margin-top: auto;
+  padding-top: var(--space-sm);
+}
+
+/* --- Main column --- */
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.app-topbar {
+  align-items: center;
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: var(--space-md);
+  justify-content: space-between;
+  padding: 0.75rem var(--space-lg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.app-topbar__title {
+  color: var(--text);
+  font-family: var(--display);
+  font-size: 1.1rem;
+  letter-spacing: var(--tracking-wide);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.app-content {
+  display: grid;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+}
+
+/* --- Toolbar --- */
+
+.app-toolbar {
+  align-items: center;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  justify-content: space-between;
+  padding: 0.7rem 0.85rem;
+}
+
+.app-toolbar__group {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* --- Panel --- */
+
+.app-panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: 0.85rem;
+  padding: var(--space-md);
+}
+
+.app-panel__head {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.7rem;
+  justify-content: space-between;
+}
+
+.app-panel__title {
+  color: var(--text);
+  font-family: var(--display);
+  font-size: 0.95rem;
+  letter-spacing: var(--tracking-wide);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.app-panel__head p,
+.app-empty-state p {
+  color: var(--text-dim);
+  margin: 0.3rem 0 0;
+}
+
+/* --- Metric tiles --- */
+
+.app-metrics {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+
+.app-metric {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: 0.4rem;
+  padding: var(--space-md);
+}
+
+.app-metric__label {
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.app-metric__value {
+  color: var(--text);
+  font-family: var(--display);
+  font-size: 1.9rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+.app-metric__delta {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+}
+
+.app-metric__delta.is-pos {
+  color: var(--success);
+}
+
+.app-metric__delta.is-neg {
+  color: var(--danger);
+}
+
+/* --- Empty state --- */
+
+.app-empty-state {
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-md);
+  color: var(--text-dim);
+  padding: var(--space-lg);
+  text-align: center;
+}
+
+/* --- Mobile rail collapse --- */
+
+.app-rail__toggle {
+  display: none;
+}
+
+@media (max-width: 880px) {
+  .app-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app-rail {
+    flex-direction: row;
+    height: auto;
+    overflow-x: auto;
+    position: sticky;
+    top: 0;
+    z-index: 11;
+  }
+
+  .app-rail__foot {
+    display: none;
+  }
+
+  .app-nav {
+    grid-auto-flow: column;
+    gap: 0.15rem;
+  }
+
+  .app-nav__section {
+    display: none;
+  }
+
+  .app-nav a {
+    border-left: 0;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+
+  .app-nav a.is-active {
+    border-left: 0;
+    border-bottom-color: var(--accent);
+  }
+
+  .app-content {
+    padding: var(--space-md);
+  }
+}
