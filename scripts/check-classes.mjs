@@ -9,7 +9,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { cls } from '../classes/index.js';
+import { cls, ui } from '../classes/index.js';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const cssDir = resolve(root, 'css');
@@ -29,6 +29,17 @@ for (const name of inManifest) {
 }
 for (const name of inCss) {
   if (!inManifest.has(name)) errors.push(`css defines .${name} but it is missing from cls`);
+}
+
+// Every runtime `ui.*` recipe must be declared on the `Ui` interface in
+// classes/index.d.ts — so the published TypeScript surface can't silently
+// drift behind the JS (a real consumer-facing break otherwise).
+const dts = readFileSync(resolve(root, 'classes/index.d.ts'), 'utf8');
+const declared = new Set([...dts.matchAll(/^\s*(\w+)\s*\(opts\?:/gm)].map((m) => m[1]));
+for (const name of Object.keys(ui)) {
+  if (!declared.has(name)) {
+    errors.push(`ui.${name}() exists in classes/index.js but is not declared on Ui in classes/index.d.ts`);
+  }
 }
 
 if (errors.length) {

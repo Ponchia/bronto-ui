@@ -315,6 +315,10 @@
     transform: translateX(0.14rem) rotate(45deg);
   }
 
+  [dir='rtl'] .ui-link--arrow:hover::after {
+    transform: translateX(-0.14rem) rotate(45deg);
+  }
+
   .ui-chip--accent:hover {
     background: var(--accent-soft);
   }

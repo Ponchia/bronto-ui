@@ -85,6 +85,11 @@
   transform: translateX(0.6rem);
 }
 
+[dir='rtl'][data-theme='dark'] .theme-toggle__thumb,
+[dir='rtl'] [data-theme='dark'] .theme-toggle__thumb {
+  transform: translateX(-0.6rem);
+}
+
 .site-nav {
   display: inline-flex;
   gap: 0.15rem;

@@ -217,7 +217,7 @@
 .ui-progress__bar {
   background: var(--accent);
   block-size: 100%;
-  transition: width var(--duration-base) var(--ease-out);
+  transition: inline-size var(--duration-base) var(--ease-out);
   inline-size: calc(clamp(0, var(--value, 0), 100) * 1%);
 }
 

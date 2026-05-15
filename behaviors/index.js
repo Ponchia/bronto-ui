@@ -129,8 +129,11 @@ export function initTabs({ root } = {}) {
   const host = root || document;
   const cleanups = [];
   for (const group of host.querySelectorAll('[data-bronto-tabs]')) {
-    const tabs = [...group.querySelectorAll('.ui-tab')];
-    const panels = [...group.querySelectorAll('.ui-tabs__panel')];
+    // Own group only — a tab/panel inside a nested [data-bronto-tabs]
+    // belongs to that inner group, not this one.
+    const owned = (el) => el.closest('[data-bronto-tabs]') === group;
+    const tabs = [...group.querySelectorAll('.ui-tab')].filter(owned);
+    const panels = [...group.querySelectorAll('.ui-tabs__panel')].filter(owned);
     if (!tabs.length) continue;
     const list = group.querySelector('.ui-tabs__list');
     if (list) list.setAttribute('role', 'tablist');
@@ -185,6 +188,12 @@ export function initTabs({ root } = {}) {
  * `showModal()` on `#dialogId`; click `[data-bronto-close]` closes the
  * nearest enclosing <dialog>. Clicking the backdrop of a dialog that has
  * `[data-bronto-dialog-light]` closes it too. SSR-safe; returns cleanup.
+ *
+ * `root` scopes which triggers are delegated (default `document`); the
+ * dialog itself is still resolved by id document-wide, because a modal
+ * <dialog> is promoted to the top layer and is inherently document-global
+ * (same model as `initThemeToggle`, where `root` scopes controls but the
+ * theme applies to <html>).
  */
 export function initDialog({ root } = {}) {
   if (!hasDom()) return noop;
