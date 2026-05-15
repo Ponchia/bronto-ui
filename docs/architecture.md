@@ -1,6 +1,6 @@
 # Architecture & Decisions
 
-Status: accepted · 2026-05-15 · applies from v0.1.0
+Status: accepted · 2026-05-15 · applies from v0.2.0
 
 ## Context
 
@@ -107,20 +107,26 @@ The npm scope `@bronto` is not ownable, so the package name is
 This split is deliberate; the README states it so the apparent mismatch is
 explained, not surprising.
 
-### Pre-publish checklist (blockers before the first real `npm publish`)
+### Pre-publish checklist
 
-1. **LICENSE** — none exists. `package.json` declares
-   `"license": "SEE LICENSE IN LICENSE"`; a `LICENSE` file must be added.
-   The license choice is the owner's and is intentionally not made here.
-2. **`NPM_TOKEN`** repo secret — an npm automation token for the
-   `@ponchia` scope (scope must be created on npm first).
-3. **Version** — `package.json` is still `0.1.0`, which predates the
-   `tokens`/`classes`/`behaviors` entrypoints. Bump to `0.2.0` (and
-   retitle the CHANGELOG `Unreleased` section) before tagging, so the
-   published version honestly reflects its contents.
-4. **Consumers** — `an Astro site` / `a SvelteKit admin` must switch their
-   dependency specifier from the tarball URL to `@ponchia/ui` (separate
-   repos; not changed here per workspace VCS rules).
+Done in-repo:
+
+- **LICENSE** — MIT, `Copyright (c) 2026 Ponchia`, `"license": "MIT"`.
+  Chosen as a permissive, reversible default for a public personal UI
+  lib; change the SPDX id + `LICENSE` file (and holder name) before
+  first publish if a different license is wanted.
+- **Version** — bumped to `0.2.0`; CHANGELOG section retitled. 0.1.0
+  was CSS-only and predates the `tokens`/`classes`/`behaviors`
+  entrypoints, so the first npm release is `0.2.0`.
+
+Remaining (npm-account side, cannot be done in-repo):
+
+- **`@ponchia` scope + `NPM_TOKEN`** — create the scope on npm, add an
+  automation token with publish rights as the `NPM_TOKEN` repo secret.
+- **Consumers** — `an Astro site` / `a SvelteKit admin` switch their
+  dependency specifier from the tarball URL to `@ponchia/ui` after the
+  first publish (separate repos; not changed here per workspace VCS
+  rules).
 
 `publishConfig` is set (`access: public`, `provenance: true`) and
 `private` is removed so the gated workflow can publish; local accidental

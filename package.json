@@ -1,9 +1,9 @@
 {
   "name": "@ponchia/ui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Shared Bronto UI framework — Nothing-inspired monochrome CSS theme, dot-matrix motifs, admin shell.",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Ponchia/bronto-ui.git"
@@ -31,10 +31,13 @@
     "check:exports": "node scripts/check-exports.mjs",
     "check:tokens": "node scripts/check-tokens.mjs",
     "check:classes": "node scripts/check-classes.mjs",
-    "check": "npm run lint && npm run check:exports && npm run check:tokens && npm run check:classes",
+    "check:pack": "node scripts/check-pack.mjs",
+    "check": "npm run lint && npm run check:exports && npm run check:tokens && npm run check:classes && npm run check:pack",
+    "test": "node --test \"test/*.test.mjs\"",
     "prepack": "npm run tokens:build"
   },
   "devDependencies": {
+    "jsdom": "^25.0.1",
     "stylelint": "^16.10.0",
     "stylelint-config-standard": "^36.0.1"
   },

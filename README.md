@@ -18,9 +18,10 @@ npm i @ponchia/ui
 > deliberately distinct from the package name. See
 > [`docs/architecture.md`](docs/architecture.md).
 
-> Not published yet — the npm scope, a `LICENSE`, and a version bump are
-> pending (see [Release](#release)). Until the first publish, depend on a
-> `file:` link to a checkout or a pinned git tag:
+> Not published yet — the only remaining blocker is npm-account side
+> (create the `@ponchia` scope + `NPM_TOKEN`; see [Release](#release)).
+> Until the first publish, depend on a `file:` link to a checkout or a
+> pinned git tag:
 >
 > ```json
 > { "dependencies": { "@ponchia/ui": "file:../bronto-ui" } }
@@ -111,15 +112,17 @@ python3 -m http.server -d . 8080   # then open http://localhost:8080/demo/
 ## Develop
 
 ```bash
-npm install        # stylelint is the only toolchain
-npm run check      # lint + 3 drift checks (exports, tokens, classes) — what CI runs
+npm install        # stylelint + jsdom (test only)
+npm run check      # lint + 4 integrity checks (exports, tokens, classes, pack)
+npm test           # node:test — pure modules + jsdom behavior tests
 npm run lint:fix   # auto-fix the safe stylistic rules
 npm run tokens:build  # regenerate tokens/index.json from tokens/index.js
 ```
 
 `npm run check` enforces that the data mirrors cannot drift from the CSS:
-exports/import-graph integrity, `tokens.css` ⇄ `tokens/index.{js,json}`, and
-the `classes` registry ⇄ the `.ui-*` selectors. CI
+exports/import-graph integrity, `tokens.css` ⇄ `tokens/index.{js,json}`, the
+`classes` registry ⇄ the `.ui-*` selectors, and that the published tarball
+ships only the intended files. CI
 (`.github/workflows/ci.yml`) runs it on every branch push and PR. It never
 publishes — a push to `main` ships nothing.
 
@@ -139,13 +142,14 @@ the version never reaches npm, so consumers never resolve it. GitHub also
 serves the raw tag tarball ungated, but that is a legacy/fallback path, not
 the documented install. See [`docs/architecture.md`](docs/architecture.md).
 
-**Before the first real publish** (one-time blockers, by design):
+**Before the first real publish** — one npm-account step remains:
 
-- Add a `LICENSE` file — none exists; `package.json` says
-  `"SEE LICENSE IN LICENSE"`. The license choice is the owner's.
-- Create the `@ponchia` npm scope and add an `NPM_TOKEN` repo secret.
-- Bump `version` to `0.2.0` (0.1.0 predates the new entrypoints) and
-  retitle the CHANGELOG `Unreleased` section.
+- Create the `@ponchia` npm scope and add an `NPM_TOKEN` repo secret
+  (an npm automation token with publish rights to the scope).
+
+Done already: MIT `LICENSE`, `version` `0.2.0`, `publishConfig`, the
+gated publish workflow. After publishing, switch the consumer repos'
+dependency specifier to `@ponchia/ui`.
 
 ## Consumers
 

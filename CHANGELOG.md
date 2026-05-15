@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 — 2026-05-15
 
 Architecture: keep plain CSS as the universal substrate, add thin optional
 layers on top (see `docs/architecture.md`). No `css/*` selector/token values
