@@ -1,0 +1,71 @@
+# Publish the kitchen-sink demo to GitHub Pages so it's viewable online.
+# Pure static deploy — the demo loads the committed runtime surface
+# (css/fonts/dist/tokens/classes/behaviors) by relative path, so there
+# is no build step. Never publishes npm or touches release.yml.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'demo/**'
+      - 'css/**'
+      - 'dist/**'
+      - 'fonts/**'
+      - 'tokens/**'
+      - 'classes/**'
+      - 'behaviors/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+# Least privilege; deploy opts into exactly what Pages needs.
+permissions:
+  contents: read
+
+# Never cancel an in-flight deploy; serialise Pages updates.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write # configure-pages enablement
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assemble static site (demo + runtime surface)
+        run: |
+          mkdir -p _site
+          cp -r demo css dist fonts tokens classes behaviors _site/
+          cat > _site/index.html <<'HTML'
+          <!doctype html>
+          <meta charset="utf-8" />
+          <meta http-equiv="refresh" content="0; url=./demo/" />
+          <title>@ponchia/ui</title>
+          <a href="./demo/">@ponchia/ui — demo</a>
+          HTML
+
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
