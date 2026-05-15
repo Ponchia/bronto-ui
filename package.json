@@ -1,0 +1,30 @@
+{
+  "name": "@bronto/ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared Bronto UI framework — Nothing-inspired monochrome CSS theme, dot-matrix motifs, admin shell.",
+  "files": [
+    "css",
+    "fonts"
+  ],
+  "exports": {
+    "./css": "./css/index.css",
+    "./css/index.css": "./css/index.css",
+    "./css/core.css": "./css/core.css",
+    "./css/tokens.css": "./css/tokens.css",
+    "./css/base.css": "./css/base.css",
+    "./css/motion.css": "./css/motion.css",
+    "./css/dots.css": "./css/dots.css",
+    "./css/layout.css": "./css/layout.css",
+    "./css/navigation.css": "./css/navigation.css",
+    "./css/typography.css": "./css/typography.css",
+    "./css/primitives.css": "./css/primitives.css",
+    "./css/forms.css": "./css/forms.css",
+    "./css/table.css": "./css/table.css",
+    "./css/cards.css": "./css/cards.css",
+    "./css/app.css": "./css/app.css",
+    "./css/responsive.css": "./css/responsive.css",
+    "./fonts/*": "./fonts/*"
+  }
+}
