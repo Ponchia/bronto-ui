@@ -1,5 +1,30 @@
 # Changelog
 
+## Unreleased
+
+Architecture: keep plain CSS as the universal substrate, add thin optional
+layers on top (see `docs/architecture.md`). No `css/*` selector/token values
+changed — existing consumers are visually unaffected.
+
+- **Cascade**: the whole framework now ships inside `@layer bronto`, so
+  un-layered consumer CSS overrides it without specificity fights. Applied
+  only at the bundle entrypoints (`core.css`, `index.css`); source files
+  unchanged. _Behavioural change for consumers that override via specificity._
+- **Fonts**: `@font-face` moved from `tokens.css` to `css/fonts.css` with
+  package-relative URLs (`../fonts/*`) — no more absolute `/fonts`
+  assumption. Bundled into `core.css`/`index.css`; exported standalone.
+- **`@bronto/ui/tokens`**: design tokens as data (`index.js` canonical,
+  `index.json` generated, `themeColor()` helper, typed).
+- **`@bronto/ui/classes`**: typed class-name contract — `cls` registry,
+  `ui.*` recipe builders, `cx()`. Framework-agnostic, returns strings.
+- **`@bronto/ui/behaviors`**: vanilla, SSR-safe, dependency-free helpers —
+  `applyStoredTheme`, `initThemeToggle`, `dismissible`, `initDisclosure`.
+- **Drift control**: `npm run check` adds `check-tokens` and
+  `check-classes`; the demo now drives itself via the shipped modules.
+- **Packaging**: `exports` for the new entrypoints (with `types`),
+  `sideEffects` for tree-shaking, `files` widened. Still `private: true`;
+  distribution decision deferred (documented in `docs/architecture.md`).
+
 ## 0.1.0 — 2026-05-15
 
 First standalone release. Promoted out of `an Astro site/bronto-ui` into its
