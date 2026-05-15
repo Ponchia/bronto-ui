@@ -23,7 +23,8 @@
     "fonts",
     "tokens",
     "classes",
-    "behaviors"
+    "behaviors",
+    "shiki"
   ],
   "style": "./dist/bronto.css",
   "scripts": {
@@ -36,9 +37,10 @@
     "check:tokens": "node scripts/check-tokens.mjs",
     "check:classes": "node scripts/check-classes.mjs",
     "check:dtcg": "node scripts/check-dtcg.mjs",
+    "check:shiki": "node scripts/check-shiki.mjs",
     "check:dist": "node scripts/check-dist.mjs",
     "check:pack": "node scripts/check-pack.mjs",
-    "check": "npm run lint && npm run check:exports && npm run check:tokens && npm run check:classes && npm run check:dtcg && npm run check:dist && npm run check:pack",
+    "check": "npm run lint && npm run check:exports && npm run check:tokens && npm run check:classes && npm run check:dtcg && npm run check:shiki && npm run check:dist && npm run check:pack",
     "test": "node --test \"test/*.test.mjs\"",
     "prepack": "npm run tokens:build && npm run dtcg:build && npm run dist:build"
   },
@@ -64,6 +66,7 @@
     "./css/dots.css": "./css/dots.css",
     "./css/layout.css": "./css/layout.css",
     "./css/navigation.css": "./css/navigation.css",
+    "./css/site.css": "./css/site.css",
     "./css/typography.css": "./css/typography.css",
     "./css/content.css": "./css/content.css",
     "./css/primitives.css": "./css/primitives.css",
@@ -81,6 +84,7 @@
     },
     "./tokens.json": "./tokens/index.json",
     "./tokens.dtcg.json": "./tokens/tokens.dtcg.json",
+    "./shiki/nothing.json": "./shiki/nothing.json",
     "./classes": {
       "types": "./classes/index.d.ts",
       "default": "./classes/index.js"

@@ -117,8 +117,9 @@ modules, so it is also a live integration test.
 | `table.css`      | `ui-table` dense / comfortable                                |
 | `app.css`        | admin shell: rail, topbar, toolbar, panel, metrics            |
 | `navigation.css` | site nav, menu, theme toggle (dot indicator)                  |
+| `site.css`       | content-site shell: `ui-container`, `ui-siteheader`/`ui-sitenav` (aria-current), `ui-sitemenu`, `ui-sitefooter`, `ui-skiplink`, `ui-tags`, `ui-meta` |
 | `typography.css` | display headings, eyebrows, legacy `.button`                  |
-| `content.css`    | `.ui-prose` — Markdown/raw-HTML long-form, zero per-element classes |
+| `content.css`    | `.ui-prose` Markdown/raw-HTML long-form (zero classes) + `ui-quote` pull-quote |
 | `cards.css`      | semantic content cards (token-driven)                         |
 | `layout.css`     | site shell, hero, grids                                       |
 | `responsive.css` | breakpoint overrides                                          |
