@@ -24,6 +24,12 @@ existing token/selector values changed except documented WCAG fixes.
   Markdown-renderer HTML — headings, lists, quote, code, tables, media,
   figures — with **zero per-element classes**, keeping documents
   semantic and machine-readable.
+- **Prebuilt bundles**: `dist/bronto.css` + `dist/bronto-core.css` —
+  the `@import` graph flattened + conservatively minified into one
+  `@layer bronto` file (~62 kB / ~11 kB gzip), no load waterfall.
+  Exposed as `@ponchia/ui` (`.`) and `./dist/*`; `check:dist` keeps it
+  byte-fresh and in a size budget; built in `prepack`. README documents
+  the evergreen support floor (Chrome 111+/Safari 16.4+/Firefox 121+).
 
 ### Earlier in this cycle
 
