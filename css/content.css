@@ -287,3 +287,38 @@
 .ui-prose--compact > * + :is(h1, h2, h3, h4, h5, h6) {
   margin-block-start: var(--space-lg);
 }
+
+/* ==========================================================================
+   ui-quote — pull-quote with attribution. A long-form companion to
+   .ui-prose (works inside it or standalone). Emphasis via scale + a
+   short accent rule, not a tinted box. Use <figure>/<blockquote> +
+   <figcaption>; tag-agnostic.
+   ========================================================================== */
+
+.ui-quote {
+  color: var(--text);
+  display: grid;
+  font-family: var(--display);
+  font-size: var(--text-xl);
+  gap: var(--space-sm);
+  line-height: 1.2;
+  margin-block: var(--space-xl);
+  max-inline-size: 40ch;
+  text-wrap: balance;
+}
+
+.ui-quote::before {
+  background: var(--accent);
+  block-size: 2px;
+  content: '';
+  inline-size: 2.5rem;
+}
+
+.ui-quote__cite {
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  font-style: normal;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
