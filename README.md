@@ -148,18 +148,23 @@ exports/import-graph integrity, `tokens.css` ⇄ `tokens/index.{js,json}`, the
 `classes` registry ⇄ the `.ui-*` selectors, `dist/` ⇄ `css/` (fresh + in
 budget), and that the published tarball ships only the intended files.
 
-Visual + a11y regression is a separate suite (real browser, so not in the
+End-to-end regression is a separate suite (real browsers, so not in the
 zero-dep core check):
 
 ```bash
-npx playwright test   # demo screenshots (light/dark/RTL) + axe-core WCAG
+npx playwright test   # visual snapshots + axe a11y + cross-engine + modes
 ```
 
-It is pinned to a Playwright container so baselines are byte-stable; the
-committed baselines under `test/e2e/__screenshots__` were authored in that
-same image. CI (`.github/workflows/ci.yml`) runs both the `check` job and a
-containerised `visual` job on every branch push and PR. It never publishes —
-a push to `main` ships nothing.
+It covers: visual snapshots light/dark/RTL/modal (chromium); axe-core
+WCAG 2.1 A/AA **plus best-practice** in both themes; behavioural specs
+(`:has()`, `color-mix()`, native `<dialog>`, `:dir()`/logical) on
+**chromium + firefox + webkit**; forced-colors / reduced-motion / print
+mode assertions; and a no-console-error / no-404 / document-structure
+gate. Pinned to a Playwright container so baselines are byte-stable; the
+committed baselines under `test/e2e/__screenshots__` were authored in
+that same image. CI (`.github/workflows/ci.yml`) runs the `check` job and
+a containerised `e2e` job on every branch push and PR (and `release.yml`
+gates publish on it). It never publishes — a push to `main` ships nothing.
 
 ## Release
 

@@ -49,10 +49,11 @@ jobs:
             exit 1
           fi
 
-  # Same visual + a11y gate as CI, pinned to the baseline container.
-  # publish-npm needs this too — a release must not skip what every
-  # branch push runs.
-  visual:
+  # Same e2e gate as CI (visual snapshots + axe a11y both themes +
+  # cross-engine firefox/webkit + forced-colors/print modes), pinned to
+  # the baseline container. publish-npm needs this too — a release must
+  # not skip what every branch push runs.
+  e2e:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.60.0-jammy
@@ -71,7 +72,7 @@ jobs:
       - run: npx playwright test
 
   publish-npm:
-    needs: [validate, visual]
+    needs: [validate, e2e]
     runs-on: ubuntu-latest
     permissions:
       contents: read
