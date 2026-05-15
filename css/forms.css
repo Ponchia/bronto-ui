@@ -1,0 +1,194 @@
+/* ==========================================================================
+   forms — inputs and controls, monochrome with red focus
+   ========================================================================== */
+
+.ui-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.ui-label {
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.ui-input,
+.ui-select,
+.ui-textarea {
+  background: var(--bg-elevated);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  padding: 0.6rem 0.7rem;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+  width: 100%;
+}
+
+.ui-input::placeholder,
+.ui-textarea::placeholder {
+  color: var(--text-dim);
+}
+
+.ui-textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+
+.ui-select {
+  appearance: none;
+  background-image: radial-gradient(var(--text-dim) 1.5px, transparent 1.5px);
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 5px 5px;
+  padding-right: 1.8rem;
+}
+
+.ui-input:focus,
+.ui-select:focus,
+.ui-textarea:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.ui-input:focus-visible,
+.ui-select:focus-visible,
+.ui-textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.ui-input:disabled,
+.ui-select:disabled,
+.ui-textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.ui-input[aria-invalid='true'],
+.ui-select[aria-invalid='true'],
+.ui-textarea[aria-invalid='true'] {
+  border-color: var(--danger);
+}
+
+.ui-hint {
+  color: var(--text-dim);
+  font-size: var(--text-2xs);
+}
+
+.ui-hint--error {
+  color: var(--danger);
+}
+
+/* Search field with leading dot. */
+.ui-search {
+  align-items: center;
+  background: var(--bg-elevated);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 0.7rem;
+}
+
+.ui-search::before {
+  background: var(--text-dim);
+  border-radius: 50%;
+  content: '';
+  flex: 0 0 auto;
+  height: 0.42rem;
+  width: 0.42rem;
+}
+
+.ui-search:focus-within {
+  border-color: var(--accent);
+}
+
+.ui-search:focus-within::before {
+  background: var(--accent);
+}
+
+.ui-search input {
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  outline: none;
+  padding: 0.6rem 0;
+  width: 100%;
+}
+
+/* Toggle switch — square Nothing-style track. */
+.ui-switch {
+  align-items: center;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 0.6rem;
+}
+
+.ui-switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ui-switch__track {
+  background: var(--panel-soft);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  height: 1.05rem;
+  padding: 2px;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+  width: 1.95rem;
+}
+
+.ui-switch__thumb {
+  background: var(--text-dim);
+  border-radius: 50%;
+  height: 100%;
+  transition:
+    transform var(--duration-fast) var(--ease-spring),
+    background-color var(--duration-fast) var(--ease-standard);
+  width: 0.78rem;
+}
+
+.ui-switch input:checked + .ui-switch__track {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.ui-switch input:checked + .ui-switch__track .ui-switch__thumb {
+  background: var(--accent);
+  transform: translateX(0.9rem);
+}
+
+.ui-switch input:focus-visible + .ui-switch__track {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Checkbox / radio — square accent. */
+.ui-check {
+  align-items: center;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 0.5rem;
+  font-size: var(--text-sm);
+}
+
+.ui-check input {
+  accent-color: var(--accent);
+  height: 1rem;
+  width: 1rem;
+}
