@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="@ponchia/ui — a Nothing-inspired, CSS-first UI framework: monochrome surfaces, single red accent, dot-matrix display type. Live kitchen-sink demo." />
     <title>@ponchia/ui — kitchen sink</title>
-    <link rel="stylesheet" href="../css/index.css" />
+    <link rel="stylesheet" href="../dist/bronto.css" />
     <style>
       /* No local @font-face: Doto now ships in css/fonts.css (bundled by
          index.css) with URLs relative to the package, so it resolves here
@@ -44,7 +45,7 @@
   </head>
   <body>
     <div class="ui-dotfield" aria-hidden="true"></div>
-    <div class="wrap">
+    <main class="wrap">
       <header class="ui-cluster ui-cluster--between">
         <div>
           <p class="ui-eyebrow">@ponchia/ui</p>
@@ -79,7 +80,7 @@
       </div>
 
       <section>
-        <p class="ui-eyebrow ui-eyebrow--muted">Palette</p>
+        <h2 class="ui-eyebrow ui-eyebrow--muted">Palette</h2>
         <div class="swatches">
           <div class="sw"><i style="background: var(--bg)"></i><span>--bg</span></div>
           <div class="sw"><i style="background: var(--panel)"></i><span>--panel</span></div>
@@ -91,7 +92,7 @@
       </section>
 
       <section class="ui-stack">
-        <p class="ui-eyebrow ui-eyebrow--muted">Theming contract — one knob re-brands</p>
+        <h2 class="ui-eyebrow ui-eyebrow--muted">Theming contract — one knob re-brands</h2>
         <div class="ui-cluster">
           <button class="ui-button ui-button--subtle" type="button" data-accent="#d71921">
             Red
@@ -125,7 +126,7 @@
       </section>
 
       <section class="ui-stack">
-        <p class="ui-eyebrow ui-eyebrow--muted">Buttons</p>
+        <h2 class="ui-eyebrow ui-eyebrow--muted">Buttons</h2>
         <div class="ui-cluster">
           <button class="ui-button">Primary</button>
           <button class="ui-button ui-button--ghost">Ghost</button>
@@ -137,7 +138,7 @@
       </section>
 
       <section class="ui-stack">
-        <p class="ui-eyebrow ui-eyebrow--muted">Badges · Chips · Dots</p>
+        <h2 class="ui-eyebrow ui-eyebrow--muted">Badges · Chips · Dots</h2>
         <div class="ui-cluster">
           <span class="ui-badge">Default</span>
           <span class="ui-badge ui-badge--accent">Accent</span>
@@ -174,7 +175,7 @@
           <p>The signature texture as a background utility.</p>
         </article>
         <div class="ui-panel">
-          <p class="ui-eyebrow ui-eyebrow--muted">Key / value</p>
+          <h2 class="ui-eyebrow ui-eyebrow--muted">Key / value</h2>
           <dl class="ui-key-value">
             <div><dt>Runtime</dt><dd>k3s · cluster</dd></div>
             <div><dt>Status</dt><dd>Reconciled</dd></div>
@@ -183,7 +184,7 @@
       </section>
 
       <section class="ui-stack">
-        <p class="ui-eyebrow ui-eyebrow--muted">Form</p>
+        <h2 class="ui-eyebrow ui-eyebrow--muted">Form</h2>
         <div class="ui-grid" style="--grid-min: 14rem">
           <label class="ui-field"
             ><span class="ui-label">Pair</span
@@ -205,7 +206,7 @@
       </section>
 
       <section class="ui-stack">
-        <p class="ui-eyebrow ui-eyebrow--muted">Table · dense</p>
+        <h2 class="ui-eyebrow ui-eyebrow--muted">Table · dense</h2>
         <div class="ui-table-wrap">
           <table class="ui-table ui-table--dense">
             <thead>
@@ -238,7 +239,7 @@
       </section>
 
       <section class="ui-stack">
-        <p class="ui-eyebrow ui-eyebrow--muted">Metrics</p>
+        <h2 class="ui-eyebrow ui-eyebrow--muted">Metrics</h2>
         <div class="app-metrics">
           <div class="app-metric">
             <span class="app-metric__label">Equity</span>
@@ -258,7 +259,7 @@
       </section>
 
       <section class="ui-stack">
-        <p class="ui-eyebrow ui-eyebrow--muted">Motion</p>
+        <h2 class="ui-eyebrow ui-eyebrow--muted">Motion</h2>
         <div class="ui-grid ui-stagger--auto" style="--grid-min: 9rem">
           <div class="ui-card">Rise 1</div>
           <div class="ui-card">Rise 2</div>
@@ -270,7 +271,7 @@
       </section>
 
       <section class="ui-stack">
-        <p class="ui-eyebrow ui-eyebrow--muted">Loaders · Progress</p>
+        <h2 class="ui-eyebrow ui-eyebrow--muted">Loaders · Progress</h2>
         <div class="ui-cluster" style="gap: 1.5rem">
           <span class="ui-dotspinner ui-dotspinner--sm"
             ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
@@ -294,7 +295,7 @@
       </section>
 
       <section class="ui-stack">
-        <p class="ui-eyebrow ui-eyebrow--muted">Alerts</p>
+        <h2 class="ui-eyebrow ui-eyebrow--muted">Alerts</h2>
         <div class="ui-alert ui-alert--accent">
           <p class="ui-alert__title">Heads up</p>
           <p class="ui-alert__body">A rationed accent border carries the tone — no fill.</p>
@@ -308,7 +309,7 @@
       </section>
 
       <section class="ui-stack">
-        <p class="ui-eyebrow ui-eyebrow--muted">Tabs · Accordion · Segmented</p>
+        <h2 class="ui-eyebrow ui-eyebrow--muted">Tabs · Accordion · Segmented</h2>
         <div class="ui-tabs" data-bronto-tabs>
           <div class="ui-tabs__list" role="tablist">
             <button class="ui-tab is-active" role="tab" data-tab="a">Overview</button>
@@ -343,7 +344,7 @@
       </section>
 
       <section class="ui-stack">
-        <p class="ui-eyebrow ui-eyebrow--muted">Breadcrumb · Pagination · Avatar</p>
+        <h2 class="ui-eyebrow ui-eyebrow--muted">Breadcrumb · Pagination · Avatar</h2>
         <ol class="ui-breadcrumb">
           <li class="ui-breadcrumb__item"><a href="#">Home</a></li>
           <li class="ui-breadcrumb__item"><a href="#">Projects</a></li>
@@ -368,7 +369,7 @@
       </section>
 
       <section class="ui-stack">
-        <p class="ui-eyebrow ui-eyebrow--muted">Overlay · Tooltip · Toast</p>
+        <h2 class="ui-eyebrow ui-eyebrow--muted">Overlay · Tooltip · Toast</h2>
         <div class="ui-cluster">
           <button class="ui-button" type="button" data-bronto-open="demoModal">Open modal</button>
           <button class="ui-button ui-button--ghost" type="button" data-bronto-open="demoDrawer">
@@ -421,21 +422,21 @@
       </section>
 
       <section class="ui-stack">
-        <p class="ui-eyebrow ui-eyebrow--muted">
+        <h2 class="ui-eyebrow ui-eyebrow--muted">
           Content — Markdown output, zero classes
-        </p>
+        </h2>
         <!-- Everything below is exactly what a Markdown renderer emits:
              semantic HTML, no class attributes. The single .ui-prose
              wrapper does all the styling, so the document stays
              machine-readable. -->
         <article class="ui-prose">
-          <h1>Designing with restraint</h1>
+          <h2>Designing with restraint</h2>
           <p>
             This whole article is plain semantic HTML — the kind a Markdown
             renderer produces — with <strong>no class attributes</strong> on
             any element. One <code>ui-prose</code> wrapper styles it.
           </p>
-          <h2>Why it matters</h2>
+          <h3>Why it matters</h3>
           <p>
             Keeping the markup clean means it stays
             <a href="#">portable and machine-readable</a>: scrapers, RSS,
@@ -445,7 +446,7 @@
           <blockquote>
             <p>Color is rationed. Structure carries the meaning.</p>
           </blockquote>
-          <h3>A list</h3>
+          <h4>A list</h4>
           <ul>
             <li>Square markers in the accent colour</li>
             <li>
@@ -459,11 +460,11 @@
             <li>Ordered lists keep accent markers</li>
             <li>Comfortable rhythm between items</li>
           </ol>
-          <h3>Code</h3>
+          <h4>Code</h4>
           <p>Inline <code>const x = 1</code> and a block:</p>
           <pre><code>import ui from '@ponchia/ui/classes';
 ui.button({ variant: 'ghost' });</code></pre>
-          <h3>A table</h3>
+          <h4>A table</h4>
           <table>
             <thead>
               <tr>
@@ -492,7 +493,7 @@ ui.button({ variant: 'ghost' });</code></pre>
           </figure>
         </article>
       </section>
-    </div>
+    </main>
 
     <!-- The demo drives itself with the package's own shipped modules,
          so it doubles as a live integration test of behaviors + classes. -->
