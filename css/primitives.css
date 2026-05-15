@@ -76,7 +76,9 @@
 /* --- Eyebrow / section label — dot-matrix face --- */
 
 .ui-eyebrow {
-  color: var(--accent);
+  /* accent-strong, not accent: this is small bold text and must clear
+     WCAG AA 4.5:1 on the soft/tinted surfaces eyebrows sit on too. */
+  color: var(--accent-strong);
   font-family: var(--display);
   font-size: var(--text-xs);
   font-weight: 700;
@@ -224,28 +226,26 @@
   text-transform: uppercase;
 }
 
+/* Tone rides the border + tint; text stays the high-contrast neutral
+   (the soft tint can't carry 4.5:1 small-bold tone-on-tone — WCAG). */
 .ui-badge--accent {
   background: var(--accent-soft);
   border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
-  color: var(--accent);
 }
 
 .ui-badge--success {
   background: var(--success-soft);
   border-color: color-mix(in srgb, var(--success) 40%, var(--line));
-  color: var(--success);
 }
 
 .ui-badge--warning {
   background: var(--warning-soft);
   border-color: color-mix(in srgb, var(--warning) 40%, var(--line));
-  color: var(--warning);
 }
 
 .ui-badge--danger {
   background: var(--danger-soft);
   border-color: color-mix(in srgb, var(--danger) 40%, var(--line));
-  color: var(--danger);
 }
 
 /* --- Key/value list --- */

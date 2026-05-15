@@ -15,7 +15,10 @@ existing token/selector values changed except documented WCAG fixes.
 - **A11y**: `initTabs` behavior (WAI-ARIA Tabs keyboard pattern);
   `forced-colors` (Windows High Contrast) support in `base.css`; WCAG
   contrast fixes — light `--text-dim`/`--warning`, dark `--text-dim`
-  now ≥ 4.5:1.
+  now ≥ 4.5:1. Badge variants drop tone-on-tinted-tone text (failed AA
+  at small bold) — tone now rides the border + tint, text inherits the
+  high-contrast neutral. `.ui-eyebrow` uses `--accent-strong` so it
+  clears 4.5:1 on soft surfaces too. (All surfaced by the new axe gate.)
 - **Theming contract**: `--accent` is one knob — the whole accent family
   is `color-mix`-derived (ratios tuned to the prior hex, ≈ zero default
   drift). `data-density` (compact/comfortable) and `data-contrast=high`
@@ -24,6 +27,12 @@ existing token/selector values changed except documented WCAG fixes.
   Markdown-renderer HTML — headings, lists, quote, code, tables, media,
   figures — with **zero per-element classes**, keeping documents
   semantic and machine-readable.
+- **CI regression safety**: Playwright visual snapshots of the demo
+  (dark / light / RTL / modal) + `@axe-core/playwright` WCAG 2.1 A/AA
+  gates (both themes, modal, tab keyboard pattern), as a new `visual`
+  CI job pinned to the Playwright container the baselines were authored
+  in (byte-stable, no cross-OS font flake). Catches CSS/markup
+  regressions structure-checks can't.
 - **Prebuilt bundles**: `dist/bronto.css` + `dist/bronto-core.css` —
   the `@import` graph flattened + conservatively minified into one
   `@layer bronto` file (~62 kB / ~11 kB gzip), no load waterfall.

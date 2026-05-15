@@ -34,3 +34,31 @@ jobs:
 
       # node:test — pure modules + jsdom behavior tests.
       - run: npm test
+
+  # Visual + a11y regression. Pinned to the same Playwright container the
+  # committed baselines were authored in, so screenshots are byte-stable
+  # across machines (no cross-OS font flake).
+  visual:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.60.0-jammy
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+      - run: npx playwright test
+
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
