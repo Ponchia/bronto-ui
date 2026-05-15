@@ -209,6 +209,8 @@
 }
 
 .project-pager__link {
+  display: grid;
+  gap: 0.45rem;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
@@ -216,11 +218,6 @@
   min-height: 6rem;
   padding: 1rem 1.05rem;
   width: 100%;
-}
-
-.project-pager__link {
-  display: grid;
-  gap: 0.45rem;
 }
 
 .project-pager__link strong {
