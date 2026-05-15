@@ -19,6 +19,24 @@ function blocking(results) {
     }));
 }
 
+/**
+ * Settle to a stable, fully-composited frame before axe samples pixels.
+ * Without this, axe's effective-background computation races the paint
+ * of the decorative fixed `.ui-dotfield` (a masked full-bleed overlay),
+ * intermittently flipping borderline small-text contrast. fonts + a
+ * networkidle nav + a double rAF make every run see the same frame; the
+ * dotfield is `aria-hidden` ornamentation so it's excluded from the scan
+ * region too. color-contrast itself stays fully enforced on real content.
+ */
+async function settle(page) {
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+  });
+}
+const scan = (page) =>
+  new AxeBuilder({ page }).withTags(TAGS).exclude('.ui-dotfield');
+
 for (const theme of ['dark', 'light']) {
   test(`a11y — demo (${theme})`, async ({ page }) => {
     await page.addInitScript((t) => {
@@ -28,30 +46,28 @@ for (const theme of ['dark', 'light']) {
         /* ignore */
       }
     }, theme);
-    await page.goto('/demo/');
-    await page.evaluate(() => document.fonts.ready);
-    const results = await new AxeBuilder({ page }).withTags(TAGS).analyze();
+    await page.goto('/demo/', { waitUntil: 'networkidle' });
+    await settle(page);
+    const results = await scan(page).analyze();
     expect(blocking(results), JSON.stringify(blocking(results), null, 2)).toEqual([]);
   });
 }
 
 test('a11y — modal open (focus-trapped dialog)', async ({ page }) => {
-  await page.goto('/demo/');
+  await page.goto('/demo/', { waitUntil: 'networkidle' });
+  await settle(page);
   await page.getByRole('button', { name: 'Open modal' }).click();
   await expect(page.locator('dialog.ui-modal#demoModal')).toBeVisible();
   // color-contrast is disabled here only: the modal's `backdrop-filter:
   // blur` defeats axe's effective-background sampling (it reports a
   // blended colour, not the button's solid --accent). The real ratios
   // are >=5:1 (computed) and contrast is gated by the themed page tests.
-  const results = await new AxeBuilder({ page })
-    .withTags(TAGS)
-    .disableRules(['color-contrast'])
-    .analyze();
+  const results = await scan(page).disableRules(['color-contrast']).analyze();
   expect(blocking(results), JSON.stringify(blocking(results), null, 2)).toEqual([]);
 });
 
 test('a11y — tabs keyboard pattern is wired', async ({ page }) => {
-  await page.goto('/demo/');
+  await page.goto('/demo/', { waitUntil: 'networkidle' });
   const tabs = page.locator('[data-bronto-tabs]');
   const first = tabs.getByRole('tab').first();
   await expect(first).toHaveAttribute('aria-selected', 'true');
