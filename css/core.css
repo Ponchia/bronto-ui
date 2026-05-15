@@ -1,14 +1,22 @@
 /* @bronto/ui — core bundle (no breakpoint overrides).
-   Consumers that manage their own responsive layer import this. */
-@import url('./tokens.css');
-@import url('./base.css');
-@import url('./motion.css');
-@import url('./dots.css');
-@import url('./layout.css');
-@import url('./navigation.css');
-@import url('./typography.css');
-@import url('./primitives.css');
-@import url('./forms.css');
-@import url('./table.css');
-@import url('./cards.css');
-@import url('./app.css');
+   Consumers that manage their own responsive layer import this.
+
+   Everything ships inside the `bronto` cascade layer. Any un-layered CSS
+   in the consuming app therefore wins over the framework without a
+   specificity fight — override by writing normal rules, no !important.
+   Declared file order below is the within-layer cascade order. */
+@layer bronto;
+
+@import url('./tokens.css') layer(bronto);
+@import url('./fonts.css') layer(bronto);
+@import url('./base.css') layer(bronto);
+@import url('./motion.css') layer(bronto);
+@import url('./dots.css') layer(bronto);
+@import url('./layout.css') layer(bronto);
+@import url('./navigation.css') layer(bronto);
+@import url('./typography.css') layer(bronto);
+@import url('./primitives.css') layer(bronto);
+@import url('./forms.css') layer(bronto);
+@import url('./table.css') layer(bronto);
+@import url('./cards.css') layer(bronto);
+@import url('./app.css') layer(bronto);
