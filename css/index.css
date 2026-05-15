@@ -1,3 +1,3 @@
 /* @bronto/ui — full bundle: core + responsive breakpoint overrides. */
-@import './core.css';
-@import './responsive.css';
+@import url('./core.css');
+@import url('./responsive.css');
