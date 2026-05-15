@@ -54,6 +54,7 @@
     "./css/layout.css": "./css/layout.css",
     "./css/navigation.css": "./css/navigation.css",
     "./css/typography.css": "./css/typography.css",
+    "./css/content.css": "./css/content.css",
     "./css/primitives.css": "./css/primitives.css",
     "./css/forms.css": "./css/forms.css",
     "./css/feedback.css": "./css/feedback.css",

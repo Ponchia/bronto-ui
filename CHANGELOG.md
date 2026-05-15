@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+Component + mobile expansion, then a framework-grade hardening pass
+(RTL, a11y, theming contract, Markdown content layer). Additive — no
+existing token/selector values changed except documented WCAG fixes.
+
+### Framework hardening
+
+- **RTL / logical properties**: every `css/*` physical property is now
+  logical (`*-inline/-block-*`), enforced by `stylelint-use-logical`
+  (`csstools/use-logical: always`). Render-neutral in LTR; RTL mirrors
+  cleanly (verified, incl. the drawer).
+- **A11y**: `initTabs` behavior (WAI-ARIA Tabs keyboard pattern);
+  `forced-colors` (Windows High Contrast) support in `base.css`; WCAG
+  contrast fixes — light `--text-dim`/`--warning`, dark `--text-dim`
+  now ≥ 4.5:1.
+- **Theming contract**: `--accent` is one knob — the whole accent family
+  is `color-mix`-derived (ratios tuned to the prior hex, ≈ zero default
+  drift). `data-density` (compact/comfortable) and `data-contrast=high`
+  + `@media (prefers-contrast: more)` presets. See `docs/theming.md`.
+- **content.css**: `.ui-prose` (+ `--compact`) styles raw
+  Markdown-renderer HTML — headings, lists, quote, code, tables, media,
+  figures — with **zero per-element classes**, keeping documents
+  semantic and machine-readable.
+
+### Earlier in this cycle
+
 Component + mobile expansion. No token/selector changes to existing
 classes — purely additive; existing consumers are unaffected.
 

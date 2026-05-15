@@ -419,6 +419,79 @@
           <div class="ui-modal__body"><p>Slide-in drawer; bottom sheet on mobile.</p></div>
         </dialog>
       </section>
+
+      <section class="ui-stack">
+        <p class="ui-eyebrow ui-eyebrow--muted">
+          Content — Markdown output, zero classes
+        </p>
+        <!-- Everything below is exactly what a Markdown renderer emits:
+             semantic HTML, no class attributes. The single .ui-prose
+             wrapper does all the styling, so the document stays
+             machine-readable. -->
+        <article class="ui-prose">
+          <h1>Designing with restraint</h1>
+          <p>
+            This whole article is plain semantic HTML — the kind a Markdown
+            renderer produces — with <strong>no class attributes</strong> on
+            any element. One <code>ui-prose</code> wrapper styles it.
+          </p>
+          <h2>Why it matters</h2>
+          <p>
+            Keeping the markup clean means it stays
+            <a href="#">portable and machine-readable</a>: scrapers, RSS,
+            reader mode, and LLMs all parse it without fighting a
+            <mark>class-soup</mark> div tree.
+          </p>
+          <blockquote>
+            <p>Color is rationed. Structure carries the meaning.</p>
+          </blockquote>
+          <h3>A list</h3>
+          <ul>
+            <li>Square markers in the accent colour</li>
+            <li>
+              Nested items work too
+              <ul>
+                <li>Second level</li>
+              </ul>
+            </li>
+          </ul>
+          <ol>
+            <li>Ordered lists keep accent markers</li>
+            <li>Comfortable rhythm between items</li>
+          </ol>
+          <h3>Code</h3>
+          <p>Inline <code>const x = 1</code> and a block:</p>
+          <pre><code>import ui from '@ponchia/ui/classes';
+ui.button({ variant: 'ghost' });</code></pre>
+          <h3>A table</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Token</th>
+                <th>Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>--accent</td>
+                <td>the one brand knob</td>
+              </tr>
+              <tr>
+                <td>--space-md</td>
+                <td>rhythm unit</td>
+              </tr>
+            </tbody>
+          </table>
+          <hr />
+          <figure>
+            <div
+              class="ui-dotgrid"
+              style="block-size: 4rem; inline-size: 100%; border: 1px solid var(--line)"
+            ></div>
+            <figcaption>Fig 1 — a dot-grid surface</figcaption>
+          </figure>
+        </article>
+      </section>
     </div>
 
     <!-- The demo drives itself with the package's own shipped modules,
