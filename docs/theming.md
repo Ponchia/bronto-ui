@@ -21,7 +21,7 @@ So a full re-brand is one declaration — globally or on any subtree:
 ```css
 :root      { --accent: #2f6df6; }   /* brand the whole app blue   */
 .promo     { --accent: #16a34a; }   /* …or just this section green */
-[data-theme='dark'] :root { --accent: #6ea8ff; } /* per-theme tuning */
+:root[data-theme='dark'] { --accent: #6ea8ff; } /* per-theme tuning */
 ```
 
 Everything — buttons, focus rings, dot motifs, accent borders, soft

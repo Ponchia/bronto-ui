@@ -51,6 +51,11 @@
   padding-inline-end: 1.8rem;
 }
 
+/* background-position has no logical form — mirror the marker for RTL. */
+[dir='rtl'] .ui-select {
+  background-position: left 0.75rem center;
+}
+
 .ui-input:focus,
 .ui-select:focus,
 .ui-textarea:focus {
@@ -171,6 +176,10 @@
 .ui-switch input:checked + .ui-switch__track .ui-switch__thumb {
   background: var(--accent);
   transform: translateX(0.9rem);
+}
+
+[dir='rtl'] .ui-switch input:checked + .ui-switch__track .ui-switch__thumb {
+  transform: translateX(-0.9rem);
 }
 
 .ui-switch input:focus-visible + .ui-switch__track {

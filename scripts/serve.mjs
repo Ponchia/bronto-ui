@@ -8,7 +8,7 @@
  */
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { resolve, dirname, normalize, extname } from 'node:path';
+import { resolve, dirname, normalize, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -31,7 +31,9 @@ createServer(async (req, res) => {
     if (pathname.endsWith('/')) pathname += 'index.html';
     // Contain to root — reject path traversal.
     const abs = normalize(resolve(root, `.${pathname}`));
-    if (!abs.startsWith(root)) {
+    // Strict containment: exactly root, or a path under root + separator
+    // (so a sibling like `<root>-evil` can't slip past a prefix check).
+    if (abs !== root && !abs.startsWith(root + sep)) {
       res.writeHead(403).end('forbidden');
       return;
     }
@@ -41,4 +43,4 @@ createServer(async (req, res) => {
   } catch {
     res.writeHead(404).end('not found');
   }
-}).listen(port, () => console.log(`serving ${root} on http://127.0.0.1:${port}`));
+}).listen(port, '127.0.0.1', () => console.log(`serving ${root} on http://127.0.0.1:${port}`));

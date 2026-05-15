@@ -40,6 +40,29 @@ existing token/selector values changed except documented WCAG fixes.
   byte-fresh and in a size budget; built in `prepack`. README documents
   the evergreen support floor (Chrome 111+/Safari 16.4+/Firefox 121+).
 
+### Multi-agent review response
+
+Acted on a deep read-only review (AgentMix `deep`), verifying each
+finding against the code first:
+
+- **Public TS contract**: `classes/index.d.ts` was stale — added the 9
+  missing `ui.*` recipes (`alert`, `toast`, `progress`, `dotspinner`,
+  `dotbar`, `modal`, `tab`, `avatar`, `prose`) + option types, and a new
+  drift guard in `check-classes` so a recipe without a declaration now
+  fails `npm run check`.
+- **RTL completeness**: `[dir='rtl']` mirrors for the cases the lint
+  plugin can't convert — switch thumb, theme-toggle thumb, `<select>`
+  marker (`background-position`), arrow-link hover nudge.
+- **Bug**: `.ui-progress__bar` transitioned the (now non-existent)
+  physical `width`; animate `inline-size`.
+- **Release gating**: `release.yml` now runs the containerised
+  visual/a11y suite and `publish-npm`/`release-notes` depend on it — a
+  tagged release can't skip what every branch push runs.
+- **Hardening**: `initTabs` scopes to its own group (nested-safe);
+  `initDialog` root semantics documented (dialogs are document-global
+  by design); `scripts/serve.mjs` binds loopback + strict path
+  containment; fixed an invalid selector in `docs/theming.md`.
+
 ### Earlier in this cycle
 
 Component + mobile expansion. No token/selector changes to existing
