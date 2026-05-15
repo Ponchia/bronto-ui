@@ -96,7 +96,7 @@ with these modules, so it is also a live integration test.
 | `app.css`        | admin shell: rail, topbar, toolbar, panel, metrics            |
 | `navigation.css` | site nav, menu, theme toggle (dot indicator)                  |
 | `typography.css` | display headings, eyebrows, legacy `.button`                  |
-| `cards.css`      | an Astro site semantic cards (token-driven)                   |
+| `cards.css`      | semantic content cards (token-driven)                         |
 | `layout.css`     | site shell, hero, grids                                       |
 | `responsive.css` | breakpoint overrides                                          |
 
@@ -153,8 +153,6 @@ dependency specifier to `@ponchia/ui`.
 
 ## Consumers
 
-- `an Astro site` — imports `@ponchia/ui/css/core.css`
-- `a SvelteKit admin` — imports `@ponchia/ui/css`
-
-Both still pin the old tarball URL; they switch their dependency to
-`@ponchia/ui` once it is published (separate repos — not changed here).
+Built for two shapes of app: a content/marketing site (imports
+`@ponchia/ui/css/core.css`) and an admin dashboard (imports the full
+`@ponchia/ui/css`). Consuming apps depend on it via `@ponchia/ui`.

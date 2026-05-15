@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1 — 2026-05-15
+
+- Remove private project names and personal paths from docs and CSS
+  comments (no code/selector/token changes). Supersedes 0.2.0, which
+  carried those references in shipped CSS comments.
+
 ## 0.2.0 — 2026-05-15
 
 Architecture: keep plain CSS as the universal substrate, add thin optional
@@ -33,8 +39,7 @@ changed — existing consumers are visually unaffected.
 
 ## 0.1.0 — 2026-05-15
 
-First standalone release. Promoted out of `an Astro site/bronto-ui` into its
-own standalone package.
+First standalone release. Extracted into its own standalone package.
 
 - Re-skinned to a Nothing-inspired design language: monochrome dual
   light/dark palette, single red accent, Doto dot-matrix display type, flat
@@ -51,7 +56,7 @@ own standalone package.
   sticky blurred topbar, toolbar, panel, metric tiles, empty state, mobile
   rail collapse.
 - Re-skinned primitives, navigation (dot active indicator), and the
-  an Astro site semantic typography/eyebrows.
+  semantic typography/eyebrows.
 - Renamed `theme.css` → `tokens.css`; dropped the `components.css`
   indirection; `core.css` now bundles the full set; `index.css` =
   core + responsive. `package.json` exports updated accordingly.
