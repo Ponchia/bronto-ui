@@ -13,7 +13,7 @@
 
 .site-shell {
   margin: 0 auto;
-  max-width: 1320px;
+  max-inline-size: 1320px;
   padding: 0.9rem;
   position: relative;
   z-index: 1;
@@ -56,7 +56,7 @@
   margin: 0 auto 0.9rem;
   padding: 0.55rem 0.65rem;
   position: sticky;
-  top: 0.65rem;
+  inset-block-start: 0.65rem;
   z-index: 10;
 }
 
@@ -92,7 +92,7 @@
   display: flex;
   gap: 1rem;
   justify-content: space-between;
-  margin-top: 1rem;
+  margin-block-start: 1rem;
   padding: 0.85rem 1rem;
 }
 
@@ -133,11 +133,11 @@
 .page-head,
 .post-shell {
   border-radius: var(--radius-xl);
-  max-width: 100%;
+  max-inline-size: 100%;
   overflow: hidden;
   padding: 1.35rem;
   position: relative;
-  width: 100%;
+  inline-size: 100%;
 }
 
 .hero {

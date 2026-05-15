@@ -1,5 +1,5 @@
 .hero__copy h1 {
-  max-width: 10ch;
+  max-inline-size: 10ch;
 }
 
 .display-heading {
@@ -12,7 +12,7 @@
 .hero__lede,
 .page-head p {
   font-size: 1.08rem;
-  max-width: 68ch;
+  max-inline-size: 68ch;
 }
 
 .eyebrow,
@@ -59,8 +59,8 @@
   letter-spacing: var(--tracking-wide);
   line-height: 1;
   text-transform: uppercase;
-  min-height: 2.4rem;
-  min-width: 8.2rem;
+  min-block-size: 2.4rem;
+  min-inline-size: 8.2rem;
   padding: 0.62rem 0.8rem;
   transition:
     background-color var(--duration-fast) var(--ease-standard),
@@ -108,13 +108,13 @@
 }
 
 .section-link::after {
-  border-right: 1px solid currentColor;
-  border-top: 1px solid currentColor;
+  border-inline-end: 1px solid currentColor;
+  border-block-start: 1px solid currentColor;
   content: '';
-  height: 0.42rem;
+  block-size: 0.42rem;
   transform: rotate(45deg);
   transition: transform var(--duration-fast) var(--ease-standard);
-  width: 0.42rem;
+  inline-size: 0.42rem;
 }
 
 .section-link:hover {
@@ -135,5 +135,5 @@
 .hero__microcopy {
   font-size: 0.96rem;
   margin: 0;
-  max-width: 56ch;
+  max-inline-size: 56ch;
 }

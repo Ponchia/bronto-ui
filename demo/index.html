@@ -50,6 +50,10 @@
           <p class="ui-eyebrow">@ponchia/ui</p>
           <h1>Nothing<br />Kitchen&nbsp;Sink</h1>
         </div>
+        <span class="ui-cluster">
+        <button class="ui-button ui-button--ghost" id="dirBtn" type="button">
+          DIR: LTR
+        </button>
         <button
           class="theme-toggle__button"
           id="themeBtn"
@@ -60,6 +64,7 @@
           <span class="theme-toggle__label" id="themeLabel">Dark</span>
           <span class="theme-toggle__track"><span class="theme-toggle__thumb"></span></span>
         </button>
+        </span>
       </header>
 
       <div
@@ -270,7 +275,7 @@
 
       <section class="ui-stack">
         <p class="ui-eyebrow ui-eyebrow--muted">Tabs · Accordion · Segmented</p>
-        <div class="ui-tabs" id="demoTabs">
+        <div class="ui-tabs" data-bronto-tabs>
           <div class="ui-tabs__list" role="tablist">
             <button class="ui-tab is-active" role="tab" data-tab="a">Overview</button>
             <button class="ui-tab" role="tab" data-tab="b">Activity</button>
@@ -389,6 +394,7 @@
         initThemeToggle,
         dismissible,
         initDialog,
+        initTabs,
         toast,
       } from '../behaviors/index.js';
       import { ui, cx } from '../classes/index.js';
@@ -396,21 +402,18 @@
       initThemeToggle();
       dismissible();
       initDialog();
+      initTabs(); // full keyboard a11y, wired from the shipped module
 
       document.getElementById('toastBtn').addEventListener('click', () => {
         toast('Order filled — BTC/EUR', { tone: 'success', title: 'Done' });
       });
 
-      // Tabs: the framework ships the look + ARIA/.is-active contract;
-      // wiring the toggle is the consumer's (here, a 6-line handler).
-      const tabs = document.getElementById('demoTabs');
-      tabs.querySelector('.ui-tabs__list').addEventListener('click', (e) => {
-        const tab = e.target.closest('.ui-tab');
-        if (!tab) return;
-        for (const t of tabs.querySelectorAll('.ui-tab')) t.classList.remove('is-active');
-        tab.classList.add('is-active');
-        for (const p of tabs.querySelectorAll('.ui-tabs__panel'))
-          p.hidden = p.dataset.panel !== tab.dataset.tab;
+      // RTL toggle — proves the logical-properties sweep mirrors cleanly.
+      const dirBtn = document.getElementById('dirBtn');
+      dirBtn.addEventListener('click', () => {
+        const rtl = document.documentElement.dir === 'rtl';
+        document.documentElement.dir = rtl ? 'ltr' : 'rtl';
+        dirBtn.textContent = rtl ? 'DIR: LTR' : 'DIR: RTL';
       });
 
       // Keep the demo's label in sync (cosmetic; the shared module does

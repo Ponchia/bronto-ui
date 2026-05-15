@@ -40,6 +40,13 @@ export declare function dismissible(opts?: DelegateOpts): Cleanup;
 export declare function initDisclosure(opts?: DelegateOpts): Cleanup;
 
 /**
+ * Wire `[data-bronto-tabs]` groups with the WAI-ARIA Tabs keyboard
+ * pattern (roving tabindex, Arrow/Home/End, aria-selected, panel sync).
+ * Returns a cleanup function.
+ */
+export declare function initTabs(opts?: DelegateOpts): Cleanup;
+
+/**
  * Wire native <dialog> open/close glue: `[data-bronto-open="id"]`,
  * `[data-bronto-close]`, and backdrop light-dismiss for dialogs marked
  * `[data-bronto-dialog-light]`. Returns a cleanup function.
