@@ -6,7 +6,13 @@ flat hairline borders, restrained motion. CSS-first and framework-agnostic.
 
 ## Use
 
-Depend on it via a local `file:` link (until published):
+Pin a tagged GitHub release tarball (reproducible, no registry needed):
+
+```json
+{ "dependencies": { "@bronto/ui": "https://github.com/Ponchia/bronto-ui/archive/refs/tags/v0.1.0.tar.gz" } }
+```
+
+For local iteration against a checkout, swap to a `file:` link instead:
 
 ```json
 { "dependencies": { "@bronto/ui": "file:../bronto-ui" } }
@@ -62,5 +68,6 @@ python3 -m http.server -d . 8080   # then open http://localhost:8080/demo/
 - `personal-site` — imports `@bronto/ui/css/core.css`
 - `polpo-admin` — imports `@bronto/ui/css`
 
-Both link via `file:`. Promote to a published package once a third app adopts
-it or versioning friction appears.
+Both pin a tagged release tarball, so a change ships only after a new tag is
+cut. Promote to a published package once a third app adopts it or versioning
+friction appears.
