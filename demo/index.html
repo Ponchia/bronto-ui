@@ -50,6 +50,10 @@
           <p class="ui-eyebrow">@ponchia/ui</p>
           <h1>Nothing<br />Kitchen&nbsp;Sink</h1>
         </div>
+        <span class="ui-cluster">
+        <button class="ui-button ui-button--ghost" id="dirBtn" type="button">
+          DIR: LTR
+        </button>
         <button
           class="theme-toggle__button"
           id="themeBtn"
@@ -60,6 +64,7 @@
           <span class="theme-toggle__label" id="themeLabel">Dark</span>
           <span class="theme-toggle__track"><span class="theme-toggle__thumb"></span></span>
         </button>
+        </span>
       </header>
 
       <div
@@ -82,6 +87,40 @@
           <div class="sw"><i style="background: var(--accent)"></i><span>--accent</span></div>
           <div class="sw"><i style="background: var(--success)"></i><span>--success</span></div>
           <div class="sw"><i style="background: var(--danger)"></i><span>--danger</span></div>
+        </div>
+      </section>
+
+      <section class="ui-stack">
+        <p class="ui-eyebrow ui-eyebrow--muted">Theming contract — one knob re-brands</p>
+        <div class="ui-cluster">
+          <button class="ui-button ui-button--subtle" type="button" data-accent="#d71921">
+            Red
+          </button>
+          <button class="ui-button ui-button--subtle" type="button" data-accent="#2f6df6">
+            Blue
+          </button>
+          <button class="ui-button ui-button--subtle" type="button" data-accent="#16a34a">
+            Green
+          </button>
+          <button class="ui-button ui-button--subtle" type="button" data-accent="#a855f7">
+            Violet
+          </button>
+          <span class="ui-segmented" role="radiogroup" aria-label="Density">
+            <label class="ui-segmented__option"
+              ><input type="radio" name="dens" value="compact" />Compact</label
+            >
+            <label class="ui-segmented__option"
+              ><input type="radio" name="dens" value="" checked />Default</label
+            >
+            <label class="ui-segmented__option"
+              ><input type="radio" name="dens" value="comfortable" />Roomy</label
+            >
+          </span>
+          <label class="ui-switch"
+            ><input type="checkbox" id="contrastChk" /><span class="ui-switch__track"
+              ><span class="ui-switch__thumb"></span></span
+            ><span class="ui-label" style="text-transform: none">High contrast</span></label
+          >
         </div>
       </section>
 
@@ -229,16 +268,277 @@
         <div class="ui-skeleton" style="height: 1.4rem; max-width: 22rem"></div>
         <hr class="ui-dotrule" />
       </section>
+
+      <section class="ui-stack">
+        <p class="ui-eyebrow ui-eyebrow--muted">Loaders · Progress</p>
+        <div class="ui-cluster" style="gap: 1.5rem">
+          <span class="ui-dotspinner ui-dotspinner--sm"
+            ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+          ></span>
+          <span class="ui-dotspinner"
+            ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+          ></span>
+          <span class="ui-dotspinner ui-dotspinner--lg"
+            ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+          ></span>
+        </div>
+        <div class="ui-progress" style="max-width: 24rem">
+          <div class="ui-progress__bar" style="--value: 64"></div>
+        </div>
+        <div class="ui-progress ui-progress--indeterminate" style="max-width: 24rem">
+          <div class="ui-progress__bar"></div>
+        </div>
+        <div class="ui-dotbar ui-dotbar--indeterminate" style="max-width: 18rem">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+      </section>
+
+      <section class="ui-stack">
+        <p class="ui-eyebrow ui-eyebrow--muted">Alerts</p>
+        <div class="ui-alert ui-alert--accent">
+          <p class="ui-alert__title">Heads up</p>
+          <p class="ui-alert__body">A rationed accent border carries the tone — no fill.</p>
+        </div>
+        <div class="ui-alert ui-alert--danger" data-bronto-dismissible>
+          <p class="ui-alert__body">Dismissible alert — wired via the shipped behavior.</p>
+          <button class="ui-alert__dismiss" type="button" data-bronto-dismiss aria-label="dismiss">
+            ✕
+          </button>
+        </div>
+      </section>
+
+      <section class="ui-stack">
+        <p class="ui-eyebrow ui-eyebrow--muted">Tabs · Accordion · Segmented</p>
+        <div class="ui-tabs" data-bronto-tabs>
+          <div class="ui-tabs__list" role="tablist">
+            <button class="ui-tab is-active" role="tab" data-tab="a">Overview</button>
+            <button class="ui-tab" role="tab" data-tab="b">Activity</button>
+            <button class="ui-tab" role="tab" data-tab="c">Settings</button>
+          </div>
+          <div class="ui-tabs__panel" data-panel="a">First panel — CSS-only look, ARIA contract.</div>
+          <div class="ui-tabs__panel" data-panel="b" hidden>Second panel.</div>
+          <div class="ui-tabs__panel" data-panel="c" hidden>Third panel.</div>
+        </div>
+        <div class="ui-accordion">
+          <details class="ui-accordion__item" open>
+            <summary class="ui-accordion__summary">What is this</summary>
+            <div class="ui-accordion__body">Native &lt;details&gt;, styled — zero JS.</div>
+          </details>
+          <details class="ui-accordion__item">
+            <summary class="ui-accordion__summary">Second item</summary>
+            <div class="ui-accordion__body">The dot marker rotates into an arrow on open.</div>
+          </details>
+        </div>
+        <div class="ui-segmented" role="radiogroup" aria-label="Density">
+          <label class="ui-segmented__option"
+            ><input type="radio" name="density" checked />Compact</label
+          >
+          <label class="ui-segmented__option"
+            ><input type="radio" name="density" />Cozy</label
+          >
+          <label class="ui-segmented__option"
+            ><input type="radio" name="density" />Roomy</label
+          >
+        </div>
+      </section>
+
+      <section class="ui-stack">
+        <p class="ui-eyebrow ui-eyebrow--muted">Breadcrumb · Pagination · Avatar</p>
+        <ol class="ui-breadcrumb">
+          <li class="ui-breadcrumb__item"><a href="#">Home</a></li>
+          <li class="ui-breadcrumb__item"><a href="#">Projects</a></li>
+          <li class="ui-breadcrumb__item" aria-current="page">Detail</li>
+        </ol>
+        <ul class="ui-pagination">
+          <li><button class="ui-pagination__item" aria-disabled="true">‹</button></li>
+          <li><button class="ui-pagination__item is-active">1</button></li>
+          <li><button class="ui-pagination__item">2</button></li>
+          <li><button class="ui-pagination__item">3</button></li>
+          <li><button class="ui-pagination__item">›</button></li>
+        </ul>
+        <div class="ui-cluster">
+          <span class="ui-avatar-group">
+            <span class="ui-avatar">ZT</span>
+            <span class="ui-avatar">AB</span>
+            <span class="ui-avatar">CD</span>
+          </span>
+          <span class="ui-avatar ui-avatar--sm">SM</span>
+          <span class="ui-avatar ui-avatar--lg">LG</span>
+        </div>
+      </section>
+
+      <section class="ui-stack">
+        <p class="ui-eyebrow ui-eyebrow--muted">Overlay · Tooltip · Toast</p>
+        <div class="ui-cluster">
+          <button class="ui-button" type="button" data-bronto-open="demoModal">Open modal</button>
+          <button class="ui-button ui-button--ghost" type="button" data-bronto-open="demoDrawer">
+            Open drawer
+          </button>
+          <button class="ui-button ui-button--subtle" type="button" id="toastBtn">
+            Push toast
+          </button>
+          <span class="ui-tooltip"
+            ><button class="ui-button ui-button--ghost" type="button">Hover me</button
+            ><span class="ui-tooltip__bubble" role="tooltip">Pure-CSS tooltip</span></span
+          >
+          <details class="site-menu" style="display: block">
+            <summary class="ui-button ui-button--subtle" style="list-style: none">Menu ▾</summary>
+            <div class="ui-menu">
+              <span class="ui-menu__label">Actions</span>
+              <button class="ui-menu__item" type="button">Duplicate</button>
+              <button class="ui-menu__item" type="button">Archive</button>
+              <hr class="ui-menu__sep" />
+              <button class="ui-menu__item" type="button">Delete</button>
+            </div>
+          </details>
+        </div>
+        <dialog class="ui-modal" id="demoModal" data-bronto-dialog-light>
+          <div class="ui-modal__head">
+            <h2 class="ui-modal__title">Confirm</h2>
+            <button class="ui-modal__close" type="button" data-bronto-close aria-label="close">
+              ✕
+            </button>
+          </div>
+          <div class="ui-modal__body">
+            <p>Native &lt;dialog&gt; styled Nothing-flat. Backdrop click closes it.</p>
+          </div>
+          <div class="ui-modal__foot">
+            <button class="ui-button ui-button--ghost" type="button" data-bronto-close>
+              Cancel
+            </button>
+            <button class="ui-button" type="button" data-bronto-close>Confirm</button>
+          </div>
+        </dialog>
+        <dialog class="ui-modal ui-modal--drawer" id="demoDrawer" data-bronto-dialog-light>
+          <div class="ui-modal__head">
+            <h2 class="ui-modal__title">Filters</h2>
+            <button class="ui-modal__close" type="button" data-bronto-close aria-label="close">
+              ✕
+            </button>
+          </div>
+          <div class="ui-modal__body"><p>Slide-in drawer; bottom sheet on mobile.</p></div>
+        </dialog>
+      </section>
+
+      <section class="ui-stack">
+        <p class="ui-eyebrow ui-eyebrow--muted">
+          Content — Markdown output, zero classes
+        </p>
+        <!-- Everything below is exactly what a Markdown renderer emits:
+             semantic HTML, no class attributes. The single .ui-prose
+             wrapper does all the styling, so the document stays
+             machine-readable. -->
+        <article class="ui-prose">
+          <h1>Designing with restraint</h1>
+          <p>
+            This whole article is plain semantic HTML — the kind a Markdown
+            renderer produces — with <strong>no class attributes</strong> on
+            any element. One <code>ui-prose</code> wrapper styles it.
+          </p>
+          <h2>Why it matters</h2>
+          <p>
+            Keeping the markup clean means it stays
+            <a href="#">portable and machine-readable</a>: scrapers, RSS,
+            reader mode, and LLMs all parse it without fighting a
+            <mark>class-soup</mark> div tree.
+          </p>
+          <blockquote>
+            <p>Color is rationed. Structure carries the meaning.</p>
+          </blockquote>
+          <h3>A list</h3>
+          <ul>
+            <li>Square markers in the accent colour</li>
+            <li>
+              Nested items work too
+              <ul>
+                <li>Second level</li>
+              </ul>
+            </li>
+          </ul>
+          <ol>
+            <li>Ordered lists keep accent markers</li>
+            <li>Comfortable rhythm between items</li>
+          </ol>
+          <h3>Code</h3>
+          <p>Inline <code>const x = 1</code> and a block:</p>
+          <pre><code>import ui from '@ponchia/ui/classes';
+ui.button({ variant: 'ghost' });</code></pre>
+          <h3>A table</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Token</th>
+                <th>Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>--accent</td>
+                <td>the one brand knob</td>
+              </tr>
+              <tr>
+                <td>--space-md</td>
+                <td>rhythm unit</td>
+              </tr>
+            </tbody>
+          </table>
+          <hr />
+          <figure>
+            <div
+              class="ui-dotgrid"
+              style="block-size: 4rem; inline-size: 100%; border: 1px solid var(--line)"
+            ></div>
+            <figcaption>Fig 1 — a dot-grid surface</figcaption>
+          </figure>
+        </article>
+      </section>
     </div>
 
     <!-- The demo drives itself with the package's own shipped modules,
          so it doubles as a live integration test of behaviors + classes. -->
     <script type="module">
-      import { initThemeToggle, dismissible } from '../behaviors/index.js';
+      import {
+        initThemeToggle,
+        dismissible,
+        initDialog,
+        initTabs,
+        toast,
+      } from '../behaviors/index.js';
       import { ui, cx } from '../classes/index.js';
 
       initThemeToggle();
       dismissible();
+      initDialog();
+      initTabs(); // full keyboard a11y, wired from the shipped module
+
+      document.getElementById('toastBtn').addEventListener('click', () => {
+        toast('Order filled — BTC/EUR', { tone: 'success', title: 'Done' });
+      });
+
+      // Theming contract: one --accent knob re-brands; density/contrast
+      // are data-attribute presets. All set on <html> (or any subtree).
+      const docEl = document.documentElement;
+      for (const b of document.querySelectorAll('[data-accent]'))
+        b.addEventListener('click', () =>
+          docEl.style.setProperty('--accent', b.dataset.accent)
+        );
+      for (const r of document.querySelectorAll('input[name="dens"]'))
+        r.addEventListener('change', () => {
+          if (r.value) docEl.dataset.density = r.value;
+          else delete docEl.dataset.density;
+        });
+      document.getElementById('contrastChk').addEventListener('change', (e) => {
+        if (e.target.checked) docEl.dataset.contrast = 'high';
+        else delete docEl.dataset.contrast;
+      });
+
+      // RTL toggle — proves the logical-properties sweep mirrors cleanly.
+      const dirBtn = document.getElementById('dirBtn');
+      dirBtn.addEventListener('click', () => {
+        const rtl = document.documentElement.dir === 'rtl';
+        document.documentElement.dir = rtl ? 'ltr' : 'rtl';
+        dirBtn.textContent = rtl ? 'DIR: LTR' : 'DIR: RTL';
+      });
 
       // Keep the demo's label in sync (cosmetic; the shared module does
       // the real work). Driven by the bronto:themechange event so it

@@ -69,14 +69,16 @@
 
 .ui-divider {
   border: 0;
-  border-top: 1px solid var(--line);
+  border-block-start: 1px solid var(--line);
   margin: 0;
 }
 
 /* --- Eyebrow / section label — dot-matrix face --- */
 
 .ui-eyebrow {
-  color: var(--accent);
+  /* accent-strong, not accent: this is small bold text and must clear
+     WCAG AA 4.5:1 on the soft/tinted surfaces eyebrows sit on too. */
+  color: var(--accent-strong);
   font-family: var(--display);
   font-size: var(--text-xs);
   font-weight: 700;
@@ -106,8 +108,8 @@
   justify-content: center;
   letter-spacing: var(--tracking-wide);
   line-height: 1;
-  min-height: 2.4rem;
-  min-width: 2.4rem;
+  min-block-size: 2.4rem;
+  min-inline-size: 2.4rem;
   padding: 0.66rem 1rem;
   text-transform: uppercase;
   transition:
@@ -137,7 +139,7 @@
 
 .ui-button--icon {
   aspect-ratio: 1;
-  min-width: 2.4rem;
+  min-inline-size: 2.4rem;
   padding: 0;
 }
 
@@ -172,13 +174,13 @@
 }
 
 .ui-link--arrow::after {
-  border-right: 1px solid currentColor;
-  border-top: 1px solid currentColor;
+  border-inline-end: 1px solid currentColor;
+  border-block-start: 1px solid currentColor;
   content: '';
-  height: 0.42rem;
+  block-size: 0.42rem;
   transform: rotate(45deg);
   transition: transform var(--duration-fast) var(--ease-standard);
-  width: 0.42rem;
+  inline-size: 0.42rem;
 }
 
 /* --- Chip / tag --- */
@@ -195,7 +197,7 @@
   gap: 0.36rem;
   letter-spacing: var(--tracking-wide);
   line-height: 1;
-  min-height: 1.7rem;
+  min-block-size: 1.7rem;
   padding: 0.32rem 0.55rem;
   text-transform: uppercase;
 }
@@ -224,28 +226,26 @@
   text-transform: uppercase;
 }
 
+/* Tone rides the border + tint; text stays the high-contrast neutral
+   (the soft tint can't carry 4.5:1 small-bold tone-on-tone — WCAG). */
 .ui-badge--accent {
   background: var(--accent-soft);
   border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
-  color: var(--accent);
 }
 
 .ui-badge--success {
   background: var(--success-soft);
   border-color: color-mix(in srgb, var(--success) 40%, var(--line));
-  color: var(--success);
 }
 
 .ui-badge--warning {
   background: var(--warning-soft);
   border-color: color-mix(in srgb, var(--warning) 40%, var(--line));
-  color: var(--warning);
 }
 
 .ui-badge--danger {
   background: var(--danger-soft);
   border-color: color-mix(in srgb, var(--danger) 40%, var(--line));
-  color: var(--danger);
 }
 
 /* --- Key/value list --- */
@@ -257,10 +257,10 @@
 }
 
 .ui-key-value div {
-  border-top: 1px solid var(--line);
+  border-block-start: 1px solid var(--line);
   display: grid;
   gap: 0.16rem;
-  padding-top: 0.6rem;
+  padding-block-start: 0.6rem;
 }
 
 .ui-key-value dt {
@@ -315,7 +315,24 @@
     transform: translateX(0.14rem) rotate(45deg);
   }
 
+  [dir='rtl'] .ui-link--arrow:hover::after {
+    transform: translateX(-0.14rem) rotate(45deg);
+  }
+
   .ui-chip--accent:hover {
     background: var(--accent-soft);
+  }
+}
+
+/* --- Touch: comfortable hit targets on coarse pointers --- */
+
+@media (pointer: coarse) {
+  .ui-button {
+    min-block-size: 2.9rem;
+    min-inline-size: 2.9rem;
+  }
+
+  .ui-button--icon {
+    min-inline-size: 2.9rem;
   }
 }

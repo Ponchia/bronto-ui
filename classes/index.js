@@ -50,7 +50,11 @@ export const cls = Object.freeze({
   dotfield: 'ui-dotfield',
   dotrule: 'ui-dotrule',
   dotbar: 'ui-dotbar',
+  dotbarIndeterminate: 'ui-dotbar--indeterminate',
   dotloader: 'ui-dotloader',
+  dotspinner: 'ui-dotspinner',
+  dotspinnerSm: 'ui-dotspinner--sm',
+  dotspinnerLg: 'ui-dotspinner--lg',
   // forms
   field: 'ui-field',
   label: 'ui-label',
@@ -64,6 +68,58 @@ export const cls = Object.freeze({
   switchThumb: 'ui-switch__thumb',
   hint: 'ui-hint',
   hintError: 'ui-hint--error',
+  // feedback
+  alert: 'ui-alert',
+  alertTitle: 'ui-alert__title',
+  alertBody: 'ui-alert__body',
+  alertDismiss: 'ui-alert__dismiss',
+  alertAccent: 'ui-alert--accent',
+  alertSuccess: 'ui-alert--success',
+  alertWarning: 'ui-alert--warning',
+  alertDanger: 'ui-alert--danger',
+  toastStack: 'ui-toast-stack',
+  toast: 'ui-toast',
+  toastTitle: 'ui-toast__title',
+  toastAccent: 'ui-toast--accent',
+  toastSuccess: 'ui-toast--success',
+  toastWarning: 'ui-toast--warning',
+  toastDanger: 'ui-toast--danger',
+  tooltip: 'ui-tooltip',
+  tooltipBubble: 'ui-tooltip__bubble',
+  progress: 'ui-progress',
+  progressBar: 'ui-progress__bar',
+  progressIndeterminate: 'ui-progress--indeterminate',
+  // overlay
+  modal: 'ui-modal',
+  modalHead: 'ui-modal__head',
+  modalTitle: 'ui-modal__title',
+  modalBody: 'ui-modal__body',
+  modalFoot: 'ui-modal__foot',
+  modalClose: 'ui-modal__close',
+  modalDrawer: 'ui-modal--drawer',
+  menu: 'ui-menu',
+  menuLabel: 'ui-menu__label',
+  menuItem: 'ui-menu__item',
+  menuSep: 'ui-menu__sep',
+  // disclosure
+  tabs: 'ui-tabs',
+  tabsList: 'ui-tabs__list',
+  tab: 'ui-tab',
+  tabsPanel: 'ui-tabs__panel',
+  accordion: 'ui-accordion',
+  accordionItem: 'ui-accordion__item',
+  accordionSummary: 'ui-accordion__summary',
+  accordionBody: 'ui-accordion__body',
+  segmented: 'ui-segmented',
+  segmentedOption: 'ui-segmented__option',
+  breadcrumb: 'ui-breadcrumb',
+  breadcrumbItem: 'ui-breadcrumb__item',
+  pagination: 'ui-pagination',
+  paginationItem: 'ui-pagination__item',
+  avatar: 'ui-avatar',
+  avatarSm: 'ui-avatar--sm',
+  avatarLg: 'ui-avatar--lg',
+  avatarGroup: 'ui-avatar-group',
   // table
   table: 'ui-table',
   tableDense: 'ui-table--dense',
@@ -84,6 +140,8 @@ export const cls = Object.freeze({
   // typography / utilities
   eyebrow: 'ui-eyebrow',
   eyebrowMuted: 'ui-eyebrow--muted',
+  prose: 'ui-prose',
+  proseCompact: 'ui-prose--compact',
   display: 'ui-display',
   mono: 'ui-mono',
   muted: 'ui-muted',
@@ -154,6 +212,33 @@ export const ui = {
   hint: ({ error } = {}) => j(cls.hint, error && cls.hintError),
   cluster: ({ between } = {}) => j(cls.cluster, between && cls.clusterBetween),
   stagger: ({ auto } = {}) => j(cls.stagger, auto && cls.staggerAuto),
+  alert: ({ tone } = {}) =>
+    j(
+      cls.alert,
+      tone === 'accent' && cls.alertAccent,
+      tone === 'success' && cls.alertSuccess,
+      tone === 'warning' && cls.alertWarning,
+      tone === 'danger' && cls.alertDanger
+    ),
+  toast: ({ tone } = {}) =>
+    j(
+      cls.toast,
+      tone === 'accent' && cls.toastAccent,
+      tone === 'success' && cls.toastSuccess,
+      tone === 'warning' && cls.toastWarning,
+      tone === 'danger' && cls.toastDanger
+    ),
+  progress: ({ indeterminate } = {}) =>
+    j(cls.progress, indeterminate && cls.progressIndeterminate),
+  dotspinner: ({ size } = {}) =>
+    j(cls.dotspinner, size === 'sm' && cls.dotspinnerSm, size === 'lg' && cls.dotspinnerLg),
+  dotbar: ({ indeterminate } = {}) =>
+    j(cls.dotbar, indeterminate && cls.dotbarIndeterminate),
+  modal: ({ drawer } = {}) => j(cls.modal, drawer && cls.modalDrawer),
+  tab: ({ active } = {}) => j(cls.tab, active && 'is-active'),
+  avatar: ({ size } = {}) =>
+    j(cls.avatar, size === 'sm' && cls.avatarSm, size === 'lg' && cls.avatarLg),
+  prose: ({ compact } = {}) => j(cls.prose, compact && cls.proseCompact),
 };
 
 export default ui;
