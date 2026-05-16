@@ -147,7 +147,12 @@ test('a11y — modal Confirm button clears 4.5:1 (computed, not just asserted)',
   // The backdrop-filter blur defeats axe's contrast sampling (hence
   // color-contrast is disabled in the modal scan above); verify the
   // solid button's real ratio here instead of only asserting it in prose.
-  const ratio = await page.locator('dialog#demoModal .ui-modal__foot .ui-button').evaluate((el) => {
+  // The solid primary button (the ghost "Cancel" shares .ui-button, so
+  // scope to the non-ghost one — the contrast-critical surface).
+  const confirm = page.locator(
+    'dialog#demoModal .ui-modal__foot .ui-button:not(.ui-button--ghost)',
+  );
+  const ratio = await confirm.evaluate((el) => {
     const cs = getComputedStyle(el);
     const rgb = (s) =>
       s
