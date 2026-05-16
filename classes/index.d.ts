@@ -62,8 +62,10 @@ export declare const cls: {
   readonly alertWarning: 'ui-alert--warning';
   readonly alertDanger: 'ui-alert--danger';
   readonly toastStack: 'ui-toast-stack';
+  readonly toastStackAssertive: 'ui-toast-stack--assertive';
   readonly toast: 'ui-toast';
   readonly toastTitle: 'ui-toast__title';
+  readonly toastClose: 'ui-toast__close';
   readonly toastAccent: 'ui-toast--accent';
   readonly toastSuccess: 'ui-toast--success';
   readonly toastWarning: 'ui-toast--warning';

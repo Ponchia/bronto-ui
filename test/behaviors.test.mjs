@@ -465,3 +465,57 @@ test('toast: toasts queued before the first frame keep FIFO order', () => {
     delete globalThis.requestAnimationFrame;
   }
 });
+
+test('toast: danger routes to a separate assertive live region', () => {
+  const d = mount('');
+  toast('boom', { tone: 'danger', duration: 0 });
+  const assertive = d.querySelector('.ui-toast-stack--assertive');
+  assert.ok(assertive, 'assertive region created');
+  assert.equal(assertive.getAttribute('aria-live'), 'assertive');
+  assert.equal(assertive.getAttribute('role'), 'alert');
+
+  // A subsequent polite toast must NOT reuse the assertive region and
+  // must keep the polite region polite.
+  toast('saved', { tone: 'success', duration: 0 });
+  const polite = d.querySelector('.ui-toast-stack:not(.ui-toast-stack--assertive)');
+  assert.ok(polite && polite !== assertive, 'distinct polite region');
+  assert.equal(polite.getAttribute('aria-live'), 'polite');
+});
+
+test('toast: explicit assertive opt overrides tone', () => {
+  const d = mount('');
+  toast('urgent', { assertive: true, duration: 0 });
+  assert.ok(d.querySelector('.ui-toast-stack--assertive'), 'assertive opt honoured');
+});
+
+test('toast: sticky toast is closable, button dismisses, text unchanged', () => {
+  const d = mount('');
+  toast('hi there', { duration: 0 });
+  const el = d.querySelector('.ui-toast');
+  const btn = el.querySelector('.ui-toast__close');
+  assert.ok(btn, 'sticky (duration:0) toast gets a close button by default');
+  assert.equal(btn.getAttribute('aria-label'), 'Dismiss');
+  assert.equal(el.textContent, 'hi there', 'close button contributes no text node');
+  btn.click();
+  assert.equal(d.querySelector('.ui-toast'), null, 'close button dismisses the toast');
+});
+
+test('toast: auto-dismiss toast has no close button unless opted in', () => {
+  const d = mount('');
+  globalThis.requestAnimationFrame = (cb) => cb();
+  try {
+    toast('transient', { duration: 5000 });
+    assert.equal(
+      d.querySelector('.ui-toast__close'),
+      null,
+      'non-sticky toast is not closable by default',
+    );
+    toast('keep', { duration: 5000, closable: true });
+    assert.ok(
+      d.querySelectorAll('.ui-toast__close').length === 1,
+      'closable:true forces a dismiss button',
+    );
+  } finally {
+    delete globalThis.requestAnimationFrame;
+  }
+});

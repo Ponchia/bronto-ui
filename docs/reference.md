@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 183 classes across 90 component groups
+- 185 classes across 90 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -627,6 +627,7 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.toast` | `ui-toast` | base |
+| `cls.toastClose` | `ui-toast__close` | part |
 | `cls.toastTitle` | `ui-toast__title` | part |
 | `cls.toastAccent` | `ui-toast--accent` | modifier |
 | `cls.toastDanger` | `ui-toast--danger` | modifier |
@@ -638,6 +639,7 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.toastStack` | `ui-toast-stack` | base |
+| `cls.toastStackAssertive` | `ui-toast-stack--assertive` | modifier |
 
 ### `.ui-tooltip`
 

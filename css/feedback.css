@@ -117,6 +117,13 @@
   z-index: var(--z-toast);
 }
 
+/* Assertive (error) region — anchored top inline-end so it never
+   overlaps the polite bottom stack and reads as a distinct, urgent
+   channel. */
+.ui-toast-stack--assertive {
+  inset-block: 1.25rem auto;
+}
+
 .ui-toast {
   align-items: flex-start;
   animation: uiToastIn var(--duration-base) var(--ease-spring) both;
@@ -152,6 +159,30 @@
   letter-spacing: var(--tracking-wide);
   margin: 0;
   text-transform: uppercase;
+}
+
+.ui-toast__close {
+  align-self: start;
+  background: none;
+  border: 0;
+  block-size: 1.4rem;
+  color: var(--text-dim);
+  cursor: pointer;
+  font: inherit;
+  grid-column: 3;
+  grid-row: 1 / -1;
+  inline-size: 1.4rem;
+  padding: 0;
+}
+
+.ui-toast__close::before {
+  content: '\00d7'; /* × — glyph via CSS so the button has no text node */
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.ui-toast__close:hover {
+  color: var(--text);
 }
 
 .ui-toast--accent::before {

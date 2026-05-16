@@ -321,20 +321,30 @@ export function initDialog({ root } = {}) {
  * it until dismissed). Returns a function that dismisses the toast
  * early. SSR-safe (no-op).
  */
-export function toast(message, { tone, title, duration = 4000 } = {}) {
+export function toast(message, { tone, title, duration = 4000, assertive, closable } = {}) {
   if (!hasDom()) return noop;
-  let stack = document.querySelector('.ui-toast-stack');
+  // Errors must interrupt: danger toasts (or an explicit `assertive`)
+  // go to a SEPARATE assertive region so they announce immediately,
+  // while status toasts stay polite. Two regions — not a per-item
+  // role=alert nested in a polite parent — avoids the double
+  // announcement that nesting causes in some screen readers.
+  const isAssertive = assertive ?? tone === 'danger';
+  const stackSel = isAssertive
+    ? '.ui-toast-stack--assertive'
+    : '.ui-toast-stack:not(.ui-toast-stack--assertive)';
+  let stack = document.querySelector(stackSel);
   const freshStack = !stack;
   if (!stack) {
     stack = document.createElement('div');
-    stack.className = 'ui-toast-stack';
-    stack.setAttribute('aria-live', 'polite');
+    stack.className = isAssertive ? 'ui-toast-stack ui-toast-stack--assertive' : 'ui-toast-stack';
+    stack.setAttribute('aria-live', isAssertive ? 'assertive' : 'polite');
+    if (isAssertive) stack.setAttribute('role', 'alert');
     document.body.appendChild(stack);
   }
   const el = document.createElement('div');
   el.className = tone ? `ui-toast ui-toast--${tone}` : 'ui-toast';
-  // No per-item role: the stack is already aria-live=polite; a nested
-  // status live region risks double announcement in some SRs.
+  // No per-item role: the stack itself is the live region; a nested
+  // live region risks double announcement in some SRs.
   if (title) {
     const t = document.createElement('p');
     t.className = 'ui-toast__title';
@@ -379,6 +389,18 @@ export function toast(message, { tone, title, duration = 4000 } = {}) {
     // The stack is a persistent live region — never removed on drain, so
     // the next toast does not recreate (and thus mis-announce) it.
   };
+  // A sticky toast (duration:0) is unusable without a manual close, so
+  // it gets a dismiss affordance by default; any toast can opt in via
+  // `closable`. The button carries no text node (glyph is a CSS
+  // ::before) so the toast's announced/textContent stays the message.
+  if (closable ?? duration === 0) {
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'ui-toast__close';
+    close.setAttribute('aria-label', 'Dismiss');
+    close.addEventListener('click', dismiss);
+    el.appendChild(close);
+  }
   if (duration > 0) timer = setTimeout(dismiss, duration);
   return dismiss;
 }
