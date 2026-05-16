@@ -17,3 +17,6 @@ _site/
 .aider*
 .ruff_cache/
 .pytest_cache/
+
+# Local Claude Code harness state
+.claude/

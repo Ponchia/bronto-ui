@@ -36,7 +36,16 @@ const clsType =
   '\n}';
 
 const classesDts = `${banner('classes/index.js')}
-export type ClassValue = string | false | null | undefined | ClassValue[];
+// Mirrors clsx's permissive input: \`number\`/\`boolean\` accepted so the
+// idiomatic React \`reactNode && 'cls'\` guard (where the node may be 0 or
+// '') type-checks. The runtime \`cx\` skips every falsy value regardless.
+export type ClassValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | ClassValue[];
 
 /** The flat registry of every class @ponchia/ui defines (literal). */
 export declare const cls: ${clsType};
@@ -47,6 +56,7 @@ export declare function cx(...parts: ClassValue[]): string;
 export interface ButtonOpts {
   variant?: 'ghost' | 'subtle' | 'danger';
   icon?: boolean;
+  size?: 'sm' | 'lg';
 }
 export interface CardOpts {
   accent?: boolean;
@@ -109,6 +119,8 @@ export interface DotbarOpts {
 }
 export interface ModalOpts {
   drawer?: boolean;
+  /** Controlled non-dialog usage — adds the is-open state (focus-trap is yours). */
+  open?: boolean;
 }
 export interface TabOpts {
   active?: boolean;

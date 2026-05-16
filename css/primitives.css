@@ -314,6 +314,24 @@
   padding: 0;
 }
 
+/* Size scale — dense tooling (toolbars, pagination, table actions) wants
+   --sm; --lg for hero CTAs. Token-driven; the default is unchanged. */
+.ui-button--sm {
+  font-size: var(--text-xs);
+  gap: 0.3rem;
+  min-block-size: 1.9rem;
+  min-inline-size: 1.9rem;
+  padding: 0.4rem 0.66rem;
+}
+
+.ui-button--lg {
+  font-size: var(--text-base);
+  gap: 0.55rem;
+  min-block-size: 2.9rem;
+  min-inline-size: 2.9rem;
+  padding: 0.85rem 1.4rem;
+}
+
 .ui-button:disabled,
 .ui-button[aria-disabled='true'] {
   cursor: not-allowed;
@@ -585,4 +603,22 @@
   .ui-button--icon {
     min-inline-size: 2.9rem;
   }
+}
+
+/* --- Empty state — shell-agnostic placeholder for "no data yet".
+   Freed from the admin shell; `.ui-app-empty-state` stays a permanent
+   grouped alias (identical output, no baseline drift). --- */
+.ui-empty-state,
+.ui-app-empty-state {
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-md);
+  color: var(--text-dim);
+  padding: var(--space-lg);
+  text-align: center;
+}
+
+.ui-empty-state p,
+.ui-app-empty-state p {
+  color: var(--text-dim);
+  margin: 0.3rem 0 0;
 }

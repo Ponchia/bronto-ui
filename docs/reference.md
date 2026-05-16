@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 222 classes across 100 component groups
+- 226 classes across 101 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -118,6 +118,7 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.appRail` | `ui-app-rail` | base |
+| `cls.appRailAccount` | `ui-app-rail__account` | part |
 | `cls.appRailBrand` | `ui-app-rail__brand` | part |
 | `cls.appRailFoot` | `ui-app-rail__foot` | part |
 | `cls.appRailToggle` | `ui-app-rail__toggle` | part |
@@ -184,6 +185,8 @@ each one matches a real selector in the stylesheet.
 | `cls.buttonDanger` | `ui-button--danger` | modifier |
 | `cls.buttonGhost` | `ui-button--ghost` | modifier |
 | `cls.buttonIcon` | `ui-button--icon` | modifier |
+| `cls.buttonLg` | `ui-button--lg` | modifier |
+| `cls.buttonSm` | `ui-button--sm` | modifier |
 | `cls.buttonSubtle` | `ui-button--subtle` | modifier |
 
 ### `.ui-card`
@@ -323,6 +326,12 @@ each one matches a real selector in the stylesheet.
 | `cls.dotspinner` | `ui-dotspinner` | base |
 | `cls.dotspinnerLg` | `ui-dotspinner--lg` | modifier |
 | `cls.dotspinnerSm` | `ui-dotspinner--sm` | modifier |
+
+### `.ui-empty-state`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.emptyState` | `ui-empty-state` | base |
 
 ### `.ui-error-summary`
 
@@ -740,6 +749,45 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.visuallyHidden` | `ui-visually-hidden` | base |
+
+## Table-local state classes
+
+Not in `cls` by design — these are plain `is-*` state hooks scoped to
+`.ui-table` (the same convention as `is-active` on tabs), so they never
+collide with global classes. Apply them on `<td>`/`<th>`. A typed
+registry consumer should reach for these instead of re-implementing
+`text-align` / tabular figures by hand.
+
+| Class | Where | Effect |
+| --- | --- | --- |
+| `.ui-table .is-num` | numeric `<td>`/`<th>` | tabular figures + end-aligned (the canonical numeric cell) |
+| `.ui-table .is-pos` | numeric `<td>` | positive-delta tone |
+| `.ui-table .is-neg` | numeric `<td>` | negative-delta tone |
+
+For numeric text *outside* a table, use the `ui-num` primitive
+(`ui.num({ tone })`), which carries the same tabular/aligned/tone intent.
+
+## Composition & state (read before re-implementing glue)
+
+The agnostic surface is class- and string-recipe-only; **stateful and
+relational wiring is ARIA-driven, not class-driven** — by design, so it
+works in any framework without a binding layer:
+
+- **Form field** — compose `ui-field` > `ui-label` + control +
+  `ui-hint`. Invalid state is the native `aria-invalid="true"` on the
+  control (styles `ui-input`/`ui-select`/`ui-textarea` red); associate
+  the hint with `aria-describedby`. There is deliberately no
+  `ui-field--invalid` class.
+- **Button loading** — set `aria-busy="true"` (and `disabled`) on
+  `ui-button`; the leading spinner is injected by CSS with no extra
+  markup or class. `ui-button--sm`/`--lg` size it.
+- **Badge tone** — `ui.badge({ tone })` emits the framework tone
+  (`accent|success|warning|danger|muted`). Mapping an app's own variant
+  vocabulary onto a tone is application logic, not a framework class.
+- **Modal** — native `<dialog>` gets backdrop + top-layer + focus-trap
+  free. For a controlled/portal modal, add `is-open`
+  (`ui.modal({ open: true })`) for the same skin/layout; the
+  backdrop and focus-trap are then yours.
 
 ## Tokens
 

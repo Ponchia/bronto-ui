@@ -25,6 +25,12 @@ flat hairline borders, restrained motion. CSS-first and framework-agnostic.
 > }
 > ```
 
+> **For AI agents / LLMs.** The package ships `llms.txt` at its root —
+> point a coding agent at `node_modules/@ponchia/ui/llms.txt` for a
+> self-contained orientation. The full class catalog
+> (`docs/reference.md`) and the token contract (`docs/theming.md`) also
+> ship in the tarball, so an offline agent never has to guess at the API.
+
 **[Live demo →](https://ponchia.github.io/bronto-ui/)** — the kitchen
 sink (every component, light/dark, RTL, theming) deployed from `demo/`.
 
