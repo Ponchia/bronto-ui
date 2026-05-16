@@ -117,7 +117,7 @@
   position: absolute;
   inset-inline-end: 0;
   inset-block-start: calc(100% + 0.4rem);
-  z-index: 30;
+  z-index: var(--z-overlay);
 }
 
 .ui-menu__label {

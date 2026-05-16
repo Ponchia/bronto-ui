@@ -664,6 +664,37 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--duration-slow` | `360ms` |
 | `--dot-size` | `2px` |
 | `--dot-gap` | `14px` |
+| `--z-base` | `0` |
+| `--z-raised` | `10` |
+| `--z-sticky` | `20` |
+| `--z-overlay` | `30` |
+| `--z-popover` | `50` |
+| `--z-toast` | `60` |
+| `--accent-1` | `color-mix(in srgb, var(--accent) 8%, var(--bg))` |
+| `--accent-2` | `color-mix(in srgb, var(--accent) 16%, var(--bg))` |
+| `--accent-3` | `color-mix(in srgb, var(--accent) 32%, var(--bg))` |
+| `--accent-4` | `color-mix(in srgb, var(--accent) 60%, var(--bg))` |
+| `--accent-5` | `var(--accent)` |
+| `--accent-6` | `var(--accent-strong)` |
+| `--surface-1` | `var(--bg)` |
+| `--surface-2` | `var(--bg-elevated)` |
+| `--surface-3` | `var(--panel)` |
+| `--surface-4` | `var(--panel-soft)` |
+| `--surface-5` | `var(--line)` |
+| `--surface-6` | `var(--line-strong)` |
+| `--bronto-color-bg` | `var(--bg)` |
+| `--bronto-color-surface` | `var(--panel)` |
+| `--bronto-color-surface-raised` | `var(--panel-strong)` |
+| `--bronto-color-border` | `var(--line)` |
+| `--bronto-color-border-strong` | `var(--line-strong)` |
+| `--bronto-color-text` | `var(--text)` |
+| `--bronto-color-text-muted` | `var(--text-dim)` |
+| `--bronto-color-action` | `var(--accent)` |
+| `--bronto-color-on-action` | `var(--button-text)` |
+| `--bronto-color-focus` | `var(--focus-ring)` |
+| `--bronto-color-success` | `var(--success)` |
+| `--bronto-color-warning` | `var(--warning)` |
+| `--bronto-color-danger` | `var(--danger)` |
 | `--surface` | `var(--panel)` |
 | `--surface-raised` | `var(--panel-strong)` |
 | `--surface-muted` | `var(--panel-soft)` |

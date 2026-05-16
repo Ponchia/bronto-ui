@@ -6,6 +6,30 @@
       "description": "Theme token. Light: `#d71921` · Dark: `#ff3b41`"
     },
     {
+      "name": "--accent-1",
+      "description": "Global scale token. Value: `color-mix(in srgb, var(--accent) 8%, var(--bg))`"
+    },
+    {
+      "name": "--accent-2",
+      "description": "Global scale token. Value: `color-mix(in srgb, var(--accent) 16%, var(--bg))`"
+    },
+    {
+      "name": "--accent-3",
+      "description": "Global scale token. Value: `color-mix(in srgb, var(--accent) 32%, var(--bg))`"
+    },
+    {
+      "name": "--accent-4",
+      "description": "Global scale token. Value: `color-mix(in srgb, var(--accent) 60%, var(--bg))`"
+    },
+    {
+      "name": "--accent-5",
+      "description": "Global scale token. Value: `var(--accent)`"
+    },
+    {
+      "name": "--accent-6",
+      "description": "Global scale token. Value: `var(--accent-strong)`"
+    },
+    {
       "name": "--accent-soft",
       "description": "Theme token. Light: `color-mix(in srgb, var(--accent) 10%, transparent)` · Dark: `color-mix(in srgb, var(--accent) 14%, transparent)`"
     },
@@ -36,6 +60,58 @@
     {
       "name": "--border-strong",
       "description": "Global scale token. Value: `var(--line-strong)`"
+    },
+    {
+      "name": "--bronto-color-action",
+      "description": "Global scale token. Value: `var(--accent)`"
+    },
+    {
+      "name": "--bronto-color-bg",
+      "description": "Global scale token. Value: `var(--bg)`"
+    },
+    {
+      "name": "--bronto-color-border",
+      "description": "Global scale token. Value: `var(--line)`"
+    },
+    {
+      "name": "--bronto-color-border-strong",
+      "description": "Global scale token. Value: `var(--line-strong)`"
+    },
+    {
+      "name": "--bronto-color-danger",
+      "description": "Global scale token. Value: `var(--danger)`"
+    },
+    {
+      "name": "--bronto-color-focus",
+      "description": "Global scale token. Value: `var(--focus-ring)`"
+    },
+    {
+      "name": "--bronto-color-on-action",
+      "description": "Global scale token. Value: `var(--button-text)`"
+    },
+    {
+      "name": "--bronto-color-success",
+      "description": "Global scale token. Value: `var(--success)`"
+    },
+    {
+      "name": "--bronto-color-surface",
+      "description": "Global scale token. Value: `var(--panel)`"
+    },
+    {
+      "name": "--bronto-color-surface-raised",
+      "description": "Global scale token. Value: `var(--panel-strong)`"
+    },
+    {
+      "name": "--bronto-color-text",
+      "description": "Global scale token. Value: `var(--text)`"
+    },
+    {
+      "name": "--bronto-color-text-muted",
+      "description": "Global scale token. Value: `var(--text-dim)`"
+    },
+    {
+      "name": "--bronto-color-warning",
+      "description": "Global scale token. Value: `var(--warning)`"
     },
     {
       "name": "--button-text",
@@ -214,6 +290,30 @@
       "description": "Global scale token. Value: `var(--panel)`"
     },
     {
+      "name": "--surface-1",
+      "description": "Global scale token. Value: `var(--bg)`"
+    },
+    {
+      "name": "--surface-2",
+      "description": "Global scale token. Value: `var(--bg-elevated)`"
+    },
+    {
+      "name": "--surface-3",
+      "description": "Global scale token. Value: `var(--panel)`"
+    },
+    {
+      "name": "--surface-4",
+      "description": "Global scale token. Value: `var(--panel-soft)`"
+    },
+    {
+      "name": "--surface-5",
+      "description": "Global scale token. Value: `var(--line)`"
+    },
+    {
+      "name": "--surface-6",
+      "description": "Global scale token. Value: `var(--line-strong)`"
+    },
+    {
       "name": "--surface-muted",
       "description": "Global scale token. Value: `var(--panel-soft)`"
     },
@@ -272,6 +372,30 @@
     {
       "name": "--warning-soft",
       "description": "Theme token. Light: `rgb(128, 100, 20, 0.13)` · Dark: `rgb(216, 189, 114, 0.14)`"
+    },
+    {
+      "name": "--z-base",
+      "description": "Global scale token. Value: `0`"
+    },
+    {
+      "name": "--z-overlay",
+      "description": "Global scale token. Value: `30`"
+    },
+    {
+      "name": "--z-popover",
+      "description": "Global scale token. Value: `50`"
+    },
+    {
+      "name": "--z-raised",
+      "description": "Global scale token. Value: `10`"
+    },
+    {
+      "name": "--z-sticky",
+      "description": "Global scale token. Value: `20`"
+    },
+    {
+      "name": "--z-toast",
+      "description": "Global scale token. Value: `60`"
     }
   ],
   "atDirectives": [

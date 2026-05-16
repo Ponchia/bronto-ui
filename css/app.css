@@ -130,7 +130,7 @@
   padding: 0.75rem var(--space-lg);
   position: sticky;
   inset-block-start: 0;
-  z-index: 10;
+  z-index: var(--z-raised);
 }
 
 .ui-app-topbar__title {
@@ -276,7 +276,7 @@
     overflow-x: auto;
     position: sticky;
     inset-block-start: 0;
-    z-index: 11;
+    z-index: calc(var(--z-raised) + 1);
   }
 
   .ui-app-rail__foot {
