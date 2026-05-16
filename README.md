@@ -34,17 +34,25 @@ Or the core bundle if the app manages its own responsive layer:
 ```
 
 **Prebuilt single file (recommended for apps without a CSS bundler).**
-`@ponchia/ui/css` is a 17-deep `@import` graph — fine through a bundler,
-a load waterfall over plain HTTP. The package also ships flattened,
-minified bundles with no `@import` chain:
+`@ponchia/ui/css` is a wide `@import` fan-out (~19 leaves, two levels
+deep) — fine through a bundler, a load waterfall over plain HTTP. The
+package also ships flattened, minified bundles with no `@import` chain:
 
 ```css
 @import '@ponchia/ui';               /* → dist/bronto.css, full   */
 @import '@ponchia/ui/dist/bronto-core.css';   /* core, no responsive */
 ```
 
-~62 kB raw / ~11 kB gzip, one request, same `@layer bronto`. Source CSS,
-tokens/classes/behaviors entrypoints are unchanged — use whichever fits.
+~70 kB raw / ~12 kB gzip, one request, same `@layer bronto`. (The
+enforced ceiling lives in `scripts/check-dist.mjs`, not this prose —
+treat these figures as indicative.) Source CSS, tokens/classes/behaviors
+entrypoints are unchanged — use whichever fits.
+
+> **The package root is CSS-only.** `@ponchia/ui` (the `.` export)
+> resolves to a stylesheet — `@import '@ponchia/ui'` in CSS, never
+> `import '@ponchia/ui'` in JS. There is no JS module at the root; the
+> JS entrypoints are the explicit subpaths `@ponchia/ui/tokens`,
+> `/classes`, and `/behaviors` (see [Entrypoints](#entrypoints)).
 
 ### Browser support
 
@@ -183,9 +191,11 @@ the version never reaches npm, so consumers never resolve it. GitHub also
 serves the raw tag tarball ungated, but that is a legacy/fallback path, not
 the documented install. See [`docs/architecture.md`](docs/architecture.md).
 
-Published: `@ponchia/ui` is live on npm (latest `0.2.1`), released by CI
-with provenance. The `@ponchia` scope and the `NPM_TOKEN` repo secret are
-in place, so a pushed `vX.Y.Z` tag is all a release needs.
+Published: `@ponchia/ui` is live on npm, released by CI with provenance.
+The `@ponchia` scope and the `NPM_TOKEN` repo secret are in place, so a
+pushed `vX.Y.Z` tag is all a release needs. (The current published
+version is whatever npm's `latest` dist-tag resolves to — this README
+deliberately does not restate it, so it can't drift from the registry.)
 
 ## Consumers
 

@@ -26,7 +26,8 @@
 .focus-panel__title,
 .section-link,
 .profile-link-list dt {
-  color: var(--accent);
+  /* accent-strong, not accent: small bold uppercase text must clear AA. */
+  color: var(--accent-strong);
   font-family: var(--display);
   font-size: 0.8rem;
   font-weight: 700;

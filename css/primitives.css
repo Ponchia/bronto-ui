@@ -203,8 +203,10 @@
 }
 
 .ui-chip--accent {
+  /* accent-strong, not accent: chip text is small uppercase mono and must
+     clear WCAG AA 4.5:1 — same rule as .ui-eyebrow above. */
+  color: var(--accent-strong);
   border-color: var(--accent);
-  color: var(--accent);
 }
 
 /* --- Badge / status pill --- */
