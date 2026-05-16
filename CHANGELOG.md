@@ -70,9 +70,13 @@ release/supply-chain, plus AgentMix) drove this pass.
   demo gained a `[data-bronto-disclosure]` instance (was untested).
   _Release note:_ the visual-snapshot baselines (`test/e2e/__screenshots__`)
   are intentionally stale after the contrast / focus-ring / legacy-removal
-  changes and must be regenerated in the pinned Playwright container
-  (`--update-snapshots`) before the `v0.3.0` tag; the e2e gate stays red
-  until then by design.
+  changes (cross-OS rasterisation means they can only be authored in the
+  pinned container, not on a dev machine). Regenerate them with one click:
+  run the **“Update visual baselines”** workflow (`workflow_dispatch`,
+  `.github/workflows/visual-baselines.yml`) from this branch — it rebuilds
+  them in `mcr.microsoft.com/playwright:v1.60.0-jammy` and commits them
+  back, after which the `e2e` gate goes green on its own. Red by design
+  until that runs.
 
 **BREAKING (legacy vocabulary removed / migrated)**
 

@@ -23,6 +23,14 @@ const hasDom = () => typeof document !== 'undefined';
 // which collides aria-controls/aria-labelledby across the document.
 let tabUid = 0;
 
+// First-toast deferral queue. The very first toast on a brand-new stack
+// is appended next frame so AT observes the empty aria-live region
+// before its first child. Any further toasts created *before* that frame
+// flushes are queued behind it so call order (FIFO) is preserved instead
+// of a synchronous later toast jumping ahead of the deferred first one.
+const toastQueue = [];
+let toastFlushScheduled = false;
+
 // Make delegated initializers idempotent. Re-binding the same logical
 // listener on the same host/element tears the previous binding down first,
 // so double-init (HMR, framework re-mount, repeated calls) never stacks
@@ -337,18 +345,29 @@ export function toast(message, { tone, title, duration = 4000 } = {}) {
   body.textContent = message;
   el.appendChild(body);
   // Append after a frame the *first* time so the empty live region is
-  // observed by AT before its first child arrives; subsequent toasts go
-  // in synchronously (the region already exists and is being watched).
+  // observed by AT before its first child arrives; once the region has
+  // been observed, later toasts append synchronously.
   let dismissed = false;
-  if (freshStack && typeof requestAnimationFrame === 'function') {
-    // Guard the deferred insert: if dismissed within this frame (e.g.
-    // duration:0 + immediate dismiss), the rAF must NOT resurrect the
-    // toast into the persistent aria-live region.
+  // `dismissed` guard: a toast dismissed before its frame (e.g.
+  // duration:0 + immediate dismiss) must NOT be resurrected into the
+  // persistent aria-live region.
+  const place = () => {
+    if (!dismissed) stack.appendChild(el);
+  };
+  const canDefer = typeof requestAnimationFrame === 'function';
+  if (freshStack && canDefer) {
+    toastQueue.push(place);
+    toastFlushScheduled = true;
     requestAnimationFrame(() => {
-      if (!dismissed) stack.appendChild(el);
+      toastFlushScheduled = false;
+      for (const fn of toastQueue.splice(0)) fn();
     });
+  } else if (toastFlushScheduled) {
+    // A first-frame deferral is in flight — queue behind it so FIFO
+    // order holds and the region still isn't populated synchronously.
+    toastQueue.push(place);
   } else {
-    stack.appendChild(el);
+    place();
   }
 
   let timer;

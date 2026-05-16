@@ -166,7 +166,11 @@ WCAG 2.1 A/AA **plus best-practice** in both themes; behavioural specs
 mode assertions; and a no-console-error / no-404 / document-structure
 gate. Pinned to a Playwright container so baselines are byte-stable; the
 committed baselines under `test/e2e/__screenshots__` were authored in
-that same image. CI (`.github/workflows/ci.yml`) runs the `check` job and
+that same image. To (re)generate them after an intentional visual
+change, run the **“Update visual baselines”** workflow
+(`workflow_dispatch`) from your branch — it rebuilds them in the pinned
+container and commits them back (never author them on a dev machine —
+cross-OS rasterisation differs). CI (`.github/workflows/ci.yml`) runs the `check` job and
 a containerised `e2e` job on every branch push and PR (and `release.yml`
 gates publish on it). It never publishes — a push to `main` ships nothing.
 

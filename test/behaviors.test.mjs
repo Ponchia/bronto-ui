@@ -413,3 +413,20 @@ test('toast: early dismiss cancels the deferred rAF insert (no zombie)', () => {
     delete globalThis.requestAnimationFrame;
   }
 });
+
+test('toast: toasts queued before the first frame keep FIFO order', () => {
+  const d = mount('');
+  const frames = [];
+  globalThis.requestAnimationFrame = (cb) => frames.push(cb);
+  try {
+    toast('first', { duration: 0 }); // fresh stack → deferred
+    toast('second', { duration: 0 }); // before flush → queued behind, not sync-ahead
+    const stack = d.querySelector('.ui-toast-stack');
+    assert.equal(stack.childElementCount, 0, 'both deferred, region still empty');
+    frames.forEach((cb) => cb());
+    const texts = [...stack.querySelectorAll('.ui-toast')].map((n) => n.textContent);
+    assert.deepEqual(texts, ['first', 'second'], 'call order preserved (no reorder)');
+  } finally {
+    delete globalThis.requestAnimationFrame;
+  }
+});
