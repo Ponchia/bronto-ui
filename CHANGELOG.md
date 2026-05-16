@@ -63,6 +63,16 @@ release/supply-chain, plus AgentMix) drove this pass.
   (`validate` + `e2e` → `publish-npm` → `release-notes`).
 - README: explicit "do not mix a bundle with a raw leaf import" hazard
   warning; a Versioning section; size/`@import`-depth prose de-drifted.
+- Tests: +3 unit tests (dialog focus-return, initializer idempotency,
+  global-unique tab ids); +5 e2e a11y tests (RTL axe pass, dialog
+  focus-return on Escape, persistent toast live region, disclosure
+  toggle, modal computed-contrast instead of a blanket rule disable);
+  demo gained a `[data-bronto-disclosure]` instance (was untested).
+  _Release note:_ the visual-snapshot baselines (`test/e2e/__screenshots__`)
+  are intentionally stale after the contrast / focus-ring / legacy-removal
+  changes and must be regenerated in the pinned Playwright container
+  (`--update-snapshots`) before the `v0.3.0` tag; the e2e gate stays red
+  until then by design.
 
 **BREAKING (legacy vocabulary removed / migrated)**
 

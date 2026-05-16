@@ -137,6 +137,9 @@ function stubDialog(dlg) {
   };
   dlg.close = function () {
     this.open = false;
+    // Real <dialog>.close() fires a `close` event on every path; the
+    // focus-return glue depends on it.
+    this.dispatchEvent(new dom.window.Event('close'));
   };
   return dlg;
 }
@@ -326,4 +329,49 @@ test('prefers-color-scheme is honored when matchMedia exists and no attr/storage
   // current() → no attr, no storage → prefersDark() true → 'dark'; click → 'light'
   d.getElementById('t').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   assert.equal(d.documentElement.getAttribute('data-theme'), 'light');
+});
+
+test('initDialog returns focus to the trigger on close (every path)', () => {
+  const d = mount(
+    '<button data-bronto-open="dlg" id="open">open</button>' +
+      '<dialog id="dlg"><button data-bronto-close>x</button></dialog>'
+  );
+  initDialog();
+  const dlg = stubDialog(d.getElementById('dlg'));
+  const opener = d.getElementById('open');
+
+  opener.focus();
+  opener.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(dlg.open, true, 'opened');
+  // Move focus into the dialog as the browser would.
+  d.querySelector('[data-bronto-close]').focus();
+  assert.notEqual(d.activeElement, opener, 'focus left the trigger while open');
+
+  d.querySelector('[data-bronto-close]').dispatchEvent(
+    new dom.window.MouseEvent('click', { bubbles: true })
+  );
+  assert.equal(dlg.open, false, 'closed');
+  assert.equal(d.activeElement, opener, 'focus returned to the trigger on close');
+});
+
+test('initThemeToggle is idempotent — re-init does not stack listeners', () => {
+  const d = mount('<button data-bronto-theme-toggle id="t">x</button>');
+  initThemeToggle();
+  initThemeToggle(); // second call must replace, not add a 2nd handler
+  d.documentElement.setAttribute('data-theme', 'light');
+  d.getElementById('t').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  // A stacked 2nd listener would toggle light→dark→light (net: light).
+  assert.equal(d.documentElement.getAttribute('data-theme'), 'dark', 'toggled exactly once');
+});
+
+test('initTabs mints globally-unique ids across separate init calls', () => {
+  const grp = (n) =>
+    `<div data-bronto-tabs id="g${n}"><div class="ui-tabs__list">` +
+    `<button class="ui-tab" data-tab="a">A</button></div>` +
+    `<div class="ui-tabs__panel" data-panel="a">p</div></div>`;
+  const d = mount(grp(1) + grp(2));
+  initTabs({ root: d.getElementById('g1') });
+  initTabs({ root: d.getElementById('g2') });
+  const ids = [...d.querySelectorAll('.ui-tab')].map((t) => t.id);
+  assert.equal(new Set(ids).size, ids.length, `tab ids unique: ${ids.join(',')}`);
 });

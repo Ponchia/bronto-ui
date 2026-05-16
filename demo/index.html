@@ -341,6 +341,18 @@
             ><input type="radio" name="density" />Roomy</label
           >
         </div>
+        <div class="ui-cluster">
+          <button
+            class="ui-button ui-button--subtle"
+            type="button"
+            data-bronto-disclosure
+            aria-expanded="false"
+            aria-controls="discPanel"
+          >
+            Details ▾
+          </button>
+          <p id="discPanel" hidden>Disclosure body — toggled via the shipped behavior.</p>
+        </div>
       </section>
 
       <section class="ui-stack">
@@ -571,6 +583,7 @@ ui.button({ variant: 'ghost' });</code></pre>
         dismissible,
         initDialog,
         initTabs,
+        initDisclosure,
         toast,
       } from '../behaviors/index.js';
       import { ui, cx } from '../classes/index.js';
@@ -579,6 +592,7 @@ ui.button({ variant: 'ghost' });</code></pre>
       dismissible();
       initDialog();
       initTabs(); // full keyboard a11y, wired from the shipped module
+      initDisclosure();
 
       document.getElementById('toastBtn').addEventListener('click', () => {
         toast('Order filled — BTC/EUR', { tone: 'success', title: 'Done' });
