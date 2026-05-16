@@ -47,6 +47,52 @@ export declare function initDisclosure(opts?: DelegateOpts): Cleanup;
 export declare function initMenu(opts?: DelegateOpts): Cleanup;
 
 /**
+ * Accessible validation glue for `<form data-bronto-validate>`:
+ * progressive enhancement over the Constraint Validation API. Sets
+ * `aria-invalid`, writes `validationMessage` into the field's
+ * `[data-bronto-error]` / `.ui-hint` slot (linked via
+ * `aria-describedby`), and on invalid submit fills the form's
+ * `[data-bronto-error-summary]` with focusable links and blocks submit.
+ * Works without JS (native validation). Returns a cleanup function.
+ */
+export declare function initFormValidation(opts?: DelegateOpts): Cleanup;
+
+/**
+ * Editable combobox with a filtered listbox popup (WAI-ARIA APG
+ * pattern), dependency-free and CSS-anchored. Wires
+ * `[data-bronto-combobox]` (input `role=combobox` +
+ * `.ui-combobox__list` of `role=option`): ids, `aria-expanded` /
+ * `aria-controls` / `aria-activedescendant`, type-to-filter, full
+ * keyboard, pointer select, outside-click close. Emits `bronto:change`
+ * ({ detail: { value } }) on selection. SSR-safe, idempotent per
+ * instance. Returns a cleanup function.
+ */
+export declare function initCombobox(opts?: DelegateOpts): Cleanup;
+
+/**
+ * Collision-aware popover, dependency-free. A `[data-bronto-popover]`
+ * trigger toggles the `.ui-popover` panel it names; the panel flips
+ * above when it would overflow the viewport and its inline edge is
+ * clamped on-screen. Uses the native top layer when the panel has
+ * `popover` and the Popover API exists, else an `.is-open` class.
+ * Manages `aria-expanded`/`aria-controls`, Escape + outside-click
+ * close, scroll/resize reposition. Returns a cleanup function.
+ */
+export declare function initPopover(opts?: DelegateOpts): Cleanup;
+
+/**
+ * Client-side sortable + selectable data table for
+ * `[data-bronto-sortable]`. Header `.ui-table__sort` / `th[data-sort]`
+ * cycles `aria-sort` and reorders the tbody (numeric- or
+ * locale-string-aware); `[data-bronto-select-all]` toggles
+ * `[data-bronto-select]` rows + `aria-selected` with synced
+ * checked/indeterminate state. Emits `bronto:selectionchange`
+ * ({ detail: { count } }). SSR-safe, idempotent per table. Returns a
+ * cleanup function.
+ */
+export declare function initTableSort(opts?: DelegateOpts): Cleanup;
+
+/**
  * Wire `[data-bronto-tabs]` groups with the WAI-ARIA Tabs keyboard
  * pattern (roving tabindex, Arrow/Home/End, aria-selected, panel sync).
  * Returns a cleanup function.

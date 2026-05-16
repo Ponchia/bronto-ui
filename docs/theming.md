@@ -66,6 +66,56 @@ fills — follows automatically, in both light and dark.
   set `accent-color` yourself on them — this is the one accent surface
   the framework can't tune for you.
 
+## Token tiers (0.3.1)
+
+Three additive, non-breaking tiers sit on top of the primitives. The
+short legacy names (`--panel`, `--line`, `--accent`, …) keep working
+forever as aliases — the tiers are about giving consumers stabler,
+coarser-grained handles.
+
+- **Semantic tier — `--bronto-color-*`.** Role-named aliases:
+  `--bronto-color-surface`, `-surface-raised`, `-border`,
+  `-border-strong`, `-text`, `-text-muted`, `-action`, `-on-action`,
+  `-focus`, `-success`, `-warning`, `-danger`, `-bg`. Target these in
+  new consumer code: re-skinning a _role_ is now one override instead of
+  chasing component internals. They resolve through the per-theme
+  primitives, so light/dark still Just Works.
+- **Accent ramp — `--accent-1 … --accent-6`.** A stepped family
+  (subtle → bold) derived from the single `--accent` knob via
+  `color-mix` against the theme background. Re-brands and theme-adapts
+  automatically. This is the palette for charts / data-viz / multi-state
+  surfaces (the use case the JS token export advertises).
+- **Neutral ramp — `--surface-1 … --surface-6`** (low → high contrast
+  against `--bg`) for layered surfaces without hand-picking greys.
+- **Stacking scale — `--z-base / -raised / -sticky / -overlay /
+  -popover / -toast`.** Every framework `z-index` now resolves through
+  these; override one to slot your app's own layers around the
+  framework's without specificity/`z-index` wars.
+
+All four tiers are in the DTCG export and the JS token model.
+
+## Accessibility markup contracts
+
+A few components are styled but need the consumer to author the right
+semantics — the CSS can't add ARIA for you:
+
+- **`.ui-switch`** — put `role="switch"` on the `<input type="checkbox">`.
+  It then announces "switch, on/off" and the native `checked` drives
+  `aria-checked` (no JS). Forced-colors state cues ship in `forms.css`.
+- **`.ui-tab` / tabs** — operability requires `initTabs()`; don't
+  server-render panels `hidden` unless it's guaranteed to run (see the
+  `initTabs` doc comment).
+- **`.ui-combobox`** — use `initCombobox()`; it owns the APG ARIA.
+- **`.ui-tooltip`** — fine for short labels; for edge-critical or rich
+  content use `.ui-popover` + `initPopover()` (collision-aware).
+
+> **Verify a rebrand:** open
+> [`demo/theme-playground.html`](../demo/theme-playground.html) — paste
+> your `--accent`, see the derived family and the computed WCAG ratios
+> for `--accent-text` / `--accent` against the surface, and copy the CSS
+> + DTCG override. This is the instrument for the "verify your hue"
+> obligation below.
+
 ## Contrast
 
 - `data-contrast="high"` on any element, **and** the OS

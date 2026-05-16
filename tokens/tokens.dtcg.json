@@ -194,7 +194,119 @@
         }
       }
     },
+    "z": {
+      "base": {
+        "$type": "number",
+        "$value": "0"
+      },
+      "raised": {
+        "$type": "number",
+        "$value": "10"
+      },
+      "sticky": {
+        "$type": "number",
+        "$value": "20"
+      },
+      "overlay": {
+        "$type": "number",
+        "$value": "30"
+      },
+      "popover": {
+        "$type": "number",
+        "$value": "50"
+      },
+      "toast": {
+        "$type": "number",
+        "$value": "60"
+      }
+    },
+    "accent": {
+      "1": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "color-mix(in srgb, var(--accent) 8%, var(--bg))"
+        }
+      },
+      "2": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "color-mix(in srgb, var(--accent) 16%, var(--bg))"
+        }
+      },
+      "3": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "color-mix(in srgb, var(--accent) 32%, var(--bg))"
+        }
+      },
+      "4": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "color-mix(in srgb, var(--accent) 60%, var(--bg))"
+        }
+      },
+      "5": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--accent)"
+        }
+      },
+      "6": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--accent-strong)"
+        }
+      }
+    },
     "surface": {
+      "1": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--bg)"
+        }
+      },
+      "2": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--bg-elevated)"
+        }
+      },
+      "3": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--panel)"
+        }
+      },
+      "4": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--panel-soft)"
+        }
+      },
+      "5": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--line)"
+        }
+      },
+      "6": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--line-strong)"
+        }
+      },
       "DEFAULT": {
         "$type": "color",
         "$value": null,
@@ -214,6 +326,99 @@
         "$value": null,
         "$extensions": {
           "com.ponchia.css": "var(--panel-soft)"
+        }
+      }
+    },
+    "bronto": {
+      "color-bg": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--bg)"
+        }
+      },
+      "color-surface": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--panel)"
+        }
+      },
+      "color-surface-raised": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--panel-strong)"
+        }
+      },
+      "color-border": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--line)"
+        }
+      },
+      "color-border-strong": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--line-strong)"
+        }
+      },
+      "color-text": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--text)"
+        }
+      },
+      "color-text-muted": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--text-dim)"
+        }
+      },
+      "color-action": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--accent)"
+        }
+      },
+      "color-on-action": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--button-text)"
+        }
+      },
+      "color-focus": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--focus-ring)"
+        }
+      },
+      "color-success": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--success)"
+        }
+      },
+      "color-warning": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--warning)"
+        }
+      },
+      "color-danger": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--danger)"
         }
       }
     },

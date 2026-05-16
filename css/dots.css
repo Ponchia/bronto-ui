@@ -30,7 +30,7 @@
   mask-image: radial-gradient(ellipse at 50% 0%, #000 30%, transparent 78%);
   pointer-events: none;
   position: fixed;
-  z-index: 0;
+  z-index: var(--z-base);
 }
 
 /* Dotted divider — replaces a plain rule. */

@@ -10,8 +10,9 @@ machine-checked.
 
 ```bash
 npm ci
-npm run check   # 11 gates: lint, format, exports, tokens, classes,
-                #            dts, types, dtcg, shiki, dist, pack
+npm run check   # 14 gates: lint, format, exports, tokens, classes,
+                #            dts, types, dtcg, shiki, dist, pack,
+                #            release, reference, vscode
 npm test        # node:test unit + type-d + contract tests
 ```
 
@@ -37,7 +38,27 @@ merge.
   axe suite. New interactive components need matching coverage.
 - Every breaking change gets a **BREAKING** entry in `CHANGELOG.md`
   with a migration note. The changelog is hand-curated — keep it
-  narrative and accurate.
+  narrative and accurate. The version in `package.json` must map to a
+  **dated** changelog heading (the `check:release` gate enforces this —
+  a published version can never be left marked `unreleased`).
+
+## Deprecation policy
+
+From 0.3.1 onward, public surface (`.ui-*` classes, `data-bronto-*`
+attributes, `cls`/token keys, behavior signatures) is removed on a
+**deprecate-one-minor** cycle:
+
+1. **Deprecate** in minor _N_: the surface keeps working unchanged, is
+   marked deprecated in `CHANGELOG.md`, and — if it is a rename — an
+   entry is added to [`MIGRATIONS.json`](MIGRATIONS.json) with a
+   `safe`/`manual` classification.
+2. **Remove** no earlier than minor _N+1_, with a **BREAKING** entry
+   pointing at the migration.
+
+This makes "minor may break" predictable: a consumer who upgrades one
+minor at a time always gets a working deprecation window and a
+machine-readable rename map. The 0.2 → 0.3 cut predates this policy
+(documented in `docs/migrations/0.2-to-0.3.md`).
 
 ## Browser floor
 
@@ -62,3 +83,25 @@ Dependabot (grouped, weekly). `@playwright/test` is intentionally
 **not** auto-bumped: it must stay in lockstep with the pinned
 `mcr.microsoft.com/playwright` container image, so bump both together
 in one deliberate PR.
+
+## Release
+
+Releases publish to npm and are tag-driven:
+
+```bash
+# bump "version" in package.json + date the CHANGELOG section
+# (check:release enforces this), land on main, let CI go green:
+git tag vX.Y.Z && git push origin vX.Y.Z
+```
+
+The tag triggers `.github/workflows/release.yml`: `validate` (read-only
+checks + tag↔version match) **and** `e2e` (Playwright visual + a11y)
+must both pass → `publish-npm` → `release-notes`. **The npm publish is
+the gate** — a failing check or e2e means the version never reaches
+npm, so consumers never resolve it. GitHub also serves the raw tag
+tarball ungated, but that is a legacy/fallback path, not the documented
+install. Publishing runs `npm publish --ignore-scripts` with provenance
+(SLSA); the `@ponchia` scope and `NPM_TOKEN` repo secret are in place,
+so a pushed `vX.Y.Z` tag is all a release needs. CI never publishes
+from a `main` push — a push to `main` ships nothing. Rationale and
+pre-publish blockers: [`docs/architecture.md`](docs/architecture.md).

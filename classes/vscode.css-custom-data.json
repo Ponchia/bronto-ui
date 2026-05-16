@@ -1,0 +1,407 @@
+{
+  "version": 1.1,
+  "properties": [
+    {
+      "name": "--accent",
+      "description": "Theme token. Light: `#d71921` · Dark: `#ff3b41`"
+    },
+    {
+      "name": "--accent-1",
+      "description": "Global scale token. Value: `color-mix(in srgb, var(--accent) 8%, var(--bg))`"
+    },
+    {
+      "name": "--accent-2",
+      "description": "Global scale token. Value: `color-mix(in srgb, var(--accent) 16%, var(--bg))`"
+    },
+    {
+      "name": "--accent-3",
+      "description": "Global scale token. Value: `color-mix(in srgb, var(--accent) 32%, var(--bg))`"
+    },
+    {
+      "name": "--accent-4",
+      "description": "Global scale token. Value: `color-mix(in srgb, var(--accent) 60%, var(--bg))`"
+    },
+    {
+      "name": "--accent-5",
+      "description": "Global scale token. Value: `var(--accent)`"
+    },
+    {
+      "name": "--accent-6",
+      "description": "Global scale token. Value: `var(--accent-strong)`"
+    },
+    {
+      "name": "--accent-soft",
+      "description": "Theme token. Light: `color-mix(in srgb, var(--accent) 10%, transparent)` · Dark: `color-mix(in srgb, var(--accent) 14%, transparent)`"
+    },
+    {
+      "name": "--accent-strong",
+      "description": "Theme token. Light: `color-mix(in srgb, var(--accent) 83%, #000)` · Dark: `color-mix(in srgb, var(--accent) 84%, #fff)`"
+    },
+    {
+      "name": "--accent-text",
+      "description": "Theme token. Light: `var(--accent-strong)` · Dark: `var(--accent-strong)`"
+    },
+    {
+      "name": "--bg",
+      "description": "Theme token. Light: `#f4f4f2` · Dark: `#000000`"
+    },
+    {
+      "name": "--bg-accent",
+      "description": "Theme token. Light: `color-mix(in srgb, var(--accent) 6%, transparent)` · Dark: `color-mix(in srgb, var(--accent) 8%, transparent)`"
+    },
+    {
+      "name": "--bg-elevated",
+      "description": "Theme token. Light: `#fbfbfa` · Dark: `#0a0a0a`"
+    },
+    {
+      "name": "--border",
+      "description": "Global scale token. Value: `var(--line)`"
+    },
+    {
+      "name": "--border-strong",
+      "description": "Global scale token. Value: `var(--line-strong)`"
+    },
+    {
+      "name": "--bronto-color-action",
+      "description": "Global scale token. Value: `var(--accent)`"
+    },
+    {
+      "name": "--bronto-color-bg",
+      "description": "Global scale token. Value: `var(--bg)`"
+    },
+    {
+      "name": "--bronto-color-border",
+      "description": "Global scale token. Value: `var(--line)`"
+    },
+    {
+      "name": "--bronto-color-border-strong",
+      "description": "Global scale token. Value: `var(--line-strong)`"
+    },
+    {
+      "name": "--bronto-color-danger",
+      "description": "Global scale token. Value: `var(--danger)`"
+    },
+    {
+      "name": "--bronto-color-focus",
+      "description": "Global scale token. Value: `var(--focus-ring)`"
+    },
+    {
+      "name": "--bronto-color-on-action",
+      "description": "Global scale token. Value: `var(--button-text)`"
+    },
+    {
+      "name": "--bronto-color-success",
+      "description": "Global scale token. Value: `var(--success)`"
+    },
+    {
+      "name": "--bronto-color-surface",
+      "description": "Global scale token. Value: `var(--panel)`"
+    },
+    {
+      "name": "--bronto-color-surface-raised",
+      "description": "Global scale token. Value: `var(--panel-strong)`"
+    },
+    {
+      "name": "--bronto-color-text",
+      "description": "Global scale token. Value: `var(--text)`"
+    },
+    {
+      "name": "--bronto-color-text-muted",
+      "description": "Global scale token. Value: `var(--text-dim)`"
+    },
+    {
+      "name": "--bronto-color-warning",
+      "description": "Global scale token. Value: `var(--warning)`"
+    },
+    {
+      "name": "--button-text",
+      "description": "Theme token. Light: `#ffffff` · Dark: `#000000`"
+    },
+    {
+      "name": "--code-bg",
+      "description": "Theme token. Light: `rgb(10, 10, 10, 0.05)` · Dark: `rgb(255, 255, 255, 0.05)`"
+    },
+    {
+      "name": "--danger",
+      "description": "Theme token. Light: `#c01622` · Dark: `#ff4d54`"
+    },
+    {
+      "name": "--danger-soft",
+      "description": "Theme token. Light: `rgb(192, 22, 34, 0.1)` · Dark: `rgb(255, 77, 84, 0.15)`"
+    },
+    {
+      "name": "--display",
+      "description": "Global scale token. Value: `'Doto', var(--mono)`"
+    },
+    {
+      "name": "--dot-font",
+      "description": "Global scale token. Value: `'Doto', var(--mono)`"
+    },
+    {
+      "name": "--dot-gap",
+      "description": "Global scale token. Value: `14px`"
+    },
+    {
+      "name": "--dot-size",
+      "description": "Global scale token. Value: `2px`"
+    },
+    {
+      "name": "--duration-base",
+      "description": "Global scale token. Value: `200ms`"
+    },
+    {
+      "name": "--duration-fast",
+      "description": "Global scale token. Value: `130ms`"
+    },
+    {
+      "name": "--duration-slow",
+      "description": "Global scale token. Value: `360ms`"
+    },
+    {
+      "name": "--ease-out",
+      "description": "Global scale token. Value: `cubic-bezier(0.33, 1, 0.68, 1)`"
+    },
+    {
+      "name": "--ease-spring",
+      "description": "Global scale token. Value: `cubic-bezier(0.16, 1, 0.3, 1)`"
+    },
+    {
+      "name": "--ease-standard",
+      "description": "Global scale token. Value: `cubic-bezier(0.2, 0.8, 0.2, 1)`"
+    },
+    {
+      "name": "--field-dot",
+      "description": "Theme token. Light: `rgb(10, 10, 10, 0.16)` · Dark: `rgb(242, 242, 242, 0.14)`"
+    },
+    {
+      "name": "--field-dot-accent",
+      "description": "Theme token. Light: `color-mix(in srgb, var(--accent) 78%, transparent)` · Dark: `color-mix(in srgb, var(--accent) 82%, transparent)`"
+    },
+    {
+      "name": "--field-dot-hot",
+      "description": "Theme token. Light: `rgb(10, 10, 10, 0.4)` · Dark: `rgb(242, 242, 242, 0.36)`"
+    },
+    {
+      "name": "--focus-ring",
+      "description": "Theme token. Light: `var(--accent)` · Dark: `var(--accent)`"
+    },
+    {
+      "name": "--line",
+      "description": "Theme token. Light: `#d8d8d4` · Dark: `#2a2a2a`"
+    },
+    {
+      "name": "--line-strong",
+      "description": "Theme token. Light: `#a8a8a2` · Dark: `#444444`"
+    },
+    {
+      "name": "--mono",
+      "description": "Global scale token. Value: `'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', ui-monospace, monospace`"
+    },
+    {
+      "name": "--orange",
+      "description": "Theme token. Light: `#a85f32` · Dark: `#d08c5b`"
+    },
+    {
+      "name": "--orange-soft",
+      "description": "Theme token. Light: `rgb(168, 95, 50, 0.13)` · Dark: `rgb(208, 140, 91, 0.15)`"
+    },
+    {
+      "name": "--panel",
+      "description": "Theme token. Light: `#ffffff` · Dark: `#0c0c0c`"
+    },
+    {
+      "name": "--panel-soft",
+      "description": "Theme token. Light: `#ececea` · Dark: `#1a1a1a`"
+    },
+    {
+      "name": "--panel-strong",
+      "description": "Theme token. Light: `#ffffff` · Dark: `#141414`"
+    },
+    {
+      "name": "--radius-lg",
+      "description": "Global scale token. Value: `3px`"
+    },
+    {
+      "name": "--radius-md",
+      "description": "Global scale token. Value: `2px`"
+    },
+    {
+      "name": "--radius-pill",
+      "description": "Global scale token. Value: `999px`"
+    },
+    {
+      "name": "--radius-sm",
+      "description": "Global scale token. Value: `1px`"
+    },
+    {
+      "name": "--radius-xl",
+      "description": "Global scale token. Value: `4px`"
+    },
+    {
+      "name": "--sans",
+      "description": "Global scale token. Value: `'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif`"
+    },
+    {
+      "name": "--shadow",
+      "description": "Theme token. Light: `none` · Dark: `none`"
+    },
+    {
+      "name": "--shadow-raised",
+      "description": "Theme token. Light: `0 0 0 1px var(--line-strong)` · Dark: `0 0 0 1px var(--line-strong)`"
+    },
+    {
+      "name": "--space-2xl",
+      "description": "Global scale token. Value: `2.5rem`"
+    },
+    {
+      "name": "--space-2xs",
+      "description": "Global scale token. Value: `0.25rem`"
+    },
+    {
+      "name": "--space-lg",
+      "description": "Global scale token. Value: `1.35rem`"
+    },
+    {
+      "name": "--space-md",
+      "description": "Global scale token. Value: `1rem`"
+    },
+    {
+      "name": "--space-sm",
+      "description": "Global scale token. Value: `0.75rem`"
+    },
+    {
+      "name": "--space-xl",
+      "description": "Global scale token. Value: `1.75rem`"
+    },
+    {
+      "name": "--space-xs",
+      "description": "Global scale token. Value: `0.5rem`"
+    },
+    {
+      "name": "--success",
+      "description": "Theme token. Light: `#2f7d4f` · Dark: `#4ec27e`"
+    },
+    {
+      "name": "--success-soft",
+      "description": "Theme token. Light: `rgb(47, 125, 79, 0.12)` · Dark: `rgb(78, 194, 126, 0.14)`"
+    },
+    {
+      "name": "--surface",
+      "description": "Global scale token. Value: `var(--panel)`"
+    },
+    {
+      "name": "--surface-1",
+      "description": "Global scale token. Value: `var(--bg)`"
+    },
+    {
+      "name": "--surface-2",
+      "description": "Global scale token. Value: `var(--bg-elevated)`"
+    },
+    {
+      "name": "--surface-3",
+      "description": "Global scale token. Value: `var(--panel)`"
+    },
+    {
+      "name": "--surface-4",
+      "description": "Global scale token. Value: `var(--panel-soft)`"
+    },
+    {
+      "name": "--surface-5",
+      "description": "Global scale token. Value: `var(--line)`"
+    },
+    {
+      "name": "--surface-6",
+      "description": "Global scale token. Value: `var(--line-strong)`"
+    },
+    {
+      "name": "--surface-muted",
+      "description": "Global scale token. Value: `var(--panel-soft)`"
+    },
+    {
+      "name": "--surface-raised",
+      "description": "Global scale token. Value: `var(--panel-strong)`"
+    },
+    {
+      "name": "--text",
+      "description": "Theme token. Light: `#0a0a0a` · Dark: `#f2f2f2`"
+    },
+    {
+      "name": "--text-2xs",
+      "description": "Global scale token. Value: `0.68rem`"
+    },
+    {
+      "name": "--text-base",
+      "description": "Global scale token. Value: `0.95rem`"
+    },
+    {
+      "name": "--text-dim",
+      "description": "Theme token. Light: `#686863` · Dark: `#858585`"
+    },
+    {
+      "name": "--text-lg",
+      "description": "Global scale token. Value: `1.15rem`"
+    },
+    {
+      "name": "--text-sm",
+      "description": "Global scale token. Value: `0.86rem`"
+    },
+    {
+      "name": "--text-soft",
+      "description": "Theme token. Light: `#353533` · Dark: `#c4c4c4`"
+    },
+    {
+      "name": "--text-xl",
+      "description": "Global scale token. Value: `1.45rem`"
+    },
+    {
+      "name": "--text-xs",
+      "description": "Global scale token. Value: `0.76rem`"
+    },
+    {
+      "name": "--tracking-wide",
+      "description": "Global scale token. Value: `0.14em`"
+    },
+    {
+      "name": "--tracking-wider",
+      "description": "Global scale token. Value: `0.22em`"
+    },
+    {
+      "name": "--warning",
+      "description": "Theme token. Light: `#806414` · Dark: `#d8bd72`"
+    },
+    {
+      "name": "--warning-soft",
+      "description": "Theme token. Light: `rgb(128, 100, 20, 0.13)` · Dark: `rgb(216, 189, 114, 0.14)`"
+    },
+    {
+      "name": "--z-base",
+      "description": "Global scale token. Value: `0`"
+    },
+    {
+      "name": "--z-overlay",
+      "description": "Global scale token. Value: `30`"
+    },
+    {
+      "name": "--z-popover",
+      "description": "Global scale token. Value: `50`"
+    },
+    {
+      "name": "--z-raised",
+      "description": "Global scale token. Value: `10`"
+    },
+    {
+      "name": "--z-sticky",
+      "description": "Global scale token. Value: `20`"
+    },
+    {
+      "name": "--z-toast",
+      "description": "Global scale token. Value: `60`"
+    }
+  ],
+  "atDirectives": [
+    {
+      "name": "@layer bronto",
+      "description": "The single cascade layer @ponchia/ui ships in. Un-layered app CSS overrides it without specificity conflict."
+    }
+  ]
+}

@@ -23,6 +23,9 @@ const hasDom = () => typeof document !== 'undefined';
 // which collides aria-controls/aria-labelledby across the document.
 let tabUid = 0;
 
+// Same rationale for auto-minted form-field / error-slot ids.
+let fieldUid = 0;
+
 // First-toast deferral queue. The very first toast on a brand-new stack
 // is appended next frame so AT observes the empty aria-live region
 // before its first child. Any further toasts created *before* that frame
@@ -321,20 +324,30 @@ export function initDialog({ root } = {}) {
  * it until dismissed). Returns a function that dismisses the toast
  * early. SSR-safe (no-op).
  */
-export function toast(message, { tone, title, duration = 4000 } = {}) {
+export function toast(message, { tone, title, duration = 4000, assertive, closable } = {}) {
   if (!hasDom()) return noop;
-  let stack = document.querySelector('.ui-toast-stack');
+  // Errors must interrupt: danger toasts (or an explicit `assertive`)
+  // go to a SEPARATE assertive region so they announce immediately,
+  // while status toasts stay polite. Two regions — not a per-item
+  // role=alert nested in a polite parent — avoids the double
+  // announcement that nesting causes in some screen readers.
+  const isAssertive = assertive ?? tone === 'danger';
+  const stackSel = isAssertive
+    ? '.ui-toast-stack--assertive'
+    : '.ui-toast-stack:not(.ui-toast-stack--assertive)';
+  let stack = document.querySelector(stackSel);
   const freshStack = !stack;
   if (!stack) {
     stack = document.createElement('div');
-    stack.className = 'ui-toast-stack';
-    stack.setAttribute('aria-live', 'polite');
+    stack.className = isAssertive ? 'ui-toast-stack ui-toast-stack--assertive' : 'ui-toast-stack';
+    stack.setAttribute('aria-live', isAssertive ? 'assertive' : 'polite');
+    if (isAssertive) stack.setAttribute('role', 'alert');
     document.body.appendChild(stack);
   }
   const el = document.createElement('div');
   el.className = tone ? `ui-toast ui-toast--${tone}` : 'ui-toast';
-  // No per-item role: the stack is already aria-live=polite; a nested
-  // status live region risks double announcement in some SRs.
+  // No per-item role: the stack itself is the live region; a nested
+  // live region risks double announcement in some SRs.
   if (title) {
     const t = document.createElement('p');
     t.className = 'ui-toast__title';
@@ -379,6 +392,18 @@ export function toast(message, { tone, title, duration = 4000 } = {}) {
     // The stack is a persistent live region — never removed on drain, so
     // the next toast does not recreate (and thus mis-announce) it.
   };
+  // A sticky toast (duration:0) is unusable without a manual close, so
+  // it gets a dismiss affordance by default; any toast can opt in via
+  // `closable`. The button carries no text node (glyph is a CSS
+  // ::before) so the toast's announced/textContent stays the message.
+  if (closable ?? duration === 0) {
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'ui-toast__close';
+    close.setAttribute('aria-label', 'Dismiss');
+    close.addEventListener('click', dismiss);
+    el.appendChild(close);
+  }
   if (duration > 0) timer = setTimeout(dismiss, duration);
   return dismiss;
 }
@@ -450,4 +475,548 @@ export function initMenu({ root } = {}) {
       host.removeEventListener('keydown', onKey);
     };
   });
+}
+
+/**
+ * Accessible form validation glue for `<form data-bronto-validate>`.
+ * Progressive enhancement over the native Constraint Validation API —
+ * the framework already ships the `[aria-invalid]` / `.ui-hint--error`
+ * styling; this wires the a11y plumbing every consumer would otherwise
+ * re-implement (and usually get wrong):
+ *
+ *  - suppresses the native error bubbles (`form.noValidate`),
+ *  - on blur and on submit sets `aria-invalid` and writes the browser's
+ *    `validationMessage` into the field's error slot
+ *    (`[data-bronto-error]` inside the `.ui-field`, falling back to a
+ *    `.ui-hint`), linked via `aria-describedby`,
+ *  - on an invalid submit, fills the form's
+ *    `[data-bronto-error-summary]` (a `.ui-error-summary`) with
+ *    in-page links to each bad field, focuses it, and blocks submit.
+ *
+ * Pure enhancement: with JS off the form still submits and the browser
+ * validates natively. SSR-safe, idempotent; returns a cleanup function.
+ */
+export function initFormValidation({ root } = {}) {
+  if (!hasDom()) return noop;
+  const host = root || document;
+
+  const ensureId = (el, prefix) => {
+    if (!el.id) el.id = `${prefix}-${++fieldUid}`;
+    return el.id;
+  };
+
+  const slotFor = (control) => {
+    const field = control.closest('.ui-field');
+    if (!field) return null;
+    return field.querySelector('[data-bronto-error]') || field.querySelector('.ui-hint');
+  };
+
+  const link = (control, slot) => {
+    const slotId = ensureId(slot, 'bronto-err');
+    const ids = (control.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+    if (!ids.includes(slotId)) {
+      ids.push(slotId);
+      control.setAttribute('aria-describedby', ids.join(' '));
+    }
+  };
+
+  const validateField = (control) => {
+    if (!control.willValidate) return true;
+    const ok = control.validity.valid;
+    const slot = slotFor(control);
+    if (ok) {
+      control.removeAttribute('aria-invalid');
+      if (slot) {
+        slot.textContent = '';
+        if (slot.classList.contains('ui-hint')) slot.classList.remove('ui-hint--error');
+      }
+    } else {
+      control.setAttribute('aria-invalid', 'true');
+      if (slot) {
+        slot.textContent = control.validationMessage;
+        if (slot.classList.contains('ui-hint')) slot.classList.add('ui-hint--error');
+        link(control, slot);
+      }
+    }
+    return ok;
+  };
+
+  const controlsOf = (form) =>
+    [...form.elements].filter(
+      (el) => el.willValidate && el.type !== 'submit' && el.type !== 'button',
+    );
+
+  const refreshSummary = (form, invalid) => {
+    const summary = form.querySelector('[data-bronto-error-summary]');
+    if (!summary) return;
+    if (!invalid.length) {
+      summary.hidden = true;
+      summary.replaceChildren();
+      return;
+    }
+    const title = document.createElement('p');
+    title.className = 'ui-error-summary__title';
+    title.textContent = 'There is a problem';
+    const list = document.createElement('ul');
+    list.className = 'ui-error-summary__list';
+    for (const c of invalid) {
+      const id = ensureId(c, 'bronto-field');
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = `#${id}`;
+      a.textContent = c.validationMessage;
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        c.focus();
+      });
+      li.appendChild(a);
+      list.appendChild(li);
+    }
+    summary.replaceChildren(title, list);
+    summary.setAttribute('role', 'alert');
+    summary.tabIndex = -1;
+    summary.hidden = false;
+  };
+
+  const onSubmit = (e) => {
+    const form = e.target.closest?.('[data-bronto-validate]');
+    if (!form) return;
+    form.noValidate = true;
+    const invalid = controlsOf(form).filter((c) => !validateField(c));
+    refreshSummary(form, invalid);
+    if (invalid.length) {
+      e.preventDefault();
+      const summary = form.querySelector('[data-bronto-error-summary]');
+      (summary && !summary.hidden ? summary : invalid[0]).focus();
+    }
+  };
+
+  const onBlur = (e) => {
+    const control = e.target;
+    if (!control.willValidate) return;
+    const form = control.closest?.('[data-bronto-validate]');
+    if (!form) return;
+    form.noValidate = true;
+    validateField(control);
+    const summary = form.querySelector('[data-bronto-error-summary]');
+    if (summary && !summary.hidden)
+      refreshSummary(
+        form,
+        controlsOf(form).filter((c) => !c.validity.valid),
+      );
+  };
+
+  return bindOnce(host, 'formValidation', () => {
+    host.addEventListener('submit', onSubmit, true);
+    host.addEventListener('focusout', onBlur);
+    return () => {
+      host.removeEventListener('submit', onSubmit, true);
+      host.removeEventListener('focusout', onBlur);
+    };
+  });
+}
+
+/**
+ * Editable combobox with a filtered listbox popup, implementing the
+ * WAI-ARIA APG combobox pattern (the widget the framework most lacked
+ * and consumers most often build badly). Dependency-free, no
+ * positioning library — the list is CSS-anchored under the input.
+ *
+ * Markup: `[data-bronto-combobox]` wrapping an `<input role="combobox">`
+ * (`.ui-combobox__input`) and a `<ul role="listbox">`
+ * (`.ui-combobox__list`) of `<li role="option">` (`.ui-combobox__option`,
+ * optional `data-value`). An optional `.ui-combobox__empty` shows when
+ * nothing matches. The behavior owns ids, `aria-expanded`,
+ * `aria-controls`, `aria-activedescendant`, roving active option,
+ * type-to-filter, full keyboard (Down/Up/Home/End/Enter/Escape/Tab),
+ * pointer select, and outside-click close; it emits a `bronto:change`
+ * CustomEvent ({ detail: { value } }) on selection. SSR-safe,
+ * idempotent per instance; returns a cleanup function.
+ */
+export function initCombobox({ root } = {}) {
+  if (!hasDom()) return noop;
+  const host = root || document;
+  const boxes = [];
+  if (host !== document && host.matches?.('[data-bronto-combobox]')) boxes.push(host);
+  boxes.push(...(host.querySelectorAll?.('[data-bronto-combobox]') ?? []));
+  const cleanups = [];
+
+  for (const box of boxes) {
+    const input = box.querySelector('[role="combobox"], .ui-combobox__input');
+    const list = box.querySelector('[role="listbox"], .ui-combobox__list');
+    if (!input || !list) continue;
+    const empty = box.querySelector('.ui-combobox__empty');
+    const options = [...list.querySelectorAll('[role="option"], .ui-combobox__option')];
+
+    const listId = list.id || (list.id = `bronto-cb-list-${++fieldUid}`);
+    options.forEach((o, i) => {
+      if (!o.id) o.id = `${listId}-opt-${i}`;
+      o.setAttribute('role', 'option');
+    });
+    list.setAttribute('role', 'listbox');
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-controls', listId);
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-expanded', 'false');
+    input.setAttribute('autocomplete', 'off');
+    list.hidden = true;
+
+    let active = -1;
+    const visible = () => options.filter((o) => !o.hidden);
+
+    const setActive = (opt) => {
+      options.forEach((o) => o.classList.remove('is-active'));
+      if (opt) {
+        opt.classList.add('is-active');
+        input.setAttribute('aria-activedescendant', opt.id);
+        // jsdom's scrollIntoView throws "Not implemented"; it is a
+        // pure affordance, so never let it break keyboard nav.
+        try {
+          opt.scrollIntoView({ block: 'nearest' });
+        } catch {
+          /* non-DOM/headless environment — ignore */
+        }
+      } else {
+        input.removeAttribute('aria-activedescendant');
+      }
+    };
+
+    const open = () => {
+      if (!list.hidden) return;
+      list.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+    };
+    const close = () => {
+      list.hidden = true;
+      input.setAttribute('aria-expanded', 'false');
+      active = -1;
+      setActive(null);
+    };
+
+    const filter = () => {
+      const q = input.value.trim().toLowerCase();
+      let any = false;
+      for (const o of options) {
+        const match = !q || o.textContent.toLowerCase().includes(q);
+        o.hidden = !match;
+        if (match) any = true;
+      }
+      if (empty) empty.hidden = any;
+      open();
+    };
+
+    const select = (opt) => {
+      input.value = opt.dataset.value ?? opt.textContent.trim();
+      options.forEach((o) => o.setAttribute('aria-selected', String(o === opt)));
+      close();
+      input.focus();
+      box.dispatchEvent(
+        new CustomEvent('bronto:change', {
+          detail: { value: input.value },
+          bubbles: true,
+        }),
+      );
+    };
+
+    const move = (delta) => {
+      const vis = visible();
+      if (!vis.length) return;
+      open();
+      const curIdx = vis.indexOf(options[active]);
+      let next = curIdx + delta;
+      if (next < 0) next = vis.length - 1;
+      if (next >= vis.length) next = 0;
+      active = options.indexOf(vis[next]);
+      setActive(options[active]);
+    };
+
+    const onInput = () => filter();
+    const onKey = (e) => {
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          list.hidden ? filter() : move(1);
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          move(-1);
+          break;
+        case 'Home':
+          if (!list.hidden) {
+            e.preventDefault();
+            const v = visible();
+            if (v.length) {
+              active = options.indexOf(v[0]);
+              setActive(options[active]);
+            }
+          }
+          break;
+        case 'End':
+          if (!list.hidden) {
+            e.preventDefault();
+            const v = visible();
+            if (v.length) {
+              active = options.indexOf(v[v.length - 1]);
+              setActive(options[active]);
+            }
+          }
+          break;
+        case 'Enter':
+          if (!list.hidden && active >= 0) {
+            e.preventDefault();
+            select(options[active]);
+          }
+          break;
+        case 'Escape':
+          if (!list.hidden) {
+            e.preventDefault();
+            close();
+          }
+          break;
+        case 'Tab':
+          close();
+          break;
+        default:
+          break;
+      }
+    };
+    const onOptionClick = (e) => {
+      const opt = e.target.closest('[role="option"], .ui-combobox__option');
+      if (opt) select(opt);
+    };
+    const onDocClick = (e) => {
+      if (!box.contains(e.target)) close();
+    };
+
+    const bound = bindOnce(box, 'combobox', () => {
+      input.addEventListener('input', onInput);
+      input.addEventListener('keydown', onKey);
+      list.addEventListener('click', onOptionClick);
+      document.addEventListener('click', onDocClick);
+      return () => {
+        input.removeEventListener('input', onInput);
+        input.removeEventListener('keydown', onKey);
+        list.removeEventListener('click', onOptionClick);
+        document.removeEventListener('click', onDocClick);
+      };
+    });
+    cleanups.push(bound);
+  }
+
+  return () => cleanups.forEach((fn) => fn());
+}
+
+/**
+ * Collision-aware popover, dependency-free. A `[data-bronto-popover]`
+ * trigger toggles the `.ui-popover` panel whose id it names. The panel
+ * is placed under the trigger and **flips above** when it would
+ * overflow the viewport, with its inline edge clamped on-screen — the
+ * thing the CSS-only tooltip can't do near edges / inside scroll
+ * containers. If the panel has the native `popover` attribute and the
+ * Popover API is available it is shown in the top layer (never
+ * clipped); otherwise an `.is-open` class is toggled. Manages
+ * `aria-expanded` / `aria-controls`, closes on Escape and outside
+ * click, and re-positions on scroll/resize while open. SSR-safe,
+ * idempotent; returns a cleanup function.
+ */
+export function initPopover({ root } = {}) {
+  if (!hasDom()) return noop;
+  const host = root || document;
+  const view = document.defaultView;
+  const GAP = 8;
+  let openPanel = null;
+  let openTrigger = null;
+
+  const place = (trigger, panel) => {
+    const r = trigger.getBoundingClientRect();
+    const pw = panel.offsetWidth;
+    const ph = panel.offsetHeight;
+    const vw = view?.innerWidth ?? 0;
+    const vh = view?.innerHeight ?? 0;
+    let top = r.bottom + GAP;
+    if (top + ph > vh && r.top - GAP - ph >= 0) top = r.top - GAP - ph;
+    let left = r.left;
+    if (vw) left = Math.max(GAP, Math.min(left, vw - pw - GAP));
+    panel.style.top = `${Math.max(GAP, top)}px`;
+    panel.style.left = `${left}px`;
+  };
+
+  const close = () => {
+    if (!openPanel) return;
+    const panel = openPanel;
+    const trigger = openTrigger;
+    openPanel = openTrigger = null;
+    if (panel.hasAttribute('popover') && typeof panel.hidePopover === 'function') {
+      try {
+        panel.hidePopover();
+      } catch {
+        /* already hidden */
+      }
+    } else {
+      panel.classList.remove('is-open');
+    }
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+  };
+
+  const open = (trigger, panel) => {
+    close();
+    trigger.setAttribute('aria-controls', panel.id);
+    trigger.setAttribute('aria-expanded', 'true');
+    if (panel.hasAttribute('popover') && typeof panel.showPopover === 'function') {
+      try {
+        panel.showPopover();
+      } catch {
+        panel.classList.add('is-open');
+      }
+    } else {
+      panel.classList.add('is-open');
+    }
+    openPanel = panel;
+    openTrigger = trigger;
+    place(trigger, panel);
+  };
+
+  const onClick = (e) => {
+    const trigger = e.target.closest?.('[data-bronto-popover]');
+    if (trigger) {
+      const panel = document.getElementById(trigger.getAttribute('data-bronto-popover'));
+      if (!panel) return;
+      e.preventDefault();
+      if (openPanel === panel) close();
+      else open(trigger, panel);
+      return;
+    }
+    if (openPanel && !openPanel.contains(e.target)) close();
+  };
+  const onKey = (e) => {
+    if (e.key === 'Escape' && openPanel) {
+      const t = openTrigger;
+      close();
+      t?.focus?.();
+    }
+  };
+  const onReflow = () => {
+    if (openPanel && openTrigger) place(openTrigger, openPanel);
+  };
+
+  return bindOnce(host, 'popover', () => {
+    host.addEventListener('click', onClick);
+    document.addEventListener('keydown', onKey);
+    view?.addEventListener('scroll', onReflow, true);
+    view?.addEventListener('resize', onReflow);
+    return () => {
+      host.removeEventListener('click', onClick);
+      document.removeEventListener('keydown', onKey);
+      view?.removeEventListener('scroll', onReflow, true);
+      view?.removeEventListener('resize', onReflow);
+    };
+  });
+}
+
+/**
+ * Client-side sortable + selectable data table. Wires
+ * `[data-bronto-sortable]`:
+ *
+ *  - clicking a header's `.ui-table__sort` (or a `th[data-sort]`)
+ *    sorts the tbody by that column, cycling `aria-sort`
+ *    none → ascending → descending and clearing the other headers.
+ *    Numeric columns (`data-sort="num"` or `.is-num` cells) sort
+ *    numerically; everything else, locale string compare.
+ *  - a `[data-bronto-select-all]` checkbox toggles every
+ *    `[data-bronto-select]` row checkbox and the rows'
+ *    `aria-selected`; toggling a row keeps the header checkbox's
+ *    checked/indeterminate state in sync. Emits `bronto:selectionchange`
+ *    ({ detail: { count } }) on the table.
+ *
+ * SSR-safe, idempotent per table; returns a cleanup function.
+ */
+export function initTableSort({ root } = {}) {
+  if (!hasDom()) return noop;
+  const host = root || document;
+  const tables = [];
+  if (host !== document && host.matches?.('[data-bronto-sortable]')) tables.push(host);
+  tables.push(...(host.querySelectorAll?.('[data-bronto-sortable]') ?? []));
+  const cleanups = [];
+
+  for (const table of tables) {
+    const tbody = table.tBodies[0];
+    if (!tbody) continue;
+
+    const colIndex = (th) => [...th.parentElement.children].indexOf(th);
+    const cellText = (row, i) => row.children[i]?.textContent.trim() ?? '';
+
+    const sortBy = (th, numeric) => {
+      const headers = th.closest('tr').querySelectorAll('th');
+      const dir = th.getAttribute('aria-sort') === 'ascending' ? 'descending' : 'ascending';
+      headers.forEach((h) => h.removeAttribute('aria-sort'));
+      th.setAttribute('aria-sort', dir);
+      const i = colIndex(th);
+      const sign = dir === 'ascending' ? 1 : -1;
+      const rows = [...tbody.rows].filter((r) => !r.classList.contains('ui-table__empty'));
+      rows.sort((a, b) => {
+        const x = cellText(a, i);
+        const y = cellText(b, i);
+        const cmp = numeric
+          ? (parseFloat(x.replace(/[^\d.-]/g, '')) || 0) -
+            (parseFloat(y.replace(/[^\d.-]/g, '')) || 0)
+          : x.localeCompare(y);
+        return cmp * sign;
+      });
+      rows.forEach((r) => tbody.appendChild(r));
+    };
+
+    const allBox = table.querySelector('[data-bronto-select-all]');
+    const rowBoxes = () => [...table.querySelectorAll('[data-bronto-select]')];
+    const syncAll = () => {
+      const boxes = rowBoxes();
+      const on = boxes.filter((b) => b.checked).length;
+      if (allBox) {
+        allBox.checked = on > 0 && on === boxes.length;
+        allBox.indeterminate = on > 0 && on < boxes.length;
+      }
+      table.dispatchEvent(
+        new CustomEvent('bronto:selectionchange', { detail: { count: on }, bubbles: true }),
+      );
+    };
+    const markRow = (box) => {
+      const tr = box.closest('tr');
+      if (tr) tr.setAttribute('aria-selected', String(box.checked));
+    };
+
+    const onClick = (e) => {
+      const sorter = e.target.closest('.ui-table__sort, th[data-sort]');
+      if (sorter && table.contains(sorter)) {
+        const th = sorter.closest('th');
+        const numeric =
+          (sorter.getAttribute('data-sort') || th.getAttribute('data-sort')) === 'num' ||
+          th.classList.contains('is-num');
+        sortBy(th, numeric);
+      }
+    };
+    const onChange = (e) => {
+      const t = e.target;
+      if (t.matches?.('[data-bronto-select-all]')) {
+        rowBoxes().forEach((b) => {
+          b.checked = t.checked;
+          markRow(b);
+        });
+        syncAll();
+      } else if (t.matches?.('[data-bronto-select]')) {
+        markRow(t);
+        syncAll();
+      }
+    };
+
+    const bound = bindOnce(table, 'tableSort', () => {
+      table.addEventListener('click', onClick);
+      table.addEventListener('change', onChange);
+      return () => {
+        table.removeEventListener('click', onClick);
+        table.removeEventListener('change', onChange);
+      };
+    });
+    cleanups.push(bound);
+  }
+
+  return () => cleanups.forEach((fn) => fn());
 }

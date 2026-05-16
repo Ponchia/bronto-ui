@@ -32,7 +32,7 @@
   inset-inline-start: var(--space-md);
   padding: 0.7rem 1rem;
   position: fixed;
-  z-index: 60;
+  z-index: var(--z-toast);
 }
 
 .ui-skiplink:focus {
@@ -182,7 +182,7 @@
   min-inline-size: 12rem;
   padding: 0.4rem;
   position: absolute;
-  z-index: 30;
+  z-index: var(--z-overlay);
 }
 
 /* Below the breakpoint the inline nav collapses into the menu. */

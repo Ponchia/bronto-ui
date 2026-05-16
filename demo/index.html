@@ -583,6 +583,91 @@ ui.button({ variant: 'ghost' });</code></pre>
           </span>
         </div>
       </section>
+
+      <section aria-labelledby="v04" class="ui-stack" style="margin-block-start: 3rem">
+        <h2 id="v04" class="ui-eyebrow">0.3.1 additions</h2>
+
+        <div class="ui-switcher">
+          <div class="ui-combobox" data-bronto-combobox>
+            <label class="ui-label" for="cbx">Combobox (APG)</label>
+            <input class="ui-input ui-combobox__input" id="cbx" />
+            <ul class="ui-combobox__list">
+              <li class="ui-combobox__option" data-value="apple">Apple</li>
+              <li class="ui-combobox__option" data-value="banana">Banana</li>
+              <li class="ui-combobox__option" data-value="cherry">Cherry</li>
+            </ul>
+            <p class="ui-combobox__empty" hidden>No matches</p>
+          </div>
+
+          <div class="ui-stack">
+            <span class="ui-label">Popover &amp; loading</span>
+            <div class="ui-cluster">
+              <button class="ui-button ui-button--subtle" data-bronto-popover="pop1">
+                Open popover
+              </button>
+              <button class="ui-button" aria-busy="true">Saving</button>
+            </div>
+            <div class="ui-popover" id="pop1">Collision-aware, dependency-free.</div>
+          </div>
+
+          <div class="ui-stack">
+            <span class="ui-label">Input group / file / range</span>
+            <span class="ui-input-group">
+              <span class="ui-input-group__addon">https://</span>
+              <input class="ui-input" aria-label="Site" value="bronto.test" />
+            </span>
+            <input class="ui-file" type="file" aria-label="Upload" />
+            <input class="ui-range" type="range" aria-label="Amount" />
+          </div>
+        </div>
+
+        <form data-bronto-validate class="ui-stack" novalidate>
+          <div class="ui-field">
+            <label class="ui-label" for="em">Email (required)</label>
+            <input class="ui-input" id="em" name="em" type="email" required />
+            <p class="ui-hint" data-bronto-error></p>
+          </div>
+          <div class="ui-error-summary" data-bronto-error-summary hidden></div>
+          <button class="ui-button" type="submit">Validate</button>
+        </form>
+
+        <div class="ui-table-wrap">
+          <table class="ui-table ui-table--selectable" data-bronto-sortable>
+            <thead>
+              <tr>
+                <th class="ui-table__select">
+                  <input type="checkbox" data-bronto-select-all aria-label="Select all" />
+                </th>
+                <th><button class="ui-table__sort" data-sort>Name</button></th>
+                <th class="is-num"><button class="ui-table__sort" data-sort="num">Score</button></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="checkbox" data-bronto-select aria-label="Select Bob" /></td>
+                <td>Bob</td>
+                <td class="is-num">30</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" data-bronto-select aria-label="Select Ann" /></td>
+                <td>Ann</td>
+                <td class="is-num">9</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" data-bronto-select aria-label="Select Cy" /></td>
+                <td>Cy</td>
+                <td class="is-num">100</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <label class="ui-switch">
+          <input type="checkbox" role="switch" />
+          <span class="ui-switch__track"><span class="ui-switch__thumb"></span></span>
+          <span>role=switch (announces on/off)</span>
+        </label>
+      </section>
     </main>
 
     <!-- The demo drives itself with the package's own shipped modules,
@@ -595,6 +680,10 @@ ui.button({ variant: 'ghost' });</code></pre>
         initTabs,
         initDisclosure,
         initMenu,
+        initCombobox,
+        initPopover,
+        initFormValidation,
+        initTableSort,
         toast,
       } from '../behaviors/index.js';
       import { ui, cx } from '../classes/index.js';
@@ -605,6 +694,10 @@ ui.button({ variant: 'ghost' });</code></pre>
       initTabs(); // full keyboard a11y, wired from the shipped module
       initDisclosure();
       initMenu();
+      initCombobox();
+      initPopover();
+      initFormValidation();
+      initTableSort();
 
       document.getElementById('toastBtn').addEventListener('click', () => {
         toast('Order filled — BTC/EUR', { tone: 'success', title: 'Done' });

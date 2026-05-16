@@ -1,0 +1,30 @@
+---
+import '@ponchia/ui';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — Astro</title>
+    <!-- is:inline → emitted verbatim, runs before paint (no flash). -->
+    <script is:inline>
+      try {
+        var t = localStorage.getItem('bronto-theme');
+        if (t) document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <main class="ui-center" style="padding: 3rem 0">
+      <p class="ui-eyebrow">@ponchia/ui</p>
+      <h1>Astro</h1>
+      <button class="ui-button" data-bronto-theme-toggle>Toggle theme</button>
+    </main>
+    <script>
+      import { initThemeToggle } from '@ponchia/ui/behaviors';
+      initThemeToggle();
+    </script>
+  </body>
+</html>

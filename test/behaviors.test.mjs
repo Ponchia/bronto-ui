@@ -9,6 +9,10 @@ import {
   initMenu,
   initDialog,
   initTabs,
+  initFormValidation,
+  initCombobox,
+  initPopover,
+  initTableSort,
   toast,
 } from '../behaviors/index.js';
 
@@ -464,4 +468,303 @@ test('toast: toasts queued before the first frame keep FIFO order', () => {
   } finally {
     delete globalThis.requestAnimationFrame;
   }
+});
+
+test('toast: danger routes to a separate assertive live region', () => {
+  const d = mount('');
+  toast('boom', { tone: 'danger', duration: 0 });
+  const assertive = d.querySelector('.ui-toast-stack--assertive');
+  assert.ok(assertive, 'assertive region created');
+  assert.equal(assertive.getAttribute('aria-live'), 'assertive');
+  assert.equal(assertive.getAttribute('role'), 'alert');
+
+  // A subsequent polite toast must NOT reuse the assertive region and
+  // must keep the polite region polite.
+  toast('saved', { tone: 'success', duration: 0 });
+  const polite = d.querySelector('.ui-toast-stack:not(.ui-toast-stack--assertive)');
+  assert.ok(polite && polite !== assertive, 'distinct polite region');
+  assert.equal(polite.getAttribute('aria-live'), 'polite');
+});
+
+test('toast: explicit assertive opt overrides tone', () => {
+  const d = mount('');
+  toast('urgent', { assertive: true, duration: 0 });
+  assert.ok(d.querySelector('.ui-toast-stack--assertive'), 'assertive opt honoured');
+});
+
+test('toast: sticky toast is closable, button dismisses, text unchanged', () => {
+  const d = mount('');
+  toast('hi there', { duration: 0 });
+  const el = d.querySelector('.ui-toast');
+  const btn = el.querySelector('.ui-toast__close');
+  assert.ok(btn, 'sticky (duration:0) toast gets a close button by default');
+  assert.equal(btn.getAttribute('aria-label'), 'Dismiss');
+  assert.equal(el.textContent, 'hi there', 'close button contributes no text node');
+  btn.click();
+  assert.equal(d.querySelector('.ui-toast'), null, 'close button dismisses the toast');
+});
+
+test('toast: auto-dismiss toast has no close button unless opted in', () => {
+  const d = mount('');
+  globalThis.requestAnimationFrame = (cb) => cb();
+  try {
+    toast('transient', { duration: 5000 });
+    assert.equal(
+      d.querySelector('.ui-toast__close'),
+      null,
+      'non-sticky toast is not closable by default',
+    );
+    toast('keep', { duration: 5000, closable: true });
+    assert.ok(
+      d.querySelectorAll('.ui-toast__close').length === 1,
+      'closable:true forces a dismiss button',
+    );
+  } finally {
+    delete globalThis.requestAnimationFrame;
+  }
+});
+
+test('initFormValidation: invalid submit marks fields, fills summary, blocks', () => {
+  const d = mount(`
+    <form data-bronto-validate>
+      <div class="ui-field">
+        <label class="ui-label" for="em">Email</label>
+        <input class="ui-input" id="em" name="em" type="email" required />
+        <p class="ui-hint" data-bronto-error></p>
+      </div>
+      <div class="ui-error-summary" data-bronto-error-summary hidden></div>
+      <button type="submit">Go</button>
+    </form>`);
+  const stop = initFormValidation();
+  const form = d.querySelector('form');
+  const input = d.querySelector('#em');
+
+  const ev = new dom.window.Event('submit', { bubbles: true, cancelable: true });
+  form.dispatchEvent(ev);
+
+  assert.equal(input.getAttribute('aria-invalid'), 'true', 'invalid field flagged');
+  assert.ok(input.getAttribute('aria-describedby'), 'error slot linked via describedby');
+  const summary = d.querySelector('[data-bronto-error-summary]');
+  assert.equal(summary.hidden, false, 'summary revealed');
+  assert.ok(summary.querySelector('a[href="#em"]'), 'summary links to the field');
+  assert.equal(ev.defaultPrevented, true, 'submit blocked');
+
+  // Fix + blur → state clears.
+  input.value = 'a@b.com';
+  input.dispatchEvent(new dom.window.Event('focusout', { bubbles: true }));
+  assert.equal(input.hasAttribute('aria-invalid'), false, 'cleared on valid blur');
+  stop();
+});
+
+test('initFormValidation: valid submit is not blocked', () => {
+  const d = mount(`
+    <form data-bronto-validate>
+      <div class="ui-field">
+        <input class="ui-input" id="nm" name="nm" required value="ok" />
+        <p class="ui-hint" data-bronto-error></p>
+      </div>
+      <button type="submit">Go</button>
+    </form>`);
+  const stop = initFormValidation();
+  const ev = new dom.window.Event('submit', { bubbles: true, cancelable: true });
+  d.querySelector('form').dispatchEvent(ev);
+  assert.equal(ev.defaultPrevented, false, 'valid form submits');
+  stop();
+});
+
+test('initFormValidation: SSR-safe', () => {
+  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
+  assert.doesNotThrow(() => {
+    const stop = initFormValidation();
+    stop();
+  });
+});
+
+const CB = `
+  <div class="ui-combobox" data-bronto-combobox>
+    <input class="ui-input ui-combobox__input" />
+    <ul class="ui-combobox__list">
+      <li class="ui-combobox__option" data-value="apple">Apple</li>
+      <li class="ui-combobox__option" data-value="banana">Banana</li>
+      <li class="ui-combobox__option" data-value="cherry">Cherry</li>
+    </ul>
+    <p class="ui-combobox__empty" hidden>No matches</p>
+  </div>`;
+
+test('initCombobox: wires ARIA, filters, keyboard-selects, emits change', () => {
+  const d = mount(CB);
+  const stop = initCombobox();
+  const input = d.querySelector('.ui-combobox__input');
+  const list = d.querySelector('.ui-combobox__list');
+
+  assert.equal(input.getAttribute('role'), 'combobox');
+  assert.equal(input.getAttribute('aria-expanded'), 'false');
+  assert.equal(input.getAttribute('aria-controls'), list.id);
+  assert.equal(list.hidden, true);
+
+  // Type → opens + filters.
+  input.value = 'an';
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  assert.equal(input.getAttribute('aria-expanded'), 'true');
+  const shown = [...list.querySelectorAll('.ui-combobox__option')].filter((o) => !o.hidden);
+  assert.deepEqual(
+    shown.map((o) => o.textContent),
+    ['Banana'],
+    'only matching option visible',
+  );
+
+  // ArrowDown activates, Enter selects, change fires.
+  let changed;
+  d.querySelector('[data-bronto-combobox]').addEventListener(
+    'bronto:change',
+    (e) => (changed = e.detail.value),
+  );
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+  assert.ok(d.querySelector('.ui-combobox__option.is-active'), 'active option set');
+  assert.equal(input.getAttribute('aria-activedescendant'), shown[0].id);
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  assert.equal(input.value, 'banana', 'selected data-value');
+  assert.equal(changed, 'banana', 'bronto:change emitted');
+  assert.equal(list.hidden, true, 'closes on select');
+  stop();
+});
+
+test('initCombobox: empty state, Escape closes, cleanup detaches', () => {
+  const d = mount(CB);
+  const stop = initCombobox();
+  const input = d.querySelector('.ui-combobox__input');
+  const list = d.querySelector('.ui-combobox__list');
+  const empty = d.querySelector('.ui-combobox__empty');
+
+  input.value = 'zzz';
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  assert.equal(empty.hidden, false, 'empty state shown when nothing matches');
+
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  assert.equal(list.hidden, true, 'Escape closes');
+
+  stop();
+  input.value = 'a';
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  assert.equal(list.hidden, true, 'no-op after cleanup');
+});
+
+test('initCombobox: SSR-safe', () => {
+  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
+  assert.doesNotThrow(() => {
+    const stop = initCombobox();
+    stop();
+  });
+});
+
+test('initPopover: toggles panel, manages aria, Escape + outside close', () => {
+  const d = mount(
+    '<button id="t" data-bronto-popover="pop">Info</button>' +
+      '<div class="ui-popover" id="pop">Details</div>' +
+      '<button id="away">elsewhere</button>',
+  );
+  const stop = initPopover();
+  const trigger = d.getElementById('t');
+  const panel = d.getElementById('pop');
+
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.ok(panel.classList.contains('is-open'), 'opens (no native Popover in jsdom)');
+  assert.equal(trigger.getAttribute('aria-expanded'), 'true');
+  assert.equal(trigger.getAttribute('aria-controls'), 'pop');
+
+  // Toggle closed by re-click.
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), false, 're-click closes');
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+
+  // Reopen, Escape closes.
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  d.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), false, 'Escape closes');
+
+  // Reopen, outside click closes.
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  d.getElementById('away').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), false, 'outside click closes');
+
+  stop();
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), false, 'no-op after cleanup');
+});
+
+test('initPopover: SSR-safe', () => {
+  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
+  assert.doesNotThrow(() => {
+    const stop = initPopover();
+    stop();
+  });
+});
+
+const TBL = `
+  <table class="ui-table ui-table--selectable" data-bronto-sortable>
+    <thead><tr>
+      <th class="ui-table__select"><input type="checkbox" data-bronto-select-all /></th>
+      <th><button class="ui-table__sort" data-sort>Name</button></th>
+      <th class="is-num"><button class="ui-table__sort" data-sort="num">Score</button></th>
+    </tr></thead>
+    <tbody>
+      <tr><td><input type="checkbox" data-bronto-select /></td><td>Bob</td><td class="is-num">30</td></tr>
+      <tr><td><input type="checkbox" data-bronto-select /></td><td>Ann</td><td class="is-num">9</td></tr>
+      <tr><td><input type="checkbox" data-bronto-select /></td><td>Cy</td><td class="is-num">100</td></tr>
+    </tbody>
+  </table>`;
+
+test('initTableSort: cycles aria-sort and reorders rows (string + numeric)', () => {
+  const d = mount(TBL);
+  const stop = initTableSort();
+  const table = d.querySelector('table');
+  const names = () => [...table.tBodies[0].rows].map((r) => r.children[1].textContent);
+  const nameBtn = table.querySelectorAll('.ui-table__sort')[0];
+  const scoreBtn = table.querySelectorAll('.ui-table__sort')[1];
+
+  nameBtn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.deepEqual(names(), ['Ann', 'Bob', 'Cy'], 'ascending string sort');
+  assert.equal(nameBtn.closest('th').getAttribute('aria-sort'), 'ascending');
+  nameBtn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.deepEqual(names(), ['Cy', 'Bob', 'Ann'], 'descending on re-click');
+  assert.equal(nameBtn.closest('th').getAttribute('aria-sort'), 'descending');
+
+  scoreBtn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.deepEqual(names(), ['Ann', 'Bob', 'Cy'], 'numeric sort (9,30,100) not lexical');
+  assert.equal(nameBtn.closest('th').hasAttribute('aria-sort'), false, 'other header sort cleared');
+  stop();
+});
+
+test('initTableSort: select-all + row selection stay in sync', () => {
+  const d = mount(TBL);
+  const stop = initTableSort();
+  const table = d.querySelector('table');
+  const all = table.querySelector('[data-bronto-select-all]');
+  const rows = [...table.querySelectorAll('[data-bronto-select]')];
+
+  let count;
+  table.addEventListener('bronto:selectionchange', (e) => (count = e.detail.count));
+
+  all.checked = true;
+  all.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+  assert.ok(
+    rows.every((b) => b.checked),
+    'select-all checks every row',
+  );
+  assert.equal(count, 3);
+  assert.equal(rows[0].closest('tr').getAttribute('aria-selected'), 'true');
+
+  rows[0].checked = false;
+  rows[0].dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+  assert.equal(all.indeterminate, true, 'header goes indeterminate on partial');
+  assert.equal(count, 2);
+  stop();
+});
+
+test('initTableSort: SSR-safe', () => {
+  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
+  assert.doesNotThrow(() => {
+    const stop = initTableSort();
+    stop();
+  });
 });
