@@ -94,6 +94,21 @@ coarser-grained handles.
 
 All four tiers are in the DTCG export and the JS token model.
 
+## Accessibility markup contracts
+
+A few components are styled but need the consumer to author the right
+semantics — the CSS can't add ARIA for you:
+
+- **`.ui-switch`** — put `role="switch"` on the `<input type="checkbox">`.
+  It then announces "switch, on/off" and the native `checked` drives
+  `aria-checked` (no JS). Forced-colors state cues ship in `forms.css`.
+- **`.ui-tab` / tabs** — operability requires `initTabs()`; don't
+  server-render panels `hidden` unless it's guaranteed to run (see the
+  `initTabs` doc comment).
+- **`.ui-combobox`** — use `initCombobox()`; it owns the APG ARIA.
+- **`.ui-tooltip`** — fine for short labels; for edge-critical or rich
+  content use `.ui-popover` + `initPopover()` (collision-aware).
+
 ## Contrast
 
 - `data-contrast="high"` on any element, **and** the OS

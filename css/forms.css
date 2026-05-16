@@ -289,6 +289,30 @@
   outline-offset: 2px;
 }
 
+/* ARIA contract: `.ui-switch` is a visually-styled checkbox. Author
+   `role="switch"` on the `<input>` so AT announces "switch, on/off"
+   rather than "checkbox, checked" — the native `checked` state then
+   drives `aria-checked` automatically, so no JS is required. In
+   forced-colors mode the colour cues are dropped by the OS, so convey
+   on/off with system-colour border + thumb instead. */
+@media (forced-colors: active) {
+  .ui-switch__track {
+    border-color: ButtonBorder;
+  }
+
+  .ui-switch__thumb {
+    background: ButtonText;
+  }
+
+  .ui-switch input:checked + .ui-switch__track {
+    border-color: Highlight;
+  }
+
+  .ui-switch input:checked + .ui-switch__track .ui-switch__thumb {
+    background: Highlight;
+  }
+}
+
 /* Checkbox / radio — square accent. */
 .ui-check {
   align-items: center;
