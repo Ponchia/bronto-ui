@@ -82,3 +82,25 @@ Dependabot (grouped, weekly). `@playwright/test` is intentionally
 **not** auto-bumped: it must stay in lockstep with the pinned
 `mcr.microsoft.com/playwright` container image, so bump both together
 in one deliberate PR.
+
+## Release
+
+Releases publish to npm and are tag-driven:
+
+```bash
+# bump "version" in package.json + date the CHANGELOG section
+# (check:release enforces this), land on main, let CI go green:
+git tag vX.Y.Z && git push origin vX.Y.Z
+```
+
+The tag triggers `.github/workflows/release.yml`: `validate` (read-only
+checks + tag↔version match) **and** `e2e` (Playwright visual + a11y)
+must both pass → `publish-npm` → `release-notes`. **The npm publish is
+the gate** — a failing check or e2e means the version never reaches
+npm, so consumers never resolve it. GitHub also serves the raw tag
+tarball ungated, but that is a legacy/fallback path, not the documented
+install. Publishing runs `npm publish --ignore-scripts` with provenance
+(SLSA); the `@ponchia` scope and `NPM_TOKEN` repo secret are in place,
+so a pushed `vX.Y.Z` tag is all a release needs. CI never publishes
+from a `main` push — a push to `main` ships nothing. Rationale and
+pre-publish blockers: [`docs/architecture.md`](docs/architecture.md).
