@@ -143,6 +143,11 @@ export const cls = Object.freeze({
   tableLined: 'ui-table--lined',
   tableWrap: 'ui-table-wrap',
   tableEmpty: 'ui-table__empty',
+  tableSort: 'ui-table__sort',
+  tableSelect: 'ui-table__select',
+  tableToolbar: 'ui-table__toolbar',
+  tableSelectable: 'ui-table--selectable',
+  tableLoading: 'ui-table--loading',
   // shell / layout
   panel: 'ui-panel',
   panelHead: 'ui-panel__head',

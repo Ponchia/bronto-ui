@@ -100,3 +100,62 @@
   padding: 2rem;
   text-align: center;
 }
+
+/* --- Sortable headers (wired by initTableSort) --- */
+.ui-table__sort {
+  align-items: center;
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  gap: 0.4rem;
+  letter-spacing: inherit;
+  padding: 0;
+  text-transform: inherit;
+  inline-size: 100%;
+}
+
+.ui-table__sort::after {
+  content: '↕';
+  opacity: 0.4;
+}
+
+.ui-table th[aria-sort='ascending'] .ui-table__sort::after {
+  content: '↑';
+  opacity: 1;
+}
+
+.ui-table th[aria-sort='descending'] .ui-table__sort::after {
+  content: '↓';
+  opacity: 1;
+}
+
+/* --- Row selection --- */
+.ui-table__select {
+  inline-size: 1px; /* shrink-to-fit checkbox column */
+  white-space: nowrap;
+}
+
+.ui-table--selectable tbody tr[aria-selected='true'] td {
+  background: var(--bg-accent);
+}
+
+/* --- Bulk-action toolbar --- */
+.ui-table__toolbar {
+  align-items: center;
+  border: 1px solid var(--line);
+  border-block-end: 0;
+  border-start-start-radius: var(--radius-md);
+  border-start-end-radius: var(--radius-md);
+  display: flex;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+}
+
+/* --- Loading state: set aria-busy + .ui-table--loading on the wrap --- */
+.ui-table--loading {
+  opacity: 0.6;
+  pointer-events: none;
+}

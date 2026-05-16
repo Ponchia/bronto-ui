@@ -81,6 +81,18 @@ export declare function initCombobox(opts?: DelegateOpts): Cleanup;
 export declare function initPopover(opts?: DelegateOpts): Cleanup;
 
 /**
+ * Client-side sortable + selectable data table for
+ * `[data-bronto-sortable]`. Header `.ui-table__sort` / `th[data-sort]`
+ * cycles `aria-sort` and reorders the tbody (numeric- or
+ * locale-string-aware); `[data-bronto-select-all]` toggles
+ * `[data-bronto-select]` rows + `aria-selected` with synced
+ * checked/indeterminate state. Emits `bronto:selectionchange`
+ * ({ detail: { count } }). SSR-safe, idempotent per table. Returns a
+ * cleanup function.
+ */
+export declare function initTableSort(opts?: DelegateOpts): Cleanup;
+
+/**
  * Wire `[data-bronto-tabs]` groups with the WAI-ARIA Tabs keyboard
  * pattern (roving tabindex, Arrow/Home/End, aria-selected, panel sync).
  * Returns a cleanup function.

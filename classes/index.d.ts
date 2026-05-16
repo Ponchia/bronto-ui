@@ -124,6 +124,11 @@ export declare const cls: {
   readonly tableLined: 'ui-table--lined';
   readonly tableWrap: 'ui-table-wrap';
   readonly tableEmpty: 'ui-table__empty';
+  readonly tableSort: 'ui-table__sort';
+  readonly tableSelect: 'ui-table__select';
+  readonly tableToolbar: 'ui-table__toolbar';
+  readonly tableSelectable: 'ui-table--selectable';
+  readonly tableLoading: 'ui-table--loading';
   readonly panel: 'ui-panel';
   readonly panelHead: 'ui-panel__head';
   readonly surface: 'ui-surface';

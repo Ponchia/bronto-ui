@@ -12,6 +12,7 @@ import {
   initFormValidation,
   initCombobox,
   initPopover,
+  initTableSort,
   toast,
 } from '../behaviors/index.js';
 
@@ -695,6 +696,75 @@ test('initPopover: SSR-safe', () => {
   for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
   assert.doesNotThrow(() => {
     const stop = initPopover();
+    stop();
+  });
+});
+
+const TBL = `
+  <table class="ui-table ui-table--selectable" data-bronto-sortable>
+    <thead><tr>
+      <th class="ui-table__select"><input type="checkbox" data-bronto-select-all /></th>
+      <th><button class="ui-table__sort" data-sort>Name</button></th>
+      <th class="is-num"><button class="ui-table__sort" data-sort="num">Score</button></th>
+    </tr></thead>
+    <tbody>
+      <tr><td><input type="checkbox" data-bronto-select /></td><td>Bob</td><td class="is-num">30</td></tr>
+      <tr><td><input type="checkbox" data-bronto-select /></td><td>Ann</td><td class="is-num">9</td></tr>
+      <tr><td><input type="checkbox" data-bronto-select /></td><td>Cy</td><td class="is-num">100</td></tr>
+    </tbody>
+  </table>`;
+
+test('initTableSort: cycles aria-sort and reorders rows (string + numeric)', () => {
+  const d = mount(TBL);
+  const stop = initTableSort();
+  const table = d.querySelector('table');
+  const names = () => [...table.tBodies[0].rows].map((r) => r.children[1].textContent);
+  const nameBtn = table.querySelectorAll('.ui-table__sort')[0];
+  const scoreBtn = table.querySelectorAll('.ui-table__sort')[1];
+
+  nameBtn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.deepEqual(names(), ['Ann', 'Bob', 'Cy'], 'ascending string sort');
+  assert.equal(nameBtn.closest('th').getAttribute('aria-sort'), 'ascending');
+  nameBtn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.deepEqual(names(), ['Cy', 'Bob', 'Ann'], 'descending on re-click');
+  assert.equal(nameBtn.closest('th').getAttribute('aria-sort'), 'descending');
+
+  scoreBtn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.deepEqual(names(), ['Ann', 'Bob', 'Cy'], 'numeric sort (9,30,100) not lexical');
+  assert.equal(nameBtn.closest('th').hasAttribute('aria-sort'), false, 'other header sort cleared');
+  stop();
+});
+
+test('initTableSort: select-all + row selection stay in sync', () => {
+  const d = mount(TBL);
+  const stop = initTableSort();
+  const table = d.querySelector('table');
+  const all = table.querySelector('[data-bronto-select-all]');
+  const rows = [...table.querySelectorAll('[data-bronto-select]')];
+
+  let count;
+  table.addEventListener('bronto:selectionchange', (e) => (count = e.detail.count));
+
+  all.checked = true;
+  all.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+  assert.ok(
+    rows.every((b) => b.checked),
+    'select-all checks every row',
+  );
+  assert.equal(count, 3);
+  assert.equal(rows[0].closest('tr').getAttribute('aria-selected'), 'true');
+
+  rows[0].checked = false;
+  rows[0].dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+  assert.equal(all.indeterminate, true, 'header goes indeterminate on partial');
+  assert.equal(count, 2);
+  stop();
+});
+
+test('initTableSort: SSR-safe', () => {
+  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
+  assert.doesNotThrow(() => {
+    const stop = initTableSort();
     stop();
   });
 });
