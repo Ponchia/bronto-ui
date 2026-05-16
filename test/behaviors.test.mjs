@@ -90,7 +90,7 @@ test('forced toggle sets a fixed theme and reflects pressed = forced===current',
 
 test('dismissible removes target and is cancelable', () => {
   const d = mount(
-    '<div data-bronto-dismissible id="box"><button data-bronto-dismiss>x</button></div>'
+    '<div data-bronto-dismissible id="box"><button data-bronto-dismiss>x</button></div>',
   );
   const stop = dismissible();
 
@@ -99,13 +99,13 @@ test('dismissible removes target and is cancelable', () => {
     once: true,
   });
   d.querySelector('[data-bronto-dismiss]').dispatchEvent(
-    new dom.window.MouseEvent('click', { bubbles: true })
+    new dom.window.MouseEvent('click', { bubbles: true }),
   );
   assert.ok(d.getElementById('box'), 'cancelled → still present');
 
   // Second attempt proceeds.
   d.querySelector('[data-bronto-dismiss]').dispatchEvent(
-    new dom.window.MouseEvent('click', { bubbles: true })
+    new dom.window.MouseEvent('click', { bubbles: true }),
   );
   assert.equal(d.getElementById('box'), null, 'removed');
   stop();
@@ -114,7 +114,7 @@ test('dismissible removes target and is cancelable', () => {
 test('initDisclosure keeps aria-expanded and hidden in sync', () => {
   const d = mount(
     '<button data-bronto-disclosure aria-controls="p" aria-expanded="false">m</button>' +
-      '<div id="p" hidden>panel</div>'
+      '<div id="p" hidden>panel</div>',
   );
   initDisclosure();
   const btn = d.querySelector('[data-bronto-disclosure]');
@@ -147,7 +147,7 @@ function stubDialog(dlg) {
 test('initDialog opens via data-bronto-open and closes via data-bronto-close', () => {
   const d = mount(
     '<button data-bronto-open="dlg" id="open">open</button>' +
-      '<dialog id="dlg"><button data-bronto-close>x</button></dialog>'
+      '<dialog id="dlg"><button data-bronto-close>x</button></dialog>',
   );
   const stop = initDialog();
   const dlg = stubDialog(d.getElementById('dlg'));
@@ -156,7 +156,7 @@ test('initDialog opens via data-bronto-open and closes via data-bronto-close', (
   assert.equal(dlg.open, true, 'opened');
 
   d.querySelector('[data-bronto-close]').dispatchEvent(
-    new dom.window.MouseEvent('click', { bubbles: true })
+    new dom.window.MouseEvent('click', { bubbles: true }),
   );
   assert.equal(dlg.open, false, 'closed');
 
@@ -167,7 +167,7 @@ test('initDialog opens via data-bronto-open and closes via data-bronto-close', (
 
 test('initDialog light-dismiss closes only when opted in via attribute', () => {
   const d = mount(
-    '<dialog id="a" data-bronto-dialog-light><p>x</p></dialog><dialog id="b"><p>y</p></dialog>'
+    '<dialog id="a" data-bronto-dialog-light><p>x</p></dialog><dialog id="b"><p>y</p></dialog>',
   );
   initDialog();
   const a = stubDialog(d.getElementById('a'));
@@ -219,7 +219,7 @@ test('initTabs: roving tabindex, click + Arrow/Home/End, panel sync', () => {
       '<button class="ui-tab" data-tab="c">C</button></div>' +
       '<div class="ui-tabs__panel" data-panel="a">PA</div>' +
       '<div class="ui-tabs__panel" data-panel="b">PB</div>' +
-      '<div class="ui-tabs__panel" data-panel="c">PC</div></div>'
+      '<div class="ui-tabs__panel" data-panel="c">PC</div></div>',
   );
   const stop = initTabs();
   const [a, b, c] = [...d.querySelectorAll('.ui-tab')];
@@ -269,7 +269,7 @@ test('initTabs: nested groups are isolated (own [data-bronto-tabs] only)', () =>
       '<div class="ui-tabs__panel" data-panel="i1">PI1</div>' +
       '<div class="ui-tabs__panel" data-panel="i2">PI2</div></div>' +
       '</div>' +
-      '<div class="ui-tabs__panel" data-panel="o2">PO2</div></div>'
+      '<div class="ui-tabs__panel" data-panel="o2">PO2</div></div>',
   );
   initTabs();
   const tab = (id, t) => d.querySelector(`#${id} .ui-tab[data-tab="${t}"]`);
@@ -299,7 +299,7 @@ test('initTabs: a root that IS the tab group initialises + wires APG', () => {
       '<button class="ui-tab is-active" data-tab="a">A</button>' +
       '<button class="ui-tab" data-tab="b">B</button></div>' +
       '<div class="ui-tabs__panel" data-panel="a">PA</div>' +
-      '<div class="ui-tabs__panel" data-panel="b">PB</div></div>'
+      '<div class="ui-tabs__panel" data-panel="b">PB</div></div>',
   );
   const group = d.getElementById('g');
   initTabs({ root: group }); // root === the [data-bronto-tabs] element itself
@@ -334,7 +334,7 @@ test('prefers-color-scheme is honored when matchMedia exists and no attr/storage
 test('initDialog returns focus to the trigger on close (every path)', () => {
   const d = mount(
     '<button data-bronto-open="dlg" id="open">open</button>' +
-      '<dialog id="dlg"><button data-bronto-close>x</button></dialog>'
+      '<dialog id="dlg"><button data-bronto-close>x</button></dialog>',
   );
   initDialog();
   const dlg = stubDialog(d.getElementById('dlg'));
@@ -348,7 +348,7 @@ test('initDialog returns focus to the trigger on close (every path)', () => {
   assert.notEqual(d.activeElement, opener, 'focus left the trigger while open');
 
   d.querySelector('[data-bronto-close]').dispatchEvent(
-    new dom.window.MouseEvent('click', { bubbles: true })
+    new dom.window.MouseEvent('click', { bubbles: true }),
   );
   assert.equal(dlg.open, false, 'closed');
   assert.equal(d.activeElement, opener, 'focus returned to the trigger on close');

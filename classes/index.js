@@ -226,7 +226,7 @@ export const ui = {
       variant === 'ghost' && cls.buttonGhost,
       variant === 'subtle' && cls.buttonSubtle,
       variant === 'danger' && cls.buttonDanger,
-      icon && cls.buttonIcon
+      icon && cls.buttonIcon,
     ),
   card: ({ accent, interactive } = {}) =>
     j(cls.card, accent && cls.cardAccent, interactive && cls.cardInteractive),
@@ -236,7 +236,7 @@ export const ui = {
       tone === 'accent' && cls.badgeAccent,
       tone === 'success' && cls.badgeSuccess,
       tone === 'warning' && cls.badgeWarning,
-      tone === 'danger' && cls.badgeDanger
+      tone === 'danger' && cls.badgeDanger,
     ),
   chip: ({ accent } = {}) => j(cls.chip, accent && cls.chipAccent),
   link: ({ arrow } = {}) => j(cls.link, arrow && cls.linkArrow),
@@ -247,7 +247,7 @@ export const ui = {
       tone === 'success' && cls.dotSuccess,
       tone === 'warning' && cls.dotWarning,
       tone === 'danger' && cls.dotDanger,
-      live && cls.dotLive
+      live && cls.dotLive,
     ),
   dotgrid: ({ accent, dense } = {}) =>
     j(cls.dotgrid, accent && cls.dotgridAccent, dense && cls.dotgridDense),
@@ -256,7 +256,7 @@ export const ui = {
       cls.table,
       density === 'dense' && cls.tableDense,
       density === 'comfortable' && cls.tableComfortable,
-      lined && cls.tableLined
+      lined && cls.tableLined,
     ),
   eyebrow: ({ muted } = {}) => j(cls.eyebrow, muted && cls.eyebrowMuted),
   hint: ({ error } = {}) => j(cls.hint, error && cls.hintError),
@@ -268,7 +268,7 @@ export const ui = {
       tone === 'accent' && cls.alertAccent,
       tone === 'success' && cls.alertSuccess,
       tone === 'warning' && cls.alertWarning,
-      tone === 'danger' && cls.alertDanger
+      tone === 'danger' && cls.alertDanger,
     ),
   toast: ({ tone } = {}) =>
     j(
@@ -276,14 +276,12 @@ export const ui = {
       tone === 'accent' && cls.toastAccent,
       tone === 'success' && cls.toastSuccess,
       tone === 'warning' && cls.toastWarning,
-      tone === 'danger' && cls.toastDanger
+      tone === 'danger' && cls.toastDanger,
     ),
-  progress: ({ indeterminate } = {}) =>
-    j(cls.progress, indeterminate && cls.progressIndeterminate),
+  progress: ({ indeterminate } = {}) => j(cls.progress, indeterminate && cls.progressIndeterminate),
   dotspinner: ({ size } = {}) =>
     j(cls.dotspinner, size === 'sm' && cls.dotspinnerSm, size === 'lg' && cls.dotspinnerLg),
-  dotbar: ({ indeterminate } = {}) =>
-    j(cls.dotbar, indeterminate && cls.dotbarIndeterminate),
+  dotbar: ({ indeterminate } = {}) => j(cls.dotbar, indeterminate && cls.dotbarIndeterminate),
   modal: ({ drawer } = {}) => j(cls.modal, drawer && cls.modalDrawer),
   tab: ({ active } = {}) => j(cls.tab, active && 'is-active'),
   avatar: ({ size } = {}) =>

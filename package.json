@@ -30,6 +30,8 @@
   "scripts": {
     "lint": "stylelint \"css/**/*.css\"",
     "lint:fix": "stylelint \"css/**/*.css\" --fix",
+    "format": "prettier --write .",
+    "check:format": "prettier --check .",
     "tokens:build": "node scripts/gen-tokens-json.mjs",
     "dtcg:build": "node scripts/gen-dtcg.mjs",
     "dts:build": "node scripts/gen-dts.mjs",
@@ -38,11 +40,12 @@
     "check:tokens": "node scripts/check-tokens.mjs",
     "check:classes": "node scripts/check-classes.mjs",
     "check:dts": "node scripts/check-dts.mjs",
+    "check:types": "tsc -p tsconfig.json",
     "check:dtcg": "node scripts/check-dtcg.mjs",
     "check:shiki": "node scripts/check-shiki.mjs",
     "check:dist": "node scripts/check-dist.mjs",
     "check:pack": "node scripts/check-pack.mjs",
-    "check": "npm run lint && npm run check:exports && npm run check:tokens && npm run check:classes && npm run check:dts && npm run check:dtcg && npm run check:shiki && npm run check:dist && npm run check:pack",
+    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:tokens && npm run check:classes && npm run check:dts && npm run check:types && npm run check:dtcg && npm run check:shiki && npm run check:dist && npm run check:pack",
     "test": "node --test \"test/*.test.mjs\"",
     "prepack": "npm run tokens:build && npm run dtcg:build && npm run dts:build && npm run dist:build",
     "prepublishOnly": "npm run check && npm test"
@@ -51,9 +54,11 @@
     "@axe-core/playwright": "^4.11.3",
     "@playwright/test": "^1.60.0",
     "jsdom": "^25.0.1",
+    "prettier": "^3.8.3",
     "stylelint": "^16.10.0",
     "stylelint-config-standard": "^36.0.1",
-    "stylelint-use-logical": "^2.1.3"
+    "stylelint-use-logical": "^2.1.3",
+    "typescript": "^5.9.3"
   },
   "exports": {
     ".": {

@@ -28,9 +28,7 @@ const STRUCTURAL = new Set([
 
 function blocking(results) {
   return results.violations
-    .filter(
-      (v) => v.impact === 'serious' || v.impact === 'critical' || STRUCTURAL.has(v.id)
-    )
+    .filter((v) => v.impact === 'serious' || v.impact === 'critical' || STRUCTURAL.has(v.id))
     .map((v) => ({
       id: v.id,
       impact: v.impact,
@@ -53,8 +51,7 @@ async function settle(page) {
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
   });
 }
-const scan = (page) =>
-  new AxeBuilder({ page }).withTags(TAGS).exclude('.ui-dotfield');
+const scan = (page) => new AxeBuilder({ page }).withTags(TAGS).exclude('.ui-dotfield');
 
 for (const theme of ['dark', 'light']) {
   test(`a11y — demo (${theme})`, async ({ page }) => {
@@ -144,27 +141,27 @@ test('a11y — disclosure toggles aria-expanded + panel hidden', async ({ page }
   await expect(panel).toBeHidden();
 });
 
-test('a11y — modal Confirm button clears 4.5:1 (computed, not just asserted)', async ({
-  page,
-}) => {
+test('a11y — modal Confirm button clears 4.5:1 (computed, not just asserted)', async ({ page }) => {
   await page.goto('/demo/', { waitUntil: 'networkidle' });
   await page.getByRole('button', { name: 'Open modal' }).click();
   // The backdrop-filter blur defeats axe's contrast sampling (hence
   // color-contrast is disabled in the modal scan above); verify the
   // solid button's real ratio here instead of only asserting it in prose.
-  const ratio = await page
-    .locator('dialog#demoModal .ui-modal__foot .ui-button')
-    .evaluate((el) => {
-      const cs = getComputedStyle(el);
-      const rgb = (s) => s.match(/[\d.]+/g).slice(0, 3).map(Number);
-      const lum = (c) =>
-        c
-          .map((v) => v / 255)
-          .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
-          .reduce((a, v, i) => a + v * [0.2126, 0.7152, 0.0722][i], 0);
-      const L1 = lum(rgb(cs.color)) + 0.05;
-      const L2 = lum(rgb(cs.backgroundColor)) + 0.05;
-      return Math.max(L1, L2) / Math.min(L1, L2);
-    });
+  const ratio = await page.locator('dialog#demoModal .ui-modal__foot .ui-button').evaluate((el) => {
+    const cs = getComputedStyle(el);
+    const rgb = (s) =>
+      s
+        .match(/[\d.]+/g)
+        .slice(0, 3)
+        .map(Number);
+    const lum = (c) =>
+      c
+        .map((v) => v / 255)
+        .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
+        .reduce((a, v, i) => a + v * [0.2126, 0.7152, 0.0722][i], 0);
+    const L1 = lum(rgb(cs.color)) + 0.05;
+    const L2 = lum(rgb(cs.backgroundColor)) + 0.05;
+    return Math.max(L1, L2) / Math.min(L1, L2);
+  });
   expect(ratio).toBeGreaterThanOrEqual(4.5);
 });

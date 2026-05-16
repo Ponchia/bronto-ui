@@ -66,7 +66,21 @@ gating" below), so a version that fails any invariant never reaches npm.
 | `shiki/nothing.json` valid + on rationed palette | `check-shiki.mjs`  |
 | `dist/*.css` == fresh build of `css/` + budget  | `check-dist.mjs`    |
 | published tarball == intended `files` only      | `check-pack.mjs`    |
+| published `.d.ts` compile + reject typos        | `tsc` (`check:types`) |
 | CSS style/correctness                           | Stylelint           |
+| non-CSS source style                            | Prettier (`check:format`) |
+
+`check-dist` is the most supply-chain-critical row: `dist/bronto.css` is
+the default `exports["."]` consumers actually load, so its byte-equality
+to a fresh build of `css/` is what makes the committed bundle trustworthy.
+The `check-dist` size ceiling (`BUDGET` in `build-dist.mjs`) is calibrated
+to the current bundle with deliberate headroom — it is the consumer-facing
+payload contract, raised only intentionally with a CHANGELOG note.
+`check:types` compiles the published declarations against
+`test/types.test-d.ts`, whose `@ts-expect-error`s would fail to compile
+if the generated literal `cls`/token types stopped rejecting typos —
+so the *value* of the generated `.d.ts` is itself gated, not just their
+freshness (`check-dts`).
 
 `check-dist` is the most supply-chain-critical row: `dist/bronto.css` is
 the default `exports["."]` consumers actually load, so its byte-equality

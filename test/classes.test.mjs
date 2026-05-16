@@ -20,11 +20,20 @@ test('default export === named ui', () => {
 test('recipes emit only registry classes', () => {
   assert.equal(ui.button(), 'ui-button');
   assert.equal(ui.button({ variant: 'ghost' }), 'ui-button ui-button--ghost');
-  assert.equal(ui.button({ variant: 'danger', icon: true }), 'ui-button ui-button--danger ui-button--icon');
+  assert.equal(
+    ui.button({ variant: 'danger', icon: true }),
+    'ui-button ui-button--danger ui-button--icon',
+  );
   assert.equal(ui.badge({ tone: 'success' }), 'ui-badge ui-badge--success');
   assert.equal(ui.dot({ tone: 'accent', live: true }), 'ui-dot ui-dot--accent ui-dot--live');
-  assert.equal(ui.table({ density: 'dense', lined: true }), 'ui-table ui-table--dense ui-table--lined');
-  assert.equal(ui.card({ accent: true, interactive: true }), 'ui-card ui-card--accent ui-card--interactive');
+  assert.equal(
+    ui.table({ density: 'dense', lined: true }),
+    'ui-table ui-table--dense ui-table--lined',
+  );
+  assert.equal(
+    ui.card({ accent: true, interactive: true }),
+    'ui-card ui-card--accent ui-card--interactive',
+  );
 });
 
 test('unknown option values are ignored, not emitted', () => {

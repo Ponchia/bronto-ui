@@ -119,6 +119,42 @@ The whole non-`ui-*` surface is gone; everything shipped is now under the
   that import to the `css/unlayered/*` path; otherwise the now-layered
   leaf is the correct (safe) default. Drift-checked by `check-dist`.
 
+### Tooling (external-review triage)
+
+Adopted what fits the CSS-first / zero-runtime-dep / curated-artifact
+ADR; declined what doesn't (recorded so the decision isn't re-litigated).
+
+**Added**
+
+- **TypeScript type gate** — `tsconfig.json` + `test/types.test-d.ts`
+  + `check:types` (in `npm run check`). Compiles the published `.d.ts`
+  and asserts, via `@ts-expect-error`, that the generated literal
+  `cls`/token types reject typos and `themeColor` rejects non-`ThemeName`.
+  Completes the review's "auto-generate .d.ts, kill drift" item
+  (generation + `check-dts` landed earlier this minor; this proves the
+  result). `typescript` is devDep-only — no runtime/types-export change.
+- **Prettier** — `.prettierrc` + `check:format`/`format`, in
+  `npm run check`. Scoped to hand-authored non-CSS source; CSS stays
+  Stylelint-owned, generated artifacts and the curated Markdown/`demo`
+  are `.prettierignore`d so formatters never fight generators.
+- **GitHub issue/PR templates** — collect `@ponchia/ui` version,
+  consuming framework, and surface; PR template carries the
+  contract/SemVer/a11y checklist.
+- **Bundle-size budget tightened** — `check-dist` `BUDGET` recalibrated
+  90 kB→64 kB raw / 16 kB→12 kB gzip (bundle is ~54/~10 post-cleanup),
+  so regrowth is gated, not just catastrophic blowouts. (Dependabot was
+  already added earlier this minor.)
+
+**Declined (rationale)** — Storybook (heavy React/Vite toolchain vs the
+framework-agnostic zero-dep ADR; `demo/index.html` is the self-driving
+surface); Style Dictionary as a dependency (the shipped
+`tokens.dtcg.json` *is* the deliberate bring-your-own platform interop;
+no native consumers exist — consumers run SD themselves);
+standard-version/auto-changelog (the curated narrative CHANGELOG is an
+asset; commits are already conventional); Renovate (Dependabot chosen);
+Lighthouse CI (the axe a11y gate + size budget already cover the
+regression vectors).
+
 ### Content-site layer
 
 Promotes the proven, hand-rolled site shell into the first-class typed

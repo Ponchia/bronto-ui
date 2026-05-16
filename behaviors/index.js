@@ -108,7 +108,7 @@ export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
     }
     reflect();
     docEl.dispatchEvent(
-      new CustomEvent('bronto:themechange', { detail: { theme: next }, bubbles: true })
+      new CustomEvent('bronto:themechange', { detail: { theme: next }, bubbles: true }),
     );
   };
 
@@ -216,7 +216,8 @@ export function initTabs({ root } = {}) {
       if (i < 0) return;
       let n = i;
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown') n = (i + 1) % tabs.length;
-      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') n = (i - 1 + tabs.length) % tabs.length;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp')
+        n = (i - 1 + tabs.length) % tabs.length;
       else if (e.key === 'Home') n = 0;
       else if (e.key === 'End') n = tabs.length - 1;
       else return;
@@ -233,7 +234,7 @@ export function initTabs({ root } = {}) {
           group.removeEventListener('click', onClick);
           group.removeEventListener('keydown', onKey);
         };
-      })
+      }),
     );
   }
   return () => cleanups.forEach((fn) => fn());
@@ -269,7 +270,7 @@ export function initDialog({ root } = {}) {
           () => {
             if (opener.isConnected && typeof opener.focus === 'function') opener.focus();
           },
-          { once: true }
+          { once: true },
         );
         dlg.showModal();
       }

@@ -1,0 +1,21 @@
+# CSS correctness + style is owned by Stylelint (stylelint-config-standard).
+css
+dist
+
+# Generated artifacts — must match their generator byte-for-byte, not Prettier.
+tokens/index.json
+tokens/tokens.dtcg.json
+*.d.ts
+shiki
+
+# Curated, hand-aligned narrative (tables/prose) — intentionally not auto-formatted.
+*.md
+
+# Hand-tuned integration fixture with whitespace-sensitive <pre>/Shiki blocks.
+demo/index.html
+
+# Data / binaries / lockfile.
+fonts
+package-lock.json
+test/e2e/__screenshots__
+node_modules

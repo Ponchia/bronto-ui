@@ -42,7 +42,9 @@ const parsed = {
   global: decls(blockBody(/:root\s*\{/)),
   light: decls(blockBody(/:root,\s*:root\[data-theme='light']\s*\{/)),
   darkMedia: decls(
-    blockBody(/@media \(prefers-color-scheme: dark\)\s*\{\s*:root:not\(\[data-theme='light']\)\s*\{/)
+    blockBody(
+      /@media \(prefers-color-scheme: dark\)\s*\{\s*:root:not\(\[data-theme='light']\)\s*\{/,
+    ),
   ),
   darkExplicit: decls(blockBody(/(?:^|\})\s*:root\[data-theme='dark']\s*\{/m)),
 };
@@ -51,7 +53,8 @@ function diff(label, expected, actual) {
   const keys = new Set([...Object.keys(expected), ...Object.keys(actual)]);
   for (const k of keys) {
     if (expected[k] === undefined) errors.push(`${label}: ${k} in CSS but not in tokens/index.js`);
-    else if (actual[k] === undefined) errors.push(`${label}: ${k} in tokens/index.js but not in CSS`);
+    else if (actual[k] === undefined)
+      errors.push(`${label}: ${k} in tokens/index.js but not in CSS`);
     else if (expected[k] !== actual[k])
       errors.push(`${label}: ${k} = "${actual[k]}" (CSS) vs "${expected[k]}" (index.js)`);
   }

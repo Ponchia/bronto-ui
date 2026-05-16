@@ -76,9 +76,15 @@ export function buildBundles() {
   return out;
 }
 
-/** Raw + gzip size budgets. Generous headroom; trip only on a real
- *  blowout (a runaway import or an accidental asset inlined). */
-export const BUDGET = { raw: 90_000, gzip: 16_000 };
+/** Raw + gzip ceiling, enforced by check-dist on *every* emitted file
+ *  (the bundle and each layered leaf — leaves are far smaller, so the
+ *  bundle is the binding one). Calibrated to the post-0.3.0 bundle
+ *  (~54 kB raw / ~10 kB gzip) with ~18%/~20% headroom for ordinary
+ *  growth: a few new components is fine, a runaway @import or an
+ *  inlined asset trips it. Bump deliberately (and note it in the
+ *  CHANGELOG) when real growth justifies it — this is the consumer-
+ *  facing payload contract. */
+export const BUDGET = { raw: 64_000, gzip: 12_000 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };
@@ -90,6 +96,8 @@ if (isMain) {
   for (const [rel, content] of Object.entries(buildBundles())) {
     writeFileSync(resolve(root, rel), content);
     const s = sizes(content);
-    console.log(`✓ ${rel} — ${(s.raw / 1024).toFixed(1)}kB raw, ${(s.gzip / 1024).toFixed(1)}kB gzip`);
+    console.log(
+      `✓ ${rel} — ${(s.raw / 1024).toFixed(1)}kB raw, ${(s.gzip / 1024).toFixed(1)}kB gzip`,
+    );
   }
 }
