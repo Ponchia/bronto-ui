@@ -6,6 +6,7 @@ import {
   initThemeToggle,
   dismissible,
   initDisclosure,
+  initMenu,
   initDialog,
   initTabs,
   toast,
@@ -127,6 +128,40 @@ test('initDisclosure keeps aria-expanded and hidden in sync', () => {
   btn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   assert.equal(btn.getAttribute('aria-expanded'), 'false');
   assert.equal(panel.hidden, true);
+});
+
+test('initMenu closes the <details> on Escape, outside-click, and item activation', () => {
+  const d = mount(
+    '<details data-bronto-menu open><summary>Menu</summary>' +
+      '<div class="ui-menu"><button class="ui-menu__item" id="it">Go</button></div>' +
+      '</details><button id="outside">x</button>',
+  );
+  const stop = initMenu();
+  const menu = d.querySelector('[data-bronto-menu]');
+  const item = d.getElementById('it');
+
+  // Escape closes + returns focus to <summary>.
+  d.querySelector('summary').dispatchEvent(
+    new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+  );
+  assert.equal(menu.open, false, 'Escape closed it');
+  assert.equal(d.activeElement, d.querySelector('summary'), 'focus returned to summary');
+
+  // Activating an item closes it.
+  menu.open = true;
+  item.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(menu.open, false, 'item activation closed it');
+
+  // Outside click closes it (no focus move).
+  menu.open = true;
+  d.getElementById('outside').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(menu.open, false, 'outside click closed it');
+
+  // Cleanup detaches listeners.
+  stop();
+  menu.open = true;
+  d.getElementById('outside').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(menu.open, true, 'no-op after cleanup');
 });
 
 /** jsdom 25 has no <dialog> showModal/close — polyfill the platform API

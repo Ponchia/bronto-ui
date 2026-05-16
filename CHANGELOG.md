@@ -186,6 +186,31 @@ regression vectors).
   to the prepack/prepublishOnly lifecycle; it ships the artifacts already
   byte-verified by `validate` on the same commit.
 
+### Further discovered-issue cleanup
+
+Bounded, sensible items surfaced by the reviews, now closed:
+
+- **a11y:** new `initMenu` behavior — Escape / outside-click /
+  close-on-activate (with focus return to `<summary>`) for a native
+  `<details data-bronto-menu>` `.ui-menu` dropdown. Deliberately a
+  disclosure of buttons, not an over-claimed ARIA menu (review M3).
+  Wired in the demo; unit-tested.
+- **a11y:** the active tab's selected state is re-asserted under
+  `forced-colors: active` (`border/colour: Highlight`) — it was
+  invisible in Windows High Contrast (review L3).
+- **a11y (demo):** the pagination "previous" control is now a real
+  `disabled` button (was a focusable/clickable `aria-disabled`,
+  misleading on the axe-gated integration surface); arrow controls
+  gained accessible names; active page uses `aria-current="page"`
+  (review M1).
+- **CI:** GitHub Pages now deploys only after the `CI` workflow
+  concludes **successfully** on `main` (`workflow_run` trigger, not a
+  bare push) — a red-e2e/broken demo can no longer be published
+  independently of the gates.
+- **docs:** theming.md documents the one accent surface the framework
+  can't tune — native control `accent-color` under a pale re-brand
+  (review css M2).
+
 ### Content-site layer
 
 Promotes the proven, hand-rolled site shell into the first-class typed

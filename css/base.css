@@ -220,6 +220,14 @@ textarea:focus-visible,
     outline-offset: -2px;
   }
 
+  /* The active tab signals selection only via accent colour/border, both
+     flattened by the forced palette — re-assert it with a system colour
+     so the selected tab stays distinguishable (a11y review L3). */
+  .ui-tab.is-active {
+    border-block-end-color: Highlight;
+    color: Highlight;
+  }
+
   /* Keyboard focus must never depend on a colour that gets overridden. */
   a:focus-visible,
   button:focus-visible,

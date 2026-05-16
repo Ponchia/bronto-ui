@@ -363,11 +363,21 @@
           <li class="ui-breadcrumb__item" aria-current="page">Detail</li>
         </ol>
         <ul class="ui-pagination">
-          <li><button class="ui-pagination__item" aria-disabled="true">‹</button></li>
-          <li><button class="ui-pagination__item is-active">1</button></li>
-          <li><button class="ui-pagination__item">2</button></li>
-          <li><button class="ui-pagination__item">3</button></li>
-          <li><button class="ui-pagination__item">›</button></li>
+          <li>
+            <button class="ui-pagination__item" type="button" disabled aria-label="Previous page">
+              ‹
+            </button>
+          </li>
+          <li>
+            <button class="ui-pagination__item is-active" type="button" aria-current="page">
+              1
+            </button>
+          </li>
+          <li><button class="ui-pagination__item" type="button">2</button></li>
+          <li><button class="ui-pagination__item" type="button">3</button></li>
+          <li>
+            <button class="ui-pagination__item" type="button" aria-label="Next page">›</button>
+          </li>
         </ul>
         <div class="ui-cluster">
           <span class="ui-avatar-group">
@@ -394,7 +404,7 @@
             ><button class="ui-button ui-button--ghost" type="button">Hover me</button
             ><span class="ui-tooltip__bubble" role="tooltip">Pure-CSS tooltip</span></span
           >
-          <details class="ui-menu-host">
+          <details class="ui-menu-host" data-bronto-menu>
             <summary class="ui-button ui-button--subtle" style="list-style: none">Menu ▾</summary>
             <div class="ui-menu">
               <span class="ui-menu__label">Actions</span>
@@ -584,6 +594,7 @@ ui.button({ variant: 'ghost' });</code></pre>
         initDialog,
         initTabs,
         initDisclosure,
+        initMenu,
         toast,
       } from '../behaviors/index.js';
       import { ui, cx } from '../classes/index.js';
@@ -593,6 +604,7 @@ ui.button({ variant: 'ghost' });</code></pre>
       initDialog();
       initTabs(); // full keyboard a11y, wired from the shipped module
       initDisclosure();
+      initMenu();
 
       document.getElementById('toastBtn').addEventListener('click', () => {
         toast('Order filled — BTC/EUR', { tone: 'success', title: 'Done' });

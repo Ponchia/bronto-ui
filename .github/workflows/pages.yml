@@ -4,18 +4,15 @@
 # is no build step. Never publishes npm or touches release.yml.
 name: Pages
 
+# Deploy only after CI (check + containerised e2e) has gone green on
+# main — never publish a demo from a commit whose gates failed. (Was a
+# bare push trigger, which could ship a broken/red-e2e demo; flagged in
+# review.)
 on:
-  push:
+  workflow_run:
+    workflows: ['CI']
     branches: [main]
-    paths:
-      - 'demo/**'
-      - 'css/**'
-      - 'dist/**'
-      - 'fonts/**'
-      - 'tokens/**'
-      - 'classes/**'
-      - 'behaviors/**'
-      - '.github/workflows/pages.yml'
+    types: [completed]
   workflow_dispatch:
 
 # Least privilege; deploy opts into exactly what Pages needs.
@@ -29,6 +26,9 @@ concurrency:
 
 jobs:
   build:
+    # Manual dispatch always; the CI-completion trigger only when it
+    # actually succeeded (workflow_run fires on failure too).
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read

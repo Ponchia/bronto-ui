@@ -58,6 +58,13 @@ fills — follows automatically, in both light and dark.
   `--text*` tokens are overridable for a bespoke palette, but you then
   own their contrast. Prefer just `--accent` unless you need a full
   re-skin.
+- **Native controls** — checkbox/radio/range tick marks use the CSS
+  `accent-color: var(--accent)` (browser-rendered). The check glyph
+  colour is the UA's choice and not in our control, so a very light
+  `--accent` (e.g. a pale yellow) can make native checkmarks low-
+  contrast. If you re-brand to a light hue, verify native controls or
+  set `accent-color` yourself on them — this is the one accent surface
+  the framework can't tune for you.
 
 ## Contrast
 

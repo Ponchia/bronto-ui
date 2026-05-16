@@ -100,7 +100,9 @@ themeColor('dark').accent; // → "#ff3b41"
 ```
 
 `behaviors` wires `[data-bronto-theme-toggle]`, `[data-bronto-dismiss]` /
-`[data-bronto-dismissible]`, `[data-bronto-disclosure]`, and native
+`[data-bronto-dismissible]`, `[data-bronto-disclosure]`,
+`[data-bronto-menu]` (`initMenu`: Escape / outside-click /
+close-on-activate for a `<details>` `.ui-menu` dropdown), and native
 `<dialog>` glue (`initDialog`: `[data-bronto-open]` / `[data-bronto-close]`
 / `[data-bronto-dialog-light]`). `toast(message, { tone, title, duration })`
 pushes into a shared, body-anchored stack. Each initializer is SSR-safe and
