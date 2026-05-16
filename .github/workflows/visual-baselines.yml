@@ -4,6 +4,19 @@
 # Manually dispatched after an intentional visual change. `main` is
 # protected, so this OPENS A PR with the regenerated baselines (it does
 # not push to main); the PR's own check + e2e then validate them.
+#
+# TOKEN: a PR opened by the default GITHUB_TOKEN does NOT trigger
+# `check`/`e2e` (GitHub anti-recursion), so it would sit permanently
+# BLOCKED and need an --admin merge. Set repo secret `BASELINE_PAT`
+# (a fine-grained PAT or GitHub App token with contents:write +
+# pull-requests:write) and the bot PR runs CI like any other and is
+# normally mergeable. Without it this falls back to GITHUB_TOKEN (the
+# legacy behaviour) — still functional, just admin-merge-only.
+#
+# CRUFT: an abandoned run leaves a `chore/visual-baselines-*` branch
+# (delete_branch_on_merge only reaps MERGED ones). This workflow now
+# self-prunes prior orphans on each run; cleanup.yml is the scheduled
+# backstop.
 name: Update visual baselines
 
 on:
@@ -56,14 +69,32 @@ jobs:
 
       - name: Open a PR with the regenerated baselines
         shell: bash
+        # Prefer a real token so the PR triggers check/e2e; fall back to
+        # GITHUB_TOKEN (admin-merge-only) if BASELINE_PAT is unset.
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.BASELINE_PAT || github.token }}
         run: |
           set -euo pipefail
           if git diff --quiet -- test/e2e/__screenshots__; then
             echo "Baselines unchanged — nothing to do."
             exit 0
           fi
+
+          # Self-prune: drop any prior chore/visual-baselines-* branch
+          # that no longer has an open PR, so abandoned runs don't pile
+          # up (cleanup.yml is the scheduled backstop).
+          mapfile -t stale < <(
+            git ls-remote --heads origin 'refs/heads/chore/visual-baselines-*' \
+              | sed 's#.*refs/heads/##'
+          )
+          for b in "${stale[@]:-}"; do
+            [ -z "$b" ] && continue
+            if [ "$(gh pr list --head "$b" --state open --json number --jq 'length')" = "0" ]; then
+              echo "Pruning orphan branch $b"
+              git push origin --delete "$b" || true
+            fi
+          done
+
           BRANCH="chore/visual-baselines-${GITHUB_RUN_ID}"
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'

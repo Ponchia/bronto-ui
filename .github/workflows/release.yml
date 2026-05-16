@@ -105,7 +105,7 @@ jobs:
   release-notes:
     # Gate on a successful publish — never announce a GitHub Release for
     # a version that failed to reach npm (no split-brain). publish-npm
-    # itself needs [validate, visual], so the gate is transitive.
+    # itself needs [validate, e2e], so the gate is transitive.
     needs: publish-npm
     runs-on: ubuntu-latest
     permissions:
