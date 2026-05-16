@@ -1,5 +1,7 @@
-/* @ponchia/ui — core bundle (no breakpoint overrides).
-   Consumers that manage their own responsive layer import this.
+/* @ponchia/ui — the CSS bundle (single source entrypoint).
+   The legacy non-ui-* vocabulary and the separate responsive layer were
+   removed in 0.3.0; the ui-* components carry their own breakpoints, so
+   there is one bundle, not a core/full split.
 
    Everything ships inside the `bronto` cascade layer. Any un-layered CSS
    in the consuming app therefore wins over the framework without a
@@ -12,10 +14,8 @@
 @import url('./base.css') layer(bronto);
 @import url('./motion.css') layer(bronto);
 @import url('./dots.css') layer(bronto);
-@import url('./layout.css') layer(bronto);
 @import url('./navigation.css') layer(bronto);
 @import url('./site.css') layer(bronto);
-@import url('./typography.css') layer(bronto);
 @import url('./content.css') layer(bronto);
 @import url('./primitives.css') layer(bronto);
 @import url('./forms.css') layer(bronto);
@@ -23,5 +23,4 @@
 @import url('./overlay.css') layer(bronto);
 @import url('./disclosure.css') layer(bronto);
 @import url('./table.css') layer(bronto);
-@import url('./cards.css') layer(bronto);
 @import url('./app.css') layer(bronto);

@@ -66,7 +66,7 @@
 .ui-input:focus-visible,
 .ui-select:focus-visible,
 .ui-textarea:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 1px;
 }
 
@@ -183,7 +183,7 @@
 }
 
 .ui-switch input:focus-visible + .ui-switch__track {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 

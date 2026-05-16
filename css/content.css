@@ -120,7 +120,7 @@
 
 @media (hover: hover) {
   .ui-prose a:hover {
-    color: var(--accent);
+    color: var(--accent-text);
     text-decoration-color: var(--accent);
   }
 }
@@ -136,7 +136,7 @@
 }
 
 .ui-prose li::marker {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .ui-prose ul {

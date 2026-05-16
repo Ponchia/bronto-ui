@@ -1,0 +1,32 @@
+name: Feature request
+description: A new component, token, recipe, or behavior — or a change to one
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What's missing and which projects need it
+      description: Framework-agnostic by design — say which consuming app(s) hit this.
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Proposed surface
+      options:
+        - New ui-* CSS component
+        - Token / theming knob
+        - classes recipe
+        - behavior (vanilla JS)
+        - tooling / build / docs
+    validations:
+      required: true
+  - type: textarea
+    id: contract
+    attributes:
+      label: Contract impact
+      description: New token/class/attribute names? Breaking (pre-1.0 → minor)? Accessibility & both-theme considerations?
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered

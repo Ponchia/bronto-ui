@@ -1,9 +1,8 @@
 /**
- * Flatten the runtime @import graph into prebuilt, single-file bundles
- * so consumers don't pay a 17-deep @import waterfall at load time.
+ * Flatten the runtime @import graph into one prebuilt single-file bundle
+ * so consumers don't pay an @import waterfall at load time.
  *
- *   dist/bronto.css       ← css/index.css  (full: core + responsive)
- *   dist/bronto-core.css  ← css/core.css   (no breakpoint overrides)
+ *   dist/bronto.css  ← css/core.css  (the single bundle)
  *
  * Each leaf's contents are concatenated in @import order and wrapped in
  * a single `@layer bronto { … }`, reproducing the cascade-layer
@@ -35,7 +34,10 @@ function leaves(entry, acc = []) {
   for (const m of src.matchAll(IMPORT_RE)) {
     const dep = m[1].replace(/^\.\//, '');
     if (/(?:^|\/)(core|index)\.css$/.test(dep)) leaves(dep, acc);
-    else acc.push(dep);
+    // Dedupe: a leaf reachable from two entrypoints must be emitted
+    // once, or the published bundle ships its rules (and the layered
+    // per-leaf file) twice.
+    else if (!acc.includes(dep)) acc.push(dep);
   }
   return acc;
 }
@@ -56,16 +58,44 @@ function bundle(entry) {
   return `@layer bronto{${minify(body)}}\n`;
 }
 
-export function buildBundles() {
-  return {
-    'dist/bronto.css': bundle('index.css'),
-    'dist/bronto-core.css': bundle('core.css'),
-  };
+/** One self-layered file per leaf, so a *direct* leaf import is layered
+ *  by default (safe to mix with the bundle). The raw, unlayered source
+ *  stays the explicit escape hatch, exported under `./css/unlayered/*`.
+ *
+ *  Depth fix: source leaves live at `css/` and reference assets as
+ *  `../fonts/*` (→ package root). These generated copies live one level
+ *  deeper at `dist/css/`, so the relative asset path must gain one `../`
+ *  or it 404s (`dist/css/../fonts` = `dist/fonts`, which is not shipped).
+ *  The flattened bundle is exempt — it sits at `dist/`, where the
+ *  original `../fonts/*` already resolves to the package root. */
+function layeredLeaf(f) {
+  const css = minify(readFileSync(resolve(cssDir, f), 'utf8')).replace(
+    /url\((['"]?)\.\.\/fonts\//g,
+    'url($1../../fonts/',
+  );
+  return `@layer bronto{${css}}\n`;
 }
 
-/** Raw + gzip size budgets. Generous headroom; trip only on a real
- *  blowout (a runaway import or an accidental asset inlined). */
-export const BUDGET = { raw: 90_000, gzip: 16_000 };
+/** The leaves a direct import can target (core.css's import order). */
+export function leafFiles() {
+  return leaves('core.css');
+}
+
+export function buildBundles() {
+  const out = { 'dist/bronto.css': bundle('core.css') };
+  for (const f of leafFiles()) out[`dist/css/${f}`] = layeredLeaf(f);
+  return out;
+}
+
+/** Raw + gzip ceiling, enforced by check-dist on *every* emitted file
+ *  (the bundle and each layered leaf — leaves are far smaller, so the
+ *  bundle is the binding one). Calibrated to the post-0.3.0 bundle
+ *  (~54 kB raw / ~10 kB gzip) with ~18%/~20% headroom for ordinary
+ *  growth: a few new components is fine, a runaway @import or an
+ *  inlined asset trips it. Bump deliberately (and note it in the
+ *  CHANGELOG) when real growth justifies it — this is the consumer-
+ *  facing payload contract. */
+export const BUDGET = { raw: 64_000, gzip: 12_000 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };
@@ -73,10 +103,12 @@ export function sizes(content) {
 
 const isMain = resolve(process.argv[1] || '') === fileURLToPath(import.meta.url);
 if (isMain) {
-  mkdirSync(resolve(root, 'dist'), { recursive: true });
+  mkdirSync(resolve(root, 'dist/css'), { recursive: true });
   for (const [rel, content] of Object.entries(buildBundles())) {
     writeFileSync(resolve(root, rel), content);
     const s = sizes(content);
-    console.log(`✓ ${rel} — ${(s.raw / 1024).toFixed(1)}kB raw, ${(s.gzip / 1024).toFixed(1)}kB gzip`);
+    console.log(
+      `✓ ${rel} — ${(s.raw / 1024).toFixed(1)}kB raw, ${(s.gzip / 1024).toFixed(1)}kB gzip`,
+    );
   }
 }

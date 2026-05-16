@@ -80,6 +80,7 @@
   --text-dim: #686863;
   --accent: #d71921;
   --accent-strong: color-mix(in srgb, var(--accent) 83%, #000);
+  --accent-text: var(--accent-strong);
   --accent-soft: color-mix(in srgb, var(--accent) 10%, transparent);
   --success: #2f7d4f;
   --success-soft: rgba(47, 125, 79, 0.12);
@@ -94,7 +95,11 @@
   --field-dot: rgba(10, 10, 10, 0.16);
   --field-dot-hot: rgba(10, 10, 10, 0.4);
   --field-dot-accent: color-mix(in srgb, var(--accent) 78%, transparent);
-  --focus-ring: color-mix(in srgb, var(--accent) 50%, transparent);
+
+  /* Solid by default: this token drives every focus outline, so it must
+     clear the 3:1 non-text contrast minimum. Override per theme/subtree
+     to tune the ring without touching --accent. */
+  --focus-ring: var(--accent);
   --shadow: none;
   --shadow-raised: 0 0 0 1px var(--line-strong);
 }
@@ -126,6 +131,7 @@
     --text-dim: #858585;
     --accent: #ff3b41;
     --accent-strong: color-mix(in srgb, var(--accent) 84%, #fff);
+    --accent-text: var(--accent-strong);
     --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
     --success: #4ec27e;
     --success-soft: rgba(78, 194, 126, 0.14);
@@ -140,7 +146,7 @@
     --field-dot: rgba(242, 242, 242, 0.14);
     --field-dot-hot: rgba(242, 242, 242, 0.36);
     --field-dot-accent: color-mix(in srgb, var(--accent) 82%, transparent);
-    --focus-ring: color-mix(in srgb, var(--accent) 55%, transparent);
+    --focus-ring: var(--accent);
     --shadow: none;
     --shadow-raised: 0 0 0 1px var(--line-strong);
   }
@@ -162,6 +168,7 @@
   --text-dim: #858585;
   --accent: #ff3b41;
   --accent-strong: color-mix(in srgb, var(--accent) 84%, #fff);
+  --accent-text: var(--accent-strong);
   --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
   --success: #4ec27e;
   --success-soft: rgba(78, 194, 126, 0.14);
@@ -176,7 +183,7 @@
   --field-dot: rgba(242, 242, 242, 0.14);
   --field-dot-hot: rgba(242, 242, 242, 0.36);
   --field-dot-accent: color-mix(in srgb, var(--accent) 82%, transparent);
-  --focus-ring: color-mix(in srgb, var(--accent) 55%, transparent);
+  --focus-ring: var(--accent);
   --shadow: none;
   --shadow-raised: 0 0 0 1px var(--line-strong);
 }

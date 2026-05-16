@@ -116,7 +116,7 @@
 }
 
 .ui-sitenav a[aria-current] {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .ui-sitenav a[aria-current]::before {
@@ -167,7 +167,7 @@
 
 .ui-sitemenu[open] > summary {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .ui-sitemenu__panel {
@@ -260,7 +260,7 @@
 .ui-tag--accent {
   background: var(--accent-soft);
   border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
-  color: var(--accent-strong);
+  color: var(--accent-text);
 }
 
 /* --- Meta row — date · author · read-time, dot-separated --- */

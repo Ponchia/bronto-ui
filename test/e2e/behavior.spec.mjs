@@ -36,7 +36,7 @@ test('RTL actually mirrors interactive controls (not just box model)', async ({ 
   // Wait for the mirrored end-state rather than racing the transition.
   await page.waitForFunction(
     (s) => new DOMMatrixReadOnly(getComputedStyle(document.querySelector(s)).transform).m41 < 0,
-    sel
+    sel,
   );
   const rtl = await read();
   expect(rtl.tx).toBeLessThan(0); // …and mirrors under RTL

@@ -38,7 +38,9 @@ const dts = readFileSync(resolve(root, 'classes/index.d.ts'), 'utf8');
 const declared = new Set([...dts.matchAll(/^\s*(\w+)\s*\(opts\?:/gm)].map((m) => m[1]));
 for (const name of Object.keys(ui)) {
   if (!declared.has(name)) {
-    errors.push(`ui.${name}() exists in classes/index.js but is not declared on Ui in classes/index.d.ts`);
+    errors.push(
+      `ui.${name}() exists in classes/index.js but is not declared on Ui in classes/index.d.ts`,
+    );
   }
 }
 

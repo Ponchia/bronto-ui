@@ -50,9 +50,7 @@ test('print: chrome is hidden, content + link URLs are kept', async ({ page }) =
     return {
       dotfield: getComputedStyle(document.querySelector('.ui-dotfield')).display,
       main: getComputedStyle(document.querySelector('main')).display,
-      afterContent: proseLink
-        ? getComputedStyle(proseLink, '::after').content
-        : '"(none)"',
+      afterContent: proseLink ? getComputedStyle(proseLink, '::after').content : '"(none)"',
     };
   });
   expect(r.dotfield).toBe('none'); // decorative chrome dropped on paper

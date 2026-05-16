@@ -1,0 +1,55 @@
+# Regenerate the Playwright visual baselines in the EXACT pinned
+# container CI uses, so the committed PNGs match CI rasterisation
+# (cross-OS rendering differs — they cannot be authored on a dev mac).
+# Manually dispatched: run it from the branch whose baselines you want
+# rebuilt (e.g. after an intentional visual change); it commits the
+# regenerated screenshots back to that branch, so the next CI run's
+# `e2e` job goes green on its own.
+name: Update visual baselines
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.60.0-jammy
+    env:
+      HOME: /root # same Firefox-on-GHA workaround as ci.yml
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+      # Only the chromium pixel specs own baselines (per playwright.config).
+      - run: npx playwright test test/e2e/visual.spec.mjs --project=chromium --update-snapshots
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: visual-baselines
+          path: test/e2e/__screenshots__/
+          retention-days: 14
+
+      - name: Commit regenerated baselines to the branch
+        run: |
+          set -euo pipefail
+          git config user.name  'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          if git diff --quiet -- test/e2e/__screenshots__; then
+            echo "Baselines unchanged — nothing to commit."
+            exit 0
+          fi
+          git add test/e2e/__screenshots__
+          git commit -m "test(e2e): regenerate visual baselines in pinned container [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

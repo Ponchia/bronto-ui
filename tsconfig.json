@@ -1,0 +1,21 @@
+{
+  "//": "Type-only gate: validates the published .d.ts compile and that consumer usage type-checks (incl. that the literal cls/token types reject typos). Does not checkJs the runtime — see test/types.test-d.ts. Run: npm run check:types",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": false,
+    "allowJs": false,
+    "checkJs": false,
+    "types": []
+  },
+  "include": [
+    "test/types.test-d.ts",
+    "classes/index.d.ts",
+    "tokens/index.d.ts",
+    "behaviors/index.d.ts"
+  ]
+}

@@ -1,12 +1,223 @@
 # Changelog
 
-## Unreleased
+## 0.3.0 — unreleased
 
-Content-site layer — promotes the proven, hand-rolled site shell into
-the first-class typed contract so consumers stop reimplementing it.
-Feature-sized; warrants a **0.3.0** when released. Legacy `site-*` /
-`.tag-list` classes are kept as undocumented back-compat (removal slated
-for a future major).
+> **Versioning:** pre-1.0, breaking changes ship in the _minor_. Pin
+> `~0.3.x`; `^0.3.0` does **not** protect you. See README → Versioning.
+
+### Multi-POV review hardening
+
+A six-perspective review (DX/contract, CSS architecture, a11y,
+release/supply-chain, plus AgentMix) drove this pass.
+
+**BREAKING (token / contract level)**
+
+- **New `--accent-text` token** (= `var(--accent-strong)`). Everywhere
+  the accent was used as _foreground text_ (links on hover, active
+  nav/tab/accordion, prose markers, eyebrows, chips, breadcrumb,
+  pagination) now resolves through `--accent-text`, not raw `--accent`,
+  so a pale re-brand no longer silently fails text contrast.
+  _Migration:_ none for default themes (visually identical). If you
+  re-brand `--accent` to a light hue, also set `--accent-text` to a
+  dark-enough value (see docs/theming.md).
+- **`--focus-ring` is now solid `var(--accent)`** (was an unused
+  50%/55% transparent mix) and every focus outline is wired to it.
+  Default focus appearance is unchanged; the `[data-contrast=high]` /
+  `prefers-contrast` promotion and per-theme `--focus-ring` overrides
+  now actually take effect. _Migration:_ none unless you relied on the
+  (previously dead) token value.
+- **`classes/index.d.ts` / `tokens/index.d.ts` are now generated
+  literal types.** `cls` exposes literal keys+values; token views use
+  `ColorKey`/`ScaleKey`/`*TokenName` unions; `themeColor` takes
+  `ThemeName`. Mistyped keys are now compile errors. _Migration:_ fix
+  any code that relied on the old `Record<string,string>` (e.g. reading
+  a non-existent key and getting `string` instead of an error). JS
+  token keys are kebab-case — `themeColor('dark')['accent-soft']`.
+
+**Fixed**
+
+- **a11y (WCAG AA):** `.ui-chip--accent`, legacy `.eyebrow` group and
+  `.tag-list--compact` first child no longer use raw `--accent` as
+  small text (was ~3.9:1 in light).
+- **a11y:** native `<dialog>` returns focus to its trigger on _every_
+  close path (Esc, close button, backdrop light-dismiss, programmatic).
+- **a11y:** the toast `aria-live` stack is a persistent region — no
+  longer created-then-destroyed per drain, fixing dropped first /
+  post-drain screen-reader announcements.
+- **a11y:** `.ui-tab:focus-visible` is now visually distinct from the
+  active-tab underline (inset ring).
+- **DX:** the `.` export is conditional (`style`/`default`) instead of a
+  bare `.css` string, so type-aware tooling no longer mis-resolves the
+  package root. The root is CSS-only (documented).
+
+**Changed (non-breaking)**
+
+- Behavior initializers (`initThemeToggle`, `dismissible`, `initDialog`,
+  `initDisclosure`, `initTabs`) are now idempotent — re-init (HMR,
+  framework remount, repeat calls) replaces rather than stacking
+  duplicate listeners. Tab ids use a module-global counter so separate
+  islands never collide on `bronto-tab-1`.
+- New drift gate `check:dts` (generated `.d.ts` ⇄ JS runtime), wired
+  into `npm run check` and `prepack`. `docs/architecture.md` drift table
+  and release-gating section corrected to the real four-job DAG
+  (`validate` + `e2e` → `publish-npm` → `release-notes`).
+- README: explicit "do not mix a bundle with a raw leaf import" hazard
+  warning; a Versioning section; size/`@import`-depth prose de-drifted.
+- Tests: +3 unit tests (dialog focus-return, initializer idempotency,
+  global-unique tab ids); +5 e2e a11y tests (RTL axe pass, dialog
+  focus-return on Escape, persistent toast live region, disclosure
+  toggle, modal computed-contrast instead of a blanket rule disable);
+  demo gained a `[data-bronto-disclosure]` instance (was untested).
+  _Release note:_ the visual-snapshot baselines (`test/e2e/__screenshots__`)
+  are intentionally stale after the contrast / focus-ring / legacy-removal
+  changes (cross-OS rasterisation means they can only be authored in the
+  pinned container, not on a dev machine). Regenerate them with one click:
+  run the **“Update visual baselines”** workflow (`workflow_dispatch`,
+  `.github/workflows/visual-baselines.yml`) from this branch — it rebuilds
+  them in `mcr.microsoft.com/playwright:v1.60.0-jammy` and commits them
+  back, after which the `e2e` gate goes green on its own. Red by design
+  until that runs.
+
+**BREAKING (legacy vocabulary removed / migrated)**
+
+The whole non-`ui-*` surface is gone; everything shipped is now under the
+`.ui-*` contract and the `check-classes` drift gate.
+
+- **Deleted (had `ui-*` equivalents):** `css/layout.css`, `css/cards.css`,
+  `css/typography.css` and their entire vocabulary — `.hero`,
+  `.project-*`, `.post-card`, `.essay-*`, `.metric-tile`, `.callout`,
+  `.eyebrow`, bare `.button`, `.section-head`, `.tag-list`,
+  `.profile-link-list`, `.page-*`, `.home-*`, `.signal-panel`,
+  `.worklog-summary`, … _Migration:_ use the `ui-*` content layer —
+  `.ui-prose`/`.ui-quote` (long-form), `.ui-card`, `.ui-eyebrow`,
+  `.ui-button`, `.ui-tag`/`.ui-tags`, `.ui-grid`/`.ui-stack`, the
+  `ui-site*` shell. `.skip-link` → `.ui-skiplink`; `.site-nav` →
+  `.ui-sitenav`; `.site-menu` → `.ui-sitemenu` (responsive nav) or the
+  new `.ui-menu-host` (a `<details>` + `.ui-menu` dropdown wrapper).
+- **Renamed → first-class:** the admin shell `.app-*` → **`.ui-app-*`**
+  (`ui-app-shell`/`-rail`/`-topbar`/`-toolbar`/`-nav`/`-panel`/
+  `-content`/`-main`/`-metrics`/`-metric`/`-empty-state`, with the same
+  `__part` / `--mod` suffixes). The theme toggle `.theme-toggle__*` →
+  **`.ui-themetoggle__*`**. _Migration:_ rename these class strings in
+  consumer markup (or use the new `cls.app*` / `cls.themetoggle*` /
+  `cls.menuHost` entries). They are now typed and drift-checked.
+- **Bundle collapsed:** `css/responsive.css` and `css/index.css` removed.
+  `ui-*` components own their breakpoints, so there is no core/full
+  split: `@ponchia/ui/css` now resolves to `css/core.css` (one bundle),
+  `@ponchia/ui` → the single `dist/bronto.css` (~54 kB / ~10 kB gzip,
+  was ~70/12). _Removed exports:_ `./css/index.css`,
+  `./css/responsive.css`, `./dist/bronto-core.css`, and the deleted
+  leaves' `./css/{layout,typography,cards}.css`. _Migration:_ import
+  `@ponchia/ui` or `@ponchia/ui/css`.
+
+**BREAKING (per-leaf imports are now layer-safe)**
+
+- Every `@ponchia/ui/css/<leaf>.css` export now resolves to a
+  self-`@layer bronto`-wrapped build (`dist/css/<leaf>.css`), so a
+  direct leaf import is layered by default and safe to mix with the
+  bundle — the silent cascade-inversion footgun is gone. The raw,
+  full-specificity source is still available as a deliberate escape
+  hatch at the explicit **`@ponchia/ui/css/unlayered/<leaf>.css`**
+  path. _Migration:_ none if you import the bundle. If you imported a
+  raw leaf *expecting* unlayered/full-specificity behaviour, switch
+  that import to the `css/unlayered/*` path; otherwise the now-layered
+  leaf is the correct (safe) default. Drift-checked by `check-dist`.
+
+### Tooling (external-review triage)
+
+Adopted what fits the CSS-first / zero-runtime-dep / curated-artifact
+ADR; declined what doesn't (recorded so the decision isn't re-litigated).
+
+**Added**
+
+- **TypeScript type gate** — `tsconfig.json` + `test/types.test-d.ts`
+  + `check:types` (in `npm run check`). Compiles the published `.d.ts`
+  and asserts, via `@ts-expect-error`, that the generated literal
+  `cls`/token types reject typos and `themeColor` rejects non-`ThemeName`.
+  Completes the review's "auto-generate .d.ts, kill drift" item
+  (generation + `check-dts` landed earlier this minor; this proves the
+  result). `typescript` is devDep-only — no runtime/types-export change.
+- **Prettier** — `.prettierrc` + `check:format`/`format`, in
+  `npm run check`. Scoped to hand-authored non-CSS source; CSS stays
+  Stylelint-owned, generated artifacts and the curated Markdown/`demo`
+  are `.prettierignore`d so formatters never fight generators.
+- **GitHub issue/PR templates** — collect `@ponchia/ui` version,
+  consuming framework, and surface; PR template carries the
+  contract/SemVer/a11y checklist.
+- **Bundle-size budget tightened** — `check-dist` `BUDGET` recalibrated
+  90 kB→64 kB raw / 16 kB→12 kB gzip (bundle is ~54/~10 post-cleanup),
+  so regrowth is gated, not just catastrophic blowouts. (Dependabot was
+  already added earlier this minor.)
+
+**Declined (rationale)** — Storybook (heavy React/Vite toolchain vs the
+framework-agnostic zero-dep ADR; `demo/index.html` is the self-driving
+surface); Style Dictionary as a dependency (the shipped
+`tokens.dtcg.json` *is* the deliberate bring-your-own platform interop;
+no native consumers exist — consumers run SD themselves);
+standard-version/auto-changelog (the curated narrative CHANGELOG is an
+asset; commits are already conventional); Renovate (Dependabot chosen);
+Lighthouse CI (the axe a11y gate + size budget already cover the
+regression vectors).
+
+### Post-review fixes (independent Opus + AgentMix pass on this branch)
+
+- **Fixed (HIGH, regression introduced here):** the persistent-toast
+  rAF deferral could resurrect an already-dismissed first toast into the
+  `aria-live` region (dismiss within the first frame). Now guarded by a
+  `dismissed` flag; `dismiss()` is idempotent. +2 unit tests polyfilling
+  rAF (the jsdom env had no `requestAnimationFrame`, so the path was
+  previously untested).
+- **Fixed (HIGH, regression introduced here):** the layered per-leaf
+  `@ponchia/ui/css/fonts.css` (now `dist/css/fonts.css`) referenced
+  `url(../fonts/*)`, which from `dist/css/` resolves to the unshipped
+  `dist/fonts/`. `build-dist` now rewrites `../fonts/` → `../../fonts/`
+  for the deeper per-leaf files (the flattened bundle at `dist/` is
+  unaffected and unchanged). `check-dist` now also resolves every
+  `url(...)` in each generated file against its own location, so this
+  class of depth bug can't recur.
+- **Fixed (docs):** README SemVer guidance was wrong — at `0.x` npm
+  resolves `^0.3.0` and `~0.3.0` identically (`>=0.3.0 <0.4.0`); both
+  hold back the breaking `0.4.0`. Corrected. Removed the stale
+  "legacy `site-*`/`.tag-list` kept as back-compat" line (they were
+  deleted this release). De-duplicated the `check-dist` paragraph in
+  architecture.md.
+- **Hardened:** the release `publish-npm` step uses
+  `npm publish --ignore-scripts`, so `NODE_AUTH_TOKEN` is never exposed
+  to the prepack/prepublishOnly lifecycle; it ships the artifacts already
+  byte-verified by `validate` on the same commit.
+
+### Further discovered-issue cleanup
+
+Bounded, sensible items surfaced by the reviews, now closed:
+
+- **a11y:** new `initMenu` behavior — Escape / outside-click /
+  close-on-activate (with focus return to `<summary>`) for a native
+  `<details data-bronto-menu>` `.ui-menu` dropdown. Deliberately a
+  disclosure of buttons, not an over-claimed ARIA menu (review M3).
+  Wired in the demo; unit-tested.
+- **a11y:** the active tab's selected state is re-asserted under
+  `forced-colors: active` (`border/colour: Highlight`) — it was
+  invisible in Windows High Contrast (review L3).
+- **a11y (demo):** the pagination "previous" control is now a real
+  `disabled` button (was a focusable/clickable `aria-disabled`,
+  misleading on the axe-gated integration surface); arrow controls
+  gained accessible names; active page uses `aria-current="page"`
+  (review M1).
+- **CI:** GitHub Pages now deploys only after the `CI` workflow
+  concludes **successfully** on `main` (`workflow_run` trigger, not a
+  bare push) — a red-e2e/broken demo can no longer be published
+  independently of the gates.
+- **docs:** theming.md documents the one accent surface the framework
+  can't tune — native control `accent-color` under a pale re-brand
+  (review css M2).
+
+### Content-site layer
+
+Promotes the proven, hand-rolled site shell into the first-class typed
+contract so consumers stop reimplementing it. (The legacy `site-*` /
+`.tag-list` back-compat classes referenced here were **removed** in the
+same release — see the "legacy vocabulary removed / migrated" BREAKING
+section above; they are not shipped.)
 
 - **`site.css`**: `ui-container` (+`--narrow`), `ui-siteheader`
   (`__brand`/`__actions`), `ui-sitenav` (active via `aria-current`, dot

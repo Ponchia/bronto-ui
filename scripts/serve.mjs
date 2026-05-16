@@ -63,6 +63,6 @@ const isMain = resolve(process.argv[1] || '') === fileURLToPath(import.meta.url)
 if (isMain) {
   const port = Number(process.argv[2]) || 8123;
   createDemoServer().listen(port, '127.0.0.1', () =>
-    console.log(`serving ${root} on http://127.0.0.1:${port}`)
+    console.log(`serving ${root} on http://127.0.0.1:${port}`),
   );
 }

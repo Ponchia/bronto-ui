@@ -6,6 +6,7 @@ import {
   initThemeToggle,
   dismissible,
   initDisclosure,
+  initMenu,
   initDialog,
   initTabs,
   toast,
@@ -90,7 +91,7 @@ test('forced toggle sets a fixed theme and reflects pressed = forced===current',
 
 test('dismissible removes target and is cancelable', () => {
   const d = mount(
-    '<div data-bronto-dismissible id="box"><button data-bronto-dismiss>x</button></div>'
+    '<div data-bronto-dismissible id="box"><button data-bronto-dismiss>x</button></div>',
   );
   const stop = dismissible();
 
@@ -99,13 +100,13 @@ test('dismissible removes target and is cancelable', () => {
     once: true,
   });
   d.querySelector('[data-bronto-dismiss]').dispatchEvent(
-    new dom.window.MouseEvent('click', { bubbles: true })
+    new dom.window.MouseEvent('click', { bubbles: true }),
   );
   assert.ok(d.getElementById('box'), 'cancelled → still present');
 
   // Second attempt proceeds.
   d.querySelector('[data-bronto-dismiss]').dispatchEvent(
-    new dom.window.MouseEvent('click', { bubbles: true })
+    new dom.window.MouseEvent('click', { bubbles: true }),
   );
   assert.equal(d.getElementById('box'), null, 'removed');
   stop();
@@ -114,7 +115,7 @@ test('dismissible removes target and is cancelable', () => {
 test('initDisclosure keeps aria-expanded and hidden in sync', () => {
   const d = mount(
     '<button data-bronto-disclosure aria-controls="p" aria-expanded="false">m</button>' +
-      '<div id="p" hidden>panel</div>'
+      '<div id="p" hidden>panel</div>',
   );
   initDisclosure();
   const btn = d.querySelector('[data-bronto-disclosure]');
@@ -129,6 +130,40 @@ test('initDisclosure keeps aria-expanded and hidden in sync', () => {
   assert.equal(panel.hidden, true);
 });
 
+test('initMenu closes the <details> on Escape, outside-click, and item activation', () => {
+  const d = mount(
+    '<details data-bronto-menu open><summary>Menu</summary>' +
+      '<div class="ui-menu"><button class="ui-menu__item" id="it">Go</button></div>' +
+      '</details><button id="outside">x</button>',
+  );
+  const stop = initMenu();
+  const menu = d.querySelector('[data-bronto-menu]');
+  const item = d.getElementById('it');
+
+  // Escape closes + returns focus to <summary>.
+  d.querySelector('summary').dispatchEvent(
+    new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+  );
+  assert.equal(menu.open, false, 'Escape closed it');
+  assert.equal(d.activeElement, d.querySelector('summary'), 'focus returned to summary');
+
+  // Activating an item closes it.
+  menu.open = true;
+  item.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(menu.open, false, 'item activation closed it');
+
+  // Outside click closes it (no focus move).
+  menu.open = true;
+  d.getElementById('outside').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(menu.open, false, 'outside click closed it');
+
+  // Cleanup detaches listeners.
+  stop();
+  menu.open = true;
+  d.getElementById('outside').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(menu.open, true, 'no-op after cleanup');
+});
+
 /** jsdom 25 has no <dialog> showModal/close — polyfill the platform API
  *  so the delegation glue (our code) is what's under test. */
 function stubDialog(dlg) {
@@ -137,6 +172,9 @@ function stubDialog(dlg) {
   };
   dlg.close = function () {
     this.open = false;
+    // Real <dialog>.close() fires a `close` event on every path; the
+    // focus-return glue depends on it.
+    this.dispatchEvent(new dom.window.Event('close'));
   };
   return dlg;
 }
@@ -144,7 +182,7 @@ function stubDialog(dlg) {
 test('initDialog opens via data-bronto-open and closes via data-bronto-close', () => {
   const d = mount(
     '<button data-bronto-open="dlg" id="open">open</button>' +
-      '<dialog id="dlg"><button data-bronto-close>x</button></dialog>'
+      '<dialog id="dlg"><button data-bronto-close>x</button></dialog>',
   );
   const stop = initDialog();
   const dlg = stubDialog(d.getElementById('dlg'));
@@ -153,7 +191,7 @@ test('initDialog opens via data-bronto-open and closes via data-bronto-close', (
   assert.equal(dlg.open, true, 'opened');
 
   d.querySelector('[data-bronto-close]').dispatchEvent(
-    new dom.window.MouseEvent('click', { bubbles: true })
+    new dom.window.MouseEvent('click', { bubbles: true }),
   );
   assert.equal(dlg.open, false, 'closed');
 
@@ -164,7 +202,7 @@ test('initDialog opens via data-bronto-open and closes via data-bronto-close', (
 
 test('initDialog light-dismiss closes only when opted in via attribute', () => {
   const d = mount(
-    '<dialog id="a" data-bronto-dialog-light><p>x</p></dialog><dialog id="b"><p>y</p></dialog>'
+    '<dialog id="a" data-bronto-dialog-light><p>x</p></dialog><dialog id="b"><p>y</p></dialog>',
   );
   initDialog();
   const a = stubDialog(d.getElementById('a'));
@@ -193,7 +231,19 @@ test('toast mounts a shared stack, applies tone/title, and dismisses', () => {
   assert.match(el.textContent, /saved/);
 
   dismiss();
-  assert.equal(d.querySelector('.ui-toast-stack'), null, 'empty stack is removed');
+  // The stack is a persistent aria-live region: the toast is removed but
+  // the (now empty) live region must stay resident so the next toast does
+  // not recreate — and thus mis-announce — it (a11y H2).
+  const after = d.querySelector('.ui-toast-stack');
+  assert.ok(after, 'empty live region persists after drain');
+  assert.equal(after.childElementCount, 0, 'toast itself was removed');
+  assert.equal(after.getAttribute('aria-live'), 'polite');
+
+  const dismiss2 = toast('again', { duration: 0 });
+  const stacks = d.querySelectorAll('.ui-toast-stack');
+  assert.equal(stacks.length, 1, 'reuses the one resident stack, no duplicate');
+  assert.equal(stacks[0], after, 'same live-region node reused');
+  dismiss2();
 });
 
 test('initTabs: roving tabindex, click + Arrow/Home/End, panel sync', () => {
@@ -204,7 +254,7 @@ test('initTabs: roving tabindex, click + Arrow/Home/End, panel sync', () => {
       '<button class="ui-tab" data-tab="c">C</button></div>' +
       '<div class="ui-tabs__panel" data-panel="a">PA</div>' +
       '<div class="ui-tabs__panel" data-panel="b">PB</div>' +
-      '<div class="ui-tabs__panel" data-panel="c">PC</div></div>'
+      '<div class="ui-tabs__panel" data-panel="c">PC</div></div>',
   );
   const stop = initTabs();
   const [a, b, c] = [...d.querySelectorAll('.ui-tab')];
@@ -254,7 +304,7 @@ test('initTabs: nested groups are isolated (own [data-bronto-tabs] only)', () =>
       '<div class="ui-tabs__panel" data-panel="i1">PI1</div>' +
       '<div class="ui-tabs__panel" data-panel="i2">PI2</div></div>' +
       '</div>' +
-      '<div class="ui-tabs__panel" data-panel="o2">PO2</div></div>'
+      '<div class="ui-tabs__panel" data-panel="o2">PO2</div></div>',
   );
   initTabs();
   const tab = (id, t) => d.querySelector(`#${id} .ui-tab[data-tab="${t}"]`);
@@ -284,7 +334,7 @@ test('initTabs: a root that IS the tab group initialises + wires APG', () => {
       '<button class="ui-tab is-active" data-tab="a">A</button>' +
       '<button class="ui-tab" data-tab="b">B</button></div>' +
       '<div class="ui-tabs__panel" data-panel="a">PA</div>' +
-      '<div class="ui-tabs__panel" data-panel="b">PB</div></div>'
+      '<div class="ui-tabs__panel" data-panel="b">PB</div></div>',
   );
   const group = d.getElementById('g');
   initTabs({ root: group }); // root === the [data-bronto-tabs] element itself
@@ -314,4 +364,104 @@ test('prefers-color-scheme is honored when matchMedia exists and no attr/storage
   // current() → no attr, no storage → prefersDark() true → 'dark'; click → 'light'
   d.getElementById('t').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   assert.equal(d.documentElement.getAttribute('data-theme'), 'light');
+});
+
+test('initDialog returns focus to the trigger on close (every path)', () => {
+  const d = mount(
+    '<button data-bronto-open="dlg" id="open">open</button>' +
+      '<dialog id="dlg"><button data-bronto-close>x</button></dialog>',
+  );
+  initDialog();
+  const dlg = stubDialog(d.getElementById('dlg'));
+  const opener = d.getElementById('open');
+
+  opener.focus();
+  opener.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(dlg.open, true, 'opened');
+  // Move focus into the dialog as the browser would.
+  d.querySelector('[data-bronto-close]').focus();
+  assert.notEqual(d.activeElement, opener, 'focus left the trigger while open');
+
+  d.querySelector('[data-bronto-close]').dispatchEvent(
+    new dom.window.MouseEvent('click', { bubbles: true }),
+  );
+  assert.equal(dlg.open, false, 'closed');
+  assert.equal(d.activeElement, opener, 'focus returned to the trigger on close');
+});
+
+test('initThemeToggle is idempotent — re-init does not stack listeners', () => {
+  const d = mount('<button data-bronto-theme-toggle id="t">x</button>');
+  initThemeToggle();
+  initThemeToggle(); // second call must replace, not add a 2nd handler
+  d.documentElement.setAttribute('data-theme', 'light');
+  d.getElementById('t').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  // A stacked 2nd listener would toggle light→dark→light (net: light).
+  assert.equal(d.documentElement.getAttribute('data-theme'), 'dark', 'toggled exactly once');
+});
+
+test('initTabs mints globally-unique ids across separate init calls', () => {
+  const grp = (n) =>
+    `<div data-bronto-tabs id="g${n}"><div class="ui-tabs__list">` +
+    `<button class="ui-tab" data-tab="a">A</button></div>` +
+    `<div class="ui-tabs__panel" data-panel="a">p</div></div>`;
+  const d = mount(grp(1) + grp(2));
+  initTabs({ root: d.getElementById('g1') });
+  initTabs({ root: d.getElementById('g2') });
+  const ids = [...d.querySelectorAll('.ui-tab')].map((t) => t.id);
+  assert.equal(new Set(ids).size, ids.length, `tab ids unique: ${ids.join(',')}`);
+});
+
+test('toast: first-toast rAF insert lands when not dismissed', () => {
+  const d = mount('');
+  const frames = [];
+  globalThis.requestAnimationFrame = (cb) => frames.push(cb);
+  try {
+    toast('hello', { duration: 0 }); // fresh stack → deferred to next frame
+    const stack = d.querySelector('.ui-toast-stack');
+    assert.ok(stack, 'live region created synchronously');
+    assert.equal(stack.childElementCount, 0, 'toast deferred, not in region yet');
+    frames.forEach((cb) => cb());
+    assert.equal(stack.childElementCount, 1, 'inserted on the frame');
+    assert.match(stack.textContent, /hello/);
+  } finally {
+    delete globalThis.requestAnimationFrame;
+  }
+});
+
+test('toast: early dismiss cancels the deferred rAF insert (no zombie)', () => {
+  const d = mount('');
+  const frames = [];
+  globalThis.requestAnimationFrame = (cb) => frames.push(cb);
+  try {
+    const dismiss = toast('zombie?', { duration: 0 });
+    const stack = d.querySelector('.ui-toast-stack');
+    assert.equal(stack.childElementCount, 0, 'deferred to next frame');
+    dismiss(); // dismissed before the frame fires
+    frames.forEach((cb) => cb()); // flush rAF
+    assert.equal(
+      stack.childElementCount,
+      0,
+      'dismissed toast must NOT be resurrected into the aria-live region',
+    );
+    assert.ok(d.querySelector('.ui-toast-stack'), 'persistent live region still present');
+  } finally {
+    delete globalThis.requestAnimationFrame;
+  }
+});
+
+test('toast: toasts queued before the first frame keep FIFO order', () => {
+  const d = mount('');
+  const frames = [];
+  globalThis.requestAnimationFrame = (cb) => frames.push(cb);
+  try {
+    toast('first', { duration: 0 }); // fresh stack → deferred
+    toast('second', { duration: 0 }); // before flush → queued behind, not sync-ahead
+    const stack = d.querySelector('.ui-toast-stack');
+    assert.equal(stack.childElementCount, 0, 'both deferred, region still empty');
+    frames.forEach((cb) => cb());
+    const texts = [...stack.querySelectorAll('.ui-toast')].map((n) => n.textContent);
+    assert.deepEqual(texts, ['first', 'second'], 'call order preserved (no reorder)');
+  } finally {
+    delete globalThis.requestAnimationFrame;
+  }
 });

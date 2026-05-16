@@ -39,8 +39,7 @@ if (files.length === 0) errors.push('npm pack reported no files');
 const alwaysOk = (p) =>
   p === 'package.json' || /^(readme|license|licence|changelog)(\.|$)/i.test(p);
 
-const underAllowlist = (p) =>
-  (pkg.files ?? []).some((f) => p === f || p.startsWith(`${f}/`));
+const underAllowlist = (p) => (pkg.files ?? []).some((f) => p === f || p.startsWith(`${f}/`));
 
 for (const p of files) {
   if (!alwaysOk(p) && !underAllowlist(p)) {
@@ -57,7 +56,7 @@ for (const p of files) {
 }
 
 // Sanity: the runtime entrypoints must actually be present.
-for (const must of ['css/index.css', 'tokens/index.js', 'classes/index.js', 'behaviors/index.js']) {
+for (const must of ['css/core.css', 'tokens/index.js', 'classes/index.js', 'behaviors/index.js']) {
   if (!files.includes(must)) errors.push(`expected entrypoint missing from package: ${must}`);
 }
 

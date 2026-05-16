@@ -108,27 +108,27 @@
     },
     "text": {
       "2xs": {
-        "$type": "color",
+        "$type": "dimension",
         "$value": "0.68rem"
       },
       "xs": {
-        "$type": "color",
+        "$type": "dimension",
         "$value": "0.76rem"
       },
       "sm": {
-        "$type": "color",
+        "$type": "dimension",
         "$value": "0.86rem"
       },
       "base": {
-        "$type": "color",
+        "$type": "dimension",
         "$value": "0.95rem"
       },
       "lg": {
-        "$type": "color",
+        "$type": "dimension",
         "$value": "1.15rem"
       },
       "xl": {
-        "$type": "color",
+        "$type": "dimension",
         "$value": "1.45rem"
       }
     },
@@ -303,6 +303,13 @@
             "com.ponchia.css": "color-mix(in srgb, var(--accent) 83%, #000)"
           }
         },
+        "text": {
+          "$type": "color",
+          "$value": null,
+          "$extensions": {
+            "com.ponchia.css": "var(--accent-strong)"
+          }
+        },
         "soft": {
           "$type": "color",
           "$value": null,
@@ -385,7 +392,7 @@
           "$type": "color",
           "$value": null,
           "$extensions": {
-            "com.ponchia.css": "color-mix(in srgb, var(--accent) 50%, transparent)"
+            "com.ponchia.css": "var(--accent)"
           }
         }
       },
@@ -471,6 +478,13 @@
             "com.ponchia.css": "color-mix(in srgb, var(--accent) 84%, #fff)"
           }
         },
+        "text": {
+          "$type": "color",
+          "$value": null,
+          "$extensions": {
+            "com.ponchia.css": "var(--accent-strong)"
+          }
+        },
         "soft": {
           "$type": "color",
           "$value": null,
@@ -553,7 +567,7 @@
           "$type": "color",
           "$value": null,
           "$extensions": {
-            "com.ponchia.css": "color-mix(in srgb, var(--accent) 55%, transparent)"
+            "com.ponchia.css": "var(--accent)"
           }
         }
       },

@@ -4,7 +4,7 @@ import { basename, sep } from 'node:path';
 import { safePath, root } from '../scripts/serve.mjs';
 
 test('safePath resolves normal paths under root', () => {
-  assert.equal(safePath('/css/index.css'), `${root}${sep}css${sep}index.css`);
+  assert.equal(safePath('/css/core.css'), `${root}${sep}css${sep}core.css`);
   assert.equal(safePath('/'), `${root}${sep}index.html`);
   assert.equal(safePath('/demo/'), `${root}${sep}demo${sep}index.html`);
   assert.equal(safePath('/.'), root); // normalises to exactly root → allowed

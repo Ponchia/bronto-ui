@@ -1,21 +1,29 @@
-/** @ponchia/ui — design token data types. */
+/** @ponchia/ui — GENERATED from tokens/index.js by scripts/gen-dts.mjs.
+ *  Do not edit by hand; run `npm run dts:build`. Drift-checked in CI. */
 
 export type ThemeName = 'light' | 'dark';
 
-/** Exact mirror of the :root blocks in css/tokens.css. */
+export type GlobalTokenName = '--radius-xl' | '--radius-lg' | '--radius-md' | '--radius-sm' | '--radius-pill' | '--space-2xs' | '--space-xs' | '--space-sm' | '--space-md' | '--space-lg' | '--space-xl' | '--space-2xl' | '--mono' | '--sans' | '--display' | '--dot-font' | '--text-2xs' | '--text-xs' | '--text-sm' | '--text-base' | '--text-lg' | '--text-xl' | '--tracking-wide' | '--tracking-wider' | '--ease-standard' | '--ease-spring' | '--ease-out' | '--duration-fast' | '--duration-base' | '--duration-slow' | '--dot-size' | '--dot-gap' | '--surface' | '--surface-raised' | '--surface-muted' | '--border' | '--border-strong';
+export type LightTokenName = '--bg' | '--bg-elevated' | '--bg-accent' | '--panel' | '--panel-strong' | '--panel-soft' | '--line' | '--line-strong' | '--text' | '--text-soft' | '--text-dim' | '--accent' | '--accent-strong' | '--accent-text' | '--accent-soft' | '--success' | '--success-soft' | '--warning' | '--warning-soft' | '--orange' | '--orange-soft' | '--danger' | '--danger-soft' | '--code-bg' | '--button-text' | '--field-dot' | '--field-dot-hot' | '--field-dot-accent' | '--focus-ring' | '--shadow' | '--shadow-raised';
+export type DarkTokenName = '--bg' | '--bg-elevated' | '--bg-accent' | '--panel' | '--panel-strong' | '--panel-soft' | '--line' | '--line-strong' | '--text' | '--text-soft' | '--text-dim' | '--accent' | '--accent-strong' | '--accent-text' | '--accent-soft' | '--success' | '--success-soft' | '--warning' | '--warning-soft' | '--orange' | '--orange-soft' | '--danger' | '--danger-soft' | '--code-bg' | '--button-text' | '--field-dot' | '--field-dot-hot' | '--field-dot-accent' | '--focus-ring' | '--shadow' | '--shadow-raised';
+
+/** Exact mirror of the :root blocks in css/tokens.css (literal keys). */
 export declare const cssVars: {
-  global: Record<`--${string}`, string>;
-  light: Record<`--${string}`, string>;
-  dark: Record<`--${string}`, string>;
+  global: Record<GlobalTokenName, string>;
+  light: Record<LightTokenName, string>;
+  dark: Record<DarkTokenName, string>;
 };
 
-/** Ergonomic view derived from {@link cssVars} (custom-property `--` prefix stripped). */
+export type ScaleKey = 'radius-xl' | 'radius-lg' | 'radius-md' | 'radius-sm' | 'radius-pill' | 'space-2xs' | 'space-xs' | 'space-sm' | 'space-md' | 'space-lg' | 'space-xl' | 'space-2xl' | 'mono' | 'sans' | 'display' | 'dot-font' | 'text-2xs' | 'text-xs' | 'text-sm' | 'text-base' | 'text-lg' | 'text-xl' | 'tracking-wide' | 'tracking-wider' | 'ease-standard' | 'ease-spring' | 'ease-out' | 'duration-fast' | 'duration-base' | 'duration-slow' | 'dot-size' | 'dot-gap' | 'surface' | 'surface-raised' | 'surface-muted' | 'border' | 'border-strong';
+export type ColorKey = 'bg' | 'bg-elevated' | 'bg-accent' | 'panel' | 'panel-strong' | 'panel-soft' | 'line' | 'line-strong' | 'text' | 'text-soft' | 'text-dim' | 'accent' | 'accent-strong' | 'accent-text' | 'accent-soft' | 'success' | 'success-soft' | 'warning' | 'warning-soft' | 'orange' | 'orange-soft' | 'danger' | 'danger-soft' | 'code-bg' | 'button-text' | 'field-dot' | 'field-dot-hot' | 'field-dot-accent' | 'focus-ring' | 'shadow' | 'shadow-raised';
+
+/** Ergonomic view derived from {@link cssVars} (`--` prefix stripped). */
 export declare const tokens: {
-  scale: Record<string, string>;
-  color: { light: Record<string, string>; dark: Record<string, string> };
+  scale: Record<ScaleKey, string>;
+  color: { light: Record<ColorKey, string>; dark: Record<ColorKey, string> };
 };
 
-/** Resolve the palette for a theme. Unknown values fall back to light. */
-export declare function themeColor(theme?: string): Record<string, string>;
+/** Resolve the palette for a theme. Unknown/omitted falls back to light. */
+export declare function themeColor(theme?: ThemeName): Record<ColorKey, string>;
 
 export default tokens;
