@@ -60,6 +60,9 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
 - `tokens/index.d.ts` — every design-token name as a literal union.
 - `tokens/index.json` — tokens as plain data (global / light / dark).
 - `tokens/tokens.dtcg.json` — same tokens in W3C DTCG format.
+- `tokens/resolved.json` — every colour token resolved to a static
+  `#rrggbb` / `rgba(...)` per theme (var() + color-mix() evaluated).
+  Use this for non-CSS render targets: MapLibre/canvas/WebGL/SVG.
 - `behaviors/index.d.ts` — typed signatures for the optional behaviors.
 - `classes/vscode.css-custom-data.json` — editor autocomplete for tokens.
 

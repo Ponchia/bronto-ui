@@ -31,6 +31,16 @@
   grid-template-rows: auto 1fr auto;
 }
 
+/* Controlled (non-<dialog>) usage. A portal/React modal that can't be a
+   native <dialog> wears the same skin + open layout via `.is-open`.
+   Backdrop, top-layer stacking and focus-trapping are then the
+   consumer's responsibility (the native <dialog> path gets them free). */
+.ui-modal.is-open {
+  animation: uiToastIn var(--duration-base) var(--ease-spring) both;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
 .ui-modal__head {
   align-items: flex-start;
   border-block-end: 1px solid var(--line);

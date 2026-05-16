@@ -6,29 +6,71 @@
 
 ## Unreleased — 0.3.3
 
-Discoverability for LLM/agent consumers working in other repos. No
-runtime, CSS, token, or API change — docs-only, ships with the next
-functional release.
+A second consumer-evidence pass ("felt it twice") plus
+agent-discoverability. All additive — new classes/recipes, a new
+generated artifact, a widened input type, a freed primitive with a
+permanent alias. No breaking change → a patch under the 0.x policy.
 
 ### Added
 
+- **`@ponchia/ui/tokens/resolved.json`** — every colour token resolved
+  to a static `#rrggbb` / `rgba(...)` per theme, with `var()` and sRGB
+  `color-mix()` evaluated at build time. For render targets that cannot
+  read CSS custom properties: MapLibre GPU paint, `<canvas>`, WebGL,
+  SVG, server-side image gen. Generated + drift-checked (new
+  `check:resolved` gate); no new colours introduced (`check:shiki`
+  unaffected). Resolves the deferred charts-palette gap now that a 2nd,
+  non-charting consumer has hit it.
+- **`ui-button--sm` / `ui-button--lg`** — token-driven size scale for
+  dense tooling (toolbars, pagination, table actions) and hero CTAs.
+  `ui.button({ size: 'sm' | 'lg' })`. Default size unchanged.
+- **`ui-empty-state`** — the empty-state primitive is now
+  shell-agnostic; `ui-app-empty-state` remains a permanent grouped alias
+  (byte-identical render, no baseline drift). Same playbook as 0.3.2
+  `ui-stat`.
+- **`ui-app-rail__account`** — a framework-blessed identity / sign-out
+  slot, so admin shells stop hand-rolling it; stays visible when the
+  rail collapses on mobile.
+- **`ui-modal` controlled (`is-open`) path** — a portal/React modal that
+  can't be a native `<dialog>` wears the same skin + open layout via
+  `is-open` (`ui.modal({ open: true })`). Backdrop and focus-trap remain
+  the consumer's responsibility (the `<dialog>` path still gets them
+  free).
 - **`llms.txt`** at the package root — a self-contained agent entrypoint
-  that orients an LLM to the typed contract, the `@layer bronto` override
-  rule, the import surface, and the shipped offline references.
+  (typed contract, the `@layer bronto` override rule, import surface,
+  shipped offline references).
 - **`docs/reference.md` and `docs/theming.md` now ship in the npm
-  tarball.** An offline coding agent in a consumer repo gets the full
-  class catalog (generated + drift-checked) and the token contract from
-  `node_modules/@ponchia/ui/` without network access. New `exports`
-  subpaths: `./llms.txt`, `./docs/reference.md`, `./docs/theming.md`.
+  tarball** — an offline coding agent gets the full class catalog and
+  token contract from `node_modules/@ponchia/ui/`. The reference also
+  now documents the table-local `is-num`/`is-pos`/`is-neg` state classes
+  and the ARIA-driven composition/state model. New `exports` subpaths:
+  `./llms.txt`, `./docs/reference.md`, `./docs/theming.md`,
+  `./tokens/resolved.json`.
 
 ### Changed
 
+- **`ClassValue` widened to clsx parity** (`string | number | boolean |
+  null | undefined | …`). The idiomatic React `reactNode && 'cls'` guard
+  (where the node may be `0` / `''`) now type-checks; the runtime `cx`
+  already skipped every falsy value, so this is a non-breaking type
+  relaxation.
 - `check-pack.mjs` relaxed from a blanket `docs/` ship-block to a
   **curated allowlist** (`docs/reference.md`, `docs/theming.md` only); a
   consistency assertion fails if that set drifts from `package.json`
-  `files`. The rest of `docs/` (tutorials, architecture, interop) stays
-  dev-only by design — a deliberate, documented narrowing of the earlier
-  runtime-only stance, justified by the agent-consumer requirement.
+  `files`. The rest of `docs/` stays dev-only by design — a deliberate,
+  documented narrowing of the earlier runtime-only stance.
+
+### Deferred (deliberately not shipped)
+
+- **React/Solid binding layer.** The duplicated form/badge "glue" two
+  consumers feel is ARIA-driven by design (`aria-invalid`, `aria-busy`,
+  `aria-describedby`), so the agnostic surface is already complete; the
+  remaining duplication is the framework-binding layer, still deferred.
+  The reference now documents the composition model explicitly.
+- **`ui-app-rail__foot` mobile `display:none`.** Whether the foot should
+  survive the mobile breakpoint is a visual/possibly-breaking call; the
+  new `__account` slot (which does survive) covers the actual need
+  without changing existing behaviour.
 
 ## 0.3.2 — 2026-05-16
 

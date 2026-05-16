@@ -1,7 +1,16 @@
 /** @ponchia/ui — GENERATED from classes/index.js by scripts/gen-dts.mjs.
  *  Do not edit by hand; run `npm run dts:build`. Drift-checked in CI. */
 
-export type ClassValue = string | false | null | undefined | ClassValue[];
+// Mirrors clsx's permissive input: `number`/`boolean` accepted so the
+// idiomatic React `reactNode && 'cls'` guard (where the node may be 0 or
+// '') type-checks. The runtime `cx` skips every falsy value regardless.
+export type ClassValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | ClassValue[];
 
 /** The flat registry of every class @ponchia/ui defines (literal). */
 export declare const cls: {
@@ -10,6 +19,8 @@ export declare const cls: {
   readonly buttonSubtle: 'ui-button--subtle';
   readonly buttonDanger: 'ui-button--danger';
   readonly buttonIcon: 'ui-button--icon';
+  readonly buttonSm: 'ui-button--sm';
+  readonly buttonLg: 'ui-button--lg';
   readonly card: 'ui-card';
   readonly cardHead: 'ui-card__head';
   readonly cardAccent: 'ui-card--accent';
@@ -36,6 +47,7 @@ export declare const cls: {
   readonly linkArrow: 'ui-link--arrow';
   readonly linkCta: 'ui-link--cta';
   readonly keyValue: 'ui-key-value';
+  readonly emptyState: 'ui-empty-state';
   readonly dot: 'ui-dot';
   readonly dotAccent: 'ui-dot--accent';
   readonly dotSuccess: 'ui-dot--success';
@@ -205,6 +217,7 @@ export declare const cls: {
   readonly appRailBrand: 'ui-app-rail__brand';
   readonly appRailToggle: 'ui-app-rail__toggle';
   readonly appRailFoot: 'ui-app-rail__foot';
+  readonly appRailAccount: 'ui-app-rail__account';
   readonly appTopbar: 'ui-app-topbar';
   readonly appTopbarTitle: 'ui-app-topbar__title';
   readonly appToolbar: 'ui-app-toolbar';
@@ -235,6 +248,7 @@ export declare function cx(...parts: ClassValue[]): string;
 export interface ButtonOpts {
   variant?: 'ghost' | 'subtle' | 'danger';
   icon?: boolean;
+  size?: 'sm' | 'lg';
 }
 export interface CardOpts {
   accent?: boolean;
@@ -297,6 +311,8 @@ export interface DotbarOpts {
 }
 export interface ModalOpts {
   drawer?: boolean;
+  /** Controlled non-dialog usage — adds the is-open state (focus-trap is yours). */
+  open?: boolean;
 }
 export interface TabOpts {
   active?: boolean;
