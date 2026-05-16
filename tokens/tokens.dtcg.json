@@ -108,27 +108,27 @@
     },
     "text": {
       "2xs": {
-        "$type": "color",
+        "$type": "dimension",
         "$value": "0.68rem"
       },
       "xs": {
-        "$type": "color",
+        "$type": "dimension",
         "$value": "0.76rem"
       },
       "sm": {
-        "$type": "color",
+        "$type": "dimension",
         "$value": "0.86rem"
       },
       "base": {
-        "$type": "color",
+        "$type": "dimension",
         "$value": "0.95rem"
       },
       "lg": {
-        "$type": "color",
+        "$type": "dimension",
         "$value": "1.15rem"
       },
       "xl": {
-        "$type": "color",
+        "$type": "dimension",
         "$value": "1.45rem"
       }
     },

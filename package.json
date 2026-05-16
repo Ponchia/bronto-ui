@@ -44,7 +44,8 @@
     "check:pack": "node scripts/check-pack.mjs",
     "check": "npm run lint && npm run check:exports && npm run check:tokens && npm run check:classes && npm run check:dts && npm run check:dtcg && npm run check:shiki && npm run check:dist && npm run check:pack",
     "test": "node --test \"test/*.test.mjs\"",
-    "prepack": "npm run tokens:build && npm run dtcg:build && npm run dts:build && npm run dist:build"
+    "prepack": "npm run tokens:build && npm run dtcg:build && npm run dts:build && npm run dist:build",
+    "prepublishOnly": "npm run check && npm test"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",

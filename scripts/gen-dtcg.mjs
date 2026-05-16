@@ -35,10 +35,17 @@ function typeOf(name, v) {
   // Classify shadows by name first — `--shadow: none` must not fall
   // through to `color` just because the name matches the colour regex.
   if (/shadow/.test(name)) return 'shadow';
-  if (isHex(v) || isRgb(v) || /color|accent|bg|panel|line|text|surface|border|focus|field/.test(name))
-    return 'color';
+  // A literal colour value is unambiguously a colour.
+  if (isHex(v) || isRgb(v)) return 'color';
+  // Dimension by value/name BEFORE the colour name-heuristic, so global
+  // size tokens (`text-2xs: 0.68rem`, `tracking-wide: 0.14em`) aren't
+  // mis-typed `color` merely because the name contains "text".
   if (/(rem|px|em)$/.test(v) || name.startsWith('radius') || name.startsWith('space') || name.startsWith('text') || name.startsWith('tracking') || name.startsWith('dot'))
     return 'dimension';
+  // Remaining colour-ish names are CSS-expr accents/aliases (var()/
+  // color-mix()) — emitted with $value:null + the CSS in $extensions.
+  if (/color|accent|bg|panel|line|text|surface|border|focus|field/.test(name))
+    return 'color';
   if (/^[0-9.]+$/.test(v)) return 'number';
   return 'string';
 }

@@ -34,7 +34,10 @@ function leaves(entry, acc = []) {
   for (const m of src.matchAll(IMPORT_RE)) {
     const dep = m[1].replace(/^\.\//, '');
     if (/(?:^|\/)(core|index)\.css$/.test(dep)) leaves(dep, acc);
-    else acc.push(dep);
+    // Dedupe: a leaf reachable from two entrypoints must be emitted
+    // once, or the published bundle ships its rules (and the layered
+    // per-leaf file) twice.
+    else if (!acc.includes(dep)) acc.push(dep);
   }
   return acc;
 }
