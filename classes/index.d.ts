@@ -116,6 +116,11 @@ export declare const cls: {
   readonly cluster: 'ui-cluster';
   readonly clusterBetween: 'ui-cluster--between';
   readonly grid: 'ui-grid';
+  readonly sidebar: 'ui-sidebar';
+  readonly switcher: 'ui-switcher';
+  readonly center: 'ui-center';
+  readonly ratio: 'ui-ratio';
+  readonly cq: 'ui-cq';
   readonly divider: 'ui-divider';
   readonly status: 'ui-status';
   readonly eyebrow: 'ui-eyebrow';

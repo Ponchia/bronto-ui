@@ -136,6 +136,11 @@ export const cls = Object.freeze({
   cluster: 'ui-cluster',
   clusterBetween: 'ui-cluster--between',
   grid: 'ui-grid',
+  sidebar: 'ui-sidebar',
+  switcher: 'ui-switcher',
+  center: 'ui-center',
+  ratio: 'ui-ratio',
+  cq: 'ui-cq',
   divider: 'ui-divider',
   status: 'ui-status',
   // typography / utilities

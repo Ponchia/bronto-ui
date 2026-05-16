@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 178 classes across 85 component groups
+- 183 classes across 90 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -199,6 +199,12 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.caret` | `ui-caret` | base |
 
+### `.ui-center`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.center` | `ui-center` | base |
+
 ### `.ui-check`
 
 | Registry key | Class | Kind |
@@ -225,6 +231,12 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.container` | `ui-container` | base |
 | `cls.containerNarrow` | `ui-container--narrow` | modifier |
+
+### `.ui-cq`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.cq` | `ui-cq` | base |
 
 ### `.ui-display`
 
@@ -429,6 +441,12 @@ each one matches a real selector in the stylesheet.
 | `cls.quote` | `ui-quote` | base |
 | `cls.quoteCite` | `ui-quote__cite` | part |
 
+### `.ui-ratio`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.ratio` | `ui-ratio` | base |
+
 ### `.ui-reveal`
 
 | Registry key | Class | Kind |
@@ -453,6 +471,12 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.select` | `ui-select` | base |
+
+### `.ui-sidebar`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.sidebar` | `ui-sidebar` | base |
 
 ### `.ui-sitefooter`
 
@@ -532,6 +556,12 @@ each one matches a real selector in the stylesheet.
 | `cls.switch` | `ui-switch` | base |
 | `cls.switchThumb` | `ui-switch__thumb` | part |
 | `cls.switchTrack` | `ui-switch__track` | part |
+
+### `.ui-switcher`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.switcher` | `ui-switcher` | base |
 
 ### `.ui-tab`
 
