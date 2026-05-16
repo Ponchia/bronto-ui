@@ -46,7 +46,7 @@
 
 .ui-tab.is-active {
   border-block-end-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .ui-tab:focus-visible {
@@ -57,7 +57,7 @@
      distinction — colour stays the solid accent used by every other
      control's ring (the --focus-ring token wiring is decided globally,
      not per-component). */
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--focus-ring);
   outline-offset: -3px;
 }
 
@@ -111,7 +111,7 @@
 }
 
 .ui-accordion__item[open] .ui-accordion__summary {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .ui-accordion__item[open] .ui-accordion__summary::before {
@@ -169,7 +169,7 @@
 }
 
 .ui-segmented__option:has(input:focus-visible) {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -221,7 +221,7 @@
 
 @media (hover: hover) {
   .ui-breadcrumb__item a:hover {
-    color: var(--accent);
+    color: var(--accent-text);
   }
 }
 
@@ -258,7 +258,7 @@
 
 .ui-pagination__item.is-active {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .ui-pagination__item[aria-disabled='true'] {

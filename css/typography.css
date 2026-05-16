@@ -27,7 +27,7 @@
 .section-link,
 .profile-link-list dt {
   /* accent-strong, not accent: small bold uppercase text must clear AA. */
-  color: var(--accent-strong);
+  color: var(--accent-text);
   font-family: var(--display);
   font-size: 0.8rem;
   font-weight: 700;
@@ -119,7 +119,7 @@
 }
 
 .section-link:hover {
-  color: var(--accent-strong);
+  color: var(--accent-text);
   text-decoration-color: var(--accent-strong);
 }
 

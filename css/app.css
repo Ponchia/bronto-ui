@@ -95,7 +95,7 @@
 .app-nav a.is-active {
   background: var(--accent-soft);
   border-inline-start-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .app-nav a.is-active::before {

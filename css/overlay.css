@@ -91,7 +91,7 @@
 @media (hover: hover) {
   .ui-modal__close:hover {
     border-color: var(--accent);
-    color: var(--accent);
+    color: var(--accent-text);
   }
 }
 

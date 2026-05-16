@@ -46,7 +46,7 @@
 .site-menu__toggle:hover,
 .theme-toggle__button:hover {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .theme-toggle__prefix {
@@ -134,7 +134,7 @@
 }
 
 .site-nav a.is-active {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .site-nav a:hover::before,

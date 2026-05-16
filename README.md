@@ -70,10 +70,18 @@ font instead, import everything except `fonts.css` and override `--display` /
 
 Everything ships inside a single `@layer bronto`, so any un-layered CSS in
 your app overrides the framework without a specificity fight or `!important`.
-The layer is applied by the `css` and `css/core.css` bundles only —
-importing an individual leaf such as `@ponchia/ui/css/primitives.css`
-directly is **unlayered** (full specificity), which is an intentional
-escape hatch, not the default path.
+
+> **Do not mix a bundle with a raw leaf import.** Today the layer is
+> applied by the `css` / `css/core.css` / `dist` bundles; importing an
+> individual leaf such as `@ponchia/ui/css/primitives.css` directly is
+> **unlayered** (full specificity). If you import *both* the bundle and a
+> raw leaf (e.g. per-route CSS splitting), the unlayered leaf
+> unconditionally beats your own layered overrides — a silent,
+> page-specific cascade inversion. Use one origin: the bundle, or only
+> leaves. Raw-leaf, full-specificity use is a deliberate escape hatch,
+> not the default path. (0.4.0 will make per-leaf imports layer-safe by
+> default and move the raw escape hatch to an explicit `unlayered/*`
+> path — see CHANGELOG.)
 
 Set `data-theme="light"` or `data-theme="dark"` on `<html>`; defaults follow
 `prefers-color-scheme`.

@@ -288,7 +288,7 @@
 
 .tag-list--compact li:first-child {
   /* accent-strong, not accent: small text on a soft tint must clear AA. */
-  color: var(--accent-strong);
+  color: var(--accent-text);
   background: var(--accent-soft);
   border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
 }

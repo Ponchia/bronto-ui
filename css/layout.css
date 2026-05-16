@@ -125,7 +125,7 @@
 }
 
 .site-footer__links a:hover {
-  color: var(--accent-strong);
+  color: var(--accent-text);
   text-decoration-color: var(--accent-strong);
 }
 
