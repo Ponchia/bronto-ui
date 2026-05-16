@@ -10,8 +10,8 @@ machine-checked.
 
 ```bash
 npm ci
-npm run check   # 11 gates: lint, format, exports, tokens, classes,
-                #            dts, types, dtcg, shiki, dist, pack
+npm run check   # 12 gates: lint, format, exports, tokens, classes,
+                #            dts, types, dtcg, shiki, dist, pack, release
 npm test        # node:test unit + type-d + contract tests
 ```
 
@@ -37,7 +37,27 @@ merge.
   axe suite. New interactive components need matching coverage.
 - Every breaking change gets a **BREAKING** entry in `CHANGELOG.md`
   with a migration note. The changelog is hand-curated — keep it
-  narrative and accurate.
+  narrative and accurate. The version in `package.json` must map to a
+  **dated** changelog heading (the `check:release` gate enforces this —
+  a published version can never be left marked `unreleased`).
+
+## Deprecation policy
+
+From 0.4.0 onward, public surface (`.ui-*` classes, `data-bronto-*`
+attributes, `cls`/token keys, behavior signatures) is removed on a
+**deprecate-one-minor** cycle:
+
+1. **Deprecate** in minor _N_: the surface keeps working unchanged, is
+   marked deprecated in `CHANGELOG.md`, and — if it is a rename — an
+   entry is added to [`MIGRATIONS.json`](MIGRATIONS.json) with a
+   `safe`/`manual` classification.
+2. **Remove** no earlier than minor _N+1_, with a **BREAKING** entry
+   pointing at the migration.
+
+This makes "minor may break" predictable: a consumer who upgrades one
+minor at a time always gets a working deprecation window and a
+machine-readable rename map. The 0.2 → 0.3 cut predates this policy
+(documented in `docs/migrations/0.2-to-0.3.md`).
 
 ## Browser floor
 

@@ -1,9 +1,25 @@
 # Changelog
 
-## 0.3.0 — unreleased
-
 > **Versioning:** pre-1.0, breaking changes ship in the _minor_. Pin
-> `~0.3.x`; `^0.3.0` does **not** protect you. See README → Versioning.
+> `~0.x`; `^0.x` does **not** protect you. See README → Versioning, and
+> the deprecation policy in CONTRIBUTING.md.
+
+## Unreleased — 0.4.0
+
+Adoption + gap-closing pass driven by a 12-perspective review (two Opus
+analyses + two five-model AgentMix deep runs). All additions are
+non-breaking; the legacy-removal in 0.3.0 stands. See ROADMAP.md for the
+tracked scope.
+
+### Fixed
+
+- **Release hygiene:** the `0.3.0` section was still labelled
+  `unreleased` after `v0.3.0` shipped to npm `latest`. Dated it
+  correctly and added a `check:release` gate (in `npm run check`) that
+  fails when `package.json`'s version maps to an `unreleased` changelog
+  heading, so a published version can never again be marked unreleased.
+
+## 0.3.0 — 2026-05-16
 
 ### Multi-POV review hardening
 

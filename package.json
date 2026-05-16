@@ -45,7 +45,8 @@
     "check:shiki": "node scripts/check-shiki.mjs",
     "check:dist": "node scripts/check-dist.mjs",
     "check:pack": "node scripts/check-pack.mjs",
-    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:tokens && npm run check:classes && npm run check:dts && npm run check:types && npm run check:dtcg && npm run check:shiki && npm run check:dist && npm run check:pack",
+    "check:release": "node scripts/check-release.mjs",
+    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:tokens && npm run check:classes && npm run check:dts && npm run check:types && npm run check:dtcg && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:release",
     "test": "node --test \"test/*.test.mjs\"",
     "prepack": "npm run tokens:build && npm run dtcg:build && npm run dts:build && npm run dist:build",
     "prepublishOnly": "npm run check && npm test"
