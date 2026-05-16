@@ -27,15 +27,27 @@ export const cls = Object.freeze({
   cardHead: 'ui-card__head',
   cardAccent: 'ui-card--accent',
   cardInteractive: 'ui-card--interactive',
+  stat: 'ui-stat',
+  statgrid: 'ui-statgrid',
+  statLabel: 'ui-stat__label',
+  statValue: 'ui-stat__value',
+  statDelta: 'ui-stat__delta',
+  num: 'ui-num',
+  numPos: 'ui-num--pos',
+  numNeg: 'ui-num--neg',
+  numMuted: 'ui-num--muted',
   badge: 'ui-badge',
   badgeAccent: 'ui-badge--accent',
   badgeSuccess: 'ui-badge--success',
   badgeWarning: 'ui-badge--warning',
   badgeDanger: 'ui-badge--danger',
+  badgeMuted: 'ui-badge--muted',
+  badgeDot: 'ui-badge--dot',
   chip: 'ui-chip',
   chipAccent: 'ui-chip--accent',
   link: 'ui-link',
   linkArrow: 'ui-link--arrow',
+  linkCta: 'ui-link--cta',
   keyValue: 'ui-key-value',
   // dots
   dot: 'ui-dot',
@@ -47,6 +59,10 @@ export const cls = Object.freeze({
   dotgrid: 'ui-dotgrid',
   dotgridAccent: 'ui-dotgrid--accent',
   dotgridDense: 'ui-dotgrid--dense',
+  dotmatrix: 'ui-dotmatrix',
+  dotmatrixCell: 'ui-dotmatrix__cell',
+  dotmatrixCellHot: 'ui-dotmatrix__cell--hot',
+  dotmatrixCellAccent: 'ui-dotmatrix__cell--accent',
   dotfield: 'ui-dotfield',
   dotrule: 'ui-dotrule',
   dotbar: 'ui-dotbar',
@@ -166,6 +182,7 @@ export const cls = Object.freeze({
   // typography / utilities
   eyebrow: 'ui-eyebrow',
   eyebrowMuted: 'ui-eyebrow--muted',
+  eyebrowSm: 'ui-eyebrow--sm',
   prose: 'ui-prose',
   proseCompact: 'ui-prose--compact',
   quote: 'ui-quote',
@@ -173,8 +190,10 @@ export const cls = Object.freeze({
   // site shell
   container: 'ui-container',
   containerNarrow: 'ui-container--narrow',
+  containerWide: 'ui-container--wide',
   skiplink: 'ui-skiplink',
   siteheader: 'ui-siteheader',
+  siteheaderSticky: 'ui-siteheader--sticky',
   siteheaderBrand: 'ui-siteheader__brand',
   siteheaderActions: 'ui-siteheader__actions',
   sitenav: 'ui-sitenav',
@@ -255,16 +274,25 @@ export const ui = {
     ),
   card: ({ accent, interactive } = {}) =>
     j(cls.card, accent && cls.cardAccent, interactive && cls.cardInteractive),
-  badge: ({ tone } = {}) =>
+  badge: ({ tone, dot } = {}) =>
     j(
       cls.badge,
       tone === 'accent' && cls.badgeAccent,
       tone === 'success' && cls.badgeSuccess,
       tone === 'warning' && cls.badgeWarning,
       tone === 'danger' && cls.badgeDanger,
+      tone === 'muted' && cls.badgeMuted,
+      dot && cls.badgeDot,
+    ),
+  num: ({ tone } = {}) =>
+    j(
+      cls.num,
+      tone === 'pos' && cls.numPos,
+      tone === 'neg' && cls.numNeg,
+      tone === 'muted' && cls.numMuted,
     ),
   chip: ({ accent } = {}) => j(cls.chip, accent && cls.chipAccent),
-  link: ({ arrow } = {}) => j(cls.link, arrow && cls.linkArrow),
+  link: ({ arrow, cta } = {}) => j(cls.link, arrow && cls.linkArrow, cta && cls.linkCta),
   dot: ({ tone, live } = {}) =>
     j(
       cls.dot,
@@ -283,7 +311,7 @@ export const ui = {
       density === 'comfortable' && cls.tableComfortable,
       lined && cls.tableLined,
     ),
-  eyebrow: ({ muted } = {}) => j(cls.eyebrow, muted && cls.eyebrowMuted),
+  eyebrow: ({ muted, sm } = {}) => j(cls.eyebrow, muted && cls.eyebrowMuted, sm && cls.eyebrowSm),
   hint: ({ error } = {}) => j(cls.hint, error && cls.hintError),
   cluster: ({ between } = {}) => j(cls.cluster, between && cls.clusterBetween),
   stagger: ({ auto } = {}) => j(cls.stagger, auto && cls.staggerAuto),
@@ -312,7 +340,8 @@ export const ui = {
   avatar: ({ size } = {}) =>
     j(cls.avatar, size === 'sm' && cls.avatarSm, size === 'lg' && cls.avatarLg),
   prose: ({ compact } = {}) => j(cls.prose, compact && cls.proseCompact),
-  container: ({ narrow } = {}) => j(cls.container, narrow && cls.containerNarrow),
+  container: ({ narrow, wide } = {}) =>
+    j(cls.container, narrow && cls.containerNarrow, wide && cls.containerWide),
   tag: ({ accent } = {}) => j(cls.tag, accent && cls.tagAccent),
 };
 

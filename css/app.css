@@ -202,61 +202,12 @@
   margin: 0.3rem 0 0;
 }
 
-/* --- Metric tiles --- */
-
-.ui-app-metrics {
-  display: grid;
-  gap: var(--space-md);
-  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
-}
-
-/* Inside an opt-in .ui-cq container, collapse to one column when the
-   container (not the viewport) is narrow — keeps metric tiles usable
-   in a slim panel. Inert without .ui-cq, so baselines are unaffected. */
-@container bronto (max-width: 30rem) {
-  .ui-app-metrics {
-    grid-template-columns: 1fr;
-  }
-}
-
-.ui-app-metric {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  display: grid;
-  gap: 0.4rem;
-  padding: var(--space-md);
-}
-
-.ui-app-metric__label {
-  color: var(--text-dim);
-  font-family: var(--mono);
-  font-size: var(--text-2xs);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-}
-
-.ui-app-metric__value {
-  color: var(--text);
-  font-family: var(--display);
-  font-size: 1.9rem;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.01em;
-  line-height: 1;
-}
-
-.ui-app-metric__delta {
-  font-family: var(--mono);
-  font-size: var(--text-xs);
-}
-
-.ui-app-metric__delta.is-pos {
-  color: var(--success);
-}
-
-.ui-app-metric__delta.is-neg {
-  color: var(--danger);
-}
+/* --- Metric tiles ---
+   The metric primitive itself is shell-agnostic and now lives in
+   primitives.css as `.ui-stat` / `.ui-statgrid`; `.ui-app-metric*` and
+   `.ui-app-metrics` remain as permanent admin-shell aliases (grouped on
+   the canonical rules there — identical output). Nothing app-specific
+   left to define here. */
 
 /* --- Empty state --- */
 

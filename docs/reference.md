@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 203 classes across 96 component groups
+- 222 classes across 100 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -164,6 +164,8 @@ each one matches a real selector in the stylesheet.
 | `cls.badge` | `ui-badge` | base |
 | `cls.badgeAccent` | `ui-badge--accent` | modifier |
 | `cls.badgeDanger` | `ui-badge--danger` | modifier |
+| `cls.badgeDot` | `ui-badge--dot` | modifier |
+| `cls.badgeMuted` | `ui-badge--muted` | modifier |
 | `cls.badgeSuccess` | `ui-badge--success` | modifier |
 | `cls.badgeWarning` | `ui-badge--warning` | modifier |
 
@@ -241,6 +243,7 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.container` | `ui-container` | base |
 | `cls.containerNarrow` | `ui-container--narrow` | modifier |
+| `cls.containerWide` | `ui-container--wide` | modifier |
 
 ### `.ui-cq`
 
@@ -298,6 +301,15 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.dotloader` | `ui-dotloader` | base |
 
+### `.ui-dotmatrix`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.dotmatrix` | `ui-dotmatrix` | base |
+| `cls.dotmatrixCell` | `ui-dotmatrix__cell` | part |
+| `cls.dotmatrixCellAccent` | `ui-dotmatrix__cell--accent` | modifier |
+| `cls.dotmatrixCellHot` | `ui-dotmatrix__cell--hot` | modifier |
+
 ### `.ui-dotrule`
 
 | Registry key | Class | Kind |
@@ -326,6 +338,7 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.eyebrow` | `ui-eyebrow` | base |
 | `cls.eyebrowMuted` | `ui-eyebrow--muted` | modifier |
+| `cls.eyebrowSm` | `ui-eyebrow--sm` | modifier |
 
 ### `.ui-field`
 
@@ -383,6 +396,7 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.link` | `ui-link` | base |
 | `cls.linkArrow` | `ui-link--arrow` | modifier |
+| `cls.linkCta` | `ui-link--cta` | modifier |
 
 ### `.ui-matrix`
 
@@ -435,6 +449,15 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.muted` | `ui-muted` | base |
+
+### `.ui-num`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.num` | `ui-num` | base |
+| `cls.numMuted` | `ui-num--muted` | modifier |
+| `cls.numNeg` | `ui-num--neg` | modifier |
+| `cls.numPos` | `ui-num--pos` | modifier |
 
 ### `.ui-pagination`
 
@@ -535,6 +558,7 @@ each one matches a real selector in the stylesheet.
 | `cls.siteheader` | `ui-siteheader` | base |
 | `cls.siteheaderActions` | `ui-siteheader__actions` | part |
 | `cls.siteheaderBrand` | `ui-siteheader__brand` | part |
+| `cls.siteheaderSticky` | `ui-siteheader--sticky` | modifier |
 
 ### `.ui-sitemenu`
 
@@ -579,6 +603,21 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.stagger` | `ui-stagger` | base |
 | `cls.staggerAuto` | `ui-stagger--auto` | modifier |
+
+### `.ui-stat`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.stat` | `ui-stat` | base |
+| `cls.statDelta` | `ui-stat__delta` | part |
+| `cls.statLabel` | `ui-stat__label` | part |
+| `cls.statValue` | `ui-stat__value` | part |
+
+### `.ui-statgrid`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.statgrid` | `ui-statgrid` | base |
 
 ### `.ui-status`
 

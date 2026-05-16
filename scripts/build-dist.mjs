@@ -89,13 +89,13 @@ export function buildBundles() {
 
 /** Raw + gzip ceiling, enforced by check-dist on *every* emitted file
  *  (the bundle and each layered leaf — leaves are far smaller, so the
- *  bundle is the binding one). Calibrated to the post-0.3.0 bundle
- *  (~54 kB raw / ~10 kB gzip) with ~18%/~20% headroom for ordinary
+ *  bundle is the binding one). Recalibrated to the post-0.3.2 bundle
+ *  (~64.5 kB raw / ~11.1 kB gzip) with ~18% raw headroom for ordinary
  *  growth: a few new components is fine, a runaway @import or an
  *  inlined asset trips it. Bump deliberately (and note it in the
  *  CHANGELOG) when real growth justifies it — this is the consumer-
- *  facing payload contract. */
-export const BUDGET = { raw: 64_000, gzip: 12_000 };
+ *  facing payload contract. (gzip cap unchanged — still ~8% headroom.) */
+export const BUDGET = { raw: 76_000, gzip: 12_000 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };

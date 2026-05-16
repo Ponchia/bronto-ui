@@ -4,6 +4,56 @@
 > `~0.x`; `^0.x` does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## 0.3.2 — 2026-05-16
+
+Re-skin-proven adoption pass: a real content-site consumer rebuilt
+several idioms bespoke because a primitive was missing or shell-locked.
+This promotes the genuinely generic, token-only ones upstream. **All
+additions are non-breaking** (additive classes/recipes; the metric tile
+keeps its admin-shell name as a permanent alias) — a patch per the 0.x
+policy.
+
+### Added
+
+- **`ui-stat` / `ui-statgrid`** — the metric tile is now shell-agnostic
+  (label + display value + signed delta). The admin-shell
+  `ui-app-metric*` / `ui-app-metrics` names remain as permanent aliases
+  grouped on the same rules (byte-identical output, no baseline drift).
+- **`ui-link--cta`** — the eyebrow-faced action link (accent · display ·
+  uppercase + arrow glyph), composed from the same tokens as
+  `ui-eyebrow`. `ui.link({ cta: true })`.
+- **`ui-badge--dot`** — leading state dot; composes with any badge tone
+  (`is`-tone tints the dot). `ui.badge({ tone, dot: true })`.
+- **`ui-eyebrow--sm`** — restores the dense size step (was
+  `eyebrow--tight` in 0.2.2). `ui.eyebrow({ sm: true })`.
+- **`ui-container--wide`** — documented wide preset (`--container-wide`,
+  default 82rem) for app/marketing shells. `ui.container({ wide: true })`.
+- **`ui-siteheader--sticky`** — structural sticky only (the floating-card
+  skin stays consumer identity, deliberately not shipped).
+- **`ui-dotmatrix`** (+`__cell`, `--hot`, `--accent`) — data-bound dot
+  grid, the on-brand counterpart to the decorative `ui-dotgrid`; the
+  data→cell mapping stays the consumer's.
+- **`ui-num`** (+`--pos`, `--neg`, `--muted`) — the tabular / end-aligned
+  / P&L-tone numeric vocabulary the table has shipped since 0.1.0, freed
+  from `.ui-table` so cards, stats and inline figures share one
+  contract. `ui.num({ tone })`. (Two independent admin consumers were
+  reinventing `.text-green`/right-align outside a table.)
+- **`ui-badge--muted`** — the idle / unknown / "no signal yet" status
+  tone, distinct from the default tinted badge. `ui.badge({ tone:
+  'muted' })`. Token-safe, no new hue.
+
+### Fixed
+
+- **`ui-card--interactive`** had no keyboard cue (cards typically wrap a
+  single link): added `:focus-within` border + a `--shadow-raised` ring
+  on hover. a11y completeness fix.
+
+### Changed
+
+- dist raw size budget recalibrated 64 kB → 76 kB (post-0.3.2 bundle is
+  ~64.5 kB raw / ~11.1 kB gzip; ~18% raw headroom restored). The gzip
+  cap (12 kB) is unchanged — the wire-size contract still holds.
+
 ## 0.3.1 — 2026-05-16
 
 Adoption + gap-closing pass driven by a 12-perspective review (two Opus
