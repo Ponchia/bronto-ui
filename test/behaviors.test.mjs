@@ -193,7 +193,19 @@ test('toast mounts a shared stack, applies tone/title, and dismisses', () => {
   assert.match(el.textContent, /saved/);
 
   dismiss();
-  assert.equal(d.querySelector('.ui-toast-stack'), null, 'empty stack is removed');
+  // The stack is a persistent aria-live region: the toast is removed but
+  // the (now empty) live region must stay resident so the next toast does
+  // not recreate — and thus mis-announce — it (a11y H2).
+  const after = d.querySelector('.ui-toast-stack');
+  assert.ok(after, 'empty live region persists after drain');
+  assert.equal(after.childElementCount, 0, 'toast itself was removed');
+  assert.equal(after.getAttribute('aria-live'), 'polite');
+
+  const dismiss2 = toast('again', { duration: 0 });
+  const stacks = d.querySelectorAll('.ui-toast-stack');
+  assert.equal(stacks.length, 1, 'reuses the one resident stack, no duplicate');
+  assert.equal(stacks[0], after, 'same live-region node reused');
+  dismiss2();
 });
 
 test('initTabs: roving tabindex, click + Arrow/Home/End, panel sync', () => {

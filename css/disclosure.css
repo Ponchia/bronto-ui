@@ -49,6 +49,18 @@
   color: var(--accent);
 }
 
+.ui-tab:focus-visible {
+  /* An inset box, deliberately distinct from the .is-active bottom-border
+     so focus ≠ selection for low-vision keyboard users: the global
+     button:focus-visible ring would otherwise sit exactly on the active
+     underline. Geometry (inset offset), not colour, carries the
+     distinction — colour stays the solid accent used by every other
+     control's ring (the --focus-ring token wiring is decided globally,
+     not per-component). */
+  outline: 2px solid var(--accent);
+  outline-offset: -3px;
+}
+
 .ui-tabs__panel[hidden] {
   display: none;
 }
