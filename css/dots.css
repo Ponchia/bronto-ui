@@ -44,6 +44,30 @@
   inline-size: 100%;
 }
 
+/* Data-bound dot matrix — a grid of state cells (activity / heatmap),
+   the on-brand counterpart to the decorative .ui-dotgrid background.
+   This is the grid + cell tones only; the data→cell mapping is the
+   consumer's. Tune density via --dotmatrix-cols / --dotmatrix-gap. */
+.ui-dotmatrix {
+  display: grid;
+  gap: var(--dotmatrix-gap, 0.5rem);
+  grid-template-columns: repeat(var(--dotmatrix-cols, 12), minmax(0, 1fr));
+}
+
+.ui-dotmatrix__cell {
+  aspect-ratio: 1;
+  background: var(--field-dot);
+  border-radius: 50%;
+}
+
+.ui-dotmatrix__cell--hot {
+  background: var(--field-dot-hot);
+}
+
+.ui-dotmatrix__cell--accent {
+  background: var(--field-dot-accent);
+}
+
 /* Status dot — the glyph-style state indicator. */
 .ui-dot {
   background: var(--text-dim);

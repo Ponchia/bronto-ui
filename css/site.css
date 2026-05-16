@@ -21,6 +21,12 @@
   max-inline-size: var(--container-narrow, 44rem);
 }
 
+/* App / marketing shells run wider than the 72rem reading measure.
+   Override the cap per-consumer via --container-wide. */
+.ui-container--wide {
+  max-inline-size: var(--container-wide, 82rem);
+}
+
 /* --- Skip link — first focusable, jumps to main --- */
 
 .ui-skiplink {
@@ -49,6 +55,14 @@
   gap: var(--space-md);
   justify-content: space-between;
   padding-block: var(--space-sm);
+}
+
+/* Structural sticky only — the floating-card skin (radius/shadow/panel
+   bg) is consumer identity, not a framework concern; layer it yourself. */
+.ui-siteheader--sticky {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--z-sticky);
 }
 
 .ui-siteheader__brand {
