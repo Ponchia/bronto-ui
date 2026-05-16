@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 185 classes across 90 component groups
+- 192 classes across 94 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -302,6 +302,14 @@ each one matches a real selector in the stylesheet.
 | `cls.dotspinnerLg` | `ui-dotspinner--lg` | modifier |
 | `cls.dotspinnerSm` | `ui-dotspinner--sm` | modifier |
 
+### `.ui-error-summary`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.errorSummary` | `ui-error-summary` | base |
+| `cls.errorSummaryList` | `ui-error-summary__list` | part |
+| `cls.errorSummaryTitle` | `ui-error-summary__title` | part |
+
 ### `.ui-eyebrow`
 
 | Registry key | Class | Kind |
@@ -314,6 +322,12 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.field` | `ui-field` | base |
+
+### `.ui-file`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.file` | `ui-file` | base |
 
 ### `.ui-grid`
 
@@ -333,6 +347,13 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.input` | `ui-input` | base |
+
+### `.ui-input-group`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.inputGroup` | `ui-input-group` | base |
+| `cls.inputGroupAddon` | `ui-input-group__addon` | part |
 
 ### `.ui-key-value`
 
@@ -440,6 +461,12 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.quote` | `ui-quote` | base |
 | `cls.quoteCite` | `ui-quote__cite` | part |
+
+### `.ui-range`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.range` | `ui-range` | base |
 
 ### `.ui-ratio`
 

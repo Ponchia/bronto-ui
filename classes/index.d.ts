@@ -53,6 +53,13 @@ export declare const cls: {
   readonly switchThumb: 'ui-switch__thumb';
   readonly hint: 'ui-hint';
   readonly hintError: 'ui-hint--error';
+  readonly inputGroup: 'ui-input-group';
+  readonly inputGroupAddon: 'ui-input-group__addon';
+  readonly file: 'ui-file';
+  readonly range: 'ui-range';
+  readonly errorSummary: 'ui-error-summary';
+  readonly errorSummaryTitle: 'ui-error-summary__title';
+  readonly errorSummaryList: 'ui-error-summary__list';
   readonly alert: 'ui-alert';
   readonly alertTitle: 'ui-alert__title';
   readonly alertBody: 'ui-alert__body';

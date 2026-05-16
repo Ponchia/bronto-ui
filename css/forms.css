@@ -92,6 +92,108 @@
   color: var(--danger);
 }
 
+/* --- Input group: prefix/suffix affix around a control --- */
+.ui-input-group {
+  display: flex;
+  isolation: isolate;
+}
+
+.ui-input-group > .ui-input,
+.ui-input-group > .ui-select {
+  border-radius: 0;
+  flex: 1;
+  margin-inline-start: -1px;
+}
+
+.ui-input-group > :first-child {
+  border-start-start-radius: var(--radius-md);
+  border-end-start-radius: var(--radius-md);
+  margin-inline-start: 0;
+}
+
+.ui-input-group > :last-child {
+  border-start-end-radius: var(--radius-md);
+  border-end-end-radius: var(--radius-md);
+}
+
+.ui-input-group > .ui-input:focus-visible {
+  z-index: 1; /* keep the focus ring above the adjacent addon border */
+}
+
+.ui-input-group__addon {
+  align-items: center;
+  background: var(--panel-soft);
+  border: 1px solid var(--line);
+  color: var(--text-dim);
+  display: flex;
+  font-size: var(--text-sm);
+  padding-inline: var(--space-sm);
+  white-space: nowrap;
+}
+
+/* --- File input --- */
+.ui-file {
+  color: var(--text-soft);
+  font-size: var(--text-sm);
+}
+
+.ui-file::file-selector-button {
+  background: var(--panel-soft);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  margin-inline-end: var(--space-sm);
+  padding: 0.5rem 0.85rem;
+}
+
+.ui-file::file-selector-button:hover {
+  border-color: var(--accent);
+}
+
+/* --- Range --- */
+.ui-range {
+  accent-color: var(--accent);
+  inline-size: 100%;
+}
+
+.ui-range:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 4px;
+}
+
+/* --- Error summary: one focusable, assertive list of form errors --- */
+.ui-error-summary {
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  padding: var(--space-md);
+}
+
+.ui-error-summary[hidden] {
+  display: none;
+}
+
+.ui-error-summary__title {
+  color: var(--danger);
+  font-family: var(--display);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  margin: 0 0 var(--space-xs);
+  text-transform: uppercase;
+}
+
+.ui-error-summary__list {
+  margin: 0;
+  padding-inline-start: var(--space-md);
+}
+
+.ui-error-summary__list a {
+  color: var(--danger);
+}
+
 /* Search field with leading dot. */
 .ui-search {
   align-items: center;

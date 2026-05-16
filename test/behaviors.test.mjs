@@ -9,6 +9,7 @@ import {
   initMenu,
   initDialog,
   initTabs,
+  initFormValidation,
   toast,
 } from '../behaviors/index.js';
 
@@ -518,4 +519,60 @@ test('toast: auto-dismiss toast has no close button unless opted in', () => {
   } finally {
     delete globalThis.requestAnimationFrame;
   }
+});
+
+test('initFormValidation: invalid submit marks fields, fills summary, blocks', () => {
+  const d = mount(`
+    <form data-bronto-validate>
+      <div class="ui-field">
+        <label class="ui-label" for="em">Email</label>
+        <input class="ui-input" id="em" name="em" type="email" required />
+        <p class="ui-hint" data-bronto-error></p>
+      </div>
+      <div class="ui-error-summary" data-bronto-error-summary hidden></div>
+      <button type="submit">Go</button>
+    </form>`);
+  const stop = initFormValidation();
+  const form = d.querySelector('form');
+  const input = d.querySelector('#em');
+
+  const ev = new dom.window.Event('submit', { bubbles: true, cancelable: true });
+  form.dispatchEvent(ev);
+
+  assert.equal(input.getAttribute('aria-invalid'), 'true', 'invalid field flagged');
+  assert.ok(input.getAttribute('aria-describedby'), 'error slot linked via describedby');
+  const summary = d.querySelector('[data-bronto-error-summary]');
+  assert.equal(summary.hidden, false, 'summary revealed');
+  assert.ok(summary.querySelector('a[href="#em"]'), 'summary links to the field');
+  assert.equal(ev.defaultPrevented, true, 'submit blocked');
+
+  // Fix + blur → state clears.
+  input.value = 'a@b.com';
+  input.dispatchEvent(new dom.window.Event('focusout', { bubbles: true }));
+  assert.equal(input.hasAttribute('aria-invalid'), false, 'cleared on valid blur');
+  stop();
+});
+
+test('initFormValidation: valid submit is not blocked', () => {
+  const d = mount(`
+    <form data-bronto-validate>
+      <div class="ui-field">
+        <input class="ui-input" id="nm" name="nm" required value="ok" />
+        <p class="ui-hint" data-bronto-error></p>
+      </div>
+      <button type="submit">Go</button>
+    </form>`);
+  const stop = initFormValidation();
+  const ev = new dom.window.Event('submit', { bubbles: true, cancelable: true });
+  d.querySelector('form').dispatchEvent(ev);
+  assert.equal(ev.defaultPrevented, false, 'valid form submits');
+  stop();
+});
+
+test('initFormValidation: SSR-safe', () => {
+  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
+  assert.doesNotThrow(() => {
+    const stop = initFormValidation();
+    stop();
+  });
 });

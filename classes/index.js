@@ -68,6 +68,13 @@ export const cls = Object.freeze({
   switchThumb: 'ui-switch__thumb',
   hint: 'ui-hint',
   hintError: 'ui-hint--error',
+  inputGroup: 'ui-input-group',
+  inputGroupAddon: 'ui-input-group__addon',
+  file: 'ui-file',
+  range: 'ui-range',
+  errorSummary: 'ui-error-summary',
+  errorSummaryTitle: 'ui-error-summary__title',
+  errorSummaryList: 'ui-error-summary__list',
   // feedback
   alert: 'ui-alert',
   alertTitle: 'ui-alert__title',
