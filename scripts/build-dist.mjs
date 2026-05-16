@@ -1,9 +1,8 @@
 /**
- * Flatten the runtime @import graph into prebuilt, single-file bundles
- * so consumers don't pay a 17-deep @import waterfall at load time.
+ * Flatten the runtime @import graph into one prebuilt single-file bundle
+ * so consumers don't pay an @import waterfall at load time.
  *
- *   dist/bronto.css       ← css/index.css  (full: core + responsive)
- *   dist/bronto-core.css  ← css/core.css   (no breakpoint overrides)
+ *   dist/bronto.css  ← css/core.css  (the single bundle)
  *
  * Each leaf's contents are concatenated in @import order and wrapped in
  * a single `@layer bronto { … }`, reproducing the cascade-layer
@@ -58,8 +57,7 @@ function bundle(entry) {
 
 export function buildBundles() {
   return {
-    'dist/bronto.css': bundle('index.css'),
-    'dist/bronto-core.css': bundle('core.css'),
+    'dist/bronto.css': bundle('core.css'),
   };
 }
 

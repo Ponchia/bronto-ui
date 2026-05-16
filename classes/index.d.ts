@@ -80,6 +80,7 @@ export declare const cls: {
   readonly modalFoot: 'ui-modal__foot';
   readonly modalClose: 'ui-modal__close';
   readonly modalDrawer: 'ui-modal--drawer';
+  readonly menuHost: 'ui-menu-host';
   readonly menu: 'ui-menu';
   readonly menuLabel: 'ui-menu__label';
   readonly menuItem: 'ui-menu__item';
@@ -154,6 +155,34 @@ export declare const cls: {
   readonly animateFade: 'ui-animate-fade';
   readonly animateDot: 'ui-animate-dot';
   readonly animateMatrix: 'ui-animate-matrix';
+  readonly appShell: 'ui-app-shell';
+  readonly appShellFull: 'ui-app-shell--full';
+  readonly appRail: 'ui-app-rail';
+  readonly appRailBrand: 'ui-app-rail__brand';
+  readonly appRailToggle: 'ui-app-rail__toggle';
+  readonly appRailFoot: 'ui-app-rail__foot';
+  readonly appTopbar: 'ui-app-topbar';
+  readonly appTopbarTitle: 'ui-app-topbar__title';
+  readonly appToolbar: 'ui-app-toolbar';
+  readonly appToolbarGroup: 'ui-app-toolbar__group';
+  readonly appNav: 'ui-app-nav';
+  readonly appNavSection: 'ui-app-nav__section';
+  readonly appMain: 'ui-app-main';
+  readonly appContent: 'ui-app-content';
+  readonly appPanel: 'ui-app-panel';
+  readonly appPanelHead: 'ui-app-panel__head';
+  readonly appPanelTitle: 'ui-app-panel__title';
+  readonly appMetrics: 'ui-app-metrics';
+  readonly appMetric: 'ui-app-metric';
+  readonly appMetricLabel: 'ui-app-metric__label';
+  readonly appMetricValue: 'ui-app-metric__value';
+  readonly appMetricDelta: 'ui-app-metric__delta';
+  readonly appEmptyState: 'ui-app-empty-state';
+  readonly themetoggleButton: 'ui-themetoggle__button';
+  readonly themetogglePrefix: 'ui-themetoggle__prefix';
+  readonly themetoggleLabel: 'ui-themetoggle__label';
+  readonly themetoggleTrack: 'ui-themetoggle__track';
+  readonly themetoggleThumb: 'ui-themetoggle__thumb';
 };
 
 /** classnames-style joiner: skips falsy, flattens arrays. */

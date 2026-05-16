@@ -36,7 +36,7 @@ for (const [key, target] of exportTargets()) {
 // 2. @import graph of the entrypoints.
 // Matches both `@import './x.css'` and `@import url('./x.css') layer(...)`.
 const importRe = /@import\s+(?:url\(\s*)?['"]([^'"]+)['"]/g;
-for (const entry of ['css/core.css', 'css/index.css']) {
+for (const entry of ['css/core.css']) {
   const abs = resolve(root, entry);
   if (!existsSync(abs)) {
     errors.push(`entrypoint ${entry} missing`);

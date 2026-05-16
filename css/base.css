@@ -165,22 +165,6 @@ textarea:focus-visible,
   outline-offset: 2px;
 }
 
-.skip-link {
-  background: var(--panel-strong);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-md);
-  color: var(--text);
-  inset-inline-start: 1rem;
-  padding: 0.7rem 1rem;
-  position: fixed;
-  inset-block-start: -4rem;
-  z-index: 40;
-}
-
-.skip-link:focus {
-  inset-block-start: 1rem;
-}
-
 /* Small global helpers reused across apps. */
 .ui-muted {
   color: var(--text-dim);
@@ -262,11 +246,11 @@ textarea:focus-visible,
   /* Decorative / interactive chrome never prints. */
   .ui-dotfield,
   .ui-toast-stack,
-  .app-rail,
-  .app-topbar,
-  .site-nav,
-  .theme-toggle__button,
-  .site-menu,
+  .ui-app-rail,
+  .ui-app-topbar,
+  .ui-sitenav,
+  .ui-themetoggle__button,
+  .ui-sitemenu,
   .ui-spinner,
   .ui-dotloader,
   .ui-dotspinner,

@@ -3,19 +3,19 @@
    For admin / operator dashboards.
    ========================================================================== */
 
-.app-shell {
+.ui-app-shell {
   display: grid;
   grid-template-columns: var(--app-rail, 14rem) minmax(0, 1fr);
   min-block-size: 100vh;
 }
 
-.app-shell--full {
+.ui-app-shell--full {
   grid-template-columns: minmax(0, 1fr);
 }
 
 /* --- Sidebar rail --- */
 
-.app-rail {
+.ui-app-rail {
   background: var(--panel);
   border-inline-end: 1px solid var(--line);
   display: flex;
@@ -28,7 +28,7 @@
   overflow-y: auto;
 }
 
-.app-rail__brand {
+.ui-app-rail__brand {
   align-items: center;
   color: var(--text);
   display: flex;
@@ -40,7 +40,7 @@
   text-transform: uppercase;
 }
 
-.app-rail__brand::before {
+.ui-app-rail__brand::before {
   background: var(--accent);
   border-radius: 50%;
   content: '';
@@ -48,12 +48,12 @@
   inline-size: 0.5rem;
 }
 
-.app-nav {
+.ui-app-nav {
   display: grid;
   gap: 0.15rem;
 }
 
-.app-nav__section {
+.ui-app-nav__section {
   color: var(--text-dim);
   font-family: var(--mono);
   font-size: var(--text-2xs);
@@ -63,7 +63,7 @@
   text-transform: uppercase;
 }
 
-.app-nav a {
+.ui-app-nav a {
   align-items: center;
   border-inline-start: 2px solid transparent;
   color: var(--text-soft);
@@ -78,7 +78,7 @@
     color var(--duration-fast) var(--ease-standard);
 }
 
-.app-nav a::before {
+.ui-app-nav a::before {
   background: currentColor;
   border-radius: 50%;
   content: '';
@@ -87,22 +87,22 @@
   inline-size: 0.34rem;
 }
 
-.app-nav a:hover {
+.ui-app-nav a:hover {
   background: var(--bg-accent);
   color: var(--text);
 }
 
-.app-nav a.is-active {
+.ui-app-nav a.is-active {
   background: var(--accent-soft);
   border-inline-start-color: var(--accent);
   color: var(--accent-text);
 }
 
-.app-nav a.is-active::before {
+.ui-app-nav a.is-active::before {
   opacity: 1;
 }
 
-.app-rail__foot {
+.ui-app-rail__foot {
   border-block-start: 1px solid var(--line);
   color: var(--text-dim);
   font-family: var(--mono);
@@ -113,13 +113,13 @@
 
 /* --- Main column --- */
 
-.app-main {
+.ui-app-main {
   display: flex;
   flex-direction: column;
   min-inline-size: 0;
 }
 
-.app-topbar {
+.ui-app-topbar {
   align-items: center;
   background: color-mix(in srgb, var(--bg) 86%, transparent);
   backdrop-filter: blur(8px);
@@ -133,7 +133,7 @@
   z-index: 10;
 }
 
-.app-topbar__title {
+.ui-app-topbar__title {
   color: var(--text);
   font-family: var(--display);
   font-size: 1.1rem;
@@ -142,7 +142,7 @@
   text-transform: uppercase;
 }
 
-.app-content {
+.ui-app-content {
   display: grid;
   gap: var(--space-lg);
   padding: var(--space-lg);
@@ -150,7 +150,7 @@
 
 /* --- Toolbar --- */
 
-.app-toolbar {
+.ui-app-toolbar {
   align-items: center;
   background: var(--panel);
   border: 1px solid var(--line);
@@ -162,7 +162,7 @@
   padding: 0.7rem 0.85rem;
 }
 
-.app-toolbar__group {
+.ui-app-toolbar__group {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
@@ -171,7 +171,7 @@
 
 /* --- Panel --- */
 
-.app-panel {
+.ui-app-panel {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
@@ -180,14 +180,14 @@
   padding: var(--space-md);
 }
 
-.app-panel__head {
+.ui-app-panel__head {
   align-items: flex-start;
   display: flex;
   gap: 0.7rem;
   justify-content: space-between;
 }
 
-.app-panel__title {
+.ui-app-panel__title {
   color: var(--text);
   font-family: var(--display);
   font-size: 0.95rem;
@@ -196,21 +196,21 @@
   text-transform: uppercase;
 }
 
-.app-panel__head p,
-.app-empty-state p {
+.ui-app-panel__head p,
+.ui-app-empty-state p {
   color: var(--text-dim);
   margin: 0.3rem 0 0;
 }
 
 /* --- Metric tiles --- */
 
-.app-metrics {
+.ui-app-metrics {
   display: grid;
   gap: var(--space-md);
   grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
 }
 
-.app-metric {
+.ui-app-metric {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
@@ -219,7 +219,7 @@
   padding: var(--space-md);
 }
 
-.app-metric__label {
+.ui-app-metric__label {
   color: var(--text-dim);
   font-family: var(--mono);
   font-size: var(--text-2xs);
@@ -227,7 +227,7 @@
   text-transform: uppercase;
 }
 
-.app-metric__value {
+.ui-app-metric__value {
   color: var(--text);
   font-family: var(--display);
   font-size: 1.9rem;
@@ -236,22 +236,22 @@
   line-height: 1;
 }
 
-.app-metric__delta {
+.ui-app-metric__delta {
   font-family: var(--mono);
   font-size: var(--text-xs);
 }
 
-.app-metric__delta.is-pos {
+.ui-app-metric__delta.is-pos {
   color: var(--success);
 }
 
-.app-metric__delta.is-neg {
+.ui-app-metric__delta.is-neg {
   color: var(--danger);
 }
 
 /* --- Empty state --- */
 
-.app-empty-state {
+.ui-app-empty-state {
   border: 1px dashed var(--line-strong);
   border-radius: var(--radius-md);
   color: var(--text-dim);
@@ -261,16 +261,16 @@
 
 /* --- Mobile rail collapse --- */
 
-.app-rail__toggle {
+.ui-app-rail__toggle {
   display: none;
 }
 
 @media (max-width: 880px) {
-  .app-shell {
+  .ui-app-shell {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .app-rail {
+  .ui-app-rail {
     flex-direction: row;
     block-size: auto;
     overflow-x: auto;
@@ -279,31 +279,31 @@
     z-index: 11;
   }
 
-  .app-rail__foot {
+  .ui-app-rail__foot {
     display: none;
   }
 
-  .app-nav {
+  .ui-app-nav {
     grid-auto-flow: column;
     gap: 0.15rem;
   }
 
-  .app-nav__section {
+  .ui-app-nav__section {
     display: none;
   }
 
-  .app-nav a {
+  .ui-app-nav a {
     border-inline-start: 0;
     border-block-end: 2px solid transparent;
     white-space: nowrap;
   }
 
-  .app-nav a.is-active {
+  .ui-app-nav a.is-active {
     border-inline-start: 0;
     border-block-end-color: var(--accent);
   }
 
-  .app-content {
+  .ui-app-content {
     padding: var(--space-md);
   }
 }

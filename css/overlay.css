@@ -97,6 +97,14 @@
 
 /* --- Dropdown menu — pairs with native <details> --- */
 
+/* The positioned host for a <details> dropdown: .ui-menu is absolute, so
+   its <details> wrapper must establish a containing block. (Replaces the
+   role the legacy .site-menu wrapper served, now a first-class ui-*.) */
+.ui-menu-host {
+  display: inline-block;
+  position: relative;
+}
+
 .ui-menu {
   background: var(--panel-strong);
   border: 1px solid var(--line-strong);

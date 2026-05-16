@@ -64,14 +64,43 @@ release/supply-chain, plus AgentMix) drove this pass.
 - README: explicit "do not mix a bundle with a raw leaf import" hazard
   warning; a Versioning section; size/`@import`-depth prose de-drifted.
 
-**In progress (this minor, not yet landed)**
+**BREAKING (legacy vocabulary removed / migrated)**
 
-- Legacy non-`ui-*` vocabulary (`.hero`, `.project-*`, `.site-*` (old),
-  `.metric-tile`, bare `.button`, `.theme-toggle*`, `responsive.css`
-  legacy targets) is being migrated into the `.ui-*` contract and the
-  rest deleted; per-leaf imports will become layer-safe by default with
-  the raw escape hatch moved to an explicit `unlayered/*` path. These
-  land before the `v0.3.0` tag with full migration notes here.
+The whole non-`ui-*` surface is gone; everything shipped is now under the
+`.ui-*` contract and the `check-classes` drift gate.
+
+- **Deleted (had `ui-*` equivalents):** `css/layout.css`, `css/cards.css`,
+  `css/typography.css` and their entire vocabulary — `.hero`,
+  `.project-*`, `.post-card`, `.essay-*`, `.metric-tile`, `.callout`,
+  `.eyebrow`, bare `.button`, `.section-head`, `.tag-list`,
+  `.profile-link-list`, `.page-*`, `.home-*`, `.signal-panel`,
+  `.worklog-summary`, … _Migration:_ use the `ui-*` content layer —
+  `.ui-prose`/`.ui-quote` (long-form), `.ui-card`, `.ui-eyebrow`,
+  `.ui-button`, `.ui-tag`/`.ui-tags`, `.ui-grid`/`.ui-stack`, the
+  `ui-site*` shell. `.skip-link` → `.ui-skiplink`; `.site-nav` →
+  `.ui-sitenav`; `.site-menu` → `.ui-sitemenu` (responsive nav) or the
+  new `.ui-menu-host` (a `<details>` + `.ui-menu` dropdown wrapper).
+- **Renamed → first-class:** the admin shell `.app-*` → **`.ui-app-*`**
+  (`ui-app-shell`/`-rail`/`-topbar`/`-toolbar`/`-nav`/`-panel`/
+  `-content`/`-main`/`-metrics`/`-metric`/`-empty-state`, with the same
+  `__part` / `--mod` suffixes). The theme toggle `.theme-toggle__*` →
+  **`.ui-themetoggle__*`**. _Migration:_ rename these class strings in
+  consumer markup (or use the new `cls.app*` / `cls.themetoggle*` /
+  `cls.menuHost` entries). They are now typed and drift-checked.
+- **Bundle collapsed:** `css/responsive.css` and `css/index.css` removed.
+  `ui-*` components own their breakpoints, so there is no core/full
+  split: `@ponchia/ui/css` now resolves to `css/core.css` (one bundle),
+  `@ponchia/ui` → the single `dist/bronto.css` (~54 kB / ~10 kB gzip,
+  was ~70/12). _Removed exports:_ `./css/index.css`,
+  `./css/responsive.css`, `./dist/bronto-core.css`, and the deleted
+  leaves' `./css/{layout,typography,cards}.css`. _Migration:_ import
+  `@ponchia/ui` or `@ponchia/ui/css`.
+
+**Still deferred to 0.4.0**
+
+- Per-leaf imports become layer-safe by default with the raw
+  full-specificity escape hatch moved to an explicit `unlayered/*` path
+  (the now-final, reduced leaf set makes this churn-free).
 
 ### Content-site layer
 
