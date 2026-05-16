@@ -24,7 +24,10 @@
     "tokens",
     "classes",
     "behaviors",
-    "shiki"
+    "shiki",
+    "llms.txt",
+    "docs/reference.md",
+    "docs/theming.md"
   ],
   "style": "./dist/bronto.css",
   "scripts": {
@@ -111,6 +114,9 @@
     "./tokens.json": "./tokens/index.json",
     "./tokens.dtcg.json": "./tokens/tokens.dtcg.json",
     "./shiki/nothing.json": "./shiki/nothing.json",
+    "./llms.txt": "./llms.txt",
+    "./docs/reference.md": "./docs/reference.md",
+    "./docs/theming.md": "./docs/theming.md",
     "./classes": {
       "types": "./classes/index.d.ts",
       "default": "./classes/index.js"

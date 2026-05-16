@@ -47,9 +47,22 @@ for (const p of files) {
   }
 }
 
-// Belt-and-braces: these must never ship.
+// Curated docs that intentionally ship for offline LLM/agent consumers
+// (a deliberate, documented relaxation of the runtime-only stance — see
+// llms.txt). `reference.md` is generated + drift-checked (check:reference)
+// so it cannot rot; `theming.md` is the stable token contract. Everything
+// else under docs/ stays dev-only. Keep this in lockstep with `files`.
+const shippedDocs = new Set(['docs/reference.md', 'docs/theming.md']);
+for (const d of shippedDocs) {
+  if (!underAllowlist(d)) {
+    errors.push(`shipped doc "${d}" missing from "files" — pack gate and files have drifted`);
+  }
+}
+
+// Belt-and-braces: these must never ship (except the curated docs above).
 const forbidden = ['scripts/', 'docs/', 'demo/', 'test/', '.github/', 'node_modules/'];
 for (const p of files) {
+  if (shippedDocs.has(p)) continue;
   if (forbidden.some((d) => p.startsWith(d)) || /^\./.test(p)) {
     errors.push(`dev-only path leaked into the package: ${p}`);
   }

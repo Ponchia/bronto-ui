@@ -4,6 +4,32 @@
 > `~0.x`; `^0.x` does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased — 0.3.3
+
+Discoverability for LLM/agent consumers working in other repos. No
+runtime, CSS, token, or API change — docs-only, ships with the next
+functional release.
+
+### Added
+
+- **`llms.txt`** at the package root — a self-contained agent entrypoint
+  that orients an LLM to the typed contract, the `@layer bronto` override
+  rule, the import surface, and the shipped offline references.
+- **`docs/reference.md` and `docs/theming.md` now ship in the npm
+  tarball.** An offline coding agent in a consumer repo gets the full
+  class catalog (generated + drift-checked) and the token contract from
+  `node_modules/@ponchia/ui/` without network access. New `exports`
+  subpaths: `./llms.txt`, `./docs/reference.md`, `./docs/theming.md`.
+
+### Changed
+
+- `check-pack.mjs` relaxed from a blanket `docs/` ship-block to a
+  **curated allowlist** (`docs/reference.md`, `docs/theming.md` only); a
+  consistency assertion fails if that set drifts from `package.json`
+  `files`. The rest of `docs/` (tutorials, architecture, interop) stays
+  dev-only by design — a deliberate, documented narrowing of the earlier
+  runtime-only stance, justified by the agent-consumer requirement.
+
 ## 0.3.2 — 2026-05-16
 
 Re-skin-proven adoption pass: a real content-site consumer rebuilt

@@ -1,0 +1,82 @@
+# @ponchia/ui
+
+> CSS-first, framework-agnostic UI framework. Zero runtime dependencies.
+> One `@layer bronto` cascade, a typed class vocabulary, design tokens as
+> data, and optional SSR-safe vanilla behaviors. Nothing-inspired:
+> monochrome surfaces, a single rationed accent, dot-matrix display type.
+>
+> This file orients an LLM/agent. The authoritative, always-correct API
+> is the TypeScript declarations shipped in this package (paths below):
+> they are generated from the runtime sources and CI-drift-checked, so
+> they never lie. Read them before guessing class or token names.
+
+## Use the framework
+
+CSS (pick one; do not import both):
+
+```css
+@import '@ponchia/ui';        /* dist/bronto.css — flattened, minified, one file (recommended) */
+@import '@ponchia/ui/css';    /* css/core.css — @import fan-out, needs a bundler */
+```
+
+Everything lands in `@layer bronto`. Consumer styles in no layer (or a
+later layer) always win over framework styles regardless of selector
+specificity — this is the intended override mechanism; do not fight it
+with `!important`.
+
+Typed class vocabulary (returns plain strings — works in any framework):
+
+```js
+import { cls, ui, cx } from '@ponchia/ui/classes';
+// ui.button({ variant: 'ghost' }) -> "ui-button ui-button--ghost"
+// cx(ui.dot({ tone: 'success' }), 'my-extra') -> joined, falsy-skipped
+// cls is the frozen flat registry of every class the framework defines
+```
+
+Tokens as data (theming + reading the palette):
+
+```js
+import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens';
+```
+
+Optional vanilla behaviors (theme toggle, etc. — SSR-safe, tree-shakeable):
+
+```js
+import { applyStoredTheme } from '@ponchia/ui/behaviors';
+```
+
+## Authoritative offline references (shipped in this package)
+
+Read these from `node_modules/@ponchia/ui/` — no network needed:
+
+- `classes/index.d.ts` — literal-typed `cls` map (exact class strings),
+  every `ui.*()` recipe signature, every `*Opts` interface. The complete
+  class surface; an agent should read this to know valid class names.
+- `docs/reference.md` — the full class catalog as prose tables (every
+  class grouped by component, with registry key + kind). Generated from
+  the same source as the types and CI-drift-checked.
+- `docs/theming.md` — the token contract: which tokens to override, the
+  light/dark model, and the rationed-accent rule.
+- `tokens/index.d.ts` — every design-token name as a literal union.
+- `tokens/index.json` — tokens as plain data (global / light / dark).
+- `tokens/tokens.dtcg.json` — same tokens in W3C DTCG format.
+- `behaviors/index.d.ts` — typed signatures for the optional behaviors.
+- `classes/vscode.css-custom-data.json` — editor autocomplete for tokens.
+
+## Human-browsable references (not shipped in the npm tarball, by design)
+
+- Live kitchen-sink demo (every component, light/dark, RTL): https://ponchia.github.io/bronto-ui/
+- Architecture & the CSS-first decision: https://github.com/Ponchia/bronto-ui/blob/main/docs/architecture.md
+- Framework integration guides (Astro / SvelteKit / React-Solid / vanilla):
+  https://github.com/Ponchia/bronto-ui/tree/main/docs/getting-started
+
+## Rules an agent should respect
+
+- Never invent `ui-*` class names. Every valid class is a member of
+  `cls` in `classes/index.d.ts`; if it is not there, it does not exist.
+- Prefer the `ui.*()` recipes over hand-concatenating modifier strings.
+- Override framework styles by writing your own rules outside
+  `@layer bronto` — not with higher specificity or `!important`.
+- The accent color is deliberately rationed (monochrome + one accent).
+  Do not introduce new hues; theme via the documented tokens only.
+- Pre-1.0 SemVer: breaking changes ship in the *minor*. Pin `~0.x`.
