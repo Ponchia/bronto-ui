@@ -58,6 +58,18 @@ export declare function initMenu(opts?: DelegateOpts): Cleanup;
 export declare function initFormValidation(opts?: DelegateOpts): Cleanup;
 
 /**
+ * Editable combobox with a filtered listbox popup (WAI-ARIA APG
+ * pattern), dependency-free and CSS-anchored. Wires
+ * `[data-bronto-combobox]` (input `role=combobox` +
+ * `.ui-combobox__list` of `role=option`): ids, `aria-expanded` /
+ * `aria-controls` / `aria-activedescendant`, type-to-filter, full
+ * keyboard, pointer select, outside-click close. Emits `bronto:change`
+ * ({ detail: { value } }) on selection. SSR-safe, idempotent per
+ * instance. Returns a cleanup function.
+ */
+export declare function initCombobox(opts?: DelegateOpts): Cleanup;
+
+/**
  * Wire `[data-bronto-tabs]` groups with the WAI-ARIA Tabs keyboard
  * pattern (roving tabindex, Arrow/Home/End, aria-selected, panel sync).
  * Returns a cleanup function.

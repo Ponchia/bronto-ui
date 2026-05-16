@@ -10,6 +10,7 @@ import {
   initDialog,
   initTabs,
   initFormValidation,
+  initCombobox,
   toast,
 } from '../behaviors/index.js';
 
@@ -573,6 +574,83 @@ test('initFormValidation: SSR-safe', () => {
   for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
   assert.doesNotThrow(() => {
     const stop = initFormValidation();
+    stop();
+  });
+});
+
+const CB = `
+  <div class="ui-combobox" data-bronto-combobox>
+    <input class="ui-input ui-combobox__input" />
+    <ul class="ui-combobox__list">
+      <li class="ui-combobox__option" data-value="apple">Apple</li>
+      <li class="ui-combobox__option" data-value="banana">Banana</li>
+      <li class="ui-combobox__option" data-value="cherry">Cherry</li>
+    </ul>
+    <p class="ui-combobox__empty" hidden>No matches</p>
+  </div>`;
+
+test('initCombobox: wires ARIA, filters, keyboard-selects, emits change', () => {
+  const d = mount(CB);
+  const stop = initCombobox();
+  const input = d.querySelector('.ui-combobox__input');
+  const list = d.querySelector('.ui-combobox__list');
+
+  assert.equal(input.getAttribute('role'), 'combobox');
+  assert.equal(input.getAttribute('aria-expanded'), 'false');
+  assert.equal(input.getAttribute('aria-controls'), list.id);
+  assert.equal(list.hidden, true);
+
+  // Type → opens + filters.
+  input.value = 'an';
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  assert.equal(input.getAttribute('aria-expanded'), 'true');
+  const shown = [...list.querySelectorAll('.ui-combobox__option')].filter((o) => !o.hidden);
+  assert.deepEqual(
+    shown.map((o) => o.textContent),
+    ['Banana'],
+    'only matching option visible',
+  );
+
+  // ArrowDown activates, Enter selects, change fires.
+  let changed;
+  d.querySelector('[data-bronto-combobox]').addEventListener(
+    'bronto:change',
+    (e) => (changed = e.detail.value),
+  );
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+  assert.ok(d.querySelector('.ui-combobox__option.is-active'), 'active option set');
+  assert.equal(input.getAttribute('aria-activedescendant'), shown[0].id);
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  assert.equal(input.value, 'banana', 'selected data-value');
+  assert.equal(changed, 'banana', 'bronto:change emitted');
+  assert.equal(list.hidden, true, 'closes on select');
+  stop();
+});
+
+test('initCombobox: empty state, Escape closes, cleanup detaches', () => {
+  const d = mount(CB);
+  const stop = initCombobox();
+  const input = d.querySelector('.ui-combobox__input');
+  const list = d.querySelector('.ui-combobox__list');
+  const empty = d.querySelector('.ui-combobox__empty');
+
+  input.value = 'zzz';
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  assert.equal(empty.hidden, false, 'empty state shown when nothing matches');
+
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  assert.equal(list.hidden, true, 'Escape closes');
+
+  stop();
+  input.value = 'a';
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  assert.equal(list.hidden, true, 'no-op after cleanup');
+});
+
+test('initCombobox: SSR-safe', () => {
+  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
+  assert.doesNotThrow(() => {
+    const stop = initCombobox();
     stop();
   });
 });

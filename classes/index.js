@@ -111,6 +111,11 @@ export const cls = Object.freeze({
   menuLabel: 'ui-menu__label',
   menuItem: 'ui-menu__item',
   menuSep: 'ui-menu__sep',
+  combobox: 'ui-combobox',
+  comboboxInput: 'ui-combobox__input',
+  comboboxList: 'ui-combobox__list',
+  comboboxOption: 'ui-combobox__option',
+  comboboxEmpty: 'ui-combobox__empty',
   // disclosure
   tabs: 'ui-tabs',
   tabsList: 'ui-tabs__list',

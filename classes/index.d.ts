@@ -94,6 +94,11 @@ export declare const cls: {
   readonly menuLabel: 'ui-menu__label';
   readonly menuItem: 'ui-menu__item';
   readonly menuSep: 'ui-menu__sep';
+  readonly combobox: 'ui-combobox';
+  readonly comboboxInput: 'ui-combobox__input';
+  readonly comboboxList: 'ui-combobox__list';
+  readonly comboboxOption: 'ui-combobox__option';
+  readonly comboboxEmpty: 'ui-combobox__empty';
   readonly tabs: 'ui-tabs';
   readonly tabsList: 'ui-tabs__list';
   readonly tab: 'ui-tab';
