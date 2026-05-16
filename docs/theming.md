@@ -66,7 +66,7 @@ fills — follows automatically, in both light and dark.
   set `accent-color` yourself on them — this is the one accent surface
   the framework can't tune for you.
 
-## Token tiers (0.4.0)
+## Token tiers (0.3.1)
 
 Three additive, non-breaking tiers sit on top of the primitives. The
 short legacy names (`--panel`, `--line`, `--accent`, …) keep working

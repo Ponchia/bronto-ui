@@ -9,7 +9,7 @@ Direction is set by periodic multi-perspective reviews. This list is
 indicative, not a commitment, and a solo-maintained project — see
 "Support expectations" below.
 
-## 0.4.0 — adoption + gap-closing (in progress)
+## 0.3.1 — adoption + gap-closing (shipped)
 
 Driven by a 12-perspective review (two Opus analyses + two five-model
 AgentMix deep runs). All additions are **non-breaking**.

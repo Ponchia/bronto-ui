@@ -44,7 +44,7 @@ merge.
 
 ## Deprecation policy
 
-From 0.4.0 onward, public surface (`.ui-*` classes, `data-bronto-*`
+From 0.3.1 onward, public surface (`.ui-*` classes, `data-bronto-*`
 attributes, `cls`/token keys, behavior signatures) is removed on a
 **deprecate-one-minor** cycle:
 

@@ -4,13 +4,14 @@
 > `~0.x`; `^0.x` does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
-## 0.4.0 — 2026-05-16
+## 0.3.1 — 2026-05-16
 
 Adoption + gap-closing pass driven by a 12-perspective review (two Opus
 analyses + two five-model AgentMix deep runs). **All additions are
 non-breaking** (additive classes/tokens/behaviors; short token names
-kept as permanent aliases); the 0.3.0 legacy removal stands. Tracked
-scope: ROADMAP.md.
+kept as permanent aliases) — so this is a patch, per the 0.x policy
+(only breaking changes bump the minor); the 0.3.0 legacy removal
+stands. Tracked scope: ROADMAP.md.
 
 ### Added
 
