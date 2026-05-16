@@ -111,6 +111,22 @@
   padding-block-start: var(--space-sm);
 }
 
+/* Account / identity slot — signed-in user + sign-out. A framework-
+   blessed home for what every shell otherwise hand-rolls. Pinned to the
+   rail end like __foot, but it stays visible when the rail collapses to
+   a horizontal bar on mobile (sign-out must not vanish). */
+.ui-app-rail__account {
+  align-items: center;
+  display: flex;
+  gap: var(--space-xs);
+  margin-block-start: auto;
+  padding-block-start: var(--space-sm);
+}
+
+.ui-app-rail__account + .ui-app-rail__foot {
+  margin-block-start: 0;
+}
+
 /* --- Main column --- */
 
 .ui-app-main {
@@ -196,8 +212,7 @@
   text-transform: uppercase;
 }
 
-.ui-app-panel__head p,
-.ui-app-empty-state p {
+.ui-app-panel__head p {
   color: var(--text-dim);
   margin: 0.3rem 0 0;
 }
@@ -209,15 +224,11 @@
    the canonical rules there — identical output). Nothing app-specific
    left to define here. */
 
-/* --- Empty state --- */
-
-.ui-app-empty-state {
-  border: 1px dashed var(--line-strong);
-  border-radius: var(--radius-md);
-  color: var(--text-dim);
-  padding: var(--space-lg);
-  text-align: center;
-}
+/* --- Empty state ---
+   The empty-state primitive is shell-agnostic and now lives in
+   primitives.css as `.ui-empty-state`; `.ui-app-empty-state` remains a
+   permanent admin-shell alias (grouped on the canonical rules there —
+   identical output). Nothing app-specific left to define here. */
 
 /* --- Mobile rail collapse --- */
 

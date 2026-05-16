@@ -23,6 +23,8 @@ export const cls = Object.freeze({
   buttonSubtle: 'ui-button--subtle',
   buttonDanger: 'ui-button--danger',
   buttonIcon: 'ui-button--icon',
+  buttonSm: 'ui-button--sm',
+  buttonLg: 'ui-button--lg',
   card: 'ui-card',
   cardHead: 'ui-card__head',
   cardAccent: 'ui-card--accent',
@@ -49,6 +51,7 @@ export const cls = Object.freeze({
   linkArrow: 'ui-link--arrow',
   linkCta: 'ui-link--cta',
   keyValue: 'ui-key-value',
+  emptyState: 'ui-empty-state',
   // dots
   dot: 'ui-dot',
   dotAccent: 'ui-dot--accent',
@@ -229,6 +232,7 @@ export const cls = Object.freeze({
   appRailBrand: 'ui-app-rail__brand',
   appRailToggle: 'ui-app-rail__toggle',
   appRailFoot: 'ui-app-rail__foot',
+  appRailAccount: 'ui-app-rail__account',
   appTopbar: 'ui-app-topbar',
   appTopbarTitle: 'ui-app-topbar__title',
   appToolbar: 'ui-app-toolbar',
@@ -264,13 +268,15 @@ export function cx(...parts) {
 const j = (...p) => p.filter(Boolean).join(' ');
 
 export const ui = {
-  button: ({ variant, icon } = {}) =>
+  button: ({ variant, icon, size } = {}) =>
     j(
       cls.button,
       variant === 'ghost' && cls.buttonGhost,
       variant === 'subtle' && cls.buttonSubtle,
       variant === 'danger' && cls.buttonDanger,
       icon && cls.buttonIcon,
+      size === 'sm' && cls.buttonSm,
+      size === 'lg' && cls.buttonLg,
     ),
   card: ({ accent, interactive } = {}) =>
     j(cls.card, accent && cls.cardAccent, interactive && cls.cardInteractive),
@@ -335,7 +341,7 @@ export const ui = {
   dotspinner: ({ size } = {}) =>
     j(cls.dotspinner, size === 'sm' && cls.dotspinnerSm, size === 'lg' && cls.dotspinnerLg),
   dotbar: ({ indeterminate } = {}) => j(cls.dotbar, indeterminate && cls.dotbarIndeterminate),
-  modal: ({ drawer } = {}) => j(cls.modal, drawer && cls.modalDrawer),
+  modal: ({ drawer, open } = {}) => j(cls.modal, drawer && cls.modalDrawer, open && 'is-open'),
   tab: ({ active } = {}) => j(cls.tab, active && 'is-active'),
   avatar: ({ size } = {}) =>
     j(cls.avatar, size === 'sm' && cls.avatarSm, size === 'lg' && cls.avatarLg),
