@@ -95,6 +95,7 @@ export const cls = Object.freeze({
   toastDanger: 'ui-toast--danger',
   tooltip: 'ui-tooltip',
   tooltipBubble: 'ui-tooltip__bubble',
+  popover: 'ui-popover',
   progress: 'ui-progress',
   progressBar: 'ui-progress__bar',
   progressIndeterminate: 'ui-progress--indeterminate',

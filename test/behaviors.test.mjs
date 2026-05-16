@@ -11,6 +11,7 @@ import {
   initTabs,
   initFormValidation,
   initCombobox,
+  initPopover,
   toast,
 } from '../behaviors/index.js';
 
@@ -651,6 +652,49 @@ test('initCombobox: SSR-safe', () => {
   for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
   assert.doesNotThrow(() => {
     const stop = initCombobox();
+    stop();
+  });
+});
+
+test('initPopover: toggles panel, manages aria, Escape + outside close', () => {
+  const d = mount(
+    '<button id="t" data-bronto-popover="pop">Info</button>' +
+      '<div class="ui-popover" id="pop">Details</div>' +
+      '<button id="away">elsewhere</button>',
+  );
+  const stop = initPopover();
+  const trigger = d.getElementById('t');
+  const panel = d.getElementById('pop');
+
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.ok(panel.classList.contains('is-open'), 'opens (no native Popover in jsdom)');
+  assert.equal(trigger.getAttribute('aria-expanded'), 'true');
+  assert.equal(trigger.getAttribute('aria-controls'), 'pop');
+
+  // Toggle closed by re-click.
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), false, 're-click closes');
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+
+  // Reopen, Escape closes.
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  d.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), false, 'Escape closes');
+
+  // Reopen, outside click closes.
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  d.getElementById('away').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), false, 'outside click closes');
+
+  stop();
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), false, 'no-op after cleanup');
+});
+
+test('initPopover: SSR-safe', () => {
+  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
+  assert.doesNotThrow(() => {
+    const stop = initPopover();
     stop();
   });
 });

@@ -70,6 +70,17 @@ export declare function initFormValidation(opts?: DelegateOpts): Cleanup;
 export declare function initCombobox(opts?: DelegateOpts): Cleanup;
 
 /**
+ * Collision-aware popover, dependency-free. A `[data-bronto-popover]`
+ * trigger toggles the `.ui-popover` panel it names; the panel flips
+ * above when it would overflow the viewport and its inline edge is
+ * clamped on-screen. Uses the native top layer when the panel has
+ * `popover` and the Popover API exists, else an `.is-open` class.
+ * Manages `aria-expanded`/`aria-controls`, Escape + outside-click
+ * close, scroll/resize reposition. Returns a cleanup function.
+ */
+export declare function initPopover(opts?: DelegateOpts): Cleanup;
+
+/**
  * Wire `[data-bronto-tabs]` groups with the WAI-ARIA Tabs keyboard
  * pattern (roving tabindex, Arrow/Home/End, aria-selected, panel sync).
  * Returns a cleanup function.

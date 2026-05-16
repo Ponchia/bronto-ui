@@ -79,6 +79,7 @@ export declare const cls: {
   readonly toastDanger: 'ui-toast--danger';
   readonly tooltip: 'ui-tooltip';
   readonly tooltipBubble: 'ui-tooltip__bubble';
+  readonly popover: 'ui-popover';
   readonly progress: 'ui-progress';
   readonly progressBar: 'ui-progress__bar';
   readonly progressIndeterminate: 'ui-progress--indeterminate';
