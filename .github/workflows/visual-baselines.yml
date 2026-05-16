@@ -1,10 +1,9 @@
 # Regenerate the Playwright visual baselines in the EXACT pinned
 # container CI uses, so the committed PNGs match CI rasterisation
-# (cross-OS rendering differs — they cannot be authored on a dev mac).
-# Manually dispatched: run it from the branch whose baselines you want
-# rebuilt (e.g. after an intentional visual change); it commits the
-# regenerated screenshots back to that branch, so the next CI run's
-# `e2e` job goes green on its own.
+# (cross-OS rendering differs — they can't be authored on a dev mac).
+# Manually dispatched after an intentional visual change. `main` is
+# protected, so this OPENS A PR with the regenerated baselines (it does
+# not push to main); the PR's own check + e2e then validate them.
 name: Update visual baselines
 
 on:
@@ -12,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   regen:
@@ -41,16 +41,36 @@ jobs:
           path: test/e2e/__screenshots__/
           retention-days: 14
 
-      - name: Commit regenerated baselines to the branch
-        shell: bash # the Playwright image's default `run` shell is dash (no pipefail)
+  open-pr:
+    needs: regen
+    runs-on: ubuntu-latest # gh CLI is preinstalled here, not in the Playwright image
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: main
+
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: visual-baselines
+          path: test/e2e/__screenshots__/
+
+      - name: Open a PR with the regenerated baselines
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          git config user.name  'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
           if git diff --quiet -- test/e2e/__screenshots__; then
-            echo "Baselines unchanged — nothing to commit."
+            echo "Baselines unchanged — nothing to do."
             exit 0
           fi
+          BRANCH="chore/visual-baselines-${GITHUB_RUN_ID}"
+          git config user.name  'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout -b "$BRANCH"
           git add test/e2e/__screenshots__
-          git commit -m "test(e2e): regenerate visual baselines in pinned container [skip ci]"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          git commit -m "test(e2e): regenerate visual baselines in the pinned container"
+          git push origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" \
+            --title "test(e2e): regenerate visual baselines" \
+            --body "Automated: pixel baselines re-rendered in \`mcr.microsoft.com/playwright:v1.60.0-jammy\` (run ${GITHUB_RUN_ID}). Merge once \`check\` + \`e2e\` are green."
