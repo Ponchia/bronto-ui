@@ -325,7 +325,7 @@
         },
         "soft": {
           "$type": "color",
-          "$value": "rgba(47, 125, 79, 0.12)"
+          "$value": "rgb(47, 125, 79, 0.12)"
         }
       },
       "warning": {
@@ -335,7 +335,7 @@
         },
         "soft": {
           "$type": "color",
-          "$value": "rgba(128, 100, 20, 0.13)"
+          "$value": "rgb(128, 100, 20, 0.13)"
         }
       },
       "orange": {
@@ -345,7 +345,7 @@
         },
         "soft": {
           "$type": "color",
-          "$value": "rgba(168, 95, 50, 0.13)"
+          "$value": "rgb(168, 95, 50, 0.13)"
         }
       },
       "danger": {
@@ -355,13 +355,13 @@
         },
         "soft": {
           "$type": "color",
-          "$value": "rgba(192, 22, 34, 0.1)"
+          "$value": "rgb(192, 22, 34, 0.1)"
         }
       },
       "code": {
         "bg": {
           "$type": "color",
-          "$value": "rgba(10, 10, 10, 0.05)"
+          "$value": "rgb(10, 10, 10, 0.05)"
         }
       },
       "button": {
@@ -373,11 +373,11 @@
       "field": {
         "dot": {
           "$type": "color",
-          "$value": "rgba(10, 10, 10, 0.16)"
+          "$value": "rgb(10, 10, 10, 0.16)"
         },
         "dot-hot": {
           "$type": "color",
-          "$value": "rgba(10, 10, 10, 0.4)"
+          "$value": "rgb(10, 10, 10, 0.4)"
         },
         "dot-accent": {
           "$type": "color",
@@ -500,7 +500,7 @@
         },
         "soft": {
           "$type": "color",
-          "$value": "rgba(78, 194, 126, 0.14)"
+          "$value": "rgb(78, 194, 126, 0.14)"
         }
       },
       "warning": {
@@ -510,7 +510,7 @@
         },
         "soft": {
           "$type": "color",
-          "$value": "rgba(216, 189, 114, 0.14)"
+          "$value": "rgb(216, 189, 114, 0.14)"
         }
       },
       "orange": {
@@ -520,7 +520,7 @@
         },
         "soft": {
           "$type": "color",
-          "$value": "rgba(208, 140, 91, 0.15)"
+          "$value": "rgb(208, 140, 91, 0.15)"
         }
       },
       "danger": {
@@ -530,13 +530,13 @@
         },
         "soft": {
           "$type": "color",
-          "$value": "rgba(255, 77, 84, 0.15)"
+          "$value": "rgb(255, 77, 84, 0.15)"
         }
       },
       "code": {
         "bg": {
           "$type": "color",
-          "$value": "rgba(255, 255, 255, 0.05)"
+          "$value": "rgb(255, 255, 255, 0.05)"
         }
       },
       "button": {
@@ -548,11 +548,11 @@
       "field": {
         "dot": {
           "$type": "color",
-          "$value": "rgba(242, 242, 242, 0.14)"
+          "$value": "rgb(242, 242, 242, 0.14)"
         },
         "dot-hot": {
           "$type": "color",
-          "$value": "rgba(242, 242, 242, 0.36)"
+          "$value": "rgb(242, 242, 242, 0.36)"
         },
         "dot-accent": {
           "$type": "color",
