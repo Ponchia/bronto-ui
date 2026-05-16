@@ -55,10 +55,22 @@ function bundle(entry) {
   return `@layer bronto{${minify(body)}}\n`;
 }
 
+/** One self-layered file per leaf, so a *direct* leaf import is layered
+ *  by default (safe to mix with the bundle). The raw, unlayered source
+ *  stays the explicit escape hatch, exported under `./css/unlayered/*`. */
+function layeredLeaf(f) {
+  return `@layer bronto{${minify(readFileSync(resolve(cssDir, f), 'utf8'))}}\n`;
+}
+
+/** The leaves a direct import can target (core.css's import order). */
+export function leafFiles() {
+  return leaves('core.css');
+}
+
 export function buildBundles() {
-  return {
-    'dist/bronto.css': bundle('core.css'),
-  };
+  const out = { 'dist/bronto.css': bundle('core.css') };
+  for (const f of leafFiles()) out[`dist/css/${f}`] = layeredLeaf(f);
+  return out;
 }
 
 /** Raw + gzip size budgets. Generous headroom; trip only on a real
@@ -71,7 +83,7 @@ export function sizes(content) {
 
 const isMain = resolve(process.argv[1] || '') === fileURLToPath(import.meta.url);
 if (isMain) {
-  mkdirSync(resolve(root, 'dist'), { recursive: true });
+  mkdirSync(resolve(root, 'dist/css'), { recursive: true });
   for (const [rel, content] of Object.entries(buildBundles())) {
     writeFileSync(resolve(root, rel), content);
     const s = sizes(content);

@@ -96,11 +96,18 @@ The whole non-`ui-*` surface is gone; everything shipped is now under the
   leaves' `./css/{layout,typography,cards}.css`. _Migration:_ import
   `@ponchia/ui` or `@ponchia/ui/css`.
 
-**Still deferred to 0.4.0**
+**BREAKING (per-leaf imports are now layer-safe)**
 
-- Per-leaf imports become layer-safe by default with the raw
-  full-specificity escape hatch moved to an explicit `unlayered/*` path
-  (the now-final, reduced leaf set makes this churn-free).
+- Every `@ponchia/ui/css/<leaf>.css` export now resolves to a
+  self-`@layer bronto`-wrapped build (`dist/css/<leaf>.css`), so a
+  direct leaf import is layered by default and safe to mix with the
+  bundle — the silent cascade-inversion footgun is gone. The raw,
+  full-specificity source is still available as a deliberate escape
+  hatch at the explicit **`@ponchia/ui/css/unlayered/<leaf>.css`**
+  path. _Migration:_ none if you import the bundle. If you imported a
+  raw leaf *expecting* unlayered/full-specificity behaviour, switch
+  that import to the `css/unlayered/*` path; otherwise the now-layered
+  leaf is the correct (safe) default. Drift-checked by `check-dist`.
 
 ### Content-site layer
 
