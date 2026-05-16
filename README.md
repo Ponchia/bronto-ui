@@ -12,8 +12,18 @@ monochrome surfaces, a single red accent, dot-matrix display type (Doto),
 flat hairline borders, restrained motion. CSS-first and framework-agnostic.
 
 **New here?** → [Getting started](#getting-started) ·
-[Theming](docs/theming.md) · [Roadmap](ROADMAP.md) ·
-[Contributing](CONTRIBUTING.md)
+[Reference](docs/reference.md) · [Theming](docs/theming.md) ·
+[Roadmap](ROADMAP.md) · [Contributing](CONTRIBUTING.md)
+
+> **Editor IntelliSense.** The package ships a VS Code CSS Custom Data
+> file so every design token autocompletes inside `var(--…)`. Add to
+> your `.vscode/settings.json`:
+>
+> ```json
+> {
+>   "css.customData": ["node_modules/@ponchia/ui/classes/vscode.css-custom-data.json"]
+> }
+> ```
 
 **[Live demo →](https://ponchia.github.io/bronto-ui/)** — the kitchen
 sink (every component, light/dark, RTL, theming) deployed from `demo/`.
