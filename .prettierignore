@@ -5,6 +5,7 @@ dist
 # Generated artifacts — must match their generator byte-for-byte, not Prettier.
 tokens/index.json
 tokens/tokens.dtcg.json
+classes/vscode.css-custom-data.json
 *.d.ts
 shiki
 
@@ -13,6 +14,7 @@ shiki
 
 # Hand-tuned integration fixture with whitespace-sensitive <pre>/Shiki blocks.
 demo/index.html
+demo/theme-playground.html
 
 # Data / binaries / lockfile.
 fonts

@@ -1,9 +1,61 @@
 # Changelog
 
-## 0.3.0 — unreleased
-
 > **Versioning:** pre-1.0, breaking changes ship in the _minor_. Pin
-> `~0.3.x`; `^0.3.0` does **not** protect you. See README → Versioning.
+> `~0.x`; `^0.x` does **not** protect you. See README → Versioning, and
+> the deprecation policy in CONTRIBUTING.md.
+
+## 0.3.1 — 2026-05-16
+
+Adoption + gap-closing pass driven by a 12-perspective review (two Opus
+analyses + two five-model AgentMix deep runs). **All additions are
+non-breaking** (additive classes/tokens/behaviors; short token names
+kept as permanent aliases) — so this is a patch, per the 0.x policy
+(only breaking changes bump the minor); the 0.3.0 legacy removal
+stands. Tracked scope: ROADMAP.md.
+
+### Added
+
+- **Components/behaviors** (all SSR-safe, idempotent, cleanup-returning,
+  dependency-free): `ui-combobox` + `initCombobox` (WAI-ARIA APG
+  combobox); `ui-popover` + `initPopover` (collision-aware, native
+  top-layer when available); `initFormValidation` (Constraint
+  Validation → `aria-invalid`/`aria-describedby` + error summary);
+  `initTableSort` (sortable `aria-sort` headers + row selection,
+  `bronto:selectionchange`); `.ui-button[aria-busy]` loading state;
+  toast dismiss button + separate assertive region for `danger`.
+- **Forms:** `ui-input-group`(+`__addon`), `ui-file`, `ui-range`,
+  `ui-error-summary`.
+- **Layout:** `ui-sidebar`, `ui-switcher`, `ui-center`, `ui-ratio`;
+  opt-in `ui-cq` container queries for `ui-grid` / `ui-app-metrics`.
+- **Tokens:** semantic `--bronto-color-*` tier, `--accent-1..6` /
+  `--surface-1..6` ramps, `--z-*` stacking scale (every framework
+  `z-index` now resolves through it; values unchanged).
+- **DX:** generated drift-checked `docs/reference.md`; VS Code
+  `classes/vscode.css-custom-data.json` (token IntelliSense, exported
+  as `./vscode.css-custom-data.json`); per-framework integration guides
+  + Tailwind interop recipe; `examples/{vanilla-vite,astro,sveltekit}`
+  + consumer-smoke CI matrix; README badges; `ROADMAP.md`;
+  `MIGRATIONS.json` + `docs/migrations/0.2-to-0.3.md`;
+  `demo/theme-playground.html` (live contrast checker).
+- **a11y:** `role="switch"` contract + forced-colors switch cues;
+  `@supports(anchor-name)` tooltip un-clipping.
+
+### Fixed
+
+- **Release hygiene:** the `0.3.0` section was still labelled
+  `unreleased` after `v0.3.0` shipped to npm `latest`. Dated it
+  correctly and added a `check:release` gate (in `npm run check`) that
+  fails when `package.json`'s version maps to an `unreleased` changelog
+  heading, so a published version can never again be marked unreleased.
+
+### Changed
+
+- `npm run check` is now 14 gates (+`check:release`, `check:reference`,
+  `check:vscode`); `prepack` regenerates the reference + VS Code data.
+- CONTRIBUTING.md documents a deprecate-one-minor policy so
+  "minor may break" is predictable.
+
+## 0.3.0 — 2026-05-16
 
 ### Multi-POV review hardening
 

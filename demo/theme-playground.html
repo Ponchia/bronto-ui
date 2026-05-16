@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — theme &amp; contrast playground</title>
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: var(--space-2xl);
+      }
+      .pg {
+        display: grid;
+        gap: var(--space-lg);
+        margin-inline: auto;
+        max-inline-size: 52rem;
+      }
+      .pg__row {
+        align-items: end;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-md);
+      }
+      .pg__swatches {
+        display: grid;
+        gap: 1px;
+        grid-template-columns: repeat(6, 1fr);
+      }
+      .pg__sw {
+        aspect-ratio: 2 / 1;
+        display: grid;
+        align-content: end;
+        font-size: var(--text-2xs);
+        padding: 0.4rem;
+      }
+      pre {
+        background: var(--code-bg);
+        overflow: auto;
+        padding: var(--space-md);
+      }
+      .pg__pass {
+        color: var(--success);
+      }
+      .pg__fail {
+        color: var(--danger);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="pg">
+      <header>
+        <p class="ui-eyebrow">@ponchia/ui</p>
+        <h1>Theme &amp; contrast playground</h1>
+        <p>
+          Paste a brand <code>--accent</code>. The whole accent family is
+          <code>color-mix</code>-derived; this checks the WCAG contrast of the
+          derived <code>--accent-text</code> (used for accent <em>text</em>) and
+          raw <code>--accent</code> against the current surface, and emits a
+          ready-to-paste override + DTCG fragment. The instruction in
+          <a href="../docs/theming.md">docs/theming.md</a> to "verify your hue" —
+          this is the instrument.
+        </p>
+      </header>
+
+      <div class="pg__row">
+        <label class="ui-field">
+          <span class="ui-label">--accent</span>
+          <span class="ui-input-group">
+            <input
+              class="ui-input"
+              id="hex"
+              value="#ff3b41"
+              spellcheck="false"
+              autocomplete="off"
+            />
+            <input
+              type="color"
+              id="picker"
+              value="#ff3b41"
+              aria-label="Pick accent colour"
+            />
+          </span>
+        </label>
+        <button class="ui-button ui-button--subtle" id="swap">Toggle theme</button>
+      </div>
+
+      <section aria-live="polite">
+        <div class="pg__swatches" id="swatches"></div>
+      </section>
+
+      <section>
+        <h2 class="ui-eyebrow">Contrast (WCAG 2.1)</h2>
+        <ul class="ui-key-value" id="contrast"></ul>
+      </section>
+
+      <section>
+        <h2 class="ui-eyebrow">CSS override</h2>
+        <pre><code id="css"></code></pre>
+        <h2 class="ui-eyebrow">DTCG fragment</h2>
+        <pre><code id="dtcg"></code></pre>
+      </section>
+    </main>
+
+    <script type="module">
+      // Dependency-free. Relative luminance + contrast ratio per WCAG 2.1.
+      const srgb = (c) => {
+        c /= 255;
+        return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+      };
+      const parse = (s) => {
+        const cv = document.createElement('canvas').getContext('2d');
+        cv.fillStyle = s;
+        const m = cv.fillStyle; // normalises any CSS colour to #rrggbb / rgb()
+        if (m.startsWith('#')) {
+          const n = parseInt(m.slice(1), 16);
+          return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+        }
+        return m.match(/\d+/g).slice(0, 3).map(Number);
+      };
+      const lum = ([r, g, b]) => 0.2126 * srgb(r) + 0.7152 * srgb(g) + 0.0722 * srgb(b);
+      const ratio = (a, b) => {
+        const [x, y] = [lum(parse(a)), lum(parse(b))].sort((m, n) => n - m);
+        return (x + 0.05) / (y + 0.05);
+      };
+
+      const root = document.documentElement;
+      const hex = document.getElementById('hex');
+      const picker = document.getElementById('picker');
+      const grade = (r, threshold) => {
+        const ok = r >= threshold;
+        return `<span class="${ok ? 'pg__pass' : 'pg__fail'}">${r.toFixed(2)}:1 ${
+          ok ? 'PASS' : 'FAIL'
+        }</span>`;
+      };
+
+      function render() {
+        const val = hex.value.trim();
+        root.style.setProperty('--accent', val);
+        const cs = getComputedStyle(root);
+        const fam = {
+          '--accent': cs.getPropertyValue('--accent').trim(),
+          '--accent-strong': cs.getPropertyValue('--accent-strong').trim(),
+          '--accent-text': cs.getPropertyValue('--accent-text').trim(),
+          '--accent-soft': cs.getPropertyValue('--accent-soft').trim(),
+          '--accent-1': cs.getPropertyValue('--accent-1').trim(),
+          '--accent-6': cs.getPropertyValue('--accent-6').trim(),
+        };
+        const bg = cs.getPropertyValue('--bg').trim();
+
+        document.getElementById('swatches').innerHTML = Object.entries(fam)
+          .map(
+            ([k, v]) =>
+              `<div class="pg__sw" style="background:${v};color:${v}" title="${k}: ${v}">` +
+              `<span style="mix-blend-mode:difference;color:#fff">${k.replace('--accent', 'a')}</span></div>`,
+          )
+          .join('');
+
+        const textR = ratio(fam['--accent-text'], bg);
+        const accentR = ratio(fam['--accent'], bg);
+        document.getElementById('contrast').innerHTML =
+          `<li><span>--accent-text vs --bg (text ≥ 4.5)</span> ${grade(textR, 4.5)}</li>` +
+          `<li><span>--accent vs --bg (non-text ≥ 3.0)</span> ${grade(accentR, 3.0)}</li>`;
+
+        document.getElementById('css').textContent = `:root { --accent: ${val}; }`;
+        document.getElementById('dtcg').textContent = JSON.stringify(
+          { color: { accent: { $type: 'color', $value: val } } },
+          null,
+          2,
+        );
+      }
+
+      hex.addEventListener('input', () => {
+        if (/^#?[0-9a-f]{3,8}$/i.test(hex.value.trim())) {
+          picker.value = hex.value.trim().startsWith('#') ? hex.value.trim() : `#${hex.value.trim()}`;
+          render();
+        }
+      });
+      picker.addEventListener('input', () => {
+        hex.value = picker.value;
+        render();
+      });
+      document.getElementById('swap').addEventListener('click', () => {
+        root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+        render();
+      });
+      render();
+    </script>
+  </body>
+</html>

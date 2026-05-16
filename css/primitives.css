@@ -27,6 +27,75 @@
   grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--grid-min, 16rem)), 1fr));
 }
 
+/* Every-Layout set — the layouts consumers otherwise hand-roll. All
+   intrinsic (no media queries): they respond to content + available
+   space, so they work the same in a viewport or a container. */
+
+/* Sidebar + main; the sidebar is its natural width, main takes the
+   rest, and they stack once main would go below --sidebar-min. */
+.ui-sidebar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sidebar-gap, var(--space-md));
+}
+
+.ui-sidebar > :first-child {
+  flex-basis: var(--sidebar-width, 16rem);
+  flex-grow: 1;
+}
+
+.ui-sidebar > :last-child {
+  flex-basis: 0;
+  flex-grow: 999;
+  min-inline-size: var(--sidebar-min, 60%);
+}
+
+/* All children in one row until they no longer fit --switcher-min,
+   then all switch to a column together (no half-states). */
+.ui-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--switcher-gap, var(--space-md));
+}
+
+.ui-switcher > * {
+  flex-basis: calc((var(--switcher-min, 24rem) - 100%) * 999);
+  flex-grow: 1;
+}
+
+/* Centered measure-bounded column. */
+.ui-center {
+  box-sizing: content-box;
+  margin-inline: auto;
+  max-inline-size: var(--center-max, 64rem);
+  padding-inline: var(--center-gutter, var(--space-md));
+}
+
+/* Intrinsic aspect-ratio box; the media child fills it. */
+.ui-ratio {
+  aspect-ratio: var(--ratio, 16 / 9);
+}
+
+.ui-ratio > * {
+  block-size: 100%;
+  inline-size: 100%;
+  object-fit: cover;
+}
+
+/* Opt-in containment: add .ui-cq to a wrapper to make descendant
+   .ui-grid / .ui-app-metrics adapt to THIS box, not the viewport
+   (island-safe). Inert until applied, so existing layouts/baselines
+   are unaffected. */
+.ui-cq {
+  container: var(--cq-name, bronto) / inline-size;
+}
+
+@container bronto (max-width: 34rem) {
+  .ui-grid {
+    --grid-min: 100%;
+  }
+}
+
 /* --- Surfaces --- */
 
 .ui-surface,
@@ -151,6 +220,32 @@
 
 .ui-button:active {
   transform: translateY(1px);
+}
+
+/* Async/pending state — set aria-busy="true" (and disable) on submit.
+   A leading ring spinner is injected with no extra markup; the label
+   stays for context. Inert until aria-busy is set, so default buttons
+   and visual baselines are unaffected. */
+.ui-button[aria-busy='true'] {
+  cursor: progress;
+  pointer-events: none;
+}
+
+.ui-button[aria-busy='true']::before {
+  animation: uiSpin 0.6s linear infinite;
+  block-size: 0.9em;
+  border: 2px solid currentcolor;
+  border-block-start-color: transparent;
+  border-radius: var(--radius-pill);
+  content: '';
+  flex: none;
+  inline-size: 0.9em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-button[aria-busy='true']::before {
+    animation-duration: 1.4s;
+  }
 }
 
 /* --- Link --- */

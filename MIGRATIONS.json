@@ -1,0 +1,50 @@
+{
+  "$comment": "Machine-readable class-rename map for @ponchia/ui upgrades. Generated-by-hand from CHANGELOG BREAKING sections; consumed by docs/migrations/*.md and any codemod/sed recipe. 'safe' rules are mechanically rewritable (whole-class-token, no semantic change); 'manual' rules need human judgement (concept moved, not a 1:1 rename).",
+  "migrations": [
+    {
+      "from": "0.2",
+      "to": "0.3",
+      "summary": "Entire non-ui-* legacy vocabulary removed; everything is now under the .ui-* contract and the check-classes drift gate.",
+      "safe": [
+        { "old": "skip-link", "new": "ui-skiplink" },
+        { "old": "site-nav", "new": "ui-sitenav" },
+        { "old": "site-menu", "new": "ui-sitemenu" },
+        { "old": "theme-toggle", "new": "ui-themetoggle", "prefix": true },
+        { "old": "app-shell", "new": "ui-app-shell", "prefix": true },
+        { "old": "app-rail", "new": "ui-app-rail", "prefix": true },
+        { "old": "app-topbar", "new": "ui-app-topbar", "prefix": true },
+        { "old": "app-toolbar", "new": "ui-app-toolbar", "prefix": true },
+        { "old": "app-nav", "new": "ui-app-nav", "prefix": true },
+        { "old": "app-panel", "new": "ui-app-panel", "prefix": true },
+        { "old": "app-content", "new": "ui-app-content", "prefix": true },
+        { "old": "app-main", "new": "ui-app-main", "prefix": true },
+        { "old": "app-metrics", "new": "ui-app-metrics", "prefix": true },
+        { "old": "app-metric", "new": "ui-app-metric", "prefix": true },
+        { "old": "app-empty-state", "new": "ui-app-empty-state", "prefix": true }
+      ],
+      "manual": [
+        {
+          "old": "hero / project-* / post-card / essay-* / page-* / home-* / signal-panel / worklog-summary",
+          "new": "the ui-* content layer",
+          "note": "Long-form content: .ui-prose / .ui-quote. Cards: .ui-card. Layout: .ui-grid / .ui-stack. Site chrome: the ui-site* shell. No 1:1 mapping — re-compose with the content primitives."
+        },
+        {
+          "old": "callout",
+          "new": "ui-alert",
+          "note": "Tone modifiers differ (.ui-alert--info/-success/-warning/-danger); re-pick the tone."
+        },
+        {
+          "old": "metric-tile",
+          "new": "ui-app-metric",
+          "note": "Now scoped to the admin shell vocabulary; standalone stat usage should wrap in .ui-app-metrics."
+        },
+        {
+          "old": "tag-list / tag",
+          "new": "ui-tags / ui-tag",
+          "note": "Compact variant .tag-list--compact → .ui-tags--compact; verify accent-on-accent contrast (see CHANGELOG 0.3.0 a11y fix)."
+        }
+      ],
+      "codemod": "See docs/migrations/0.2-to-0.3.md for a ready-to-run ripgrep+sed recipe covering the 'safe' rules."
+    }
+  ]
+}

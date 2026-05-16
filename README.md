@@ -1,8 +1,29 @@
 # @ponchia/ui
 
+[![npm](https://img.shields.io/npm/v/@ponchia/ui?logo=npm)](https://www.npmjs.com/package/@ponchia/ui)
+[![npm provenance](https://img.shields.io/badge/npm-provenance-blue?logo=npm)](https://www.npmjs.com/package/@ponchia/ui#provenance)
+[![runtime deps](https://img.shields.io/badge/runtime%20deps-0-brightgreen)](package.json)
+[![bundle](https://img.shields.io/badge/dist-~54kB%20%2F%20~10kB%20gzip-informational)](scripts/check-dist.mjs)
+[![CI](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
 Shared UI framework for Bronto personal projects. Nothing-inspired:
 monochrome surfaces, a single red accent, dot-matrix display type (Doto),
 flat hairline borders, restrained motion. CSS-first and framework-agnostic.
+
+**New here?** → [Getting started](#getting-started) ·
+[Reference](docs/reference.md) · [Theming](docs/theming.md) ·
+[Roadmap](ROADMAP.md) · [Contributing](CONTRIBUTING.md)
+
+> **Editor IntelliSense.** The package ships a VS Code CSS Custom Data
+> file so every design token autocompletes inside `var(--…)`. Add to
+> your `.vscode/settings.json`:
+>
+> ```json
+> {
+>   "css.customData": ["node_modules/@ponchia/ui/classes/vscode.css-custom-data.json"]
+> }
+> ```
 
 **[Live demo →](https://ponchia.github.io/bronto-ui/)** — the kitchen
 sink (every component, light/dark, RTL, theming) deployed from `demo/`.
@@ -129,52 +150,36 @@ modules, so it is also a live integration test.
 | `site.css`       | content-site shell: `ui-container`, `ui-siteheader`/`ui-sitenav` (aria-current), `ui-sitemenu`, `ui-sitefooter`, `ui-skiplink`, `ui-tags`, `ui-meta` |
 | `content.css`    | `.ui-prose` Markdown/raw-HTML long-form (zero classes) + `ui-quote` pull-quote |
 
+## Getting started
+
+| Consumer                | Guide                                                              |
+| ----------------------- | ------------------------------------------------------------------ |
+| Astro                   | [`docs/getting-started/astro.md`](docs/getting-started/astro.md)   |
+| SvelteKit               | [`docs/getting-started/sveltekit.md`](docs/getting-started/sveltekit.md) |
+| Vanilla / Vite / plain  | [`docs/getting-started/vanilla.md`](docs/getting-started/vanilla.md) |
+| React / Solid (snippet) | [`docs/getting-started/react-solid.md`](docs/getting-started/react-solid.md) |
+| Tailwind / cascade-layer interop | [`docs/interop/tailwind.md`](docs/interop/tailwind.md)    |
+
+Each covers the CSS import location, the **no-flash** `applyStoredTheme`
+head-script pattern, behavior init/cleanup in that framework's lifecycle,
+and SSR caveats. Index: [`docs/integration.md`](docs/integration.md).
+
 ## Demo
 
-`demo/index.html` is a kitchen sink covering every primitive in both themes.
-Serve the package root and open `/demo/`:
+`demo/index.html` is a kitchen sink covering every primitive in both
+themes — it drives itself with the real behavior modules, so it is also a
+live integration test. Serve the package root and open `/demo/`:
 
 ```bash
 python3 -m http.server -d . 8080   # then open http://localhost:8080/demo/
 ```
 
-## Develop
+## Develop & release
 
-```bash
-npm install        # stylelint + jsdom (test only)
-npm run check      # lint + 5 integrity checks (exports, tokens, classes, dist, pack)
-npm test           # node:test — pure modules + jsdom behavior tests
-npm run lint:fix   # auto-fix the safe stylistic rules + logical properties
-npm run tokens:build  # regenerate tokens/index.json from tokens/index.js
-npm run dist:build    # rebuild the flattened dist/ bundles
-```
-
-`npm run check` enforces that the data mirrors cannot drift from the CSS:
-exports/import-graph integrity, `tokens.css` ⇄ `tokens/index.{js,json}`, the
-`classes` registry ⇄ the `.ui-*` selectors, `dist/` ⇄ `css/` (fresh + in
-budget), and that the published tarball ships only the intended files.
-
-End-to-end regression is a separate suite (real browsers, so not in the
-zero-dep core check):
-
-```bash
-npx playwright test   # visual snapshots + axe a11y + cross-engine + modes
-```
-
-It covers: visual snapshots light/dark/RTL/modal (chromium); axe-core
-WCAG 2.1 A/AA **plus best-practice** in both themes; behavioural specs
-(`:has()`, `color-mix()`, native `<dialog>`, `:dir()`/logical) on
-**chromium + firefox + webkit**; forced-colors / reduced-motion / print
-mode assertions; and a no-console-error / no-404 / document-structure
-gate. Pinned to a Playwright container so baselines are byte-stable; the
-committed baselines under `test/e2e/__screenshots__` were authored in
-that same image. To (re)generate them after an intentional visual
-change, run the **“Update visual baselines”** workflow
-(`workflow_dispatch`) from your branch — it rebuilds them in the pinned
-container and commits them back (never author them on a dev machine —
-cross-OS rasterisation differs). CI (`.github/workflows/ci.yml`) runs the `check` job and
-a containerised `e2e` job on every branch push and PR (and `release.yml`
-gates publish on it). It never publishes — a push to `main` ships nothing.
+Contributor setup, the 14 `check` gates, the e2e suite, the visual-
+baseline workflow, the deprecation policy and the tag-driven release
+flow all live in **[CONTRIBUTING.md](CONTRIBUTING.md)**. Direction and
+scope: **[ROADMAP.md](ROADMAP.md)**.
 
 ## Versioning
 
@@ -200,29 +205,6 @@ not** (may change in any release): token _values_ (visual tuning), the
 internal leaf-file boundaries and `@layer` internals, and anything
 explicitly marked legacy/deprecated. Full token contract:
 [`docs/theming.md`](docs/theming.md).
-
-## Release
-
-Releases publish to npm and are tag-driven:
-
-```bash
-# 1. bump "version" in package.json, land on main, let CI go green
-git tag vX.Y.Z && git push origin vX.Y.Z
-```
-
-The tag triggers `.github/workflows/release.yml`: `validate` (read-only
-checks + tag↔version match) **and** `e2e` (Playwright visual + a11y) must
-both pass → `publish-npm` → `release-notes`. **The npm publish is the
-gate** — a failing check or e2e means the version never reaches npm, so
-consumers never resolve it. GitHub also serves the raw tag tarball
-ungated, but that is a legacy/fallback path, not the documented install.
-See [`docs/architecture.md`](docs/architecture.md).
-
-Published: `@ponchia/ui` is live on npm, released by CI with provenance.
-The `@ponchia` scope and the `NPM_TOKEN` repo secret are in place, so a
-pushed `vX.Y.Z` tag is all a release needs. (The current published
-version is whatever npm's `latest` dist-tag resolves to — this README
-deliberately does not restate it, so it can't drift from the registry.)
 
 ## Consumers
 

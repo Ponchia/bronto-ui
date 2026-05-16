@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — vanilla + Vite</title>
+    <!-- No-flash theme: inline, before any module JS. -->
+    <script>
+      try {
+        var t = localStorage.getItem('bronto-theme');
+        if (t) document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <main class="ui-center" style="padding: 3rem 0">
+      <p class="ui-eyebrow">@ponchia/ui</p>
+      <h1>Vanilla + Vite</h1>
+      <div class="ui-cluster">
+        <button class="ui-button" data-bronto-theme-toggle>Toggle theme</button>
+        <button class="ui-button ui-button--subtle" id="toastBtn">Toast</button>
+      </div>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

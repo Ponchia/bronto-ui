@@ -130,7 +130,7 @@
   padding: 0.75rem var(--space-lg);
   position: sticky;
   inset-block-start: 0;
-  z-index: 10;
+  z-index: var(--z-raised);
 }
 
 .ui-app-topbar__title {
@@ -210,6 +210,15 @@
   grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
 }
 
+/* Inside an opt-in .ui-cq container, collapse to one column when the
+   container (not the viewport) is narrow — keeps metric tiles usable
+   in a slim panel. Inert without .ui-cq, so baselines are unaffected. */
+@container bronto (max-width: 30rem) {
+  .ui-app-metrics {
+    grid-template-columns: 1fr;
+  }
+}
+
 .ui-app-metric {
   background: var(--panel);
   border: 1px solid var(--line);
@@ -276,7 +285,7 @@
     overflow-x: auto;
     position: sticky;
     inset-block-start: 0;
-    z-index: 11;
+    z-index: calc(var(--z-raised) + 1);
   }
 
   .ui-app-rail__foot {
