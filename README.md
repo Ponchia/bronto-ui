@@ -176,7 +176,7 @@ python3 -m http.server -d . 8080   # then open http://localhost:8080/demo/
 
 ## Develop & release
 
-Contributor setup, the 12 `check` gates, the e2e suite, the visual-
+Contributor setup, the 14 `check` gates, the e2e suite, the visual-
 baseline workflow, the deprecation policy and the tag-driven release
 flow all live in **[CONTRIBUTING.md](CONTRIBUTING.md)**. Direction and
 scope: **[ROADMAP.md](ROADMAP.md)**.

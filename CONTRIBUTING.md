@@ -10,8 +10,9 @@ machine-checked.
 
 ```bash
 npm ci
-npm run check   # 12 gates: lint, format, exports, tokens, classes,
-                #            dts, types, dtcg, shiki, dist, pack, release
+npm run check   # 14 gates: lint, format, exports, tokens, classes,
+                #            dts, types, dtcg, shiki, dist, pack,
+                #            release, reference, vscode
 npm test        # node:test unit + type-d + contract tests
 ```
 
