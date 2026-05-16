@@ -53,13 +53,18 @@ export interface CardOpts {
   interactive?: boolean;
 }
 export interface BadgeOpts {
-  tone?: 'accent' | 'success' | 'warning' | 'danger';
+  tone?: 'accent' | 'success' | 'warning' | 'danger' | 'muted';
+  dot?: boolean;
+}
+export interface NumOpts {
+  tone?: 'pos' | 'neg' | 'muted';
 }
 export interface ChipOpts {
   accent?: boolean;
 }
 export interface LinkOpts {
   arrow?: boolean;
+  cta?: boolean;
 }
 export interface DotOpts {
   tone?: 'accent' | 'success' | 'warning' | 'danger';
@@ -75,6 +80,7 @@ export interface TableOpts {
 }
 export interface EyebrowOpts {
   muted?: boolean;
+  sm?: boolean;
 }
 export interface HintOpts {
   error?: boolean;
@@ -115,6 +121,7 @@ export interface ProseOpts {
 }
 export interface ContainerOpts {
   narrow?: boolean;
+  wide?: boolean;
 }
 export interface TagOpts {
   accent?: boolean;
@@ -124,6 +131,7 @@ export interface Ui {
   button(opts?: ButtonOpts): string;
   card(opts?: CardOpts): string;
   badge(opts?: BadgeOpts): string;
+  num(opts?: NumOpts): string;
   chip(opts?: ChipOpts): string;
   link(opts?: LinkOpts): string;
   dot(opts?: DotOpts): string;

@@ -128,6 +128,13 @@
   border-color: var(--accent);
 }
 
+/* Interactive cards usually wrap a single link; keyboard users get no
+   hover, so surface the focused state on the card itself (not pointer-
+   gated — lives outside the @media (hover) block below). */
+.ui-card--interactive:focus-within {
+  border-color: var(--line-strong);
+}
+
 .ui-card__head,
 .ui-panel__head {
   align-items: flex-start;
@@ -140,6 +147,95 @@
   border: 0;
   border-block-start: 1px solid var(--line);
   margin: 0;
+}
+
+/* --- Stat / metric tile — shell-agnostic ---
+   The canonical metric primitive. `.ui-app-metric*` / `.ui-app-metrics`
+   are permanent aliases grouped here so the admin shell keeps working
+   with byte-identical output (no baseline drift). */
+
+.ui-statgrid,
+.ui-app-metrics {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+
+/* Inside an opt-in .ui-cq container, collapse to one column when the
+   container (not the viewport) is narrow — keeps tiles usable in a slim
+   panel. Inert without .ui-cq, so baselines are unaffected. */
+@container bronto (max-width: 30rem) {
+  .ui-statgrid,
+  .ui-app-metrics {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ui-stat,
+.ui-app-metric {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: 0.4rem;
+  padding: var(--space-md);
+}
+
+.ui-stat__label,
+.ui-app-metric__label {
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.ui-stat__value,
+.ui-app-metric__value {
+  color: var(--text);
+  font-family: var(--display);
+  font-size: 1.9rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+.ui-stat__delta,
+.ui-app-metric__delta {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+}
+
+.ui-stat__delta.is-pos,
+.ui-app-metric__delta.is-pos {
+  color: var(--success);
+}
+
+.ui-stat__delta.is-neg,
+.ui-app-metric__delta.is-neg {
+  color: var(--danger);
+}
+
+/* --- Numeric value vocabulary ---
+   The same tabular/aligned/tone intent the table has shipped since
+   0.1.0, but freed from `.ui-table` so cards, stats and inline figures
+   share one P&L vocabulary. Token-identical to the table's is-num/
+   is-pos/is-neg (which stay table-local). */
+.ui-num {
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.ui-num--pos {
+  color: var(--success);
+}
+
+.ui-num--neg {
+  color: var(--danger);
+}
+
+.ui-num--muted {
+  color: var(--text-dim);
 }
 
 /* --- Eyebrow / section label — dot-matrix face --- */
@@ -158,6 +254,12 @@
 
 .ui-eyebrow--muted {
   color: var(--text-dim);
+}
+
+/* Dense contexts (cards, table toolbars) — restores the size step that
+   0.2.2 had as eyebrow--tight. Composes with --muted. */
+.ui-eyebrow--sm {
+  font-size: var(--text-2xs);
 }
 
 /* --- Buttons --- */
@@ -261,14 +363,26 @@
     text-decoration-color var(--duration-fast) var(--ease-standard);
 }
 
-.ui-link--arrow {
+.ui-link--arrow,
+.ui-link--cta {
   align-items: center;
   display: inline-flex;
   gap: 0.4rem;
   text-decoration: none;
 }
 
-.ui-link--arrow::after {
+/* CTA: the eyebrow-faced action link (accent · display · uppercase),
+   composed from the same tokens as .ui-eyebrow + the arrow glyph. */
+.ui-link--cta {
+  color: var(--accent-text);
+  font-family: var(--display);
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.ui-link--arrow::after,
+.ui-link--cta::after {
   border-inline-end: 1px solid currentColor;
   border-block-start: 1px solid currentColor;
   content: '';
@@ -345,6 +459,42 @@
   border-color: color-mix(in srgb, var(--danger) 40%, var(--line));
 }
 
+/* Idle / unknown — the honest "no signal yet" tone (distinct from the
+   default tinted badge). Token-safe; no new hue. */
+.ui-badge--muted {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--text-dim);
+}
+
+/* Leading state dot — composes with any tone modifier; the dot takes
+   the tone via currentColor-adjacent text, but stays neutral-strong so
+   it reads on the soft tint (same WCAG rationale as the tone note). */
+.ui-badge--dot::before {
+  background: var(--text-soft);
+  border-radius: 50%;
+  content: '';
+  flex: 0 0 auto;
+  block-size: 0.4rem;
+  inline-size: 0.4rem;
+}
+
+.ui-badge--accent.ui-badge--dot::before {
+  background: var(--accent);
+}
+
+.ui-badge--success.ui-badge--dot::before {
+  background: var(--success);
+}
+
+.ui-badge--warning.ui-badge--dot::before {
+  background: var(--warning);
+}
+
+.ui-badge--danger.ui-badge--dot::before {
+  background: var(--danger);
+}
+
 /* --- Key/value list --- */
 
 .ui-key-value {
@@ -384,6 +534,7 @@
   }
 
   .ui-card--interactive:hover {
+    box-shadow: var(--shadow-raised);
     transform: translateY(-2px);
   }
 
@@ -408,11 +559,13 @@
     text-decoration-color: var(--accent);
   }
 
-  .ui-link--arrow:hover::after {
+  .ui-link--arrow:hover::after,
+  .ui-link--cta:hover::after {
     transform: translateX(0.14rem) rotate(45deg);
   }
 
-  [dir='rtl'] .ui-link--arrow:hover::after {
+  [dir='rtl'] .ui-link--arrow:hover::after,
+  [dir='rtl'] .ui-link--cta:hover::after {
     transform: translateX(-0.14rem) rotate(45deg);
   }
 

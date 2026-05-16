@@ -14,15 +14,27 @@ export declare const cls: {
   readonly cardHead: 'ui-card__head';
   readonly cardAccent: 'ui-card--accent';
   readonly cardInteractive: 'ui-card--interactive';
+  readonly stat: 'ui-stat';
+  readonly statgrid: 'ui-statgrid';
+  readonly statLabel: 'ui-stat__label';
+  readonly statValue: 'ui-stat__value';
+  readonly statDelta: 'ui-stat__delta';
+  readonly num: 'ui-num';
+  readonly numPos: 'ui-num--pos';
+  readonly numNeg: 'ui-num--neg';
+  readonly numMuted: 'ui-num--muted';
   readonly badge: 'ui-badge';
   readonly badgeAccent: 'ui-badge--accent';
   readonly badgeSuccess: 'ui-badge--success';
   readonly badgeWarning: 'ui-badge--warning';
   readonly badgeDanger: 'ui-badge--danger';
+  readonly badgeMuted: 'ui-badge--muted';
+  readonly badgeDot: 'ui-badge--dot';
   readonly chip: 'ui-chip';
   readonly chipAccent: 'ui-chip--accent';
   readonly link: 'ui-link';
   readonly linkArrow: 'ui-link--arrow';
+  readonly linkCta: 'ui-link--cta';
   readonly keyValue: 'ui-key-value';
   readonly dot: 'ui-dot';
   readonly dotAccent: 'ui-dot--accent';
@@ -33,6 +45,10 @@ export declare const cls: {
   readonly dotgrid: 'ui-dotgrid';
   readonly dotgridAccent: 'ui-dotgrid--accent';
   readonly dotgridDense: 'ui-dotgrid--dense';
+  readonly dotmatrix: 'ui-dotmatrix';
+  readonly dotmatrixCell: 'ui-dotmatrix__cell';
+  readonly dotmatrixCellHot: 'ui-dotmatrix__cell--hot';
+  readonly dotmatrixCellAccent: 'ui-dotmatrix__cell--accent';
   readonly dotfield: 'ui-dotfield';
   readonly dotrule: 'ui-dotrule';
   readonly dotbar: 'ui-dotbar';
@@ -145,14 +161,17 @@ export declare const cls: {
   readonly status: 'ui-status';
   readonly eyebrow: 'ui-eyebrow';
   readonly eyebrowMuted: 'ui-eyebrow--muted';
+  readonly eyebrowSm: 'ui-eyebrow--sm';
   readonly prose: 'ui-prose';
   readonly proseCompact: 'ui-prose--compact';
   readonly quote: 'ui-quote';
   readonly quoteCite: 'ui-quote__cite';
   readonly container: 'ui-container';
   readonly containerNarrow: 'ui-container--narrow';
+  readonly containerWide: 'ui-container--wide';
   readonly skiplink: 'ui-skiplink';
   readonly siteheader: 'ui-siteheader';
+  readonly siteheaderSticky: 'ui-siteheader--sticky';
   readonly siteheaderBrand: 'ui-siteheader__brand';
   readonly siteheaderActions: 'ui-siteheader__actions';
   readonly sitenav: 'ui-sitenav';
@@ -222,13 +241,18 @@ export interface CardOpts {
   interactive?: boolean;
 }
 export interface BadgeOpts {
-  tone?: 'accent' | 'success' | 'warning' | 'danger';
+  tone?: 'accent' | 'success' | 'warning' | 'danger' | 'muted';
+  dot?: boolean;
+}
+export interface NumOpts {
+  tone?: 'pos' | 'neg' | 'muted';
 }
 export interface ChipOpts {
   accent?: boolean;
 }
 export interface LinkOpts {
   arrow?: boolean;
+  cta?: boolean;
 }
 export interface DotOpts {
   tone?: 'accent' | 'success' | 'warning' | 'danger';
@@ -244,6 +268,7 @@ export interface TableOpts {
 }
 export interface EyebrowOpts {
   muted?: boolean;
+  sm?: boolean;
 }
 export interface HintOpts {
   error?: boolean;
@@ -284,6 +309,7 @@ export interface ProseOpts {
 }
 export interface ContainerOpts {
   narrow?: boolean;
+  wide?: boolean;
 }
 export interface TagOpts {
   accent?: boolean;
@@ -293,6 +319,7 @@ export interface Ui {
   button(opts?: ButtonOpts): string;
   card(opts?: CardOpts): string;
   badge(opts?: BadgeOpts): string;
+  num(opts?: NumOpts): string;
   chip(opts?: ChipOpts): string;
   link(opts?: LinkOpts): string;
   dot(opts?: DotOpts): string;
