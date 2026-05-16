@@ -60,9 +60,20 @@ function bundle(entry) {
 
 /** One self-layered file per leaf, so a *direct* leaf import is layered
  *  by default (safe to mix with the bundle). The raw, unlayered source
- *  stays the explicit escape hatch, exported under `./css/unlayered/*`. */
+ *  stays the explicit escape hatch, exported under `./css/unlayered/*`.
+ *
+ *  Depth fix: source leaves live at `css/` and reference assets as
+ *  `../fonts/*` (→ package root). These generated copies live one level
+ *  deeper at `dist/css/`, so the relative asset path must gain one `../`
+ *  or it 404s (`dist/css/../fonts` = `dist/fonts`, which is not shipped).
+ *  The flattened bundle is exempt — it sits at `dist/`, where the
+ *  original `../fonts/*` already resolves to the package root. */
 function layeredLeaf(f) {
-  return `@layer bronto{${minify(readFileSync(resolve(cssDir, f), 'utf8'))}}\n`;
+  const css = minify(readFileSync(resolve(cssDir, f), 'utf8')).replace(
+    /url\((['"]?)\.\.\/fonts\//g,
+    'url($1../../fonts/',
+  );
+  return `@layer bronto{${css}}\n`;
 }
 
 /** The leaves a direct import can target (core.css's import order). */

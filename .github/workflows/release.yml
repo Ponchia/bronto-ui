@@ -91,7 +91,14 @@ jobs:
 
       - run: npm ci
 
-      - run: npm publish
+      # Publish with --ignore-scripts so NODE_AUTH_TOKEN is never exposed
+      # to the prepack/prepublishOnly lifecycle (the whole check+test+build
+      # surface + devDeps). Safe because the committed artifacts were
+      # already byte-verified by `validate` (check-dist/tokens/dts/pack) on
+      # this exact commit, and e2e gated separately — so we ship exactly
+      # what was validated, not a re-build. prepublishOnly stays the
+      # intrinsic guard for any non-CI/manual publish.
+      - run: npm publish --ignore-scripts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

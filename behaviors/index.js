@@ -339,14 +339,22 @@ export function toast(message, { tone, title, duration = 4000 } = {}) {
   // Append after a frame the *first* time so the empty live region is
   // observed by AT before its first child arrives; subsequent toasts go
   // in synchronously (the region already exists and is being watched).
+  let dismissed = false;
   if (freshStack && typeof requestAnimationFrame === 'function') {
-    requestAnimationFrame(() => stack.appendChild(el));
+    // Guard the deferred insert: if dismissed within this frame (e.g.
+    // duration:0 + immediate dismiss), the rAF must NOT resurrect the
+    // toast into the persistent aria-live region.
+    requestAnimationFrame(() => {
+      if (!dismissed) stack.appendChild(el);
+    });
   } else {
     stack.appendChild(el);
   }
 
   let timer;
   const dismiss = () => {
+    if (dismissed) return;
+    dismissed = true;
     if (timer) clearTimeout(timer);
     el.remove();
     // The stack is a persistent live region — never removed on drain, so

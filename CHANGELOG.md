@@ -155,12 +155,40 @@ asset; commits are already conventional); Renovate (Dependabot chosen);
 Lighthouse CI (the axe a11y gate + size budget already cover the
 regression vectors).
 
+### Post-review fixes (independent Opus + AgentMix pass on this branch)
+
+- **Fixed (HIGH, regression introduced here):** the persistent-toast
+  rAF deferral could resurrect an already-dismissed first toast into the
+  `aria-live` region (dismiss within the first frame). Now guarded by a
+  `dismissed` flag; `dismiss()` is idempotent. +2 unit tests polyfilling
+  rAF (the jsdom env had no `requestAnimationFrame`, so the path was
+  previously untested).
+- **Fixed (HIGH, regression introduced here):** the layered per-leaf
+  `@ponchia/ui/css/fonts.css` (now `dist/css/fonts.css`) referenced
+  `url(../fonts/*)`, which from `dist/css/` resolves to the unshipped
+  `dist/fonts/`. `build-dist` now rewrites `../fonts/` → `../../fonts/`
+  for the deeper per-leaf files (the flattened bundle at `dist/` is
+  unaffected and unchanged). `check-dist` now also resolves every
+  `url(...)` in each generated file against its own location, so this
+  class of depth bug can't recur.
+- **Fixed (docs):** README SemVer guidance was wrong — at `0.x` npm
+  resolves `^0.3.0` and `~0.3.0` identically (`>=0.3.0 <0.4.0`); both
+  hold back the breaking `0.4.0`. Corrected. Removed the stale
+  "legacy `site-*`/`.tag-list` kept as back-compat" line (they were
+  deleted this release). De-duplicated the `check-dist` paragraph in
+  architecture.md.
+- **Hardened:** the release `publish-npm` step uses
+  `npm publish --ignore-scripts`, so `NODE_AUTH_TOKEN` is never exposed
+  to the prepack/prepublishOnly lifecycle; it ships the artifacts already
+  byte-verified by `validate` on the same commit.
+
 ### Content-site layer
 
 Promotes the proven, hand-rolled site shell into the first-class typed
-contract so consumers stop reimplementing it. Legacy `site-*` /
-`.tag-list` classes are kept as undocumented back-compat (removal slated
-for the legacy-migration work above).
+contract so consumers stop reimplementing it. (The legacy `site-*` /
+`.tag-list` back-compat classes referenced here were **removed** in the
+same release — see the "legacy vocabulary removed / migrated" BREAKING
+section above; they are not shipped.)
 
 - **`site.css`**: `ui-container` (+`--narrow`), `ui-siteheader`
   (`__brand`/`__actions`), `ui-sitenav` (active via `aria-current`, dot

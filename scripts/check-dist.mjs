@@ -29,6 +29,18 @@ for (const [rel, expected] of Object.entries(buildBundles())) {
   const s = sizes(expected);
   if (s.raw > BUDGET.raw) errors.push(`${rel} raw ${s.raw}B over budget ${BUDGET.raw}B`);
   if (s.gzip > BUDGET.gzip) errors.push(`${rel} gzip ${s.gzip}B over budget ${BUDGET.gzip}B`);
+
+  // Every relative url(...) asset must resolve to a shipped file from
+  // *this generated file's own location* — catches depth bugs like a
+  // leaf at dist/css/ still pointing at ../fonts (would be dist/fonts).
+  const here = dirname(abs);
+  for (const m of expected.matchAll(/url\(\s*['"]?([^'")]+)['"]?\s*\)/g)) {
+    const ref = m[1].trim();
+    if (/^(data:|https?:|#|\/)/.test(ref)) continue;
+    if (!existsSync(resolve(here, ref))) {
+      errors.push(`${rel}: url(${ref}) does not resolve (→ ${resolve(here, ref)})`);
+    }
+  }
 }
 
 if (errors.length) {

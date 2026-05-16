@@ -375,3 +375,41 @@ test('initTabs mints globally-unique ids across separate init calls', () => {
   const ids = [...d.querySelectorAll('.ui-tab')].map((t) => t.id);
   assert.equal(new Set(ids).size, ids.length, `tab ids unique: ${ids.join(',')}`);
 });
+
+test('toast: first-toast rAF insert lands when not dismissed', () => {
+  const d = mount('');
+  const frames = [];
+  globalThis.requestAnimationFrame = (cb) => frames.push(cb);
+  try {
+    toast('hello', { duration: 0 }); // fresh stack → deferred to next frame
+    const stack = d.querySelector('.ui-toast-stack');
+    assert.ok(stack, 'live region created synchronously');
+    assert.equal(stack.childElementCount, 0, 'toast deferred, not in region yet');
+    frames.forEach((cb) => cb());
+    assert.equal(stack.childElementCount, 1, 'inserted on the frame');
+    assert.match(stack.textContent, /hello/);
+  } finally {
+    delete globalThis.requestAnimationFrame;
+  }
+});
+
+test('toast: early dismiss cancels the deferred rAF insert (no zombie)', () => {
+  const d = mount('');
+  const frames = [];
+  globalThis.requestAnimationFrame = (cb) => frames.push(cb);
+  try {
+    const dismiss = toast('zombie?', { duration: 0 });
+    const stack = d.querySelector('.ui-toast-stack');
+    assert.equal(stack.childElementCount, 0, 'deferred to next frame');
+    dismiss(); // dismissed before the frame fires
+    frames.forEach((cb) => cb()); // flush rAF
+    assert.equal(
+      stack.childElementCount,
+      0,
+      'dismissed toast must NOT be resurrected into the aria-live region',
+    );
+    assert.ok(d.querySelector('.ui-toast-stack'), 'persistent live region still present');
+  } finally {
+    delete globalThis.requestAnimationFrame;
+  }
+});

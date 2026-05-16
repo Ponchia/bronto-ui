@@ -177,10 +177,12 @@ the _minor_** (`0.x.0`); patches (`0.x.y`) are non-breaking. This is the
 standard 0.x reading of SemVer, stated explicitly because this framework
 dresses several apps:
 
-- **Pin `~0.3.x`** (tilde) if you want only non-breaking updates, or pin
-  an exact version and bump deliberately. `^0.3.0` (caret) will _not_
-  protect you — npm treats `^0.x` as minor-locked, but our minors may
-  break.
+- Because breaking changes bump the **minor**, the protective range is
+  the patch range. At `0.x` npm resolves **both** `^0.3.0` and `~0.3.0`
+  to `>=0.3.0 <0.4.0` — they are equivalent here, and either gives you
+  only non-breaking `0.3.x` patches while holding back the next
+  (breaking) `0.4.0`. Pin either; pin an **exact** version if you want
+  zero surprise and to adopt each minor deliberately.
 - Every breaking change is called out in [`CHANGELOG.md`](CHANGELOG.md)
   under a **BREAKING** heading with a migration note.
 

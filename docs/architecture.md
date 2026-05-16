@@ -82,10 +82,6 @@ if the generated literal `cls`/token types stopped rejecting typos —
 so the *value* of the generated `.d.ts` is itself gated, not just their
 freshness (`check-dts`).
 
-`check-dist` is the most supply-chain-critical row: `dist/bronto.css` is
-the default `exports["."]` consumers actually load, so its byte-equality
-to a fresh build of `css/` is what makes the committed bundle trustworthy.
-
 ## Release gating
 
 `release.yml` (on a pushed `v*` tag) is a four-job DAG:
