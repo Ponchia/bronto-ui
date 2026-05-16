@@ -1,12 +1,84 @@
 # Changelog
 
-## Unreleased
+## 0.3.0 — unreleased
 
-Content-site layer — promotes the proven, hand-rolled site shell into
-the first-class typed contract so consumers stop reimplementing it.
-Feature-sized; warrants a **0.3.0** when released. Legacy `site-*` /
+> **Versioning:** pre-1.0, breaking changes ship in the _minor_. Pin
+> `~0.3.x`; `^0.3.0` does **not** protect you. See README → Versioning.
+
+### Multi-POV review hardening
+
+A six-perspective review (DX/contract, CSS architecture, a11y,
+release/supply-chain, plus AgentMix) drove this pass.
+
+**BREAKING (token / contract level)**
+
+- **New `--accent-text` token** (= `var(--accent-strong)`). Everywhere
+  the accent was used as _foreground text_ (links on hover, active
+  nav/tab/accordion, prose markers, eyebrows, chips, breadcrumb,
+  pagination) now resolves through `--accent-text`, not raw `--accent`,
+  so a pale re-brand no longer silently fails text contrast.
+  _Migration:_ none for default themes (visually identical). If you
+  re-brand `--accent` to a light hue, also set `--accent-text` to a
+  dark-enough value (see docs/theming.md).
+- **`--focus-ring` is now solid `var(--accent)`** (was an unused
+  50%/55% transparent mix) and every focus outline is wired to it.
+  Default focus appearance is unchanged; the `[data-contrast=high]` /
+  `prefers-contrast` promotion and per-theme `--focus-ring` overrides
+  now actually take effect. _Migration:_ none unless you relied on the
+  (previously dead) token value.
+- **`classes/index.d.ts` / `tokens/index.d.ts` are now generated
+  literal types.** `cls` exposes literal keys+values; token views use
+  `ColorKey`/`ScaleKey`/`*TokenName` unions; `themeColor` takes
+  `ThemeName`. Mistyped keys are now compile errors. _Migration:_ fix
+  any code that relied on the old `Record<string,string>` (e.g. reading
+  a non-existent key and getting `string` instead of an error). JS
+  token keys are kebab-case — `themeColor('dark')['accent-soft']`.
+
+**Fixed**
+
+- **a11y (WCAG AA):** `.ui-chip--accent`, legacy `.eyebrow` group and
+  `.tag-list--compact` first child no longer use raw `--accent` as
+  small text (was ~3.9:1 in light).
+- **a11y:** native `<dialog>` returns focus to its trigger on _every_
+  close path (Esc, close button, backdrop light-dismiss, programmatic).
+- **a11y:** the toast `aria-live` stack is a persistent region — no
+  longer created-then-destroyed per drain, fixing dropped first /
+  post-drain screen-reader announcements.
+- **a11y:** `.ui-tab:focus-visible` is now visually distinct from the
+  active-tab underline (inset ring).
+- **DX:** the `.` export is conditional (`style`/`default`) instead of a
+  bare `.css` string, so type-aware tooling no longer mis-resolves the
+  package root. The root is CSS-only (documented).
+
+**Changed (non-breaking)**
+
+- Behavior initializers (`initThemeToggle`, `dismissible`, `initDialog`,
+  `initDisclosure`, `initTabs`) are now idempotent — re-init (HMR,
+  framework remount, repeat calls) replaces rather than stacking
+  duplicate listeners. Tab ids use a module-global counter so separate
+  islands never collide on `bronto-tab-1`.
+- New drift gate `check:dts` (generated `.d.ts` ⇄ JS runtime), wired
+  into `npm run check` and `prepack`. `docs/architecture.md` drift table
+  and release-gating section corrected to the real four-job DAG
+  (`validate` + `e2e` → `publish-npm` → `release-notes`).
+- README: explicit "do not mix a bundle with a raw leaf import" hazard
+  warning; a Versioning section; size/`@import`-depth prose de-drifted.
+
+**In progress (this minor, not yet landed)**
+
+- Legacy non-`ui-*` vocabulary (`.hero`, `.project-*`, `.site-*` (old),
+  `.metric-tile`, bare `.button`, `.theme-toggle*`, `responsive.css`
+  legacy targets) is being migrated into the `.ui-*` contract and the
+  rest deleted; per-leaf imports will become layer-safe by default with
+  the raw escape hatch moved to an explicit `unlayered/*` path. These
+  land before the `v0.3.0` tag with full migration notes here.
+
+### Content-site layer
+
+Promotes the proven, hand-rolled site shell into the first-class typed
+contract so consumers stop reimplementing it. Legacy `site-*` /
 `.tag-list` classes are kept as undocumented back-compat (removal slated
-for a future major).
+for the legacy-migration work above).
 
 - **`site.css`**: `ui-container` (+`--narrow`), `ui-siteheader`
   (`__brand`/`__actions`), `ui-sitenav` (active via `aria-current`, dot

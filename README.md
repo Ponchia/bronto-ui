@@ -183,6 +183,29 @@ that same image. CI (`.github/workflows/ci.yml`) runs the `check` job and
 a containerised `e2e` job on every branch push and PR (and `release.yml`
 gates publish on it). It never publishes — a push to `main` ships nothing.
 
+## Versioning
+
+Pre-1.0 and deliberately so. **Until `1.0.0`, breaking changes ship in
+the _minor_** (`0.x.0`); patches (`0.x.y`) are non-breaking. This is the
+standard 0.x reading of SemVer, stated explicitly because this framework
+dresses several apps:
+
+- **Pin `~0.3.x`** (tilde) if you want only non-breaking updates, or pin
+  an exact version and bump deliberately. `^0.3.0` (caret) will _not_
+  protect you — npm treats `^0.x` as minor-locked, but our minors may
+  break.
+- Every breaking change is called out in [`CHANGELOG.md`](CHANGELOG.md)
+  under a **BREAKING** heading with a migration note.
+
+**What is contractual** (changes are breaking): the `--accent`
+derivation and token **names** (incl. `--accent-text`, `--focus-ring`);
+the `.ui-*` class names and `cls`/recipe names; the `data-bronto-*`
+behavior attributes; each behavior's return-cleanup contract. **What is
+not** (may change in any release): token _values_ (visual tuning), the
+internal leaf-file boundaries and `@layer` internals, and anything
+explicitly marked legacy/deprecated. Full token contract:
+[`docs/theming.md`](docs/theming.md).
+
 ## Release
 
 Releases publish to npm and are tag-driven:
@@ -193,11 +216,12 @@ git tag vX.Y.Z && git push origin vX.Y.Z
 ```
 
 The tag triggers `.github/workflows/release.yml`: `validate` (read-only
-checks + tag↔version match) → `publish-npm` (only if validate passes) +
-`release-notes`. **The npm publish is the gate** — a failing check means
-the version never reaches npm, so consumers never resolve it. GitHub also
-serves the raw tag tarball ungated, but that is a legacy/fallback path, not
-the documented install. See [`docs/architecture.md`](docs/architecture.md).
+checks + tag↔version match) **and** `e2e` (Playwright visual + a11y) must
+both pass → `publish-npm` → `release-notes`. **The npm publish is the
+gate** — a failing check or e2e means the version never reaches npm, so
+consumers never resolve it. GitHub also serves the raw tag tarball
+ungated, but that is a legacy/fallback path, not the documented install.
+See [`docs/architecture.md`](docs/architecture.md).
 
 Published: `@ponchia/ui` is live on npm, released by CI with provenance.
 The `@ponchia` scope and the `NPM_TOKEN` repo secret are in place, so a

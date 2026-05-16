@@ -56,26 +56,40 @@ Every data mirror is backed by a check wired into `npm run check`, run by CI
 on every push/PR and again by `release.yml` before publish (see "Release
 gating" below), so a version that fails any invariant never reaches npm.
 
-| Invariant                                   | Enforced by              |
-| ------------------------------------------- | ------------------------ |
-| exports / import graph / `files` consistent | `check-exports.mjs`      |
-| `tokens.css` ⇄ `tokens/index.js` ⇄ `.json`  | `check-tokens.mjs`       |
-| `classes` `cls` ⇄ `.ui-*` selectors         | `check-classes.mjs`      |
-| CSS style/correctness                       | Stylelint                |
+| Invariant                                       | Enforced by         |
+| ----------------------------------------------- | ------------------- |
+| exports / import graph / `files` consistent     | `check-exports.mjs` |
+| `tokens.css` ⇄ `tokens/index.js` ⇄ `.json`      | `check-tokens.mjs`  |
+| `classes` `cls` ⇄ `.ui-*` selectors             | `check-classes.mjs` |
+| `classes`/`tokens` `.d.ts` ⇄ JS runtime (exact) | `check-dts.mjs`     |
+| `tokens.dtcg.json` ⇄ token model                | `check-dtcg.mjs`    |
+| `shiki/nothing.json` valid + on rationed palette | `check-shiki.mjs`  |
+| `dist/*.css` == fresh build of `css/` + budget  | `check-dist.mjs`    |
+| published tarball == intended `files` only      | `check-pack.mjs`    |
+| CSS style/correctness                           | Stylelint           |
+
+`check-dist` is the most supply-chain-critical row: `dist/bronto.css` is
+the default `exports["."]` consumers actually load, so its byte-equality
+to a fresh build of `css/` is what makes the committed bundle trustworthy.
 
 ## Release gating
 
-`release.yml` (on a pushed `v*` tag) splits into three jobs:
+`release.yml` (on a pushed `v*` tag) is a four-job DAG:
 
 - `validate` — read-only: `npm run check` + tag↔version match.
-- `publish-npm` — `needs: validate`: `npm publish` with provenance.
-- `release-notes` — `needs: validate`: a GitHub Release for visibility.
+- `e2e` — Playwright (visual + axe a11y, both themes, cross-engine) in
+  the pinned `mcr.microsoft.com/playwright` container.
+- `publish-npm` — `needs: [validate, e2e]`: `npm publish` with provenance.
+- `release-notes` — `needs: publish-npm`: a GitHub Release for visibility
+  (transitively gated on a successful publish, hence on validate + e2e).
 
 Because the documented install path is the npm package, **the npm publish
-is a real gate**: if `validate` fails, `publish-npm` never runs, the version
-never reaches the registry, and consumers never resolve it. Permissions are
-least-privilege per job (only `release-notes` gets `contents: write`; only
-`publish-npm` gets `id-token: write` for provenance).
+is a real gate**: if `validate` *or* `e2e` fails, `publish-npm` never runs,
+the version never reaches the registry, and consumers never resolve it.
+(Corollary: a flaky `e2e` blocks releases — that is deliberate; fix the
+flake, don't bypass the gate.) Permissions are least-privilege per job
+(only `release-notes` gets `contents: write`; only `publish-npm` gets
+`id-token: write` for provenance).
 
 GitHub still serves the raw tag tarball `archive/refs/tags/vX.Y.Z.tar.gz`
 for any tag, ungated — that path is legacy/fallback, deliberately *not* the
