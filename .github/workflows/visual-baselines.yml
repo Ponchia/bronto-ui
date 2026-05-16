@@ -102,6 +102,21 @@ jobs:
           git add test/e2e/__screenshots__
           git commit -m "test(e2e): regenerate visual baselines in the pinned container"
           git push origin "$BRANCH"
+
+          # Be explicit about the merge expectation so a future
+          # maintainer is never confused: with BASELINE_PAT the PR runs
+          # CI and auto-merges; without it, `main` protection
+          # (enforce_admins=true) means it CANNOT merge — abandon it and
+          # cleanup.yml/self-prune will reap it. The clean-e2e pattern
+          # (keep demo/ untouched) avoids needing this workflow at all.
+          if [ -n "${{ secrets.BASELINE_PAT }}" ]; then
+            note="✅ Opened with BASELINE_PAT — \`check\`/\`e2e\` will run; enable auto-merge to land it."
+          else
+            note="⚠️ Opened with the default GITHUB_TOKEN, so \`check\`/\`e2e\` will NOT run and \`main\` protection makes this **unmergeable**. This is expected — close it (cleanup.yml reaps it automatically). To make baseline regen mergeable, add a \`BASELINE_PAT\` secret, or just use the clean-e2e pattern and never run this workflow."
+          fi
           gh pr create --base main --head "$BRANCH" \
             --title "test(e2e): regenerate visual baselines" \
-            --body "Automated: pixel baselines re-rendered in \`mcr.microsoft.com/playwright:v1.60.0-jammy\` (run ${GITHUB_RUN_ID}). Merge once \`check\` + \`e2e\` are green."
+            --body "Automated: pixel baselines re-rendered in \`mcr.microsoft.com/playwright:v1.60.0-jammy\` (run ${GITHUB_RUN_ID}).
+
+          $note"
+          echo "$note" >> "$GITHUB_STEP_SUMMARY"
