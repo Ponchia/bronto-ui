@@ -4,7 +4,7 @@
 > `~0.x`; `^0.x` does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
-## Unreleased — 0.3.3
+## 0.3.3 — 2026-05-16
 
 A second consumer-evidence pass ("felt it twice") plus
 agent-discoverability. All additive — new classes/recipes, a new
