@@ -109,6 +109,13 @@ semantics — the CSS can't add ARIA for you:
 - **`.ui-tooltip`** — fine for short labels; for edge-critical or rich
   content use `.ui-popover` + `initPopover()` (collision-aware).
 
+> **Verify a rebrand:** open
+> [`demo/theme-playground.html`](../demo/theme-playground.html) — paste
+> your `--accent`, see the derived family and the computed WCAG ratios
+> for `--accent-text` / `--accent` against the surface, and copy the CSS
+> + DTCG override. This is the instrument for the "verify your hue"
+> obligation below.
+
 ## Contrast
 
 - `data-contrast="high"` on any element, **and** the OS

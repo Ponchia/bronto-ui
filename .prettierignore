@@ -14,6 +14,7 @@ shiki
 
 # Hand-tuned integration fixture with whitespace-sensitive <pre>/Shiki blocks.
 demo/index.html
+demo/theme-playground.html
 
 # Data / binaries / lockfile.
 fonts
