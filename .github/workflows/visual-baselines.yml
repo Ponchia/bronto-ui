@@ -42,6 +42,7 @@ jobs:
           retention-days: 14
 
       - name: Commit regenerated baselines to the branch
+        shell: bash # the Playwright image's default `run` shell is dash (no pipefail)
         run: |
           set -euo pipefail
           git config user.name  'github-actions[bot]'
