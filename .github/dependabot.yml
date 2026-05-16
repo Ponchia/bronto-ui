@@ -25,3 +25,16 @@ updates:
       # silently via Dependabot.
       - dependency-name: '@playwright/test'
       - dependency-name: '@axe-core/playwright'
+      # examples/* are disposable, illustrative consumer apps — NOT part
+      # of the published package (zero runtime deps; examples excluded
+      # from the tarball) and rebuilt from scratch in CI. Their build
+      # toolchain is not a security surface for @ponchia/ui consumers,
+      # so don't let Dependabot churn (or break, cf. the vite 5→8 jump
+      # in #15) the demo scaffolding. Bump these by hand if a demo
+      # genuinely needs it.
+      - dependency-name: 'vite'
+      - dependency-name: 'astro'
+      - dependency-name: 'svelte'
+      - dependency-name: '@sveltejs/kit'
+      - dependency-name: '@sveltejs/adapter-static'
+      - dependency-name: '@sveltejs/vite-plugin-svelte'
