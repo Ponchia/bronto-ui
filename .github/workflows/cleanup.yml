@@ -1,0 +1,60 @@
+# Scheduled backstop GC for automation cruft. visual-baselines.yml
+# self-prunes on each run, but a run series that is never repeated would
+# leave its last orphan forever — this sweeps any `chore/visual-baselines-*`
+# branch that has no open PR, and closes baseline PRs left stale > 14 days.
+# Idempotent and safe: it only touches the bot's own branch namespace.
+name: Cleanup
+
+on:
+  schedule:
+    - cron: '0 4 * * 1' # Mondays 04:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write # delete orphan branches
+  pull-requests: write # close stale bot PRs
+
+concurrency:
+  group: cleanup
+  cancel-in-progress: false
+
+jobs:
+  prune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Close stale baseline PRs and delete orphan branches
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          # 1. Close baseline PRs with no activity for > 14 days.
+          cutoff=$(date -u -d '14 days ago' +%s 2>/dev/null || date -u -v-14d +%s)
+          gh pr list --repo "$REPO" --state open --limit 100 \
+            --json number,headRefName,updatedAt \
+            --jq '.[] | select(.headRefName | startswith("chore/visual-baselines-")) | "\(.number) \(.updatedAt)"' \
+          | while read -r num updated; do
+              [ -z "$num" ] && continue
+              upd=$(date -u -d "$updated" +%s 2>/dev/null || date -u -jf '%Y-%m-%dT%H:%M:%SZ' "$updated" +%s)
+              if [ "$upd" -lt "$cutoff" ]; then
+                echo "Closing stale PR #$num (last update $updated)"
+                gh pr close "$num" --repo "$REPO" --delete-branch \
+                  --comment "Auto-closed by cleanup.yml: stale > 14 days. Re-run Update visual baselines if still needed." || true
+              fi
+            done
+
+          # 2. Delete any chore/visual-baselines-* branch with no open PR.
+          git ls-remote --heads origin 'refs/heads/chore/visual-baselines-*' \
+            | sed 's#.*refs/heads/##' \
+          | while read -r b; do
+              [ -z "$b" ] && continue
+              open=$(gh pr list --repo "$REPO" --head "$b" --state open --json number --jq 'length')
+              if [ "$open" = "0" ]; then
+                echo "Deleting orphan branch $b"
+                git push origin --delete "$b" || true
+              fi
+            done
