@@ -18,3 +18,10 @@ updates:
     groups:
       dev:
         patterns: ['*']
+    ignore:
+      # @playwright/test must stay in lockstep with the pinned
+      # mcr.microsoft.com/playwright container image (visual baselines
+      # are rasterised there) — bump both together, by hand, never
+      # silently via Dependabot.
+      - dependency-name: '@playwright/test'
+      - dependency-name: '@axe-core/playwright'
