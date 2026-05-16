@@ -8,13 +8,14 @@ Anything not listed here is internal and may change between minor versions.
 
 The whole accent family derives from `--accent` via `color-mix()`:
 
-| Token                 | Derivation (light / dark)                    |
-| --------------------- | -------------------------------------------- |
-| `--accent-strong`     | `--accent` mixed 83% with black / 84% white  |
-| `--accent-soft`       | `--accent` at 10% / 14% over transparent     |
-| `--bg-accent`         | `--accent` at 6% / 8%                         |
-| `--field-dot-accent`  | `--accent` at 78% / 82%                       |
-| `--focus-ring`        | `--accent` at 50% / 55%                       |
+| Token                 | Derivation (light / dark)                    | Role |
+| --------------------- | -------------------------------------------- | ---- |
+| `--accent-strong`     | `--accent` mixed 83% with black / 84% white  | darker/lighter accent for hover, emphasis |
+| `--accent-text`       | `var(--accent-strong)` (alias)               | **accent used as foreground text** — the on-surface, AA-safe one |
+| `--accent-soft`       | `--accent` at 10% / 14% over transparent     | tinted fills |
+| `--bg-accent`         | `--accent` at 6% / 8%                         | faint accent backgrounds |
+| `--field-dot-accent`  | `--accent` at 78% / 82%                       | form dot indicators |
+| `--focus-ring`        | `var(--accent)` (solid)                       | **every focus outline** — override to tune the ring alone |
 
 So a full re-brand is one declaration — globally or on any subtree:
 
@@ -27,9 +28,21 @@ So a full re-brand is one declaration — globally or on any subtree:
 Everything — buttons, focus rings, dot motifs, accent borders, soft
 fills — follows automatically, in both light and dark.
 
-> Pick an `--accent` with ≥ 4.5:1 contrast against `--button-text` (white
-> in light, black in dark) for accessible primary buttons. The defaults
-> are tuned for this; verify if you deviate hard.
+> **Two contrast obligations when you change `--accent`:**
+>
+> 1. **Buttons** — pick an `--accent` with ≥ 4.5:1 against `--button-text`
+>    (white in light, black in dark) for accessible primary buttons.
+> 2. **Accent-as-text** — anywhere the accent is foreground text (links,
+>    active nav/tabs, eyebrows, chips) the framework uses `--accent-text`,
+>    **not** raw `--accent`, so it stays AA on surfaces. `--accent-text`
+>    defaults to `--accent-strong` (a darkened/​lightened accent). If you
+>    re-brand to a pale hue, raw `--accent` would fail as text — override
+>    `--accent-text` to a sufficiently dark/light value rather than
+>    relying on the 83%/84% mix.
+>
+> The defaults are tuned for both; verify if you deviate hard. The focus
+> ring is solid `--accent` (≥ 3:1 non-text) — re-brand to a near-`--bg`
+> hue and you must also raise `--focus-ring` (it's an independent knob).
 
 ## Other supported knobs
 
@@ -45,6 +58,13 @@ fills — follows automatically, in both light and dark.
   `--text*` tokens are overridable for a bespoke palette, but you then
   own their contrast. Prefer just `--accent` unless you need a full
   re-skin.
+- **Native controls** — checkbox/radio/range tick marks use the CSS
+  `accent-color: var(--accent)` (browser-rendered). The check glyph
+  colour is the UA's choice and not in our control, so a very light
+  `--accent` (e.g. a pale yellow) can make native checkmarks low-
+  contrast. If you re-brand to a light hue, verify native controls or
+  set `accent-color` yourself on them — this is the one accent surface
+  the framework can't tune for you.
 
 ## Contrast
 
@@ -70,11 +90,17 @@ fabricating a number — the resolvable knob is `color.<theme>.accent`.
 
 ## Reading tokens from JS
 
-`@ponchia/ui/tokens` exposes the model as data. `--accent` and the
-non-derived colors resolve to literal hex; the derived members
-(`accentSoft`, `focusRing`, …) are expressed as `color-mix(var(--accent)…)`
-strings — resolve them in the DOM via `getComputedStyle` if you need the
-final value, or just read/​set `--accent` itself.
+`@ponchia/ui/tokens` exposes the model as data. The ergonomic view only
+strips the `--` prefix — **keys stay kebab-case**, so they must be
+bracket-accessed: `themeColor('dark')['accent-soft']`, **not**
+`.accentSoft`. (`themeColor('dark').accent` works only because `accent`
+is a single word.) `--accent` and the non-derived colors resolve to
+literal hex; the derived members (`accent-strong`, `accent-soft`,
+`focus-ring`, …) are `color-mix(…)` / alias strings — resolve them in the
+DOM via `getComputedStyle` if you need the final value, or just read/​set
+`--accent` itself. The `.d.ts` now types these keys as literal unions
+(`ColorKey`/`ScaleKey`), so a mistyped key is a compile error and
+autocomplete lists the real names.
 
 ## Stability
 

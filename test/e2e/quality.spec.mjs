@@ -55,10 +55,7 @@ test('quality — document structure (SEO / a11y landmarks)', async ({ page }) =
   await page.goto('/demo/', { waitUntil: 'networkidle' });
   await expect(page.locator('html')).toHaveAttribute('lang', /\w/);
   await expect(page).toHaveTitle(/\S/);
-  await expect(page.locator('head meta[name="description"]')).toHaveAttribute(
-    'content',
-    /\S/
-  );
+  await expect(page.locator('head meta[name="description"]')).toHaveAttribute('content', /\S/);
   await expect(page.locator('head meta[name="viewport"]')).toHaveCount(1);
   await expect(page.locator('main')).toHaveCount(1);
 });

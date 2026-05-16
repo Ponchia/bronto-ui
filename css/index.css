@@ -1,5 +1,0 @@
-/* @ponchia/ui — full bundle: core + responsive breakpoint overrides.
-   responsive.css joins the same `bronto` layer and, being imported last,
-   wins the within-layer cascade over the base rules it overrides. */
-@import url('./core.css');
-@import url('./responsive.css') layer(bronto);

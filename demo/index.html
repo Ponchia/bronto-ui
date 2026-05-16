@@ -7,8 +7,8 @@
     <title>@ponchia/ui — kitchen sink</title>
     <link rel="stylesheet" href="../dist/bronto.css" />
     <style>
-      /* No local @font-face: Doto now ships in css/fonts.css (bundled by
-         index.css) with URLs relative to the package, so it resolves here
+      /* No local @font-face: Doto ships in css/fonts.css (bundled by
+         core.css) with URLs relative to the package, so it resolves here
          with zero demo-side setup — that is the portability fix in action. */
       body {
         margin: 0;
@@ -56,14 +56,14 @@
           DIR: LTR
         </button>
         <button
-          class="theme-toggle__button"
+          class="ui-themetoggle__button"
           id="themeBtn"
           type="button"
           data-bronto-theme-toggle
         >
-          <span class="theme-toggle__prefix">Theme</span>
-          <span class="theme-toggle__label" id="themeLabel">Dark</span>
-          <span class="theme-toggle__track"><span class="theme-toggle__thumb"></span></span>
+          <span class="ui-themetoggle__prefix">Theme</span>
+          <span class="ui-themetoggle__label" id="themeLabel">Dark</span>
+          <span class="ui-themetoggle__track"><span class="ui-themetoggle__thumb"></span></span>
         </button>
         </span>
       </header>
@@ -240,20 +240,20 @@
 
       <section class="ui-stack">
         <h2 class="ui-eyebrow ui-eyebrow--muted">Metrics</h2>
-        <div class="app-metrics">
-          <div class="app-metric">
-            <span class="app-metric__label">Equity</span>
-            <span class="app-metric__value">€12,408</span>
-            <span class="app-metric__delta is-pos">+2.4% / 24h</span>
+        <div class="ui-app-metrics">
+          <div class="ui-app-metric">
+            <span class="ui-app-metric__label">Equity</span>
+            <span class="ui-app-metric__value">€12,408</span>
+            <span class="ui-app-metric__delta is-pos">+2.4% / 24h</span>
           </div>
-          <div class="app-metric">
-            <span class="app-metric__label">Open</span><span class="app-metric__value">3</span>
-            <span class="app-metric__delta">positions</span>
+          <div class="ui-app-metric">
+            <span class="ui-app-metric__label">Open</span><span class="ui-app-metric__value">3</span>
+            <span class="ui-app-metric__delta">positions</span>
           </div>
-          <div class="app-metric">
-            <span class="app-metric__label">Win rate</span
-            ><span class="app-metric__value">61%</span>
-            <span class="app-metric__delta is-neg">−4pt / wk</span>
+          <div class="ui-app-metric">
+            <span class="ui-app-metric__label">Win rate</span
+            ><span class="ui-app-metric__value">61%</span>
+            <span class="ui-app-metric__delta is-neg">−4pt / wk</span>
           </div>
         </div>
       </section>
@@ -341,6 +341,18 @@
             ><input type="radio" name="density" />Roomy</label
           >
         </div>
+        <div class="ui-cluster">
+          <button
+            class="ui-button ui-button--subtle"
+            type="button"
+            data-bronto-disclosure
+            aria-expanded="false"
+            aria-controls="discPanel"
+          >
+            Details ▾
+          </button>
+          <p id="discPanel" hidden>Disclosure body — toggled via the shipped behavior.</p>
+        </div>
       </section>
 
       <section class="ui-stack">
@@ -351,11 +363,21 @@
           <li class="ui-breadcrumb__item" aria-current="page">Detail</li>
         </ol>
         <ul class="ui-pagination">
-          <li><button class="ui-pagination__item" aria-disabled="true">‹</button></li>
-          <li><button class="ui-pagination__item is-active">1</button></li>
-          <li><button class="ui-pagination__item">2</button></li>
-          <li><button class="ui-pagination__item">3</button></li>
-          <li><button class="ui-pagination__item">›</button></li>
+          <li>
+            <button class="ui-pagination__item" type="button" disabled aria-label="Previous page">
+              ‹
+            </button>
+          </li>
+          <li>
+            <button class="ui-pagination__item is-active" type="button" aria-current="page">
+              1
+            </button>
+          </li>
+          <li><button class="ui-pagination__item" type="button">2</button></li>
+          <li><button class="ui-pagination__item" type="button">3</button></li>
+          <li>
+            <button class="ui-pagination__item" type="button" aria-label="Next page">›</button>
+          </li>
         </ul>
         <div class="ui-cluster">
           <span class="ui-avatar-group">
@@ -382,7 +404,7 @@
             ><button class="ui-button ui-button--ghost" type="button">Hover me</button
             ><span class="ui-tooltip__bubble" role="tooltip">Pure-CSS tooltip</span></span
           >
-          <details class="site-menu" style="display: block">
+          <details class="ui-menu-host" data-bronto-menu>
             <summary class="ui-button ui-button--subtle" style="list-style: none">Menu ▾</summary>
             <div class="ui-menu">
               <span class="ui-menu__label">Actions</span>
@@ -571,6 +593,8 @@ ui.button({ variant: 'ghost' });</code></pre>
         dismissible,
         initDialog,
         initTabs,
+        initDisclosure,
+        initMenu,
         toast,
       } from '../behaviors/index.js';
       import { ui, cx } from '../classes/index.js';
@@ -579,6 +603,8 @@ ui.button({ variant: 'ghost' });</code></pre>
       dismissible();
       initDialog();
       initTabs(); // full keyboard a11y, wired from the shipped module
+      initDisclosure();
+      initMenu();
 
       document.getElementById('toastBtn').addEventListener('click', () => {
         toast('Order filled — BTC/EUR', { tone: 'success', title: 'Done' });

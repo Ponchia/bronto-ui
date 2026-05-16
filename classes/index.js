@@ -97,6 +97,7 @@ export const cls = Object.freeze({
   modalFoot: 'ui-modal__foot',
   modalClose: 'ui-modal__close',
   modalDrawer: 'ui-modal--drawer',
+  menuHost: 'ui-menu-host',
   menu: 'ui-menu',
   menuLabel: 'ui-menu__label',
   menuItem: 'ui-menu__item',
@@ -177,6 +178,36 @@ export const cls = Object.freeze({
   animateFade: 'ui-animate-fade',
   animateDot: 'ui-animate-dot',
   animateMatrix: 'ui-animate-matrix',
+  // admin shell (was the legacy .app-* vocabulary; promoted in 0.3.0)
+  appShell: 'ui-app-shell',
+  appShellFull: 'ui-app-shell--full',
+  appRail: 'ui-app-rail',
+  appRailBrand: 'ui-app-rail__brand',
+  appRailToggle: 'ui-app-rail__toggle',
+  appRailFoot: 'ui-app-rail__foot',
+  appTopbar: 'ui-app-topbar',
+  appTopbarTitle: 'ui-app-topbar__title',
+  appToolbar: 'ui-app-toolbar',
+  appToolbarGroup: 'ui-app-toolbar__group',
+  appNav: 'ui-app-nav',
+  appNavSection: 'ui-app-nav__section',
+  appMain: 'ui-app-main',
+  appContent: 'ui-app-content',
+  appPanel: 'ui-app-panel',
+  appPanelHead: 'ui-app-panel__head',
+  appPanelTitle: 'ui-app-panel__title',
+  appMetrics: 'ui-app-metrics',
+  appMetric: 'ui-app-metric',
+  appMetricLabel: 'ui-app-metric__label',
+  appMetricValue: 'ui-app-metric__value',
+  appMetricDelta: 'ui-app-metric__delta',
+  appEmptyState: 'ui-app-empty-state',
+  // theme toggle (was the legacy .theme-toggle__* vocabulary)
+  themetoggleButton: 'ui-themetoggle__button',
+  themetogglePrefix: 'ui-themetoggle__prefix',
+  themetoggleLabel: 'ui-themetoggle__label',
+  themetoggleTrack: 'ui-themetoggle__track',
+  themetoggleThumb: 'ui-themetoggle__thumb',
 });
 
 /** classnames-style joiner: skips falsy, flattens nested arrays of any depth. */
@@ -195,7 +226,7 @@ export const ui = {
       variant === 'ghost' && cls.buttonGhost,
       variant === 'subtle' && cls.buttonSubtle,
       variant === 'danger' && cls.buttonDanger,
-      icon && cls.buttonIcon
+      icon && cls.buttonIcon,
     ),
   card: ({ accent, interactive } = {}) =>
     j(cls.card, accent && cls.cardAccent, interactive && cls.cardInteractive),
@@ -205,7 +236,7 @@ export const ui = {
       tone === 'accent' && cls.badgeAccent,
       tone === 'success' && cls.badgeSuccess,
       tone === 'warning' && cls.badgeWarning,
-      tone === 'danger' && cls.badgeDanger
+      tone === 'danger' && cls.badgeDanger,
     ),
   chip: ({ accent } = {}) => j(cls.chip, accent && cls.chipAccent),
   link: ({ arrow } = {}) => j(cls.link, arrow && cls.linkArrow),
@@ -216,7 +247,7 @@ export const ui = {
       tone === 'success' && cls.dotSuccess,
       tone === 'warning' && cls.dotWarning,
       tone === 'danger' && cls.dotDanger,
-      live && cls.dotLive
+      live && cls.dotLive,
     ),
   dotgrid: ({ accent, dense } = {}) =>
     j(cls.dotgrid, accent && cls.dotgridAccent, dense && cls.dotgridDense),
@@ -225,7 +256,7 @@ export const ui = {
       cls.table,
       density === 'dense' && cls.tableDense,
       density === 'comfortable' && cls.tableComfortable,
-      lined && cls.tableLined
+      lined && cls.tableLined,
     ),
   eyebrow: ({ muted } = {}) => j(cls.eyebrow, muted && cls.eyebrowMuted),
   hint: ({ error } = {}) => j(cls.hint, error && cls.hintError),
@@ -237,7 +268,7 @@ export const ui = {
       tone === 'accent' && cls.alertAccent,
       tone === 'success' && cls.alertSuccess,
       tone === 'warning' && cls.alertWarning,
-      tone === 'danger' && cls.alertDanger
+      tone === 'danger' && cls.alertDanger,
     ),
   toast: ({ tone } = {}) =>
     j(
@@ -245,14 +276,12 @@ export const ui = {
       tone === 'accent' && cls.toastAccent,
       tone === 'success' && cls.toastSuccess,
       tone === 'warning' && cls.toastWarning,
-      tone === 'danger' && cls.toastDanger
+      tone === 'danger' && cls.toastDanger,
     ),
-  progress: ({ indeterminate } = {}) =>
-    j(cls.progress, indeterminate && cls.progressIndeterminate),
+  progress: ({ indeterminate } = {}) => j(cls.progress, indeterminate && cls.progressIndeterminate),
   dotspinner: ({ size } = {}) =>
     j(cls.dotspinner, size === 'sm' && cls.dotspinnerSm, size === 'lg' && cls.dotspinnerLg),
-  dotbar: ({ indeterminate } = {}) =>
-    j(cls.dotbar, indeterminate && cls.dotbarIndeterminate),
+  dotbar: ({ indeterminate } = {}) => j(cls.dotbar, indeterminate && cls.dotbarIndeterminate),
   modal: ({ drawer } = {}) => j(cls.modal, drawer && cls.modalDrawer),
   tab: ({ active } = {}) => j(cls.tab, active && 'is-active'),
   avatar: ({ size } = {}) =>

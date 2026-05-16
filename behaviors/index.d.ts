@@ -40,6 +40,13 @@ export declare function dismissible(opts?: DelegateOpts): Cleanup;
 export declare function initDisclosure(opts?: DelegateOpts): Cleanup;
 
 /**
+ * Close affordances (Escape, outside-click, close-on-activate) for a
+ * native `<details data-bronto-menu>` dropdown holding a `.ui-menu`.
+ * Not a full ARIA menu by design. Returns a cleanup function.
+ */
+export declare function initMenu(opts?: DelegateOpts): Cleanup;
+
+/**
  * Wire `[data-bronto-tabs]` groups with the WAI-ARIA Tabs keyboard
  * pattern (roving tabindex, Arrow/Home/End, aria-selected, panel sync).
  * Returns a cleanup function.

@@ -1,0 +1,55 @@
+name: Bug report
+description: A defect in @ponchia/ui (CSS, tokens, classes, or behaviors)
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: '@ponchia/ui version'
+      placeholder: '0.3.0'
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Which surface
+      options:
+        - CSS (ui-* component / token)
+        - tokens (JS/JSON/DTCG)
+        - classes (cls / recipes / .d.ts)
+        - behaviors (vanilla JS)
+        - build / exports / packaging
+    validations:
+      required: true
+  - type: input
+    id: consumer
+    attributes:
+      label: Consuming framework
+      description: Astro / SvelteKit / React / Solid / plain HTML, + version
+      placeholder: 'Astro 4.x'
+    validations:
+      required: true
+  - type: input
+    id: component
+    attributes:
+      label: Component / token / class involved
+      placeholder: 'ui-button, --accent-text, initDialog…'
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: Minimal markup/CSS/JS, or a link. Note theme (light/dark), RTL, density/contrast presets if relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs actual
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser + version
+      description: The floor is Chrome/Edge 111+, Safari 16.4+, Firefox 121+.
+      placeholder: 'Safari 17.4'

@@ -18,6 +18,37 @@ const THEMES = ['light', 'dark'];
 const noop = () => {};
 const hasDom = () => typeof document !== 'undefined';
 
+// Module-global so tab ids stay unique across *every* initTabs() call.
+// A per-call counter makes separate islands/roots all mint `bronto-tab-1`,
+// which collides aria-controls/aria-labelledby across the document.
+let tabUid = 0;
+
+// First-toast deferral queue. The very first toast on a brand-new stack
+// is appended next frame so AT observes the empty aria-live region
+// before its first child. Any further toasts created *before* that frame
+// flushes are queued behind it so call order (FIFO) is preserved instead
+// of a synchronous later toast jumping ahead of the deferred first one.
+const toastQueue = [];
+let toastFlushScheduled = false;
+
+// Make delegated initializers idempotent. Re-binding the same logical
+// listener on the same host/element tears the previous binding down first,
+// so double-init (HMR, framework re-mount, repeated calls) never stacks
+// duplicate handlers (the "double-toggle" class of bug). The returned
+// cleanup removes the single live binding.
+const BOUND = Symbol('bronto-bound');
+function bindOnce(target, key, add) {
+  const reg = target[BOUND] || (target[BOUND] = Object.create(null));
+  if (reg[key]) reg[key]();
+  const remove = add();
+  const cleanup = () => {
+    remove();
+    if (reg[key] === cleanup) delete reg[key];
+  };
+  reg[key] = cleanup;
+  return cleanup;
+}
+
 /**
  * Apply the persisted theme to <html data-theme>. Call as early as
  * possible (an inline module in <head>) to avoid a flash before the
@@ -85,14 +116,16 @@ export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
     }
     reflect();
     docEl.dispatchEvent(
-      new CustomEvent('bronto:themechange', { detail: { theme: next }, bubbles: true })
+      new CustomEvent('bronto:themechange', { detail: { theme: next }, bubbles: true }),
     );
   };
 
   applyStoredTheme({ storageKey });
   reflect();
-  host.addEventListener('click', onClick);
-  return () => host.removeEventListener('click', onClick);
+  return bindOnce(host, 'themeToggle', () => {
+    host.addEventListener('click', onClick);
+    return () => host.removeEventListener('click', onClick);
+  });
 }
 
 /**
@@ -112,8 +145,10 @@ export function dismissible({ root } = {}) {
     const ev = new CustomEvent('bronto:dismiss', { bubbles: true, cancelable: true });
     if (target.dispatchEvent(ev)) target.remove();
   };
-  host.addEventListener('click', onClick);
-  return () => host.removeEventListener('click', onClick);
+  return bindOnce(host, 'dismissible', () => {
+    host.addEventListener('click', onClick);
+    return () => host.removeEventListener('click', onClick);
+  });
 }
 
 /**
@@ -122,13 +157,19 @@ export function dismissible({ root } = {}) {
  * Tabs pattern: roving `tabindex`, `aria-selected`, Arrow/Home/End
  * navigation with automatic activation, and panel `hidden` sync. Tabs are
  * `.ui-tab[data-tab]`; panels are `.ui-tabs__panel[data-panel]` with
- * matching values. SSR-safe; returns a cleanup function.
+ * matching values. SSR-safe and idempotent (re-init replaces, never
+ * stacks, the per-group listeners); returns a cleanup function.
+ *
+ * Accessibility caveat: this is what makes tabs operable. Do **not**
+ * author `hidden` on `.ui-tabs__panel` in server-rendered markup unless
+ * `initTabs` is guaranteed to run client-side — without it the panels
+ * stay hidden with no keyboard/pointer way to reveal them. Prefer
+ * authoring all panels visible and letting `initTabs` add `hidden`.
  */
 export function initTabs({ root } = {}) {
   if (!hasDom()) return noop;
   const host = root || document;
   const cleanups = [];
-  let uid = 0;
   // querySelectorAll only matches descendants, so a `root` that *is* a
   // tab group would be skipped — include it explicitly.
   const groups = [];
@@ -149,7 +190,7 @@ export function initTabs({ root } = {}) {
     for (const t of tabs) {
       const p = panels.find((x) => x.dataset.panel === t.dataset.tab);
       if (!p) continue;
-      const n = ++uid;
+      const n = ++tabUid;
       if (!t.id) t.id = `bronto-tab-${n}`;
       if (!p.id) p.id = `bronto-tabpanel-${n}`;
       t.setAttribute('aria-controls', p.id);
@@ -183,7 +224,8 @@ export function initTabs({ root } = {}) {
       if (i < 0) return;
       let n = i;
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown') n = (i + 1) % tabs.length;
-      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') n = (i - 1 + tabs.length) % tabs.length;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp')
+        n = (i - 1 + tabs.length) % tabs.length;
       else if (e.key === 'Home') n = 0;
       else if (e.key === 'End') n = tabs.length - 1;
       else return;
@@ -191,13 +233,17 @@ export function initTabs({ root } = {}) {
       select(tabs[n]);
       tabs[n].focus();
     };
-    group.addEventListener('click', onClick);
-    group.addEventListener('keydown', onKey);
     select(tabs.find((t) => t.classList.contains('is-active')) || tabs[0]);
-    cleanups.push(() => {
-      group.removeEventListener('click', onClick);
-      group.removeEventListener('keydown', onKey);
-    });
+    cleanups.push(
+      bindOnce(group, 'tabs', () => {
+        group.addEventListener('click', onClick);
+        group.addEventListener('keydown', onKey);
+        return () => {
+          group.removeEventListener('click', onClick);
+          group.removeEventListener('keydown', onKey);
+        };
+      }),
+    );
   }
   return () => cleanups.forEach((fn) => fn());
 }
@@ -207,7 +253,11 @@ export function initTabs({ root } = {}) {
  * declaratively). Click `[data-bronto-open="dialogId"]` calls
  * `showModal()` on `#dialogId`; click `[data-bronto-close]` closes the
  * nearest enclosing <dialog>. Clicking the backdrop of a dialog that has
- * `[data-bronto-dialog-light]` closes it too. SSR-safe; returns cleanup.
+ * `[data-bronto-dialog-light]` closes it too. On open the trigger is
+ * remembered and focus is returned to it on *every* close path (Esc,
+ * close button, backdrop light-dismiss, programmatic) via the native
+ * `close` event, so keyboard/SR users are never dropped at `<body>`.
+ * SSR-safe and idempotent; returns cleanup.
  *
  * `root` scopes which triggers are delegated (default `document`); the
  * dialog itself is still resolved by id document-wide, because a modal
@@ -222,7 +272,16 @@ export function initDialog({ root } = {}) {
     const opener = e.target.closest('[data-bronto-open]');
     if (opener && host.contains(opener)) {
       const dlg = document.getElementById(opener.getAttribute('data-bronto-open'));
-      if (dlg && typeof dlg.showModal === 'function' && !dlg.open) dlg.showModal();
+      if (dlg && typeof dlg.showModal === 'function' && !dlg.open) {
+        dlg.addEventListener(
+          'close',
+          () => {
+            if (opener.isConnected && typeof opener.focus === 'function') opener.focus();
+          },
+          { once: true },
+        );
+        dlg.showModal();
+      }
       return;
     }
     const closer = e.target.closest('[data-bronto-close]');
@@ -243,20 +302,29 @@ export function initDialog({ root } = {}) {
       dlg.close();
     }
   };
-  host.addEventListener('click', onClick);
-  return () => host.removeEventListener('click', onClick);
+  return bindOnce(host, 'dialog', () => {
+    host.addEventListener('click', onClick);
+    return () => host.removeEventListener('click', onClick);
+  });
 }
 
 /**
- * Push a transient toast into a shared, screen-anchored stack (created
- * once and appended to <body>, `aria-live="polite"`). `tone` is one of
- * accent/success/warning/danger; `title` is an optional uppercase label;
- * `duration` ms before auto-dismiss (0 keeps it until dismissed). Returns
- * a function that dismisses the toast early. SSR-safe (no-op).
+ * Push a transient toast into a shared, screen-anchored stack. The stack
+ * is the `aria-live="polite"` region: it is created once, appended to
+ * <body>, and **kept resident even when empty** so the live region is
+ * always present before content is inserted (a freshly created region
+ * that receives its first child in the same tick is not reliably
+ * announced by VoiceOver/NVDA). On first creation the empty region is
+ * inserted and the toast is appended on the next frame for the same
+ * reason. `tone` is accent/success/warning/danger; `title` is an
+ * optional uppercase label; `duration` ms before auto-dismiss (0 keeps
+ * it until dismissed). Returns a function that dismisses the toast
+ * early. SSR-safe (no-op).
  */
 export function toast(message, { tone, title, duration = 4000 } = {}) {
   if (!hasDom()) return noop;
   let stack = document.querySelector('.ui-toast-stack');
+  const freshStack = !stack;
   if (!stack) {
     stack = document.createElement('div');
     stack.className = 'ui-toast-stack';
@@ -276,13 +344,40 @@ export function toast(message, { tone, title, duration = 4000 } = {}) {
   const body = document.createElement('div');
   body.textContent = message;
   el.appendChild(body);
-  stack.appendChild(el);
+  // Append after a frame the *first* time so the empty live region is
+  // observed by AT before its first child arrives; once the region has
+  // been observed, later toasts append synchronously.
+  let dismissed = false;
+  // `dismissed` guard: a toast dismissed before its frame (e.g.
+  // duration:0 + immediate dismiss) must NOT be resurrected into the
+  // persistent aria-live region.
+  const place = () => {
+    if (!dismissed) stack.appendChild(el);
+  };
+  const canDefer = typeof requestAnimationFrame === 'function';
+  if (freshStack && canDefer) {
+    toastQueue.push(place);
+    toastFlushScheduled = true;
+    requestAnimationFrame(() => {
+      toastFlushScheduled = false;
+      for (const fn of toastQueue.splice(0)) fn();
+    });
+  } else if (toastFlushScheduled) {
+    // A first-frame deferral is in flight — queue behind it so FIFO
+    // order holds and the region still isn't populated synchronously.
+    toastQueue.push(place);
+  } else {
+    place();
+  }
 
   let timer;
   const dismiss = () => {
+    if (dismissed) return;
+    dismissed = true;
     if (timer) clearTimeout(timer);
     el.remove();
-    if (stack && !stack.childElementCount) stack.remove();
+    // The stack is a persistent live region — never removed on drain, so
+    // the next toast does not recreate (and thus mis-announce) it.
   };
   if (duration > 0) timer = setTimeout(dismiss, duration);
   return dismiss;
@@ -306,6 +401,53 @@ export function initDisclosure({ root } = {}) {
     trigger.setAttribute('aria-expanded', String(!open));
     panel.hidden = open;
   };
-  host.addEventListener('click', onClick);
-  return () => host.removeEventListener('click', onClick);
+  return bindOnce(host, 'disclosure', () => {
+    host.addEventListener('click', onClick);
+    return () => host.removeEventListener('click', onClick);
+  });
+}
+
+/**
+ * Dropdown-menu close affordances for a native `<details data-bronto-menu>`
+ * holding a `.ui-menu`. `<details>` alone won't close on Escape, on an
+ * outside click, or when a `.ui-menu__item` is activated — this adds
+ * exactly those, returning focus to the `<summary>` on Esc/activate.
+ *
+ * Deliberately NOT a full WAI-ARIA menu (no arrow-key roving): the items
+ * are real buttons, Tab-reachable; this is a disclosure of actions, and
+ * over-claiming `role="menu"` semantics would be worse. SSR-safe,
+ * idempotent; returns a cleanup function.
+ */
+export function initMenu({ root } = {}) {
+  if (!hasDom()) return noop;
+  const host = root || document;
+  const openMenus = () => host.querySelectorAll?.('[data-bronto-menu][open]') ?? [];
+  const shut = (menu) => {
+    if (!menu || !menu.open) return;
+    menu.open = false;
+    menu.querySelector('summary')?.focus();
+  };
+  const onClick = (e) => {
+    const menu = e.target.closest('[data-bronto-menu]');
+    // Activate an item → close its menu (and return focus to summary).
+    if (menu && e.target.closest('.ui-menu__item')) {
+      shut(menu);
+      return;
+    }
+    // Click outside any open menu → close them all (no focus move).
+    for (const m of openMenus()) if (!m.contains(e.target)) m.open = false;
+  };
+  const onKey = (e) => {
+    if (e.key !== 'Escape') return;
+    const menu = e.target.closest?.('[data-bronto-menu][open]') || openMenus()[0];
+    shut(menu);
+  };
+  return bindOnce(host, 'menu', () => {
+    host.addEventListener('click', onClick);
+    host.addEventListener('keydown', onKey);
+    return () => {
+      host.removeEventListener('click', onClick);
+      host.removeEventListener('keydown', onKey);
+    };
+  });
 }

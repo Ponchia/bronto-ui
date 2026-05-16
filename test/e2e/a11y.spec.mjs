@@ -28,9 +28,7 @@ const STRUCTURAL = new Set([
 
 function blocking(results) {
   return results.violations
-    .filter(
-      (v) => v.impact === 'serious' || v.impact === 'critical' || STRUCTURAL.has(v.id)
-    )
+    .filter((v) => v.impact === 'serious' || v.impact === 'critical' || STRUCTURAL.has(v.id))
     .map((v) => ({
       id: v.id,
       impact: v.impact,
@@ -53,8 +51,7 @@ async function settle(page) {
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
   });
 }
-const scan = (page) =>
-  new AxeBuilder({ page }).withTags(TAGS).exclude('.ui-dotfield');
+const scan = (page) => new AxeBuilder({ page }).withTags(TAGS).exclude('.ui-dotfield');
 
 for (const theme of ['dark', 'light']) {
   test(`a11y — demo (${theme})`, async ({ page }) => {
@@ -95,4 +92,81 @@ test('a11y — tabs keyboard pattern is wired', async ({ page }) => {
   const second = tabs.getByRole('tab').nth(1);
   await expect(second).toHaveAttribute('aria-selected', 'true');
   await expect(second).toBeFocused();
+});
+
+test('a11y — demo passes axe in RTL', async ({ page }) => {
+  await page.addInitScript(() => document.documentElement.setAttribute('dir', 'rtl'));
+  await page.goto('/demo/', { waitUntil: 'networkidle' });
+  await settle(page);
+  const results = await scan(page).analyze();
+  expect(blocking(results), JSON.stringify(blocking(results), null, 2)).toEqual([]);
+});
+
+test('a11y — dialog returns focus to its trigger on Escape', async ({ page }) => {
+  await page.goto('/demo/', { waitUntil: 'networkidle' });
+  const opener = page.getByRole('button', { name: 'Open modal' });
+  await opener.click();
+  await expect(page.locator('dialog.ui-modal#demoModal')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('dialog.ui-modal#demoModal')).toBeHidden();
+  await expect(opener).toBeFocused(); // review C1: focus must not land on <body>
+});
+
+test('a11y — toast pushes into a persistent polite live region', async ({ page }) => {
+  await page.goto('/demo/', { waitUntil: 'networkidle' });
+  const stack = page.locator('.ui-toast-stack');
+  await expect(stack).toHaveCount(0);
+  await page.locator('#toastBtn').click();
+  await expect(stack).toHaveAttribute('aria-live', 'polite');
+  await expect(stack.locator('.ui-toast')).toHaveText(/Order filled/);
+  // The region must persist (not be torn down) — drain then re-toast.
+  await page.waitForTimeout(4500);
+  await expect(stack).toBeAttached();
+  await expect(stack.locator('.ui-toast')).toHaveCount(0);
+  await page.locator('#toastBtn').click();
+  await expect(page.locator('.ui-toast-stack')).toHaveCount(1); // reused, not duplicated
+});
+
+test('a11y — disclosure toggles aria-expanded + panel hidden', async ({ page }) => {
+  await page.goto('/demo/', { waitUntil: 'networkidle' });
+  const btn = page.locator('[data-bronto-disclosure]');
+  const panel = page.locator('#discPanel');
+  await expect(btn).toHaveAttribute('aria-expanded', 'false');
+  await expect(panel).toBeHidden();
+  await btn.click();
+  await expect(btn).toHaveAttribute('aria-expanded', 'true');
+  await expect(panel).toBeVisible();
+  await btn.click();
+  await expect(btn).toHaveAttribute('aria-expanded', 'false');
+  await expect(panel).toBeHidden();
+});
+
+test('a11y — modal Confirm button clears 4.5:1 (computed, not just asserted)', async ({ page }) => {
+  await page.goto('/demo/', { waitUntil: 'networkidle' });
+  await page.getByRole('button', { name: 'Open modal' }).click();
+  // The backdrop-filter blur defeats axe's contrast sampling (hence
+  // color-contrast is disabled in the modal scan above); verify the
+  // solid button's real ratio here instead of only asserting it in prose.
+  // The solid primary button (the ghost "Cancel" shares .ui-button, so
+  // scope to the non-ghost one — the contrast-critical surface).
+  const confirm = page.locator(
+    'dialog#demoModal .ui-modal__foot .ui-button:not(.ui-button--ghost)',
+  );
+  const ratio = await confirm.evaluate((el) => {
+    const cs = getComputedStyle(el);
+    const rgb = (s) =>
+      s
+        .match(/[\d.]+/g)
+        .slice(0, 3)
+        .map(Number);
+    const lum = (c) =>
+      c
+        .map((v) => v / 255)
+        .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
+        .reduce((a, v, i) => a + v * [0.2126, 0.7152, 0.0722][i], 0);
+    const L1 = lum(rgb(cs.color)) + 0.05;
+    const L2 = lum(rgb(cs.backgroundColor)) + 0.05;
+    return Math.max(L1, L2) / Math.min(L1, L2);
+  });
+  expect(ratio).toBeGreaterThanOrEqual(4.5);
 });

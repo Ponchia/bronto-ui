@@ -21,30 +21,33 @@ npm i @ponchia/ui
 > deliberately distinct from the package name. See
 > [`docs/architecture.md`](docs/architecture.md).
 
-Import the full theme (includes responsive breakpoints):
+Import the theme (one bundle — `ui-*` components carry their own
+breakpoints, so there is no separate core/full split as of 0.3.0):
 
 ```css
-@import '@ponchia/ui/css';
-```
-
-Or the core bundle if the app manages its own responsive layer:
-
-```css
-@import '@ponchia/ui/css/core.css';
+@import '@ponchia/ui/css';        /* === @ponchia/ui/css/core.css */
 ```
 
 **Prebuilt single file (recommended for apps without a CSS bundler).**
-`@ponchia/ui/css` is a 17-deep `@import` graph — fine through a bundler,
-a load waterfall over plain HTTP. The package also ships flattened,
-minified bundles with no `@import` chain:
+`@ponchia/ui/css` is a wide `@import` fan-out (~14 leaves, one level
+deep) — fine through a bundler, a load waterfall over plain HTTP. The
+package also ships one flattened, minified bundle with no `@import`
+chain:
 
 ```css
-@import '@ponchia/ui';               /* → dist/bronto.css, full   */
-@import '@ponchia/ui/dist/bronto-core.css';   /* core, no responsive */
+@import '@ponchia/ui';   /* → dist/bronto.css, the whole framework */
 ```
 
-~62 kB raw / ~11 kB gzip, one request, same `@layer bronto`. Source CSS,
-tokens/classes/behaviors entrypoints are unchanged — use whichever fits.
+~54 kB raw / ~10 kB gzip, one request, same `@layer bronto`. (The
+enforced ceiling lives in `scripts/check-dist.mjs`, not this prose —
+treat these figures as indicative.) Source CSS, tokens/classes/behaviors
+entrypoints are unchanged — use whichever fits.
+
+> **The package root is CSS-only.** `@ponchia/ui` (the `.` export)
+> resolves to a stylesheet — `@import '@ponchia/ui'` in CSS, never
+> `import '@ponchia/ui'` in JS. There is no JS module at the root; the
+> JS entrypoints are the explicit subpaths `@ponchia/ui/tokens`,
+> `/classes`, and `/behaviors` (see [Entrypoints](#entrypoints)).
 
 ### Browser support
 
@@ -62,10 +65,14 @@ font instead, import everything except `fonts.css` and override `--display` /
 
 Everything ships inside a single `@layer bronto`, so any un-layered CSS in
 your app overrides the framework without a specificity fight or `!important`.
-The layer is applied by the `css` and `css/core.css` bundles only —
-importing an individual leaf such as `@ponchia/ui/css/primitives.css`
-directly is **unlayered** (full specificity), which is an intentional
-escape hatch, not the default path.
+
+> **Leaf imports are layer-safe by default.** Every per-leaf export —
+> `@ponchia/ui/css/primitives.css`, etc. — is self-wrapped in
+> `@layer bronto`, so mixing the bundle with individual leaves (e.g.
+> per-route CSS splitting in SvelteKit/Astro) is safe: no silent
+> cascade inversion. The deliberate full-specificity escape hatch is
+> the explicit `@ponchia/ui/css/unlayered/<leaf>.css` path — use it
+> only when you *want* an unlayered override, never by accident.
 
 Set `data-theme="light"` or `data-theme="dark"` on `<html>`; defaults follow
 `prefers-color-scheme`.
@@ -93,7 +100,9 @@ themeColor('dark').accent; // → "#ff3b41"
 ```
 
 `behaviors` wires `[data-bronto-theme-toggle]`, `[data-bronto-dismiss]` /
-`[data-bronto-dismissible]`, `[data-bronto-disclosure]`, and native
+`[data-bronto-dismissible]`, `[data-bronto-disclosure]`,
+`[data-bronto-menu]` (`initMenu`: Escape / outside-click /
+close-on-activate for a `<details>` `.ui-menu` dropdown), and native
 `<dialog>` glue (`initDialog`: `[data-bronto-open]` / `[data-bronto-close]`
 / `[data-bronto-dialog-light]`). `toast(message, { tone, title, duration })`
 pushes into a shared, body-anchored stack. Each initializer is SSR-safe and
@@ -115,14 +124,10 @@ modules, so it is also a live integration test.
 | `overlay.css`    | modal + drawer (native `<dialog>`), dropdown menu             |
 | `disclosure.css` | tabs, accordion (`<details>`), segmented, breadcrumb, pagination, avatar |
 | `table.css`      | `ui-table` dense / comfortable                                |
-| `app.css`        | admin shell: rail, topbar, toolbar, panel, metrics            |
-| `navigation.css` | site nav, menu, theme toggle (dot indicator)                  |
+| `app.css`        | admin shell: `ui-app-shell`/`-rail`/`-topbar`/`-toolbar`/`-panel`/`-nav`/`-metrics` |
+| `navigation.css` | `ui-themetoggle` (dot-thumb switch)                           |
 | `site.css`       | content-site shell: `ui-container`, `ui-siteheader`/`ui-sitenav` (aria-current), `ui-sitemenu`, `ui-sitefooter`, `ui-skiplink`, `ui-tags`, `ui-meta` |
-| `typography.css` | display headings, eyebrows, legacy `.button`                  |
 | `content.css`    | `.ui-prose` Markdown/raw-HTML long-form (zero classes) + `ui-quote` pull-quote |
-| `cards.css`      | semantic content cards (token-driven)                         |
-| `layout.css`     | site shell, hero, grids                                       |
-| `responsive.css` | breakpoint overrides                                          |
 
 ## Demo
 
@@ -163,9 +168,38 @@ WCAG 2.1 A/AA **plus best-practice** in both themes; behavioural specs
 mode assertions; and a no-console-error / no-404 / document-structure
 gate. Pinned to a Playwright container so baselines are byte-stable; the
 committed baselines under `test/e2e/__screenshots__` were authored in
-that same image. CI (`.github/workflows/ci.yml`) runs the `check` job and
+that same image. To (re)generate them after an intentional visual
+change, run the **“Update visual baselines”** workflow
+(`workflow_dispatch`) from your branch — it rebuilds them in the pinned
+container and commits them back (never author them on a dev machine —
+cross-OS rasterisation differs). CI (`.github/workflows/ci.yml`) runs the `check` job and
 a containerised `e2e` job on every branch push and PR (and `release.yml`
 gates publish on it). It never publishes — a push to `main` ships nothing.
+
+## Versioning
+
+Pre-1.0 and deliberately so. **Until `1.0.0`, breaking changes ship in
+the _minor_** (`0.x.0`); patches (`0.x.y`) are non-breaking. This is the
+standard 0.x reading of SemVer, stated explicitly because this framework
+dresses several apps:
+
+- Because breaking changes bump the **minor**, the protective range is
+  the patch range. At `0.x` npm resolves **both** `^0.3.0` and `~0.3.0`
+  to `>=0.3.0 <0.4.0` — they are equivalent here, and either gives you
+  only non-breaking `0.3.x` patches while holding back the next
+  (breaking) `0.4.0`. Pin either; pin an **exact** version if you want
+  zero surprise and to adopt each minor deliberately.
+- Every breaking change is called out in [`CHANGELOG.md`](CHANGELOG.md)
+  under a **BREAKING** heading with a migration note.
+
+**What is contractual** (changes are breaking): the `--accent`
+derivation and token **names** (incl. `--accent-text`, `--focus-ring`);
+the `.ui-*` class names and `cls`/recipe names; the `data-bronto-*`
+behavior attributes; each behavior's return-cleanup contract. **What is
+not** (may change in any release): token _values_ (visual tuning), the
+internal leaf-file boundaries and `@layer` internals, and anything
+explicitly marked legacy/deprecated. Full token contract:
+[`docs/theming.md`](docs/theming.md).
 
 ## Release
 
@@ -177,18 +211,22 @@ git tag vX.Y.Z && git push origin vX.Y.Z
 ```
 
 The tag triggers `.github/workflows/release.yml`: `validate` (read-only
-checks + tag↔version match) → `publish-npm` (only if validate passes) +
-`release-notes`. **The npm publish is the gate** — a failing check means
-the version never reaches npm, so consumers never resolve it. GitHub also
-serves the raw tag tarball ungated, but that is a legacy/fallback path, not
-the documented install. See [`docs/architecture.md`](docs/architecture.md).
+checks + tag↔version match) **and** `e2e` (Playwright visual + a11y) must
+both pass → `publish-npm` → `release-notes`. **The npm publish is the
+gate** — a failing check or e2e means the version never reaches npm, so
+consumers never resolve it. GitHub also serves the raw tag tarball
+ungated, but that is a legacy/fallback path, not the documented install.
+See [`docs/architecture.md`](docs/architecture.md).
 
-Published: `@ponchia/ui` is live on npm (latest `0.2.1`), released by CI
-with provenance. The `@ponchia` scope and the `NPM_TOKEN` repo secret are
-in place, so a pushed `vX.Y.Z` tag is all a release needs.
+Published: `@ponchia/ui` is live on npm, released by CI with provenance.
+The `@ponchia` scope and the `NPM_TOKEN` repo secret are in place, so a
+pushed `vX.Y.Z` tag is all a release needs. (The current published
+version is whatever npm's `latest` dist-tag resolves to — this README
+deliberately does not restate it, so it can't drift from the registry.)
 
 ## Consumers
 
-Built for two shapes of app: a content/marketing site (imports
-`@ponchia/ui/css/core.css`) and an admin dashboard (imports the full
-`@ponchia/ui/css`). Consuming apps depend on it via `@ponchia/ui`.
+Built for two shapes of app: a content/marketing site (`ui-site*`,
+`ui-prose`) and an admin dashboard (`ui-app-*` shell). Both import the
+one bundle `@ponchia/ui` (or `@ponchia/ui/css`); consuming apps depend
+on it via `@ponchia/ui`.

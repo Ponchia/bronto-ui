@@ -29,7 +29,7 @@ if (!existsSync(path)) {
     if ((theme.colors?.['editorCursor.foreground'] || '').toLowerCase() !== accent)
       errors.push(`editorCursor.foreground must be the brand accent ${accent}`);
     const kw = (theme.tokenColors || []).find((t) =>
-      (Array.isArray(t.scope) ? t.scope : [t.scope]).includes('keyword')
+      (Array.isArray(t.scope) ? t.scope : [t.scope]).includes('keyword'),
     );
     if (!kw || (kw.settings?.foreground || '').toLowerCase() !== accent)
       errors.push(`keyword scope must use the brand accent ${accent}`);

@@ -4,18 +4,15 @@
 # is no build step. Never publishes npm or touches release.yml.
 name: Pages
 
+# Deploy only after CI (check + containerised e2e) has gone green on
+# main — never publish a demo from a commit whose gates failed. (Was a
+# bare push trigger, which could ship a broken/red-e2e demo; flagged in
+# review.)
 on:
-  push:
+  workflow_run:
+    workflows: ['CI']
     branches: [main]
-    paths:
-      - 'demo/**'
-      - 'css/**'
-      - 'dist/**'
-      - 'fonts/**'
-      - 'tokens/**'
-      - 'classes/**'
-      - 'behaviors/**'
-      - '.github/workflows/pages.yml'
+    types: [completed]
   workflow_dispatch:
 
 # Least privilege; deploy opts into exactly what Pages needs.
@@ -29,13 +26,16 @@ concurrency:
 
 jobs:
   build:
+    # Manual dispatch always; the CI-completion trigger only when it
+    # actually succeeded (workflow_run fires on failure too).
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pages: write # configure-pages enablement
-      id-token: write
+      # no id-token here: OIDC is only minted by deploy-pages in `deploy`.
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Assemble static site (demo + runtime surface)
         run: |
@@ -49,11 +49,11 @@ jobs:
           <a href="./demo/">@ponchia/ui — demo</a>
           HTML
 
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
         with:
           enablement: true
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: _site
 
@@ -68,4 +68,4 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - id: deploy
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

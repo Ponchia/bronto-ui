@@ -1,15 +1,10 @@
 /* ==========================================================================
-   navigation — site nav, menu, theme toggle (Nothing flat, dot indicator)
-   Class names kept stable for site-nav compatibility.
+   navigation — theme toggle (Nothing flat, dot-thumb switch).
+   Site nav/menu live in site.css as ui-sitenav / ui-sitemenu; the legacy
+   .site-nav / .site-menu vocabulary was removed in 0.3.0.
    ========================================================================== */
 
-.site-menu {
-  display: none;
-  position: relative;
-}
-
-.site-menu__toggle,
-.theme-toggle__button {
+.ui-themetoggle__button {
   align-items: center;
   background: transparent;
   border: 1px solid var(--line-strong);
@@ -21,9 +16,10 @@
   font-size: var(--text-xs);
   font-weight: 600;
   gap: 0.4rem;
+  justify-content: center;
   letter-spacing: var(--tracking-wide);
-  list-style: none;
   min-block-size: 2rem;
+  min-inline-size: 7rem;
   padding: 0.42rem 0.66rem;
   text-transform: uppercase;
   transition:
@@ -33,32 +29,21 @@
   white-space: nowrap;
 }
 
-.theme-toggle__button {
-  justify-content: center;
-  min-inline-size: 7rem;
-}
-
-.site-menu__toggle::-webkit-details-marker {
-  display: none;
-}
-
-.site-menu[open] .site-menu__toggle,
-.site-menu__toggle:hover,
-.theme-toggle__button:hover {
+.ui-themetoggle__button:hover {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
-.theme-toggle__prefix {
+.ui-themetoggle__prefix {
   color: var(--text-dim);
 }
 
-.theme-toggle__label {
+.ui-themetoggle__label {
   color: var(--text);
   font-weight: 700;
 }
 
-.theme-toggle__track {
+.ui-themetoggle__track {
   background: var(--panel-soft);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-pill);
@@ -68,7 +53,7 @@
   inline-size: 1.5rem;
 }
 
-.theme-toggle__thumb {
+.ui-themetoggle__thumb {
   background: var(--text-dim);
   border-radius: 50%;
   display: block;
@@ -80,72 +65,18 @@
   inline-size: 0.56rem;
 }
 
-[data-theme='dark'] .theme-toggle__thumb {
+[data-theme='dark'] .ui-themetoggle__thumb {
   background: var(--accent);
   transform: translateX(0.6rem);
 }
 
-[dir='rtl'][data-theme='dark'] .theme-toggle__thumb,
-[dir='rtl'] [data-theme='dark'] .theme-toggle__thumb {
+[dir='rtl'][data-theme='dark'] .ui-themetoggle__thumb,
+[dir='rtl'] [data-theme='dark'] .ui-themetoggle__thumb {
   transform: translateX(-0.6rem);
 }
 
-.site-nav {
-  display: inline-flex;
-  gap: 0.15rem;
-}
-
-.site-nav a {
-  align-items: center;
-  border: 1px solid transparent;
-  border-radius: var(--radius-md);
-  color: var(--text-soft);
-  display: inline-flex;
-  font-family: var(--mono);
-  font-size: var(--text-xs);
-  gap: 0.45rem;
-  letter-spacing: var(--tracking-wide);
-  padding: 0.4rem 0.6rem;
-  position: relative;
-  text-transform: uppercase;
-  transition:
-    border-color var(--duration-fast) var(--ease-standard),
-    background-color var(--duration-fast) var(--ease-standard),
-    color var(--duration-fast) var(--ease-standard);
-}
-
-/* Leading dot is the active/hover indicator — Nothing glyph cue. */
-.site-nav a::before {
-  background: currentColor;
-  border-radius: 50%;
-  content: '';
-  block-size: 0.32rem;
-  opacity: 0;
-  transform: scale(0.5);
-  transition:
-    opacity var(--duration-fast) var(--ease-standard),
-    transform var(--duration-fast) var(--ease-spring);
-  inline-size: 0.32rem;
-}
-
-.site-nav a:hover,
-.site-nav a.is-active {
-  color: var(--text);
-}
-
-.site-nav a.is-active {
-  color: var(--accent);
-}
-
-.site-nav a:hover::before,
-.site-nav a.is-active::before {
-  opacity: 1;
-  transform: scale(1);
-}
-
 @media (hover: hover) {
-  .site-menu__toggle:active,
-  .theme-toggle__button:active {
+  .ui-themetoggle__button:active {
     transform: translateY(1px);
   }
 }
