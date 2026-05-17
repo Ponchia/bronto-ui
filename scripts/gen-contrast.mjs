@@ -25,24 +25,27 @@ import { buildResolved } from './gen-resolved.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
+const HEX6 = /^#([0-9a-f]{6})$/i;
+const RGBA_FN = /^rgba?\(([^)]+)\)$/i;
+
 /** Parse a resolved literal (#rrggbb or rgba(r, g, b, a)) → [r,g,b,a]. */
 function rgba(v) {
   const s = String(v).trim();
-  let m = s.match(/^#([0-9a-f]{6})$/i);
-  if (m) {
-    const h = m[1];
+  const hex = HEX6.exec(s);
+  if (hex) {
+    const h = hex[1];
     return [
-      parseInt(h.slice(0, 2), 16),
-      parseInt(h.slice(2, 4), 16),
-      parseInt(h.slice(4, 6), 16),
+      Number.parseInt(h.slice(0, 2), 16),
+      Number.parseInt(h.slice(2, 4), 16),
+      Number.parseInt(h.slice(4, 6), 16),
       1,
     ];
   }
-  m = s.match(/^rgba?\(([^)]+)\)$/i);
-  if (m) {
-    const p = m[1].split(/[\s,/]+/).filter(Boolean);
+  const fn = RGBA_FN.exec(s);
+  if (fn) {
+    const p = fn[1].split(/[\s,/]+/).filter(Boolean);
     const num = (x, pctScale) =>
-      x != null && x.endsWith('%') ? (parseFloat(x) / 100) * pctScale : parseFloat(x);
+      x?.endsWith('%') ? (Number.parseFloat(x) / 100) * pctScale : Number.parseFloat(x);
     const out = [num(p[0], 255), num(p[1], 255), num(p[2], 255), p[3] != null ? num(p[3], 1) : 1];
     // Reject anything that didn't parse to a finite number (e.g. a
     // percent alpha the old `+x` coercion silently turned into NaN —
@@ -119,7 +122,7 @@ const PAIRS = [
   ['--line-strong', '--surface', 'Strong hairline vs a card', 'decorative'],
 ];
 
-const FLOOR = { text: 4.5, ui: 3.0, decorative: 0 };
+const FLOOR = { text: 4.5, ui: 3, decorative: 0 };
 const LABEL = {
   text: 'AA text (4.5:1)',
   ui: 'UI / large (3:1)',
@@ -149,6 +152,11 @@ export function audit() {
 
 const r2 = (n) => (n == null ? 'n/a' : `${n.toFixed(2)}:1`);
 
+function verdict(x) {
+  if (!x.gated) return 'ℹ️ not gated';
+  return x.pass ? '✅ pass' : '❌ **FAIL**';
+}
+
 function themeTable(rows) {
   const head =
     '| Foreground | Background | Role | Held to | Ratio | Verdict |\n' +
@@ -156,9 +164,7 @@ function themeTable(rows) {
   const body = rows
     .map(
       (x) =>
-        `| \`${x.fg}\` | \`${x.bg}\` | ${x.role} | ${LABEL[x.level]} | ${r2(x.ratio)} | ${
-          !x.gated ? 'ℹ️ not gated' : x.pass ? '✅ pass' : '❌ **FAIL**'
-        } |`,
+        `| \`${x.fg}\` | \`${x.bg}\` | ${x.role} | ${LABEL[x.level]} | ${r2(x.ratio)} | ${verdict(x)} |`,
     )
     .join('\n');
   return `${head}\n${body}`;
