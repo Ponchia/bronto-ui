@@ -9,37 +9,64 @@ Direction is set by periodic multi-perspective reviews. This list is
 indicative, not a commitment, and a solo-maintained project — see
 "Support expectations" below.
 
-## 0.3.1 — adoption + gap-closing (shipped)
+> **Source of truth is [`CHANGELOG.md`](CHANGELOG.md).** This file
+> describes *direction*; the changelog records what actually shipped. If
+> the two disagree, the changelog wins — this file was last reconciled
+> against it at 0.3.3.
 
-Driven by a 12-perspective review (two Opus analyses + two five-model
-AgentMix deep runs). All additions are **non-breaking**.
+## Shipped (0.3.1 → 0.3.3)
 
-**Lifecycle & docs**
+The entire original 0.3.1 adoption checklist is **done** and has been for
+several releases — kept here as a delivered summary, not a to-do list.
+Per-item detail is in the dated CHANGELOG sections.
 
-- [x] Release-hygiene gate (`check:release`) + dated CHANGELOG
-- [x] `MIGRATIONS.json` + `docs/migrations/*` + deprecation policy
-- [ ] Per-framework getting-started (Astro / SvelteKit / vanilla; React/Solid snippet)
-- [ ] Tailwind v4 / cascade-layer interop recipe
-- [ ] Generated, drift-checked component/token reference
-- [ ] VS Code `css.customData` artifact (class + custom-property IntelliSense)
-- [ ] `examples/` apps installed from `npm pack` + consumer CI smoke matrix
-- [ ] README badges + consumer/maintainer doc split
+- **Lifecycle & docs** — release-hygiene gate + dated CHANGELOG;
+  `MIGRATIONS.json` + deprecation policy; per-framework getting-started
+  (Astro / SvelteKit / vanilla / React-Solid snippet); Tailwind /
+  cascade-layer interop; generated drift-checked `docs/reference.md`;
+  VS Code `css.customData` artifact; `examples/` built from `npm pack`
+  in CI; README badges; `llms.txt` agent entrypoint; shipped offline
+  docs.
+- **Tokens & layout** — semantic `--bronto-color-*` tier; stepped colour
+  scale (`--accent-1..6`, `--surface-1..6`); `--z-*` scale; layout
+  primitives `ui-sidebar` / `ui-switcher` / `ui-center` / `ui-ratio`;
+  opt-in container queries.
+- **Components & behaviors** — `ui-combobox` + `initCombobox` (APG);
+  collision-aware `ui-popover` + `initPopover`; `initFormValidation`;
+  sortable `aria-sort` table + `initTableSort` + selection;
+  `aria-busy` button loading; toast dismiss + assertive danger path;
+  `role=switch`; `ui-stat`/`ui-num`/`ui-empty-state` freed from the
+  shell; `tokens/resolved.json`; controlled `ui-modal` (`is-open`).
+- **Accessibility surface** — published, **CI-gated** WCAG 2.1 contrast
+  matrix (`docs/contrast.md`): every contractual token pairing has a
+  declared conformance level the build enforces. Decorative hairlines
+  are reported but 1.4.11-exempt by design.
+- **Guidance** — hand-written `docs/usage.md` decision guide (badge vs
+  chip vs dot, default density, prose-in-card, when to add a behavior),
+  shipped in the tarball alongside the generated reference.
 
-**Tokens & layout**
+## Open / under active consideration
 
-- [ ] Semantic `--bronto-*` token tier + stepped colour scale + `--z-*` scale (additive; short names kept as aliases)
-- [ ] Layout primitives: `ui-sidebar`, `ui-switcher`, `ui-center`, `ui-ratio`
-- [ ] Opt-in container queries on `ui-grid` / `ui-app-metrics` / `ui-card`
+Genuinely not done. Driven by real consumer evidence, not speculation.
 
-**Components & behaviors**
-
-- [ ] Button loading / `aria-busy` state; toast dismiss + assertive/danger path
-- [ ] Forms: `ui-input-group` / file / range; `initFormValidation` + error-summary
-- [ ] `ui-combobox` + `initCombobox` (APG, dependency-free)
-- [ ] Collision-aware tooltip/popover (native Popover API + CSS anchor positioning)
-- [ ] Data-table: `aria-sort` headers + `initTableSort` + selection contract
-- [ ] `role=switch` ARIA contract for `ui-switch`
-- [ ] Theme + contrast preview tool in the demo
+- **Framework-binding layer (React/Solid).** The remaining duplication
+  two consumers feel is the *binding* glue, not the agnostic surface
+  (which is ARIA-driven and complete). Still **deliberately deferred** —
+  the most likely thing to force the next *minor* if a third consumer
+  hits it. Tracked, not forgotten.
+- **"Prove the knob" — alternative themes.** External reviews converge
+  on one strategic risk: the project sells the *skin* (Nothing) more
+  than the *system* (token-driven restraint). Direction: lead docs with
+  the architecture and ship at least one credible non-default theme to
+  demonstrate `--accent`/identity is truly swappable. Spike findings
+  (what is token-reskinnable today vs. hardcoded) tracked in the
+  theme-spike notes.
+- **Token gaps surfaced by the contrast/theme work** — no `--info`
+  status token; no secondary-brand slot. Additive, patch-safe, ship
+  on real demand.
+- **APCA contrast (informational, non-gated).** WCAG 2.1 stays the
+  enforced legal/axe baseline; APCA could be published alongside for
+  guidance only.
 
 ## Later / under consideration
 

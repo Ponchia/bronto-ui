@@ -57,6 +57,12 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   the same source as the types and CI-drift-checked.
 - `docs/theming.md` — the token contract: which tokens to override, the
   light/dark model, and the rationed-accent rule.
+- `docs/usage.md` — the decision guide: badge vs chip vs dot, default
+  density, prose-in-card, when to add a behavior. Read this before
+  re-implementing UI the framework already has an opinion about.
+- `docs/contrast.md` — the published, CI-gated WCAG 2.1 contrast matrix
+  for every contractual token pairing, per theme. Generated from the
+  resolved palette; the build fails below the declared floor.
 - `tokens/index.d.ts` — every design-token name as a literal union.
 - `tokens/index.json` — tokens as plain data (global / light / dark).
 - `tokens/tokens.dtcg.json` — same tokens in W3C DTCG format.

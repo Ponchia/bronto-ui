@@ -12,7 +12,8 @@ monochrome surfaces, a single red accent, dot-matrix display type (Doto),
 flat hairline borders, restrained motion. CSS-first and framework-agnostic.
 
 **New here?** → [Getting started](#getting-started) ·
-[Reference](docs/reference.md) · [Theming](docs/theming.md) ·
+[Reference](docs/reference.md) · [Usage](docs/usage.md) ·
+[Theming](docs/theming.md) · [Contrast](docs/contrast.md) ·
 [Roadmap](ROADMAP.md) · [Contributing](CONTRIBUTING.md)
 
 > **Editor IntelliSense.** The package ships a VS Code CSS Custom Data

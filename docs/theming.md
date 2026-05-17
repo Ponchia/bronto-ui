@@ -66,6 +66,43 @@ fills — follows automatically, in both light and dark.
   set `accent-color` yourself on them — this is the one accent surface
   the framework can't tune for you.
 
+## Beyond accent: a full re-skin (the knob really works)
+
+The "Nothing" look is the **default skin, not the architecture**. It is
+~7 token declarations deep — no selector hardcodes the identity. An
+audit of `css/` found radius (25+ rules go through `var(--radius-*)`),
+the display/dot font, dot density, motion easings and the colour scale
+are *all* token-driven; the only hardcoded geometry is the deliberate
+`border-radius: 0` on a few sharp elements and `50%` on dots/avatars
+(correct to hardcode — they are not skin).
+
+So a genuinely different identity is a single override block, no fork:
+
+```css
+/* "Warm" — softer, rounder, no dot-matrix. Drop on :root or a subtree. */
+:root {
+  --accent: #c2683a;            /* terracotta, not the red */
+  --radius-md: 10px;            /* the system rounds everywhere at once */
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --display: var(--sans);       /* retire the Doto dot-matrix face */
+  --dot-font: var(--sans);
+  --dot-size: 0;                /* mute the decorative dot-grid motif */
+}
+```
+
+That changes buttons, cards, inputs, badges, focus rings, the display
+type and the dot motif together, in both themes, because every component
+consumes those tokens — not because there is a per-component theme file.
+This is the difference between a *system* and a *skin*: the skin is
+swappable, the system (rationed colour, density, classless prose,
+minimal JS) is what you are actually adopting.
+
+Caveat, restated: a custom `--accent` is **your** contrast obligation.
+The shipped palettes are CI-gated ([contrast.md](contrast.md)); a
+re-skin is not. Verify the primary-button label, `--accent-text` and the
+focus ring against their backgrounds.
+
 ## Token tiers (0.3.1)
 
 Three additive, non-breaking tiers sit on top of the primitives. The
