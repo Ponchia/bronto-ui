@@ -1,0 +1,51 @@
+name: CodeQL
+
+# Semantic security analysis in CI, not just ad-hoc. The package is
+# CSS-first but ships real JS (behaviors/, classes/, tokens/, scripts/),
+# so the JS surface is worth a standing scan; the actions language scans
+# the workflows themselves.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '34 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'Ponchia'
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [javascript-typescript, actions]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@9e0d7b8d25671d64c341c19c0152d693099fb5ba # v4
+        with:
+          languages: ${{ matrix.language }}
+          # No runtime deps and no build step — pure ESM source.
+          build-mode: none
+
+      - name: Analyze
+        uses: github/codeql-action/analyze@9e0d7b8d25671d64c341c19c0152d693099fb5ba # v4
+        with:
+          category: '/language:${{ matrix.language }}'
