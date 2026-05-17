@@ -8,6 +8,9 @@
     "preview": "astro preview --port 4174"
   },
   "devDependencies": {
-    "astro": "^4.16.0"
+    "astro": "^6.3.0"
+  },
+  "dependencies": {
+    "@ponchia/ui": "file:../../ponchia-ui-0.3.4.tgz"
   }
 }

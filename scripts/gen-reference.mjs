@@ -47,7 +47,12 @@ const classSection = [...groups.entries()]
 const tokenTable = (obj) =>
   '| Token | Value |\n| --- | --- |\n' +
   Object.entries(obj)
-    .map(([k, v]) => `| \`${k}\` | \`${String(v).replace(/\|/g, '\\|')}\` |`)
+    // Escape `\` before `|` so the sanitisation is complete (the escape
+    // char must itself be escaped first) — satisfies the closed token
+    // registry today and stays correct if a value ever contains either.
+    .map(
+      ([k, v]) => `| \`${k}\` | \`${String(v).replaceAll('\\', '\\\\').replaceAll('|', '\\|')}\` |`,
+    )
     .join('\n');
 
 const totalClasses = Object.keys(cls).length;
