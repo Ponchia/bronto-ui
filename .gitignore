@@ -18,5 +18,18 @@ _site/
 .ruff_cache/
 .pytest_cache/
 
+# Example apps build only from the packed tarball in CI; their installs,
+# lockfiles and outputs are local-only and must never reach this public repo.
+examples/*/node_modules/
+examples/*/package-lock.json
+examples/*/dist/
+examples/*/build/
+examples/*/.astro/
+examples/*/.svelte-kit/
+
+# Local code-quality tooling (SonarQube) — config + output, never commit
+.scannerwork/
+sonar-project.properties
+
 # Local Claude Code harness state
 .claude/
