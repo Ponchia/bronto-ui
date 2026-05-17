@@ -145,6 +145,7 @@
           <span class="ui-badge ui-badge--success">Success</span>
           <span class="ui-badge ui-badge--warning">Warning</span>
           <span class="ui-badge ui-badge--danger">Danger</span>
+          <span class="ui-badge ui-badge--info">Info</span>
           <span class="ui-chip">Chip</span>
           <span class="ui-chip ui-chip--accent">Active</span>
         </div>
@@ -152,6 +153,7 @@
           <span class="ui-status"><span class="ui-dot ui-dot--live"></span> Online</span>
           <span class="ui-status"><span class="ui-dot ui-dot--warning"></span> Degraded</span>
           <span class="ui-status"><span class="ui-dot ui-dot--danger"></span> Down</span>
+          <span class="ui-status"><span class="ui-dot ui-dot--info"></span> Info</span>
           <span class="ui-dotloader"><span></span><span></span><span></span></span>
           <span class="ui-spinner"></span>
           <span class="ui-caret">typing</span>
@@ -305,6 +307,9 @@
           <button class="ui-alert__dismiss" type="button" data-bronto-dismiss aria-label="dismiss">
             ✕
           </button>
+        </div>
+        <div class="ui-alert ui-alert--info">
+          <p class="ui-alert__body">Info tone — the neutral status colour, AA-safe on surface.</p>
         </div>
       </section>
 
@@ -698,9 +703,17 @@ ui.button({ variant: 'ghost' });</code></pre>
         </div>
 
         <table class="ui-table">
+          <thead>
+            <tr>
+              <th scope="col">Account</th>
+              <th scope="col" class="ui-num">Gain</th>
+              <th scope="col" class="ui-num">Loss</th>
+              <th scope="col" class="ui-num">Flat</th>
+            </tr>
+          </thead>
           <tbody>
             <tr>
-              <td>Net</td>
+              <th scope="row">Net</th>
               <td class="ui-num ui-num--pos">+1,240.00</td>
               <td class="ui-num ui-num--neg">−318.50</td>
               <td class="ui-num ui-num--muted">0.00</td>

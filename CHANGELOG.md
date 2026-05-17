@@ -4,6 +4,109 @@
 > `~0.x`; `^0.x` does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## 0.3.4 — 2026-05-17
+
+A review-driven accessibility + adoption pass (three external reviews →
+independent Opus review → AgentMix deep multi-POV review). All additive:
+new gated artifact, two new shipped docs, one new token. No breaking
+change → a patch under the 0.x policy.
+
+### Added
+
+- **`docs/contrast.md` — a published, CI-gated WCAG 2.1 contrast
+  matrix.** Every contractual token pairing, the conformance level it is
+  *held to*, and its measured sRGB ratio per theme. Generated from the
+  resolved token model (`scripts/gen-contrast.mjs`) so it cannot drift
+  from the palette, and **gated**: the new `check:contrast` fails
+  `npm run check` (and so release) if any gated pairing drops below its
+  floor. Text pairings are held to AA 4.5:1; non-text UI to 3:1;
+  decorative hairlines are reported but WCAG-1.4.11-exempt by design
+  (the low ratio is published, not hidden). New `exports`/`files`
+  entry; indexed in `llms.txt` + README.
+- **`docs/usage.md` — the decision guide.** When to use which primitive
+  (badge vs chip vs status dot), the unset density default and its two
+  presets, prose-in-card, when to reach for a behavior. Hand-written and
+  stable (contract, like `theming.md`); ships in the tarball for offline
+  agents/consumers.
+- **`info` status tone — token wired through the full status family.**
+  New `--info` / `--info-soft` tokens (+ `--bronto-color-info` semantic
+  alias), dual-theme, **and** the consumers that make it real:
+  `ui-badge--info`, `ui-alert--info`, `ui-toast--info`, `ui-dot--info`,
+  with `ui.badge`/`ui.alert`/`ui.dot` recipes, `BadgeOpts`/`DotOpts`/
+  `Tone` types, the toast `ToastOpts` tone, the generated reference and
+  the demo. This deliberately reverses the 0.3.2 `ui-badge--info`
+  deferral: shipping a token no component consumes would be the exact
+  dead-token defect this release exists to remove. Its gated contrast
+  row is now a real indicator (measured ≥3:1 on surface — light 5.77:1,
+  dark 8.41:1). Status hues (`success`/`warning`/`danger`/`info`) are
+  outside the rationed-accent rule by design.
+- **`docs/theming.md` — a full re-skin recipe.** Demonstrates that the
+  "Nothing" identity is a token skin, not the architecture: a per-theme
+  override block (measured AA-passing accents) restyles the whole system
+  with no fork.
+
+### Changed
+
+- `.ui-dotbar i` radius `1px` → `var(--radius-sm)` (byte-identical
+  render — `--radius-sm` *is* `1px` — but now responds to a radius
+  re-skin; no visual-baseline drift).
+- **`--dot-font` is now a live knob.** It and `--display` were defined
+  identically and nothing consumed `--dot-font`, yet README / Astro
+  guide / `fonts.css` all advertised it as a self-host/re-skin override
+  (a documented dead token — the exact defect this release exists to
+  remove). `--display` now derives from `--dot-font`
+  (`--display: var(--dot-font)`): byte-identical render today, but
+  overriding `--dot-font` as documented finally works. Removing the
+  token instead would have been breaking (names are contractual), so
+  the patch-safe fix is to make the advertised knob real.
+- Contrast gate now also covers text on `--surface-muted`
+  (`--text-soft`, `--text-dim`) — that surface is rendered as a fill by
+  forms/disclosure and `--text-dim` there is the tightest real margin
+  (~4.7:1). Passing today; now gated so a future palette nudge can't
+  silently regress it. (Found by the full-codebase audit.)
+- ROADMAP reconciled against shipped reality: the entire original 0.3.1
+  checklist has been delivered for several releases. CHANGELOG is now
+  the stated source of truth.
+
+### Fixed
+
+- `scripts/gen-contrast.mjs` colour parser now rejects non-finite
+  channels and handles percent alpha, so a `NaN` ratio can no longer
+  silently pass the gate (`check:contrast` also fails explicitly on a
+  non-finite ratio). Found by the AgentMix review.
+- `demo/theme-playground.html` WCAG linearisation threshold aligned to
+  the canonical `0.04045` (was `0.03928`); points at the gated
+  implementation as the source of truth.
+- `check-classes` now strips CSS comments before scraping selectors. It
+  is the one contract check that scrapes CSS rather than diffing a
+  generator, so a `.ui-*` named only inside a comment could previously
+  satisfy the `cls`⇄selector contract — a real (if currently
+  unexercised) drift hole. Closed by the full-codebase audit.
+- **`ToastOpts` was runtime-public but type-private.** `toast()` has
+  always accepted (and tested) `assertive` / `closable`, but the typed
+  `ToastOpts` stopped at `tone`/`title`/`duration`, so a TypeScript
+  consumer couldn't pass documented options. Added both (+ a type
+  test). `check:dts` covers only the *generated* classes/tokens `.d.ts`,
+  not the hand-written behaviors one — this drift was invisible to the
+  gate.
+- **`initFormValidation` suppressed native bubbles too late.**
+  `form.noValidate` was set inside the submit/blur handlers, so the
+  *first* invalid real-browser submit of a pre-existing form showed the
+  UA bubble instead of the Bronto error summary (the demo masked it
+  with authored `novalidate`). It is now set at init for matched forms
+  and restored on cleanup; dynamically-added forms stay covered by the
+  in-handler set.
+- **Combobox could select a filtered-out option.** Typing a query that
+  hid the active option left `aria-activedescendant` stale; Enter then
+  selected the hidden option. `filter()` now clears stale active state
+  and Enter is visibility-guarded (WAI-ARIA APG correctness).
+- `check-dist` now also asserts the on-disk `dist/**/*.css` set exactly
+  matches the generated bundles — since the whole `dist/` ships, a
+  stale/renamed leaf would otherwise reach npm undetected.
+- README bundle-size figures refreshed (~64 kB raw / ~11 kB gzip; the
+  enforced ceiling remains `check-dist`'s budget). Prior `~54/~10`
+  prose had drifted since 0.3.2.
+
 ## 0.3.3 — 2026-05-16
 
 A second consumer-evidence pass ("felt it twice") plus

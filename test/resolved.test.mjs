@@ -15,7 +15,8 @@ test('resolved: every value is static — no var()/color-mix() leaks', () => {
 });
 
 test('resolved: light and dark expose the same token set', () => {
-  assert.deepEqual(Object.keys(r.light).sort(), Object.keys(r.dark).sort());
+  const byName = (a, b) => a.localeCompare(b);
+  assert.deepEqual(Object.keys(r.light).sort(byName), Object.keys(r.dark).sort(byName));
 });
 
 test('resolved: color-mix is evaluated correctly (sRGB)', () => {

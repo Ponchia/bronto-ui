@@ -106,7 +106,7 @@ works in any framework without a binding layer:
   \`ui-button\`; the leading spinner is injected by CSS with no extra
   markup or class. \`ui-button--sm\`/\`--lg\` size it.
 - **Badge tone** — \`ui.badge({ tone })\` emits the framework tone
-  (\`accent|success|warning|danger|muted\`). Mapping an app's own variant
+  (\`accent|success|warning|danger|info|muted\`). Mapping an app's own variant
   vocabulary onto a tone is application logic, not a framework class.
 - **Modal** — native \`<dialog>\` gets backdrop + top-layer + focus-trap
   free. For a controlled/portal modal, add \`is-open\`

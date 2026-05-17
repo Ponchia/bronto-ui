@@ -8,15 +8,39 @@
  *
  * Run: node scripts/check-dist.mjs
  */
-import { readFileSync, existsSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { resolve, dirname, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildBundles, BUDGET, sizes } from './build-dist.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
 
-for (const [rel, expected] of Object.entries(buildBundles())) {
+const bundles = buildBundles();
+
+// `package.json` ships the WHOLE `dist/` dir, but the loop below only
+// iterates the *expected* outputs — a stale extra .css (a renamed leaf,
+// a removed module) would ship to consumers undetected. Assert the
+// on-disk .css set is exactly the generated set.
+const distDir = resolve(root, 'dist');
+const onDisk = [];
+const walk = (d) => {
+  for (const e of readdirSync(d, { withFileTypes: true })) {
+    const p = resolve(d, e.name);
+    if (e.isDirectory()) walk(p);
+    else if (e.name.endsWith('.css'))
+      onDisk.push(`dist/${relative(distDir, p).split(sep).join('/')}`);
+  }
+};
+if (existsSync(distDir)) walk(distDir);
+const expectedSet = new Set(Object.keys(bundles));
+for (const rel of onDisk) {
+  if (!expectedSet.has(rel)) {
+    errors.push(`${rel} is a stale dist artifact (not produced by build-dist) — would ship to npm`);
+  }
+}
+
+for (const [rel, expected] of Object.entries(bundles)) {
   const abs = resolve(root, rel);
   if (!existsSync(abs)) {
     errors.push(`${rel} missing — run: npm run dist:build`);

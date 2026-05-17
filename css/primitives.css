@@ -477,6 +477,11 @@
   border-color: color-mix(in srgb, var(--danger) 40%, var(--line));
 }
 
+.ui-badge--info {
+  background: var(--info-soft);
+  border-color: color-mix(in srgb, var(--info) 40%, var(--line));
+}
+
 /* Idle / unknown — the honest "no signal yet" tone (distinct from the
    default tinted badge). Token-safe; no new hue. */
 .ui-badge--muted {
@@ -511,6 +516,10 @@
 
 .ui-badge--danger.ui-badge--dot::before {
   background: var(--danger);
+}
+
+.ui-badge--info.ui-badge--dot::before {
+  background: var(--info);
 }
 
 /* --- Key/value list --- */

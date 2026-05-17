@@ -80,15 +80,6 @@
         ]
       }
     },
-    "display": {
-      "DEFAULT": {
-        "$type": "fontFamily",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "'Doto', var(--mono)"
-        }
-      }
-    },
     "dot": {
       "font": {
         "$type": "fontFamily",
@@ -104,6 +95,15 @@
       "gap": {
         "$type": "dimension",
         "$value": "14px"
+      }
+    },
+    "display": {
+      "DEFAULT": {
+        "$type": "fontFamily",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--dot-font)"
+        }
       }
     },
     "text": {
@@ -420,6 +420,13 @@
         "$extensions": {
           "com.ponchia.css": "var(--danger)"
         }
+      },
+      "color-info": {
+        "$type": "color",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--info)"
+        }
       }
     },
     "border": {
@@ -561,6 +568,16 @@
         "soft": {
           "$type": "color",
           "$value": "rgb(192, 22, 34, 0.1)"
+        }
+      },
+      "info": {
+        "DEFAULT": {
+          "$type": "color",
+          "$value": "#1f63c4"
+        },
+        "soft": {
+          "$type": "color",
+          "$value": "rgb(31, 99, 196, 0.12)"
         }
       },
       "code": {
@@ -736,6 +753,16 @@
         "soft": {
           "$type": "color",
           "$value": "rgb(255, 77, 84, 0.15)"
+        }
+      },
+      "info": {
+        "DEFAULT": {
+          "$type": "color",
+          "$value": "#6fb0e6"
+        },
+        "soft": {
+          "$type": "color",
+          "$value": "rgb(111, 176, 230, 0.14)"
         }
       },
       "code": {

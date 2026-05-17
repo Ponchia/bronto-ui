@@ -43,6 +43,7 @@ export const cls = Object.freeze({
   badgeSuccess: 'ui-badge--success',
   badgeWarning: 'ui-badge--warning',
   badgeDanger: 'ui-badge--danger',
+  badgeInfo: 'ui-badge--info',
   badgeMuted: 'ui-badge--muted',
   badgeDot: 'ui-badge--dot',
   chip: 'ui-chip',
@@ -58,6 +59,7 @@ export const cls = Object.freeze({
   dotSuccess: 'ui-dot--success',
   dotWarning: 'ui-dot--warning',
   dotDanger: 'ui-dot--danger',
+  dotInfo: 'ui-dot--info',
   dotLive: 'ui-dot--live',
   dotgrid: 'ui-dotgrid',
   dotgridAccent: 'ui-dotgrid--accent',
@@ -103,6 +105,7 @@ export const cls = Object.freeze({
   alertSuccess: 'ui-alert--success',
   alertWarning: 'ui-alert--warning',
   alertDanger: 'ui-alert--danger',
+  alertInfo: 'ui-alert--info',
   toastStack: 'ui-toast-stack',
   toastStackAssertive: 'ui-toast-stack--assertive',
   toast: 'ui-toast',
@@ -112,6 +115,7 @@ export const cls = Object.freeze({
   toastSuccess: 'ui-toast--success',
   toastWarning: 'ui-toast--warning',
   toastDanger: 'ui-toast--danger',
+  toastInfo: 'ui-toast--info',
   tooltip: 'ui-tooltip',
   tooltipBubble: 'ui-tooltip__bubble',
   popover: 'ui-popover',
@@ -287,6 +291,7 @@ export const ui = {
       tone === 'success' && cls.badgeSuccess,
       tone === 'warning' && cls.badgeWarning,
       tone === 'danger' && cls.badgeDanger,
+      tone === 'info' && cls.badgeInfo,
       tone === 'muted' && cls.badgeMuted,
       dot && cls.badgeDot,
     ),
@@ -306,6 +311,7 @@ export const ui = {
       tone === 'success' && cls.dotSuccess,
       tone === 'warning' && cls.dotWarning,
       tone === 'danger' && cls.dotDanger,
+      tone === 'info' && cls.dotInfo,
       live && cls.dotLive,
     ),
   dotgrid: ({ accent, dense } = {}) =>
@@ -328,6 +334,7 @@ export const ui = {
       tone === 'success' && cls.alertSuccess,
       tone === 'warning' && cls.alertWarning,
       tone === 'danger' && cls.alertDanger,
+      tone === 'info' && cls.alertInfo,
     ),
   toast: ({ tone } = {}) =>
     j(
@@ -336,6 +343,7 @@ export const ui = {
       tone === 'success' && cls.toastSuccess,
       tone === 'warning' && cls.toastWarning,
       tone === 'danger' && cls.toastDanger,
+      tone === 'info' && cls.toastInfo,
     ),
   progress: ({ indeterminate } = {}) => j(cls.progress, indeterminate && cls.progressIndeterminate),
   dotspinner: ({ size } = {}) =>

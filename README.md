@@ -3,7 +3,7 @@
 [![npm](https://img.shields.io/npm/v/@ponchia/ui?logo=npm)](https://www.npmjs.com/package/@ponchia/ui)
 [![npm provenance](https://img.shields.io/badge/npm-provenance-blue?logo=npm)](https://www.npmjs.com/package/@ponchia/ui#provenance)
 [![runtime deps](https://img.shields.io/badge/runtime%20deps-0-brightgreen)](package.json)
-[![bundle](https://img.shields.io/badge/dist-~54kB%20%2F%20~10kB%20gzip-informational)](scripts/check-dist.mjs)
+[![bundle](https://img.shields.io/badge/dist-~64kB%20%2F%20~11kB%20gzip-informational)](scripts/check-dist.mjs)
 [![CI](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
@@ -12,7 +12,8 @@ monochrome surfaces, a single red accent, dot-matrix display type (Doto),
 flat hairline borders, restrained motion. CSS-first and framework-agnostic.
 
 **New here?** → [Getting started](#getting-started) ·
-[Reference](docs/reference.md) · [Theming](docs/theming.md) ·
+[Reference](docs/reference.md) · [Usage](docs/usage.md) ·
+[Theming](docs/theming.md) · [Contrast](docs/contrast.md) ·
 [Roadmap](ROADMAP.md) · [Contributing](CONTRIBUTING.md)
 
 > **Editor IntelliSense.** The package ships a VS Code CSS Custom Data
@@ -65,7 +66,7 @@ chain:
 @import '@ponchia/ui';   /* → dist/bronto.css, the whole framework */
 ```
 
-~54 kB raw / ~10 kB gzip, one request, same `@layer bronto`. (The
+~64 kB raw / ~11 kB gzip, one request, same `@layer bronto`. (The
 enforced ceiling lives in `scripts/check-dist.mjs`, not this prose —
 treat these figures as indicative.) Source CSS, tokens/classes/behaviors
 entrypoints are unchanged — use whichever fits.

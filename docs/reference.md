@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 226 classes across 101 component groups
+- 230 classes across 101 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -38,6 +38,7 @@ each one matches a real selector in the stylesheet.
 | `cls.alertTitle` | `ui-alert__title` | part |
 | `cls.alertAccent` | `ui-alert--accent` | modifier |
 | `cls.alertDanger` | `ui-alert--danger` | modifier |
+| `cls.alertInfo` | `ui-alert--info` | modifier |
 | `cls.alertSuccess` | `ui-alert--success` | modifier |
 | `cls.alertWarning` | `ui-alert--warning` | modifier |
 
@@ -166,6 +167,7 @@ each one matches a real selector in the stylesheet.
 | `cls.badgeAccent` | `ui-badge--accent` | modifier |
 | `cls.badgeDanger` | `ui-badge--danger` | modifier |
 | `cls.badgeDot` | `ui-badge--dot` | modifier |
+| `cls.badgeInfo` | `ui-badge--info` | modifier |
 | `cls.badgeMuted` | `ui-badge--muted` | modifier |
 | `cls.badgeSuccess` | `ui-badge--success` | modifier |
 | `cls.badgeWarning` | `ui-badge--warning` | modifier |
@@ -273,6 +275,7 @@ each one matches a real selector in the stylesheet.
 | `cls.dot` | `ui-dot` | base |
 | `cls.dotAccent` | `ui-dot--accent` | modifier |
 | `cls.dotDanger` | `ui-dot--danger` | modifier |
+| `cls.dotInfo` | `ui-dot--info` | modifier |
 | `cls.dotLive` | `ui-dot--live` | modifier |
 | `cls.dotSuccess` | `ui-dot--success` | modifier |
 | `cls.dotWarning` | `ui-dot--warning` | modifier |
@@ -727,6 +730,7 @@ each one matches a real selector in the stylesheet.
 | `cls.toastTitle` | `ui-toast__title` | part |
 | `cls.toastAccent` | `ui-toast--accent` | modifier |
 | `cls.toastDanger` | `ui-toast--danger` | modifier |
+| `cls.toastInfo` | `ui-toast--info` | modifier |
 | `cls.toastSuccess` | `ui-toast--success` | modifier |
 | `cls.toastWarning` | `ui-toast--warning` | modifier |
 
@@ -782,7 +786,7 @@ works in any framework without a binding layer:
   `ui-button`; the leading spinner is injected by CSS with no extra
   markup or class. `ui-button--sm`/`--lg` size it.
 - **Badge tone** — `ui.badge({ tone })` emits the framework tone
-  (`accent|success|warning|danger|muted`). Mapping an app's own variant
+  (`accent|success|warning|danger|info|muted`). Mapping an app's own variant
   vocabulary onto a tone is application logic, not a framework class.
 - **Modal** — native `<dialog>` gets backdrop + top-layer + focus-trap
   free. For a controlled/portal modal, add `is-open`
@@ -813,8 +817,8 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--space-2xl` | `2.5rem` |
 | `--mono` | `'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', ui-monospace, monospace` |
 | `--sans` | `'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif` |
-| `--display` | `'Doto', var(--mono)` |
 | `--dot-font` | `'Doto', var(--mono)` |
+| `--display` | `var(--dot-font)` |
 | `--text-2xs` | `0.68rem` |
 | `--text-xs` | `0.76rem` |
 | `--text-sm` | `0.86rem` |
@@ -862,6 +866,7 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--bronto-color-success` | `var(--success)` |
 | `--bronto-color-warning` | `var(--warning)` |
 | `--bronto-color-danger` | `var(--danger)` |
+| `--bronto-color-info` | `var(--info)` |
 | `--surface` | `var(--panel)` |
 | `--surface-raised` | `var(--panel-strong)` |
 | `--surface-muted` | `var(--panel-soft)` |
@@ -895,6 +900,8 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--orange-soft` | `rgb(168, 95, 50, 0.13)` |
 | `--danger` | `#c01622` |
 | `--danger-soft` | `rgb(192, 22, 34, 0.1)` |
+| `--info` | `#1f63c4` |
+| `--info-soft` | `rgb(31, 99, 196, 0.12)` |
 | `--code-bg` | `rgb(10, 10, 10, 0.05)` |
 | `--button-text` | `#ffffff` |
 | `--field-dot` | `rgb(10, 10, 10, 0.16)` |
@@ -931,6 +938,8 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--orange-soft` | `rgb(208, 140, 91, 0.15)` |
 | `--danger` | `#ff4d54` |
 | `--danger-soft` | `rgb(255, 77, 84, 0.15)` |
+| `--info` | `#6fb0e6` |
+| `--info-soft` | `rgb(111, 176, 230, 0.14)` |
 | `--code-bg` | `rgb(255, 255, 255, 0.05)` |
 | `--button-text` | `#000000` |
 | `--field-dot` | `rgb(242, 242, 242, 0.14)` |

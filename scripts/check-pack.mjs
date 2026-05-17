@@ -52,7 +52,12 @@ for (const p of files) {
 // llms.txt). `reference.md` is generated + drift-checked (check:reference)
 // so it cannot rot; `theming.md` is the stable token contract. Everything
 // else under docs/ stays dev-only. Keep this in lockstep with `files`.
-const shippedDocs = new Set(['docs/reference.md', 'docs/theming.md']);
+const shippedDocs = new Set([
+  'docs/reference.md',
+  'docs/theming.md',
+  'docs/contrast.md',
+  'docs/usage.md',
+]);
 for (const d of shippedDocs) {
   if (!underAllowlist(d)) {
     errors.push(`shipped doc "${d}" missing from "files" — pack gate and files have drifted`);
