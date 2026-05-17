@@ -108,7 +108,7 @@ export declare function initDialog(opts?: DelegateOpts): Cleanup;
 
 export interface ToastOpts {
   /** Status tone — maps to `ui-toast--<tone>`. */
-  tone?: 'accent' | 'success' | 'warning' | 'danger';
+  tone?: 'accent' | 'success' | 'warning' | 'danger' | 'info';
   /** Optional uppercase label rendered above the message. */
   title?: string;
   /** Auto-dismiss delay in ms. 0 keeps it until dismissed. Default: 4000. */

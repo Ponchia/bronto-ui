@@ -28,10 +28,18 @@ change → a patch under the 0.x policy.
   presets, prose-in-card, when to reach for a behavior. Hand-written and
   stable (contract, like `theming.md`); ships in the tarball for offline
   agents/consumers.
-- **`--info` status token** (+ `--info-soft`, + `--bronto-color-info`
-  semantic alias), dual-theme, with its own gated contrast row. Closes
-  the named ROADMAP status-token gap. Token-safe; values measured ≥3:1
-  on surface (light 5.77:1, dark 8.41:1).
+- **`info` status tone — token wired through the full status family.**
+  New `--info` / `--info-soft` tokens (+ `--bronto-color-info` semantic
+  alias), dual-theme, **and** the consumers that make it real:
+  `ui-badge--info`, `ui-alert--info`, `ui-toast--info`, `ui-dot--info`,
+  with `ui.badge`/`ui.alert`/`ui.dot` recipes, `BadgeOpts`/`DotOpts`/
+  `Tone` types, the toast `ToastOpts` tone, the generated reference and
+  the demo. This deliberately reverses the 0.3.2 `ui-badge--info`
+  deferral: shipping a token no component consumes would be the exact
+  dead-token defect this release exists to remove. Its gated contrast
+  row is now a real indicator (measured ≥3:1 on surface — light 5.77:1,
+  dark 8.41:1). Status hues (`success`/`warning`/`danger`/`info`) are
+  outside the rationed-accent rule by design.
 - **`docs/theming.md` — a full re-skin recipe.** Demonstrates that the
   "Nothing" identity is a token skin, not the architecture: a per-theme
   override block (measured AA-passing accents) restyles the whole system

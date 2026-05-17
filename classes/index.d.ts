@@ -39,6 +39,7 @@ export declare const cls: {
   readonly badgeSuccess: 'ui-badge--success';
   readonly badgeWarning: 'ui-badge--warning';
   readonly badgeDanger: 'ui-badge--danger';
+  readonly badgeInfo: 'ui-badge--info';
   readonly badgeMuted: 'ui-badge--muted';
   readonly badgeDot: 'ui-badge--dot';
   readonly chip: 'ui-chip';
@@ -53,6 +54,7 @@ export declare const cls: {
   readonly dotSuccess: 'ui-dot--success';
   readonly dotWarning: 'ui-dot--warning';
   readonly dotDanger: 'ui-dot--danger';
+  readonly dotInfo: 'ui-dot--info';
   readonly dotLive: 'ui-dot--live';
   readonly dotgrid: 'ui-dotgrid';
   readonly dotgridAccent: 'ui-dotgrid--accent';
@@ -96,6 +98,7 @@ export declare const cls: {
   readonly alertSuccess: 'ui-alert--success';
   readonly alertWarning: 'ui-alert--warning';
   readonly alertDanger: 'ui-alert--danger';
+  readonly alertInfo: 'ui-alert--info';
   readonly toastStack: 'ui-toast-stack';
   readonly toastStackAssertive: 'ui-toast-stack--assertive';
   readonly toast: 'ui-toast';
@@ -105,6 +108,7 @@ export declare const cls: {
   readonly toastSuccess: 'ui-toast--success';
   readonly toastWarning: 'ui-toast--warning';
   readonly toastDanger: 'ui-toast--danger';
+  readonly toastInfo: 'ui-toast--info';
   readonly tooltip: 'ui-tooltip';
   readonly tooltipBubble: 'ui-tooltip__bubble';
   readonly popover: 'ui-popover';
@@ -255,7 +259,7 @@ export interface CardOpts {
   interactive?: boolean;
 }
 export interface BadgeOpts {
-  tone?: 'accent' | 'success' | 'warning' | 'danger' | 'muted';
+  tone?: 'accent' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
   dot?: boolean;
 }
 export interface NumOpts {
@@ -269,7 +273,7 @@ export interface LinkOpts {
   cta?: boolean;
 }
 export interface DotOpts {
-  tone?: 'accent' | 'success' | 'warning' | 'danger';
+  tone?: 'accent' | 'success' | 'warning' | 'danger' | 'info';
   live?: boolean;
 }
 export interface DotgridOpts {
@@ -293,7 +297,7 @@ export interface ClusterOpts {
 export interface StaggerOpts {
   auto?: boolean;
 }
-export type Tone = 'accent' | 'success' | 'warning' | 'danger';
+export type Tone = 'accent' | 'success' | 'warning' | 'danger' | 'info';
 export interface AlertOpts {
   tone?: Tone;
 }

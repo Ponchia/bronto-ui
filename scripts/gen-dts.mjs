@@ -63,7 +63,7 @@ export interface CardOpts {
   interactive?: boolean;
 }
 export interface BadgeOpts {
-  tone?: 'accent' | 'success' | 'warning' | 'danger' | 'muted';
+  tone?: 'accent' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
   dot?: boolean;
 }
 export interface NumOpts {
@@ -77,7 +77,7 @@ export interface LinkOpts {
   cta?: boolean;
 }
 export interface DotOpts {
-  tone?: 'accent' | 'success' | 'warning' | 'danger';
+  tone?: 'accent' | 'success' | 'warning' | 'danger' | 'info';
   live?: boolean;
 }
 export interface DotgridOpts {
@@ -101,7 +101,7 @@ export interface ClusterOpts {
 export interface StaggerOpts {
   auto?: boolean;
 }
-export type Tone = 'accent' | 'success' | 'warning' | 'danger';
+export type Tone = 'accent' | 'success' | 'warning' | 'danger' | 'info';
 export interface AlertOpts {
   tone?: Tone;
 }

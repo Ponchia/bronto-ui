@@ -94,6 +94,10 @@
   background: var(--danger);
 }
 
+.ui-dot--info {
+  background: var(--info);
+}
+
 .ui-dot--live {
   background: var(--success);
   box-shadow: 0 0 0 0 color-mix(in srgb, var(--success) 70%, transparent);

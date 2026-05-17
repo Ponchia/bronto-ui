@@ -319,7 +319,7 @@ export function initDialog({ root } = {}) {
  * that receives its first child in the same tick is not reliably
  * announced by VoiceOver/NVDA). On first creation the empty region is
  * inserted and the toast is appended on the next frame for the same
- * reason. `tone` is accent/success/warning/danger; `title` is an
+ * reason. `tone` is accent/success/warning/danger/info; `title` is an
  * optional uppercase label; `duration` ms before auto-dismiss (0 keeps
  * it until dismissed). Returns a function that dismisses the toast
  * early. SSR-safe (no-op).
