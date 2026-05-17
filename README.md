@@ -5,7 +5,6 @@
 [![runtime deps](https://img.shields.io/badge/runtime%20deps-0-brightgreen)](package.json)
 [![bundle](https://img.shields.io/badge/dist-~64kB%20%2F%20~11kB%20gzip-informational)](scripts/check-dist.mjs)
 [![CI](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/Ponchia/bronto-ui/actions/workflows/codeql.yml/badge.svg)](https://github.com/Ponchia/bronto-ui/actions/workflows/codeql.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Ponchia/bronto-ui/badge)](https://scorecard.dev/viewer/?uri=github.com/Ponchia/bronto-ui)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
