@@ -66,6 +66,55 @@ fills — follows automatically, in both light and dark.
   set `accent-color` yourself on them — this is the one accent surface
   the framework can't tune for you.
 
+## Beyond accent: a full re-skin (the knob really works)
+
+The "Nothing" look is the **default skin, not the architecture**. It is
+a handful of token declarations deep — no selector hardcodes the
+identity. An audit of `css/` found radius (every rounded element goes
+through `var(--radius-*)`), the display face, dot density, motion easings
+and the colour scale are *all* token-driven; the only hardcoded geometry
+is the deliberate `border-radius: 0` on a few sharp elements and `50%` on
+dots/avatars (correct to hardcode — they are circles, not skin).
+
+The framework derives its accent **per theme** (the shipped red is
+`#d71921` light / `#ff3b41` dark) precisely so each side stays
+contrast-safe. A serious re-skin does the same — one override block,
+no fork:
+
+```css
+/* "Warm" — softer, rounder, no dot-matrix. Per-theme so the primary
+   button label stays AA on both sides (measured: see below). */
+:root,
+:root[data-theme='light'] {
+  --accent: #a8431a;            /* terracotta — #fff label = 6.03:1 */
+  --radius-md: 10px;            /* the system rounds everywhere at once */
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --display: var(--sans);       /* retire the Doto dot-matrix face */
+  --dot-size: 0;                /* mute the decorative dot-grid motif */
+}
+:root[data-theme='dark'] {
+  --accent: #e8a06a;            /* lighter warm — #000 label = 9.67:1 */
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) { --accent: #e8a06a; }
+}
+```
+
+That changes buttons, cards, inputs, badges, focus rings, the display
+type and the dot motif together, because every component consumes those
+tokens — not because there is a per-component theme file. This is the
+difference between a *system* and a *skin*: the skin is swappable, the
+system (rationed colour, density, classless prose, minimal JS) is what
+you are actually adopting.
+
+Caveat, restated: a custom `--accent` is **your** contrast obligation —
+the shipped palettes are CI-gated ([contrast.md](contrast.md)), a re-skin
+is not. The values above are *measured* (white label on `#a8431a` =
+6.03:1, black on `#e8a06a` = 9.67:1, both ≥ 4.5:1 AA); pick your own with
+the same check. Don't set one global `--accent` and hope — that is why
+this example is split per theme.
+
 ## Token tiers (0.3.1)
 
 Three additive, non-breaking tiers sit on top of the primitives. The

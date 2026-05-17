@@ -319,7 +319,7 @@ export function initDialog({ root } = {}) {
  * that receives its first child in the same tick is not reliably
  * announced by VoiceOver/NVDA). On first creation the empty region is
  * inserted and the toast is appended on the next frame for the same
- * reason. `tone` is accent/success/warning/danger; `title` is an
+ * reason. `tone` is accent/success/warning/danger/info; `title` is an
  * optional uppercase label; `duration` ms before auto-dismiss (0 keeps
  * it until dismissed). Returns a function that dismisses the toast
  * early. SSR-safe (no-op).
@@ -607,11 +607,29 @@ export function initFormValidation({ root } = {}) {
   };
 
   return bindOnce(host, 'formValidation', () => {
+    // Suppress native bubbles UP FRONT for forms present at init. The
+    // in-handler `noValidate = true` only fires after the first
+    // submit/blur, so the very first invalid real-browser submit would
+    // otherwise show the native UA bubble instead of the Bronto
+    // summary — contradicting the documented contract. (Forms added
+    // after init are still covered by the in-handler set.)
+    // Feature-detect rather than `instanceof Element` — `Element` is not
+    // a guaranteed global (SSR / the no-DOM test env), and `host` is
+    // either `document` (no `.matches`) or a root Element.
+    const selfForm =
+      typeof host.matches === 'function' && host.matches('[data-bronto-validate]') ? [host] : [];
+    const forms = [...selfForm, ...(host.querySelectorAll?.('[data-bronto-validate]') ?? [])];
+    const priorNoValidate = new Map();
+    for (const f of forms) {
+      priorNoValidate.set(f, f.noValidate);
+      f.noValidate = true;
+    }
     host.addEventListener('submit', onSubmit, true);
     host.addEventListener('focusout', onBlur);
     return () => {
       host.removeEventListener('submit', onSubmit, true);
       host.removeEventListener('focusout', onBlur);
+      for (const [f, v] of priorNoValidate) f.noValidate = v;
     };
   });
 }
@@ -702,6 +720,12 @@ export function initCombobox({ root } = {}) {
         if (match) any = true;
       }
       if (empty) empty.hidden = any;
+      // The active option may have just been filtered out — drop the
+      // stale activedescendant so Enter can't select a hidden option.
+      if (active >= 0 && options[active]?.hidden) {
+        active = -1;
+        setActive(null);
+      }
       open();
     };
 
@@ -762,7 +786,7 @@ export function initCombobox({ root } = {}) {
           }
           break;
         case 'Enter':
-          if (!list.hidden && active >= 0) {
+          if (!list.hidden && active >= 0 && !options[active].hidden) {
             e.preventDefault();
             select(options[active]);
           }

@@ -572,6 +572,22 @@ test('initFormValidation: valid submit is not blocked', () => {
   stop();
 });
 
+test('initFormValidation: noValidate is set at init, restored on cleanup', () => {
+  const d = mount(`
+    <form data-bronto-validate>
+      <input class="ui-input" name="x" required />
+      <button type="submit">Go</button>
+    </form>`);
+  const form = d.querySelector('form');
+  assert.equal(form.noValidate, false, 'precondition: native validation on');
+  const stop = initFormValidation();
+  // Must be suppressed at INIT, not deferred to the first submit/blur —
+  // otherwise the first invalid real-browser submit shows the UA bubble.
+  assert.equal(form.noValidate, true, 'native bubbles suppressed at init');
+  stop();
+  assert.equal(form.noValidate, false, 'prior noValidate restored on cleanup');
+});
+
 test('initFormValidation: SSR-safe', () => {
   for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
   assert.doesNotThrow(() => {
@@ -647,6 +663,33 @@ test('initCombobox: empty state, Escape closes, cleanup detaches', () => {
   input.value = 'a';
   input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
   assert.equal(list.hidden, true, 'no-op after cleanup');
+});
+
+test('initCombobox: a filtered-out active option cannot be Enter-selected (APG)', () => {
+  const d = mount(CB);
+  const stop = initCombobox();
+  const input = d.querySelector('.ui-combobox__input');
+
+  // Open (all shown) and activate the first option (Apple).
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+  const apple = d.querySelector('.ui-combobox__option');
+  assert.equal(input.getAttribute('aria-activedescendant'), apple.id, 'Apple is active');
+
+  // Filter so Apple is hidden — stale active must be dropped.
+  input.value = 'ban';
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  assert.equal(apple.hidden, true, 'Apple filtered out');
+  assert.equal(
+    input.hasAttribute('aria-activedescendant'),
+    false,
+    'stale activedescendant cleared',
+  );
+
+  // Enter must NOT select the hidden Apple.
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  assert.notEqual(input.value, 'apple', 'hidden option is not selectable');
+  stop();
 });
 
 test('initCombobox: SSR-safe', () => {

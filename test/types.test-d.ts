@@ -42,7 +42,28 @@ const scaleMd: string = tokens.scale['space-md'];
 const stop: Cleanup = initThemeToggle();
 const stopDlg: Cleanup = initDialog({ root: document });
 const dismiss: Cleanup = toast('hi', { tone: 'success', title: 'OK', duration: 0 });
+// Runtime-public options must be type-public too (regression: ToastOpts
+// previously stopped at tone/title/duration while the runtime accepted
+// these and the behavior tests exercised them).
+const dismiss2: Cleanup = toast('err', { tone: 'danger', assertive: true, closable: true });
 // @ts-expect-error — message is required.
 toast();
+// @ts-expect-error — assertive is a boolean.
+toast('x', { assertive: 'yes' });
 
-void [btn, appShell, tt, a, b, joined, soft, th, accentVar, scaleMd, stop, stopDlg, dismiss];
+void [
+  btn,
+  appShell,
+  tt,
+  a,
+  b,
+  joined,
+  soft,
+  th,
+  accentVar,
+  scaleMd,
+  stop,
+  stopDlg,
+  dismiss,
+  dismiss2,
+];

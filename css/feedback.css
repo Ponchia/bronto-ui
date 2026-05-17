@@ -95,6 +95,14 @@
   background: var(--danger);
 }
 
+.ui-alert--info {
+  border-inline-start-color: var(--info);
+}
+
+.ui-alert--info::before {
+  background: var(--info);
+}
+
 @media (hover: hover) {
   .ui-alert__dismiss:hover {
     color: var(--text);
@@ -199,6 +207,10 @@
 
 .ui-toast--danger::before {
   background: var(--danger);
+}
+
+.ui-toast--info::before {
+  background: var(--info);
 }
 
 /* --- Tooltip — CSS-only, hover/focus, no JS --- */
