@@ -135,7 +135,7 @@
     },
     {
       "name": "--display",
-      "description": "Global scale token. Value: `'Doto', var(--mono)`"
+      "description": "Global scale token. Value: `var(--dot-font)`"
     },
     {
       "name": "--dot-font",

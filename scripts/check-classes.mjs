@@ -17,7 +17,13 @@ const cssDir = resolve(root, 'css');
 const inCss = new Set();
 for (const f of readdirSync(cssDir)) {
   if (!f.endsWith('.css')) continue;
-  const src = readFileSync(resolve(cssDir, f), 'utf8');
+  // Strip /* */ comments first: this is the one check that scrapes CSS
+  // rather than diffing a generator, so a class named only inside a
+  // comment must not satisfy the cls⇄selector contract (same regex as
+  // build-dist.mjs). Otherwise a deleted rule whose name still appears
+  // in a comment elsewhere would keep this gate green while `cls`
+  // points at dead CSS.
+  const src = readFileSync(resolve(cssDir, f), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
   for (const m of src.matchAll(/\.(ui-[\w-]+)/g)) inCss.add(m[1]);
 }
 

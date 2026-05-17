@@ -32,8 +32,8 @@ export const cssVars = {
     '--mono': "'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', ui-monospace, monospace",
     '--sans':
       "'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
-    '--display': "'Doto', var(--mono)",
     '--dot-font': "'Doto', var(--mono)",
+    '--display': 'var(--dot-font)',
     '--text-2xs': '0.68rem',
     '--text-xs': '0.76rem',
     '--text-sm': '0.86rem',

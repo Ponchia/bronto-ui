@@ -80,15 +80,6 @@
         ]
       }
     },
-    "display": {
-      "DEFAULT": {
-        "$type": "fontFamily",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "'Doto', var(--mono)"
-        }
-      }
-    },
     "dot": {
       "font": {
         "$type": "fontFamily",
@@ -104,6 +95,15 @@
       "gap": {
         "$type": "dimension",
         "$value": "14px"
+      }
+    },
+    "display": {
+      "DEFAULT": {
+        "$type": "fontFamily",
+        "$value": null,
+        "$extensions": {
+          "com.ponchia.css": "var(--dot-font)"
+        }
       }
     },
     "text": {

@@ -113,6 +113,13 @@ export interface ToastOpts {
   title?: string;
   /** Auto-dismiss delay in ms. 0 keeps it until dismissed. Default: 4000. */
   duration?: number;
+  /**
+   * Route to the assertive live region so AT interrupts immediately.
+   * Defaults to `true` when `tone === 'danger'`.
+   */
+  assertive?: boolean;
+  /** Render a dismiss button on the toast. */
+  closable?: boolean;
 }
 
 /**

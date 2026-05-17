@@ -50,6 +50,20 @@ change → a patch under the 0.x policy.
 - `.ui-dotbar i` radius `1px` → `var(--radius-sm)` (byte-identical
   render — `--radius-sm` *is* `1px` — but now responds to a radius
   re-skin; no visual-baseline drift).
+- **`--dot-font` is now a live knob.** It and `--display` were defined
+  identically and nothing consumed `--dot-font`, yet README / Astro
+  guide / `fonts.css` all advertised it as a self-host/re-skin override
+  (a documented dead token — the exact defect this release exists to
+  remove). `--display` now derives from `--dot-font`
+  (`--display: var(--dot-font)`): byte-identical render today, but
+  overriding `--dot-font` as documented finally works. Removing the
+  token instead would have been breaking (names are contractual), so
+  the patch-safe fix is to make the advertised knob real.
+- Contrast gate now also covers text on `--surface-muted`
+  (`--text-soft`, `--text-dim`) — that surface is rendered as a fill by
+  forms/disclosure and `--text-dim` there is the tightest real margin
+  (~4.7:1). Passing today; now gated so a future palette nudge can't
+  silently regress it. (Found by the full-codebase audit.)
 - ROADMAP reconciled against shipped reality: the entire original 0.3.1
   checklist has been delivered for several releases. CHANGELOG is now
   the stated source of truth.
@@ -63,6 +77,35 @@ change → a patch under the 0.x policy.
 - `demo/theme-playground.html` WCAG linearisation threshold aligned to
   the canonical `0.04045` (was `0.03928`); points at the gated
   implementation as the source of truth.
+- `check-classes` now strips CSS comments before scraping selectors. It
+  is the one contract check that scrapes CSS rather than diffing a
+  generator, so a `.ui-*` named only inside a comment could previously
+  satisfy the `cls`⇄selector contract — a real (if currently
+  unexercised) drift hole. Closed by the full-codebase audit.
+- **`ToastOpts` was runtime-public but type-private.** `toast()` has
+  always accepted (and tested) `assertive` / `closable`, but the typed
+  `ToastOpts` stopped at `tone`/`title`/`duration`, so a TypeScript
+  consumer couldn't pass documented options. Added both (+ a type
+  test). `check:dts` covers only the *generated* classes/tokens `.d.ts`,
+  not the hand-written behaviors one — this drift was invisible to the
+  gate.
+- **`initFormValidation` suppressed native bubbles too late.**
+  `form.noValidate` was set inside the submit/blur handlers, so the
+  *first* invalid real-browser submit of a pre-existing form showed the
+  UA bubble instead of the Bronto error summary (the demo masked it
+  with authored `novalidate`). It is now set at init for matched forms
+  and restored on cleanup; dynamically-added forms stay covered by the
+  in-handler set.
+- **Combobox could select a filtered-out option.** Typing a query that
+  hid the active option left `aria-activedescendant` stale; Enter then
+  selected the hidden option. `filter()` now clears stale active state
+  and Enter is visibility-guarded (WAI-ARIA APG correctness).
+- `check-dist` now also asserts the on-disk `dist/**/*.css` set exactly
+  matches the generated bundles — since the whole `dist/` ships, a
+  stale/renamed leaf would otherwise reach npm undetected.
+- README bundle-size figures refreshed (~64 kB raw / ~11 kB gzip; the
+  enforced ceiling remains `check-dist`'s budget). Prior `~54/~10`
+  prose had drifted since 0.3.2.
 
 ## 0.3.3 — 2026-05-16
 

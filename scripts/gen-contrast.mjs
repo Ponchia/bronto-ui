@@ -98,8 +98,13 @@ const PAIRS = [
   ['--text', '--surface-muted', 'Body text on a muted panel', 'text'],
   ['--text-soft', '--bg', 'Secondary text on page background', 'text'],
   ['--text-soft', '--surface', 'Secondary text on a card', 'text'],
+  ['--text-soft', '--surface-muted', 'Secondary text on a muted panel', 'text'],
   ['--text-dim', '--bg', 'Dim/meta text on page background', 'text'],
   ['--text-dim', '--surface', 'Dim/meta text on a card', 'text'],
+  // Muted-panel dim text is the tightest real-world margin (~4.7:1) and
+  // is rendered (forms/disclosure use --panel-soft as a fill), so it is
+  // gated, not left to chance.
+  ['--text-dim', '--surface-muted', 'Dim/meta text on a muted panel', 'text'],
   // The accent used *as foreground text* — theming.md calls this the
   // AA-safe one, so it is gated at full text level deliberately.
   ['--accent-text', '--bg', 'Accent text on page background', 'text'],

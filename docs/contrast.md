@@ -45,8 +45,10 @@ Overall: **all contractual pairings meet their floor ✅**.
 | `--text` | `--surface-muted` | Body text on a muted panel | AA text (4.5:1) | 16.74:1 | ✅ pass |
 | `--text-soft` | `--bg` | Secondary text on page background | AA text (4.5:1) | 11.16:1 | ✅ pass |
 | `--text-soft` | `--surface` | Secondary text on a card | AA text (4.5:1) | 12.29:1 | ✅ pass |
+| `--text-soft` | `--surface-muted` | Secondary text on a muted panel | AA text (4.5:1) | 10.39:1 | ✅ pass |
 | `--text-dim` | `--bg` | Dim/meta text on page background | AA text (4.5:1) | 5.09:1 | ✅ pass |
 | `--text-dim` | `--surface` | Dim/meta text on a card | AA text (4.5:1) | 5.60:1 | ✅ pass |
+| `--text-dim` | `--surface-muted` | Dim/meta text on a muted panel | AA text (4.5:1) | 4.74:1 | ✅ pass |
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 6.32:1 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 6.96:1 | ✅ pass |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 5.18:1 | ✅ pass |
@@ -68,8 +70,10 @@ Overall: **all contractual pairings meet their floor ✅**.
 | `--text` | `--surface-muted` | Body text on a muted panel | AA text (4.5:1) | 15.55:1 | ✅ pass |
 | `--text-soft` | `--bg` | Secondary text on page background | AA text (4.5:1) | 12.04:1 | ✅ pass |
 | `--text-soft` | `--surface` | Secondary text on a card | AA text (4.5:1) | 11.22:1 | ✅ pass |
+| `--text-soft` | `--surface-muted` | Secondary text on a muted panel | AA text (4.5:1) | 9.98:1 | ✅ pass |
 | `--text-dim` | `--bg` | Dim/meta text on page background | AA text (4.5:1) | 5.69:1 | ✅ pass |
 | `--text-dim` | `--surface` | Dim/meta text on a card | AA text (4.5:1) | 5.30:1 | ✅ pass |
+| `--text-dim` | `--surface-muted` | Dim/meta text on a muted panel | AA text (4.5:1) | 4.72:1 | ✅ pass |
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 6.88:1 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 6.41:1 | ✅ pass |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 5.95:1 | ✅ pass |
