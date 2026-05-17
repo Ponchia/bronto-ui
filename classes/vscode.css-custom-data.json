@@ -86,6 +86,10 @@
       "description": "Global scale token. Value: `var(--focus-ring)`"
     },
     {
+      "name": "--bronto-color-info",
+      "description": "Global scale token. Value: `var(--info)`"
+    },
+    {
       "name": "--bronto-color-on-action",
       "description": "Global scale token. Value: `var(--button-text)`"
     },
@@ -184,6 +188,14 @@
     {
       "name": "--focus-ring",
       "description": "Theme token. Light: `var(--accent)` · Dark: `var(--accent)`"
+    },
+    {
+      "name": "--info",
+      "description": "Theme token. Light: `#1f63c4` · Dark: `#6fb0e6`"
+    },
+    {
+      "name": "--info-soft",
+      "description": "Theme token. Light: `rgb(31, 99, 196, 0.12)` · Dark: `rgb(111, 176, 230, 0.14)`"
     },
     {
       "name": "--line",

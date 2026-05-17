@@ -61,9 +61,9 @@ Genuinely not done. Driven by real consumer evidence, not speculation.
   demonstrate `--accent`/identity is truly swappable. Spike findings
   (what is token-reskinnable today vs. hardcoded) tracked in the
   theme-spike notes.
-- **Token gaps surfaced by the contrast/theme work** — no `--info`
-  status token; no secondary-brand slot. Additive, patch-safe, ship
-  on real demand.
+- **Token gaps surfaced by the contrast/theme work** — no
+  secondary-brand slot. (`--info` shipped 0.3.4 with a gated contrast
+  row.) Additive, patch-safe, ship on real demand.
 - **APCA contrast (informational, non-gated).** WCAG 2.1 stays the
   enforced legal/axe baseline; APCA could be published alongside for
   guidance only.

@@ -229,7 +229,7 @@
 
 .ui-dotbar i {
   background: var(--field-dot);
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   flex: 1;
   block-size: 0.5rem;
 }

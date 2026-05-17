@@ -862,6 +862,7 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--bronto-color-success` | `var(--success)` |
 | `--bronto-color-warning` | `var(--warning)` |
 | `--bronto-color-danger` | `var(--danger)` |
+| `--bronto-color-info` | `var(--info)` |
 | `--surface` | `var(--panel)` |
 | `--surface-raised` | `var(--panel-strong)` |
 | `--surface-muted` | `var(--panel-soft)` |
@@ -895,6 +896,8 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--orange-soft` | `rgb(168, 95, 50, 0.13)` |
 | `--danger` | `#c01622` |
 | `--danger-soft` | `rgb(192, 22, 34, 0.1)` |
+| `--info` | `#1f63c4` |
+| `--info-soft` | `rgb(31, 99, 196, 0.12)` |
 | `--code-bg` | `rgb(10, 10, 10, 0.05)` |
 | `--button-text` | `#ffffff` |
 | `--field-dot` | `rgb(10, 10, 10, 0.16)` |
@@ -931,6 +934,8 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--orange-soft` | `rgb(208, 140, 91, 0.15)` |
 | `--danger` | `#ff4d54` |
 | `--danger-soft` | `rgb(255, 77, 84, 0.15)` |
+| `--info` | `#6fb0e6` |
+| `--info-soft` | `rgb(111, 176, 230, 0.14)` |
 | `--code-bg` | `rgb(255, 255, 255, 0.05)` |
 | `--button-text` | `#000000` |
 | `--field-dot` | `rgb(242, 242, 242, 0.14)` |

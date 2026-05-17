@@ -41,7 +41,13 @@ function rgba(v) {
   m = s.match(/^rgba?\(([^)]+)\)$/i);
   if (m) {
     const p = m[1].split(/[\s,/]+/).filter(Boolean);
-    return [+p[0], +p[1], +p[2], p[3] != null ? +p[3] : 1];
+    const num = (x, pctScale) =>
+      x != null && x.endsWith('%') ? (parseFloat(x) / 100) * pctScale : parseFloat(x);
+    const out = [num(p[0], 255), num(p[1], 255), num(p[2], 255), p[3] != null ? num(p[3], 1) : 1];
+    // Reject anything that didn't parse to a finite number (e.g. a
+    // percent alpha the old `+x` coercion silently turned into NaN —
+    // which would then slip the gate as a non-comparable ratio).
+    return out.every((n) => Number.isFinite(n)) ? out : null;
   }
   return null;
 }
@@ -104,6 +110,7 @@ const PAIRS = [
   ['--success', '--surface', 'Success indicator vs a card', 'ui'],
   ['--warning', '--surface', 'Warning indicator vs a card', 'ui'],
   ['--danger', '--surface', 'Danger indicator vs a card', 'ui'],
+  ['--info', '--surface', 'Info indicator vs a card', 'ui'],
   // Hairlines are a deliberate identity choice and WCAG 1.4.11 exempts
   // decorative borders that are not the sole identifier of a control
   // (the framework re-asserts boundaries under forced-colors /
@@ -178,9 +185,9 @@ model (\`tokens/resolved.json\`) so it cannot drift from the palette, and
 - **Body / UI text** pairings are guaranteed **WCAG 2.1 AA — 4.5:1**
   (1.4.3). This covers \`--text\`, \`--text-soft\`, \`--text-dim\`,
   \`--accent-text\`, and the primary-button label.
-- **Non-text UI** (focus ring, accent fill, status colour, strong
-  hairline) is guaranteed **3:1** (1.4.11 non-text contrast / the
-  large-text bar). These are deliberately *not* held to 4.5:1 — a focus
+- **Non-text UI** (focus ring, accent fill, status colour) is guaranteed
+  **3:1** (1.4.11 non-text contrast / the large-text bar). These are
+  deliberately *not* held to 4.5:1 — a focus
   ring is a UI boundary, not body copy, and WCAG agrees.
 - **Hairlines** (\`--line\`, \`--line-strong\`) are a deliberate identity
   choice and are **reported but not gated**: WCAG 1.4.11 exempts

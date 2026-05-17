@@ -36,7 +36,7 @@ for (const [theme, rows] of [
 ]) {
   for (const x of rows) {
     if (!x.gated) continue;
-    if (x.ratio == null) {
+    if (x.ratio == null || !Number.isFinite(x.ratio)) {
       errors.push(`${theme}: ${x.fg} on ${x.bg} did not resolve to a measurable colour`);
     } else if (x.ratio < x.floor) {
       errors.push(

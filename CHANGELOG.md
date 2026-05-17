@@ -4,6 +4,58 @@
 > `~0.x`; `^0.x` does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## 0.3.4 — 2026-05-17
+
+A review-driven accessibility + adoption pass (three external reviews →
+independent Opus review → AgentMix deep multi-POV review). All additive:
+new gated artifact, two new shipped docs, one new token. No breaking
+change → a patch under the 0.x policy.
+
+### Added
+
+- **`docs/contrast.md` — a published, CI-gated WCAG 2.1 contrast
+  matrix.** Every contractual token pairing, the conformance level it is
+  *held to*, and its measured sRGB ratio per theme. Generated from the
+  resolved token model (`scripts/gen-contrast.mjs`) so it cannot drift
+  from the palette, and **gated**: the new `check:contrast` fails
+  `npm run check` (and so release) if any gated pairing drops below its
+  floor. Text pairings are held to AA 4.5:1; non-text UI to 3:1;
+  decorative hairlines are reported but WCAG-1.4.11-exempt by design
+  (the low ratio is published, not hidden). New `exports`/`files`
+  entry; indexed in `llms.txt` + README.
+- **`docs/usage.md` — the decision guide.** When to use which primitive
+  (badge vs chip vs status dot), the unset density default and its two
+  presets, prose-in-card, when to reach for a behavior. Hand-written and
+  stable (contract, like `theming.md`); ships in the tarball for offline
+  agents/consumers.
+- **`--info` status token** (+ `--info-soft`, + `--bronto-color-info`
+  semantic alias), dual-theme, with its own gated contrast row. Closes
+  the named ROADMAP status-token gap. Token-safe; values measured ≥3:1
+  on surface (light 5.77:1, dark 8.41:1).
+- **`docs/theming.md` — a full re-skin recipe.** Demonstrates that the
+  "Nothing" identity is a token skin, not the architecture: a per-theme
+  override block (measured AA-passing accents) restyles the whole system
+  with no fork.
+
+### Changed
+
+- `.ui-dotbar i` radius `1px` → `var(--radius-sm)` (byte-identical
+  render — `--radius-sm` *is* `1px` — but now responds to a radius
+  re-skin; no visual-baseline drift).
+- ROADMAP reconciled against shipped reality: the entire original 0.3.1
+  checklist has been delivered for several releases. CHANGELOG is now
+  the stated source of truth.
+
+### Fixed
+
+- `scripts/gen-contrast.mjs` colour parser now rejects non-finite
+  channels and handles percent alpha, so a `NaN` ratio can no longer
+  silently pass the gate (`check:contrast` also fails explicitly on a
+  non-finite ratio). Found by the AgentMix review.
+- `demo/theme-playground.html` WCAG linearisation threshold aligned to
+  the canonical `0.04045` (was `0.03928`); points at the gated
+  implementation as the source of truth.
+
 ## 0.3.3 — 2026-05-16
 
 A second consumer-evidence pass ("felt it twice") plus

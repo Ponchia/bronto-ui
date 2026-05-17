@@ -11,19 +11,20 @@ The one principle everything below follows:
 > type weight, and the hairline before reaching for a hue. The accent is
 > a spotlight, not a paint bucket.
 
-## Density: what "default" means
+## Density: the unset default and its two presets
 
-`data-density` has three steps. **Default (unset) is the middle.** Set it
-on `<html>` or any subtree:
+`data-density` has two presets over an unset middle default. There is no
+`data-density="default"` value — *unset* is the design target; you opt
+into a preset on `<html>` or any subtree:
 
 | Value                  | Use for                                          |
 | ---------------------- | ------------------------------------------------ |
+| _(unset)_              | general app & content — the design target        |
 | `compact`              | data-dense admin: tables, dashboards, toolbars   |
-| _(unset)_ / `default`  | general app & content — the design target        |
-| `roomy`                | marketing / landing / reading-first pages        |
+| `comfortable`          | marketing / landing / reading-first pages        |
 
 Scope it, don't globalize blindly: a dashboard with one marketing-style
-hero can set `compact` on `<html>` and `roomy` on the hero section.
+hero can set `compact` on `<html>` and `comfortable` on the hero section.
 
 ## Badge vs chip vs status dot
 

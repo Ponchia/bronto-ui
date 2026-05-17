@@ -16,9 +16,9 @@ model (`tokens/resolved.json`) so it cannot drift from the palette, and
 - **Body / UI text** pairings are guaranteed **WCAG 2.1 AA — 4.5:1**
   (1.4.3). This covers `--text`, `--text-soft`, `--text-dim`,
   `--accent-text`, and the primary-button label.
-- **Non-text UI** (focus ring, accent fill, status colour, strong
-  hairline) is guaranteed **3:1** (1.4.11 non-text contrast / the
-  large-text bar). These are deliberately *not* held to 4.5:1 — a focus
+- **Non-text UI** (focus ring, accent fill, status colour) is guaranteed
+  **3:1** (1.4.11 non-text contrast / the large-text bar). These are
+  deliberately *not* held to 4.5:1 — a focus
   ring is a UI boundary, not body copy, and WCAG agrees.
 - **Hairlines** (`--line`, `--line-strong`) are a deliberate identity
   choice and are **reported but not gated**: WCAG 1.4.11 exempts
@@ -56,6 +56,7 @@ Overall: **all contractual pairings meet their floor ✅**.
 | `--success` | `--surface` | Success indicator vs a card | UI / large (3:1) | 5.04:1 | ✅ pass |
 | `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 5.60:1 | ✅ pass |
 | `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 6.21:1 | ✅ pass |
+| `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 5.77:1 | ✅ pass |
 | `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.39:1 | ℹ️ not gated |
 
 ## Dark theme
@@ -78,6 +79,7 @@ Overall: **all contractual pairings meet their floor ✅**.
 | `--success` | `--surface` | Success indicator vs a card | UI / large (3:1) | 8.70:1 | ✅ pass |
 | `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 10.66:1 | ✅ pass |
 | `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 6.00:1 | ✅ pass |
+| `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 8.41:1 | ✅ pass |
 | `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.01:1 | ℹ️ not gated |
 
 ## Scope & caveats
