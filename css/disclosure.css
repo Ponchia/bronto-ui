@@ -321,3 +321,183 @@
 .ui-avatar-group .ui-avatar:not(:first-child) {
   margin-inline-start: -0.5rem;
 }
+
+/* --- Carousel — a scroll-snap track of slides with an optional thumbnail
+   strip. Native horizontal scroll gives touch/trackpad swipe + momentum
+   for free; initCarousel adds prev/next, keyboard, thumbnail sync and the
+   position counter. A full-screen gallery is this same carousel inside a
+   native <dialog class="ui-lightbox"> (see overlay.css) — the dialog
+   brings the top layer, focus-trap and Esc; nothing is re-implemented. --- */
+
+.ui-carousel {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+/* Positioned frame for the viewport + overlay controls. The arrows can't
+   live inside the scroll viewport (absolute children of a scroll container
+   scroll away with the content), so they anchor to this stage instead. */
+.ui-carousel__stage {
+  position: relative;
+}
+
+.ui-carousel__viewport {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.ui-carousel__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.ui-carousel__viewport:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+
+.ui-carousel__slide {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+}
+
+.ui-carousel__slide > :is(img, picture, .ui-ratio) {
+  display: block;
+  inline-size: 100%;
+  object-fit: cover;
+}
+
+/* Prev / next — hairline round controls over the stage edges. */
+.ui-carousel__prev,
+.ui-carousel__next {
+  align-items: center;
+  background: color-mix(in srgb, var(--panel-strong) 80%, transparent);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  color: var(--text);
+  cursor: pointer;
+  display: inline-flex;
+  block-size: 2.2rem;
+  inline-size: 2.2rem;
+  inset-block-start: 50%;
+  justify-content: center;
+  position: absolute;
+  transform: translateY(-50%);
+  z-index: var(--z-raised);
+}
+
+.ui-carousel__prev {
+  inset-inline-start: var(--space-xs);
+}
+
+.ui-carousel__next {
+  inset-inline-end: var(--space-xs);
+}
+
+/* Chevron glyph, mirrors for RTL via the logical border edges. */
+.ui-carousel__prev::before,
+.ui-carousel__next::before {
+  block-size: 0.5rem;
+  border-block-start: 1.5px solid currentColor;
+  border-inline-end: 1.5px solid currentColor;
+  content: '';
+  inline-size: 0.5rem;
+}
+
+.ui-carousel__prev::before {
+  margin-inline-start: 0.2rem;
+  transform: rotate(-135deg);
+}
+
+.ui-carousel__next::before {
+  margin-inline-end: 0.2rem;
+  transform: rotate(45deg);
+}
+
+/* The chevron direction is a physical rotation, so flip it for RTL (the
+   buttons already swap sides via the logical insets above). */
+[dir='rtl'] .ui-carousel__prev::before {
+  transform: rotate(45deg);
+}
+
+[dir='rtl'] .ui-carousel__next::before {
+  transform: rotate(-135deg);
+}
+
+.ui-carousel__prev:disabled,
+.ui-carousel__next:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.ui-carousel__prev:focus-visible,
+.ui-carousel__next:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Position counter ("3 / 12") — initCarousel fills the text; aria-live. */
+.ui-carousel__status {
+  background: color-mix(in srgb, var(--panel-strong) 75%, transparent);
+  border-radius: var(--radius-pill);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  inset-block-end: var(--space-xs);
+  inset-inline-start: var(--space-xs);
+  letter-spacing: var(--tracking-wide);
+  padding: 0.2rem 0.5rem;
+  position: absolute;
+}
+
+/* Thumbnail strip — clicking a thumb jumps the track; active = accent. */
+.ui-carousel__thumbs {
+  display: flex;
+  gap: 0.4rem;
+  list-style: none;
+  margin: 0;
+  overflow-x: auto;
+  padding: 0;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.ui-carousel__thumbs::-webkit-scrollbar {
+  display: none;
+}
+
+.ui-carousel__thumb {
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  flex: 0 0 auto;
+  block-size: 3rem;
+  inline-size: 4rem;
+  overflow: hidden;
+  padding: 0;
+}
+
+.ui-carousel__thumb > img {
+  block-size: 100%;
+  inline-size: 100%;
+  object-fit: cover;
+}
+
+.ui-carousel__thumb[aria-current='true'] {
+  border-color: var(--accent);
+}
+
+.ui-carousel__thumb:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-carousel__viewport,
+  .ui-carousel__thumbs {
+    scroll-behavior: auto;
+  }
+}

@@ -111,6 +111,9 @@ export interface ToastOpts {
 export interface ProgressOpts {
   indeterminate?: boolean;
 }
+export interface MeterOpts {
+  tone?: 'accent' | 'success' | 'warning' | 'danger';
+}
 export interface DotspinnerOpts {
   size?: 'sm' | 'lg';
 }
@@ -138,6 +141,10 @@ export interface ContainerOpts {
 export interface TagOpts {
   accent?: boolean;
 }
+export interface InputIconOpts {
+  /** Place the icon at the inline-end instead of the start. */
+  end?: boolean;
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -156,6 +163,7 @@ export interface Ui {
   alert(opts?: AlertOpts): string;
   toast(opts?: ToastOpts): string;
   progress(opts?: ProgressOpts): string;
+  meter(opts?: MeterOpts): string;
   dotspinner(opts?: DotspinnerOpts): string;
   dotbar(opts?: DotbarOpts): string;
   modal(opts?: ModalOpts): string;
@@ -164,6 +172,7 @@ export interface Ui {
   prose(opts?: ProseOpts): string;
   container(opts?: ContainerOpts): string;
   tag(opts?: TagOpts): string;
+  inputIcon(opts?: InputIconOpts): string;
 }
 
 export declare const ui: Ui;

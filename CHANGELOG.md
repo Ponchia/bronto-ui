@@ -4,6 +4,73 @@
 > `~0.x`; `^0.x` does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## 0.3.5 — 2026-05-29
+
+A consumer-evidence pass: six small primitives that adopters were
+repeatedly hand-rolling, added as pure CSS in
+`@layer bronto` reusing existing tokens. All additive — no new token, no
+new gated contrast pairing, no breaking change → a patch under the 0.x
+policy.
+
+### Added
+
+- **`ui-pagehead` — the in-page title bar.** `ui-pagehead` +
+  `__title` + `__actions`: eyebrow/breadcrumb + title on the start,
+  an actions cluster on the end, one hairline beneath. Composes the
+  existing `ui-eyebrow` / `ui-breadcrumb` rather than duplicating them.
+  Parts-only (no recipe), like `ui-panel`.
+- **`ui-steps` — a stepper for multi-step flows.** `ui-steps` (an `<ol>`)
+  + `__item` + `__item--done`, auto-numbered by CSS counter with hairline
+  connectors. State is ARIA-driven: the active step is `aria-current="step"`
+  (no class); completed steps take `--done`.
+- **`ui-timeline` — a vertical event list.** `ui-timeline` (an `<ol>`) +
+  `__item` + `__time`, on a hairline spine with a per-item marker dot;
+  `aria-current` marks the live event (accent marker).
+- **`ui-meter` — a labelled proportion / threshold bar.** `ui-meter` +
+  `__fill` + tone modifiers `--accent` / `--success` / `--warning` /
+  `--danger`, with a `ui.meter({ tone })` recipe + `MeterOpts`. Distinct
+  from `ui-progress` (task progress, can be indeterminate): a meter shows
+  a measured static value (coverage, capacity, a KPI). Width is the same
+  shared `--value` knob progress uses; author `role="meter"` +
+  `aria-valuenow/min/max`.
+- **`ui-kbd` — an inline keyboard-key glyph.** Wrap a `<kbd>`; one per key
+  for a shortcut.
+- **`ui-input-icon` — a leading/trailing icon *inside* a control.**
+  `ui-input-icon` + `__icon` + `--end`, with a `ui.inputIcon({ end })`
+  recipe + `InputIconOpts`. Distinct from `ui-input-group` (an *adjacent*
+  affix): the icon overlays inside one `.ui-input`, which keeps full width
+  and gains padding on the icon side. Closes the "no framework primitive"
+  gap consumers were filling with a bespoke absolute overlay.
+- **`ui-carousel` + `initCarousel` — an image gallery / carousel, and a
+  lightbox built on it.** `ui-carousel` (`__stage` / `__viewport` /
+  `__slide` / `__prev` / `__next` / `__thumbs` / `__thumb` / `__status`)
+  is a **scroll-snap** track, so touch + trackpad swipe (with momentum)
+  are the browser's, not hand-rolled. `initCarousel` adds prev/next,
+  keyboard (Arrow/Home/End), a thumbnail strip with `aria-current` sync,
+  the position counter, and carousel ARIA, keeping a JS index in sync with
+  the scroll position both ways (`IntersectionObserver` where available);
+  `data-bronto-carousel-loop` wraps; it emits `bronto:change`
+  (`{ index }`). A **full-screen lightbox** is the same markup inside a
+  native `<dialog class="ui-lightbox">` (+ `ui-lightbox__close`) opened by
+  the existing `initDialog` — so the top layer, focus-trap, Escape and
+  focus-return come from `<dialog>` with zero new focus code. Closes the
+  gallery/lightbox/carousel gap consumers were filling by hand (one
+  adopter had shipped three overlapping hand-rolled versions). SSR-safe,
+  idempotent, returns a cleanup; declared in `behaviors/index.d.ts` and
+  demoed.
+- Demo gains a **"0.3.5 additions"** kitchen-sink section; `docs/usage.md`
+  gains meter-vs-progress and steps/timeline/kbd/input-icon guidance; the
+  generated `docs/reference.md`, `classes/index.d.ts`,
+  `classes/vscode.css-custom-data.json` and `dist/*` pick the new surface
+  up automatically.
+
+### Changed
+
+- **Bundle gzip budget 12 kB → 13 kB** (raw cap unchanged at 76 kB). The
+  six new primitives grew `dist/bronto.css` to ~68.1 kB raw / ~11.9 kB
+  gzip; the cap is recalibrated with ~7% gzip headroom, per the
+  bump-deliberately rule in `scripts/build-dist.mjs`.
+
 ## 0.3.4 — 2026-05-17
 
 A review-driven accessibility + adoption pass (three external reviews →

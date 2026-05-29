@@ -131,6 +131,50 @@
   white-space: nowrap;
 }
 
+/* --- Input icon: a leading (or trailing) glyph *inside* a single
+   control, distinct from input-group's adjacent affix. Wrap the input:
+   <span class="ui-input-icon"><svg class="ui-input-icon__icon"/>
+   <input class="ui-input"></span>. The icon is a decorative overlay; the
+   input keeps full width and gains padding on the icon side. --end moves
+   the icon to the inline-end. RTL falls out of the logical props. --- */
+.ui-input-icon {
+  display: block;
+  position: relative;
+}
+
+.ui-input-icon > .ui-input {
+  padding-inline-start: 2.2rem;
+}
+
+.ui-input-icon--end > .ui-input {
+  padding-inline: 0.7rem 2.2rem;
+}
+
+.ui-input-icon__icon {
+  align-items: center;
+  color: var(--text-dim);
+  display: inline-flex;
+  inset-block-start: 50%;
+  inset-inline-start: 0.7rem;
+  justify-content: center;
+  pointer-events: none;
+  position: absolute;
+  transform: translateY(-50%);
+}
+
+.ui-input-icon--end .ui-input-icon__icon {
+  inset-inline: auto 0.7rem;
+}
+
+.ui-input-icon__icon svg {
+  block-size: 1rem;
+  inline-size: 1rem;
+}
+
+.ui-input-icon:focus-within .ui-input-icon__icon {
+  color: var(--accent);
+}
+
 /* --- File input --- */
 .ui-file {
   color: var(--text-soft);

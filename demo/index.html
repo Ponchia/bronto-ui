@@ -764,6 +764,200 @@ ui.button({ variant: 'ghost' });</code></pre>
           <p class="ui-muted">ui-container--wide · ui-siteheader--sticky (structural)</p>
         </div>
       </section>
+
+      <section aria-labelledby="v06" class="ui-stack" style="margin-block-start: 3rem">
+        <h2 id="v06" class="ui-eyebrow">0.3.5 additions</h2>
+
+        <!-- Page header — eyebrow + title + actions, one hairline. -->
+        <div class="ui-pagehead">
+          <div class="ui-stack" style="--stack-gap: var(--space-2xs)">
+            <p class="ui-eyebrow ui-eyebrow--sm">Settings</p>
+            <h3 class="ui-pagehead__title">Billing</h3>
+          </div>
+          <div class="ui-pagehead__actions">
+            <button class="ui-button ui-button--subtle ui-button--sm" type="button">Export</button>
+            <button class="ui-button ui-button--sm" type="button">New invoice</button>
+          </div>
+        </div>
+
+        <!-- Steps — current via aria-current="step", completed via --done. -->
+        <ol class="ui-steps" style="max-inline-size: 32rem">
+          <li class="ui-steps__item ui-steps__item--done">Account</li>
+          <li class="ui-steps__item" aria-current="step">Profile</li>
+          <li class="ui-steps__item">Confirm</li>
+        </ol>
+
+        <!-- Timeline — hairline spine, aria-current marks the live event. -->
+        <ol class="ui-timeline" style="max-inline-size: 32rem">
+          <li class="ui-timeline__item" aria-current="true">
+            <span class="ui-timeline__time">09:42</span>
+            <span>Deploy started</span>
+          </li>
+          <li class="ui-timeline__item">
+            <span class="ui-timeline__time">09:31</span>
+            <span>Build passed</span>
+          </li>
+          <li class="ui-timeline__item">
+            <span class="ui-timeline__time">09:20</span>
+            <span>Commit pushed</span>
+          </li>
+        </ol>
+
+        <!-- Meter — measured value, toned by threshold (not task progress). -->
+        <div class="ui-stack" style="--stack-gap: var(--space-xs); max-inline-size: 24rem">
+          <span class="ui-eyebrow ui-eyebrow--sm">Coverage · disk · errors</span>
+          <div
+            class="ui-meter ui-meter--success"
+            role="meter"
+            aria-label="Coverage"
+            aria-valuenow="72"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <span class="ui-meter__fill" style="--value: 72"></span>
+          </div>
+          <div
+            class="ui-meter ui-meter--warning"
+            role="meter"
+            aria-label="Disk usage"
+            aria-valuenow="48"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <span class="ui-meter__fill" style="--value: 48"></span>
+          </div>
+          <div
+            class="ui-meter ui-meter--danger"
+            role="meter"
+            aria-label="Error rate"
+            aria-valuenow="91"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <span class="ui-meter__fill" style="--value: 91"></span>
+          </div>
+        </div>
+
+        <!-- Input with a leading icon inside the control. -->
+        <div class="ui-field" style="max-inline-size: 22rem">
+          <label class="ui-label" for="demoIconInput">Search</label>
+          <span class="ui-input-icon">
+            <span class="ui-input-icon__icon" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="7" cy="7" r="4.5"></circle>
+                <path d="M10.5 10.5 L14 14"></path>
+              </svg>
+            </span>
+            <input class="ui-input" id="demoIconInput" type="search" placeholder="Filter…" />
+          </span>
+        </div>
+
+        <!-- Keyboard key glyph. -->
+        <p class="ui-muted">
+          Press <kbd class="ui-kbd">⌘</kbd> <kbd class="ui-kbd">K</kbd> to search,
+          <kbd class="ui-kbd">Esc</kbd> to close.
+        </p>
+
+        <!-- Carousel — scroll-snap track (native swipe) + thumbnails +
+             counter, wired by initCarousel. A full-screen gallery is the
+             same markup inside a <dialog class="ui-lightbox"> (below). -->
+        <div
+          class="ui-carousel"
+          data-bronto-carousel
+          data-bronto-carousel-label="Sample photos"
+          style="max-inline-size: 30rem"
+        >
+          <div class="ui-carousel__stage">
+            <div class="ui-carousel__viewport">
+              <div class="ui-carousel__slide">
+                <div class="ui-ratio" style="--ratio: 16/9; background: var(--panel-soft)">
+                  <svg viewBox="0 0 160 90" aria-hidden="true">
+                    <text x="80" y="53" text-anchor="middle" fill="#8a8a8a" font-size="26" font-family="monospace">01</text>
+                  </svg>
+                </div>
+              </div>
+              <div class="ui-carousel__slide">
+                <div class="ui-ratio" style="--ratio: 16/9; background: var(--panel-strong)">
+                  <svg viewBox="0 0 160 90" aria-hidden="true">
+                    <text x="80" y="53" text-anchor="middle" fill="#8a8a8a" font-size="26" font-family="monospace">02</text>
+                  </svg>
+                </div>
+              </div>
+              <div class="ui-carousel__slide">
+                <div class="ui-ratio" style="--ratio: 16/9; background: var(--panel-soft)">
+                  <svg viewBox="0 0 160 90" aria-hidden="true">
+                    <text x="80" y="53" text-anchor="middle" fill="#8a8a8a" font-size="26" font-family="monospace">03</text>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <button class="ui-carousel__prev" data-bronto-carousel-prev></button>
+            <button class="ui-carousel__next" data-bronto-carousel-next></button>
+            <p class="ui-carousel__status"></p>
+          </div>
+          <ul class="ui-carousel__thumbs">
+            <li>
+              <button class="ui-carousel__thumb" aria-label="Photo 1">
+                <svg viewBox="0 0 160 90" aria-hidden="true" style="display: block; inline-size: 100%; block-size: 100%; background: var(--panel-soft)"></svg>
+              </button>
+            </li>
+            <li>
+              <button class="ui-carousel__thumb" aria-label="Photo 2">
+                <svg viewBox="0 0 160 90" aria-hidden="true" style="display: block; inline-size: 100%; block-size: 100%; background: var(--panel-strong)"></svg>
+              </button>
+            </li>
+            <li>
+              <button class="ui-carousel__thumb" aria-label="Photo 3">
+                <svg viewBox="0 0 160 90" aria-hidden="true" style="display: block; inline-size: 100%; block-size: 100%; background: var(--panel-soft)"></svg>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Lightbox = the same carousel inside a native <dialog>. -->
+        <div class="ui-cluster">
+          <button
+            class="ui-button ui-button--ghost ui-button--sm"
+            data-bronto-open="lbDemo"
+            type="button"
+          >
+            Open gallery
+          </button>
+        </div>
+        <dialog class="ui-lightbox" id="lbDemo" data-bronto-dialog-light aria-label="Photo gallery">
+          <button
+            class="ui-button ui-button--icon ui-lightbox__close"
+            data-bronto-close
+            type="button"
+            aria-label="Close gallery"
+          >
+            ×
+          </button>
+          <div class="ui-carousel" data-bronto-carousel data-bronto-carousel-loop data-bronto-carousel-label="Gallery">
+            <div class="ui-carousel__stage">
+              <div class="ui-carousel__viewport">
+                <div class="ui-carousel__slide">
+                  <div class="ui-ratio" style="--ratio: 16/9; background: var(--panel-soft)">
+                    <svg viewBox="0 0 160 90" aria-hidden="true">
+                      <text x="80" y="53" text-anchor="middle" fill="#8a8a8a" font-size="26" font-family="monospace">01</text>
+                    </svg>
+                  </div>
+                </div>
+                <div class="ui-carousel__slide">
+                  <div class="ui-ratio" style="--ratio: 16/9; background: var(--panel-strong)">
+                    <svg viewBox="0 0 160 90" aria-hidden="true">
+                      <text x="80" y="53" text-anchor="middle" fill="#8a8a8a" font-size="26" font-family="monospace">02</text>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <button class="ui-carousel__prev" data-bronto-carousel-prev></button>
+              <button class="ui-carousel__next" data-bronto-carousel-next></button>
+              <p class="ui-carousel__status"></p>
+            </div>
+          </div>
+        </dialog>
+      </section>
     </main>
 
     <!-- The demo drives itself with the package's own shipped modules,
@@ -780,6 +974,7 @@ ui.button({ variant: 'ghost' });</code></pre>
         initPopover,
         initFormValidation,
         initTableSort,
+        initCarousel,
         toast,
       } from '../behaviors/index.js';
       import { ui, cx } from '../classes/index.js';
@@ -794,6 +989,7 @@ ui.button({ variant: 'ghost' });</code></pre>
       initPopover();
       initFormValidation();
       initTableSort();
+      initCarousel(); // wires both the inline carousel and the lightbox's
 
       document.getElementById('toastBtn').addEventListener('click', () => {
         toast('Order filled — BTC/EUR', { tone: 'success', title: 'Done' });

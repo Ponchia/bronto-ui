@@ -85,6 +85,9 @@ export declare const cls: {
   readonly hintError: 'ui-hint--error';
   readonly inputGroup: 'ui-input-group';
   readonly inputGroupAddon: 'ui-input-group__addon';
+  readonly inputIcon: 'ui-input-icon';
+  readonly inputIconSlot: 'ui-input-icon__icon';
+  readonly inputIconEnd: 'ui-input-icon--end';
   readonly file: 'ui-file';
   readonly range: 'ui-range';
   readonly errorSummary: 'ui-error-summary';
@@ -115,6 +118,15 @@ export declare const cls: {
   readonly progress: 'ui-progress';
   readonly progressBar: 'ui-progress__bar';
   readonly progressIndeterminate: 'ui-progress--indeterminate';
+  readonly meter: 'ui-meter';
+  readonly meterFill: 'ui-meter__fill';
+  readonly meterAccent: 'ui-meter--accent';
+  readonly meterSuccess: 'ui-meter--success';
+  readonly meterWarning: 'ui-meter--warning';
+  readonly meterDanger: 'ui-meter--danger';
+  readonly steps: 'ui-steps';
+  readonly stepsItem: 'ui-steps__item';
+  readonly stepsItemDone: 'ui-steps__item--done';
   readonly modal: 'ui-modal';
   readonly modalHead: 'ui-modal__head';
   readonly modalTitle: 'ui-modal__title';
@@ -132,6 +144,8 @@ export declare const cls: {
   readonly comboboxList: 'ui-combobox__list';
   readonly comboboxOption: 'ui-combobox__option';
   readonly comboboxEmpty: 'ui-combobox__empty';
+  readonly lightbox: 'ui-lightbox';
+  readonly lightboxClose: 'ui-lightbox__close';
   readonly tabs: 'ui-tabs';
   readonly tabsList: 'ui-tabs__list';
   readonly tab: 'ui-tab';
@@ -150,6 +164,15 @@ export declare const cls: {
   readonly avatarSm: 'ui-avatar--sm';
   readonly avatarLg: 'ui-avatar--lg';
   readonly avatarGroup: 'ui-avatar-group';
+  readonly carousel: 'ui-carousel';
+  readonly carouselStage: 'ui-carousel__stage';
+  readonly carouselViewport: 'ui-carousel__viewport';
+  readonly carouselSlide: 'ui-carousel__slide';
+  readonly carouselPrev: 'ui-carousel__prev';
+  readonly carouselNext: 'ui-carousel__next';
+  readonly carouselStatus: 'ui-carousel__status';
+  readonly carouselThumbs: 'ui-carousel__thumbs';
+  readonly carouselThumb: 'ui-carousel__thumb';
   readonly table: 'ui-table';
   readonly tableDense: 'ui-table--dense';
   readonly tableComfortable: 'ui-table--comfortable';
@@ -190,6 +213,9 @@ export declare const cls: {
   readonly siteheaderSticky: 'ui-siteheader--sticky';
   readonly siteheaderBrand: 'ui-siteheader__brand';
   readonly siteheaderActions: 'ui-siteheader__actions';
+  readonly pagehead: 'ui-pagehead';
+  readonly pageheadTitle: 'ui-pagehead__title';
+  readonly pageheadActions: 'ui-pagehead__actions';
   readonly sitenav: 'ui-sitenav';
   readonly sitemenu: 'ui-sitemenu';
   readonly sitemenuPanel: 'ui-sitemenu__panel';
@@ -200,6 +226,10 @@ export declare const cls: {
   readonly tagAccent: 'ui-tag--accent';
   readonly meta: 'ui-meta';
   readonly metaItem: 'ui-meta__item';
+  readonly timeline: 'ui-timeline';
+  readonly timelineItem: 'ui-timeline__item';
+  readonly timelineTime: 'ui-timeline__time';
+  readonly kbd: 'ui-kbd';
   readonly display: 'ui-display';
   readonly mono: 'ui-mono';
   readonly muted: 'ui-muted';
@@ -307,6 +337,9 @@ export interface ToastOpts {
 export interface ProgressOpts {
   indeterminate?: boolean;
 }
+export interface MeterOpts {
+  tone?: 'accent' | 'success' | 'warning' | 'danger';
+}
 export interface DotspinnerOpts {
   size?: 'sm' | 'lg';
 }
@@ -334,6 +367,10 @@ export interface ContainerOpts {
 export interface TagOpts {
   accent?: boolean;
 }
+export interface InputIconOpts {
+  /** Place the icon at the inline-end instead of the start. */
+  end?: boolean;
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -352,6 +389,7 @@ export interface Ui {
   alert(opts?: AlertOpts): string;
   toast(opts?: ToastOpts): string;
   progress(opts?: ProgressOpts): string;
+  meter(opts?: MeterOpts): string;
   dotspinner(opts?: DotspinnerOpts): string;
   dotbar(opts?: DotbarOpts): string;
   modal(opts?: ModalOpts): string;
@@ -360,6 +398,7 @@ export interface Ui {
   prose(opts?: ProseOpts): string;
   container(opts?: ContainerOpts): string;
   tag(opts?: TagOpts): string;
+  inputIcon(opts?: InputIconOpts): string;
 }
 
 export declare const ui: Ui;

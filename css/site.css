@@ -91,6 +91,39 @@
   gap: var(--space-xs);
 }
 
+/* --- Page header — the in-page title bar every view re-hand-rolls:
+   eyebrow/breadcrumb + title on the start, actions on the end, one
+   hairline beneath. Compose the existing ui-eyebrow / ui-breadcrumb in
+   the title block (don't duplicate them); __actions is a cluster. --- */
+
+.ui-pagehead {
+  align-items: flex-end;
+  border-block-end: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  justify-content: space-between;
+  padding-block-end: var(--space-md);
+}
+
+.ui-pagehead__title {
+  color: var(--text);
+  font-family: var(--display);
+  font-size: var(--text-xl);
+  letter-spacing: var(--tracking-wide);
+  line-height: 1.1;
+  margin: 0;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.ui-pagehead__actions {
+  align-items: center;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
 /* --- Nav — desktop inline, dot active cue via aria-current --- */
 
 .ui-sitenav {
