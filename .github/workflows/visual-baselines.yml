@@ -22,9 +22,11 @@ name: Update visual baselines
 on:
   workflow_dispatch:
 
+# Least privilege: read-only by default; only the open-pr job elevates to
+# the writes it needs. regen just renders + uploads an artifact (Scorecard
+# Token-Permissions / least-privilege).
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   regen:
@@ -57,6 +59,9 @@ jobs:
   open-pr:
     needs: regen
     runs-on: ubuntu-latest # gh CLI is preinstalled here, not in the Playwright image
+    permissions:
+      contents: write # push the chore/visual-baselines-* branch
+      pull-requests: write # open the baseline PR
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
