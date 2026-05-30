@@ -67,9 +67,24 @@ policy.
 ### Changed
 
 - **Bundle gzip budget 12 kB → 13 kB** (raw cap unchanged at 76 kB). The
-  six new primitives grew `dist/bronto.css` to ~68.1 kB raw / ~11.9 kB
-  gzip; the cap is recalibrated with ~7% gzip headroom, per the
-  bump-deliberately rule in `scripts/build-dist.mjs`.
+  six new primitives plus the carousel/lightbox grew `dist/bronto.css` to
+  ~73 kB raw / ~12.7 kB gzip (against the 76 kB / 13 kB caps); the gzip cap
+  is recalibrated per the bump-deliberately rule in
+  `scripts/build-dist.mjs`.
+
+### Packaging & docs
+
+- **`fonts/OFL.txt`** — the bundled Doto font is now shipped with its SIL
+  Open Font License 1.1 text and attribution (© 2024 The Doto Project
+  Authors), as required to redistribute it; README gained a font-license
+  note. No code change.
+- **README rewritten** for the npm package page (de-duplicated, accurate
+  install/quick-start/theming, absolute links); `package.json` gained a
+  compelling `description` + `keywords`; `ROADMAP.md` reconciled to 0.3.5.
+- **Visual regression reworked** to component-scoped per-section snapshots
+  (`data-shot` slugs, auto-discovered) so adding a primitive no longer
+  drifts every baseline; the `visual-baselines` workflow's change-gate now
+  detects brand-new (untracked) baselines.
 
 ## 0.3.4 — 2026-05-17
 

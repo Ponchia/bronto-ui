@@ -75,7 +75,14 @@ jobs:
           GH_TOKEN: ${{ secrets.BASELINE_PAT || github.token }}
         run: |
           set -euo pipefail
-          if git diff --quiet -- test/e2e/__screenshots__; then
+          # Stage first so the change-check sees brand-NEW baselines too:
+          # a new component yields untracked <slug>-<theme>.png files, and
+          # plain `git diff` is blind to untracked paths (it only compares
+          # tracked files) — so it would falsely report "nothing to do" on
+          # exactly the case this workflow exists for. `git diff --cached`
+          # after staging catches additions, deletions and modifications.
+          git add -A -- test/e2e/__screenshots__
+          if git diff --cached --quiet -- test/e2e/__screenshots__; then
             echo "Baselines unchanged — nothing to do."
             exit 0
           fi

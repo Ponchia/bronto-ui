@@ -2,7 +2,22 @@
   "name": "@ponchia/ui",
   "version": "0.3.5",
   "type": "module",
-  "description": "Shared Bronto UI framework — Nothing-inspired monochrome CSS theme, dot-matrix motifs, admin shell.",
+  "description": "Nothing-inspired, CSS-first UI framework — monochrome design tokens, one rationed accent, dot-matrix motifs, zero runtime dependencies, framework-agnostic.",
+  "keywords": [
+    "css",
+    "ui",
+    "ui-framework",
+    "design-system",
+    "design-tokens",
+    "cascade-layers",
+    "css-layers",
+    "nothing",
+    "monochrome",
+    "framework-agnostic",
+    "zero-dependencies",
+    "dark-mode",
+    "accessibility"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
