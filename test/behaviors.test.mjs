@@ -13,6 +13,7 @@ import {
   initCombobox,
   initPopover,
   initTableSort,
+  initCarousel,
   toast,
 } from '../behaviors/index.js';
 
@@ -808,6 +809,130 @@ test('initTableSort: SSR-safe', () => {
   for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
   assert.doesNotThrow(() => {
     const stop = initTableSort();
+    stop();
+  });
+});
+
+const CAR = `
+  <div class="ui-carousel" data-bronto-carousel data-bronto-carousel-label="Photos">
+    <div class="ui-carousel__stage">
+      <div class="ui-carousel__viewport">
+        <div class="ui-carousel__slide"><img src="a" alt="A" /></div>
+        <div class="ui-carousel__slide"><img src="b" alt="B" /></div>
+        <div class="ui-carousel__slide"><img src="c" alt="C" /></div>
+      </div>
+      <button class="ui-carousel__prev" data-bronto-carousel-prev></button>
+      <button class="ui-carousel__next" data-bronto-carousel-next></button>
+      <p class="ui-carousel__status"></p>
+    </div>
+    <ul class="ui-carousel__thumbs">
+      <li><button class="ui-carousel__thumb"><img src="a" alt="" /></button></li>
+      <li><button class="ui-carousel__thumb"><img src="b" alt="" /></button></li>
+      <li><button class="ui-carousel__thumb"><img src="c" alt="" /></button></li>
+    </ul>
+  </div>`;
+
+test('initCarousel: wires ARIA + counter, next advances index, emits change', () => {
+  const d = mount(CAR);
+  const stop = initCarousel();
+  const vp = d.querySelector('.ui-carousel__viewport');
+  const status = d.querySelector('.ui-carousel__status');
+  const prev = d.querySelector('[data-bronto-carousel-prev]');
+  const next = d.querySelector('[data-bronto-carousel-next]');
+  const thumbs = [...d.querySelectorAll('.ui-carousel__thumb')];
+
+  assert.equal(vp.getAttribute('role'), 'group');
+  assert.equal(vp.getAttribute('aria-roledescription'), 'carousel');
+  assert.equal(vp.getAttribute('aria-label'), 'Photos');
+  assert.equal(vp.tabIndex, 0);
+  assert.equal(status.getAttribute('aria-live'), 'polite');
+  assert.equal(status.textContent, '1 / 3');
+  assert.equal(thumbs[0].getAttribute('aria-current'), 'true');
+  assert.equal(prev.disabled, true, 'prev disabled at start when not looping');
+  assert.equal(next.disabled, false);
+
+  let changed;
+  d.querySelector('[data-bronto-carousel]').addEventListener(
+    'bronto:change',
+    (e) => (changed = e.detail.index),
+  );
+  next.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(status.textContent, '2 / 3');
+  assert.equal(changed, 1, 'bronto:change carries the new index');
+  assert.equal(thumbs[1].getAttribute('aria-current'), 'true');
+  assert.equal(thumbs[0].hasAttribute('aria-current'), false, 'active thumb moved');
+  assert.equal(prev.disabled, false);
+  stop();
+});
+
+test('initCarousel: thumb click jumps; next clamps at the end (no loop)', () => {
+  const d = mount(CAR);
+  initCarousel();
+  const status = d.querySelector('.ui-carousel__status');
+  const next = d.querySelector('[data-bronto-carousel-next]');
+  const thumbs = [...d.querySelectorAll('.ui-carousel__thumb')];
+
+  thumbs[2].dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(status.textContent, '3 / 3', 'thumb jumps to its index');
+  assert.equal(next.disabled, true, 'next disabled at the end');
+
+  next.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(status.textContent, '3 / 3', 'clamped — no wrap without loop');
+});
+
+test('initCarousel: keyboard Arrow/Home/End navigate the focused viewport', () => {
+  const d = mount(CAR);
+  initCarousel();
+  const vp = d.querySelector('.ui-carousel__viewport');
+  const status = d.querySelector('.ui-carousel__status');
+  const key = (k) =>
+    vp.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: k, bubbles: true }));
+
+  key('ArrowRight');
+  assert.equal(status.textContent, '2 / 3');
+  key('End');
+  assert.equal(status.textContent, '3 / 3');
+  key('Home');
+  assert.equal(status.textContent, '1 / 3');
+  key('ArrowLeft');
+  assert.equal(status.textContent, '1 / 3', 'clamped at the start');
+});
+
+test('initCarousel: data-bronto-carousel-loop wraps at both ends', () => {
+  const d = mount(
+    CAR.replace('data-bronto-carousel ', 'data-bronto-carousel data-bronto-carousel-loop '),
+  );
+  initCarousel();
+  const status = d.querySelector('.ui-carousel__status');
+  const prev = d.querySelector('[data-bronto-carousel-prev]');
+  const next = d.querySelector('[data-bronto-carousel-next]');
+
+  assert.equal(prev.disabled, false, 'looping carousel never disables the ends');
+  prev.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(status.textContent, '3 / 3', 'prev from the first wraps to the last');
+  next.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(status.textContent, '1 / 3', 'next from the last wraps to the first');
+});
+
+test('initCarousel: idempotent re-init does not stack, cleanup detaches', () => {
+  const d = mount(CAR);
+  initCarousel();
+  const stop = initCarousel(); // must replace, not add a 2nd handler
+  const status = d.querySelector('.ui-carousel__status');
+  const next = d.querySelector('[data-bronto-carousel-next]');
+
+  next.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(status.textContent, '2 / 3', 'advanced exactly once');
+
+  stop();
+  next.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(status.textContent, '2 / 3', 'no-op after cleanup');
+});
+
+test('initCarousel: SSR-safe', () => {
+  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
+  assert.doesNotThrow(() => {
+    const stop = initCarousel();
     stop();
   });
 });

@@ -12,9 +12,9 @@ indicative, not a commitment, and a solo-maintained project — see
 > **Source of truth is [`CHANGELOG.md`](CHANGELOG.md).** This file
 > describes *direction*; the changelog records what actually shipped. If
 > the two disagree, the changelog wins — this file was last reconciled
-> against it at 0.3.3.
+> against it at 0.3.5.
 
-## Shipped (0.3.1 → 0.3.3)
+## Shipped (0.3.1 → 0.3.5)
 
 The entire original 0.3.1 adoption checklist is **done** and has been for
 several releases — kept here as a delivered summary, not a to-do list.
@@ -44,6 +44,13 @@ Per-item detail is in the dated CHANGELOG sections.
 - **Guidance** — hand-written `docs/usage.md` decision guide (badge vs
   chip vs dot, default density, prose-in-card, when to add a behavior),
   shipped in the tarball alongside the generated reference.
+- **0.3.4** — CI-gated WCAG contrast matrix hardening, `--info` status
+  tone with a gated contrast row, the re-skin recipe, and a11y/contrast
+  audit fixes.
+- **0.3.5** — six consumer-evidence CSS primitives (`ui-pagehead`,
+  `ui-steps`, `ui-timeline`, `ui-meter`, `ui-kbd`, `ui-input-icon`) plus
+  `ui-carousel` + `ui-lightbox` (CSS scroll-snap gallery in a native
+  `<dialog>`), and a component-scoped Playwright visual-baseline suite.
 
 ## Open / under active consideration
 
