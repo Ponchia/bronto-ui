@@ -105,6 +105,54 @@
   }
 }
 
+/* --- Lightbox — a full-viewport <dialog> wrapping a .ui-carousel. The
+   native <dialog> brings the top layer, focus-trap and Escape; initDialog
+   adds open (`data-bronto-open`) + focus-return; initCarousel drives the
+   inner carousel. No bespoke overlay/focus code — that is the whole point
+   of building it on <dialog>. --- */
+.ui-lightbox {
+  background: color-mix(in srgb, var(--bg) 92%, #000);
+  border: 0;
+  block-size: 100vh;
+  color: var(--text);
+  max-block-size: 100vh;
+  max-inline-size: 100vw;
+  padding: 0;
+  inline-size: 100vw;
+}
+
+.ui-lightbox::backdrop {
+  background: color-mix(in srgb, #000 80%, transparent);
+}
+
+.ui-lightbox[open] {
+  align-content: center;
+  display: grid;
+}
+
+.ui-lightbox .ui-carousel {
+  inline-size: 100%;
+  margin: auto;
+  max-inline-size: min(64rem, 100vw);
+}
+
+/* Lightbox images are shown whole (contain), not cropped like the inline
+   carousel's cover thumbnails. */
+.ui-lightbox .ui-carousel__slide > img {
+  margin-inline: auto;
+  max-block-size: 80vh;
+  max-inline-size: 100%;
+  inline-size: auto;
+  object-fit: contain;
+}
+
+.ui-lightbox__close {
+  inset-block-start: var(--space-sm);
+  inset-inline-end: var(--space-sm);
+  position: fixed;
+  z-index: var(--z-raised);
+}
+
 /* --- Dropdown menu — pairs with native <details> --- */
 
 /* The positioned host for a <details> dropdown: .ui-menu is absolute, so

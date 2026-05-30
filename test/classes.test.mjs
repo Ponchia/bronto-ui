@@ -54,6 +54,11 @@ test('the recipes added this cycle emit only registry classes', () => {
   assert.equal(ui.prose({ compact: true }), 'ui-prose ui-prose--compact');
   assert.equal(ui.alert({ tone: 'bogus' }), 'ui-alert');
   assert.equal(ui.dotspinner({ size: 'bogus' }), 'ui-dotspinner');
+  assert.equal(ui.meter(), 'ui-meter');
+  assert.equal(ui.meter({ tone: 'success' }), 'ui-meter ui-meter--success');
+  assert.equal(ui.meter({ tone: 'bogus' }), 'ui-meter');
+  assert.equal(ui.inputIcon(), 'ui-input-icon');
+  assert.equal(ui.inputIcon({ end: true }), 'ui-input-icon ui-input-icon--end');
 });
 
 test('every ui.* recipe is declared on the Ui interface in index.d.ts', async () => {

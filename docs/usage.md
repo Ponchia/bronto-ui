@@ -86,6 +86,39 @@ destructive action).
 | toast    | transient, out-of-flow, system-initiated. Danger toasts route to an assertive live region; everything else polite. |
 | tooltip  | supplemental, hover/focus, never essential info (it's not announced reliably; don't hide required content in it). |
 
+## Meter vs progress
+
+Both are a thin horizontal bar; they mean different things.
+
+- **`ui-progress`** — *task* progress: how far an operation has run. Can be
+  indeterminate (`ui-progress--indeterminate`). The fill is always accent.
+- **`ui-meter`** — a *measured static value*: coverage, disk, capacity, a
+  KPI against a target. Never indeterminate. Tone the fill by threshold
+  (`ui.meter({ tone })` → accent/success/warning/danger); the unset
+  default is neutral. Drive the width with the shared `--value` knob
+  (`style="--value: 72"`, 0–100) and author `role="meter"` +
+  `aria-valuenow/min/max` for AT.
+
+Rule of thumb: *something is happening* → progress; *something measures
+this much* → meter.
+
+## Steps, timeline, kbd, input icons
+
+- **`ui-steps`** — a stepper for a multi-step flow. Use an `<ol>`. State is
+  ARIA-driven (the framework rule): the active step is `aria-current="step"`
+  (no class); completed steps take `ui-steps__item--done`. Markers are
+  auto-numbered by CSS counter.
+- **`ui-timeline`** — a vertical event list on a hairline spine (`<ol>` of
+  `ui-timeline__item`, optional `ui-timeline__time`). `aria-current` on an
+  item marks the live/most-recent event.
+- **`ui-kbd`** — an inline keyboard-key glyph. Wrap a `<kbd>`; for a
+  shortcut, use one per key (`<kbd>⌘</kbd> <kbd>K</kbd>`).
+- **`ui-input-icon`** — a leading (or `--end` trailing) icon *inside* one
+  control. This is distinct from `ui-input-group`, whose addon sits
+  *adjacent* to the control. Wrap the input; the icon is decorative
+  (`aria-hidden`) and the input keeps its full width. Don't hand-roll an
+  absolute overlay.
+
 ## Modal: native `<dialog>` vs `is-open`
 
 Prefer the **native `<dialog>`** path — you get top-layer, backdrop and
@@ -93,6 +126,25 @@ focus-trap free. Only use `ui-modal.is-open` (`ui.modal({ open: true })`)
 when a portal/React modal genuinely can't be a `<dialog>`; then the
 backdrop and focus-trap are **yours** to provide. A drawer is a modal
 that enters from an edge — same rule.
+
+## Carousel & lightbox: one primitive, two skins
+
+`ui-carousel` is a scroll-snap track of `__slide`s wired by `initCarousel`
+(prev/next, keyboard, a `__thumb` strip, the `__status` counter, ARIA).
+Because the track is **native horizontal scroll**, touch and trackpad
+swipe — with momentum — are the browser's; the behavior only keeps the JS
+index in sync with the scroll both ways. Add `data-bronto-carousel-loop`
+to wrap at the ends.
+
+A **lightbox is the same carousel inside a native
+`<dialog class="ui-lightbox">`**, opened with `data-bronto-open` (wired by
+`initDialog`). Do **not** hand-roll an overlay: the `<dialog>` gives the
+top layer, the backdrop, the focus-trap, Escape, and focus-return for
+free — exactly the parts a from-scratch lightbox gets wrong. The inline
+carousel crops (`cover`); the lightbox shows the whole image (`contain`).
+
+This is deliberately *not* an auto-playing marketing slider (no timers, no
+infinite-clone track). It's a gallery: the user drives it.
 
 ## When to add a behavior
 

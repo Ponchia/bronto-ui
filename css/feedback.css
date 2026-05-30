@@ -338,3 +338,114 @@
     animation: none;
   }
 }
+
+/* --- Meter — a labelled proportion / threshold bar. Unlike ui-progress
+   (task progress, can be indeterminate), a meter shows a measured static
+   value for data display (coverage, capacity, a KPI against a target).
+   Drive the fill with the same --value knob as progress; tone the fill by
+   threshold. Author role="meter" + aria-valuenow/min/max for AT. --- */
+
+.ui-meter {
+  background: var(--panel-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  block-size: 0.5rem;
+  overflow: hidden;
+  inline-size: 100%;
+}
+
+/* Default (untoned) fill is --text-dim, not --line-strong: the fill
+   conveys the measured value, so it must clear the 3:1 non-text floor
+   against the --panel-soft track (--line-strong is only ~2:1). --text-dim
+   on --surface-muted is already a gated contrast pairing (≥4.5:1). */
+.ui-meter__fill {
+  background: var(--text-dim);
+  block-size: 100%;
+  transition: inline-size var(--duration-base) var(--ease-out);
+  inline-size: calc(clamp(0, var(--value, 0), 100) * 1%);
+}
+
+.ui-meter--accent .ui-meter__fill {
+  background: var(--accent);
+}
+
+.ui-meter--success .ui-meter__fill {
+  background: var(--success);
+}
+
+.ui-meter--warning .ui-meter__fill {
+  background: var(--warning);
+}
+
+.ui-meter--danger .ui-meter__fill {
+  background: var(--danger);
+}
+
+/* --- Steps — progress through a multi-step flow. Use an <ol>; the
+   current step is aria-current="step" (no class), completed steps take
+   --done. Counter-numbered markers, hairline connectors. --- */
+
+.ui-steps {
+  counter-reset: ui-step;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ui-steps__item {
+  align-items: center;
+  color: var(--text-dim);
+  counter-increment: ui-step;
+  display: inline-flex;
+  flex: 1 1 auto;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  gap: 0.5rem;
+  letter-spacing: var(--tracking-wide);
+  min-inline-size: max-content;
+  text-transform: uppercase;
+}
+
+.ui-steps__item::before {
+  align-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  color: var(--text-dim);
+  content: counter(ui-step);
+  display: inline-flex;
+  flex: 0 0 auto;
+  block-size: 1.5rem;
+  inline-size: 1.5rem;
+  justify-content: center;
+}
+
+/* Connector hairline trailing every item except the last. */
+.ui-steps__item:not(:last-child)::after {
+  background: var(--line);
+  block-size: 1px;
+  content: '';
+  flex: 1 1 1.5rem;
+  min-inline-size: 1rem;
+}
+
+.ui-steps__item[aria-current='step'] {
+  color: var(--text);
+}
+
+.ui-steps__item[aria-current='step']::before {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.ui-steps__item--done {
+  color: var(--text-soft);
+}
+
+.ui-steps__item--done::before {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--button-text);
+}

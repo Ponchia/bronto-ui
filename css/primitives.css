@@ -631,3 +631,63 @@
   color: var(--text-dim);
   margin: 0.3rem 0 0;
 }
+
+/* --- Keyboard key — inline glyph for shortcut hints. Wrap a <kbd>. --- */
+
+.ui-kbd {
+  align-items: center;
+  background: var(--panel-soft);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-soft);
+  display: inline-flex;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  justify-content: center;
+  line-height: 1;
+  min-inline-size: 1.4rem;
+  padding: 0.18rem 0.4rem;
+}
+
+/* --- Timeline — vertical event list on a hairline spine. Use an <ol>;
+   each <li> is a __item with an optional __time label. aria-current marks
+   the live/most-recent event (accent marker). --- */
+
+.ui-timeline {
+  display: grid;
+  gap: var(--space-md);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ui-timeline__item {
+  border-inline-start: 1px solid var(--line);
+  display: grid;
+  gap: 0.2rem;
+  padding-inline-start: var(--space-md);
+  position: relative;
+}
+
+.ui-timeline__item::before {
+  background: var(--line-strong);
+  border-radius: 50%;
+  block-size: 0.5rem;
+  content: '';
+  inline-size: 0.5rem;
+  inset-block-start: 0.18rem;
+  inset-inline-start: calc(-0.25rem - 0.5px);
+  position: absolute;
+}
+
+.ui-timeline__item[aria-current]::before {
+  background: var(--accent);
+}
+
+.ui-timeline__time {
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}

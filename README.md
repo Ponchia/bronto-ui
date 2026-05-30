@@ -2,221 +2,152 @@
 
 [![npm](https://img.shields.io/npm/v/@ponchia/ui?logo=npm)](https://www.npmjs.com/package/@ponchia/ui)
 [![npm provenance](https://img.shields.io/badge/npm-provenance-blue?logo=npm)](https://www.npmjs.com/package/@ponchia/ui#provenance)
-[![runtime deps](https://img.shields.io/badge/runtime%20deps-0-brightgreen)](package.json)
-[![bundle](https://img.shields.io/badge/dist-~64kB%20%2F%20~11kB%20gzip-informational)](scripts/check-dist.mjs)
+[![runtime deps](https://img.shields.io/badge/runtime%20deps-0-brightgreen)](https://github.com/Ponchia/bronto-ui/blob/main/package.json)
+[![dist](https://img.shields.io/badge/dist-~73kB%20%2F%20~13kB%20gzip-informational)](https://github.com/Ponchia/bronto-ui/blob/main/scripts/check-dist.mjs)
 [![CI](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Ponchia/bronto-ui/badge)](https://scorecard.dev/viewer/?uri=github.com/Ponchia/bronto-ui)
-[![license: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE)
 
-Shared UI framework for Bronto personal projects. Nothing-inspired:
-monochrome surfaces, a single red accent, dot-matrix display type (Doto),
-flat hairline borders, restrained motion. CSS-first and framework-agnostic.
+**A CSS-first, framework-agnostic UI framework with a "Nothing"-inspired look — monochrome surfaces, one rationed red accent, dot-matrix display type, hairline borders, restrained motion. Zero runtime dependencies. Re-brand the whole thing with one CSS variable.**
 
-**New here?** → [Getting started](#getting-started) ·
-[Reference](docs/reference.md) · [Usage](docs/usage.md) ·
-[Theming](docs/theming.md) · [Contrast](docs/contrast.md) ·
-[Roadmap](ROADMAP.md) · [Contributing](CONTRIBUTING.md)
+### [Live demo →](https://ponchia.github.io/bronto-ui/) &nbsp;·&nbsp; [Theme playground →](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)
 
-> **Editor IntelliSense.** The package ships a VS Code CSS Custom Data
-> file so every design token autocompletes inside `var(--…)`. Add to
-> your `.vscode/settings.json`:
->
-> ```json
-> {
->   "css.customData": ["node_modules/@ponchia/ui/classes/vscode.css-custom-data.json"]
-> }
-> ```
+The demo is the kitchen sink — every component, light/dark, RTL, live theming.
 
-> **For AI agents / LLMs.** The package ships `llms.txt` at its root —
-> point a coding agent at `node_modules/@ponchia/ui/llms.txt` for a
-> self-contained orientation. The full class catalog
-> (`docs/reference.md`) and the token contract (`docs/theming.md`) also
-> ship in the tarball, so an offline agent never has to guess at the API.
+---
 
-**[Live demo →](https://ponchia.github.io/bronto-ui/)** — the kitchen
-sink (every component, light/dark, RTL, theming) deployed from `demo/`.
+## What it is
 
-## Use
+`@ponchia/ui` ships its design as **CSS**, not components. You drop in one stylesheet and style with semantic `ui-*` classes; an optional thin layer of typed class-name recipes and SSR-safe vanilla behaviors sits on top for the few things that genuinely need JS (theme persistence, dialogs, toasts, disclosure). The guiding principle is **color is rationed, structure carries meaning** — layout, type weight and the hairline do the work before a hue does, and the accent is a spotlight, not a paint bucket. Because everything lives in a single `@layer bronto`, your own un-layered CSS overrides the framework with no specificity fight and no `!important`.
 
-Install from npm (public, no registry config):
+## Install
 
 ```bash
 npm i @ponchia/ui
 ```
 
-> Naming: the **npm package** is `@ponchia/ui` (the `@bronto` scope isn't
-> ownable). The **CSS layer** and behavior attributes stay `bronto`
-> (`@layer bronto`, `data-bronto-*`) — that's the design-system namespace,
-> deliberately distinct from the package name. See
-> [`docs/architecture.md`](docs/architecture.md).
+Or drop it in with no build step, straight from a CDN:
 
-Import the theme (one bundle — `ui-*` components carry their own
-breakpoints, so there is no separate core/full split as of 0.3.0):
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui/dist/bronto.css">
+```
+
+## Quick start
+
+**1. Load the CSS.** One flattened, minified bundle — the whole framework, one request (~73 kB raw / ~13 kB gzip):
 
 ```css
-@import '@ponchia/ui/css';        /* === @ponchia/ui/css/core.css */
+@import '@ponchia/ui';            /* via a bundler */
 ```
 
-**Prebuilt single file (recommended for apps without a CSS bundler).**
-`@ponchia/ui/css` is a wide `@import` fan-out (~14 leaves, one level
-deep) — fine through a bundler, a load waterfall over plain HTTP. The
-package also ships one flattened, minified bundle with no `@import`
-chain:
+```html
+<!-- or a plain <link>, no bundler -->
+<link rel="stylesheet" href="/node_modules/@ponchia/ui/dist/bronto.css">
+```
+
+> Prefer source leaves through a bundler? Use `@import '@ponchia/ui/css'` (a thin `@import` fan-out) instead. Both resolve the Doto `@font-face` with relative URLs, so there's no `/fonts` path assumption.
+
+**2. Write markup with `ui-*` classes** (primary is the default button; modifiers are opt-in):
+
+```html
+<button class="ui-button">Save</button>
+<button class="ui-button ui-button--ghost">Cancel</button>
+<div class="ui-card">
+  <span class="ui-eyebrow">Status</span>
+  <span class="ui-badge ui-badge--success">Online</span>
+</div>
+```
+
+**3. (Optional) typed recipes — build class strings in JS/TS:**
+
+```js
+import { ui, cx } from '@ponchia/ui/classes';
+
+ui.button({ variant: 'ghost' });   // → "ui-button ui-button--ghost"
+ui.meter({ tone: 'warning' });      // → "ui-meter ui-meter--warning"
+```
+
+**4. (Optional) behaviors — SSR-safe vanilla JS, each returns a cleanup function:**
+
+```js
+import { initThemeToggle, initDialog, toast } from '@ponchia/ui/behaviors';
+
+initThemeToggle();   // wires [data-bronto-theme-toggle] + localStorage
+initDialog();        // native <dialog> glue: [data-bronto-open] / [data-bronto-close]
+toast('Saved', { tone: 'success' });   // body-anchored stack, no markup needed
+```
+
+Behaviors cover theme persistence, disclosure, dropdown menus, native-`<dialog>` modals/drawers, tabs, combobox, form validation, table sort, carousel and toasts — wired by `data-bronto-*` attributes.
+
+## What's in the box
+
+- **Primitives** — buttons, cards, chips, badges, links, key/value, `ui-num`, avatars.
+- **Forms** — inputs, select, textarea, search, switch, checkbox, `ui-input-icon`, `ui-input-group`.
+- **Feedback** — alert/callout, toast, tooltip, `ui-progress` (task) and `ui-meter` (measured value).
+- **Overlay** — modal + drawer on native `<dialog>`, dropdown menu, `ui-carousel` + `ui-lightbox` (gallery, user-driven — not an auto-slider).
+- **Disclosure & nav** — tabs, accordion, segmented, breadcrumb, pagination, `ui-steps`, `ui-timeline`, `ui-pagehead`, `ui-kbd`.
+- **Shells** — an admin dashboard shell (`ui-app-*`) and a content/marketing site shell (`ui-site*`, `ui-container`).
+- **Prose** — `.ui-prose` styles raw, unclassed semantic HTML (Markdown / CMS / LLM output) with zero classes.
+- **Motion & dots** — the dot-matrix motif kit: dot grid, status dots, dot loaders, the orbital spinner, matrix reveal — all reduced-motion aware.
+
+Full generated catalog of every class: **[docs/reference.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/reference.md)**. The decision guide (which primitive when): **[docs/usage.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/usage.md)**.
+
+## Theming: one knob
+
+Everything accent-colored derives from a single `--accent` variable via `color-mix()`. Re-brand the entire app — both light and dark — with one declaration, globally or scoped to any subtree:
 
 ```css
-@import '@ponchia/ui';   /* → dist/bronto.css, the whole framework */
+:root   { --accent: #2f6df6; }   /* whole app blue   */
+.promo  { --accent: #16a34a; }   /* …or just this section green */
 ```
 
-~64 kB raw / ~11 kB gzip, one request, same `@layer bronto`. (The
-enforced ceiling lives in `scripts/check-dist.mjs`, not this prose —
-treat these figures as indicative.) Source CSS, tokens/classes/behaviors
-entrypoints are unchanged — use whichever fits.
+Buttons, focus rings, dot motifs, accent borders and soft fills all follow automatically. Light/dark is `data-theme="light"` / `"dark"` on `<html>` (defaults to `prefers-color-scheme`); `data-density` and `data-contrast` give density and contrast presets. A full re-skin (radius, display face, dot density, surfaces) is a handful more token overrides — the "Nothing" look is the **default skin, not the architecture**.
 
-> **The package root is CSS-only.** `@ponchia/ui` (the `.` export)
-> resolves to a stylesheet — `@import '@ponchia/ui'` in CSS, never
-> `import '@ponchia/ui'` in JS. There is no JS module at the root; the
-> JS entrypoints are the explicit subpaths `@ponchia/ui/tokens`,
-> `/classes`, and `/behaviors` (see [Entrypoints](#entrypoints)).
+> When you change `--accent`, contrast becomes yours: verify your hue in the **[theme playground](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)** (it shows the derived family and computed WCAG ratios). Full contract: **[docs/theming.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/theming.md)**.
 
-### Browser support
+## Works with anything
 
-Evergreen only — the framework relies on cascade layers (`@layer`),
-`:has()`, `color-mix()`, CSS logical properties and native `<dialog>`.
-Floor: **Chrome/Edge 111+, Safari 16.4+, Firefox 121+** (early 2023
-onward). No build-time fallback is shipped; pin an older tag if you must
-support below this.
+The CSS is the framework, so it works with React, Svelte/SvelteKit, Astro, Vue, Solid or plain HTML — there's no component runtime to adopt. The optional `classes` and `behaviors` entrypoints pull in **no** UI framework and are SSR-safe.
 
-The Doto `@font-face` ships in `css/fonts.css` (bundled by both `css` and
-`css/core.css`) with URLs relative to the package, so it resolves through a
-bundler or static serving with no `/fonts` path assumption. To self-host the
-font instead, import everything except `fonts.css` and override `--display` /
-`--dot-font`.
+Per-framework getting-started guides + runnable example apps live in the repo:
 
-Everything ships inside a single `@layer bronto`, so any un-layered CSS in
-your app overrides the framework without a specificity fight or `!important`.
+| Stack | Guide | Example |
+| ----- | ----- | ------- |
+| Vanilla / Vite / plain HTML | [vanilla.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/vanilla.md) | [`examples/vanilla-vite`](https://github.com/Ponchia/bronto-ui/tree/main/examples/vanilla-vite) |
+| Astro | [astro.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/astro.md) | [`examples/astro`](https://github.com/Ponchia/bronto-ui/tree/main/examples/astro) |
+| SvelteKit | [sveltekit.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/sveltekit.md) | [`examples/sveltekit`](https://github.com/Ponchia/bronto-ui/tree/main/examples/sveltekit) |
+| React / Solid (snippet) | [react-solid.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/react-solid.md) | — |
+| Tailwind / cascade-layer interop | [tailwind.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/interop/tailwind.md) | — |
 
-> **Leaf imports are layer-safe by default.** Every per-leaf export —
-> `@ponchia/ui/css/primitives.css`, etc. — is self-wrapped in
-> `@layer bronto`, so mixing the bundle with individual leaves (e.g.
-> per-route CSS splitting in SvelteKit/Astro) is safe: no silent
-> cascade inversion. The deliberate full-specificity escape hatch is
-> the explicit `@ponchia/ui/css/unlayered/<leaf>.css` path — use it
-> only when you *want* an unlayered override, never by accident.
+## Extras
 
-Set `data-theme="light"` or `data-theme="dark"` on `<html>`; defaults follow
-`prefers-color-scheme`.
+- **Tokens as data** — `import tokens, { themeColor, cssVars } from '@ponchia/ui/tokens'` (plus `tokens.json`, W3C DTCG `tokens.dtcg.json`, and `tokens/resolved.json` for charts/data-viz).
+- **Editor IntelliSense** — point VS Code at the shipped custom-data file so every token autocompletes in `var(--…)`:
+  ```json
+  { "css.customData": ["node_modules/@ponchia/ui/classes/vscode.css-custom-data.json"] }
+  ```
+- **For AI coding agents** — the package ships `llms.txt` at its root plus `docs/reference.md`, `docs/usage.md` and `docs/theming.md` inside the tarball, so an offline agent has the full API without guessing.
 
-**Re-brand with one knob:** `--accent` drives the whole accent family
-(`color-mix`-derived). `:root { --accent: #2f6df6 }` — or scope it to a
-subtree — restyles everything, both themes. Plus `data-density` and
-`data-contrast` presets. Full contract: [`docs/theming.md`](docs/theming.md).
+> The package root is **CSS-only**: `@import '@ponchia/ui'` in CSS, never `import '@ponchia/ui'` in JS. The JS entrypoints are the explicit subpaths `/tokens`, `/classes`, `/behaviors`.
 
-## Entrypoints
+## Browser support
 
-The CSS is the framework. These optional sibling entrypoints are thin layers
-on top of it — none pull in a UI framework. See
-[`docs/architecture.md`](docs/architecture.md) for the rationale.
-
-```js
-import tokens, { cssVars, themeColor } from '@ponchia/ui/tokens'; // tokens as data (+ /tokens.json)
-import { ui, cx } from '@ponchia/ui/classes'; // typed class-name recipes
-import { initThemeToggle, dismissible } from '@ponchia/ui/behaviors'; // vanilla, SSR-safe
-```
-
-```js
-ui.button({ variant: 'ghost' }); // → "ui-button ui-button--ghost"
-themeColor('dark').accent; // → "#ff3b41"
-```
-
-`behaviors` wires `[data-bronto-theme-toggle]`, `[data-bronto-dismiss]` /
-`[data-bronto-dismissible]`, `[data-bronto-disclosure]`,
-`[data-bronto-menu]` (`initMenu`: Escape / outside-click /
-close-on-activate for a `<details>` `.ui-menu` dropdown), and native
-`<dialog>` glue (`initDialog`: `[data-bronto-open]` / `[data-bronto-close]`
-/ `[data-bronto-dialog-light]`). `toast(message, { tone, title, duration })`
-pushes into a shared, body-anchored stack. Each initializer is SSR-safe and
-returns a cleanup function. `demo/index.html` drives itself with these
-modules, so it is also a live integration test.
-
-## Layout
-
-| File             | Contents                                                      |
-| ---------------- | ------------------------------------------------------------- |
-| `tokens.css`     | palette (dual light/dark), spacing, type, motion, dot tokens  |
-| `fonts.css`      | Doto `@font-face` (relative URLs; optional if self-hosting)    |
-| `base.css`       | reset, element defaults, focus, scrollbars                    |
-| `motion.css`     | keyframes + animation utilities + reduced-motion              |
-| `dots.css`       | dot-grid, dot rule, status dot, dot loader, orbital dot spinner, dot bar (+ indeterminate), matrix reveal |
-| `primitives.css` | `ui-*` buttons, cards, chips, badges, links, key/value        |
-| `forms.css`      | inputs, select, textarea, search, switch, checkbox            |
-| `feedback.css`   | alert / callout, toast, tooltip, linear progress              |
-| `overlay.css`    | modal + drawer (native `<dialog>`), dropdown menu             |
-| `disclosure.css` | tabs, accordion (`<details>`), segmented, breadcrumb, pagination, avatar |
-| `table.css`      | `ui-table` dense / comfortable                                |
-| `app.css`        | admin shell: `ui-app-shell`/`-rail`/`-topbar`/`-toolbar`/`-panel`/`-nav`/`-metrics` |
-| `navigation.css` | `ui-themetoggle` (dot-thumb switch)                           |
-| `site.css`       | content-site shell: `ui-container`, `ui-siteheader`/`ui-sitenav` (aria-current), `ui-sitemenu`, `ui-sitefooter`, `ui-skiplink`, `ui-tags`, `ui-meta` |
-| `content.css`    | `.ui-prose` Markdown/raw-HTML long-form (zero classes) + `ui-quote` pull-quote |
-
-## Getting started
-
-| Consumer                | Guide                                                              |
-| ----------------------- | ------------------------------------------------------------------ |
-| Astro                   | [`docs/getting-started/astro.md`](docs/getting-started/astro.md)   |
-| SvelteKit               | [`docs/getting-started/sveltekit.md`](docs/getting-started/sveltekit.md) |
-| Vanilla / Vite / plain  | [`docs/getting-started/vanilla.md`](docs/getting-started/vanilla.md) |
-| React / Solid (snippet) | [`docs/getting-started/react-solid.md`](docs/getting-started/react-solid.md) |
-| Tailwind / cascade-layer interop | [`docs/interop/tailwind.md`](docs/interop/tailwind.md)    |
-
-Each covers the CSS import location, the **no-flash** `applyStoredTheme`
-head-script pattern, behavior init/cleanup in that framework's lifecycle,
-and SSR caveats. Index: [`docs/integration.md`](docs/integration.md).
-
-## Demo
-
-`demo/index.html` is a kitchen sink covering every primitive in both
-themes — it drives itself with the real behavior modules, so it is also a
-live integration test. Serve the package root and open `/demo/`:
-
-```bash
-python3 -m http.server -d . 8080   # then open http://localhost:8080/demo/
-```
-
-## Develop & release
-
-Contributor setup, the 14 `check` gates, the e2e suite, the visual-
-baseline workflow, the deprecation policy and the tag-driven release
-flow all live in **[CONTRIBUTING.md](CONTRIBUTING.md)**. Direction and
-scope: **[ROADMAP.md](ROADMAP.md)**.
+Evergreen only. The framework relies on cascade layers, `:has()`, `color-mix()`, CSS logical properties and native `<dialog>`. Floor: **Chrome/Edge 111+, Safari 16.4+, Firefox 121+** (early 2023 onward). No build-time fallback ships; pin an older tag if you need below this.
 
 ## Versioning
 
-Pre-1.0 and deliberately so. **Until `1.0.0`, breaking changes ship in
-the _minor_** (`0.x.0`); patches (`0.x.y`) are non-breaking. This is the
-standard 0.x reading of SemVer, stated explicitly because this framework
-dresses several apps:
+Pre-1.0 and deliberately so. **Until `1.0.0`, breaking changes ship in the _minor_** (`0.x.0`); patches (`0.x.y`) are always non-breaking. Pin with the patch range — at `0.x`, `~0.3.0` (and equivalently `^0.3.0`) resolves to `>=0.3.0 <0.4.0`, giving you safe patches while holding back the next breaking minor. Every breaking change is called out under a **BREAKING** heading in the **[CHANGELOG](https://github.com/Ponchia/bronto-ui/blob/main/CHANGELOG.md)** with a migration note.
 
-- Because breaking changes bump the **minor**, the protective range is
-  the patch range. At `0.x` npm resolves **both** `^0.3.0` and `~0.3.0`
-  to `>=0.3.0 <0.4.0` — they are equivalent here, and either gives you
-  only non-breaking `0.3.x` patches while holding back the next
-  (breaking) `0.4.0`. Pin either; pin an **exact** version if you want
-  zero surprise and to adopt each minor deliberately.
-- Every breaking change is called out in [`CHANGELOG.md`](CHANGELOG.md)
-  under a **BREAKING** heading with a migration note.
+Contractual (changes are breaking): the `--accent` derivation and token **names**, the `.ui-*` class and recipe names, the `data-bronto-*` attributes, and each behavior's cleanup contract. Not contractual (may change any release): token **values** (visual tuning) and internal leaf-file / `@layer` boundaries.
 
-**What is contractual** (changes are breaking): the `--accent`
-derivation and token **names** (incl. `--accent-text`, `--focus-ring`);
-the `.ui-*` class names and `cls`/recipe names; the `data-bronto-*`
-behavior attributes; each behavior's return-cleanup contract. **What is
-not** (may change in any release): token _values_ (visual tuning), the
-internal leaf-file boundaries and `@layer` internals, and anything
-explicitly marked legacy/deprecated. Full token contract:
-[`docs/theming.md`](docs/theming.md).
+## Links
 
-## Consumers
+- **[Live demo](https://ponchia.github.io/bronto-ui/)** · **[Theme playground](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)**
+- **[Class reference](https://github.com/Ponchia/bronto-ui/blob/main/docs/reference.md)** · **[Usage guide](https://github.com/Ponchia/bronto-ui/blob/main/docs/usage.md)** · **[Theming](https://github.com/Ponchia/bronto-ui/blob/main/docs/theming.md)** · **[Contrast](https://github.com/Ponchia/bronto-ui/blob/main/docs/contrast.md)**
+- **[CHANGELOG](https://github.com/Ponchia/bronto-ui/blob/main/CHANGELOG.md)** · **[Roadmap](https://github.com/Ponchia/bronto-ui/blob/main/ROADMAP.md)** · **[Contributing](https://github.com/Ponchia/bronto-ui/blob/main/CONTRIBUTING.md)**
 
-Built for two shapes of app: a content/marketing site (`ui-site*`,
-`ui-prose`) and an admin dashboard (`ui-app-*` shell). Both import the
-one bundle `@ponchia/ui` (or `@ponchia/ui/css`); consuming apps depend
-on it via `@ponchia/ui`.
+## License
+
+[MIT](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE) © Ponchia.
+
+The bundled **Doto** font (`fonts/*.ttf`) is © 2024 The Doto Project Authors and licensed separately under the [SIL Open Font License 1.1](https://github.com/Ponchia/bronto-ui/blob/main/fonts/OFL.txt) — see `fonts/OFL.txt`.

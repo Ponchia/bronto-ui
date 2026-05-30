@@ -15,6 +15,6 @@
     "vite": "^8.0.0"
   },
   "dependencies": {
-    "@ponchia/ui": "file:../../ponchia-ui-0.3.4.tgz"
+    "@ponchia/ui": "file:../../ponchia-ui-0.3.5.tgz"
   }
 }

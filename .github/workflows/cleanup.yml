@@ -10,9 +10,10 @@ on:
     - cron: '0 4 * * 1' # Mondays 04:00 UTC
   workflow_dispatch:
 
+# Least privilege: read-only by default, the prune job elevates to the
+# writes it actually needs (Scorecard Token-Permissions / least-privilege).
 permissions:
-  contents: write # delete orphan branches
-  pull-requests: write # close stale bot PRs
+  contents: read
 
 concurrency:
   group: cleanup
@@ -21,6 +22,9 @@ concurrency:
 jobs:
   prune:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # delete orphan branches
+      pull-requests: write # close stale bot PRs
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 

@@ -106,6 +106,22 @@ export declare function initTabs(opts?: DelegateOpts): Cleanup;
  */
 export declare function initDialog(opts?: DelegateOpts): Cleanup;
 
+/**
+ * Image carousel / gallery built on CSS scroll-snap (touch/trackpad swipe
+ * is the browser's). Wires `[data-bronto-carousel]`: prev/next
+ * (`[data-bronto-carousel-prev|next]`), keyboard (Arrow/Home/End on the
+ * focused `.ui-carousel__viewport`), a `.ui-carousel__thumb` strip with
+ * `aria-current` sync, the `.ui-carousel__status` counter, and ARIA. Keeps
+ * a JS index in sync with the scroll position both ways (via
+ * IntersectionObserver where available). `data-bronto-carousel-loop` wraps
+ * at the ends; `data-bronto-carousel-label` names the region. A
+ * full-screen lightbox is the same markup inside a native
+ * `<dialog class="ui-lightbox">` opened by `initDialog` (focus-trap/Escape
+ * come from the dialog). Emits `bronto:change` ({ detail: { index } }).
+ * SSR-safe, idempotent per carousel. Returns a cleanup function.
+ */
+export declare function initCarousel(opts?: DelegateOpts): Cleanup;
+
 export interface ToastOpts {
   /** Status tone — maps to `ui-toast--<tone>`. */
   tone?: 'accent' | 'success' | 'warning' | 'danger' | 'info';

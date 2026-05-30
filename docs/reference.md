@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 230 classes across 101 component groups
+- 260 classes across 109 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -206,6 +206,20 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.caret` | `ui-caret` | base |
 
+### `.ui-carousel`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.carousel` | `ui-carousel` | base |
+| `cls.carouselNext` | `ui-carousel__next` | part |
+| `cls.carouselPrev` | `ui-carousel__prev` | part |
+| `cls.carouselSlide` | `ui-carousel__slide` | part |
+| `cls.carouselStage` | `ui-carousel__stage` | part |
+| `cls.carouselStatus` | `ui-carousel__status` | part |
+| `cls.carouselThumb` | `ui-carousel__thumb` | part |
+| `cls.carouselThumbs` | `ui-carousel__thumbs` | part |
+| `cls.carouselViewport` | `ui-carousel__viewport` | part |
+
 ### `.ui-center`
 
 | Registry key | Class | Kind |
@@ -390,6 +404,20 @@ each one matches a real selector in the stylesheet.
 | `cls.inputGroup` | `ui-input-group` | base |
 | `cls.inputGroupAddon` | `ui-input-group__addon` | part |
 
+### `.ui-input-icon`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.inputIcon` | `ui-input-icon` | base |
+| `cls.inputIconSlot` | `ui-input-icon__icon` | part |
+| `cls.inputIconEnd` | `ui-input-icon--end` | modifier |
+
+### `.ui-kbd`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.kbd` | `ui-kbd` | base |
+
 ### `.ui-key-value`
 
 | Registry key | Class | Kind |
@@ -401,6 +429,13 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.label` | `ui-label` | base |
+
+### `.ui-lightbox`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.lightbox` | `ui-lightbox` | base |
+| `cls.lightboxClose` | `ui-lightbox__close` | part |
 
 ### `.ui-link`
 
@@ -438,6 +473,17 @@ each one matches a real selector in the stylesheet.
 | `cls.meta` | `ui-meta` | base |
 | `cls.metaItem` | `ui-meta__item` | part |
 
+### `.ui-meter`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.meter` | `ui-meter` | base |
+| `cls.meterFill` | `ui-meter__fill` | part |
+| `cls.meterAccent` | `ui-meter--accent` | modifier |
+| `cls.meterDanger` | `ui-meter--danger` | modifier |
+| `cls.meterSuccess` | `ui-meter--success` | modifier |
+| `cls.meterWarning` | `ui-meter--warning` | modifier |
+
 ### `.ui-modal`
 
 | Registry key | Class | Kind |
@@ -470,6 +516,14 @@ each one matches a real selector in the stylesheet.
 | `cls.numMuted` | `ui-num--muted` | modifier |
 | `cls.numNeg` | `ui-num--neg` | modifier |
 | `cls.numPos` | `ui-num--pos` | modifier |
+
+### `.ui-pagehead`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.pagehead` | `ui-pagehead` | base |
+| `cls.pageheadActions` | `ui-pagehead__actions` | part |
+| `cls.pageheadTitle` | `ui-pagehead__title` | part |
 
 ### `.ui-pagination`
 
@@ -637,6 +691,14 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.status` | `ui-status` | base |
 
+### `.ui-steps`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.steps` | `ui-steps` | base |
+| `cls.stepsItem` | `ui-steps__item` | part |
+| `cls.stepsItemDone` | `ui-steps__item--done` | modifier |
+
 ### `.ui-surface`
 
 | Registry key | Class | Kind |
@@ -720,6 +782,14 @@ each one matches a real selector in the stylesheet.
 | `cls.themetogglePrefix` | `ui-themetoggle__prefix` | part |
 | `cls.themetoggleThumb` | `ui-themetoggle__thumb` | part |
 | `cls.themetoggleTrack` | `ui-themetoggle__track` | part |
+
+### `.ui-timeline`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.timeline` | `ui-timeline` | base |
+| `cls.timelineItem` | `ui-timeline__item` | part |
+| `cls.timelineTime` | `ui-timeline__time` | part |
 
 ### `.ui-toast`
 
