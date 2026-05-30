@@ -79,7 +79,7 @@
         </button>
       </div>
 
-      <section>
+      <section data-shot="palette">
         <h2 class="ui-eyebrow ui-eyebrow--muted">Palette</h2>
         <div class="swatches">
           <div class="sw"><i style="background: var(--bg)"></i><span>--bg</span></div>
@@ -91,7 +91,7 @@
         </div>
       </section>
 
-      <section class="ui-stack">
+      <section class="ui-stack" data-shot="theming">
         <h2 class="ui-eyebrow ui-eyebrow--muted">Theming contract — one knob re-brands</h2>
         <div class="ui-cluster">
           <button class="ui-button ui-button--subtle" type="button" data-accent="#d71921">
@@ -125,7 +125,7 @@
         </div>
       </section>
 
-      <section class="ui-stack">
+      <section class="ui-stack" data-shot="buttons">
         <h2 class="ui-eyebrow ui-eyebrow--muted">Buttons</h2>
         <div class="ui-cluster">
           <button class="ui-button">Primary</button>
@@ -137,7 +137,7 @@
         </div>
       </section>
 
-      <section class="ui-stack">
+      <section class="ui-stack" data-shot="badges">
         <h2 class="ui-eyebrow ui-eyebrow--muted">Badges · Chips · Dots</h2>
         <div class="ui-cluster">
           <span class="ui-badge">Default</span>
@@ -164,7 +164,7 @@
         </div>
       </section>
 
-      <section class="ui-grid" style="--grid-min: 15rem">
+      <section class="ui-grid" style="--grid-min: 15rem" data-shot="cards" data-shot-rtl>
         <article class="ui-card ui-card--interactive">
           <p class="ui-eyebrow">Card</p>
           <h3>Interactive surface</h3>
@@ -185,7 +185,7 @@
         </div>
       </section>
 
-      <section class="ui-stack">
+      <section class="ui-stack" data-shot="form">
         <h2 class="ui-eyebrow ui-eyebrow--muted">Form</h2>
         <div class="ui-grid" style="--grid-min: 14rem">
           <label class="ui-field"
@@ -207,7 +207,7 @@
         >
       </section>
 
-      <section class="ui-stack">
+      <section class="ui-stack" data-shot="table" data-shot-rtl>
         <h2 class="ui-eyebrow ui-eyebrow--muted">Table · dense</h2>
         <div class="ui-table-wrap">
           <table class="ui-table ui-table--dense">
@@ -240,7 +240,7 @@
         </div>
       </section>
 
-      <section class="ui-stack">
+      <section class="ui-stack" data-shot="metrics">
         <h2 class="ui-eyebrow ui-eyebrow--muted">Metrics</h2>
         <div class="ui-app-metrics">
           <div class="ui-app-metric">
@@ -260,7 +260,7 @@
         </div>
       </section>
 
-      <section class="ui-stack">
+      <section class="ui-stack" data-shot="motion">
         <h2 class="ui-eyebrow ui-eyebrow--muted">Motion</h2>
         <div class="ui-grid ui-stagger--auto" style="--grid-min: 9rem">
           <div class="ui-card">Rise 1</div>
@@ -272,7 +272,7 @@
         <hr class="ui-dotrule" />
       </section>
 
-      <section class="ui-stack">
+      <section class="ui-stack" data-shot="loaders">
         <h2 class="ui-eyebrow ui-eyebrow--muted">Loaders · Progress</h2>
         <div class="ui-cluster" style="gap: 1.5rem">
           <span class="ui-dotspinner ui-dotspinner--sm"
@@ -296,7 +296,7 @@
         </div>
       </section>
 
-      <section class="ui-stack">
+      <section class="ui-stack" data-shot="alerts">
         <h2 class="ui-eyebrow ui-eyebrow--muted">Alerts</h2>
         <div class="ui-alert ui-alert--accent">
           <p class="ui-alert__title">Heads up</p>
@@ -313,7 +313,7 @@
         </div>
       </section>
 
-      <section class="ui-stack">
+      <section class="ui-stack" data-shot="tabs" data-shot-rtl>
         <h2 class="ui-eyebrow ui-eyebrow--muted">Tabs · Accordion · Segmented</h2>
         <div class="ui-tabs" data-bronto-tabs>
           <div class="ui-tabs__list" role="tablist">
@@ -360,7 +360,7 @@
         </div>
       </section>
 
-      <section class="ui-stack">
+      <section class="ui-stack" data-shot="navigation" data-shot-rtl>
         <h2 class="ui-eyebrow ui-eyebrow--muted">Breadcrumb · Pagination · Avatar</h2>
         <ol class="ui-breadcrumb">
           <li class="ui-breadcrumb__item"><a href="#">Home</a></li>
@@ -395,7 +395,7 @@
         </div>
       </section>
 
-      <section class="ui-stack">
+      <section class="ui-stack" data-shot="overlay">
         <h2 class="ui-eyebrow ui-eyebrow--muted">Overlay · Tooltip · Toast</h2>
         <div class="ui-cluster">
           <button class="ui-button" type="button" data-bronto-open="demoModal">Open modal</button>
@@ -448,7 +448,7 @@
         </dialog>
       </section>
 
-      <section class="ui-stack">
+      <section class="ui-stack" data-shot="prose">
         <h2 class="ui-eyebrow ui-eyebrow--muted">
           Content — Markdown output, zero classes
         </h2>
@@ -523,7 +523,7 @@ ui.button({ variant: 'ghost' });</code></pre>
         </article>
       </section>
 
-      <section class="ui-stack">
+      <section class="ui-stack" data-shot="site-shell">
         <h2 class="ui-eyebrow ui-eyebrow--muted">Site shell — content-site layer</h2>
 
         <div class="ui-siteheader" style="border: 1px solid var(--line); padding-inline: 1rem">
@@ -589,7 +589,7 @@ ui.button({ variant: 'ghost' });</code></pre>
         </div>
       </section>
 
-      <section aria-labelledby="v04" class="ui-stack" style="margin-block-start: 3rem">
+      <section aria-labelledby="v04" class="ui-stack" style="margin-block-start: 3rem" data-shot="v031">
         <h2 id="v04" class="ui-eyebrow">0.3.1 additions</h2>
 
         <div class="ui-switcher">
@@ -674,7 +674,7 @@ ui.button({ variant: 'ghost' });</code></pre>
         </label>
       </section>
 
-      <section aria-labelledby="v05" class="ui-stack" style="margin-block-start: 3rem">
+      <section aria-labelledby="v05" class="ui-stack" style="margin-block-start: 3rem" data-shot="v032">
         <h2 id="v05" class="ui-eyebrow">0.3.2 additions</h2>
 
         <div class="ui-statgrid">
@@ -765,7 +765,7 @@ ui.button({ variant: 'ghost' });</code></pre>
         </div>
       </section>
 
-      <section aria-labelledby="v06" class="ui-stack" style="margin-block-start: 3rem">
+      <section aria-labelledby="v06" class="ui-stack" style="margin-block-start: 3rem" data-shot="v035" data-shot-rtl>
         <h2 id="v06" class="ui-eyebrow">0.3.5 additions</h2>
 
         <!-- Page header — eyebrow + title + actions, one hairline. -->
