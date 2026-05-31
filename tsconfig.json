@@ -19,6 +19,8 @@
     "behaviors/index.d.ts",
     "glyphs/glyphs.d.ts",
     "tokens/skins.d.ts",
-    "tokens/charts.d.ts"
+    "tokens/charts.d.ts",
+    "react/index.d.ts",
+    "solid/index.d.ts"
   ]
 }
