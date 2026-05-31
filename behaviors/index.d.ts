@@ -143,3 +143,14 @@ export interface ToastOpts {
  * function that dismisses it early. No-op (returns noop) without a DOM.
  */
 export declare function toast(message: string, opts?: ToastOpts): Cleanup;
+
+/**
+ * Expand `[data-bronto-glyph="name"]` placeholders into a `.ui-dotmatrix`
+ * grid of cells — the DOM counterpart to `renderGlyph` from
+ * `@ponchia/ui/glyphs`. Decorative by default (`aria-hidden`); add
+ * `data-bronto-glyph-label` to expose it as `role="img"`. Unknown glyph names
+ * are left untouched. SSR-safe, idempotent (skips an already-expanded host).
+ * Returns a cleanup that removes the cells and restores the original
+ * attributes.
+ */
+export declare function initDotGlyph(opts?: DelegateOpts): Cleanup;
