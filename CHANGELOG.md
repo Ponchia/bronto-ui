@@ -4,9 +4,29 @@
 > `~0.x`; `^0.x` does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
-## 0.4.1 — 2026-05-31
+## 0.4.1 — 2026-06-01
 
-Patch hardening for the public framework surface.
+Patch hardening for the public framework surface, plus the first step of the
+modern-platform motion direction (see [ADR-0002](docs/adr/0002-scope-and-2026-baseline.md)).
+
+### Added
+
+- **Zero-JS enter _and_ exit motion for native-`<dialog>` overlays.** Modal and
+  drawer (and their backdrop) now fade/scale **both ways** via `@starting-style`
+  + `transition-behavior: allow-discrete` — previously they only animated in and
+  vanished on close. Pure CSS, reduced-motion-aware (snaps with no flash), scoped
+  to `dialog.ui-modal` so the controlled `.is-open` path is unchanged.
+
+### Changed
+
+- **Browser floor raised to Chrome/Edge 125+, Safari 18+, Firefox 129+**
+  (early–mid 2025). A deliberate greenfield stance (ADR-0002) so the framework
+  can build natively on `@starting-style`, `transition-behavior: allow-discrete`,
+  `oklch()`/relative color, and `light-dark()`. No fallbacks ship below the
+  floor; not-yet-cross-engine features (View Transitions, scroll-driven
+  animations) are enhancement-only and degrade to a static end-state.
+- Bundle gzip budget nudged 13.0 → 13.5 kB to seat the dialog enter/exit motion
+  (the raw budget and headroom posture are unchanged).
 
 ### Fixed
 

@@ -100,8 +100,10 @@ export function buildBundles() {
  *  keeping ~10% raw / ~7% gzip headroom for ordinary growth: a few new
  *  components is fine, a runaway @import or an inlined asset trips it.
  *  Bump deliberately (and note it in the CHANGELOG) when real growth
- *  justifies it — this is the consumer-facing payload contract. */
-export const BUDGET = { raw: 76_000, gzip: 13_000 };
+ *  justifies it — this is the consumer-facing payload contract. The gzip
+ *  ceiling was nudged 13.0→13.5 kB at 0.4.1 for the native-`<dialog>`
+ *  enter+exit motion (`@starting-style` + `allow-discrete`). */
+export const BUDGET = { raw: 76_000, gzip: 13_500 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };

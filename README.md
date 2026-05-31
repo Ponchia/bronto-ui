@@ -157,7 +157,7 @@ Per-framework getting-started guides + runnable example apps live in the repo:
 
 ## Browser support
 
-Evergreen only. The framework relies on cascade layers, `:has()`, `color-mix()`, CSS logical properties and native `<dialog>`. Floor: **Chrome/Edge 111+, Safari 16.4+, Firefox 121+** (early 2023 onward). No build-time fallback ships; pin an older tag if you need below this.
+Recent-evergreen, by design. The framework targets the modern web platform — cascade layers, `:has()`, `color-mix()`/`oklch()`, logical properties, native `<dialog>`, and the 2026 interaction primitives (`@starting-style`, `transition-behavior: allow-discrete`, `light-dark()`). Floor: **Chrome/Edge 125+, Safari 18+, Firefox 129+** (early–mid 2025). No fallback ships below this — pin an older tag if you need it. See [ADR-0002](https://github.com/Ponchia/bronto-ui/blob/main/docs/adr/0002-scope-and-2026-baseline.md) for the scope/greenfield rationale.
 
 ## Versioning
 
@@ -170,7 +170,7 @@ Release candidates publish to the `next` dist-tag, never to `latest` — opt in 
 ## Links
 
 - **[Live demo](https://ponchia.github.io/bronto-ui/)** · **[Theme playground](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)**
-- **[Class reference](https://github.com/Ponchia/bronto-ui/blob/main/docs/reference.md)** · **[Usage guide](https://github.com/Ponchia/bronto-ui/blob/main/docs/usage.md)** · **[Theming](https://github.com/Ponchia/bronto-ui/blob/main/docs/theming.md)** · **[Contrast](https://github.com/Ponchia/bronto-ui/blob/main/docs/contrast.md)** · **[Color system (ADR-0001)](https://github.com/Ponchia/bronto-ui/blob/main/docs/adr/0001-color-system.md)**
+- **[Class reference](https://github.com/Ponchia/bronto-ui/blob/main/docs/reference.md)** · **[Usage guide](https://github.com/Ponchia/bronto-ui/blob/main/docs/usage.md)** · **[Theming](https://github.com/Ponchia/bronto-ui/blob/main/docs/theming.md)** · **[Contrast](https://github.com/Ponchia/bronto-ui/blob/main/docs/contrast.md)** · **[Color system (ADR-0001)](https://github.com/Ponchia/bronto-ui/blob/main/docs/adr/0001-color-system.md)** · **[Scope & 2026 baseline (ADR-0002)](https://github.com/Ponchia/bronto-ui/blob/main/docs/adr/0002-scope-and-2026-baseline.md)**
 - **[CHANGELOG](https://github.com/Ponchia/bronto-ui/blob/main/CHANGELOG.md)** · **[Roadmap](https://github.com/Ponchia/bronto-ui/blob/main/ROADMAP.md)** · **[Contributing](https://github.com/Ponchia/bronto-ui/blob/main/CONTRIBUTING.md)**
 
 ## License

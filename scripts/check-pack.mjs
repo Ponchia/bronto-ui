@@ -59,6 +59,7 @@ const shippedDocs = new Set([
   'docs/stability.md',
   'docs/usage.md',
   'docs/adr/0001-color-system.md',
+  'docs/adr/0002-scope-and-2026-baseline.md',
 ]);
 for (const d of shippedDocs) {
   if (!underAllowlist(d)) {
