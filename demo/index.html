@@ -962,25 +962,18 @@ ui.button({ variant: 'ghost' });</code></pre>
       <section aria-labelledby="v07" class="ui-stack" style="margin-block-start: 3rem">
         <h2 id="v07" class="ui-eyebrow">0.3.6 additions</h2>
 
-        <!-- Display glyphs — dot-matrix bitmaps from @ponchia/ui/glyphs.
-             All five are [data-bronto-glyph] placeholders expanded by
-             initDotGlyph(); `heart` carries data-bronto-glyph-label so it's
-             exposed as role="img", the rest stay decorative (aria-hidden). -->
-        <p class="ui-muted">Display glyphs — <code>@ponchia/ui/glyphs</code> on the dot-matrix primitive.</p>
+        <!-- Display glyphs — the 24-glyph @ponchia/ui/glyphs set. The gallery
+             is generated from GLYPH_NAMES in the module script below as
+             [data-bronto-glyph] placeholders, then expanded by initDotGlyph().
+             A display set: crisp from ~40px up, not a 16px inline-icon set. -->
+        <p class="ui-muted">
+          Display glyphs — <code>@ponchia/ui/glyphs</code>, a 24-glyph dot-matrix icon set.
+        </p>
         <div
+          id="glyphGallery"
           class="ui-cluster"
-          style="--cluster-gap: var(--space-lg); align-items: center"
-        >
-          <span data-bronto-glyph="arrow-right" style="--dotmatrix-dot: 0.5rem"></span>
-          <span data-bronto-glyph="check" style="--dotmatrix-dot: 0.5rem"></span>
-          <span data-bronto-glyph="cross" style="--dotmatrix-dot: 0.5rem"></span>
-          <span
-            data-bronto-glyph="heart"
-            data-bronto-glyph-label="Favourite"
-            style="--dotmatrix-dot: 0.5rem"
-          ></span>
-          <span data-bronto-glyph="spark" style="--dotmatrix-dot: 0.5rem"></span>
-        </div>
+          style="--cluster-gap: var(--space-md); align-items: center"
+        ></div>
       </section>
     </main>
 
@@ -1003,6 +996,28 @@ ui.button({ variant: 'ghost' });</code></pre>
         toast,
       } from '../behaviors/index.js';
       import { ui, cx } from '../classes/index.js';
+      import { GLYPH_NAMES } from '../glyphs/glyphs.js';
+
+      // Build the glyph gallery from the shipped registry, then let
+      // initDotGlyph() expand the placeholders — stays in sync with the set.
+      const gallery = document.getElementById('glyphGallery');
+      if (gallery) {
+        for (const name of GLYPH_NAMES) {
+          const cell = document.createElement('span');
+          cell.className = 'ui-stack';
+          cell.style.cssText = '--stack-gap: var(--space-2xs); align-items: center';
+          const g = document.createElement('span');
+          g.setAttribute('data-bronto-glyph', name);
+          g.setAttribute('data-bronto-glyph-label', name);
+          g.style.cssText = '--dotmatrix-dot: 0.28rem; --dotmatrix-gap: 0.07rem';
+          const cap = document.createElement('span');
+          cap.className = 'ui-muted';
+          cap.style.fontSize = '0.6rem';
+          cap.textContent = name;
+          cell.append(g, cap);
+          gallery.appendChild(cell);
+        }
+      }
 
       initThemeToggle();
       dismissible();

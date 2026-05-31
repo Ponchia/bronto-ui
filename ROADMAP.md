@@ -51,10 +51,11 @@ Per-item detail is in the dated CHANGELOG sections.
   `ui-steps`, `ui-timeline`, `ui-meter`, `ui-kbd`, `ui-input-icon`) plus
   `ui-carousel` + `ui-lightbox` (CSS scroll-snap gallery in a native
   `<dialog>`), and a component-scoped Playwright visual-baseline suite.
-- **0.3.6** — `@ponchia/ui/glyphs`: a display-glyph subpath of 16×16
-  dot-matrix bitmaps on the `.ui-dotmatrix` primitive (`renderGlyph` +
-  `initDotGlyph`), with a generated/CI-drift-checked `GlyphName` union and
-  a `--dotmatrix-dot` intrinsic-sizing knob.
+- **0.3.6** — `@ponchia/ui/glyphs`: a 24-glyph dot-matrix display-icon set
+  (nav/actions/status/marks) on the `.ui-dotmatrix` primitive (`renderGlyph`
+  + `initDotGlyph`), with a generated/CI-drift-checked `GlyphName` union and
+  a `--dotmatrix-dot` intrinsic-sizing knob. A display set (crisp ≳40px), not
+  a 16px inline-icon replacement.
 
 ## Open / under active consideration
 

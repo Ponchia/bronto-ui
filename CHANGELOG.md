@@ -14,13 +14,17 @@ policy.
 
 ### Added
 
-- **`@ponchia/ui/glyphs` — display glyphs.** A frozen 16×16 bitmap registry
-  (`GLYPHS`, `GLYPH_NAMES`, `GLYPH_SIZE`) with `glyph()`, `glyphCells()`, and
-  `renderGlyph(name, { label, grid, dot, gap })` — an SSR-safe HTML string,
-  decorative (`aria-hidden`) by default and `role="img"` when labelled. Ships
-  the starter set `arrow-right`, `check`, `cross`, `heart`, `spark` (the
-  two-tone accent demo). The `GlyphName` literal union is generated and
-  CI-drift-checked from the runtime, like the `cls`/token maps.
+- **`@ponchia/ui/glyphs` — a 24-glyph dot-matrix display-icon set.** A frozen
+  16×16 bitmap registry (`GLYPHS`, `GLYPH_NAMES`, `GLYPH_SIZE`) with `glyph()`,
+  `glyphCells()`, and `renderGlyph(name, { label, grid, dot, gap })` — an
+  SSR-safe HTML string, decorative (`aria-hidden`) by default and `role="img"`
+  when labelled. Covers navigation (`arrow-*`, `chevron-*`), actions (`check`,
+  `close`, `plus`, `minus`, `search`, `menu`, `gear`), status (`info`,
+  `warning`, `bell`, `lock`) and common marks (`home`, `user`, `heart`,
+  `star`, `spark` — the two-tone accent demo). A _display_ set: crisp from
+  ~40px up, not a 16px inline-icon replacement. The `GlyphName` literal union
+  is generated and CI-drift-checked from the runtime, like the `cls`/token
+  maps.
 - **`initDotGlyph()` behavior.** Expands `[data-bronto-glyph]` placeholders
   into a `.ui-dotmatrix` grid in place (optional `data-bronto-glyph-label`),
   idempotent, with a cleanup that fully reverts — the DOM counterpart to

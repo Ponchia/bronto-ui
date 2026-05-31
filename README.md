@@ -79,17 +79,17 @@ toast('Saved', { tone: 'success' });   // body-anchored stack, no markup needed
 
 Behaviors cover theme persistence, disclosure, dropdown menus, native-`<dialog>` modals/drawers, tabs, combobox, form validation, table sort, carousel and toasts — wired by `data-bronto-*` attributes.
 
-**5. (Optional) display glyphs — dot-matrix bitmaps, decorative by default:**
+**5. (Optional) display glyphs — a 24-glyph dot-matrix icon set:**
 
 ```js
 import { renderGlyph } from '@ponchia/ui/glyphs';
 
-el.innerHTML = renderGlyph('heart', { label: 'Favourite' });  // role="img"
+el.innerHTML = renderGlyph('search', { label: 'Search' });  // role="img"
 // or drop a placeholder and expand it: <span data-bronto-glyph="check"></span>
 // import { initDotGlyph } from '@ponchia/ui/behaviors'; initDotGlyph();
 ```
 
-Glyphs render on the same `.ui-dotmatrix` primitive and re-skin with the `--field-dot*` tokens — no SVG, no font.
+Arrows, chevrons, check/close/plus/minus, search/menu/gear, info/warning/bell/lock, home/user/heart/star/spark — rendered on the same `.ui-dotmatrix` primitive and re-skinned by the `--field-dot*` tokens (no SVG, no font). It's a **display** set: crisp from ~40px up, not a 16px inline-icon replacement.
 
 ## What's in the box
 

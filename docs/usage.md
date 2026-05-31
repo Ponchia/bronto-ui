@@ -148,18 +148,26 @@ infinite-clone track). It's a gallery: the user drives it.
 
 ## Display glyphs: when (and when not)
 
-`@ponchia/ui/glyphs` is a small set of dot-matrix bitmaps (`arrow-right`,
-`check`, `cross`, `heart`, `spark`) rendered on the `.ui-dotmatrix`
-primitive — the on-brand way to show a chunky, pixel-lit mark that
-re-skins with the `--field-dot*` tokens. They are **decorative pixel art,
-not an icon system**: reach for one as a hero/empty-state flourish, a
-status burst, or the `spark` accent demo — not as a 16px inline UI icon
-(use a real icon set for dense affordances). `renderGlyph(name, { label })`
-returns an SSR-safe string (decorative `aria-hidden` unless you pass a
-`label`, which makes it `role="img"`); prefer the `data-bronto-glyph`
-placeholder + `initDotGlyph()` when the markup is easier dropped than
-inlined. Size with `--dotmatrix-dot` for an intrinsic dot, or let it
-stretch to its container.
+`@ponchia/ui/glyphs` is a 24-glyph dot-matrix icon set — navigation
+(`arrow-*`, `chevron-*`), actions (`check`, `close`, `plus`, `minus`,
+`search`, `menu`, `gear`), status (`info`, `warning`, `bell`, `lock`) and
+common marks (`home`, `user`, `heart`, `star`, `spark`) — rendered on the
+`.ui-dotmatrix` primitive, so they re-skin with the same `--field-dot*`
+tokens as every other dot surface (no SVG, no icon font).
+
+**It's a _display_ icon set, not a 16px toolbar set.** A dot-matrix glyph
+needs physical room for the dots to read: it's crisp and recognizable at
+roughly **40px and up** (hero marks, empty states, status bursts, section
+headers, large buttons), and collapses into dot-soup below ~24px. For
+dense, tiny inline affordances reach for a vector icon set — that's the
+honest boundary of the medium, not a gap to fill with more glyphs.
+
+`renderGlyph(name, { label })` returns an SSR-safe string: decorative
+(`aria-hidden`) by default, or `role="img"` + `aria-label` when you pass a
+`label` — which is how it conveys meaning to assistive tech. Prefer the
+`data-bronto-glyph` placeholder + `initDotGlyph()` when the markup is
+easier dropped than inlined. Size with `--dotmatrix-dot` (and a tight
+`--dotmatrix-gap`) for an intrinsic dot, or let it stretch to its container.
 
 ## When to add a behavior
 

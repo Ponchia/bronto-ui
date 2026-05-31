@@ -3,11 +3,30 @@
 
 /** Every display-glyph name @ponchia/ui ships (literal union). */
 export type GlyphName =
+  | 'arrow-down'
+  | 'arrow-left'
   | 'arrow-right'
+  | 'arrow-up'
+  | 'bell'
   | 'check'
-  | 'cross'
+  | 'chevron-down'
+  | 'chevron-left'
+  | 'chevron-right'
+  | 'chevron-up'
+  | 'close'
+  | 'gear'
   | 'heart'
-  | 'spark';
+  | 'home'
+  | 'info'
+  | 'lock'
+  | 'menu'
+  | 'minus'
+  | 'plus'
+  | 'search'
+  | 'spark'
+  | 'star'
+  | 'user'
+  | 'warning';
 
 /** A glyph is 16 rows of 16 chars: `.` off, `#` lit, `*` accent. */
 export type Glyph = readonly string[];
