@@ -110,7 +110,10 @@ checks + tag↔version match), `e2e` (Playwright visual + a11y), **and**
 `examples` (consumer build against the packed tarball) must all pass →
 `publish-npm` → `release-notes`. **The npm publish is the gate** — a
 failing check, e2e, or examples build means the version never reaches
-npm, so consumers never resolve it. GitHub also serves the raw tag
+npm, so consumers never resolve it. `publish-npm` then **pauses for a
+manual approval** (the `npm-publish` Environment's required-reviewer
+rule) — open the run in the Actions tab and click *Review deployments →
+Approve* to release. Nothing reaches npm until you approve. GitHub also serves the raw tag
 tarball ungated, but that is a legacy/fallback path, not the documented
 install. Publishing runs `npm publish --ignore-scripts` with provenance
 (SLSA); the `@ponchia` scope and `NPM_TOKEN` repo secret are in place,

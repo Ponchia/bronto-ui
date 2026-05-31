@@ -124,6 +124,13 @@ jobs:
   publish-npm:
     needs: [validate, e2e, examples]
     runs-on: ubuntu-latest
+    # Manual approval gate: this job is the ONLY thing that reaches npm, so
+    # it runs in the `npm-publish` Environment (required-reviewer protection
+    # rule). After the gates pass, the run pauses here until a maintainer
+    # approves in the Actions UI — a deliberate guard against an accidental
+    # tag push publishing. The Environment is also where NPM_TOKEN should be
+    # scoped so no other job can read it.
+    environment: npm-publish
     permissions:
       contents: read
       id-token: write # npm provenance (publishConfig.provenance)
