@@ -67,6 +67,7 @@
     "check:tokens": "node scripts/check-tokens.mjs",
     "check:classes": "node scripts/check-classes.mjs",
     "check:dts": "node scripts/check-dts.mjs",
+    "check:behaviors": "node scripts/check-behaviors.mjs",
     "check:glyphs": "node scripts/check-glyphs.mjs",
     "check:types": "tsc -p tsconfig.json",
     "check:dtcg": "node scripts/check-dtcg.mjs",
@@ -78,7 +79,7 @@
     "check:reference": "node scripts/check-reference.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:vscode": "node scripts/check-vscode-data.mjs",
-    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:tokens && npm run check:classes && npm run check:dts && npm run check:types && npm run check:dtcg && npm run check:resolved && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:release && npm run check:reference && npm run check:contrast && npm run check:vscode && npm run check:glyphs",
+    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:tokens && npm run check:classes && npm run check:dts && npm run check:types && npm run check:dtcg && npm run check:resolved && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:release && npm run check:reference && npm run check:contrast && npm run check:vscode && npm run check:behaviors && npm run check:glyphs",
     "test": "node --test \"test/*.test.mjs\"",
     "prepack": "npm run tokens:build && npm run dtcg:build && npm run resolved:build && npm run dts:build && npm run reference:build && npm run contrast:build && npm run vscode:build && npm run dist:build && npm run glyphs:build",
     "prepublishOnly": "npm run check && npm test"
