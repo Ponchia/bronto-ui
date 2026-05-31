@@ -17,6 +17,7 @@
     "classes/index.d.ts",
     "tokens/index.d.ts",
     "behaviors/index.d.ts",
-    "glyphs/glyphs.d.ts"
+    "glyphs/glyphs.d.ts",
+    "tokens/skins.d.ts"
   ]
 }

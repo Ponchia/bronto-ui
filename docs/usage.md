@@ -204,6 +204,25 @@ A few sharp edges to know:
   render hundreds at once (e.g. one in every row of a long table) without
   measuring.
 
+## Colorways: when to reach for a skin
+
+`@ponchia/ui/css/skins.css` adds `data-bronto-skin="amber-crt |
+phosphor-green | e-ink"` — a **root-level** colorway (apply on `<html>`, like
+`data-theme`) that re-points the one accent to a different single hue.
+
+- **Use a skin** when you want a distinct, on-brand _look_ (a phosphor/CRT or
+  e-ink feel) for the whole page or app — it's the supported, contrast-gated
+  way to recolour without leaving the design system.
+- **Use a raw `--accent` override** when you just need _your_ brand hue: it's
+  one declaration (see "Re-brand obligations" below) — but then contrast is
+  yours, whereas the shipped skins are pre-gated.
+- **Don't** put `data-bronto-skin` on a subtree — it's root-level by design
+  (the derived accent family only recomputes at `:root`); a subtree skin
+  no-ops. For a one-section recolour, scope a raw `--accent` override instead.
+- It's **opt-in**: a separate stylesheet, never in `dist/bronto.css`. No skin
+  imported → zero cost. Full detail in [theming.md](theming.md) → "Display
+  colorways".
+
 ## When to add a behavior
 
 The CSS is the framework; `@ponchia/ui/behaviors` is the *sanctioned*

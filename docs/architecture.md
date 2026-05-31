@@ -2,6 +2,14 @@
 
 Status: accepted · 2026-05-15 · applies from v0.2.0
 
+> **Separate ADRs.** Larger, self-contained decisions live under
+> [`docs/adr/`](./adr/):
+>
+> - [ADR-0001 — Color system: governed evolution beyond monochrome](./adr/0001-color-system.md)
+>   (accepted; steps 1–6 implemented in 0.4.0) — the five-tier color
+>   constitution, the `check:color-policy`/`check:skins` gates, opt-in
+>   colorways, and the deferred data-viz / core-ramp-OKLCH steps.
+
 ## Context
 
 `@ponchia/ui` is the shared design layer for several projects on
@@ -63,6 +71,9 @@ gating" below), so a version that fails any invariant never reaches npm.
 | `classes` `cls` ⇄ `.ui-*` selectors             | `check-classes.mjs` |
 | `classes`/`tokens` `.d.ts` ⇄ JS runtime (exact) | `check-dts.mjs`     |
 | `tokens.dtcg.json` ⇄ token model                | `check-dtcg.mjs`    |
+| color tokens tiered · no raw chromatic color in components | `check-color-policy.mjs` |
+| `css/skins.css` ⇄ `tokens/skins.js` · colorways opt-in | `check-skins.mjs` |
+| every shipped colorway accent meets its WCAG floor | `check-contrast.mjs` |
 | `shiki/nothing.json` valid + on rationed palette | `check-shiki.mjs`  |
 | `dist/*.css` == fresh build of `css/` + budget  | `check-dist.mjs`    |
 | published tarball == intended `files` only      | `check-pack.mjs`    |

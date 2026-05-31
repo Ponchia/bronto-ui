@@ -51,7 +51,16 @@
    --dotmatrix-dot to a fixed dot length (intrinsic sizing, e.g. for the
    display glyphs in @ponchia/ui/glyphs) instead of stretching to fit;
    set --dotmatrix-dot-radius: 0 (with --dotmatrix-gap: 0) to fuse the dots
-   into a crisp pixel glyph that stays legible at small/inline sizes. */
+   into a crisp pixel glyph that stays legible at small/inline sizes.
+
+   Tier-3 "display expression" knobs (see docs/adr/0001-color-system.md) — the
+   on-brand substitute for decorative colour, since a dot-matrix display speaks
+   in brightness + time, not hue. All default to a no-op, so the default render
+   is unchanged; the optional colorways (css/skins.css) set them:
+     --dotmatrix-glow      phosphor bloom around lit cells (default 0 = off)
+     --dotmatrix-pulse-min the floor the --pulse animation dips to (default 0.55)
+     --dotmatrix-reveal-step per-cell scan cadence for --reveal (default 3ms)
+   Density stays on --dotmatrix-cols / --dotmatrix-gap / --dotmatrix-dot. */
 .ui-dotmatrix {
   display: grid;
   gap: var(--dotmatrix-gap, 0.5rem);
@@ -64,12 +73,16 @@
   border-radius: var(--dotmatrix-dot-radius, 50%);
 }
 
+/* Lit cells optionally bloom — a phosphor/LED glow in the cell's own colour.
+   0 blur by default → no shadow painted, so display use is unaffected. */
 .ui-dotmatrix__cell--hot {
   background: var(--field-dot-hot);
+  box-shadow: 0 0 var(--dotmatrix-glow, 0) var(--field-dot-hot);
 }
 
 .ui-dotmatrix__cell--accent {
   background: var(--field-dot-accent);
+  box-shadow: 0 0 var(--dotmatrix-glow, 0) var(--field-dot-accent);
 }
 
 /* Animation (opt-in, decorative): a dot-matrix that "plays". Meaning stays
@@ -99,7 +112,7 @@
 
 @keyframes dotmatrixPulse {
   50% {
-    opacity: 0.55;
+    opacity: var(--dotmatrix-pulse-min, 0.55);
     transform: scale(0.94);
   }
 }
