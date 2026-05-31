@@ -27,6 +27,19 @@ categorical color lands later it ships as a governed, opt-in data-viz module
 
 ### Added
 
+- **Data-viz colour module — `@ponchia/ui/css/dataviz.css` + `@ponchia/ui/charts.json`.**
+  An opt-in Tier-4 chart palette for dashboards (ADR-0001 step 7). **Hybrid
+  accent-led**: series 1 is the live `var(--accent)` (the brand stays series 1);
+  series 2–8 are the Okabe-Ito colourblind-safe set; plus a sequential ramp
+  (heatmaps) and a diverging ramp (gains/losses). **Colour is never the sole
+  signal** — each series ships a matching `--chart-pattern-*` dot-matrix fill
+  (WCAG 1.4.1). The categorical palette is **gated for distinguishability under
+  normal + simulated protan/deutan/tritan vision** (`check:charts`, OKLab ΔE),
+  not just eyeballed. Resolved hex per theme in `tokens/charts.json` for
+  canvas/SVG/charting libs; typed `ChartTokenName` (`./charts`). **Charts-only,
+  never UI chrome** (`check:color-policy` fails on `var(--chart-*)` in core CSS)
+  and **never in the default bundle** (separate entrypoint). Sourced from
+  `tokens/charts.js` (generated → drift-checked by `check:charts`).
 - **Display colorways — `@ponchia/ui/css/skins.css`.** Opt-in
   `data-bronto-skin="amber-crt | phosphor-green | e-ink"`, a **root-level**
   choice like `data-theme` (apply on `<html>`). Each re-points the one accent

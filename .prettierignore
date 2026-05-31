@@ -5,6 +5,7 @@ dist
 # Generated artifacts — must match their generator byte-for-byte, not Prettier.
 tokens/index.json
 tokens/tokens.dtcg.json
+tokens/charts.json
 classes/vscode.css-custom-data.json
 *.d.ts
 shiki

@@ -223,6 +223,25 @@ phosphor-green | e-ink"` — a **root-level** colorway (apply on `<html>`, like
   imported → zero cost. Full detail in [theming.md](theming.md) → "Display
   colorways".
 
+## Data-viz colours: charts, not chrome
+
+`@ponchia/ui/css/dataviz.css` (opt-in) adds a Tier-4 chart palette for
+dashboards: `--chart-1..8` (categorical), `--chart-seq-*` (sequential),
+`--chart-div-*` (diverging), and `--chart-pattern-1..8` (dot-matrix fills).
+
+- **Use it for charts only.** These are not UI tokens — a build gate fails if
+  `var(--chart-*)` appears in component CSS. Style buttons/badges with the
+  accent/status tiers, not chart colours.
+- **Series 1 is the accent**, so your brand leads the palette; series 2–8 are a
+  colourblind-safe set (gated for distinctness under protan/deutan/tritan).
+- **Always pair colour with pattern** (`--chart-pattern-N`) and/or a direct
+  label — never colour alone (WCAG 1.4.1):
+  `background: var(--chart-3); background-image: var(--chart-pattern-3); background-size: var(--chart-pattern-size);`
+- **In JS** (Chart.js, canvas, SVG): import resolved hex from
+  `@ponchia/ui/charts.json` (`{ light, dark }`, series 1 = the resolved accent).
+  Cap a chart at ~8 series. Full detail in [theming.md](theming.md) →
+  "Data-viz palette".
+
 ## When to add a behavior
 
 The CSS is the framework; `@ponchia/ui/behaviors` is the *sanctioned*

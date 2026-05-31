@@ -23,43 +23,14 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildResolved } from './gen-resolved.mjs';
 import { skins, SKIN_NAMES } from '../tokens/skins.js';
+import { charts } from '../tokens/charts.js';
+import { resolveColor } from './gen-charts.mjs';
+import { parseOklch } from './lib/oklch.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 const HEX = /^#([0-9a-f]{3,8})$/i;
 const RGBA_FN = /^rgba?\(([^)]+)\)$/i;
-const OKLCH_FN = /^oklch\(\s*([^)]+)\)$/i;
-
-/** oklch(L C H [/ A]) → sRGB [r,g,b] (0-255), via OKLab → linear sRGB → gamma.
- *  L accepts 0-1 or a percentage; H is in degrees. Out-of-gamut is clamped. */
-function oklchToRgb(L, C, H) {
-  const hr = (H * Math.PI) / 180;
-  const a = C * Math.cos(hr);
-  const b = C * Math.sin(hr);
-  const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3;
-  const m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3;
-  const s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3;
-  const lin = [
-    4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
-    -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
-    -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s,
-  ];
-  // Reject out-of-sRGB-gamut accents loudly rather than silently clamping to a
-  // colour the browser would gamut-map differently — a clamped value would let
-  // the contrast gate pass/fail on a colour no user sees. (All shipped skin
-  // accents are in-gamut; this guards a future one.)
-  if (lin.some((c) => c < -0.001 || c > 1.001)) {
-    throw new Error(
-      `oklch(${L} ${C} ${H}) is outside the sRGB gamut (linear ${lin.map((c) => c.toFixed(3))}) — ` +
-        `pick an in-gamut accent so its contrast can be measured honestly`,
-    );
-  }
-  const gamma = (x) => {
-    const c = x <= 0.0031308 ? 12.92 * x : 1.055 * x ** (1 / 2.4) - 0.055;
-    return Math.max(0, Math.min(1, c)) * 255;
-  };
-  return lin.map(gamma);
-}
 
 /** Parse a resolved literal (#rrggbb, rgba(…), or oklch(…)) → [r,g,b,a]. */
 function rgba(v) {
@@ -87,23 +58,7 @@ function rgba(v) {
     // which would then slip the gate as a non-comparable ratio).
     return out.every((n) => Number.isFinite(n)) ? out : null;
   }
-  const ok = OKLCH_FN.exec(s);
-  if (ok) {
-    const p = ok[1].split(/[\s/]+/).filter(Boolean);
-    if (p.length < 3) return null;
-    const L = p[0].endsWith('%') ? Number.parseFloat(p[0]) / 100 : Number.parseFloat(p[0]);
-    const C = Number.parseFloat(p[1]);
-    const H = Number.parseFloat(p[2]);
-    const al =
-      p[3] != null
-        ? p[3].endsWith('%')
-          ? Number.parseFloat(p[3]) / 100
-          : Number.parseFloat(p[3])
-        : 1;
-    if (![L, C, H, al].every((n) => Number.isFinite(n))) return null;
-    return [...oklchToRgb(L, C, H), al];
-  }
-  return null;
+  return parseOklch(s); // #rrggbb / rgba() above; oklch() here (shared lib)
 }
 
 /** color-mix(in srgb, A p%, B) for two OPAQUE colours, per CSS Color 5 (gamma
@@ -314,6 +269,24 @@ function themeTable(rows) {
   return `${head}\n${body}`;
 }
 
+function datavizSection(resolved) {
+  const themeBlock = (theme) => {
+    const bg = resolved[theme]['--bg'];
+    const rows = charts[theme].categorical
+      .map((v, i) => {
+        const hex = resolveColor(v, theme);
+        const r = ratio(hex, bg);
+        return `| ${i + 1}${i === 0 ? ' _(accent)_' : ''} | \`${hex}\` | ${r2(r)} | ${apcaCell(apcaLc(hex, bg))} |`;
+      })
+      .join('\n');
+    return (
+      `### ${theme[0].toUpperCase()}${theme.slice(1)} theme — categorical vs \`--bg\`\n\n` +
+      `| Series | Colour | Ratio _(advisory)_ | APCA _(advisory)_ |\n| --- | --- | --- | --- |\n${rows}`
+    );
+  };
+  return `${themeBlock('light')}\n\n${themeBlock('dark')}`;
+}
+
 function build() {
   const { light, dark, skins: skinAudits } = audit();
   const skinRows = skinAudits.flatMap((s) => s.rows);
@@ -376,6 +349,19 @@ palette untouched). Accents are authored in OKLCH; \`--accent-text\` is the
 \`color-mix\`-derived \`--accent-strong\`, exactly as in the core palette.
 
 ${skinAudits.map((s) => `### ${s.label} — ${s.theme}\n\n${themeTable(s.rows)}`).join('\n\n')}
+
+## Data-viz palette (advisory)
+
+The opt-in Tier-4 chart palette (\`@ponchia/ui/css/dataviz.css\`, authored in
+\`tokens/charts.js\`) is gated differently: categorical series are held to
+**mutual distinguishability under normal + simulated protan/deutan/tritan
+vision** (\`check:charts\`, OKLab ΔE), and colour is **never the sole signal** —
+each series ships a matching \`--chart-pattern-*\` dot-matrix fill. So the
+WCAG ratios below are **advisory** (a chart fill is not body text); use them to
+pick a darker series for thin lines/points, or rely on the pattern. Series 1 is
+the brand accent.
+
+${datavizSection(buildResolved())}
 
 ## Scope & caveats
 

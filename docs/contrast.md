@@ -163,6 +163,43 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 12.81:1 | Lc 79 | ✅ pass |
 | `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 13.75:1 | Lc 79 | ✅ pass |
 
+## Data-viz palette (advisory)
+
+The opt-in Tier-4 chart palette (`@ponchia/ui/css/dataviz.css`, authored in
+`tokens/charts.js`) is gated differently: categorical series are held to
+**mutual distinguishability under normal + simulated protan/deutan/tritan
+vision** (`check:charts`, OKLab ΔE), and colour is **never the sole signal** —
+each series ships a matching `--chart-pattern-*` dot-matrix fill. So the
+WCAG ratios below are **advisory** (a chart fill is not body text); use them to
+pick a darker series for thin lines/points, or rely on the pattern. Series 1 is
+the brand accent.
+
+### Light theme — categorical vs `--bg`
+
+| Series | Colour | Ratio _(advisory)_ | APCA _(advisory)_ |
+| --- | --- | --- | --- |
+| 1 _(accent)_ | `#d71921` | 4.71:1 | Lc 67 |
+| 2 | `#e69f00` | 2.05:1 | Lc 37 |
+| 3 | `#56b4e9` | 2.10:1 | Lc 39 |
+| 4 | `#009e73` | 3.11:1 | Lc 54 |
+| 5 | `#f0e442` | 1.20:1 | Lc 9 |
+| 6 | `#0072b2` | 4.71:1 | Lc 68 |
+| 7 | `#cc79a7` | 2.78:1 | Lc 51 |
+| 8 | `#4d5358` | 7.08:1 | Lc 80 |
+
+### Dark theme — categorical vs `--bg`
+
+| Series | Colour | Ratio _(advisory)_ | APCA _(advisory)_ |
+| --- | --- | --- | --- |
+| 1 _(accent)_ | `#ff3b41` | 5.95:1 | Lc 41 |
+| 2 | `#e69f00` | 9.32:1 | Lc 58 |
+| 3 | `#56b4e9` | 9.10:1 | Lc 57 |
+| 4 | `#009e73` | 6.14:1 | Lc 41 |
+| 5 | `#f0e442` | 15.88:1 | Lc 88 |
+| 6 | `#0072b2` | 4.05:1 | Lc 27 |
+| 7 | `#cc79a7` | 6.86:1 | Lc 45 |
+| 8 | `#4d5358` | 2.69:1 | Lc 15 |
+
 ## Scope & caveats
 
 - This gates the **framework token contract** (core palette **and** every

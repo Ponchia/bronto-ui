@@ -18,6 +18,7 @@
     "tokens/index.d.ts",
     "behaviors/index.d.ts",
     "glyphs/glyphs.d.ts",
-    "tokens/skins.d.ts"
+    "tokens/skins.d.ts",
+    "tokens/charts.d.ts"
   ]
 }
