@@ -79,7 +79,7 @@ toast('Saved', { tone: 'success' });   // body-anchored stack, no markup needed
 
 Behaviors cover theme persistence, disclosure, dropdown menus, native-`<dialog>` modals/drawers, tabs, combobox, form validation, table sort, carousel and toasts — wired by `data-bronto-*` attributes.
 
-**5. (Optional) display glyphs — a 24-glyph dot-matrix icon set:**
+**5. (Optional) display glyphs — a 43-glyph dot-matrix icon set:**
 
 ```js
 import { renderGlyph } from '@ponchia/ui/glyphs';

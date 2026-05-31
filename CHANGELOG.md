@@ -14,7 +14,7 @@ policy.
 
 ### Added
 
-- **`@ponchia/ui/glyphs` — a 24-glyph dot-matrix display-icon set.** A frozen
+- **`@ponchia/ui/glyphs` — a 43-glyph dot-matrix display-icon set.** A frozen
   16×16 bitmap registry (`GLYPHS`, `GLYPH_NAMES`, `GLYPH_SIZE`) with `glyph()`,
   `glyphCells()`, and `renderGlyph(name, { label, grid, dot, gap })` — an
   SSR-safe HTML string, decorative (`aria-hidden`) by default and `role="img"`
