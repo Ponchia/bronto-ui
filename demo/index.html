@@ -958,6 +958,30 @@ ui.button({ variant: 'ghost' });</code></pre>
           </div>
         </dialog>
       </section>
+
+      <section aria-labelledby="v07" class="ui-stack" style="margin-block-start: 3rem">
+        <h2 id="v07" class="ui-eyebrow">0.3.6 additions</h2>
+
+        <!-- Display glyphs — dot-matrix bitmaps from @ponchia/ui/glyphs.
+             The first row is hand-authored markup (renderGlyph output shape);
+             the rest are [data-bronto-glyph] placeholders expanded by
+             initDotGlyph(). Decorative unless data-bronto-glyph-label is set. -->
+        <p class="ui-muted">Display glyphs — <code>@ponchia/ui/glyphs</code> on the dot-matrix primitive.</p>
+        <div
+          class="ui-cluster"
+          style="--cluster-gap: var(--space-lg); align-items: center"
+        >
+          <span data-bronto-glyph="arrow-right" style="--dotmatrix-dot: 0.5rem"></span>
+          <span data-bronto-glyph="check" style="--dotmatrix-dot: 0.5rem"></span>
+          <span data-bronto-glyph="cross" style="--dotmatrix-dot: 0.5rem"></span>
+          <span
+            data-bronto-glyph="heart"
+            data-bronto-glyph-label="Favourite"
+            style="--dotmatrix-dot: 0.5rem"
+          ></span>
+          <span data-bronto-glyph="spark" style="--dotmatrix-dot: 0.5rem"></span>
+        </div>
+      </section>
     </main>
 
     <!-- The demo drives itself with the package's own shipped modules,
@@ -975,6 +999,7 @@ ui.button({ variant: 'ghost' });</code></pre>
         initFormValidation,
         initTableSort,
         initCarousel,
+        initDotGlyph,
         toast,
       } from '../behaviors/index.js';
       import { ui, cx } from '../classes/index.js';
@@ -990,6 +1015,7 @@ ui.button({ variant: 'ghost' });</code></pre>
       initFormValidation();
       initTableSort();
       initCarousel(); // wires both the inline carousel and the lightbox's
+      initDotGlyph(); // expands [data-bronto-glyph] placeholders
 
       document.getElementById('toastBtn').addEventListener('click', () => {
         toast('Order filled — BTC/EUR', { tone: 'success', title: 'Done' });

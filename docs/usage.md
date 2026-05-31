@@ -146,6 +146,21 @@ carousel crops (`cover`); the lightbox shows the whole image (`contain`).
 This is deliberately *not* an auto-playing marketing slider (no timers, no
 infinite-clone track). It's a gallery: the user drives it.
 
+## Display glyphs: when (and when not)
+
+`@ponchia/ui/glyphs` is a small set of dot-matrix bitmaps (`arrow-right`,
+`check`, `cross`, `heart`, `spark`) rendered on the `.ui-dotmatrix`
+primitive — the on-brand way to show a chunky, pixel-lit mark that
+re-skins with the `--field-dot*` tokens. They are **decorative pixel art,
+not an icon system**: reach for one as a hero/empty-state flourish, a
+status burst, or the `spark` accent demo — not as a 16px inline UI icon
+(use a real icon set for dense affordances). `renderGlyph(name, { label })`
+returns an SSR-safe string (decorative `aria-hidden` unless you pass a
+`label`, which makes it `role="img"`); prefer the `data-bronto-glyph`
+placeholder + `initDotGlyph()` when the markup is easier dropped than
+inlined. Size with `--dotmatrix-dot` for an intrinsic dot, or let it
+stretch to its container.
+
 ## When to add a behavior
 
 The CSS is the framework; `@ponchia/ui/behaviors` is the *sanctioned*

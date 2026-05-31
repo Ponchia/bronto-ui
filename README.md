@@ -79,6 +79,18 @@ toast('Saved', { tone: 'success' });   // body-anchored stack, no markup needed
 
 Behaviors cover theme persistence, disclosure, dropdown menus, native-`<dialog>` modals/drawers, tabs, combobox, form validation, table sort, carousel and toasts — wired by `data-bronto-*` attributes.
 
+**5. (Optional) display glyphs — dot-matrix bitmaps, decorative by default:**
+
+```js
+import { renderGlyph } from '@ponchia/ui/glyphs';
+
+el.innerHTML = renderGlyph('heart', { label: 'Favourite' });  // role="img"
+// or drop a placeholder and expand it: <span data-bronto-glyph="check"></span>
+// import { initDotGlyph } from '@ponchia/ui/behaviors'; initDotGlyph();
+```
+
+Glyphs render on the same `.ui-dotmatrix` primitive and re-skin with the `--field-dot*` tokens — no SVG, no font.
+
 ## What's in the box
 
 - **Primitives** — buttons, cards, chips, badges, links, key/value, `ui-num`, avatars.
@@ -128,7 +140,7 @@ Per-framework getting-started guides + runnable example apps live in the repo:
   ```
 - **For AI coding agents** — the package ships `llms.txt` at its root plus `docs/reference.md`, `docs/usage.md` and `docs/theming.md` inside the tarball, so an offline agent has the full API without guessing.
 
-> The package root is **CSS-only**: `@import '@ponchia/ui'` in CSS, never `import '@ponchia/ui'` in JS. The JS entrypoints are the explicit subpaths `/tokens`, `/classes`, `/behaviors`.
+> The package root is **CSS-only**: `@import '@ponchia/ui'` in CSS, never `import '@ponchia/ui'` in JS. The JS entrypoints are the explicit subpaths `/tokens`, `/classes`, `/behaviors`, `/glyphs`.
 
 ## Browser support
 

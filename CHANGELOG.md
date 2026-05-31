@@ -4,6 +4,34 @@
 > `~0.x`; `^0.x` does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## 0.3.6 — 2026-05-31
+
+Display glyphs: a small `@ponchia/ui/glyphs` subpath of dot-matrix bitmaps
+rendered on the existing `.ui-dotmatrix` primitive — no SVG, no icon font,
+re-skinned by the same `--field-dot*` tokens. All additive — a new optional
+JS subpath plus one backward-compatible CSS var → a patch under the 0.x
+policy.
+
+### Added
+
+- **`@ponchia/ui/glyphs` — display glyphs.** A frozen 16×16 bitmap registry
+  (`GLYPHS`, `GLYPH_NAMES`, `GLYPH_SIZE`) with `glyph()`, `glyphCells()`, and
+  `renderGlyph(name, { label, grid, dot, gap })` — an SSR-safe HTML string,
+  decorative (`aria-hidden`) by default and `role="img"` when labelled. Ships
+  the starter set `arrow-right`, `check`, `cross`, `heart`, `spark` (the
+  two-tone accent demo). The `GlyphName` literal union is generated and
+  CI-drift-checked from the runtime, like the `cls`/token maps.
+- **`initDotGlyph()` behavior.** Expands `[data-bronto-glyph]` placeholders
+  into a `.ui-dotmatrix` grid in place (optional `data-bronto-glyph-label`),
+  idempotent, with a cleanup that fully reverts — the DOM counterpart to
+  `renderGlyph`.
+
+### Changed
+
+- **`.ui-dotmatrix` gains a `--dotmatrix-dot` knob** for intrinsic dot
+  sizing (`grid-template-columns` falls back to the previous
+  `minmax(0, 1fr)` when unset, so existing matrices are unchanged).
+
 ## 0.3.5 — 2026-05-29
 
 A consumer-evidence pass: six small primitives that adopters were

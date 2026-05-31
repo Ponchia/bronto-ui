@@ -47,11 +47,13 @@
 /* Data-bound dot matrix — a grid of state cells (activity / heatmap),
    the on-brand counterpart to the decorative .ui-dotgrid background.
    This is the grid + cell tones only; the data→cell mapping is the
-   consumer's. Tune density via --dotmatrix-cols / --dotmatrix-gap. */
+   consumer's. Tune density via --dotmatrix-cols / --dotmatrix-gap; set
+   --dotmatrix-dot to a fixed dot length (intrinsic sizing, e.g. for the
+   display glyphs in @ponchia/ui/glyphs) instead of stretching to fit. */
 .ui-dotmatrix {
   display: grid;
   gap: var(--dotmatrix-gap, 0.5rem);
-  grid-template-columns: repeat(var(--dotmatrix-cols, 12), minmax(0, 1fr));
+  grid-template-columns: repeat(var(--dotmatrix-cols, 12), var(--dotmatrix-dot, minmax(0, 1fr)));
 }
 
 .ui-dotmatrix__cell {
