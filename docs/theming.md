@@ -178,6 +178,36 @@ you have, so the one-accent discipline holds.
   colorways". (Your _own_ `--accent` re-brand is still your obligation; the
   guarantee covers the shipped palettes and skins.)
 
+## Data-viz palette (`@ponchia/ui/css/dataviz.css`)
+
+Opt-in Tier-4 chart colours for dashboards — **charts only, never UI chrome**
+(a build gate fails on `var(--chart-*)` in component CSS), and never in the
+default bundle.
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/dataviz.css" />
+```
+
+```js
+// resolved hex for canvas / SVG / Chart.js etc.
+import charts from '@ponchia/ui/charts.json' with { type: 'json' };
+const series = charts.dark.categorical; // ['#ff3b41', '#e69f00', …] — series 0 = accent
+```
+
+- **Categorical `--chart-1..8`** — hybrid accent-led: series 1 is the live
+  `var(--accent)` (your brand leads), series 2–8 are the Okabe-Ito
+  colourblind-safe set. The set is **gated for mutual distinguishability under
+  normal + simulated protanopia/deuteranopia/tritanopia** (OKLab ΔE).
+- **Sequential `--chart-seq-1..6`** — single-hue light→dark, for
+  heatmaps/intensity. **Diverging `--chart-div-1..7`** — blue↔neutral↔orange,
+  for ±/gains-losses.
+- **Pattern fills `--chart-pattern-1..8`** — a dot-matrix second channel so
+  colour is never the sole signal (WCAG 1.4.1). Pair colour N with pattern N:
+  `background: var(--chart-2); background-image: var(--chart-pattern-2); background-size: var(--chart-pattern-size); --chart-pattern-ink: rgb(0 0 0 / .34);`
+- A chart colour's WCAG ratio vs the background is published **advisory** in
+  [contrast.md](contrast.md) (a fill is not body text) — pick a darker series
+  for thin lines/points, or lean on the pattern.
+
 ## Accessibility markup contracts
 
 A few components are styled but need the consumer to author the right

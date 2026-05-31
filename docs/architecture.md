@@ -74,6 +74,7 @@ gating" below), so a version that fails any invariant never reaches npm.
 | color tokens tiered · no raw chromatic color in components | `check-color-policy.mjs` |
 | `css/skins.css` ⇄ `tokens/skins.js` · colorways opt-in | `check-skins.mjs` |
 | every shipped colorway accent meets its WCAG floor | `check-contrast.mjs` |
+| `dataviz.css`/`charts.json`/`charts.d.ts` ⇄ `tokens/charts.js` · CVD-distinguishable · opt-in | `check-charts.mjs` |
 | `shiki/nothing.json` valid + on rationed palette | `check-shiki.mjs`  |
 | `dist/*.css` == fresh build of `css/` + budget  | `check-dist.mjs`    |
 | published tarball == intended `files` only      | `check-pack.mjs`    |

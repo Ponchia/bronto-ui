@@ -24,6 +24,7 @@ import {
   type GlyphCell,
 } from '../glyphs/glyphs.js';
 import { skins, SKIN_NAMES, type SkinName } from '../tokens/skins.js';
+import { charts, type ChartTokenName } from '../tokens/charts.js';
 
 // cls values are literal, not widened to `string`.
 const btn: 'ui-button' = cls.button;
@@ -99,6 +100,13 @@ const skinLabel: string = skins[skinName].label;
 // @ts-expect-error — not a registered colorway name.
 const badSkin: SkinName = 'neon-pink';
 void [skinName, firstSkin, skinLabel, badSkin];
+
+// Data-viz: the ./charts subpath types are sound and ChartTokenName is literal.
+const chartTok: ChartTokenName = '--chart-1';
+const series1: string = charts.light.categorical[0];
+// @ts-expect-error — not a categorical chart token.
+const badChart: ChartTokenName = '--chart-99';
+void [chartTok, series1, badChart];
 
 void [
   btn,

@@ -9,6 +9,8 @@
     <!-- Opt-in colorways (0.4.0). Not in the default bundle — a separate
          entrypoint a consumer adds on demand. Loaded here to demo the switcher. -->
     <link rel="stylesheet" href="../dist/css/skins.css" />
+    <!-- Opt-in Tier-4 data-viz palette (0.4.0). Separate entrypoint; never bundled. -->
+    <link rel="stylesheet" href="../dist/css/dataviz.css" />
     <style>
       /* No local @font-face: Doto ships in css/fonts.css (bundled by
          core.css) with URLs relative to the package, so it resolves here
@@ -1031,6 +1033,61 @@ ui.button({ variant: 'ghost' });</code></pre>
             style="--dotmatrix-dot: 0.5rem; max-inline-size: 9rem"
           ></div>
         </div>
+      </section>
+
+      <section aria-labelledby="v08b" class="ui-stack" style="margin-block-start: 3rem">
+        <h2 id="v08b" class="ui-eyebrow">0.4.0 — data-viz palette</h2>
+
+        <!-- Opt-in Tier-4 chart palette (`@ponchia/ui/css/dataviz.css`): a hybrid
+             accent-led, colourblind-safe categorical set (series 1 = the brand
+             accent), gated for distinguishability under simulated protan/deutan/
+             tritan vision. Colour is never the sole signal — each series pairs a
+             colour with a dot-matrix pattern fill. Charts-only, never UI chrome.
+             Hex for canvas/charting libs ships in tokens/charts.json. -->
+        <p class="ui-muted">
+          A colourblind-safe categorical palette (series 1 = the accent), each series
+          colour <strong>paired with a dot-matrix pattern</strong> so it never relies on colour
+          alone. Read hex from <code>@ponchia/ui/charts.json</code> for canvas/charting libs.
+        </p>
+
+        <figure style="margin: 0">
+          <div
+            role="img"
+            aria-label="Bar chart, six data series, illustrating the categorical palette and pattern fills"
+            style="display: flex; align-items: flex-end; gap: 0.6rem; block-size: 9rem; padding: 0.5rem 0; border-block-end: 1px solid var(--line)"
+          >
+            <span style="flex: 1; block-size: 72%; background-color: var(--chart-1); background-image: var(--chart-pattern-1); background-size: var(--chart-pattern-size)"></span>
+            <span style="flex: 1; block-size: 90%; background-color: var(--chart-2); background-image: var(--chart-pattern-2); background-size: var(--chart-pattern-size)"></span>
+            <span style="flex: 1; block-size: 54%; background-color: var(--chart-3); background-image: var(--chart-pattern-3); background-size: var(--chart-pattern-size)"></span>
+            <span style="flex: 1; block-size: 66%; background-color: var(--chart-4); background-image: var(--chart-pattern-4); background-size: var(--chart-pattern-size)"></span>
+            <span style="flex: 1; block-size: 40%; background-color: var(--chart-5); background-image: var(--chart-pattern-5); background-size: var(--chart-pattern-size)"></span>
+            <span style="flex: 1; block-size: 80%; background-color: var(--chart-6); background-image: var(--chart-pattern-6); background-size: var(--chart-pattern-size)"></span>
+          </div>
+          <figcaption class="ui-muted" style="margin-block-start: 0.75rem">
+            <ul
+              style="display: flex; flex-wrap: wrap; gap: 0.5rem 1.1rem; list-style: none; margin: 0; padding: 0; font-family: var(--mono); font-size: var(--text-2xs)"
+            >
+              <li style="display: inline-flex; align-items: center; gap: 0.4rem">
+                <span aria-hidden="true" style="inline-size: 0.85rem; block-size: 0.85rem; border-radius: 2px; background-color: var(--chart-1); background-image: var(--chart-pattern-1); background-size: var(--chart-pattern-size)"></span>Accent
+              </li>
+              <li style="display: inline-flex; align-items: center; gap: 0.4rem">
+                <span aria-hidden="true" style="inline-size: 0.85rem; block-size: 0.85rem; border-radius: 2px; background-color: var(--chart-2); background-image: var(--chart-pattern-2); background-size: var(--chart-pattern-size)"></span>Sessions
+              </li>
+              <li style="display: inline-flex; align-items: center; gap: 0.4rem">
+                <span aria-hidden="true" style="inline-size: 0.85rem; block-size: 0.85rem; border-radius: 2px; background-color: var(--chart-3); background-image: var(--chart-pattern-3); background-size: var(--chart-pattern-size)"></span>Signups
+              </li>
+              <li style="display: inline-flex; align-items: center; gap: 0.4rem">
+                <span aria-hidden="true" style="inline-size: 0.85rem; block-size: 0.85rem; border-radius: 2px; background-color: var(--chart-4); background-image: var(--chart-pattern-4); background-size: var(--chart-pattern-size)"></span>Revenue
+              </li>
+              <li style="display: inline-flex; align-items: center; gap: 0.4rem">
+                <span aria-hidden="true" style="inline-size: 0.85rem; block-size: 0.85rem; border-radius: 2px; background-color: var(--chart-5); background-image: var(--chart-pattern-5); background-size: var(--chart-pattern-size)"></span>Errors
+              </li>
+              <li style="display: inline-flex; align-items: center; gap: 0.4rem">
+                <span aria-hidden="true" style="inline-size: 0.85rem; block-size: 0.85rem; border-radius: 2px; background-color: var(--chart-6); background-image: var(--chart-pattern-6); background-size: var(--chart-pattern-size)"></span>Latency
+              </li>
+            </ul>
+          </figcaption>
+        </figure>
       </section>
     </main>
 
