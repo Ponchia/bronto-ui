@@ -65,6 +65,7 @@ export declare const cls: {
   readonly dotmatrixCellAccent: 'ui-dotmatrix__cell--accent';
   readonly dotmatrixReveal: 'ui-dotmatrix--reveal';
   readonly dotmatrixPulse: 'ui-dotmatrix--pulse';
+  readonly icon: 'ui-icon';
   readonly dotfield: 'ui-dotfield';
   readonly dotrule: 'ui-dotrule';
   readonly dotbar: 'ui-dotbar';

@@ -63,6 +63,14 @@ export interface RenderGlyphOptions {
   /** CSS length for the gap between dots (sets \`--dotmatrix-gap\`; sanitized
    *  the same way as \`dot\`). */
   gap?: string;
+  /** \`'mask'\` returns a single \`.ui-icon\` element masked by the glyph bitmap
+   *  (one DOM node, not GLYPH_SIZE²) — the icon-at-scale path. Inherits
+   *  \`currentColor\`; the cell-mode options above don't apply. Needs the
+   *  \`.ui-icon\` rule from \`@ponchia/ui/css\`. */
+  render?: 'mask';
+  /** With \`render: 'mask'\`, the icon size (sets \`--icon-size\`; defaults to
+   *  \`1em\`; sanitized to a length/calc allowlist). */
+  size?: string;
 }
 
 /** The grid edge length (rows = cols = ${GLYPH_SIZE}). */

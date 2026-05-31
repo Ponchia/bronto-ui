@@ -117,6 +117,21 @@
   }
 }
 
+/* Inline icon wrapper — the one-node glyph render path (renderGlyph(name,
+   { render: 'mask' })). A single element masked by the glyph bitmap, so it
+   scales with the text and inherits currentColor — for icon-at-scale (e.g.
+   one in every table row) where the 256-cell .ui-dotmatrix is too heavy.
+   --icon-size (default 1em) sizes it; --icon-mask carries the bitmap. */
+.ui-icon {
+  display: inline-block;
+  flex: 0 0 auto;
+  inline-size: var(--icon-size, 1em);
+  block-size: var(--icon-size, 1em);
+  background: currentcolor;
+  vertical-align: -0.125em;
+  mask: var(--icon-mask) center / contain no-repeat;
+}
+
 /* Status dot — the glyph-style state indicator. */
 .ui-dot {
   background: var(--text-dim);

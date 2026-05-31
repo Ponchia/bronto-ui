@@ -33,6 +33,13 @@ categorical color lands later it ships as a governed, opt-in data-viz module
 
 ### Added
 
+- **Glyphs: a one-node icon-at-scale render path + a `.ui-icon` wrapper + 5
+  circle-family glyphs.** `renderGlyph(name, { render: 'mask', size })` now
+  returns a **single** `.ui-icon` element masked by the glyph bitmap (one DOM
+  node instead of 256 cells) — for an icon in every table row. It scales with
+  the text (`--icon-size`, default `1em`) and inherits `currentColor`. New
+  `.ui-icon` CSS primitive (`cls.icon`) drives it. Vocabulary grows to 48 with
+  `circle`, `check-circle`, `x-circle`, `plus-circle`, `minus-circle`.
 - **Data-viz colour module — `@ponchia/ui/css/dataviz.css` + `@ponchia/ui/charts.json`.**
   An opt-in Tier-4 chart palette for dashboards (ADR-0001 step 7). **Hybrid
   accent-led**: series 1 is the live `var(--accent)` (the brand stays series 1);

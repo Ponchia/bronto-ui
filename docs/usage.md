@@ -198,11 +198,14 @@ A few sharp edges to know:
 - **Directional glyphs are physical, not logical.** `arrow-left/right`,
   `chevron-left/right` are fixed bitmaps; in an RTL context flip them yourself
   (e.g. swap the name, or `transform: scaleX(-1)`), the framework won't.
-- **Cost.** Each glyph is a 16×16 grid = 256 cells (DOM nodes / spans),
-  regardless of mode; `anim: 'reveal'` adds a per-cell `--i` (≈doubles the
-  string size). Fine for display marks and the odd inline icon — but don't
-  render hundreds at once (e.g. one in every row of a long table) without
-  measuring.
+- **Cost / icon-at-scale.** The default (cell) render is a 16×16 grid = 256
+  cells (DOM nodes), regardless of `solid`/`grid`; `anim: 'reveal'` adds a
+  per-cell `--i`. That's the dot-matrix display look — but for **many** icons
+  (one in every row of a long table) use **`renderGlyph(name, { render: 'mask' })`**:
+  it returns a **single** `.ui-icon` element masked by the bitmap (one node, not
+  256), sizes to `size` / `--icon-size` (default `1em`) and inherits
+  `currentColor` — a normal inline icon. Pick `render: 'mask'` for icons,
+  the cell render for display marks/animation.
 
 ## Colorways: when to reach for a skin
 
