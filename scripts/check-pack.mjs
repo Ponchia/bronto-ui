@@ -57,6 +57,7 @@ const shippedDocs = new Set([
   'docs/theming.md',
   'docs/contrast.md',
   'docs/usage.md',
+  'docs/adr/0001-color-system.md',
 ]);
 for (const d of shippedDocs) {
   if (!underAllowlist(d)) {

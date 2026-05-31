@@ -2,8 +2,9 @@
 
 > CSS-first, framework-agnostic UI framework. Zero runtime dependencies.
 > One `@layer bronto` cascade, a typed class vocabulary, design tokens as
-> data, and optional SSR-safe vanilla behaviors. Nothing-inspired:
-> monochrome surfaces, a single rationed accent, dot-matrix display type.
+> data, and optional SSR-safe vanilla behaviors. Token-driven restraint:
+> monochrome by default, one rationed accent, dot-matrix display type, with
+> opt-in colorways + a colourblind-safe data-viz palette layered on top.
 >
 > This file orients an LLM/agent. The authoritative, always-correct API
 > is the TypeScript declarations shipped in this package (paths below):
@@ -125,6 +126,9 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
 - Prefer the `ui.*()` recipes over hand-concatenating modifier strings.
 - Override framework styles by writing your own rules outside
   `@layer bronto` — not with higher specificity or `!important`.
-- The accent color is deliberately rationed (monochrome + one accent).
-  Do not introduce new hues; theme via the documented tokens only.
+- Color is tiered (ADR-0001): neutral canvas · one rationed accent · locked
+  status · display expression · opt-in data-viz. Theme via the documented
+  tokens — re-point `--accent` (or a `data-bronto-skin` colorway), use status
+  tokens for status, and `--chart-*` (from `css/dataviz.css`) for charts only.
+  Don't add raw hues to components; `check:color-policy` enforces this.
 - Pre-1.0 SemVer: breaking changes ship in the *minor*. Pin `~0.x`.

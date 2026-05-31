@@ -37,16 +37,29 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Assemble static site (demo + runtime surface)
+      - name: Assemble static site (demo + docs + runtime surface)
         run: |
           mkdir -p _site
-          cp -r demo css dist fonts tokens classes behaviors _site/
+          # docs/ ships the markdown viewer (docs/index.html) + the .md it renders.
+          cp -r demo docs css dist fonts tokens classes behaviors _site/
           cat > _site/index.html <<'HTML'
           <!doctype html>
           <meta charset="utf-8" />
-          <meta http-equiv="refresh" content="0; url=./demo/" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
           <title>@ponchia/ui</title>
-          <a href="./demo/">@ponchia/ui — demo</a>
+          <link rel="stylesheet" href="./dist/bronto.css" />
+          <main class="ui-prose" style="max-width: 40rem; margin: 4rem auto; padding: 0 1.25rem">
+            <h1>@ponchia/ui</h1>
+            <p>A CSS-first, framework-agnostic UI framework — token-driven restraint,
+              opt-in colorways, a dot-matrix icon set, and a colourblind-safe data-viz palette.</p>
+            <p>
+              <a class="ui-button" href="./demo/">Live demo</a>
+              <a class="ui-button ui-button--subtle" href="./docs/">Documentation</a>
+              <a class="ui-button ui-button--subtle" href="./demo/theme-playground.html">Theme playground</a>
+            </p>
+            <p class="ui-muted"><a href="https://github.com/Ponchia/bronto-ui">GitHub</a> ·
+              <a href="https://www.npmjs.com/package/@ponchia/ui">npm</a></p>
+          </main>
           HTML
 
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0

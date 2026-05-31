@@ -44,5 +44,5 @@ client navigation.
   per-framework package by design, see `docs/architecture.md`)
 - [Tailwind / cascade-layer interop](interop/tailwind.md)
 
-All behaviors and their attributes are listed in the README
-"Entrypoints" section and typed in `@ponchia/ui/behaviors`.
+All behaviors and their attributes are typed in `@ponchia/ui/behaviors`
+(`behaviors/index.d.ts`); the README quick-start shows the common ones.
