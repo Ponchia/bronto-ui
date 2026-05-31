@@ -11,6 +11,13 @@
 # ungated — that path is legacy/fallback, not the documented install;
 # see docs/architecture.md.)
 #
+# DIST-TAG ROUTING: a stable tag (`v0.4.0`) publishes to `latest`, so
+# `npm i @ponchia/ui` resolves it. A SemVer prerelease tag (`v0.4.0-rc.1`,
+# anything with a hyphenated identifier) publishes to `next` instead —
+# consumers opt in with `@ponchia/ui@next` and `latest` never silently
+# moves onto an unstable build. The GitHub Release is flagged prerelease
+# to match. publish-npm derives this from the tag; nothing else to set.
+#
 # Requires repo secret NPM_TOKEN (npm automation token for the @ponchia
 # scope) and a committed LICENSE file before the first successful publish.
 name: Release
@@ -98,7 +105,22 @@ jobs:
       # this exact commit, and e2e gated separately — so we ship exactly
       # what was validated, not a re-build. prepublishOnly stays the
       # intrinsic guard for any non-CI/manual publish.
-      - run: npm publish --ignore-scripts
+      #
+      # --tag is explicit on both paths: a bare `npm publish` defaults to
+      # `latest`, so a prerelease would otherwise hijack the default
+      # install. We route prereleases to `next` instead (see header).
+      - name: Publish to npm
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          # A hyphen marks a SemVer prerelease identifier (0.4.0-rc.1);
+          # ${version%%-*} strips it, so an unchanged value means stable.
+          if [ "$version" != "${version%%-*}" ]; then
+            dist_tag=next
+          else
+            dist_tag=latest
+          fi
+          echo "Publishing $version to dist-tag '$dist_tag'"
+          npm publish --ignore-scripts --tag "$dist_tag"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -117,3 +139,6 @@ jobs:
         uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
         with:
           generate_release_notes: true
+          # Flag prerelease tags (hyphenated SemVer) so the GitHub Release
+          # matches the `next` dist-tag and is not surfaced as "Latest".
+          prerelease: ${{ contains(github.ref_name, '-') }}

@@ -90,8 +90,13 @@ freshness (`check-dts`).
 - `e2e` — Playwright (visual + axe a11y, both themes, cross-engine) in
   the pinned `mcr.microsoft.com/playwright` container.
 - `publish-npm` — `needs: [validate, e2e]`: `npm publish` with provenance.
+  Dist-tag is derived from the tag: stable (`v0.4.0`) → `latest`; SemVer
+  prerelease (`v0.4.0-rc.1`, any hyphenated identifier) → `next`, so the
+  default `npm i @ponchia/ui` never moves onto an unstable build (opt in
+  with `@ponchia/ui@next`).
 - `release-notes` — `needs: publish-npm`: a GitHub Release for visibility
-  (transitively gated on a successful publish, hence on validate + e2e).
+  (transitively gated on a successful publish, hence on validate + e2e);
+  prerelease tags are flagged so they aren't surfaced as "Latest".
 
 Because the documented install path is the npm package, **the npm publish
 is a real gate**: if `validate` *or* `e2e` fails, `publish-npm` never runs,
