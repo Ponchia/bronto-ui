@@ -550,16 +550,6 @@
           "$value": "rgb(128, 100, 20, 0.13)"
         }
       },
-      "orange": {
-        "DEFAULT": {
-          "$type": "color",
-          "$value": "#a85f32"
-        },
-        "soft": {
-          "$type": "color",
-          "$value": "rgb(168, 95, 50, 0.13)"
-        }
-      },
       "danger": {
         "DEFAULT": {
           "$type": "color",
@@ -733,16 +723,6 @@
         "soft": {
           "$type": "color",
           "$value": "rgb(216, 189, 114, 0.14)"
-        }
-      },
-      "orange": {
-        "DEFAULT": {
-          "$type": "color",
-          "$value": "#d08c5b"
-        },
-        "soft": {
-          "$type": "color",
-          "$value": "rgb(208, 140, 91, 0.15)"
         }
       },
       "danger": {

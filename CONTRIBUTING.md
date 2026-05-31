@@ -55,6 +55,16 @@ attributes, `cls`/token keys, behavior signatures) is removed on a
 2. **Remove** no earlier than minor _N+1_, with a **BREAKING** entry
    pointing at the migration.
 
+**Exception — provably-unreferenced surface.** A token/class/attribute that
+is consumed by **no** shipped CSS, component, behavior, or doc (verifiable by
+repo-wide search) may be removed in a single minor with a **BREAKING** entry
+and a one-line migration note, **skipping the deprecation window** — there is
+no internal usage to wind down and the deprecation cycle exists to protect
+working call-sites, of which there are none. This is the path taken for
+`--orange` in 0.4.0 (an orphan hue; see the CHANGELOG and
+`docs/adr/0001-color-system.md`). The `check:color-policy` gate now prevents a
+new untiered hue from being added in the first place.
+
 This makes "minor may break" predictable: a consumer who upgrades one
 minor at a time always gets a working deprecation window and a
 machine-readable rename map. The 0.2 → 0.3 cut predates this policy

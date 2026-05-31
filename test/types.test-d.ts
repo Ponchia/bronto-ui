@@ -23,6 +23,7 @@ import {
   type GlyphName,
   type GlyphCell,
 } from '../glyphs/glyphs.js';
+import { skins, SKIN_NAMES, type SkinName } from '../tokens/skins.js';
 
 // cls values are literal, not widened to `string`.
 const btn: 'ui-button' = cls.button;
@@ -90,6 +91,14 @@ const dyn: string = renderGlyph('icon-from-config');
 // @ts-expect-error — not a registered glyph name.
 const bad: GlyphName = 'definitely-not-a-glyph';
 void [dyn, bad];
+
+// Colorways: the ./skins subpath types are sound and SkinName rejects typos.
+const skinName: SkinName = 'phosphor-green';
+const firstSkin: SkinName = SKIN_NAMES[0];
+const skinLabel: string = skins[skinName].label;
+// @ts-expect-error — not a registered colorway name.
+const badSkin: SkinName = 'neon-pink';
+void [skinName, firstSkin, skinLabel, badSkin];
 
 void [
   btn,
