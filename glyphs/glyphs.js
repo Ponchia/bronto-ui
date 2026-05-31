@@ -25,6 +25,96 @@ export const GLYPH_SIZE = 16;
 // `.` off · `#` hot · `*` accent. Only `spark` uses accent dots — it is the
 // canonical two-tone demo; the gate in check-glyphs.mjs enforces the shape.
 const RAW = {
+  circle: [
+    '................',
+    '.....######.....',
+    '....########....',
+    '...###....###...',
+    '..##........##..',
+    '.###........###.',
+    '.##..........##.',
+    '.##..........##.',
+    '.##..........##.',
+    '.##..........##.',
+    '.###........###.',
+    '..##........##..',
+    '...###....###...',
+    '....########....',
+    '.....######.....',
+    '................',
+  ],
+  'check-circle': [
+    '................',
+    '.....######.....',
+    '....########....',
+    '...###....###...',
+    '..##........##..',
+    '.###........###.',
+    '.##........####.',
+    '.##..##...##.##.',
+    '.##...##.##..##.',
+    '.##....###...##.',
+    '.###...##...###.',
+    '..##........##..',
+    '...###....###...',
+    '....########....',
+    '.....######.....',
+    '................',
+  ],
+  'x-circle': [
+    '................',
+    '.....######.....',
+    '....########....',
+    '...###....###...',
+    '..##........##..',
+    '.###.##..##.###.',
+    '.##...####...##.',
+    '.##....##....##.',
+    '.##...####...##.',
+    '.##..##..##..##.',
+    '.#####....#####.',
+    '..##........##..',
+    '...###....###...',
+    '....########....',
+    '.....######.....',
+    '................',
+  ],
+  'plus-circle': [
+    '................',
+    '.....######.....',
+    '....########....',
+    '...###....###...',
+    '..##........##..',
+    '.###...##...###.',
+    '.##....##....##.',
+    '.##..######..##.',
+    '.##..######..##.',
+    '.##....##....##.',
+    '.###...##...###.',
+    '..##........##..',
+    '...###....###...',
+    '....########....',
+    '.....######.....',
+    '................',
+  ],
+  'minus-circle': [
+    '................',
+    '.....######.....',
+    '....########....',
+    '...###....###...',
+    '..##........##..',
+    '.###........###.',
+    '.##..........##.',
+    '.##..######..##.',
+    '.##..######..##.',
+    '.##..........##.',
+    '.###........###.',
+    '..##........##..',
+    '...###....###...',
+    '....########....',
+    '.....######.....',
+    '................',
+  ],
   'arrow-down': [
     '................',
     '......####......',
@@ -861,6 +951,40 @@ function cssLen(v) {
 }
 
 /**
+ * Build a CSS `mask-image` `url()` of an inline SVG for a glyph's lit cells —
+ * the basis of the one-node `render: 'mask'` path. Horizontal runs are merged
+ * into single `<rect>`s (fewer nodes, no seams). The SVG is alpha-masked, so
+ * the element's `currentColor` background shows through only the lit cells —
+ * one DOM node instead of GLYPH_SIZE² (256), for an icon at any size/colour.
+ */
+function maskUrl(rows) {
+  let rects = '';
+  rows.forEach((row, y) => {
+    let run = 0;
+    for (let x = 0; x <= GLYPH_SIZE; x++) {
+      const on = x < GLYPH_SIZE && row[x] !== '.';
+      if (on) run++;
+      else if (run) {
+        rects += `<rect x='${x - run}' y='${y}' width='${run}' height='1'/>`;
+        run = 0;
+      }
+    }
+  });
+  // The url() lands unquoted inside an HTML `style="…"` attribute, so it must
+  // carry no spaces or quotes of its own — encode them (and `<>#`) so it stays
+  // a single CSS url-token and can't break out of the attribute.
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${GLYPH_SIZE} ${GLYPH_SIZE}'>${rects}</svg>`;
+  const enc = svg
+    .replace(/%/g, '%25')
+    .replace(/</g, '%3C')
+    .replace(/>/g, '%3E')
+    .replace(/#/g, '%23')
+    .replace(/'/g, '%27')
+    .replace(/ /g, '%20');
+  return `url(data:image/svg+xml,${enc})`;
+}
+
+/**
  * A full `.ui-dotmatrix` HTML string for a glyph (`''` if the name is
  * unknown). Decorative by default (`aria-hidden`); pass `label` to expose it
  * as `role="img"`. Pins `--dotmatrix-cols` to GLYPH_SIZE so the square layout
@@ -875,11 +999,28 @@ function cssLen(v) {
  * `anim` opts into a decorative animation (disabled under reduced-motion;
  * the static frame + `label` still carry the meaning): `'reveal'` powers the
  * cells on in a scan, `'pulse'` makes the glyph breathe.
+ *
+ * `render: 'mask'` returns a single `.ui-icon` element masked by the glyph
+ * bitmap (one DOM node, not GLYPH_SIZE²) — the icon-at-scale path: it sizes to
+ * `size` (or `--icon-size` / `1em`) and inherits `currentColor`. The
+ * cell-mode options (grid/solid/anim/dot/gap) don't apply; `label` does.
+ * Needs `@ponchia/ui/css` (the `.ui-icon` rule).
  */
 export function renderGlyph(name, options = {}) {
+  const rows = GLYPHS[name];
+  if (!rows) return '';
+  const { grid = true, solid = false, anim, label, dot, gap, render, size } = options;
+
+  // One-node icon: a single `.ui-icon` span masked by the glyph's bitmap, so
+  // it scales to any font-size and inherits `currentColor` — for icon-at-scale
+  // (e.g. one in every table row) where the GLYPH_SIZE²-cell path is too heavy.
+  if (render === 'mask') {
+    const a11yM = label ? `role="img" aria-label="${esc(label)}"` : 'aria-hidden="true"';
+    const sz = size && cssLen(size) ? `--icon-size:${cssLen(size)};` : '';
+    return `<span class="ui-icon" style="${sz}--icon-mask:${maskUrl(rows)}" ${a11yM}></span>`;
+  }
+
   const cells = glyphCells(name);
-  if (!cells.length) return '';
-  const { grid = true, solid = false, anim, label, dot, gap } = options;
 
   const style = [`--dotmatrix-cols:${GLYPH_SIZE}`];
   const dotLen = dot && cssLen(dot);

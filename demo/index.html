@@ -987,6 +987,12 @@ ui.button({ variant: 'ghost' });</code></pre>
         <div id="glyphButtons" class="ui-cluster" style="--cluster-gap: var(--space-xs)"></div>
 
         <p class="ui-muted">
+          <code>render: 'mask'</code> — a one-node <code>.ui-icon</code> for icon-at-scale: scales
+          with the text, inherits <code>currentColor</code>. New circle-family glyphs shown.
+        </p>
+        <p id="glyphMask" style="font-size: 1.4rem; display: flex; gap: 0.6rem; align-items: center"></p>
+
+        <p class="ui-muted">
           Animation (opt-in, reduced-motion-aware): <code>reveal</code> powers the cells on;
           <code>pulse</code> breathes for a live state.
         </p>
@@ -1110,7 +1116,7 @@ ui.button({ variant: 'ghost' });</code></pre>
         toast,
       } from '../behaviors/index.js';
       import { ui, cx } from '../classes/index.js';
-      import { renderGlyph } from '../glyphs/glyphs.js';
+      import { renderGlyph, GLYPH_NAMES } from '../glyphs/glyphs.js';
       import { skins, SKIN_NAMES } from '../tokens/skins.js';
 
       // A representative slice of the 43-glyph set (full list in the docs).
@@ -1160,6 +1166,16 @@ ui.button({ variant: 'ghost' });</code></pre>
             renderGlyph(name, { solid: true, dot: '1.2px' }) + `<span>${text}</span>`;
           glyphButtons.appendChild(btn);
         }
+      }
+
+      // Mask render: one-node inline icons at text size, incl. the new circle family.
+      const glyphMask = document.getElementById('glyphMask');
+      if (glyphMask) {
+        glyphMask.innerHTML =
+          ['search', 'check-circle', 'x-circle', 'plus-circle', 'circle', 'external', 'gear']
+            .filter((n) => GLYPH_NAMES.includes(n))
+            .map((n) => renderGlyph(n, { render: 'mask', label: n }))
+            .join('');
       }
 
       // Animation: a reveal glyph (with a replay button — re-inserting the

@@ -270,3 +270,28 @@ test('initDotGlyph honours data-bronto-glyph-anim (reveal stagger + pulse) and r
     else globalThis.document = prevDocument;
   }
 });
+
+test('the circle-family glyphs ship', () => {
+  for (const n of ['circle', 'check-circle', 'x-circle', 'plus-circle', 'minus-circle']) {
+    assert.ok(GLYPH_NAMES.includes(n), `${n} present`);
+    assert.equal(glyph(n).length, GLYPH_SIZE);
+  }
+});
+
+test("render: 'mask' returns one .ui-icon node, no cells, currentColor-able", () => {
+  const html = renderGlyph('gear', { render: 'mask', label: 'Settings' });
+  assert.match(html, /^<span class="ui-icon"/);
+  assert.match(html, /role="img" aria-label="Settings"/);
+  assert.match(html, /--icon-mask:url\(data:image\/svg\+xml,/);
+  assert.ok(!html.includes('ui-dotmatrix__cell')); // one node — the icon-at-scale win
+  // Attribute-safe: the mask url() carries no raw quotes/spaces.
+  const style = html.match(/style="([^"]*)"/)[1];
+  assert.ok(!/[ "']/.test(style), 'mask style attribute is quote/space-safe');
+});
+
+test("render: 'mask' size sets --icon-size; decorative when unlabelled; sanitized", () => {
+  assert.match(renderGlyph('check', { render: 'mask', size: '2rem' }), /--icon-size:2rem/);
+  assert.match(renderGlyph('check', { render: 'mask' }), /aria-hidden="true"/);
+  assert.ok(!renderGlyph('check', { render: 'mask', size: 'red;}' }).includes('red'));
+  assert.equal(renderGlyph('nope', { render: 'mask' }), '');
+});

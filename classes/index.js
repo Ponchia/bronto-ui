@@ -70,6 +70,7 @@ export const cls = Object.freeze({
   dotmatrixCellAccent: 'ui-dotmatrix__cell--accent',
   dotmatrixReveal: 'ui-dotmatrix--reveal',
   dotmatrixPulse: 'ui-dotmatrix--pulse',
+  icon: 'ui-icon',
   dotfield: 'ui-dotfield',
   dotrule: 'ui-dotrule',
   dotbar: 'ui-dotbar',
