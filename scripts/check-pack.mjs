@@ -81,6 +81,8 @@ for (const must of [
   'classes/index.js',
   'behaviors/index.js',
   'glyphs/glyphs.js',
+  'react/index.js',
+  'solid/index.js',
 ]) {
   if (!files.includes(must)) errors.push(`expected entrypoint missing from package: ${must}`);
 }
