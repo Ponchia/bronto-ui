@@ -112,3 +112,84 @@ test('Solid binding resolves callback roots after mount and cleans up on dispose
     stdio: 'pipe',
   });
 });
+
+// End-to-end: a REAL hook drives a REAL behavior to a DOM effect (not just a
+// stub init). useDisclosure delegates from document and toggles the trigger's
+// aria-expanded + the panel's hidden on click — a pure mutation (no node
+// removal, so it won't fight the framework's ownership), jsdom-supported, so
+// we prove the full hook → behavior → DOM path for both frameworks.
+test('React useDisclosure wires the real behavior end-to-end', async () => {
+  const host = mount();
+  globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+  const [{ createElement, act }, { createRoot }, { useDisclosure }] = await Promise.all([
+    import('react'),
+    import('react-dom/client'),
+    import('../react/index.js'),
+  ]);
+  function App() {
+    useDisclosure();
+    return createElement(
+      'div',
+      null,
+      createElement(
+        'button',
+        {
+          type: 'button',
+          id: 'trig',
+          'data-bronto-disclosure': '',
+          'aria-controls': 'panel',
+          'aria-expanded': 'false',
+        },
+        'Toggle',
+      ),
+      createElement('div', { id: 'panel', hidden: true }, 'Panel'),
+    );
+  }
+  const root = createRoot(host);
+  await act(async () => root.render(createElement(App)));
+  assert.equal(document.getElementById('panel').hidden, true, 'panel starts hidden');
+  await act(async () => {
+    document
+      .getElementById('trig')
+      .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  });
+  assert.equal(document.getElementById('trig').getAttribute('aria-expanded'), 'true');
+  assert.equal(document.getElementById('panel').hidden, false, 'useDisclosure opened the panel');
+  await act(async () => root.unmount());
+});
+
+test('Solid useDisclosure wires the real behavior end-to-end', () => {
+  const script = `
+    import assert from 'node:assert/strict';
+    import { JSDOM } from 'jsdom';
+    const dom = new JSDOM('<!doctype html><html><body><div id="app"></div></body></html>', {
+      url: 'https://bronto.test/', pretendToBeVisual: true,
+    });
+    globalThis.window = dom.window;
+    globalThis.document = dom.window.document;
+    globalThis.HTMLElement = dom.window.HTMLElement;
+    globalThis.Node = dom.window.Node;
+    globalThis.CustomEvent = dom.window.CustomEvent;
+    const [{ render }, { useDisclosure }] = await Promise.all([
+      import('solid-js/web'), import('./solid/index.js'),
+    ]);
+    function App() {
+      useDisclosure();
+      const wrap = document.createElement('div');
+      wrap.innerHTML = '<button type="button" id="trig" data-bronto-disclosure aria-controls="panel" aria-expanded="false">Toggle</button><div id="panel" hidden>Panel</div>';
+      return wrap;
+    }
+    const dispose = render(App, document.getElementById('app'));
+    await new Promise((r) => setTimeout(r, 0));
+    assert.equal(document.getElementById('panel').hidden, true, 'panel starts hidden');
+    document.getElementById('trig').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+    assert.equal(document.getElementById('trig').getAttribute('aria-expanded'), 'true');
+    assert.equal(document.getElementById('panel').hidden, false, 'useDisclosure opened the panel');
+    dispose();
+    dom.window.close();
+  `;
+  execFileSync(process.execPath, ['--conditions=browser', '--input-type=module', '-e', script], {
+    cwd: process.cwd(),
+    stdio: 'pipe',
+  });
+});

@@ -139,3 +139,43 @@ no-ops without a DOM, so importing it in a server-rendered module will
 not crash. Keep the actual calls inside `useEffect` / `onMount` so they
 only run client-side. The inline theme script is the only pre-paint
 requirement.
+
+**Next.js (App Router).** Three rules:
+
+1. Import the CSS once in `app/layout.tsx` (`import '@ponchia/ui'`) and set
+   `<html data-theme>` defensively with the **inline, render-blocking** no-flash
+   script (a `useEffect` runs after paint and flashes):
+
+   ```tsx
+   // app/layout.tsx (a Server Component — no 'use client')
+   import '@ponchia/ui';
+   export default function RootLayout({ children }: { children: React.ReactNode }) {
+     return (
+       <html lang="en" suppressHydrationWarning>
+         <head>
+           <script
+             dangerouslySetInnerHTML={{
+               __html: `try{var t=localStorage.getItem('bronto-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}`,
+             }}
+           />
+         </head>
+         <body>{children}</body>
+       </html>
+     );
+   }
+   ```
+
+   `suppressHydrationWarning` on `<html>` silences the expected
+   server-vs-client `data-theme` mismatch (the server can't know the user's
+   stored theme).
+
+2. The hooks touch the DOM, so any component calling one must be a Client
+   Component — put `'use client'` at the top of that file. The markup itself
+   (`<dialog class="ui-modal">`, `.ui-tabs`, …) can stay in Server Components;
+   only the component that calls `useDialog()`/`useTabs()` needs the directive.
+
+3. `@ponchia/ui/react` (and `/behaviors`) are ESM-only — Next's bundler handles
+   them natively; no `transpilePackages` needed.
+
+**SolidStart** is the same shape: CSS + inline theme script in the root
+document, hooks (`onMount`-based) run client-side automatically.
