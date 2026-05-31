@@ -65,12 +65,13 @@
 
   /* Accent ramp — a stepped family for charts / data-viz / multi-state
      surfaces (the use case tokens/index.js advertises). Derived from the
-     single --accent knob via color-mix against the theme bg, so it
-     re-brands and theme-adapts automatically; no per-theme duplication. */
-  --accent-1: color-mix(in oklch, var(--accent) 8%, var(--bg));
-  --accent-2: color-mix(in oklch, var(--accent) 16%, var(--bg));
-  --accent-3: color-mix(in oklch, var(--accent) 32%, var(--bg));
-  --accent-4: color-mix(in oklch, var(--accent) 60%, var(--bg));
+     single --accent knob via OKLCH color-mix against a per-theme white/black
+     endpoint. Using an explicit neutral endpoint avoids low-chroma background
+     hue differences between browser engines. */
+  --accent-1: color-mix(in oklch, var(--accent) 8%, var(--accent-ramp-end));
+  --accent-2: color-mix(in oklch, var(--accent) 16%, var(--accent-ramp-end));
+  --accent-3: color-mix(in oklch, var(--accent) 32%, var(--accent-ramp-end));
+  --accent-4: color-mix(in oklch, var(--accent) 60%, var(--accent-ramp-end));
   --accent-5: var(--accent);
   --accent-6: var(--accent-strong);
 
@@ -128,6 +129,7 @@
   --text-soft: #353533;
   --text-dim: #686863;
   --accent: #d71921;
+  --accent-ramp-end: #ffffff;
   --accent-strong: color-mix(in srgb, var(--accent) 83%, #000);
   --accent-text: var(--accent-strong);
   --accent-soft: color-mix(in srgb, var(--accent) 10%, transparent);
@@ -179,6 +181,7 @@
     --text-soft: #c4c4c4;
     --text-dim: #858585;
     --accent: #ff3b41;
+    --accent-ramp-end: #000000;
     --accent-strong: color-mix(in srgb, var(--accent) 84%, #fff);
     --accent-text: var(--accent-strong);
     --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
@@ -216,6 +219,7 @@
   --text-soft: #c4c4c4;
   --text-dim: #858585;
   --accent: #ff3b41;
+  --accent-ramp-end: #000000;
   --accent-strong: color-mix(in srgb, var(--accent) 84%, #fff);
   --accent-text: var(--accent-strong);
   --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);

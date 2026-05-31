@@ -72,6 +72,7 @@ const TIERS = {
   // Tier 1 — the single brand accent, its ramp, and accent-derived knobs.
   1: [
     '--accent',
+    '--accent-ramp-end',
     '--accent-strong',
     '--accent-soft',
     '--bg-accent',

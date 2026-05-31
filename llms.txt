@@ -20,6 +20,12 @@ CSS (pick one; do not import both):
 @import '@ponchia/ui/css';    /* css/core.css — @import fan-out, needs a bundler */
 ```
 
+`import '@ponchia/ui'` is supported only as a CSS side-effect import in a
+CSS-aware bundler. Do not import the package root from Node/runtime JS; use the
+explicit JS subpaths below.
+
+JS subpaths are ESM-only. In CommonJS, use dynamic `import()`.
+
 Everything lands in `@layer bronto`. Consumer styles in no layer (or a
 later layer) always win over framework styles regardless of selector
 specificity — this is the intended override mechanism; do not fight it
@@ -51,6 +57,7 @@ For React/Solid, optional thin hook bindings over those behaviors (peer deps
 
 ```js
 import { useDialog, useToast } from '@ponchia/ui/react'; // or '@ponchia/ui/solid'
+// Scope with { root: reactRef } or a resolver callback, not { root: ref.current } during render.
 ```
 
 Optional display glyphs — dot-matrix bitmaps on the `.ui-dotmatrix` primitive
@@ -101,6 +108,8 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   the same source as the types and CI-drift-checked.
 - `docs/theming.md` — the token contract: which tokens to override, the
   light/dark model, and the rationed-accent rule.
+- `docs/stability.md` — the public API matrix: stable vs internal surfaces,
+  root-import contract, behavior trust boundary, and glyph-mask CSP note.
 - `docs/usage.md` — the decision guide: badge vs chip vs dot, default
   density, prose-in-card, when to add a behavior. Read this before
   re-implementing UI the framework already has an opinion about.

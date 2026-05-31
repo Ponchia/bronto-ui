@@ -148,12 +148,14 @@ infinite-clone track). It's a gallery: the user drives it.
 
 ## Display glyphs: when (and when not)
 
-`@ponchia/ui/glyphs` is a 43-glyph dot-matrix icon set — navigation
+`@ponchia/ui/glyphs` is a 48-glyph dot-matrix icon set — navigation
 (`arrow-*`, `chevron-*`), actions (`check`, `close`, `plus`, `minus`,
 `search`, `menu`, `gear`), status (`info`, `warning`, `bell`, `lock`) and
-common marks (`home`, `user`, `heart`, `star`, `spark`) — rendered on the
+common marks (`home`, `user`, `heart`, `star`, `spark`, circle-family marks) — rendered on the
 `.ui-dotmatrix` primitive, so they re-skin with the same `--field-dot*`
-tokens as every other dot surface (no SVG, no icon font).
+tokens as every other dot surface. The default and `solid` renderers emit
+dot-matrix DOM, not an icon font; the dense `.ui-icon` renderer uses an
+internal SVG data URL as a CSS mask so it can stay one DOM node.
 
 **Two rendering modes — pick by size.** The dots need physical room to
 read, so the default _dot_ look is for **display** sizes (~40px up: hero

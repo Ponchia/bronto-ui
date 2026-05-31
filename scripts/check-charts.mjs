@@ -41,17 +41,13 @@ for (const [rel, expected] of Object.entries(generated)) {
 }
 
 // --- 2. Shape -----------------------------------------------------------------
-const oklchL = (s) => {
-  const m = /oklch\(\s*([\d.]+)%/.exec(s);
-  return m ? Number.parseFloat(m[1]) : null;
-};
 for (const theme of ['light', 'dark']) {
   const c = charts[theme];
   if (c.categorical.length !== CHART_CATEGORICAL)
     errors.push(`${theme}: categorical has ${c.categorical.length}, expected ${CHART_CATEGORICAL}`);
   if (c.categorical[0] !== ACCENT)
     errors.push(`${theme}: categorical[0] must be the accent (${ACCENT})`);
-  const Ls = c.sequential.map(oklchL);
+  const Ls = c.sequential.map(oklchLightness);
   if (Ls.some((l) => l == null))
     errors.push(`${theme}: sequential must be oklch() with a % lightness`);
   else {
@@ -136,3 +132,8 @@ if (errors.length) {
 console.log(
   `✓ data-viz: ${CHART_CATEGORICAL} categorical series distinguishable under normal + protan/deutan/tritan, ramps monotonic, opt-in`,
 );
+
+function oklchLightness(s) {
+  const m = /oklch\(\s*([\d.]+)%/.exec(s);
+  return m ? Number.parseFloat(m[1]) : null;
+}

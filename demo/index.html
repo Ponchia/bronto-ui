@@ -967,12 +967,12 @@ ui.button({ variant: 'ghost' });</code></pre>
       <section aria-labelledby="v07" class="ui-stack" style="margin-block-start: 3rem">
         <h2 id="v07" class="ui-eyebrow">0.3.6 additions</h2>
 
-        <!-- Display glyphs — the 43-glyph @ponchia/ui/glyphs set. The gallery
+        <!-- Display glyphs — the @ponchia/ui/glyphs set. The gallery
              is generated from GLYPH_NAMES in the module script below as
              [data-bronto-glyph] placeholders, then expanded by initDotGlyph().
              A display set: crisp from ~40px up, not a 16px inline-icon set. -->
         <p class="ui-muted">
-          Display glyphs — <code>@ponchia/ui/glyphs</code>, a 43-glyph dot-matrix icon set
+          Display glyphs — <code>@ponchia/ui/glyphs</code>, a dot-matrix icon set
           (a sample, default dot look, for display sizes).
         </p>
         <div
@@ -1119,8 +1119,8 @@ ui.button({ variant: 'ghost' });</code></pre>
       import { renderGlyph, GLYPH_NAMES } from '../glyphs/glyphs.js';
       import { skins, SKIN_NAMES } from '../tokens/skins.js';
 
-      // A representative slice of the 43-glyph set (full list in the docs).
-      // Each glyph is a GLYPH_SIZE² grid, so showing all 43 here would add
+      // A representative slice of the glyph set (full list in the docs).
+      // Each glyph is a GLYPH_SIZE² grid, so showing the full set here would add
       // ~11k decorative nodes and slow the demo's axe scan — keep it light.
       const GALLERY = [
         'arrow-right', 'chevron-down', 'check', 'close', 'plus', 'search',

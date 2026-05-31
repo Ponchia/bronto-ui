@@ -34,13 +34,18 @@ There's a `useX` for each behavior (`useDialog`, `useTabs`, `useMenu`,
 `useCombobox`, `usePopover`, `useDisclosure`, `useFormValidation`,
 `useTableSort`, `useCarousel`, `useDismissible`, `useThemeToggle`,
 `useDotGlyph`), `useToast()` → the imperative, and the generic
-`useBrontoBehavior(init, opts)`. Pass `{ root: ref.current }` to scope a
-hook to a subtree. The hand-rolled equivalent below still works if you'd
-rather not take the binding — it's exactly what the bindings do.
+`useBrontoBehavior(init, opts)`. To scope a hook to a subtree, pass a
+React ref object (`{ root: ref }`) or a resolver callback (`() => ({
+root: el })`). The bindings resolve options on mount, after refs have
+been assigned. Avoid `{ root: ref.current }` in React render code because
+that captures the first render's `null`. The hand-rolled equivalent below
+still works if you'd rather not take the binding — it's exactly what the
+bindings do.
 
 ## CSS + no-flash theme
 
-Import the CSS once at your root (`import '@ponchia/ui'`). For the
+Import the CSS once at your root (`import '@ponchia/ui'`) when your
+bundler understands CSS side-effect imports. For the
 no-flash theme, put the inline script in your HTML shell — `index.html`
 (Vite/CRA), or `app/layout.tsx` for Next via a raw `<script>` in
 `<head>` with `dangerouslySetInnerHTML`:
@@ -84,6 +89,20 @@ import { ui } from '@ponchia/ui/classes';
 
 `toast(message, opts)` is import-and-call from any handler — no hook.
 
+When using the shipped React bindings, scope by passing the ref object:
+
+```tsx
+import { useRef } from 'react';
+import { useDialog, useTabs } from '@ponchia/ui/react';
+
+export function Screen() {
+  const root = useRef<HTMLElement | null>(null);
+  useDialog({ root });
+  useTabs({ root });
+  return <main ref={root}>{/* dialog/tab markup */}</main>;
+}
+```
+
 ## Solid: `onMount` / `onCleanup`
 
 ```tsx
@@ -94,6 +113,19 @@ onMount(() => {
   const stop = [initThemeToggle(), initDialog()];
   onCleanup(() => stop.forEach((fn) => fn()));
 });
+```
+
+With the shipped Solid bindings, use a resolver so the element assignment
+is read on mount:
+
+```tsx
+import { useDialog, useTabs } from '@ponchia/ui/solid';
+
+let root!: HTMLElement;
+useDialog(() => ({ root }));
+useTabs(() => ({ root }));
+
+<main ref={root}>{/* dialog/tab markup */}</main>;
 ```
 
 ## SSR (Next / SolidStart)

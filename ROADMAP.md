@@ -1,104 +1,77 @@
 # Roadmap
 
-`@ponchia/ui` is a CSS-first, framework-agnostic UI system. The engine is
-intentionally small and the contract is machine-checked; the roadmap is
-about closing **adoption** and **consumer-DX** gaps without compromising
-the zero-runtime-dependency, CSS-first ADR (see `docs/architecture.md`).
+`@ponchia/ui` is a CSS-first, framework-agnostic UI system. The engine stays
+small; roadmap work should close adoption, verification, and consumer-DX gaps
+without turning the project into a per-framework component suite.
 
-Direction is set by periodic multi-perspective reviews. This list is
-indicative, not a commitment, and a solo-maintained project — see
-"Support expectations" below.
+> **Source of truth is [`CHANGELOG.md`](CHANGELOG.md).** This file describes
+> direction; the changelog records what actually shipped. If they disagree, the
+> changelog wins. Last reconciled against `0.4.0`.
 
-> **Source of truth is [`CHANGELOG.md`](CHANGELOG.md).** This file
-> describes *direction*; the changelog records what actually shipped. If
-> the two disagree, the changelog wins — this file was last reconciled
-> against it at 0.3.5.
+## Shipped through 0.4.0
 
-## Shipped (0.3.1 → 0.3.5)
+- **Lifecycle and docs.** Release-hygiene gate, dated changelog,
+  `MIGRATIONS.json`, deprecation policy, per-framework guides, Tailwind
+  interop, generated `docs/reference.md`, VS Code custom data, `llms.txt`, and
+  curated offline docs in the package.
+- **Core CSS system.** Semantic `--bronto-color-*` tier, `--accent-1..6`
+  OKLCH ramp, `--surface-1..6`, `--z-*`, layout primitives, site/app shells,
+  prose, forms, overlay, disclosure, feedback, tables, motion, and dot-matrix
+  primitives.
+- **Behaviors.** SSR-safe, delegated, cleanup-returning vanilla behavior layer:
+  theme toggle, dismissible, disclosure, menu, form validation, combobox,
+  popover, table sort/select, tabs, native dialog glue, carousel, toasts, and
+  dot-glyph expansion.
+- **Glyphs.** `@ponchia/ui/glyphs`: 48 registered 16x16 dot-matrix glyphs,
+  generated `GlyphName` types, display/solid DOM renderers, `initDotGlyph`, and
+  the one-node `.ui-icon` mask renderer for dense icon-at-scale use.
+- **Framework bindings.** Optional `@ponchia/ui/react` and `@ponchia/ui/solid`
+  hooks over the behavior layer. They are thin lifecycle adapters, not component
+  libraries, and their peers remain optional.
+- **Color system.** ADR-0001 steps 1-8: color-policy gate, display colorways,
+  Tier-3 dot-matrix expression tokens, OKLCH-authored colorways, APCA advisory
+  reporting, opt-in data-viz palette, and OKLCH core accent ramp.
+- **Verification.** Unit/type/drift gates, package allowlist checks, packed
+  consumer examples, component-scoped visual baselines, cross-engine non-pixel
+  Playwright checks, axe, forced-colors, reduced-motion, print, and console/404
+  quality gates.
 
-The entire original 0.3.1 adoption checklist is **done** and has been for
-several releases — kept here as a delivered summary, not a to-do list.
-Per-item detail is in the dated CHANGELOG sections.
+## Active hardening
 
-- **Lifecycle & docs** — release-hygiene gate + dated CHANGELOG;
-  `MIGRATIONS.json` + deprecation policy; per-framework getting-started
-  (Astro / SvelteKit / vanilla / React-Solid snippet); Tailwind /
-  cascade-layer interop; generated drift-checked `docs/reference.md`;
-  VS Code `css.customData` artifact; `examples/` built from `npm pack`
-  in CI; README badges; `llms.txt` agent entrypoint; shipped offline
-  docs.
-- **Tokens & layout** — semantic `--bronto-color-*` tier; stepped colour
-  scale (`--accent-1..6`, `--surface-1..6`); `--z-*` scale; layout
-  primitives `ui-sidebar` / `ui-switcher` / `ui-center` / `ui-ratio`;
-  opt-in container queries.
-- **Components & behaviors** — `ui-combobox` + `initCombobox` (APG);
-  collision-aware `ui-popover` + `initPopover`; `initFormValidation`;
-  sortable `aria-sort` table + `initTableSort` + selection;
-  `aria-busy` button loading; toast dismiss + assertive danger path;
-  `role=switch`; `ui-stat`/`ui-num`/`ui-empty-state` freed from the
-  shell; `tokens/resolved.json`; controlled `ui-modal` (`is-open`).
-- **Accessibility surface** — published, **CI-gated** WCAG 2.1 contrast
-  matrix (`docs/contrast.md`): every contractual token pairing has a
-  declared conformance level the build enforces. Decorative hairlines
-  are reported but 1.4.11-exempt by design.
-- **Guidance** — hand-written `docs/usage.md` decision guide (badge vs
-  chip vs dot, default density, prose-in-card, when to add a behavior),
-  shipped in the tarball alongside the generated reference.
-- **0.3.4** — CI-gated WCAG contrast matrix hardening, `--info` status
-  tone with a gated contrast row, the re-skin recipe, and a11y/contrast
-  audit fixes.
-- **0.3.5** — six consumer-evidence CSS primitives (`ui-pagehead`,
-  `ui-steps`, `ui-timeline`, `ui-meter`, `ui-kbd`, `ui-input-icon`) plus
-  `ui-carousel` + `ui-lightbox` (CSS scroll-snap gallery in a native
-  `<dialog>`), and a component-scoped Playwright visual-baseline suite.
-- **0.3.6** — `@ponchia/ui/glyphs`: a 43-glyph dot-matrix icon set
-  (nav/actions/editing/media/status/marks) on the `.ui-dotmatrix` primitive
-  (`renderGlyph` + `initDotGlyph`), with a generated/CI-drift-checked
-  `GlyphName` union and `--dotmatrix-dot` / `--dotmatrix-dot-radius` knobs.
-  Two modes from one source: the dot look for display, and `solid` (square,
-  gapless) for crisp inline icons down to ~16px.
-
-## Open / under active consideration
-
-Genuinely not done. Driven by real consumer evidence, not speculation.
-
-- **Framework-binding layer (React/Solid).** The remaining duplication
-  two consumers feel is the *binding* glue, not the agnostic surface
-  (which is ARIA-driven and complete). Still **deliberately deferred** —
-  the most likely thing to force the next *minor* if a third consumer
-  hits it. Tracked, not forgotten.
-- **"Prove the knob" — alternative themes.** External reviews converge
-  on one strategic risk: the project sells the *skin* (Nothing) more
-  than the *system* (token-driven restraint). Direction: lead docs with
-  the architecture and ship at least one credible non-default theme to
-  demonstrate `--accent`/identity is truly swappable. Spike findings
-  (what is token-reskinnable today vs. hardcoded) tracked in the
-  theme-spike notes.
-- **Token gaps surfaced by the contrast/theme work** — no
-  secondary-brand slot. (`--info` shipped 0.3.4 with a gated contrast
-  row.) Additive, patch-safe, ship on real demand.
-- **APCA contrast (informational, non-gated).** WCAG 2.1 stays the
-  enforced legal/axe baseline; APCA could be published alongside for
-  guidance only.
+- **Binding parity.** Keep React/Solid hook options and lifecycle behavior in
+  parity with vanilla behaviors, with packed-example smoke tests and runtime
+  tests for scoped roots.
+- **Browser proof for new surfaces.** Maintain real-browser checks for glyph
+  mask rendering, OKLCH computed colors, and behavior paths that jsdom cannot
+  faithfully model.
+- **Payload reporting.** Publish a per-entrypoint size report for CSS bundle,
+  behavior JS, glyph JS, tarball size, and font weight. The existing budget gate
+  remains the hard stop.
+- **Docs contract.** Keep `docs/stability.md`, README, SECURITY, ADR, and
+  CHANGELOG in sync before every release.
+- **Behavior internals.** Split high-complexity behavior internals when it
+  reduces maintenance risk, while preserving the existing public barrel and
+  cleanup contracts.
 
 ## Later / under consideration
 
-- Date-time picker, command palette, tree-view — only as documented
-  recipes or behavior-backed components if real consumers need them; not
-  as a reason to grow the core.
-- Per-entrypoint published bundle-size report.
+- Date-time picker, command palette, tree-view, and richer data-table recipes:
+  only if real consumers need them, and preferably as documented recipes before
+  growing the core behavior layer.
 - Canary / `next` dist-tag for testing an upcoming minor before `latest`.
+- Optional font-weight strategy: WOFF2/subsetting or a fontless preset if the
+  install-size report shows the current bundled TTF set is too heavy.
 
-## Explicitly out of scope (stable decisions)
+## Explicitly out of scope
 
-Per `docs/architecture.md` / CHANGELOG "Declined": no Storybook, no
-per-framework component packages, no bundled Style Dictionary / Renovate
-/ Lighthouse dependency, no chart engine, no virtualized data-grid. The
-native `<dialog>` / `<details>` strategy is a feature, not a gap.
+No Storybook dependency, no per-framework component packages, no bundled
+Style Dictionary / Renovate / Lighthouse dependency, no chart engine, no
+virtualized data-grid, and no second UI accent. Native `<dialog>` / `<details>`
+remain deliberate platform choices.
 
 ## Support expectations
 
-Solo-maintained, pre-1.0. Breaking changes ship in the **minor** (pin
-`~0.x`). Security issues: see `SECURITY.md` (private reporting).
-Best-effort response; no SLA. Adopters should pin exact and visual-test
-their own app on upgrade.
+Solo-maintained, pre-1.0. Breaking changes ship in the **minor**; patches are
+non-breaking. Security issues: see `SECURITY.md` for private reporting.
+Best-effort response; no SLA. Adopters should pin the compatible minor and
+visual-test their own app on upgrade.

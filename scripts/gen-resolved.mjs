@@ -6,7 +6,7 @@
  * The token model is CSS-first: the accent family is `color-mix()`-
  * derived and most aliases are `var()` chains, so `@ponchia/ui/tokens`
  * (which mirrors the raw CSS strings) can't help a non-CSS consumer —
- * they hand-eyeball hexes and drift. This resolves `var()` + sRGB
+ * they hand-eyeball hexes and drift. This resolves `var()` + sRGB/OKLCH
  * `color-mix()` at build time into static `#rrggbb` / `rgba(...)`,
  * separately for the light and dark palettes.
  *

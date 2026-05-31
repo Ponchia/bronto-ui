@@ -7,19 +7,19 @@
     },
     {
       "name": "--accent-1",
-      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 8%, var(--bg))`"
+      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 8%, var(--accent-ramp-end))`"
     },
     {
       "name": "--accent-2",
-      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 16%, var(--bg))`"
+      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 16%, var(--accent-ramp-end))`"
     },
     {
       "name": "--accent-3",
-      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 32%, var(--bg))`"
+      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 32%, var(--accent-ramp-end))`"
     },
     {
       "name": "--accent-4",
-      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 60%, var(--bg))`"
+      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 60%, var(--accent-ramp-end))`"
     },
     {
       "name": "--accent-5",
@@ -28,6 +28,10 @@
     {
       "name": "--accent-6",
       "description": "Global scale token. Value: `var(--accent-strong)`"
+    },
+    {
+      "name": "--accent-ramp-end",
+      "description": "Theme token. Light: `#ffffff` · Dark: `#000000`"
     },
     {
       "name": "--accent-soft",

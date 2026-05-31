@@ -114,10 +114,12 @@ void [chartTok, series1, badChart];
 import { useDialog as useDialogR, useToast as useToastR } from '../react/index.js';
 import { useTabs as useTabsS } from '../solid/index.js';
 const rDialog: void = useDialogR({ root: document });
+const rDialogRef: void = useDialogR({ root: { current: document } });
+const rDialogResolver: void = useDialogR(() => ({ root: document }));
 const rToast = useToastR();
 const rDismiss = rToast('hi', { tone: 'success' }); // Cleanup
-const sTabs: void = useTabsS();
-void [rDialog, rDismiss, sTabs];
+const sTabs: void = useTabsS({ root: () => document });
+void [rDialog, rDialogRef, rDialogResolver, rDismiss, sTabs];
 
 void [
   btn,

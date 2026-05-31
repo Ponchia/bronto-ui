@@ -6,9 +6,10 @@ Status: accepted · 2026-05-15 · applies from v0.2.0
 > [`docs/adr/`](./adr/):
 >
 > - [ADR-0001 — Color system: governed evolution beyond monochrome](./adr/0001-color-system.md)
->   (accepted; steps 1–6 implemented in 0.4.0) — the five-tier color
->   constitution, the `check:color-policy`/`check:skins` gates, opt-in
->   colorways, and the deferred data-viz / core-ramp-OKLCH steps.
+>   (accepted; steps 1–8 implemented in 0.4.0) — the five-tier color
+>   constitution, the `check:color-policy`/`check:skins`/`check:charts`
+>   gates, opt-in colorways, data-viz, APCA advisory reporting, and the
+>   OKLCH core accent ramp.
 
 ## Context
 
@@ -31,10 +32,13 @@ on top of the CSS, none of which require a framework commitment**:
 
 ```
 @ponchia/ui
-├── css/         canonical universal layer (the framework)         [required]
-├── tokens/      design tokens as JS/JSON, for JS/canvas/tooling    [optional]
+├── css/         canonical universal layer (the framework)          [required]
+├── tokens/      design tokens as JS/JSON, for JS/canvas/tooling     [optional]
 ├── classes/     typed class-name contract + recipe builders         [optional]
-└── behaviors/   vanilla, SSR-safe JS for the few stateful widgets  [optional]
+├── behaviors/   vanilla, SSR-safe JS for stateful widgets           [optional]
+├── glyphs/      dot-matrix glyph registry/renderers                 [optional]
+├── react/       thin React hooks over behaviors                     [optional peer]
+└── solid/       thin Solid primitives over behaviors                [optional peer]
 ```
 
 ### Consequences of each layer
@@ -57,6 +61,12 @@ on top of the CSS, none of which require a framework commitment**:
   SSR-safe. Chosen over Web Components (SSR/hydration friction with Astro
   islands and SvelteKit) and over per-framework packages (maintenance
   multiplier). Revisit Web Components only if stateful widgets accumulate.
+- **glyphs/** — static bitmap data and SSR-safe render helpers. The
+  256-cell DOM renderers are for display and solid inline icons; the `.ui-icon`
+  mask renderer is for dense icon-at-scale use.
+- **react/** / **solid/** — optional lifecycle adapters over `behaviors/`.
+  They do not define markup, own state, or fork behavior logic; they only run
+  the vanilla initializers on mount and cleanup on unmount/dispose.
 
 ## Drift control
 
@@ -106,7 +116,7 @@ pointer:
   only a stable release must carry a dated heading.
 - `e2e` — Playwright (visual + axe a11y, both themes, cross-engine) in
   the pinned `mcr.microsoft.com/playwright` container.
-- `examples` — `needs: validate`: builds the three downstream example
+- `examples` — `needs: validate`: builds the downstream example
   apps against the **packed tarball**, mirroring CI. Catches a broken
   published surface (exports map / missing file / unresolved subpath)
   that `check:pack`'s file-allowlist inspection cannot — so the release
@@ -143,7 +153,7 @@ Process still applies: bump `package.json`, land on `main`, go green, tag.
 ## Decision — distribution: npm public `@ponchia/ui`
 
 Decided 2026-05-15. The framework is consumed by a growing set of
-heterogeneous web frontends (Astro, SvelteKit, future React/Solid/vanilla),
+heterogeneous web frontends (Astro, SvelteKit, React, Solid, vanilla),
 several deploying via third-party CI. The only option where onboarding a new
 frontend is `npm i @ponchia/ui` with zero per-consumer config is **npm
 public**, and it uniquely also closes the release-gating gap (publish *is*
@@ -164,27 +174,15 @@ The npm scope `@bronto` is not ownable, so the package name is
 This split is deliberate; the README states it so the apparent mismatch is
 explained, not surprising.
 
-### Pre-publish checklist
+### Post-publish checklist
 
-Done in-repo:
-
-- **LICENSE** — MIT, `Copyright (c) 2026 Ponchia`, `"license": "MIT"`.
-  Chosen as a permissive, reversible default for a public personal UI
-  lib; change the SPDX id + `LICENSE` file (and holder name) before
-  first publish if a different license is wanted.
-- **Version** — bumped to `0.2.0`; CHANGELOG section retitled. 0.1.0
-  was CSS-only and predates the `tokens`/`classes`/`behaviors`
-  entrypoints, so the first npm release is `0.2.0`.
-
-Remaining (npm-account side, cannot be done in-repo):
-
-- **`@ponchia` scope + `NPM_TOKEN`** — create the scope on npm, add an
-  automation token with publish rights as the `NPM_TOKEN` secret scoped
-  to the `npm-publish` Environment (so only the gated publish job reads it).
-- **Consumers** — the consuming apps switch their dependency specifier
-  from the tarball URL to `@ponchia/ui` after the first publish
-  (separate repos; not changed here).
-
-`publishConfig` is set (`access: public`, `provenance: true`) and
-`private` is removed so the gated workflow can publish; local accidental
-publish still fails without auth.
+- Confirm npm `latest` points at the tagged version and the package page shows
+  provenance.
+- Run `npm pack --dry-run --json` locally or from CI logs and confirm the
+  intended file count/payload.
+- Build the packed examples matrix (vanilla, Astro, SvelteKit, React, Solid)
+  from the tarball, not a workspace link.
+- Confirm the GitHub Release body matches the curated changelog section.
+- If a bad package is published, deprecate that exact version on npm, publish a
+  patched version, and link the deprecation note to the changelog/security
+  advisory as appropriate.

@@ -56,6 +56,7 @@ const shippedDocs = new Set([
   'docs/reference.md',
   'docs/theming.md',
   'docs/contrast.md',
+  'docs/stability.md',
   'docs/usage.md',
   'docs/adr/0001-color-system.md',
 ]);

@@ -225,28 +225,28 @@
         "$type": "color",
         "$value": null,
         "$extensions": {
-          "com.ponchia.css": "color-mix(in oklch, var(--accent) 8%, var(--bg))"
+          "com.ponchia.css": "color-mix(in oklch, var(--accent) 8%, var(--accent-ramp-end))"
         }
       },
       "2": {
         "$type": "color",
         "$value": null,
         "$extensions": {
-          "com.ponchia.css": "color-mix(in oklch, var(--accent) 16%, var(--bg))"
+          "com.ponchia.css": "color-mix(in oklch, var(--accent) 16%, var(--accent-ramp-end))"
         }
       },
       "3": {
         "$type": "color",
         "$value": null,
         "$extensions": {
-          "com.ponchia.css": "color-mix(in oklch, var(--accent) 32%, var(--bg))"
+          "com.ponchia.css": "color-mix(in oklch, var(--accent) 32%, var(--accent-ramp-end))"
         }
       },
       "4": {
         "$type": "color",
         "$value": null,
         "$extensions": {
-          "com.ponchia.css": "color-mix(in oklch, var(--accent) 60%, var(--bg))"
+          "com.ponchia.css": "color-mix(in oklch, var(--accent) 60%, var(--accent-ramp-end))"
         }
       },
       "5": {
@@ -508,6 +508,10 @@
           "$type": "color",
           "$value": "#d71921"
         },
+        "ramp-end": {
+          "$type": "color",
+          "$value": "#ffffff"
+        },
         "strong": {
           "$type": "color",
           "$value": null,
@@ -682,6 +686,10 @@
         "DEFAULT": {
           "$type": "color",
           "$value": "#ff3b41"
+        },
+        "ramp-end": {
+          "$type": "color",
+          "$value": "#000000"
         },
         "strong": {
           "$type": "color",

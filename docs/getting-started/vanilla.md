@@ -15,6 +15,10 @@ initThemeToggle();
 initDialog();
 ```
 
+That root import is a CSS side-effect import. It belongs in bundlers that
+understand CSS package exports; Node/runtime JS should import only explicit
+subpaths such as `@ponchia/ui/behaviors`.
+
 ## Plain HTML, no bundler
 
 `@ponchia/ui` ships a single flattened stylesheet. Point at it from

@@ -54,6 +54,7 @@
     "docs/reference.md",
     "docs/theming.md",
     "docs/contrast.md",
+    "docs/stability.md",
     "docs/usage.md",
     "docs/adr/0001-color-system.md"
   ],
@@ -63,6 +64,7 @@
     "lint:fix": "stylelint \"css/**/*.css\" --fix",
     "format": "prettier --write .",
     "check:format": "prettier --check .",
+    "size:report": "node scripts/size-report.mjs",
     "tokens:build": "node scripts/gen-tokens-json.mjs",
     "dtcg:build": "node scripts/gen-dtcg.mjs",
     "resolved:build": "node scripts/gen-resolved.mjs",
@@ -104,6 +106,9 @@
     "@playwright/test": "^1.60.0",
     "jsdom": "^29.1.1",
     "prettier": "^3.8.3",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "solid-js": "^1.9.13",
     "stylelint": "^17.11.1",
     "stylelint-config-standard": "^40.0.0",
     "stylelint-use-logical": "^2.1.3",
@@ -176,6 +181,7 @@
     "./docs/reference.md": "./docs/reference.md",
     "./docs/theming.md": "./docs/theming.md",
     "./docs/contrast.md": "./docs/contrast.md",
+    "./docs/stability.md": "./docs/stability.md",
     "./docs/usage.md": "./docs/usage.md",
     "./docs/adr/0001-color-system.md": "./docs/adr/0001-color-system.md",
     "./classes": {

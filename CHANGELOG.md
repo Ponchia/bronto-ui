@@ -6,7 +6,7 @@
 
 ## 0.4.0 — 2026-05-31
 
-The color-system release — [ADR-0001](docs/adr/0001-color-system.md) steps 1–7.
+The color-system release — [ADR-0001](docs/adr/0001-color-system.md) steps 1–8.
 A governed evolution beyond pure monochrome: the tier model is written down and
 **enforced** (`check:color-policy`), and the "Nothing" look is proven to be a
 _skin, not the architecture_ — opt-in **colorways** (amber CRT · phosphor green ·
@@ -34,10 +34,11 @@ categorical color lands later it ships as a governed, opt-in data-viz module
 ### Added
 
 - **The `--accent-1..6` ramp is now perceptually even (OKLCH).** Steps 1–4 mix
-  the accent toward the background `in oklch` instead of `in srgb` (ADR-0001
-  step 8), so the ramp reads as evenly-spaced — better for charts / multi-state
-  surfaces. `scripts/gen-resolved.mjs` learned to resolve `color-mix(in oklch,…)`
-  → hex (bit-for-bit matching browser `color-mix`), so `tokens/resolved.json`,
+  the accent toward an explicit per-theme white/black endpoint `in oklch`
+  instead of using the old sRGB ramp (ADR-0001 step 8), so the ramp reads as
+  evenly-spaced and avoids low-chroma background-hue differences between browser
+  engines. `scripts/gen-resolved.mjs` learned to resolve `color-mix(in oklch,…)`
+  → hex with the same one-channel tolerance browsers show, so `tokens/resolved.json`,
   the DTCG export, and `docs/reference.md` all carry the new values. These are
   token **values** (non-contractual under the 0.x policy) and the ramp is not
   consumed by any shipped component, so there is **no change to any component's
@@ -102,10 +103,9 @@ categorical color lands later it ships as a governed, opt-in data-viz module
 - **`check:skins` gate** — `css/skins.css` can't drift from `tokens/skins.js`,
   every skin defines `--accent`, and colorways stay out of the default bundle.
 - **[ADR-0001 — Color system](docs/adr/0001-color-system.md)** — the five-tier
-  color constitution and the backward-compatible roadmap. Steps 1–6 are
-  implemented in this release (gate + colorways + Tier-3 tokens + OKLCH for new
-  work + APCA advisory); the data-viz categorical module and any core-ramp
-  OKLCH migration are deliberately deferred.
+  color constitution and the backward-compatible roadmap. Steps 1–8 are
+  implemented in this release: gate + colorways + Tier-3 tokens + OKLCH for new
+  work + APCA advisory + data-viz + OKLCH core accent ramp.
 
 ## 0.3.6 — 2026-05-31
 

@@ -48,7 +48,7 @@ one accent *mean* something.
 
 | Practice | Who | Relevance to us |
 | --- | --- | --- |
-| **Perceptual color space** (equal numeric step = equal perceived step) | Tailwind v4 (OKLCH+P3), Radix 3 (P3), Material 3 (HCT) | We derive `--accent-1..6` via `color-mix(in srgb,…)`; OKLCH is the modern substrate and is **CSS-native** — no dependency cost |
+| **Perceptual color space** (equal numeric step = equal perceived step) | Tailwind v4 (OKLCH+P3), Radix 3 (P3), Material 3 (HCT) | `--accent-1..6` now derives via `color-mix(in oklch,…)`; OKLCH is the modern substrate and is **CSS-native** — no dependency cost |
 | **Relative color syntax** `oklch(from var(--base) calc(l-.1) c h)` | CSS Color 5 | ~90% support, Baseline in 2026 — lets a single hue derive a whole tonal ramp natively |
 | **WCAG 2.2 to pass, APCA to design** | Radix text steps spec'd in APCA Lc | WCAG 2.2 AA stays the legal/hard gate; APCA (Lc, accounts for size/weight, WCAG 3 candidate) as an **advisory** track |
 | **Role-bound scale steps** (1–2 bg, 3–5 component, 6–8 border, 9–10 solid, 11–12 text) | Radix 12-step | Our tiers are coarser; the role-bound scale is where depth lives if we ever need it |
@@ -136,15 +136,13 @@ Hard acceptance criteria for every step below:
   said "dist bytes unchanged" — the precise invariant is *rendered output*.)
 - Token **names** are not renamed/repurposed (removals of provably-unreferenced
   tokens follow the CONTRIBUTING.md deprecation-policy exception).
-- The existing `--accent-1..6` **sRGB `color-mix` derivation is not silently
-  changed.** `scripts/gen-resolved.mjs` only evaluates `color-mix(in srgb,…)`;
-  for any other space it returns `null`, and a `null` token is **dropped
-  entirely** from `resolved.json` (not defaulted) — so a consumer doing
-  `resolved.dark['--accent-3']` would get `undefined` and may throw. Combined
-  with the rendered-pixel change, switching the ramp to OKLCH is a breaking
-  change twice over. Stable names alone do not make it non-breaking. Any OKLCH
-  migration of the **existing** ramp is a documented **minor/RC** decision
-  after tooling + visual review, never a silent patch.
+- The existing `--accent-1..6` **token names and roles are stable; exact
+  values are visual tuning before 1.0.** The ramp migrated from sRGB to OKLCH in
+  `0.4.0` only after `scripts/gen-resolved.mjs` learned
+  `color-mix(in oklch, …)` and visual review confirmed no component-rendering
+  baseline moved. Future changes to the ramp algorithm require the same
+  treatment: resolver support first, computed-style checks, changelog callout,
+  and release-note visibility.
 
 ## Roadmap (ordered, backward-compatible)
 
@@ -176,12 +174,10 @@ Hard acceptance criteria for every step below:
    `css/forms.css` (they touch only the accent, never the canvas).
 5. **OKLCH for new work first.** *(done for colorways — accents authored in
    OKLCH in `tokens/skins.js`; the contrast tooling now parses `oklch()` →
-   sRGB, so skin accents are gated, not eyeballed.)* The **core** `--accent-1..6`
-   ramp stays sRGB (decision below). For any future OKLCH in contractual token
-   files (the core ramp), still upgrade `gen-resolved` first and add a
-   gamut-aware fallback (`@supports`, sRGB-first), and consider `light-dark()`
-   to collapse the twice-written dark palette — both are in the same CSS
-   Color 5 / Baseline-2026 bracket.
+   sRGB, so skin accents are gated, not eyeballed.)* The core ramp followed in
+   step 8 only after resolver and visual checks were in place. For future CSS
+   Color 5 work, still upgrade generators/checks first and consider
+   `light-dark()` only when it is inside the declared browser floor.
 6. **APCA advisory reporting.** *(done — `scripts/gen-contrast.mjs`)* APCA-W3
    0.1.9 `Lc` is computed beside the WCAG ratio for every pairing (core + skins)
    in `docs/contrast.md`. **Advisory only** — WCAG 2.1 AA stays the hard gate.
@@ -199,9 +195,10 @@ Hard acceptance criteria for every step below:
    ratio vs the background is reported **advisory** (a fill is not body text;
    the pattern + ΔE gate carry distinguishability).
 8. **OKLCH `--accent-1..6` ramp migration.** *(done in 0.4.0)* Steps 1–4 mix
-   the accent toward `--bg` `in oklch` (perceptually even). `gen-resolved` was
-   upgraded first to resolve `color-mix(in oklch,…)` → hex (bit-for-bit matching
-   the browser, incl. powerless-hue for near-neutral endpoints), so the
+   the accent toward `--accent-ramp-end` (white in light, black in dark)
+   `in oklch` (perceptually even). The explicit endpoint avoids low-chroma
+   background-hue differences between browser engines. `gen-resolved` was
+   upgraded first to resolve `color-mix(in oklch,…)` → hex, so the
    contractual `resolved.json`/DTCG never drop the tokens. Verified no rendered
    change: `--accent-1..6` is consumed by **no** component (only JS/chart
    consumers + the theme playground), so no visual baseline moved — the feared
@@ -213,8 +210,8 @@ Hard acceptance criteria for every step below:
 | Risk | Mitigation |
 | --- | --- |
 | **Brand dilution** (secondary accents, decorative hues creep in) | Rule 4/5; `check:color-policy`; off-by-default |
-| **Compat break** from OKLCH ramp swap | Freeze above; OKLCH for *new* work first; minor/RC only, never silent |
-| **Tooling drift** (resolver/DTCG/contrast/baseline assume sRGB) | Upgrade tooling *before* OKLCH enters token files; add computed-style tests |
+| **Compat break** from future ramp tuning | Freeze above; resolver + computed-style checks first; release notes always call out value changes |
+| **Tooling drift** (resolver/DTCG/contrast/baseline assume one color space) | Upgrade tooling *before* new colour syntax enters token files; keep computed-style tests |
 | **Chart color leakage** into UI chrome | `check:color-policy` forbids chart tokens in core CSS; docs forbid it |
 | **Motion/status misuse** carrying sole meaning | Rule 6; reduced-motion equivalence; status stays locked, never skin-derived |
 | **APCA overreach** | Advisory only; WCAG 2.2 AA stays the hard gate while WCAG 3 is draft |
@@ -240,9 +237,10 @@ Hard acceptance criteria for every step below:
 Resolved while implementing steps 3–6 (the open questions the earlier draft
 flagged):
 
-- **`--accent-1..6` is semver-stable and stays sRGB.** No silent ramp change.
-  → step 8 (default-ramp OKLCH migration) **deferred** — visual-diff review
-  cost outweighs the gain; reconsider as an opt-in engine / explicit minor.
+- **`--accent-1..6` migrated to OKLCH in 0.4.0.** Token names and roles are
+  stable; exact values remain visual tuning before 1.0. The migration shipped
+  only after resolver support and visual review confirmed no component baseline
+  consumed the changed values.
 - **Colorways ship as a supported package export** (`./css/skins.css`),
   opt-in, excluded from the default bundle. Not docs-only recipes.
 - **Colorways are root-level** (`data-bronto-skin` on `:root`, like
@@ -266,7 +264,8 @@ WCAG; Radix 12-step; Material 3 HCT; Adobe Leonardo; colorblind-safe
 categorical limits) and a 14-leg AgentMix `deep` multi-POV pass
 (Pi/MiniMax, Aider, OpenCode, Crush, Codex + architecture / implementation-risk
 / testing / security / operations / contrarian legs). Key reconciled dissent:
-several legs wanted an immediate OKLCH ramp swap — rejected as a silent break
-(see freeze); the claim that `--accent-1..6` already serves as a categorical
-scale was rejected (a same-hue ramp encodes sequence/intensity, not independent
+several legs warned that an OKLCH ramp swap would be a silent break if tooling
+lagged — accepted as a process constraint, then resolved before 0.4.0 shipped;
+the claim that `--accent-1..6` already serves as a categorical scale was
+rejected (a same-hue ramp encodes sequence/intensity, not independent
 categories); deriving status from skins was rejected (status stays locked).

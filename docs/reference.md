@@ -919,10 +919,10 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--z-overlay` | `30` |
 | `--z-popover` | `50` |
 | `--z-toast` | `60` |
-| `--accent-1` | `color-mix(in oklch, var(--accent) 8%, var(--bg))` |
-| `--accent-2` | `color-mix(in oklch, var(--accent) 16%, var(--bg))` |
-| `--accent-3` | `color-mix(in oklch, var(--accent) 32%, var(--bg))` |
-| `--accent-4` | `color-mix(in oklch, var(--accent) 60%, var(--bg))` |
+| `--accent-1` | `color-mix(in oklch, var(--accent) 8%, var(--accent-ramp-end))` |
+| `--accent-2` | `color-mix(in oklch, var(--accent) 16%, var(--accent-ramp-end))` |
+| `--accent-3` | `color-mix(in oklch, var(--accent) 32%, var(--accent-ramp-end))` |
+| `--accent-4` | `color-mix(in oklch, var(--accent) 60%, var(--accent-ramp-end))` |
 | `--accent-5` | `var(--accent)` |
 | `--accent-6` | `var(--accent-strong)` |
 | `--surface-1` | `var(--bg)` |
@@ -967,6 +967,7 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--text-soft` | `#353533` |
 | `--text-dim` | `#686863` |
 | `--accent` | `#d71921` |
+| `--accent-ramp-end` | `#ffffff` |
 | `--accent-strong` | `color-mix(in srgb, var(--accent) 83%, #000)` |
 | `--accent-text` | `var(--accent-strong)` |
 | `--accent-soft` | `color-mix(in srgb, var(--accent) 10%, transparent)` |
@@ -1003,6 +1004,7 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--text-soft` | `#c4c4c4` |
 | `--text-dim` | `#858585` |
 | `--accent` | `#ff3b41` |
+| `--accent-ramp-end` | `#000000` |
 | `--accent-strong` | `color-mix(in srgb, var(--accent) 84%, #fff)` |
 | `--accent-text` | `var(--accent-strong)` |
 | `--accent-soft` | `color-mix(in srgb, var(--accent) 14%, transparent)` |
