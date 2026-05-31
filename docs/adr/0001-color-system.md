@@ -1,6 +1,6 @@
 # ADR-0001 — Color system: governed evolution beyond monochrome
 
-Status: accepted (steps 1–7 implemented in 0.4.0; 8 deferred to 0.5) · 2026-05-31 ·
+Status: accepted (all steps 1–8 implemented in 0.4.0) · 2026-05-31 ·
 supersedes the informal "monochrome + one accent" framing in `README.md` /
 `package.json`
 
@@ -198,9 +198,15 @@ Hard acceptance criteria for every step below:
    safety, which the gate caught); the ramps are OKLCH. A chart colour's WCAG
    ratio vs the background is reported **advisory** (a fill is not body text;
    the pattern + ΔE gate carry distinguishability).
-8. **Consider OKLCH default-ramp migration later** — only after resolver
-   support and screenshot review prove acceptable diffs, as an opt-in engine or
-   a clearly documented minor/RC.
+8. **OKLCH `--accent-1..6` ramp migration.** *(done in 0.4.0)* Steps 1–4 mix
+   the accent toward `--bg` `in oklch` (perceptually even). `gen-resolved` was
+   upgraded first to resolve `color-mix(in oklch,…)` → hex (bit-for-bit matching
+   the browser, incl. powerless-hue for near-neutral endpoints), so the
+   contractual `resolved.json`/DTCG never drop the tokens. Verified no rendered
+   change: `--accent-1..6` is consumed by **no** component (only JS/chart
+   consumers + the theme playground), so no visual baseline moved — the feared
+   "breaking + needs baseline review" turned out to touch only token *values*
+   (non-contractual under 0.x).
 
 ## Risks & mitigations
 

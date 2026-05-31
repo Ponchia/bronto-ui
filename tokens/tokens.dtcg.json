@@ -225,28 +225,28 @@
         "$type": "color",
         "$value": null,
         "$extensions": {
-          "com.ponchia.css": "color-mix(in srgb, var(--accent) 8%, var(--bg))"
+          "com.ponchia.css": "color-mix(in oklch, var(--accent) 8%, var(--bg))"
         }
       },
       "2": {
         "$type": "color",
         "$value": null,
         "$extensions": {
-          "com.ponchia.css": "color-mix(in srgb, var(--accent) 16%, var(--bg))"
+          "com.ponchia.css": "color-mix(in oklch, var(--accent) 16%, var(--bg))"
         }
       },
       "3": {
         "$type": "color",
         "$value": null,
         "$extensions": {
-          "com.ponchia.css": "color-mix(in srgb, var(--accent) 32%, var(--bg))"
+          "com.ponchia.css": "color-mix(in oklch, var(--accent) 32%, var(--bg))"
         }
       },
       "4": {
         "$type": "color",
         "$value": null,
         "$extensions": {
-          "com.ponchia.css": "color-mix(in srgb, var(--accent) 60%, var(--bg))"
+          "com.ponchia.css": "color-mix(in oklch, var(--accent) 60%, var(--bg))"
         }
       },
       "5": {

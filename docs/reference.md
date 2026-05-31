@@ -919,10 +919,10 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--z-overlay` | `30` |
 | `--z-popover` | `50` |
 | `--z-toast` | `60` |
-| `--accent-1` | `color-mix(in srgb, var(--accent) 8%, var(--bg))` |
-| `--accent-2` | `color-mix(in srgb, var(--accent) 16%, var(--bg))` |
-| `--accent-3` | `color-mix(in srgb, var(--accent) 32%, var(--bg))` |
-| `--accent-4` | `color-mix(in srgb, var(--accent) 60%, var(--bg))` |
+| `--accent-1` | `color-mix(in oklch, var(--accent) 8%, var(--bg))` |
+| `--accent-2` | `color-mix(in oklch, var(--accent) 16%, var(--bg))` |
+| `--accent-3` | `color-mix(in oklch, var(--accent) 32%, var(--bg))` |
+| `--accent-4` | `color-mix(in oklch, var(--accent) 60%, var(--bg))` |
 | `--accent-5` | `var(--accent)` |
 | `--accent-6` | `var(--accent-strong)` |
 | `--surface-1` | `var(--bg)` |
