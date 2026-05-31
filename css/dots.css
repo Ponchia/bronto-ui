@@ -47,17 +47,21 @@
 /* Data-bound dot matrix — a grid of state cells (activity / heatmap),
    the on-brand counterpart to the decorative .ui-dotgrid background.
    This is the grid + cell tones only; the data→cell mapping is the
-   consumer's. Tune density via --dotmatrix-cols / --dotmatrix-gap. */
+   consumer's. Tune density via --dotmatrix-cols / --dotmatrix-gap; set
+   --dotmatrix-dot to a fixed dot length (intrinsic sizing, e.g. for the
+   display glyphs in @ponchia/ui/glyphs) instead of stretching to fit;
+   set --dotmatrix-dot-radius: 0 (with --dotmatrix-gap: 0) to fuse the dots
+   into a crisp pixel glyph that stays legible at small/inline sizes. */
 .ui-dotmatrix {
   display: grid;
   gap: var(--dotmatrix-gap, 0.5rem);
-  grid-template-columns: repeat(var(--dotmatrix-cols, 12), minmax(0, 1fr));
+  grid-template-columns: repeat(var(--dotmatrix-cols, 12), var(--dotmatrix-dot, minmax(0, 1fr)));
 }
 
 .ui-dotmatrix__cell {
   aspect-ratio: 1;
   background: var(--field-dot);
-  border-radius: 50%;
+  border-radius: var(--dotmatrix-dot-radius, 50%);
 }
 
 .ui-dotmatrix__cell--hot {
@@ -66,6 +70,38 @@
 
 .ui-dotmatrix__cell--accent {
   background: var(--field-dot-accent);
+}
+
+/* Animation (opt-in, decorative): a dot-matrix that "plays". Meaning stays
+   in the static cells + the element's label — motion is enhancement only,
+   and the reduced-motion block below switches it off. */
+
+/* --reveal: cells power on in a left→right, top→bottom scan. The per-cell
+   delay reads `--i` (the row-major index) which the renderer sets. */
+.ui-dotmatrix--reveal .ui-dotmatrix__cell {
+  animation: dotmatrixCellOn var(--duration-base) var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * var(--dotmatrix-reveal-step, 3ms));
+}
+
+/* `from`-only on purpose: when reduced-motion kills the animation the cells
+   stay at their natural opacity:1 — i.e. the settled end-state still shows. */
+@keyframes dotmatrixCellOn {
+  from {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+}
+
+/* --pulse: the whole glyph breathes, for a "live"/attention state. */
+.ui-dotmatrix--pulse {
+  animation: dotmatrixPulse 1.8s var(--ease-standard) infinite;
+}
+
+@keyframes dotmatrixPulse {
+  50% {
+    opacity: 0.55;
+    transform: scale(0.94);
+  }
 }
 
 /* Status dot — the glyph-style state indicator. */
@@ -289,7 +325,9 @@
   .ui-dot--live::after,
   .ui-dotloader span,
   .ui-dotspinner,
-  .ui-dotbar--indeterminate i {
+  .ui-dotbar--indeterminate i,
+  .ui-dotmatrix--reveal .ui-dotmatrix__cell,
+  .ui-dotmatrix--pulse {
     animation: none;
   }
 

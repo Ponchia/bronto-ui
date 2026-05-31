@@ -146,6 +146,64 @@ carousel crops (`cover`); the lightbox shows the whole image (`contain`).
 This is deliberately *not* an auto-playing marketing slider (no timers, no
 infinite-clone track). It's a gallery: the user drives it.
 
+## Display glyphs: when (and when not)
+
+`@ponchia/ui/glyphs` is a 43-glyph dot-matrix icon set — navigation
+(`arrow-*`, `chevron-*`), actions (`check`, `close`, `plus`, `minus`,
+`search`, `menu`, `gear`), status (`info`, `warning`, `bell`, `lock`) and
+common marks (`home`, `user`, `heart`, `star`, `spark`) — rendered on the
+`.ui-dotmatrix` primitive, so they re-skin with the same `--field-dot*`
+tokens as every other dot surface (no SVG, no icon font).
+
+**Two rendering modes — pick by size.** The dots need physical room to
+read, so the default _dot_ look is for **display** sizes (~40px up: hero
+marks, empty states, status bursts, section headers, large buttons). For
+small/inline use pass **`solid: true`** (or `data-bronto-glyph-solid`):
+that fuses the cells into a square, gapless pixel glyph that stays crisp and
+legible down to **~16px** — so the same set doubles as real inline UI icons,
+not just decoration. (Below the dot fragments into dot-soup; solid does not.)
+
+`renderGlyph(name, { label })` returns an SSR-safe string: decorative
+(`aria-hidden`) by default, or `role="img"` + `aria-label` when you pass a
+`label` — which is how it conveys meaning to assistive tech. Prefer the
+`data-bronto-glyph` placeholder + `initDotGlyph()` when the markup is
+easier dropped than inlined. Size with `--dotmatrix-dot` (and a tight
+`--dotmatrix-gap`) for an intrinsic dot, or let it stretch to its container.
+It is still a pixel-grid aesthetic, not a hairline vector set — but it now
+spans both inline-icon and display use from one source.
+
+**Animation** is opt-in via `anim` (`renderGlyph(name, { anim: 'reveal' })`)
+or `data-bronto-glyph-anim`: `reveal` powers the cells on in a scan (a
+dot-matrix booting up), `pulse` makes the glyph breathe for a live/attention
+state. It's **decorative only** — disabled under `prefers-reduced-motion`,
+and the meaning still lives in the static frame + `label`, never in the
+motion. Don't animate to convey information a reduced-motion user would miss.
+Tune the scan speed with `--dotmatrix-reveal-step` (delay per cell, default
+`3ms`). Use `pulse` sparingly — one attention target per view: it loops
+indefinitely, and animation that runs in parallel with other content is the
+consumer's WCAG 2.2.2 (Pause/Stop/Hide) responsibility (reduced-motion is not
+a substitute).
+
+A few sharp edges to know:
+
+- **Inline icon recipe.** `renderGlyph` returns a `<span>`, so it's valid
+  inline and inside a `<button>`. For an inline UI icon, render `solid` and
+  size the dot, e.g. inside a button:
+  `` `<button class="ui-button">${renderGlyph('search', { solid: true, dot: '1.2px', label: 'Search' })}<span>Search</span></button>` `` —
+  the button's `display: inline-flex; gap` aligns icon + text. For icon-in-prose,
+  set `--dotmatrix-dot` to ~`0.08em` and `vertical-align: -0.15em` on the span.
+- **`solid` wins.** `solid: true` implies glyph-only and forces
+  `--dotmatrix-gap: 0` / square cells, so a `grid: true` or `gap` passed
+  alongside it is ignored.
+- **Directional glyphs are physical, not logical.** `arrow-left/right`,
+  `chevron-left/right` are fixed bitmaps; in an RTL context flip them yourself
+  (e.g. swap the name, or `transform: scaleX(-1)`), the framework won't.
+- **Cost.** Each glyph is a 16×16 grid = 256 cells (DOM nodes / spans),
+  regardless of mode; `anim: 'reveal'` adds a per-cell `--i` (≈doubles the
+  string size). Fine for display marks and the odd inline icon — but don't
+  render hundreds at once (e.g. one in every row of a long table) without
+  measuring.
+
 ## When to add a behavior
 
 The CSS is the framework; `@ponchia/ui/behaviors` is the *sanctioned*

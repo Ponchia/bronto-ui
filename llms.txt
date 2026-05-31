@@ -45,6 +45,14 @@ Optional vanilla behaviors (theme toggle, etc. — SSR-safe, tree-shakeable):
 import { applyStoredTheme } from '@ponchia/ui/behaviors';
 ```
 
+Optional display glyphs — dot-matrix bitmaps on the `.ui-dotmatrix` primitive
+(decorative by default; `renderGlyph` is SSR-safe, `initDotGlyph` is the DOM form):
+
+```js
+import { renderGlyph, GLYPH_NAMES } from '@ponchia/ui/glyphs';
+el.innerHTML = renderGlyph('check', { label: 'Done' });
+```
+
 ## Authoritative offline references (shipped in this package)
 
 Read these from `node_modules/@ponchia/ui/` — no network needed:
@@ -70,6 +78,9 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   `#rrggbb` / `rgba(...)` per theme (var() + color-mix() evaluated).
   Use this for non-CSS render targets: MapLibre/canvas/WebGL/SVG.
 - `behaviors/index.d.ts` — typed signatures for the optional behaviors.
+- `glyphs/glyphs.d.ts` — the `GlyphName` literal union plus `renderGlyph` /
+  `glyphCells` signatures for the display glyphs. (The DOM form,
+  `initDotGlyph`, is declared in `behaviors/index.d.ts`.)
 - `classes/vscode.css-custom-data.json` — editor autocomplete for tokens.
 
 ## Human-browsable references (not shipped in the npm tarball, by design)

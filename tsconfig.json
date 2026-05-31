@@ -16,6 +16,7 @@
     "test/types.test-d.ts",
     "classes/index.d.ts",
     "tokens/index.d.ts",
-    "behaviors/index.d.ts"
+    "behaviors/index.d.ts",
+    "glyphs/glyphs.d.ts"
   ]
 }
