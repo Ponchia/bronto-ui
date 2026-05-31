@@ -88,3 +88,55 @@ export function deltaOklab(rgb1, rgb2) {
   const b = rgbToOklab(rgb2);
   return Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 }
+
+/** sRGB [r,g,b] (0-255) → OKLCH { L, C, H(deg), achromatic }. */
+export function rgbToOklch(rgb) {
+  const [L, a, b] = rgbToOklab(rgb);
+  const C = Math.hypot(a, b);
+  // A near-neutral's hue is "powerless" in CSS color-mix (the chromatic
+  // endpoint's hue is kept), matching browser color-mix(in oklch, …). 0.02
+  // separates near-neutral surfaces (C ≲ 0.003) from real colours (C ≳ 0.05).
+  return { L, C, H: ((Math.atan2(b, a) * 180) / Math.PI + 360) % 360, achromatic: C < 0.02 };
+}
+
+/** OKLCH (L, C, H deg) → sRGB [r,g,b] (0-255), clamped to gamut (no throw). */
+function oklchToRgbClamp(L, C, H) {
+  const hr = (H * Math.PI) / 180;
+  const a = C * Math.cos(hr);
+  const b = C * Math.sin(hr);
+  const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3;
+  const m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3;
+  const s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3;
+  const lin = [
+    4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+    -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+    -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s,
+  ];
+  return lin.map((x) => {
+    const c = x <= 0.0031308 ? 12.92 * x : 1.055 * x ** (1 / 2.4) - 0.055;
+    return Math.round(Math.max(0, Math.min(1, c)) * 255);
+  });
+}
+
+/** Replicate CSS `color-mix(in oklch, A wA%, B wB%)` for two OPAQUE sRGB
+ *  colours → sRGB [r,g,b]. Interpolates L, C and (shorter-arc) H per CSS
+ *  Color 4; an achromatic endpoint's hue is "powerless" and takes the other's.
+ *  wA/wB are the (already-normalised) weights. */
+export function mixOklch(rgbA, rgbB, wA, wB) {
+  const a = rgbToOklch(rgbA);
+  const b = rgbToOklch(rgbB);
+  const L = a.L * wA + b.L * wB;
+  const C = a.C * wA + b.C * wB;
+  let H;
+  if (a.achromatic && b.achromatic) H = 0;
+  else if (a.achromatic) H = b.H;
+  else if (b.achromatic) H = a.H;
+  else {
+    // Shorter-arc hue interpolation.
+    let d = b.H - a.H;
+    if (d > 180) d -= 360;
+    else if (d < -180) d += 360;
+    H = (a.H + d * wB + 360) % 360;
+  }
+  return oklchToRgbClamp(L, C, H);
+}
