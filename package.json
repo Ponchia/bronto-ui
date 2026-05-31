@@ -19,6 +19,7 @@
     "accessibility"
   ],
   "license": "MIT",
+  "author": "Ponchia (https://github.com/Ponchia)",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Ponchia/bronto-ui.git"

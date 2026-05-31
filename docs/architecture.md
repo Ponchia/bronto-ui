@@ -100,10 +100,13 @@ pointer:
   that `check:pack`'s file-allowlist inspection cannot — so the release
   path runs the same consumer smoke as merge-to-main.
 - `publish-npm` — `needs: [validate, e2e, examples]`: `npm publish` with
-  provenance. Dist-tag is derived from the tag: stable (`v0.4.0`) →
-  `latest`; SemVer prerelease (`v0.4.0-rc.1`, any hyphenated identifier)
-  → `next`, so the default `npm i @ponchia/ui` never moves onto an
-  unstable build (opt in with `@ponchia/ui@next`).
+  provenance. Runs in the `npm-publish` **Environment** (required-reviewer
+  protection), so after the gates pass the run pauses for a manual approval
+  in the Actions UI before anything reaches npm — a guard against an
+  accidental tag push publishing. Dist-tag is derived from the tag: stable
+  (`v0.4.0`) → `latest`; SemVer prerelease (`v0.4.0-rc.1`, any hyphenated
+  identifier) → `next`, so the default `npm i @ponchia/ui` never moves onto
+  an unstable build (opt in with `@ponchia/ui@next`).
 - `release-notes` — `needs: publish-npm`: a GitHub Release for visibility
   (transitively gated on a successful publish, hence on the gates above);
   prerelease tags are flagged so they aren't surfaced as "Latest".
