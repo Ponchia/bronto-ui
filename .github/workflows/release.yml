@@ -187,10 +187,16 @@ jobs:
         with:
           persist-credentials: false
 
+      # The Release body IS the curated, narrative CHANGELOG section for this
+      # tag — not GitHub's auto-generated PR list. One source of truth
+      # (CHANGELOG.md), surfaced where users read it.
+      - name: Extract the CHANGELOG section for this tag
+        run: node scripts/changelog-section.mjs "${{ github.ref_name }}" > "${RUNNER_TEMP}/release-body.md"
+
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
         with:
-          generate_release_notes: true
+          body_path: ${{ runner.temp }}/release-body.md
           # Flag prerelease tags (hyphenated SemVer) so the GitHub Release
           # matches the `next` dist-tag and is not surfaced as "Latest".
           prerelease: ${{ contains(github.ref_name, '-') }}
