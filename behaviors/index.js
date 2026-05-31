@@ -1266,7 +1266,10 @@ export function initDotGlyph({ root } = {}) {
   const cleanups = [];
 
   for (const el of els) {
-    if (el.querySelector('.ui-dotmatrix__cell')) continue; // already expanded
+    // Scope to DIRECT-child cells (the ones we append) — so a placeholder that
+    // legitimately nests its own .ui-dotmatrix is neither mis-read as already
+    // expanded here nor have its inner cells removed by cleanup below.
+    if (el.querySelector(':scope > .ui-dotmatrix__cell')) continue; // already expanded
     const cells = glyphCells(el.getAttribute('data-bronto-glyph'));
     if (!cells.length) continue; // unknown glyph — leave the placeholder as-is
 
@@ -1302,13 +1305,16 @@ export function initDotGlyph({ root } = {}) {
     el.appendChild(frag);
 
     cleanups.push(() => {
-      el.querySelectorAll('.ui-dotmatrix__cell').forEach((n) => n.remove());
+      el.querySelectorAll(':scope > .ui-dotmatrix__cell').forEach((n) => n.remove());
       if (!hadMatrix) el.classList.remove('ui-dotmatrix');
       if (hadCols) el.style.setProperty('--dotmatrix-cols', hadCols);
       else el.style.removeProperty('--dotmatrix-cols');
       restoreAttr(el, 'aria-hidden', hadAriaHidden);
       restoreAttr(el, 'role', hadRole);
       restoreAttr(el, 'aria-label', hadAriaLabel);
+      // Don't leave behind empty class=""/style="" we ourselves created.
+      if (el.getAttribute('class') === '') el.removeAttribute('class');
+      if (el.getAttribute('style') === '') el.removeAttribute('style');
     });
   }
 

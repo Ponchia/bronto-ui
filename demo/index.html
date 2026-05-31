@@ -963,9 +963,9 @@ ui.button({ variant: 'ghost' });</code></pre>
         <h2 id="v07" class="ui-eyebrow">0.3.6 additions</h2>
 
         <!-- Display glyphs — dot-matrix bitmaps from @ponchia/ui/glyphs.
-             The first row is hand-authored markup (renderGlyph output shape);
-             the rest are [data-bronto-glyph] placeholders expanded by
-             initDotGlyph(). Decorative unless data-bronto-glyph-label is set. -->
+             All five are [data-bronto-glyph] placeholders expanded by
+             initDotGlyph(); `heart` carries data-bronto-glyph-label so it's
+             exposed as role="img", the rest stay decorative (aria-hidden). -->
         <p class="ui-muted">Display glyphs — <code>@ponchia/ui/glyphs</code> on the dot-matrix primitive.</p>
         <div
           class="ui-cluster"

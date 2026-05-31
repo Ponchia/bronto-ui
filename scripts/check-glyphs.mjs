@@ -29,8 +29,12 @@ for (const [rel, expected] of Object.entries(generated)) {
 // --- 2. shape ---
 const keys = Object.keys(GLYPHS);
 const sorted = [...keys].sort();
-if (keys.join(',') !== sorted.join(','))
-  errors.push(`GLYPHS keys are not sorted (e.g. expected ${sorted.find((k, i) => k !== keys[i])})`);
+if (keys.join(',') !== sorted.join(',')) {
+  const at = keys.findIndex((k, i) => k !== sorted[i]);
+  errors.push(
+    `GLYPHS keys are not sorted (first out-of-order: \`${keys[at]}\`, expected \`${sorted[at]}\`)`,
+  );
+}
 
 if (GLYPH_NAMES.join(',') !== sorted.join(','))
   errors.push('GLYPH_NAMES must equal the sorted GLYPHS keys');

@@ -7,7 +7,22 @@
  */
 import { cls, ui, cx, type ClassValue } from '../classes/index.js';
 import tokens, { themeColor, cssVars, type ThemeName } from '../tokens/index.js';
-import { initThemeToggle, initDialog, toast, type Cleanup } from '../behaviors/index.js';
+import {
+  initThemeToggle,
+  initDialog,
+  initDotGlyph,
+  toast,
+  type Cleanup,
+} from '../behaviors/index.js';
+import {
+  renderGlyph,
+  glyphCells,
+  glyph,
+  GLYPH_SIZE,
+  GLYPH_NAMES,
+  type GlyphName,
+  type GlyphCell,
+} from '../glyphs/glyphs.js';
 
 // cls values are literal, not widened to `string`.
 const btn: 'ui-button' = cls.button;
@@ -51,6 +66,18 @@ toast();
 // @ts-expect-error — assertive is a boolean.
 toast('x', { assertive: 'yes' });
 
+// Glyphs: the subpath types are sound and the GlyphName union rejects typos.
+const stopGlyph: Cleanup = initDotGlyph({ root: document });
+const glyphHtml: string = renderGlyph('check', { label: 'Done', grid: false, dot: '0.5rem' });
+const cells: GlyphCell[] = glyphCells('spark');
+const cellOn: boolean = cells[0].on;
+const gname: GlyphName = 'heart';
+const rows = glyph(gname); // readonly string[] | undefined
+const size: 16 = GLYPH_SIZE; // narrows to the literal
+const firstName: GlyphName = GLYPH_NAMES[0];
+// @ts-expect-error — not a registered glyph name.
+renderGlyph('definitely-not-a-glyph');
+
 void [
   btn,
   appShell,
@@ -66,4 +93,11 @@ void [
   stopDlg,
   dismiss,
   dismiss2,
+  stopGlyph,
+  glyphHtml,
+  cells,
+  cellOn,
+  rows,
+  size,
+  firstName,
 ];

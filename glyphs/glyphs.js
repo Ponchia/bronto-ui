@@ -167,12 +167,22 @@ function esc(s) {
     .replace(/"/g, '&quot;');
 }
 
+// `dot`/`gap` land in an inline-CSS context (`style="--dotmatrix-dot:VALUE"`),
+// where HTML-escaping a `"` stops attribute breakout but a `;` would still open
+// a second CSS declaration (overlay/clickjacking, selector exfil). So restrict
+// them to length/calc syntax — digits, units, %, whitespace and `()+-*/.,` for
+// calc()/clamp()/var() — and drop anything else rather than emit it.
+function cssLen(v) {
+  return /^[\w.%+\-*/()\s,]+$/.test(v) ? v : '';
+}
+
 /**
  * A full `.ui-dotmatrix` HTML string for a glyph (`''` if the name is
  * unknown). Decorative by default (`aria-hidden`); pass `label` to expose it
  * as `role="img"`. Pins `--dotmatrix-cols` to GLYPH_SIZE so the square layout
  * holds regardless of the 12-col default; `dot`/`gap` set `--dotmatrix-dot` /
- * `--dotmatrix-gap`. `grid: false` drops the unlit panel dots (glyph-only).
+ * `--dotmatrix-gap` (sanitized to a CSS length/calc allowlist; a malformed
+ * value is dropped). `grid: false` drops the unlit panel dots (glyph-only).
  */
 export function renderGlyph(name, options = {}) {
   const cells = glyphCells(name);
@@ -180,8 +190,10 @@ export function renderGlyph(name, options = {}) {
   const { grid = true, label, dot, gap } = options;
 
   const style = [`--dotmatrix-cols:${GLYPH_SIZE}`];
-  if (dot) style.push(`--dotmatrix-dot:${esc(dot)}`);
-  if (gap) style.push(`--dotmatrix-gap:${esc(gap)}`);
+  const dotLen = dot && cssLen(dot);
+  const gapLen = gap && cssLen(gap);
+  if (dotLen) style.push(`--dotmatrix-dot:${dotLen}`);
+  if (gapLen) style.push(`--dotmatrix-gap:${gapLen}`);
 
   const a11y = label ? `role="img" aria-label="${esc(label)}"` : 'aria-hidden="true"';
 

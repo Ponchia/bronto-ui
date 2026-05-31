@@ -75,6 +75,24 @@ test('renderGlyph() is decorative by default and labelled on demand', () => {
   assert.doesNotMatch(labelled, /aria-hidden/);
 });
 
+test('renderGlyph() escapes label and sanitizes dot/gap (no CSS/HTML injection)', () => {
+  const name = GLYPH_NAMES[0];
+  // label: HTML-attribute context — must be escaped, no tag/attr breakout.
+  const evilLabel = renderGlyph(name, { label: '"><img src=x onerror=alert(1)>' });
+  assert.doesNotMatch(evilLabel, /<img/);
+  assert.match(evilLabel, /&quot;&gt;/);
+
+  // dot/gap: inline-CSS context — a `;` would open a second declaration.
+  const evilDot = renderGlyph(name, { dot: '1px;position:fixed;inset:0' });
+  assert.doesNotMatch(evilDot, /position:fixed/);
+  assert.doesNotMatch(evilDot, /--dotmatrix-dot/); // malformed → dropped entirely
+
+  // Well-formed lengths/calc are kept verbatim.
+  const ok = renderGlyph(name, { dot: 'calc(0.5rem + 2px)', gap: '0.25rem' });
+  assert.match(ok, /--dotmatrix-dot:calc\(0\.5rem \+ 2px\)/);
+  assert.match(ok, /--dotmatrix-gap:0\.25rem/);
+});
+
 test('spark is the accent demo; no other glyph uses accent dots', () => {
   for (const [name, rows] of Object.entries(GLYPHS)) {
     const hasAccent = rows.join('').includes('*');
@@ -103,6 +121,42 @@ test('initDotGlyph expands a placeholder and cleans up', async () => {
     assert.equal(el.querySelectorAll('.ui-dotmatrix__cell').length, 0);
     assert.ok(!el.classList.contains('ui-dotmatrix'));
     assert.equal(el.getAttribute('aria-hidden'), null);
+    // A bare placeholder leaves no empty class=""/style="" residue.
+    assert.equal(el.getAttribute('class'), null);
+    assert.equal(el.getAttribute('style'), null);
+  } finally {
+    if (prevDocument === undefined) delete globalThis.document;
+    else globalThis.document = prevDocument;
+  }
+});
+
+test('initDotGlyph cleanup only removes the cells it appended', async () => {
+  const dom = new JSDOM('<!doctype html><body></body>');
+  const prevDocument = globalThis.document;
+  globalThis.document = dom.window.document;
+  try {
+    const { initDotGlyph } = await import('../behaviors/index.js');
+    const el = dom.window.document.createElement('span');
+    el.setAttribute('data-bronto-glyph', GLYPH_NAMES[0]);
+    // A pre-existing nested dot matrix the consumer authored themselves.
+    const nested = dom.window.document.createElement('div');
+    nested.className = 'ui-dotmatrix';
+    nested.innerHTML = '<span class="ui-dotmatrix__cell"></span>';
+    el.appendChild(nested);
+    dom.window.document.body.appendChild(el);
+
+    const stop = initDotGlyph({ root: dom.window.document });
+    // Appended GLYPH_SIZE² direct-child cells, plus the 1 nested cell.
+    assert.equal(
+      el.querySelectorAll(':scope > .ui-dotmatrix__cell').length,
+      GLYPH_SIZE * GLYPH_SIZE,
+    );
+
+    stop();
+    // The consumer's nested matrix and its cell survive untouched.
+    assert.equal(el.querySelectorAll(':scope > .ui-dotmatrix__cell').length, 0);
+    assert.equal(nested.querySelectorAll('.ui-dotmatrix__cell').length, 1);
+    assert.ok(el.contains(nested));
   } finally {
     if (prevDocument === undefined) delete globalThis.document;
     else globalThis.document = prevDocument;

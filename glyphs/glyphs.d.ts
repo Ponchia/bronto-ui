@@ -23,9 +23,11 @@ export interface RenderGlyphOptions {
   grid?: boolean;
   /** Expose as `role="img"` with this label; omit for decorative (aria-hidden). */
   label?: string;
-  /** CSS length for one dot (sets `--dotmatrix-dot`). */
+  /** CSS length for one dot (sets `--dotmatrix-dot`; sanitized — a value that
+   *  is not a plain length/calc expression is dropped). */
   dot?: string;
-  /** CSS length for the gap between dots (sets `--dotmatrix-gap`). */
+  /** CSS length for the gap between dots (sets `--dotmatrix-gap`; sanitized
+   *  the same way as `dot`). */
   gap?: string;
 }
 
