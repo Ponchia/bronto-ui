@@ -33,6 +33,15 @@ categorical color lands later it ships as a governed, opt-in data-viz module
 
 ### Added
 
+- **Framework bindings — `@ponchia/ui/react` + `@ponchia/ui/solid`.** Optional,
+  thin hooks over the SSR-safe `init*` behaviors (run on mount, clean up on
+  unmount/dispose): `useDialog`, `useTabs`, `useMenu`, `useCombobox`,
+  `usePopover`, `useDisclosure`, `useFormValidation`, `useTableSort`,
+  `useCarousel`, `useDismissible`, `useThemeToggle`, `useDotGlyph`,
+  `useToast()`, and the generic `useBrontoBehavior(init, opts)`; `cls`/`ui`/`cx`
+  re-exported for one-import DX. `react` / `solid-js` are **optional peer
+  dependencies** — the core stays zero-runtime-dependency. Thin adapters over
+  the canonical CSS/behaviors layer, not a component library (architecture ADR).
 - **Glyphs: a one-node icon-at-scale render path + a `.ui-icon` wrapper + 5
   circle-family glyphs.** `renderGlyph(name, { render: 'mask', size })` now
   returns a **single** `.ui-icon` element masked by the glyph bitmap (one DOM

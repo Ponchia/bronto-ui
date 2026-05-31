@@ -108,6 +108,17 @@ const series1: string = charts.light.categorical[0];
 const badChart: ChartTokenName = '--chart-99';
 void [chartTok, series1, badChart];
 
+// Framework bindings: the ./react + ./solid hook types resolve from the .d.ts
+// (no react/solid-js needed to type-check), take the behaviors' opts, and the
+// toast hook returns the imperative.
+import { useDialog as useDialogR, useToast as useToastR } from '../react/index.js';
+import { useTabs as useTabsS } from '../solid/index.js';
+const rDialog: void = useDialogR({ root: document });
+const rToast = useToastR();
+const rDismiss = rToast('hi', { tone: 'success' }); // Cleanup
+const sTabs: void = useTabsS();
+void [rDialog, rDismiss, sTabs];
+
 void [
   btn,
   appShell,

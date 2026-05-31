@@ -128,7 +128,7 @@ Not an afterthought — a gate. Every contractual token pairing has a declared W
 
 ## Works with anything
 
-The CSS is the framework, so it works with React, Svelte/SvelteKit, Astro, Vue, Solid or plain HTML — there's no component runtime to adopt. The optional `classes` and `behaviors` entrypoints pull in **no** UI framework and are SSR-safe.
+The CSS is the framework, so it works with React, Svelte/SvelteKit, Astro, Vue, Solid or plain HTML — there's no component runtime to adopt. The optional `classes` and `behaviors` entrypoints pull in **no** UI framework and are SSR-safe. For React and Solid there are also **optional thin bindings** — `@ponchia/ui/react` and `@ponchia/ui/solid` wrap the behaviors as hooks (`useDialog`, `useToast`, …); `react`/`solid-js` are optional peer deps, so the core stays zero-dependency.
 
 Per-framework getting-started guides + runnable example apps live in the repo:
 

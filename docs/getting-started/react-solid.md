@@ -3,8 +3,40 @@
 `@ponchia/ui` ships **no per-framework component package** — that is a
 deliberate ADR (`docs/architecture.md`): the CSS is the framework and
 the typed `cls`/`ui` recipes are already framework-agnostic. Only the
-imperative behaviors need a lifecycle wrapper, and it is small enough to
-copy. This page is that copy-paste.
+imperative behaviors need a lifecycle wrapper.
+
+Since 0.4.0 those wrappers ship as **optional, thin bindings** —
+`@ponchia/ui/react` and `@ponchia/ui/solid` (`react` / `solid-js` are
+_optional_ peer deps). They're hooks over the same `init*` behaviors:
+
+```tsx
+// React
+import { useDialog, useTabs, useToast, cls } from '@ponchia/ui/react';
+function App() {
+  useDialog(); // wires every .ui-modal under document; cleans up on unmount
+  useTabs();
+  const toast = useToast();
+  return <button className={cls.button} onClick={() => toast('Saved', { tone: 'success' })}>Save</button>;
+}
+```
+
+```tsx
+// Solid — identical surface
+import { useDialog, useToast } from '@ponchia/ui/solid';
+function App() {
+  useDialog();
+  const toast = useToast();
+  return <button class="ui-button" onClick={() => toast('Saved')}>Save</button>;
+}
+```
+
+There's a `useX` for each behavior (`useDialog`, `useTabs`, `useMenu`,
+`useCombobox`, `usePopover`, `useDisclosure`, `useFormValidation`,
+`useTableSort`, `useCarousel`, `useDismissible`, `useThemeToggle`,
+`useDotGlyph`), `useToast()` → the imperative, and the generic
+`useBrontoBehavior(init, opts)`. Pass `{ root: ref.current }` to scope a
+hook to a subtree. The hand-rolled equivalent below still works if you'd
+rather not take the binding — it's exactly what the bindings do.
 
 ## CSS + no-flash theme
 

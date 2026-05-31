@@ -46,6 +46,13 @@ Optional vanilla behaviors (theme toggle, etc. — SSR-safe, tree-shakeable):
 import { applyStoredTheme } from '@ponchia/ui/behaviors';
 ```
 
+For React/Solid, optional thin hook bindings over those behaviors (peer deps
+`react` / `solid-js`, optional — core stays zero-dep):
+
+```js
+import { useDialog, useToast } from '@ponchia/ui/react'; // or '@ponchia/ui/solid'
+```
+
 Optional display glyphs — dot-matrix bitmaps on the `.ui-dotmatrix` primitive
 (decorative by default; `renderGlyph` is SSR-safe, `initDotGlyph` is the DOM form):
 
