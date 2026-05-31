@@ -37,10 +37,10 @@ There's a `useX` for each behavior (`useDialog`, `useTabs`, `useMenu`,
 `useBrontoBehavior(init, opts)`. To scope a hook to a subtree, pass a
 React ref object (`{ root: ref }`) or a resolver callback (`() => ({
 root: el })`). The bindings resolve options on mount, after refs have
-been assigned. Avoid `{ root: ref.current }` in React render code because
-that captures the first render's `null`. The hand-rolled equivalent below
-still works if you'd rather not take the binding — it's exactly what the
-bindings do.
+been assigned; the ref/resolver timing was hardened in 0.4.1. Avoid
+`{ root: ref.current }` in React render code because that captures the first
+render's `null`. The hand-rolled equivalent below still works if you'd rather
+not take the binding — it's exactly what the bindings do.
 
 ## CSS + no-flash theme
 
@@ -102,6 +102,10 @@ export function Screen() {
   return <main ref={root}>{/* dialog/tab markup */}</main>;
 }
 ```
+
+`root` scopes which delegated controls are wired. Controlled targets such as
+dialogs, disclosures, and popovers resolve root-first, then document-wide so
+body/portal-mounted overlays keep working.
 
 ## Solid: `onMount` / `onCleanup`
 

@@ -1,6 +1,6 @@
 {
   "name": "@ponchia/ui",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "type": "module",
   "description": "CSS-first, framework-agnostic UI framework — token-driven restraint (monochrome by default, one rationed accent), OKLCH colorways, a dot-matrix icon set, a colourblind-safe data-viz palette, dot-matrix motifs, zero runtime dependencies.",
   "keywords": [

@@ -27,6 +27,9 @@ Behaviors assume trusted application markup. If a delegated root includes
 untrusted CMS or user HTML, sanitize it first or do not initialize behaviors on
 that root. The behavior layer intentionally lets authored `data-bronto-*`,
 `aria-controls`, and `id` relationships control elements inside the root.
+Dialog, disclosure, and popover targets resolve root-first and then
+document-wide for body/portal-mounted overlays; scoped roots are not a sandbox
+for untrusted markup.
 
 The one-node glyph mask renderer emits inline style/custom-property data. Apps
 with a strict CSP should either allow the required `data:` mask/image source and

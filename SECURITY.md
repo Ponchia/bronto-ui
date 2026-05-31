@@ -34,7 +34,10 @@ optional peer only when imported.
 Behaviors assume trusted application markup. Do not initialize them over
 untrusted user/CMS HTML unless you have sanitized that markup and are
 comfortable with its `data-bronto-*`, `aria-controls`, and `id`
-relationships controlling elements inside the delegated root.
+relationships controlling elements inside the delegated root. Dialog,
+disclosure, and popover targets resolve root-first and then document-wide
+for body/portal-mounted overlays, so a scoped root is an ergonomics and
+conflict-avoidance boundary, not an untrusted-markup sandbox.
 
 The `.ui-icon` glyph mask renderer uses an inline CSS `data:` URL. If
 your app ships a strict CSP and uses `renderGlyph(..., { render:

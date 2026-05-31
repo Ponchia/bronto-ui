@@ -152,7 +152,7 @@ test('initDisclosure keeps aria-expanded and hidden in sync', () => {
   assert.equal(panel.hidden, true);
 });
 
-test('initDisclosure scoped root only toggles controlled panels inside that root', () => {
+test('initDisclosure scoped root can target document-wide portal panels', () => {
   const d = mount(
     '<section id="scope"><button data-bronto-disclosure aria-controls="outside" aria-expanded="false">m</button></section>' +
       '<div id="outside" hidden>panel</div>',
@@ -161,7 +161,7 @@ test('initDisclosure scoped root only toggles controlled panels inside that root
   d.querySelector('[data-bronto-disclosure]').dispatchEvent(
     new dom.window.MouseEvent('click', { bubbles: true }),
   );
-  assert.equal(d.getElementById('outside').hidden, true, 'outside panel untouched');
+  assert.equal(d.getElementById('outside').hidden, false, 'outside portal panel toggled');
 });
 
 test('initDisclosure scoped root resolves duplicate ids inside the root first', () => {
@@ -250,12 +250,12 @@ test('initDialog opens via data-bronto-open and closes via data-bronto-close', (
   assert.equal(dlg.open, false, 'no-op after cleanup');
 });
 
-test('initDialog scoped root only opens dialogs inside that root', () => {
+test('initDialog scoped root can target document-wide portal dialogs', () => {
   const d = mount(
     '<section id="scope"><button data-bronto-open="inside" id="openIn">open</button>' +
       '<dialog id="inside"></dialog>' +
       '<button data-bronto-open="outside" id="openOut">open</button></section>' +
-      '<dialog id="outside"></dialog>',
+      '<dialog id="outside" data-bronto-dialog-light><button data-bronto-close>x</button></dialog>',
   );
   const inside = stubDialog(d.getElementById('inside'));
   const outside = stubDialog(d.getElementById('outside'));
@@ -265,7 +265,16 @@ test('initDialog scoped root only opens dialogs inside that root', () => {
   assert.equal(inside.open, true, 'inside dialog opened');
 
   d.getElementById('openOut').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
-  assert.equal(outside.open, false, 'outside dialog ignored');
+  assert.equal(outside.open, true, 'outside portal dialog opened');
+
+  d.querySelector('#outside [data-bronto-close]').dispatchEvent(
+    new dom.window.MouseEvent('click', { bubbles: true }),
+  );
+  assert.equal(outside.open, false, 'outside portal dialog close button works');
+
+  d.getElementById('openOut').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  outside.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(outside.open, false, 'outside portal dialog light-dismiss works');
 });
 
 test('initDialog scoped root resolves duplicate ids inside the root first', () => {
@@ -816,18 +825,21 @@ test('initPopover: toggles panel, manages aria, Escape + outside close', () => {
   assert.equal(panel.classList.contains('is-open'), false, 'no-op after cleanup');
 });
 
-test('initPopover scoped root only opens panels inside that root', () => {
+test('initPopover scoped root can target document-wide portal panels', () => {
   const d = mount(
     '<section id="scope"><button id="t" data-bronto-popover="outside">Info</button></section>' +
-      '<div class="ui-popover" id="outside">Details</div>',
+      '<div class="ui-popover" id="outside">Details</div><button id="away">Away</button>',
   );
+  const panel = d.getElementById('outside');
   initPopover({ root: d.getElementById('scope') });
   d.getElementById('t').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
-  assert.equal(
-    d.getElementById('outside').classList.contains('is-open'),
-    false,
-    'outside panel ignored',
-  );
+  assert.equal(panel.classList.contains('is-open'), true, 'outside portal panel opened');
+  d.getElementById('away').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), false, 'outside click closes portal panel');
+
+  d.getElementById('t').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  d.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), false, 'Escape closes portal panel');
 });
 
 test('initPopover scoped root resolves duplicate ids inside the root first', () => {

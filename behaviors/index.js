@@ -54,16 +54,14 @@ function bindOnce(target, key, add) {
   return cleanup;
 }
 
-function inHost(host, el) {
-  if (!el) return false;
-  return host === document || host === el || host.contains?.(el);
-}
-
 function byIdInHost(host, id) {
   if (!id) return null;
   if (host === document) return document.getElementById(id);
   if (host.id === id) return host;
-  return Array.from(host.querySelectorAll?.('[id]') || []).find((el) => el.id === id) || null;
+  return (
+    Array.from(host.querySelectorAll?.('[id]') || []).find((el) => el.id === id) ||
+    document.getElementById(id)
+  );
 }
 
 function closestSafe(el, selector) {
@@ -284,49 +282,64 @@ export function initTabs({ root } = {}) {
  * `close` event, so keyboard/SR users are never dropped at `<body>`.
  * SSR-safe and idempotent; returns cleanup.
  *
- * `root` scopes both delegated triggers and the dialog ids they may control
- * (default `document`).
+ * `root` scopes delegated triggers (default `document`). Controlled targets are
+ * resolved root-first, then document-wide, so scoped islands win duplicate-id
+ * conflicts without breaking body/portal-mounted overlays.
  */
 export function initDialog({ root } = {}) {
   if (!hasDom()) return noop;
   const host = root || document;
-  const onClick = (e) => {
-    const opener = e.target.closest('[data-bronto-open]');
-    if (opener && host.contains(opener)) {
-      const dlg = byIdInHost(host, opener.getAttribute('data-bronto-open'));
-      if (dlg && typeof dlg.showModal === 'function' && !dlg.open) {
-        dlg.addEventListener(
-          'close',
-          () => {
-            if (opener.isConnected && typeof opener.focus === 'function') opener.focus();
-          },
-          { once: true },
-        );
-        dlg.showModal();
-      }
-      return;
-    }
-    const closer = e.target.closest('[data-bronto-close]');
-    if (closer && host.contains(closer)) {
-      const dlg = closer.closest('dialog');
-      if (dlg && dlg.open) dlg.close();
-      return;
-    }
-    // Light-dismiss: a click whose target is the <dialog> itself is the
-    // backdrop (content sits in child elements).
-    const dlg = e.target;
+  const managedDialogs = new WeakSet();
+  const canManageDialog = (dlg, origin) => host.contains(origin) || managedDialogs.has(dlg);
+
+  const openFrom = (opener) => {
+    const dlg = byIdInHost(host, opener.getAttribute('data-bronto-open'));
+    if (!dlg || typeof dlg.showModal !== 'function' || dlg.open) return;
+    managedDialogs.add(dlg);
+    dlg.addEventListener(
+      'close',
+      () => {
+        if (opener.isConnected && typeof opener.focus === 'function') opener.focus();
+      },
+      { once: true },
+    );
+    dlg.showModal();
+  };
+
+  const closeFrom = (closer) => {
+    const dlg = closer.closest('dialog');
+    if (dlg && dlg.open && canManageDialog(dlg, closer)) dlg.close();
+  };
+
+  const lightDismiss = (dlg) => {
     if (
       dlg.tagName === 'DIALOG' &&
       dlg.open &&
       dlg.hasAttribute('data-bronto-dialog-light') &&
-      host.contains(dlg)
+      canManageDialog(dlg, dlg)
     ) {
       dlg.close();
     }
   };
+
+  const onClick = (e) => {
+    const opener = e.target.closest('[data-bronto-open]');
+    if (opener && host.contains(opener)) {
+      openFrom(opener);
+      return;
+    }
+    const closer = e.target.closest('[data-bronto-close]');
+    if (closer) {
+      closeFrom(closer);
+      return;
+    }
+    // Light-dismiss: a click whose target is the <dialog> itself is the
+    // backdrop (content sits in child elements).
+    lightDismiss(e.target);
+  };
   return bindOnce(host, 'dialog', () => {
-    host.addEventListener('click', onClick);
-    return () => host.removeEventListener('click', onClick);
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
   });
 }
 
@@ -955,12 +968,12 @@ export function initPopover({ root } = {}) {
   };
 
   return bindOnce(host, 'popover', () => {
-    host.addEventListener('click', onClick);
+    document.addEventListener('click', onClick);
     document.addEventListener('keydown', onKey);
     view?.addEventListener('scroll', onReflow, true);
     view?.addEventListener('resize', onReflow);
     return () => {
-      host.removeEventListener('click', onClick);
+      document.removeEventListener('click', onClick);
       document.removeEventListener('keydown', onKey);
       view?.removeEventListener('scroll', onReflow, true);
       view?.removeEventListener('resize', onReflow);

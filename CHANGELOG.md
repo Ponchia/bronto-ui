@@ -4,6 +4,32 @@
 > `~0.x`; `^0.x` does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## 0.4.1 — 2026-05-31
+
+Patch hardening for the public framework surface.
+
+### Fixed
+
+- React and Solid bindings now resolve scoped roots on mount, so `{ root: ref }`
+  and resolver callbacks work after framework refs are assigned. Nullish resolver
+  results normalize to default behavior instead of crashing destructuring
+  behavior initializers.
+- Scoped behavior roots now resolve controlled ids root-first, then
+  document-wide. This keeps existing body/portal-mounted dialogs, popovers, and
+  disclosure panels working while preventing earlier duplicate ids outside an
+  island from shadowing the in-root target.
+- `data-bronto-dismiss="<selector>"` ignores malformed selectors instead of
+  throwing during event handling.
+- The one-node glyph mask path now includes a WebKit-prefixed mask declaration,
+  and the OKLCH accent ramp uses an explicit white/black neutral endpoint for
+  cross-engine browser parity.
+
+### Added
+
+- React and Solid Vite examples, CI/release matrix coverage for those examples,
+  runtime binding tests, public API stability docs, a release runbook, and
+  `npm run size:report`.
+
 ## 0.4.0 — 2026-05-31
 
 The color-system release — [ADR-0001](docs/adr/0001-color-system.md) steps 1–8.
@@ -34,12 +60,11 @@ categorical color lands later it ships as a governed, opt-in data-viz module
 ### Added
 
 - **The `--accent-1..6` ramp is now perceptually even (OKLCH).** Steps 1–4 mix
-  the accent toward an explicit per-theme white/black endpoint `in oklch`
-  instead of using the old sRGB ramp (ADR-0001 step 8), so the ramp reads as
-  evenly-spaced and avoids low-chroma background-hue differences between browser
-  engines. `scripts/gen-resolved.mjs` learned to resolve `color-mix(in oklch,…)`
-  → hex with the same one-channel tolerance browsers show, so `tokens/resolved.json`,
-  the DTCG export, and `docs/reference.md` all carry the new values. These are
+  the accent `in oklch` instead of using the old sRGB ramp (ADR-0001 step 8), so
+  the ramp reads as evenly-spaced. `scripts/gen-resolved.mjs` learned to resolve
+  `color-mix(in oklch,…)` → hex with the same one-channel tolerance browsers
+  show, so `tokens/resolved.json`, the DTCG export, and `docs/reference.md` all
+  carry the new values. These are
   token **values** (non-contractual under the 0.x policy) and the ramp is not
   consumed by any shipped component, so there is **no change to any component's
   rendering** — only consumers using `var(--accent-1..4)` directly see the
