@@ -21,6 +21,7 @@ import { writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { cssVars } from '../tokens/index.js';
+import { mixOklch } from './lib/oklch.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -72,13 +73,15 @@ function parseLiteral(v) {
 }
 
 /**
- * color-mix(in srgb, C1 p1?, C2 p2?) per CSS Color 5, sRGB
- * (gamma-encoded), alpha-premultiplied. Percentages default so the pair
- * sums to 100%; a sum < 100% scales the result alpha.
+ * color-mix(in <srgb|oklch>, C1 p1?, C2 p2?) per CSS Color 4/5. `srgb` is
+ * gamma-encoded + alpha-premultiplied; `oklch` interpolates L/C/H (shorter-arc
+ * hue, powerless-achromatic) via the shared lib. Percentages default so the
+ * pair sums to 100%; a sum < 100% scales the result alpha.
  */
 function mix(args, scope, seen) {
   const parts = splitTop(args);
-  if (!/^in\s+srgb$/i.test(parts[0])) return null; // only srgb is used
+  const space = /^in\s+(srgb|oklch)$/i.exec(parts[0])?.[1]?.toLowerCase();
+  if (!space) return null; // only srgb / oklch are understood
   const stop = (raw) => {
     const pm = raw.match(/\s([0-9.]+)%\s*$/);
     const pct = pm ? parseFloat(pm[1]) : null;
@@ -99,9 +102,14 @@ function mix(args, scope, seen) {
   const w2 = p2 / sum;
   const [r1, g1, b1, al1] = a.rgba;
   const [r2, g2, b2, al2] = b.rgba;
+  const alphaMul = sum < 100 ? sum / 100 : 1;
+  if (space === 'oklch') {
+    // The accent ramp mixes opaque colours; interpolate in OKLCH.
+    const [r, g, bl] = mixOklch([r1, g1, b1], [r2, g2, b2], w1, w2);
+    return [r, g, bl, (al1 * w1 + al2 * w2) * alphaMul];
+  }
   const oa = al1 * w1 + al2 * w2;
   const un = (c1, c2) => (oa === 0 ? 0 : (c1 * al1 * w1 + c2 * al2 * w2) / oa);
-  const alphaMul = sum < 100 ? sum / 100 : 1;
   return [un(r1, r2), un(g1, g2), un(b1, b2), oa * alphaMul];
 }
 
@@ -142,7 +150,7 @@ function paletteFor(themeKey) {
 export function buildResolved() {
   return {
     $comment:
-      '@ponchia/ui colour tokens resolved to static values per theme (var() + sRGB color-mix() evaluated at build). For non-CSS render targets: MapLibre/canvas/WebGL/SVG. Generated from tokens/index.js — do not edit by hand; run `npm run resolved:build`. Drift-checked in CI.',
+      '@ponchia/ui colour tokens resolved to static values per theme (var() + sRGB/OKLCH color-mix() evaluated at build). For non-CSS render targets: MapLibre/canvas/WebGL/SVG. Generated from tokens/index.js — do not edit by hand; run `npm run resolved:build`. Drift-checked in CI.',
     light: paletteFor('light'),
     dark: paletteFor('dark'),
   };

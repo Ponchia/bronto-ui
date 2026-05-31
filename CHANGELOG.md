@@ -33,6 +33,16 @@ categorical color lands later it ships as a governed, opt-in data-viz module
 
 ### Added
 
+- **The `--accent-1..6` ramp is now perceptually even (OKLCH).** Steps 1–4 mix
+  the accent toward the background `in oklch` instead of `in srgb` (ADR-0001
+  step 8), so the ramp reads as evenly-spaced — better for charts / multi-state
+  surfaces. `scripts/gen-resolved.mjs` learned to resolve `color-mix(in oklch,…)`
+  → hex (bit-for-bit matching browser `color-mix`), so `tokens/resolved.json`,
+  the DTCG export, and `docs/reference.md` all carry the new values. These are
+  token **values** (non-contractual under the 0.x policy) and the ramp is not
+  consumed by any shipped component, so there is **no change to any component's
+  rendering** — only consumers using `var(--accent-1..4)` directly see the
+  (intended) shift.
 - **Framework bindings — `@ponchia/ui/react` + `@ponchia/ui/solid`.** Optional,
   thin hooks over the SSR-safe `init*` behaviors (run on mount, clean up on
   unmount/dispose): `useDialog`, `useTabs`, `useMenu`, `useCombobox`,

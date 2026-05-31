@@ -1,10 +1,10 @@
 {
-  "$comment": "@ponchia/ui colour tokens resolved to static values per theme (var() + sRGB color-mix() evaluated at build). For non-CSS render targets: MapLibre/canvas/WebGL/SVG. Generated from tokens/index.js — do not edit by hand; run `npm run resolved:build`. Drift-checked in CI.",
+  "$comment": "@ponchia/ui colour tokens resolved to static values per theme (var() + sRGB/OKLCH color-mix() evaluated at build). For non-CSS render targets: MapLibre/canvas/WebGL/SVG. Generated from tokens/index.js — do not edit by hand; run `npm run resolved:build`. Drift-checked in CI.",
   "light": {
-    "--accent-1": "#f2e2e1",
-    "--accent-2": "#efd1d1",
-    "--accent-3": "#ebaeaf",
-    "--accent-4": "#e37175",
+    "--accent-1": "#f6e5e2",
+    "--accent-2": "#f6d6d2",
+    "--accent-3": "#f5b8b1",
+    "--accent-4": "#ed8378",
     "--accent-5": "#d71921",
     "--accent-6": "#b2151b",
     "--surface-1": "#f4f4f2",
@@ -63,10 +63,10 @@
     "--focus-ring": "#d71921"
   },
   "dark": {
-    "--accent-1": "#140505",
-    "--accent-2": "#29090a",
-    "--accent-3": "#521315",
-    "--accent-4": "#992327",
+    "--accent-1": "#020000",
+    "--accent-2": "#0d0101",
+    "--accent-3": "#330506",
+    "--accent-4": "#80191c",
     "--accent-5": "#ff3b41",
     "--accent-6": "#ff5a5f",
     "--surface-1": "#000000",

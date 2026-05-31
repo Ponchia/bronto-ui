@@ -7,19 +7,19 @@
     },
     {
       "name": "--accent-1",
-      "description": "Global scale token. Value: `color-mix(in srgb, var(--accent) 8%, var(--bg))`"
+      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 8%, var(--bg))`"
     },
     {
       "name": "--accent-2",
-      "description": "Global scale token. Value: `color-mix(in srgb, var(--accent) 16%, var(--bg))`"
+      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 16%, var(--bg))`"
     },
     {
       "name": "--accent-3",
-      "description": "Global scale token. Value: `color-mix(in srgb, var(--accent) 32%, var(--bg))`"
+      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 32%, var(--bg))`"
     },
     {
       "name": "--accent-4",
-      "description": "Global scale token. Value: `color-mix(in srgb, var(--accent) 60%, var(--bg))`"
+      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 60%, var(--bg))`"
     },
     {
       "name": "--accent-5",

@@ -67,10 +67,10 @@
      surfaces (the use case tokens/index.js advertises). Derived from the
      single --accent knob via color-mix against the theme bg, so it
      re-brands and theme-adapts automatically; no per-theme duplication. */
-  --accent-1: color-mix(in srgb, var(--accent) 8%, var(--bg));
-  --accent-2: color-mix(in srgb, var(--accent) 16%, var(--bg));
-  --accent-3: color-mix(in srgb, var(--accent) 32%, var(--bg));
-  --accent-4: color-mix(in srgb, var(--accent) 60%, var(--bg));
+  --accent-1: color-mix(in oklch, var(--accent) 8%, var(--bg));
+  --accent-2: color-mix(in oklch, var(--accent) 16%, var(--bg));
+  --accent-3: color-mix(in oklch, var(--accent) 32%, var(--bg));
+  --accent-4: color-mix(in oklch, var(--accent) 60%, var(--bg));
   --accent-5: var(--accent);
   --accent-6: var(--accent-strong);
 
