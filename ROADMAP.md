@@ -6,7 +6,7 @@ without turning the project into a per-framework component suite.
 
 > **Source of truth is [`CHANGELOG.md`](CHANGELOG.md).** This file describes
 > direction; the changelog records what actually shipped. If they disagree, the
-> changelog wins. Last reconciled against `0.4.0`.
+> changelog wins. Last reconciled against `0.4.1`.
 
 ## Shipped through 0.4.0
 
@@ -58,7 +58,6 @@ without turning the project into a per-framework component suite.
 - Date-time picker, command palette, tree-view, and richer data-table recipes:
   only if real consumers need them, and preferably as documented recipes before
   growing the core behavior layer.
-- Canary / `next` dist-tag for testing an upcoming minor before `latest`.
 - Optional font-weight strategy: WOFF2/subsetting or a fontless preset if the
   install-size report shows the current bundled TTF set is too heavy.
 
