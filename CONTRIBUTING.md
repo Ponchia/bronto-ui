@@ -94,10 +94,22 @@ Releases publish to npm and are tag-driven:
 git tag vX.Y.Z && git push origin vX.Y.Z
 ```
 
+**Prereleases (release candidates).** Tag a SemVer prerelease and it
+publishes to the `next` dist-tag instead of `latest`, so consumers only
+get it via `npm i @ponchia/ui@next`:
+
+```bash
+# package.json version must match, e.g. "0.4.0-rc.1". The base version's
+# CHANGELOG section need only exist ("## Unreleased — 0.4.0" is fine) —
+# only the final stable release must be dated.
+git tag v0.4.0-rc.1 && git push origin v0.4.0-rc.1
+```
+
 The tag triggers `.github/workflows/release.yml`: `validate` (read-only
-checks + tag↔version match) **and** `e2e` (Playwright visual + a11y)
-must both pass → `publish-npm` → `release-notes`. **The npm publish is
-the gate** — a failing check or e2e means the version never reaches
+checks + tag↔version match), `e2e` (Playwright visual + a11y), **and**
+`examples` (consumer build against the packed tarball) must all pass →
+`publish-npm` → `release-notes`. **The npm publish is the gate** — a
+failing check, e2e, or examples build means the version never reaches
 npm, so consumers never resolve it. GitHub also serves the raw tag
 tarball ungated, but that is a legacy/fallback path, not the documented
 install. Publishing runs `npm publish --ignore-scripts` with provenance

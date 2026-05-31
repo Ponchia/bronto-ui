@@ -84,23 +84,34 @@ freshness (`check-dts`).
 
 ## Release gating
 
-`release.yml` (on a pushed `v*` tag) is a four-job DAG:
+`release.yml` (on a pushed `v*` tag) is a five-job DAG, serialized by a
+`concurrency: release-publish` group so two tags can't race the dist-tag
+pointer:
 
-- `validate` — read-only: `npm run check` + tag↔version match.
+- `validate` — read-only: `npm run check` + tag↔version match. `check`
+  includes `check:release`; for a prerelease tag the base version's
+  CHANGELOG section need only exist (`## Unreleased — x.y.z` is fine) —
+  only a stable release must carry a dated heading.
 - `e2e` — Playwright (visual + axe a11y, both themes, cross-engine) in
   the pinned `mcr.microsoft.com/playwright` container.
-- `publish-npm` — `needs: [validate, e2e]`: `npm publish` with provenance.
-  Dist-tag is derived from the tag: stable (`v0.4.0`) → `latest`; SemVer
-  prerelease (`v0.4.0-rc.1`, any hyphenated identifier) → `next`, so the
-  default `npm i @ponchia/ui` never moves onto an unstable build (opt in
-  with `@ponchia/ui@next`).
+- `examples` — `needs: validate`: builds the three downstream example
+  apps against the **packed tarball**, mirroring CI. Catches a broken
+  published surface (exports map / missing file / unresolved subpath)
+  that `check:pack`'s file-allowlist inspection cannot — so the release
+  path runs the same consumer smoke as merge-to-main.
+- `publish-npm` — `needs: [validate, e2e, examples]`: `npm publish` with
+  provenance. Dist-tag is derived from the tag: stable (`v0.4.0`) →
+  `latest`; SemVer prerelease (`v0.4.0-rc.1`, any hyphenated identifier)
+  → `next`, so the default `npm i @ponchia/ui` never moves onto an
+  unstable build (opt in with `@ponchia/ui@next`).
 - `release-notes` — `needs: publish-npm`: a GitHub Release for visibility
-  (transitively gated on a successful publish, hence on validate + e2e);
+  (transitively gated on a successful publish, hence on the gates above);
   prerelease tags are flagged so they aren't surfaced as "Latest".
 
 Because the documented install path is the npm package, **the npm publish
-is a real gate**: if `validate` *or* `e2e` fails, `publish-npm` never runs,
-the version never reaches the registry, and consumers never resolve it.
+is a real gate**: if `validate`, `e2e`, *or* `examples` fails,
+`publish-npm` never runs, the version never reaches the registry, and
+consumers never resolve it.
 (Corollary: a flaky `e2e` blocks releases — that is deliberate; fix the
 flake, don't bypass the gate.) Permissions are least-privilege per job
 (only `release-notes` gets `contents: write`; only `publish-npm` gets
