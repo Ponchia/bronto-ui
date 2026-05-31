@@ -60,6 +60,7 @@
 
     <script type="module">
       import { marked } from 'https://cdn.jsdelivr.net/npm/marked@15/lib/marked.esm.js';
+      import DOMPurify from 'https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.es.mjs';
 
       // The docs that ship + matter to a reader, in reading order.
       const DOCS = [
@@ -85,15 +86,25 @@
       }
 
       async function render(path) {
+        // Only ever fetch/show an allow-listed doc path (never a raw hash value).
         if (!links.has(path)) path = DOCS[0][0];
         for (const [p, a] of links) a.setAttribute('aria-current', p === path ? 'page' : 'false');
         try {
           const res = await fetch(path, { cache: 'no-cache' });
           if (!res.ok) throw new Error(res.status);
-          content.innerHTML = marked.parse(await res.text());
+          // Sanitize the rendered markdown before it touches the DOM — the docs
+          // are trusted, but never pipe fetched text into innerHTML unsanitized.
+          content.innerHTML = DOMPurify.sanitize(marked.parse(await res.text()));
           content.scrollIntoView({ block: 'start' });
         } catch {
-          content.innerHTML = `<p>Couldn't load <code>${path}</code>. View it on <a href="https://github.com/Ponchia/bronto-ui/blob/main/docs/${path}">GitHub</a>.</p>`;
+          // Build the fallback with the DOM API (no innerHTML / interpolation).
+          const p = document.createElement('p');
+          p.append("Couldn't load this doc. View it on ");
+          const a = document.createElement('a');
+          a.href = `https://github.com/Ponchia/bronto-ui/blob/main/docs/${encodeURI(path)}`;
+          a.textContent = 'GitHub';
+          p.append(a, '.');
+          content.replaceChildren(p);
         }
       }
 
