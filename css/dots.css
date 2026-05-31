@@ -79,10 +79,12 @@
 /* --reveal: cells power on in a left→right, top→bottom scan. The per-cell
    delay reads `--i` (the row-major index) which the renderer sets. */
 .ui-dotmatrix--reveal .ui-dotmatrix__cell {
-  animation: dotmatrixCellOn var(--duration-base, 0.3s) var(--ease-out) both;
-  animation-delay: calc(var(--i, 0) * 3ms);
+  animation: dotmatrixCellOn var(--duration-base) var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * var(--dotmatrix-reveal-step, 3ms));
 }
 
+/* `from`-only on purpose: when reduced-motion kills the animation the cells
+   stay at their natural opacity:1 — i.e. the settled end-state still shows. */
 @keyframes dotmatrixCellOn {
   from {
     opacity: 0;

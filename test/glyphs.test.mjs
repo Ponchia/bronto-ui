@@ -231,3 +231,42 @@ test('initDotGlyph honours data-bronto-glyph-solid and restores on cleanup', asy
     else globalThis.document = prevDocument;
   }
 });
+
+test('initDotGlyph honours data-bronto-glyph-anim (reveal stagger + pulse) and restores', async () => {
+  const dom = new JSDOM('<!doctype html><body></body>');
+  const prevDocument = globalThis.document;
+  globalThis.document = dom.window.document;
+  try {
+    const { initDotGlyph } = await import('../behaviors/index.js');
+
+    // reveal: adds the modifier class + a per-cell --i stagger.
+    const rev = dom.window.document.createElement('span');
+    rev.setAttribute('data-bronto-glyph', GLYPH_NAMES[0]);
+    rev.setAttribute('data-bronto-glyph-anim', 'reveal');
+    dom.window.document.body.appendChild(rev);
+    // pulse: adds the modifier class, no per-cell stagger.
+    const pul = dom.window.document.createElement('span');
+    pul.setAttribute('data-bronto-glyph', GLYPH_NAMES[0]);
+    pul.setAttribute('data-bronto-glyph-anim', 'pulse');
+    dom.window.document.body.appendChild(pul);
+
+    const stop = initDotGlyph({ root: dom.window.document });
+    assert.ok(rev.classList.contains('ui-dotmatrix--reveal'));
+    const cells = rev.querySelectorAll(':scope > .ui-dotmatrix__cell');
+    assert.equal(cells[0].style.getPropertyValue('--i'), '0');
+    assert.equal(cells[cells.length - 1].style.getPropertyValue('--i'), String(cells.length - 1));
+    assert.ok(pul.classList.contains('ui-dotmatrix--pulse'));
+    assert.equal(
+      pul.querySelector(':scope > .ui-dotmatrix__cell').style.getPropertyValue('--i'),
+      '',
+    );
+
+    stop();
+    assert.ok(!rev.classList.contains('ui-dotmatrix--reveal')); // class we added is removed
+    assert.ok(!pul.classList.contains('ui-dotmatrix--pulse'));
+    assert.equal(rev.getAttribute('class'), null); // no empty residue
+  } finally {
+    if (prevDocument === undefined) delete globalThis.document;
+    else globalThis.document = prevDocument;
+  }
+});

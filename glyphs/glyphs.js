@@ -915,5 +915,8 @@ export function renderGlyph(name, options = {}) {
     })
     .join('');
 
-  return `<div class="${cls}" style="${style.join(';')}" ${a11y}>${inner}</div>`;
+  // A `<span>` (not `<div>`): it's phrasing content, so the glyph is valid
+  // inline and inside a `<button>` (its content model is phrasing-only) — the
+  // inline-icon use. `.ui-dotmatrix`'s `display: grid` works on a span.
+  return `<span class="${cls}" style="${style.join(';')}" ${a11y}>${inner}</span>`;
 }

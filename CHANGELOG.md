@@ -30,9 +30,13 @@ policy.
   pixel glyph legible as an **inline icon down to ~16px**; and opt-in
   **`anim`** (`reveal` powers the cells on in a scan, `pulse` makes the glyph
   breathe) — decorative only, disabled under `prefers-reduced-motion`, with
-  the meaning kept in the static frame + label. The `GlyphName` literal union
-  is generated and CI-drift-checked from the runtime, like the `cls`/token
-  maps.
+  the meaning kept in the static frame + label. `renderGlyph` returns a
+  `<span>` (valid inline / inside a `<button>`) and accepts any string for
+  dynamic dispatch (`GlyphNameInput = GlyphName | (string & {})`) — unknown
+  names hit the documented `''`/`[]`/`undefined` fallback — while the
+  `GlyphName` union itself stays strict (typos in annotations are errors). The
+  union is generated and CI-drift-checked from the runtime, like the
+  `cls`/token maps.
 - **`initDotGlyph()` behavior.** Expands `[data-bronto-glyph]` placeholders
   into a `.ui-dotmatrix` grid in place (optional `data-bronto-glyph-label`),
   idempotent, with a cleanup that fully reverts — the DOM counterpart to
@@ -47,7 +51,8 @@ policy.
   look. Both default to the prior behaviour, so existing matrices are
   unchanged. Adds opt-in `ui-dotmatrix--reveal` / `ui-dotmatrix--pulse`
   animation modifiers (`cls.dotmatrixReveal` / `cls.dotmatrixPulse`), both
-  reduced-motion-aware.
+  reduced-motion-aware; `--dotmatrix-reveal-step` tunes the reveal scan speed
+  (per-cell delay, default `3ms`).
 
 ## 0.3.5 — 2026-05-29
 

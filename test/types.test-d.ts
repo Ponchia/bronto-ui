@@ -83,8 +83,13 @@ const gname: GlyphName = 'heart';
 const rows = glyph(gname); // readonly string[] | undefined
 const size: 16 = GLYPH_SIZE; // narrows to the literal
 const firstName: GlyphName = GLYPH_NAMES[0];
+// Dynamic dispatch: an arbitrary string is accepted (returns the '' fallback),
+// so a CMS/config-supplied name needs no cast.
+const dyn: string = renderGlyph('icon-from-config');
+// …but the GlyphName union itself still rejects typo'd literals.
 // @ts-expect-error — not a registered glyph name.
-renderGlyph('definitely-not-a-glyph');
+const bad: GlyphName = 'definitely-not-a-glyph';
+void [dyn, bad];
 
 void [
   btn,

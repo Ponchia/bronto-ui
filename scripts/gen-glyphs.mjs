@@ -25,9 +25,15 @@ const banner = (src) =>
 const u = (names) => names.map((n) => `'${n}'`).join('\n  | ');
 
 const glyphsDts = `${banner('glyphs/glyphs.js')}
-/** Every display-glyph name @ponchia/ui ships (literal union). */
+/** Every display-glyph name @ponchia/ui ships (literal union). Use this as a
+ *  type annotation to reject typos (\`const n: GlyphName = 'arow'\` is an error). */
 export type GlyphName =
   | ${u(GLYPH_NAMES)};
+
+/** A glyph name, or any string — for dynamic dispatch (a CMS/config value). The
+ *  known names still autocomplete; an unknown name hits the runtime fallback
+ *  (\`glyph\`→\`undefined\`, \`glyphCells\`→\`[]\`, \`renderGlyph\`→\`''\`). */
+export type GlyphNameInput = GlyphName | (string & {});
 
 /** A glyph is ${GLYPH_SIZE} rows of ${GLYPH_SIZE} chars: \`.\` off, \`#\` lit, \`*\` accent. */
 export type Glyph = readonly string[];
@@ -69,13 +75,13 @@ export declare const GLYPHS: Readonly<Record<GlyphName, Glyph>>;
 export declare const GLYPH_NAMES: readonly GlyphName[];
 
 /** The raw bitmap rows for a glyph, or \`undefined\` if the name is unknown. */
-export declare function glyph(name: GlyphName): Glyph | undefined;
+export declare function glyph(name: GlyphNameInput): Glyph | undefined;
 
 /** ${GLYPH_SIZE * GLYPH_SIZE} cell descriptors (row-major), or \`[]\` if unknown. */
-export declare function glyphCells(name: GlyphName): GlyphCell[];
+export declare function glyphCells(name: GlyphNameInput): GlyphCell[];
 
 /** A full \`.ui-dotmatrix\` HTML string for a glyph (\`''\` if unknown). */
-export declare function renderGlyph(name: GlyphName, options?: RenderGlyphOptions): string;
+export declare function renderGlyph(name: GlyphNameInput, options?: RenderGlyphOptions): string;
 `;
 
 export const generated = {
