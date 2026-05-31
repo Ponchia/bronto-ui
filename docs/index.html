@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — docs</title>
+    <meta
+      name="description"
+      content="@ponchia/ui documentation — theming, usage, class reference, contrast, and the color-system ADR."
+    />
+    <!-- Dogfood: the docs site is styled by the framework it documents. -->
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 16rem minmax(0, 1fr);
+        gap: 2rem;
+        max-width: 64rem;
+        margin: 0 auto;
+        padding: 2rem 1.25rem 5rem;
+      }
+      .nav {
+        position: sticky;
+        top: 1rem;
+        align-self: start;
+        font-family: var(--mono);
+        font-size: var(--text-sm);
+      }
+      .nav a {
+        display: block;
+        padding: 0.3rem 0.5rem;
+        border-radius: var(--radius-md);
+        color: var(--text-soft);
+        text-decoration: none;
+      }
+      .nav a[aria-current='page'] {
+        background: var(--bg-accent);
+        color: var(--accent-text);
+      }
+      @media (max-width: 48rem) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        .nav {
+          position: static;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <nav class="nav ui-stack" aria-label="Documentation" id="nav" style="--stack-gap: 0.1rem">
+        <strong class="ui-eyebrow" style="padding: 0.3rem 0.5rem">@ponchia/ui</strong>
+      </nav>
+      <main class="ui-prose" id="content" aria-live="polite">Loading…</main>
+    </div>
+
+    <script type="module">
+      import { marked } from 'https://cdn.jsdelivr.net/npm/marked@15/lib/marked.esm.js';
+
+      // The docs that ship + matter to a reader, in reading order.
+      const DOCS = [
+        ['getting-started/vanilla.md', 'Getting started'],
+        ['theming.md', 'Theming & colorways'],
+        ['usage.md', 'Usage guide'],
+        ['reference.md', 'Class reference'],
+        ['contrast.md', 'Contrast & a11y'],
+        ['adr/0001-color-system.md', 'Color system (ADR-0001)'],
+        ['architecture.md', 'Architecture'],
+        ['integration.md', 'Integration'],
+      ];
+
+      const nav = document.getElementById('nav');
+      const content = document.getElementById('content');
+      const links = new Map();
+      for (const [path, label] of DOCS) {
+        const a = document.createElement('a');
+        a.href = `#${path}`;
+        a.textContent = label;
+        nav.appendChild(a);
+        links.set(path, a);
+      }
+
+      async function render(path) {
+        if (!links.has(path)) path = DOCS[0][0];
+        for (const [p, a] of links) a.setAttribute('aria-current', p === path ? 'page' : 'false');
+        try {
+          const res = await fetch(path, { cache: 'no-cache' });
+          if (!res.ok) throw new Error(res.status);
+          content.innerHTML = marked.parse(await res.text());
+          content.scrollIntoView({ block: 'start' });
+        } catch {
+          content.innerHTML = `<p>Couldn't load <code>${path}</code>. View it on <a href="https://github.com/Ponchia/bronto-ui/blob/main/docs/${path}">GitHub</a>.</p>`;
+        }
+      }
+
+      const fromHash = () => render(decodeURIComponent(location.hash.slice(1)) || DOCS[0][0]);
+      addEventListener('hashchange', fromHash);
+      // Intercept in-doc links to other .md files so they route in the viewer.
+      content.addEventListener('click', (e) => {
+        const a = e.target.closest('a');
+        if (!a) return;
+        const href = a.getAttribute('href') || '';
+        if (/\.md(#|$)/.test(href) && !href.startsWith('http')) {
+          e.preventDefault();
+          location.hash = href.replace(/^\.?\//, '').replace(/^(\.\.\/)+/, '');
+        }
+      });
+      fromHash();
+    </script>
+  </body>
+</html>
