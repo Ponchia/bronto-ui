@@ -968,7 +968,7 @@ ui.button({ variant: 'ghost' });</code></pre>
              A display set: crisp from ~40px up, not a 16px inline-icon set. -->
         <p class="ui-muted">
           Display glyphs — <code>@ponchia/ui/glyphs</code>, a 43-glyph dot-matrix icon set
-          (default dot look, for display sizes).
+          (a sample, default dot look, for display sizes).
         </p>
         <div
           id="glyphGallery"
@@ -1002,13 +1002,21 @@ ui.button({ variant: 'ghost' });</code></pre>
         toast,
       } from '../behaviors/index.js';
       import { ui, cx } from '../classes/index.js';
-      import { GLYPH_NAMES, renderGlyph } from '../glyphs/glyphs.js';
+      import { renderGlyph } from '../glyphs/glyphs.js';
 
-      // Build the glyph gallery from the shipped registry, then let
-      // initDotGlyph() expand the placeholders — stays in sync with the set.
+      // A representative slice of the 43-glyph set (full list in the docs).
+      // Each glyph is a GLYPH_SIZE² grid, so showing all 43 here would add
+      // ~11k decorative nodes and slow the demo's axe scan — keep it light.
+      const GALLERY = [
+        'arrow-right', 'chevron-down', 'check', 'close', 'plus', 'search',
+        'menu', 'gear', 'edit', 'trash', 'download', 'play', 'eye', 'sun',
+        'bell', 'heart', 'home', 'user', 'star', 'spark',
+      ];
+
+      // Build the glyph gallery, then let initDotGlyph() expand the placeholders.
       const gallery = document.getElementById('glyphGallery');
       if (gallery) {
-        for (const name of GLYPH_NAMES) {
+        for (const name of GALLERY) {
           const cell = document.createElement('span');
           cell.className = 'ui-stack';
           cell.style.cssText = '--stack-gap: var(--space-2xs); align-items: center';
