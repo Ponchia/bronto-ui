@@ -53,6 +53,17 @@ import { renderGlyph, GLYPH_NAMES } from '@ponchia/ui/glyphs';
 el.innerHTML = renderGlyph('check', { label: 'Done' });
 ```
 
+Optional display colorways — opt-in, never in the default bundle. Root-level,
+like `data-theme` (the derived accent family only recomputes at `:root`):
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/skins.css" />
+<html data-bronto-skin="amber-crt | phosphor-green | e-ink">
+```
+
+Each re-points the one `--accent` (OKLCH, per-theme, contrast-gated); status
+colours and the neutral canvas are untouched. Details in `docs/theming.md`.
+
 ## Authoritative offline references (shipped in this package)
 
 Read these from `node_modules/@ponchia/ui/` — no network needed:

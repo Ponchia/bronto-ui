@@ -4,6 +4,64 @@
 > `~0.x`; `^0.x` does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased — 0.4.0
+
+First step of the color-system evolution in
+[ADR-0001](docs/adr/0001-color-system.md): make the (already three-tier)
+color model explicit and enforced, and clear out dead color. No visual or
+behavioral change to the default build — the red accent, every shipped token
+name, and both theme palettes render identically; this only removes a token
+nothing consumed and adds a gate. Breaking under the 0.x policy only in the
+strict sense that a public (but undocumented, unused) token name is gone.
+
+**BREAKING (orphan token removed)** — **`--orange` / `--orange-soft`** are
+removed. They were defined in every token mirror (`css/tokens.css`,
+`tokens/index.js`, `tokens.dtcg.json`, `resolved.json`, `index.d.ts`,
+`reference.md`) but **referenced by no component and documented nowhere**, and
+untiered under the new color model. As a provably-unreferenced token this is
+removed in a single minor under the CONTRIBUTING.md deprecation-policy
+exception (no working call-site to wind down). Removed rather than adopted; if
+categorical color lands later it ships as a governed, opt-in data-viz module
+(ADR-0001 tier 4), not a stray top-level token. _Migration:_ if you referenced
+`--orange`/`--orange-soft`, define it yourself in a consumer override.
+
+### Added
+
+- **Display colorways — `@ponchia/ui/css/skins.css`.** Opt-in
+  `data-bronto-skin="amber-crt | phosphor-green | e-ink"`, a **root-level**
+  choice like `data-theme` (apply on `<html>`). Each re-points the one accent
+  to a different single hue — the derived accent family, focus ring, dot-matrix
+  and glyphs follow automatically; status colours and the neutral canvas are
+  untouched. Authored in **OKLCH**, per-theme (a dark + light accent, like the
+  core red), and **every skin accent is contrast-gated** to the same WCAG AA /
+  3:1 floors as the core (see `docs/contrast.md`). Shipped as a **separate
+  entrypoint, never in the default `dist/bronto.css`** — zero cost unless you
+  import it. Sourced from `tokens/skins.js` (generated → drift-checked by
+  `check:skins`).
+- **Tier-3 dot-matrix "display expression" tokens** (`css/dots.css`):
+  `--dotmatrix-glow` (phosphor bloom on lit cells), `--dotmatrix-pulse-min`
+  (the `--pulse` floor), documented `--dotmatrix-reveal-step` (scan cadence).
+  All default to a **no-op**, so the default render is unchanged; the phosphor
+  colorways use the glow in dark.
+- **APCA advisory contrast** in `docs/contrast.md`. Every pairing (core **and**
+  every colorway) now shows an APCA-W3 `Lc` column beside the WCAG ratio — a
+  perceptual cross-check. **Advisory only**: WCAG 2.1 AA stays the hard gate
+  (`check:contrast`). Implemented dependency-free, alongside an OKLCH→sRGB
+  converter so OKLCH-authored values can be measured.
+- **`check:color-policy` gate** (`scripts/check-color-policy.mjs`, wired into
+  `npm run check`). Enforces the color constitution: every color-defining token
+  (across `global`/`light`/`dark`) must be classified into a tier (this is what
+  would have caught `--orange`); the `--chart-*` / `--cat-*` / `--data-*`
+  data-viz namespace is reserved; and component CSS may not use raw chromatic
+  color (only tiered tokens, with neutral grays / `color-mix()` endpoints).
+- **`check:skins` gate** — `css/skins.css` can't drift from `tokens/skins.js`,
+  every skin defines `--accent`, and colorways stay out of the default bundle.
+- **[ADR-0001 — Color system](docs/adr/0001-color-system.md)** — the five-tier
+  color constitution and the backward-compatible roadmap. Steps 1–6 are
+  implemented in this release (gate + colorways + Tier-3 tokens + OKLCH for new
+  work + APCA advisory); the data-viz categorical module and any core-ramp
+  OKLCH migration are deliberately deferred.
+
 ## 0.3.6 — 2026-05-31
 
 Display glyphs: a small `@ponchia/ui/glyphs` subpath of dot-matrix bitmaps

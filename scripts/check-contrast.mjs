@@ -28,11 +28,15 @@ for (const [rel, expected] of Object.entries(generated)) {
     errors.push(`${rel} is stale — run: npm run contrast:build`);
 }
 
-// 2. Floor enforcement.
-const { light, dark } = audit();
+// 2. Floor enforcement — core palette AND every shipped colorway. A skin is
+// part of the framework, so its accent is held to the same floors (this gate,
+// not just the unit test, is what docs/architecture.md advertise as enforcing
+// "every shipped colorway accent meets its WCAG floor").
+const { light, dark, skins: skinAudits } = audit();
 for (const [theme, rows] of [
   ['light', light],
   ['dark', dark],
+  ...skinAudits.map((s) => [`skin ${s.name}/${s.theme}`, s.rows]),
 ]) {
   for (const x of rows) {
     if (!x.gated) continue;
@@ -52,4 +56,6 @@ if (errors.length) {
   for (const e of errors) console.error(`  - ${e}`);
   process.exit(1);
 }
-console.log('✓ docs/contrast.md is fresh and every gated token pairing meets its WCAG floor');
+console.log(
+  '✓ docs/contrast.md is fresh and every gated token pairing — core palette and every colorway — meets its WCAG floor',
+);

@@ -17,7 +17,7 @@ test('forced-colors: the keyboard focus ring is re-asserted', async ({ page }) =
   // is fragile. The robust signal that our forced-colors block applied
   // is the focus outline (outline is not backplated): base.css sets
   // focus-visible → `outline: 2px solid Highlight`.
-  const btn = page.getByRole('button', { name: 'Primary' });
+  const btn = page.getByRole('button', { name: 'Primary', exact: true });
   await btn.focus();
   const o = await btn.evaluate((el) => {
     const s = getComputedStyle(el);

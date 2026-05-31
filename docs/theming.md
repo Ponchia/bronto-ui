@@ -141,7 +141,42 @@ coarser-grained handles.
   these; override one to slot your app's own layers around the
   framework's without specificity/`z-index` wars.
 
-All four tiers are in the DTCG export and the JS token model.
+All four tiers are in the DTCG export and the JS token model. The full
+five-tier colour model and its rules live in
+[ADR-0001](adr/0001-color-system.md).
+
+## Display colorways (`data-bronto-skin`)
+
+Opt-in single-hue colorways, shipped as a **separate** entrypoint (never in
+the default bundle):
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/skins.css" />
+<html data-theme="dark" data-bronto-skin="phosphor-green">
+  …
+</html>
+```
+
+`data-bronto-skin="amber-crt | phosphor-green | e-ink"` is a **root-level**
+choice, like `data-theme` — put it on `:root`/`<html>`. It re-points the one
+`--accent` (per theme, authored in OKLCH); the derived family, focus ring,
+dot-matrix and glyphs follow automatically, and status colours + the neutral
+canvas are untouched. A colorway is _not_ a second accent — it swaps the one
+you have, so the one-accent discipline holds.
+
+- **Root-level only.** The accent's derived family (`--accent-strong`/`-text`,
+  `--field-dot-accent`, `--accent-1..6`, …) is `color-mix(… var(--accent) …)`
+  declared on `:root`; it only re-evaluates on the element that carries it. A
+  skin on a subtree would leave that family stale, so the selectors are
+  `:root`-anchored and a subtree skin simply no-ops.
+- **Phosphor bloom.** The `amber-crt` / `phosphor-green` skins set
+  `--dotmatrix-glow` (a Tier-3 display knob, default `0`) in dark, so the
+  dot-matrix gains a CRT-style glow. Set it yourself on any `.ui-dotmatrix`
+  to tune the bloom.
+- **Contrast-gated.** Every shipped skin accent meets the same WCAG AA / 3:1
+  floors as the core palette — see [contrast.md](contrast.md) → "Display
+  colorways". (Your _own_ `--accent` re-brand is still your obligation; the
+  guarantee covers the shipped palettes and skins.)
 
 ## Accessibility markup contracts
 

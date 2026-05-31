@@ -59,6 +59,7 @@
     "resolved:build": "node scripts/gen-resolved.mjs",
     "dts:build": "node scripts/gen-dts.mjs",
     "glyphs:build": "node scripts/gen-glyphs.mjs",
+    "skins:build": "node scripts/gen-skins.mjs",
     "reference:build": "node scripts/gen-reference.mjs",
     "contrast:build": "node scripts/gen-contrast.mjs",
     "vscode:build": "node scripts/gen-vscode-data.mjs",
@@ -69,6 +70,8 @@
     "check:dts": "node scripts/check-dts.mjs",
     "check:behaviors": "node scripts/check-behaviors.mjs",
     "check:glyphs": "node scripts/check-glyphs.mjs",
+    "check:color-policy": "node scripts/check-color-policy.mjs",
+    "check:skins": "node scripts/check-skins.mjs",
     "check:types": "tsc -p tsconfig.json",
     "check:dtcg": "node scripts/check-dtcg.mjs",
     "check:resolved": "node scripts/check-resolved.mjs",
@@ -79,9 +82,9 @@
     "check:reference": "node scripts/check-reference.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:vscode": "node scripts/check-vscode-data.mjs",
-    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:tokens && npm run check:classes && npm run check:dts && npm run check:types && npm run check:dtcg && npm run check:resolved && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:release && npm run check:reference && npm run check:contrast && npm run check:vscode && npm run check:behaviors && npm run check:glyphs",
+    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:tokens && npm run check:classes && npm run check:dts && npm run check:types && npm run check:dtcg && npm run check:resolved && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:release && npm run check:reference && npm run check:contrast && npm run check:vscode && npm run check:behaviors && npm run check:glyphs && npm run check:color-policy && npm run check:skins",
     "test": "node --test \"test/*.test.mjs\"",
-    "prepack": "npm run tokens:build && npm run dtcg:build && npm run resolved:build && npm run dts:build && npm run reference:build && npm run contrast:build && npm run vscode:build && npm run dist:build && npm run glyphs:build",
+    "prepack": "npm run tokens:build && npm run dtcg:build && npm run resolved:build && npm run dts:build && npm run reference:build && npm run contrast:build && npm run vscode:build && npm run skins:build && npm run dist:build && npm run glyphs:build",
     "prepublishOnly": "npm run check && npm test"
   },
   "devDependencies": {
@@ -117,6 +120,7 @@
     "./css/disclosure.css": "./dist/css/disclosure.css",
     "./css/table.css": "./dist/css/table.css",
     "./css/app.css": "./dist/css/app.css",
+    "./css/skins.css": "./dist/css/skins.css",
     "./css/unlayered/tokens.css": "./css/tokens.css",
     "./css/unlayered/fonts.css": "./css/fonts.css",
     "./css/unlayered/base.css": "./css/base.css",
@@ -132,6 +136,7 @@
     "./css/unlayered/disclosure.css": "./css/disclosure.css",
     "./css/unlayered/table.css": "./css/table.css",
     "./css/unlayered/app.css": "./css/app.css",
+    "./css/unlayered/skins.css": "./css/skins.css",
     "./tokens": {
       "types": "./tokens/index.d.ts",
       "default": "./tokens/index.js"
@@ -157,6 +162,10 @@
     "./glyphs": {
       "types": "./glyphs/glyphs.d.ts",
       "default": "./glyphs/glyphs.js"
+    },
+    "./skins": {
+      "types": "./tokens/skins.d.ts",
+      "default": "./tokens/skins.js"
     },
     "./fonts/*": "./fonts/*"
   }

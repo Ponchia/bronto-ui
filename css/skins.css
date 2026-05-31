@@ -1,0 +1,54 @@
+/* @ponchia/ui — GENERATED from tokens/skins.js by scripts/gen-skins.mjs.
+ *  Do not edit by hand; run `npm run skins:build`. Drift-checked in CI.
+ *
+ *  Optional display colorways (ADR-0001). OPT-IN: imported on demand via
+ *  `@ponchia/ui/css/skins.css`, never part of the default bundle. Apply with
+ *  `data-bronto-skin="amber-crt | e-ink | phosphor-green"` on :root / <html> (a
+ *  root-level choice like data-theme), re-pointing the one accent. The accent's
+ *  derived family recomputes from the live var(--accent); status colours + the
+ *  neutral canvas are untouched. Every accent below is gated by check-contrast.mjs. */
+
+/* Amber CRT */
+:root[data-bronto-skin='amber-crt'] {
+  --accent: oklch(52% 0.11 67deg);
+}
+
+:root[data-theme='dark'][data-bronto-skin='amber-crt'] {
+  --accent: oklch(82% 0.15 82deg);
+  --dotmatrix-glow: 0.4em;
+}
+
+/* E-ink */
+:root[data-bronto-skin='e-ink'] {
+  --accent: oklch(34% 0.012 250deg);
+}
+
+:root[data-theme='dark'][data-bronto-skin='e-ink'] {
+  --accent: oklch(84% 0.008 250deg);
+}
+
+/* Phosphor Green */
+:root[data-bronto-skin='phosphor-green'] {
+  --accent: oklch(52% 0.13 150deg);
+}
+
+:root[data-theme='dark'][data-bronto-skin='phosphor-green'] {
+  --accent: oklch(84% 0.19 150deg);
+  --dotmatrix-glow: 0.4em;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light'])[data-bronto-skin='amber-crt'] {
+    --accent: oklch(82% 0.15 82deg);
+    --dotmatrix-glow: 0.4em;
+  }
+
+  :root:not([data-theme='light'])[data-bronto-skin='e-ink'] {
+    --accent: oklch(84% 0.008 250deg);
+  }
+
+  :root:not([data-theme='light'])[data-bronto-skin='phosphor-green'] {
+    --accent: oklch(84% 0.19 150deg);
+    --dotmatrix-glow: 0.4em;
+  }
+}

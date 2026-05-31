@@ -22,23 +22,58 @@ import { writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildResolved } from './gen-resolved.mjs';
+import { skins, SKIN_NAMES } from '../tokens/skins.js';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
-const HEX6 = /^#([0-9a-f]{6})$/i;
+const HEX = /^#([0-9a-f]{3,8})$/i;
 const RGBA_FN = /^rgba?\(([^)]+)\)$/i;
+const OKLCH_FN = /^oklch\(\s*([^)]+)\)$/i;
 
-/** Parse a resolved literal (#rrggbb or rgba(r, g, b, a)) → [r,g,b,a]. */
+/** oklch(L C H [/ A]) → sRGB [r,g,b] (0-255), via OKLab → linear sRGB → gamma.
+ *  L accepts 0-1 or a percentage; H is in degrees. Out-of-gamut is clamped. */
+function oklchToRgb(L, C, H) {
+  const hr = (H * Math.PI) / 180;
+  const a = C * Math.cos(hr);
+  const b = C * Math.sin(hr);
+  const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3;
+  const m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3;
+  const s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3;
+  const lin = [
+    4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+    -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+    -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s,
+  ];
+  // Reject out-of-sRGB-gamut accents loudly rather than silently clamping to a
+  // colour the browser would gamut-map differently — a clamped value would let
+  // the contrast gate pass/fail on a colour no user sees. (All shipped skin
+  // accents are in-gamut; this guards a future one.)
+  if (lin.some((c) => c < -0.001 || c > 1.001)) {
+    throw new Error(
+      `oklch(${L} ${C} ${H}) is outside the sRGB gamut (linear ${lin.map((c) => c.toFixed(3))}) — ` +
+        `pick an in-gamut accent so its contrast can be measured honestly`,
+    );
+  }
+  const gamma = (x) => {
+    const c = x <= 0.0031308 ? 12.92 * x : 1.055 * x ** (1 / 2.4) - 0.055;
+    return Math.max(0, Math.min(1, c)) * 255;
+  };
+  return lin.map(gamma);
+}
+
+/** Parse a resolved literal (#rrggbb, rgba(…), or oklch(…)) → [r,g,b,a]. */
 function rgba(v) {
   const s = String(v).trim();
-  const hex = HEX6.exec(s);
-  if (hex) {
-    const h = hex[1];
+  const hexM = HEX.exec(s);
+  if (hexM) {
+    // Expand 3/4-digit shorthand to 6/8 ("abc" → "aabbcc").
+    const h = hexM[1].length <= 4 ? [...hexM[1]].map((c) => c + c).join('') : hexM[1];
+    if (h.length !== 6 && h.length !== 8) return null;
     return [
       Number.parseInt(h.slice(0, 2), 16),
       Number.parseInt(h.slice(2, 4), 16),
       Number.parseInt(h.slice(4, 6), 16),
-      1,
+      h.length === 8 ? Number.parseInt(h.slice(6, 8), 16) / 255 : 1,
     ];
   }
   const fn = RGBA_FN.exec(s);
@@ -52,7 +87,36 @@ function rgba(v) {
     // which would then slip the gate as a non-comparable ratio).
     return out.every((n) => Number.isFinite(n)) ? out : null;
   }
+  const ok = OKLCH_FN.exec(s);
+  if (ok) {
+    const p = ok[1].split(/[\s/]+/).filter(Boolean);
+    if (p.length < 3) return null;
+    const L = p[0].endsWith('%') ? Number.parseFloat(p[0]) / 100 : Number.parseFloat(p[0]);
+    const C = Number.parseFloat(p[1]);
+    const H = Number.parseFloat(p[2]);
+    const al =
+      p[3] != null
+        ? p[3].endsWith('%')
+          ? Number.parseFloat(p[3]) / 100
+          : Number.parseFloat(p[3])
+        : 1;
+    if (![L, C, H, al].every((n) => Number.isFinite(n))) return null;
+    return [...oklchToRgb(L, C, H), al];
+  }
   return null;
+}
+
+/** color-mix(in srgb, A p%, B) for two OPAQUE colours, per CSS Color 5 (gamma
+ *  sRGB) — the only form the accent ramp uses. Returns an `rgb(r,g,b)` string.
+ *  Used to derive a skin's --accent-strong/-text from its (oklch) --accent the
+ *  same way css/tokens.css does, so the skin audit measures real values. */
+function mixSrgbOpaque(aRaw, bRaw, aPct) {
+  const a = rgba(aRaw);
+  const b = rgba(bRaw);
+  if (!a || !b) return null;
+  const w = aPct / 100;
+  const ch = (i) => Math.round(a[i] * w + b[i] * (1 - w));
+  return `rgb(${ch(0)}, ${ch(1)}, ${ch(2)})`;
 }
 
 /** Composite a possibly-translucent fg over an opaque bg (simple alpha). */
@@ -81,6 +145,51 @@ export function ratio(fgRaw, bgRaw) {
   const L2 = luminance(bgOpaque);
   const [hi, lo] = L1 >= L2 ? [L1, L2] : [L2, L1];
   return (hi + 0.05) / (lo + 0.05);
+}
+
+/** APCA (APCA-W3 0.1.9) lightness contrast, |Lc|. Advisory only — a
+ *  perceptual cross-check that accounts for polarity (light-on-dark vs
+ *  dark-on-light), which WCAG 2.1's symmetric ratio cannot. NOT gated:
+ *  WCAG 3 is a Working Draft, so WCAG 2.1 AA stays the hard floor. */
+export function apcaLc(fgRaw, bgRaw) {
+  const fg = rgba(fgRaw);
+  const bg = rgba(bgRaw);
+  if (!fg || !bg) return null;
+  const bgO = bg[3] >= 1 ? bg.slice(0, 3) : flatten(bg, [255, 255, 255]);
+  const fgO = fg[3] >= 1 ? fg.slice(0, 3) : flatten(fg, bgO);
+  // APCA luminance: simple ^2.4, Nimbusic coefficients (no WCAG piecewise).
+  const Y = ([r, g, b]) =>
+    0.2126729 * (r / 255) ** 2.4 + 0.7151522 * (g / 255) ** 2.4 + 0.072175 * (b / 255) ** 2.4;
+  const soft = (y) => (y < 0.022 ? y + (0.022 - y) ** 1.414 : y);
+  const Ytxt = soft(Y(fgO));
+  const Ybg = soft(Y(bgO));
+  let Sapc;
+  if (Ybg > Ytxt)
+    Sapc = (Ybg ** 0.56 - Ytxt ** 0.57) * 1.14; // dark text / light bg
+  else Sapc = (Ybg ** 0.65 - Ytxt ** 0.62) * 1.14; // light text / dark bg
+  let Lc = 0;
+  if (Math.abs(Sapc) >= 0.1) Lc = Sapc > 0 ? (Sapc - 0.027) * 100 : (Sapc + 0.027) * 100;
+  return Math.abs(Lc);
+}
+
+/**
+ * Build a skin's accent family over a base (resolved) palette — re-pointing
+ * `--accent` to the skin's (oklch) value and recomputing `--accent-text`
+ * (= `--accent-strong`) with the same color-mix the core palette uses
+ * (83% accent + black in light, 84% accent + white in dark). `--focus-ring`
+ * follows `--accent`. Everything else (canvas, status) is the base palette.
+ */
+function skinPalette(name, theme, base) {
+  const accent = skins[name][theme]['--accent'];
+  const strong =
+    theme === 'light' ? mixSrgbOpaque(accent, '#000000', 83) : mixSrgbOpaque(accent, '#ffffff', 84);
+  return {
+    ...base,
+    '--accent': accent,
+    '--accent-strong': strong,
+    '--accent-text': strong,
+    '--focus-ring': accent,
+  };
 }
 
 /**
@@ -135,24 +244,52 @@ const LABEL = {
 };
 
 /** Audit one theme → rows + worst-case failure list. */
-export function auditTheme(palette) {
+export function auditTheme(palette, pairs = PAIRS) {
   const rows = [];
-  for (const [fg, bg, role, level] of PAIRS) {
+  for (const [fg, bg, role, level] of pairs) {
     const fv = palette[fg];
     const bv = palette[bg];
     const r = fv != null && bv != null ? ratio(fv, bv) : null;
+    const apca = fv != null && bv != null ? apcaLc(fv, bv) : null;
     const floor = FLOOR[level];
     // Decorative rows are reported, never gated (WCAG 1.4.11 exempt).
     const gated = level !== 'decorative';
     const pass = !gated || (r != null && r >= floor);
-    rows.push({ fg, bg, role, level, fv, bv, ratio: r, floor, gated, pass });
+    rows.push({ fg, bg, role, level, fv, bv, ratio: r, apca, floor, gated, pass });
   }
   return rows;
 }
 
+// The accent-touching subset of PAIRS — what a colorway can move (it only
+// re-points the accent; canvas + status are unchanged, so re-auditing them
+// would just re-report the core result).
+const SKIN_PAIRS = PAIRS.filter(([fg, bg]) =>
+  [fg, bg].some((t) => /(^--accent|accent-text|button-text|focus-ring)/.test(t)),
+);
+
+/** Audit every shipped colorway (both themes) — same floors as the core. */
+export function auditSkins(resolved) {
+  const out = [];
+  for (const name of SKIN_NAMES) {
+    for (const theme of ['light', 'dark']) {
+      out.push({
+        name,
+        label: skins[name].label,
+        theme,
+        rows: auditTheme(skinPalette(name, theme, resolved[theme]), SKIN_PAIRS),
+      });
+    }
+  }
+  return out;
+}
+
 export function audit() {
   const resolved = buildResolved();
-  return { light: auditTheme(resolved.light), dark: auditTheme(resolved.dark) };
+  return {
+    light: auditTheme(resolved.light),
+    dark: auditTheme(resolved.dark),
+    skins: auditSkins(resolved),
+  };
 }
 
 const r2 = (n) => (n == null ? 'n/a' : `${n.toFixed(2)}:1`);
@@ -162,22 +299,25 @@ function verdict(x) {
   return x.pass ? '✅ pass' : '❌ **FAIL**';
 }
 
+const apcaCell = (n) => (n == null ? 'n/a' : `Lc ${Math.round(n)}`);
+
 function themeTable(rows) {
   const head =
-    '| Foreground | Background | Role | Held to | Ratio | Verdict |\n' +
-    '| --- | --- | --- | --- | --- | --- |';
+    '| Foreground | Background | Role | Held to | Ratio | APCA _(advisory)_ | Verdict |\n' +
+    '| --- | --- | --- | --- | --- | --- | --- |';
   const body = rows
     .map(
       (x) =>
-        `| \`${x.fg}\` | \`${x.bg}\` | ${x.role} | ${LABEL[x.level]} | ${r2(x.ratio)} | ${verdict(x)} |`,
+        `| \`${x.fg}\` | \`${x.bg}\` | ${x.role} | ${LABEL[x.level]} | ${r2(x.ratio)} | ${apcaCell(x.apca)} | ${verdict(x)} |`,
     )
     .join('\n');
   return `${head}\n${body}`;
 }
 
 function build() {
-  const { light, dark } = audit();
-  const allPass = [...light, ...dark].filter((x) => x.gated).every((x) => x.pass);
+  const { light, dark, skins: skinAudits } = audit();
+  const skinRows = skinAudits.flatMap((s) => s.rows);
+  const allPass = [...light, ...dark, ...skinRows].filter((x) => x.gated).every((x) => x.pass);
   const md = `<!-- @ponchia/ui — GENERATED from the resolved token model by
      scripts/gen-contrast.mjs. Do not edit by hand; run
      \`npm run contrast:build\`. Drift-checked AND gated in CI
@@ -224,20 +364,38 @@ ${themeTable(light)}
 
 ${themeTable(dark)}
 
+## Display colorways (skins)
+
+The opt-in \`data-bronto-skin\` colorways (\`@ponchia/ui/css/skins.css\`,
+authored in \`tokens/skins.js\`) re-point the one accent to a different single
+hue. Because a shipped colorway is part of the framework — not an arbitrary
+consumer re-brand — **its accent is gated to the same floors as the core**:
+the primary-button label, accent-as-text, and the focus ring/accent fill. Only
+the accent-touching pairings are shown (a skin leaves the canvas and status
+palette untouched). Accents are authored in OKLCH; \`--accent-text\` is the
+\`color-mix\`-derived \`--accent-strong\`, exactly as in the core palette.
+
+${skinAudits.map((s) => `### ${s.label} — ${s.theme}\n\n${themeTable(s.rows)}`).join('\n\n')}
+
 ## Scope & caveats
 
-- This gates the **framework token contract**, not arbitrary consumer
-  re-brands. Re-accenting via \`--accent\` is your contrast obligation
-  (see [theming.md](theming.md) → "Re-brand obligations"); this table is
-  the guarantee for the *shipped* palettes only.
+- This gates the **framework token contract** (core palette **and** every
+  shipped colorway), not arbitrary consumer re-brands. Re-accenting via
+  \`--accent\` yourself is your contrast obligation (see [theming.md](theming.md)
+  → "Re-brand obligations"); this table is the guarantee for the *shipped*
+  palettes and skins only.
 - Status colours (\`--success\` / \`--warning\` / \`--danger\`) are gated
   as **indicators** (3:1). If you set status text *as body copy* on a
   surface, verify 4.5:1 yourself or pair it with an icon/label.
-- Ratios are sRGB WCAG 2.1. The newer APCA model is intentionally not
-  used — WCAG 2.1 AA is the testable legal/again-axe baseline the e2e
-  suite already asserts.
+- The gated **Ratio** is sRGB WCAG 2.1 AA — the testable legal / axe-compatible
+  baseline the e2e suite also asserts. The **APCA** column (APCA-W3 0.1.9 \`Lc\`)
+  is **advisory only**: a perceptual cross-check that, unlike WCAG 2.1's
+  symmetric ratio, accounts for polarity and is the WCAG 3 candidate. It does
+  **not** gate the build while WCAG 3 is a Working Draft — use it to tune
+  quality, not to override the WCAG 2.1 floor. As a rough read, body text wants
+  \`Lc\` ≥ 75 and non-text/large ≥ 45–60.
 `;
-  return { md, allPass, light, dark };
+  return { md, allPass, light, dark, skins: skinAudits };
 }
 
 export const generated = { 'docs/contrast.md': build().md };

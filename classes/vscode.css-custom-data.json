@@ -210,14 +210,6 @@
       "description": "Global scale token. Value: `'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', ui-monospace, monospace`"
     },
     {
-      "name": "--orange",
-      "description": "Theme token. Light: `#a85f32` · Dark: `#d08c5b`"
-    },
-    {
-      "name": "--orange-soft",
-      "description": "Theme token. Light: `rgb(168, 95, 50, 0.13)` · Dark: `rgb(208, 140, 91, 0.15)`"
-    },
-    {
       "name": "--panel",
       "description": "Theme token. Light: `#ffffff` · Dark: `#0c0c0c`"
     },

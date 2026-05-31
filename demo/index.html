@@ -6,6 +6,9 @@
     <meta name="description" content="@ponchia/ui — a Nothing-inspired, CSS-first UI framework: monochrome surfaces, single red accent, dot-matrix display type. Live kitchen-sink demo." />
     <title>@ponchia/ui — kitchen sink</title>
     <link rel="stylesheet" href="../dist/bronto.css" />
+    <!-- Opt-in colorways (0.4.0). Not in the default bundle — a separate
+         entrypoint a consumer adds on demand. Loaded here to demo the switcher. -->
+    <link rel="stylesheet" href="../dist/css/skins.css" />
     <style>
       /* No local @font-face: Doto ships in css/fonts.css (bundled by
          core.css) with URLs relative to the package, so it resolves here
@@ -987,6 +990,48 @@ ui.button({ variant: 'ghost' });</code></pre>
         </p>
         <div id="glyphAnim" class="ui-cluster" style="--cluster-gap: var(--space-lg); align-items: center"></div>
       </section>
+
+      <section aria-labelledby="v08" class="ui-stack" style="margin-block-start: 3rem">
+        <h2 id="v08" class="ui-eyebrow">0.4.0 — display colorways</h2>
+
+        <!-- Opt-in `data-bronto-skin` colorways: re-point the ONE accent to a
+             different single hue (authored in OKLCH, every accent AA-gated in
+             docs/contrast.md). It is a ROOT-LEVEL choice like data-theme — the
+             switcher sets data-bronto-skin on <html>, so the whole page (incl.
+             the sample below) follows. "Default" clears it back to red. -->
+        <p class="ui-muted">
+          Colorways re-point the one accent (not a second colour) for the whole page, like a
+          theme. Switch it — the accent, focus ring, dot-matrix and accent text all follow.
+          Authored in OKLCH and contrast-gated; phosphor skins add a dot-matrix
+          <code>--dotmatrix-glow</code> in dark.
+        </p>
+        <div
+          id="skinSwitch"
+          class="ui-cluster"
+          role="group"
+          aria-label="Choose a display colorway"
+          style="--cluster-gap: var(--space-xs)"
+        ></div>
+
+        <div id="skinPreview" class="ui-card ui-stack" style="margin-block-start: 1rem; gap: 1rem">
+          <p style="margin: 0">
+            Accent as text — <a href="#v08">a themed link</a> and an
+            <span class="ui-badge ui-badge--accent">accent badge</span>.
+          </p>
+          <div class="ui-cluster" style="--cluster-gap: var(--space-xs); align-items: center">
+            <button type="button" class="ui-button">Save changes</button>
+            <button type="button" class="ui-button ui-button--subtle">Secondary</button>
+            <span class="ui-dot ui-dot--accent" aria-hidden="true"></span>
+          </div>
+          <div
+            id="skinMatrix"
+            class="ui-dotmatrix"
+            data-bronto-glyph="spark"
+            data-bronto-glyph-label="spark glyph in the current colorway"
+            style="--dotmatrix-dot: 0.5rem; max-inline-size: 9rem"
+          ></div>
+        </div>
+      </section>
     </main>
 
     <!-- The demo drives itself with the package's own shipped modules,
@@ -1009,6 +1054,7 @@ ui.button({ variant: 'ghost' });</code></pre>
       } from '../behaviors/index.js';
       import { ui, cx } from '../classes/index.js';
       import { renderGlyph } from '../glyphs/glyphs.js';
+      import { skins, SKIN_NAMES } from '../tokens/skins.js';
 
       // A representative slice of the 43-glyph set (full list in the docs).
       // Each glyph is a GLYPH_SIZE² grid, so showing all 43 here would add
@@ -1100,7 +1146,29 @@ ui.button({ variant: 'ghost' });</code></pre>
       initFormValidation();
       initTableSort();
       initCarousel(); // wires both the inline carousel and the lightbox's
-      initDotGlyph(); // expands [data-bronto-glyph] placeholders
+      initDotGlyph(); // expands [data-bronto-glyph] placeholders (incl. the skin preview)
+
+      // Colorway switcher: set data-bronto-skin on the preview region only, so
+      // the rest of the page keeps the default red. "Default" clears it.
+      const skinSwitch = document.getElementById('skinSwitch');
+      if (skinSwitch) {
+        const root = document.documentElement; // colorways are root-level, like data-theme
+        const setSkin = (value, pressedBtn) => {
+          if (value) root.setAttribute('data-bronto-skin', value);
+          else root.removeAttribute('data-bronto-skin');
+          for (const b of skinSwitch.children)
+            b.setAttribute('aria-pressed', String(b === pressedBtn));
+        };
+        for (const [value, label] of [['', 'Default'], ...SKIN_NAMES.map((n) => [n, skins[n].label])]) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'ui-button ui-button--sm';
+          btn.textContent = label;
+          btn.setAttribute('aria-pressed', value === '' ? 'true' : 'false');
+          btn.addEventListener('click', () => setSkin(value, btn));
+          skinSwitch.appendChild(btn);
+        }
+      }
 
       document.getElementById('toastBtn').addEventListener('click', () => {
         toast('Order filled — BTC/EUR', { tone: 'success', title: 'Done' });
