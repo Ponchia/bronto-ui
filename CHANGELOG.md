@@ -4,15 +4,21 @@
 > `~0.x`; `^0.x` does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
-## Unreleased — 0.4.0
+## 0.4.0 — 2026-05-31
 
-First step of the color-system evolution in
-[ADR-0001](docs/adr/0001-color-system.md): make the (already three-tier)
-color model explicit and enforced, and clear out dead color. No visual or
-behavioral change to the default build — the red accent, every shipped token
-name, and both theme palettes render identically; this only removes a token
-nothing consumed and adds a gate. Breaking under the 0.x policy only in the
-strict sense that a public (but undocumented, unused) token name is gone.
+The color-system release — [ADR-0001](docs/adr/0001-color-system.md) steps 1–7.
+A governed evolution beyond pure monochrome: the tier model is written down and
+**enforced** (`check:color-policy`), and the "Nothing" look is proven to be a
+_skin, not the architecture_ — opt-in **colorways** (amber CRT · phosphor green ·
+e-ink), a **data-viz palette** for dashboards (colourblind-safe, gated under
+simulated protan/deutan/tritan vision), Tier-3 dot-matrix display tokens, OKLCH
+authoring, and an APCA advisory contrast track all ship. Plus a reframed README
++ a rendered docs site, and the curated CHANGELOG is now the GitHub Release body.
+
+**The default build is unchanged** — the red accent, every retained token name,
+and both theme palettes render identically; colorways and data-viz are opt-in
+entrypoints, never in the default bundle. The only breaking change is the
+removal of the orphan `--orange` token (undocumented, unused) — see below.
 
 **BREAKING (orphan token removed)** — **`--orange` / `--orange-soft`** are
 removed. They were defined in every token mirror (`css/tokens.css`,
