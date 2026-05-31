@@ -121,7 +121,10 @@ pointer:
   an unstable build (opt in with `@ponchia/ui@next`).
 - `release-notes` — `needs: publish-npm`: a GitHub Release for visibility
   (transitively gated on a successful publish, hence on the gates above);
-  prerelease tags are flagged so they aren't surfaced as "Latest".
+  prerelease tags are flagged so they aren't surfaced as "Latest". The Release
+  **body is the curated `CHANGELOG.md` section** for the tag
+  (`scripts/changelog-section.mjs`), not GitHub's auto-generated PR list — one
+  source of truth, surfaced where readers look.
 
 Because the documented install path is the npm package, **the npm publish
 is a real gate**: if `validate`, `e2e`, *or* `examples` fails,
