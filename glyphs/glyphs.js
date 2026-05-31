@@ -525,27 +525,34 @@ function cssLen(v) {
  * holds regardless of the 12-col default; `dot`/`gap` set `--dotmatrix-dot` /
  * `--dotmatrix-gap` (sanitized to a CSS length/calc allowlist; a malformed
  * value is dropped). `grid: false` drops the unlit panel dots (glyph-only).
+ *
+ * `solid: true` renders the lit cells as square, gapless pixels (a filled
+ * silhouette) instead of separated dots — the legible mode at small/inline
+ * sizes (~16–24px) where the dot look fragments. It implies glyph-only.
  */
 export function renderGlyph(name, options = {}) {
   const cells = glyphCells(name);
   if (!cells.length) return '';
-  const { grid = true, label, dot, gap } = options;
+  const { grid = true, solid = false, label, dot, gap } = options;
 
   const style = [`--dotmatrix-cols:${GLYPH_SIZE}`];
   const dotLen = dot && cssLen(dot);
   const gapLen = gap && cssLen(gap);
   if (dotLen) style.push(`--dotmatrix-dot:${dotLen}`);
-  if (gapLen) style.push(`--dotmatrix-gap:${gapLen}`);
+  // Solid mode fuses the dots into a crisp pixel glyph: square cells, no gap.
+  if (solid) style.push('--dotmatrix-dot-radius:0', '--dotmatrix-gap:0');
+  else if (gapLen) style.push(`--dotmatrix-gap:${gapLen}`);
 
   const a11y = label ? `role="img" aria-label="${esc(label)}"` : 'aria-hidden="true"';
 
-  // Off cells always keep the cell class (so they hold their grid track and
-  // 1:1 aspect-ratio); `grid: false` only drops their lit background, for the
-  // glyph-only look, without collapsing all-off rows.
+  // Off cells keep the cell class (so they hold their grid track and 1:1
+  // aspect-ratio); `grid: false` (implied by `solid`) only drops their lit
+  // background, for the glyph-only look, without collapsing all-off rows.
+  const showPanel = grid && !solid;
   const inner = cells
     .map((c) => {
       if (c.on) return `<span class="${cellClass(c)}"></span>`;
-      return grid
+      return showPanel
         ? '<span class="ui-dotmatrix__cell"></span>'
         : '<span class="ui-dotmatrix__cell" style="background:transparent"></span>';
     })

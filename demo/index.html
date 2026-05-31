@@ -967,13 +967,19 @@ ui.button({ variant: 'ghost' });</code></pre>
              [data-bronto-glyph] placeholders, then expanded by initDotGlyph().
              A display set: crisp from ~40px up, not a 16px inline-icon set. -->
         <p class="ui-muted">
-          Display glyphs — <code>@ponchia/ui/glyphs</code>, a 24-glyph dot-matrix icon set.
+          Display glyphs — <code>@ponchia/ui/glyphs</code>, a 24-glyph dot-matrix icon set
+          (default dot look, for display sizes).
         </p>
         <div
           id="glyphGallery"
           class="ui-cluster"
           style="--cluster-gap: var(--space-md); align-items: center"
         ></div>
+
+        <p class="ui-muted">
+          Same glyphs in <code>solid</code> mode — crisp inline icons (~18px) inside buttons.
+        </p>
+        <div id="glyphButtons" class="ui-cluster" style="--cluster-gap: var(--space-xs)"></div>
       </section>
     </main>
 
@@ -996,7 +1002,7 @@ ui.button({ variant: 'ghost' });</code></pre>
         toast,
       } from '../behaviors/index.js';
       import { ui, cx } from '../classes/index.js';
-      import { GLYPH_NAMES } from '../glyphs/glyphs.js';
+      import { GLYPH_NAMES, renderGlyph } from '../glyphs/glyphs.js';
 
       // Build the glyph gallery from the shipped registry, then let
       // initDotGlyph() expand the placeholders — stays in sync with the set.
@@ -1016,6 +1022,26 @@ ui.button({ variant: 'ghost' });</code></pre>
           cap.textContent = name;
           cell.append(g, cap);
           gallery.appendChild(cell);
+        }
+      }
+
+      // Solid mode: the same bitmaps as crisp ~18px inline icons in buttons.
+      const glyphButtons = document.getElementById('glyphButtons');
+      if (glyphButtons) {
+        for (const [name, text] of [
+          ['search', 'Search'],
+          ['plus', 'New'],
+          ['check', 'Confirm'],
+          ['gear', 'Settings'],
+          ['close', 'Dismiss'],
+        ]) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = name === 'plus' ? 'ui-button' : 'ui-button ui-button--subtle';
+          btn.style.cssText = 'display: inline-flex; align-items: center; gap: 0.45rem';
+          btn.innerHTML =
+            renderGlyph(name, { solid: true, dot: '1.2px' }) + `<span>${text}</span>`;
+          glyphButtons.appendChild(btn);
         }
       }
 

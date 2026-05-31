@@ -89,7 +89,7 @@ el.innerHTML = renderGlyph('search', { label: 'Search' });  // role="img"
 // import { initDotGlyph } from '@ponchia/ui/behaviors'; initDotGlyph();
 ```
 
-Arrows, chevrons, check/close/plus/minus, search/menu/gear, info/warning/bell/lock, home/user/heart/star/spark — rendered on the same `.ui-dotmatrix` primitive and re-skinned by the `--field-dot*` tokens (no SVG, no font). It's a **display** set: crisp from ~40px up, not a 16px inline-icon replacement.
+Arrows, chevrons, check/close/plus/minus, search/menu/gear, info/warning/bell/lock, home/user/heart/star/spark — rendered on the same `.ui-dotmatrix` primitive and re-skinned by the `--field-dot*` tokens (no SVG, no font). Default dot look is for **display** sizes; pass **`{ solid: true }`** to fuse the cells into a crisp pixel glyph that works as an **inline icon down to ~16px**.
 
 ## What's in the box
 

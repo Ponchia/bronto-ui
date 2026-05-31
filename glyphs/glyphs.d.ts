@@ -40,6 +40,10 @@ export interface GlyphCell {
 export interface RenderGlyphOptions {
   /** Show the unlit panel dots (default true). `false` → glyph-only look. */
   grid?: boolean;
+  /** Render lit cells as square, gapless pixels (a filled silhouette) instead
+   *  of separated dots — the legible mode at small/inline sizes (~16–24px).
+   *  Implies glyph-only. Default false (the dot-matrix display look). */
+  solid?: boolean;
   /** Expose as `role="img"` with this label; omit for decorative (aria-hidden). */
   label?: string;
   /** CSS length for one dot (sets `--dotmatrix-dot`; sanitized — a value that

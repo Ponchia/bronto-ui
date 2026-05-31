@@ -1274,14 +1274,23 @@ export function initDotGlyph({ root } = {}) {
     if (!cells.length) continue; // unknown glyph — leave the placeholder as-is
 
     const label = el.getAttribute('data-bronto-glyph-label');
+    // `data-bronto-glyph-solid` → square, gapless pixel glyph (legible small),
+    // the DOM counterpart to renderGlyph's `solid` option. Implies glyph-only.
+    const solid = el.hasAttribute('data-bronto-glyph-solid');
     const hadMatrix = el.classList.contains('ui-dotmatrix');
     const hadCols = el.style.getPropertyValue('--dotmatrix-cols');
+    const hadRadius = el.style.getPropertyValue('--dotmatrix-dot-radius');
+    const hadGap = el.style.getPropertyValue('--dotmatrix-gap');
     const hadAriaHidden = el.getAttribute('aria-hidden');
     const hadRole = el.getAttribute('role');
     const hadAriaLabel = el.getAttribute('aria-label');
 
     el.classList.add('ui-dotmatrix');
     el.style.setProperty('--dotmatrix-cols', String(GLYPH_SIZE));
+    if (solid) {
+      el.style.setProperty('--dotmatrix-dot-radius', '0');
+      el.style.setProperty('--dotmatrix-gap', '0');
+    }
     if (label) {
       el.setAttribute('role', 'img');
       el.setAttribute('aria-label', label);
@@ -1300,6 +1309,7 @@ export function initDotGlyph({ root } = {}) {
           : c.tone === 'accent'
             ? 'ui-dotmatrix__cell ui-dotmatrix__cell--accent'
             : 'ui-dotmatrix__cell';
+      if (!c.on && solid) span.style.background = 'transparent'; // glyph-only
       frag.appendChild(span);
     }
     el.appendChild(frag);
@@ -1307,6 +1317,12 @@ export function initDotGlyph({ root } = {}) {
     cleanups.push(() => {
       el.querySelectorAll(':scope > .ui-dotmatrix__cell').forEach((n) => n.remove());
       if (!hadMatrix) el.classList.remove('ui-dotmatrix');
+      if (solid) {
+        if (hadRadius) el.style.setProperty('--dotmatrix-dot-radius', hadRadius);
+        else el.style.removeProperty('--dotmatrix-dot-radius');
+        if (hadGap) el.style.setProperty('--dotmatrix-gap', hadGap);
+        else el.style.removeProperty('--dotmatrix-gap');
+      }
       if (hadCols) el.style.setProperty('--dotmatrix-cols', hadCols);
       else el.style.removeProperty('--dotmatrix-cols');
       restoreAttr(el, 'aria-hidden', hadAriaHidden);

@@ -68,7 +68,12 @@ toast('x', { assertive: 'yes' });
 
 // Glyphs: the subpath types are sound and the GlyphName union rejects typos.
 const stopGlyph: Cleanup = initDotGlyph({ root: document });
-const glyphHtml: string = renderGlyph('check', { label: 'Done', grid: false, dot: '0.5rem' });
+const glyphHtml: string = renderGlyph('check', {
+  label: 'Done',
+  grid: false,
+  solid: true,
+  dot: '0.5rem',
+});
 const cells: GlyphCell[] = glyphCells('spark');
 const cellOn: boolean = cells[0].on;
 const gname: GlyphName = 'heart';

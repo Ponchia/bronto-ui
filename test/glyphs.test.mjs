@@ -75,6 +75,20 @@ test('renderGlyph() is decorative by default and labelled on demand', () => {
   assert.doesNotMatch(labelled, /aria-hidden/);
 });
 
+test('renderGlyph({ solid }) fuses dots into a square, gapless pixel glyph', () => {
+  const name = GLYPH_NAMES[0];
+  const s = renderGlyph(name, { solid: true });
+  assert.match(s, /--dotmatrix-dot-radius:0/);
+  assert.match(s, /--dotmatrix-gap:0/);
+  assert.match(s, /background:transparent/); // solid implies glyph-only
+  // still emits only registered dot-matrix classes
+  for (const m of s.matchAll(/class="([^"]*)"/g)) {
+    for (const tok of m[1].split(/\s+/).filter(Boolean)) {
+      assert.ok(tok.startsWith('ui-dotmatrix'), `unexpected class ${tok}`);
+    }
+  }
+});
+
 test('renderGlyph() escapes label and sanitizes dot/gap (no CSS/HTML injection)', () => {
   const name = GLYPH_NAMES[0];
   // label: HTML-attribute context — must be escaped, no tag/attr breakout.
@@ -157,6 +171,31 @@ test('initDotGlyph cleanup only removes the cells it appended', async () => {
     assert.equal(el.querySelectorAll(':scope > .ui-dotmatrix__cell').length, 0);
     assert.equal(nested.querySelectorAll('.ui-dotmatrix__cell').length, 1);
     assert.ok(el.contains(nested));
+  } finally {
+    if (prevDocument === undefined) delete globalThis.document;
+    else globalThis.document = prevDocument;
+  }
+});
+
+test('initDotGlyph honours data-bronto-glyph-solid and restores on cleanup', async () => {
+  const dom = new JSDOM('<!doctype html><body></body>');
+  const prevDocument = globalThis.document;
+  globalThis.document = dom.window.document;
+  try {
+    const { initDotGlyph } = await import('../behaviors/index.js');
+    const el = dom.window.document.createElement('span');
+    el.setAttribute('data-bronto-glyph', GLYPH_NAMES[0]);
+    el.setAttribute('data-bronto-glyph-solid', '');
+    dom.window.document.body.appendChild(el);
+
+    const stop = initDotGlyph({ root: dom.window.document });
+    assert.equal(el.style.getPropertyValue('--dotmatrix-dot-radius'), '0');
+    assert.equal(el.style.getPropertyValue('--dotmatrix-gap'), '0');
+
+    stop();
+    assert.equal(el.style.getPropertyValue('--dotmatrix-dot-radius'), '');
+    assert.equal(el.style.getPropertyValue('--dotmatrix-gap'), '');
+    assert.equal(el.getAttribute('style'), null); // no empty style residue
   } finally {
     if (prevDocument === undefined) delete globalThis.document;
     else globalThis.document = prevDocument;

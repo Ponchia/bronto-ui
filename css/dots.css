@@ -49,7 +49,9 @@
    This is the grid + cell tones only; the data→cell mapping is the
    consumer's. Tune density via --dotmatrix-cols / --dotmatrix-gap; set
    --dotmatrix-dot to a fixed dot length (intrinsic sizing, e.g. for the
-   display glyphs in @ponchia/ui/glyphs) instead of stretching to fit. */
+   display glyphs in @ponchia/ui/glyphs) instead of stretching to fit;
+   set --dotmatrix-dot-radius: 0 (with --dotmatrix-gap: 0) to fuse the dots
+   into a crisp pixel glyph that stays legible at small/inline sizes. */
 .ui-dotmatrix {
   display: grid;
   gap: var(--dotmatrix-gap, 0.5rem);
@@ -59,7 +61,7 @@
 .ui-dotmatrix__cell {
   aspect-ratio: 1;
   background: var(--field-dot);
-  border-radius: 50%;
+  border-radius: var(--dotmatrix-dot-radius, 50%);
 }
 
 .ui-dotmatrix__cell--hot {

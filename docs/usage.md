@@ -155,12 +155,13 @@ common marks (`home`, `user`, `heart`, `star`, `spark`) — rendered on the
 `.ui-dotmatrix` primitive, so they re-skin with the same `--field-dot*`
 tokens as every other dot surface (no SVG, no icon font).
 
-**It's a _display_ icon set, not a 16px toolbar set.** A dot-matrix glyph
-needs physical room for the dots to read: it's crisp and recognizable at
-roughly **40px and up** (hero marks, empty states, status bursts, section
-headers, large buttons), and collapses into dot-soup below ~24px. For
-dense, tiny inline affordances reach for a vector icon set — that's the
-honest boundary of the medium, not a gap to fill with more glyphs.
+**Two rendering modes — pick by size.** The dots need physical room to
+read, so the default _dot_ look is for **display** sizes (~40px up: hero
+marks, empty states, status bursts, section headers, large buttons). For
+small/inline use pass **`solid: true`** (or `data-bronto-glyph-solid`):
+that fuses the cells into a square, gapless pixel glyph that stays crisp and
+legible down to **~16px** — so the same set doubles as real inline UI icons,
+not just decoration. (Below the dot fragments into dot-soup; solid does not.)
 
 `renderGlyph(name, { label })` returns an SSR-safe string: decorative
 (`aria-hidden`) by default, or `role="img"` + `aria-label` when you pass a
@@ -168,6 +169,8 @@ honest boundary of the medium, not a gap to fill with more glyphs.
 `data-bronto-glyph` placeholder + `initDotGlyph()` when the markup is
 easier dropped than inlined. Size with `--dotmatrix-dot` (and a tight
 `--dotmatrix-gap`) for an intrinsic dot, or let it stretch to its container.
+It is still a pixel-grid aesthetic, not a hairline vector set — but it now
+spans both inline-icon and display use from one source.
 
 ## When to add a behavior
 
