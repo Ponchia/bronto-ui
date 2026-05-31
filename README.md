@@ -140,6 +140,8 @@ Pre-1.0 and deliberately so. **Until `1.0.0`, breaking changes ship in the _mino
 
 Contractual (changes are breaking): the `--accent` derivation and token **names**, the `.ui-*` class and recipe names, the `data-bronto-*` attributes, and each behavior's cleanup contract. Not contractual (may change any release): token **values** (visual tuning) and internal leaf-file / `@layer` boundaries.
 
+Release candidates publish to the `next` dist-tag, never to `latest` — opt in with `npm i @ponchia/ui@next` to try an upcoming version early. A plain `npm i @ponchia/ui` only ever resolves a stable release.
+
 ## Links
 
 - **[Live demo](https://ponchia.github.io/bronto-ui/)** · **[Theme playground](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)**

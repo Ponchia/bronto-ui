@@ -18,17 +18,27 @@ const changelog = readFileSync(resolve(root, 'CHANGELOG.md'), 'utf8');
 const errors = [];
 
 const version = pkg.version;
+// A prerelease (e.g. 0.4.0-rc.1 — any SemVer prerelease identifier) is
+// cut against the in-development stable target (0.4.0) and maps to that
+// base version's CHANGELOG section, which is allowed to still be
+// "## Unreleased — 0.4.0". Only the final stable release must carry a
+// dated heading. So for a prerelease we require the base section to
+// exist but do NOT demand it be dated/non-"unreleased".
+const prerelease = version.includes('-');
+const target = prerelease ? version.split('-')[0] : version;
 const headings = [...changelog.matchAll(/^##\s+(.+)$/gm)].map((m) => m[1].trim());
 
-// A heading "owns" the package version if the version string appears in it.
-const owning = headings.filter((h) => h.includes(version));
+// A heading "owns" the version if the (base) version string appears in it.
+const owning = headings.filter((h) => h.includes(target));
 
 if (owning.length === 0) {
   errors.push(
     `package.json version ${version} has no CHANGELOG section ` +
-      `(expected a "## ${version} — <date>" heading)`,
+      (prerelease
+        ? `(expected "## ${target} — <date>" or "## Unreleased — ${target}" for the prerelease's base version)`
+        : `(expected a "## ${target} — <date>" heading)`),
   );
-} else {
+} else if (!prerelease) {
   for (const h of owning) {
     if (/unreleased/i.test(h)) {
       errors.push(
@@ -49,4 +59,8 @@ if (errors.length) {
   for (const e of errors) console.error(`  - ${e}`);
   process.exit(1);
 }
-console.log(`✓ release hygiene: v${version} maps to a dated CHANGELOG section`);
+console.log(
+  prerelease
+    ? `✓ release hygiene: prerelease v${version} maps to the "${target}" CHANGELOG section`
+    : `✓ release hygiene: v${version} maps to a dated CHANGELOG section`,
+);
