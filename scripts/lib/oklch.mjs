@@ -9,7 +9,7 @@
  *  L is 0-1; H is degrees. Throws on out-of-sRGB-gamut rather than silently
  *  clamping to a colour the browser would gamut-map differently — a clamped
  *  value would let a gate pass/fail on a colour no user actually sees. */
-export function oklchToRgb(L, C, H) {
+function oklchToRgb(L, C, H) {
   const hr = (H * Math.PI) / 180;
   const a = C * Math.cos(hr);
   const b = C * Math.sin(hr);
@@ -64,7 +64,7 @@ export function rgbToHex([r, g, b]) {
 }
 
 /** sRGB [r,g,b] (0-255) → OKLab [L,a,b] (for perceptual distance). */
-export function rgbToOklab([r, g, b]) {
+function rgbToOklab([r, g, b]) {
   const lin = (c) => {
     c /= 255;
     return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
@@ -90,7 +90,7 @@ export function deltaOklab(rgb1, rgb2) {
 }
 
 /** sRGB [r,g,b] (0-255) → OKLCH { L, C, H(deg), achromatic }. */
-export function rgbToOklch(rgb) {
+function rgbToOklch(rgb) {
   const [L, a, b] = rgbToOklab(rgb);
   const C = Math.hypot(a, b);
   // A near-neutral's hue is "powerless" in CSS color-mix (the chromatic
