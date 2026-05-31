@@ -980,6 +980,12 @@ ui.button({ variant: 'ghost' });</code></pre>
           Same glyphs in <code>solid</code> mode — crisp inline icons (~18px) inside buttons.
         </p>
         <div id="glyphButtons" class="ui-cluster" style="--cluster-gap: var(--space-xs)"></div>
+
+        <p class="ui-muted">
+          Animation (opt-in, reduced-motion-aware): <code>reveal</code> powers the cells on;
+          <code>pulse</code> breathes for a live state.
+        </p>
+        <div id="glyphAnim" class="ui-cluster" style="--cluster-gap: var(--space-lg); align-items: center"></div>
       </section>
     </main>
 
@@ -1051,6 +1057,36 @@ ui.button({ variant: 'ghost' });</code></pre>
             renderGlyph(name, { solid: true, dot: '1.2px' }) + `<span>${text}</span>`;
           glyphButtons.appendChild(btn);
         }
+      }
+
+      // Animation: a reveal glyph (with a replay button — re-inserting the
+      // element restarts the CSS animation) and a continuously pulsing one.
+      const glyphAnim = document.getElementById('glyphAnim');
+      if (glyphAnim) {
+        const revealBox = document.createElement('span');
+        const drawReveal = () => {
+          revealBox.innerHTML = renderGlyph('spark', {
+            anim: 'reveal',
+            dot: '0.34rem',
+            gap: '0.1rem',
+          });
+        };
+        drawReveal();
+        const replay = document.createElement('button');
+        replay.type = 'button';
+        replay.className = 'ui-button ui-button--subtle ui-button--sm';
+        replay.textContent = 'Replay reveal';
+        replay.addEventListener('click', drawReveal);
+
+        const pulseBox = document.createElement('span');
+        pulseBox.innerHTML = renderGlyph('bell', {
+          anim: 'pulse',
+          dot: '0.34rem',
+          gap: '0.1rem',
+          label: 'Notifications',
+        });
+
+        glyphAnim.append(revealBox, replay, pulseBox);
       }
 
       initThemeToggle();

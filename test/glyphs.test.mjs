@@ -66,6 +66,36 @@ test('renderGlyph() emits only registered dot-matrix classes', () => {
   assert.equal(renderGlyph('definitely-not-a-glyph'), '');
 });
 
+test('renderGlyph({ anim }) adds the registered modifier and staggers reveal', () => {
+  const name = GLYPH_NAMES[0];
+  const allowed = new Set([
+    cls.dotmatrix,
+    cls.dotmatrixReveal,
+    cls.dotmatrixPulse,
+    cls.dotmatrixCell,
+    cls.dotmatrixCellHot,
+    cls.dotmatrixCellAccent,
+  ]);
+
+  const reveal = renderGlyph(name, { anim: 'reveal' });
+  assert.match(reveal, new RegExp(`class="${cls.dotmatrix} ${cls.dotmatrixReveal}"`));
+  assert.match(reveal, /--i:0/); // first cell
+  assert.match(reveal, new RegExp(`--i:${GLYPH_SIZE * GLYPH_SIZE - 1}`)); // last cell
+
+  const pulse = renderGlyph(name, { anim: 'pulse' });
+  assert.match(pulse, new RegExp(`class="${cls.dotmatrix} ${cls.dotmatrixPulse}"`));
+  assert.doesNotMatch(pulse, /--i:/); // pulse needs no per-cell stagger
+
+  // still only registered classes in both modes
+  for (const html of [reveal, pulse]) {
+    for (const m of html.matchAll(/class="([^"]*)"/g)) {
+      for (const tok of m[1].split(/\s+/).filter(Boolean)) {
+        assert.ok(allowed.has(tok), `unregistered class ${tok}`);
+      }
+    }
+  }
+});
+
 test('renderGlyph() is decorative by default and labelled on demand', () => {
   const name = GLYPH_NAMES[0];
   assert.match(renderGlyph(name), /aria-hidden="true"/);

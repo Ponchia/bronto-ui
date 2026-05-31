@@ -72,6 +72,36 @@
   background: var(--field-dot-accent);
 }
 
+/* Animation (opt-in, decorative): a dot-matrix that "plays". Meaning stays
+   in the static cells + the element's label — motion is enhancement only,
+   and the reduced-motion block below switches it off. */
+
+/* --reveal: cells power on in a left→right, top→bottom scan. The per-cell
+   delay reads `--i` (the row-major index) which the renderer sets. */
+.ui-dotmatrix--reveal .ui-dotmatrix__cell {
+  animation: dotmatrixCellOn var(--duration-base, 0.3s) var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 3ms);
+}
+
+@keyframes dotmatrixCellOn {
+  from {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+}
+
+/* --pulse: the whole glyph breathes, for a "live"/attention state. */
+.ui-dotmatrix--pulse {
+  animation: dotmatrixPulse 1.8s var(--ease-standard) infinite;
+}
+
+@keyframes dotmatrixPulse {
+  50% {
+    opacity: 0.55;
+    transform: scale(0.94);
+  }
+}
+
 /* Status dot — the glyph-style state indicator. */
 .ui-dot {
   background: var(--text-dim);
@@ -293,7 +323,9 @@
   .ui-dot--live::after,
   .ui-dotloader span,
   .ui-dotspinner,
-  .ui-dotbar--indeterminate i {
+  .ui-dotbar--indeterminate i,
+  .ui-dotmatrix--reveal .ui-dotmatrix__cell,
+  .ui-dotmatrix--pulse {
     animation: none;
   }
 

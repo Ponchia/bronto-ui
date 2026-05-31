@@ -72,8 +72,11 @@ const glyphHtml: string = renderGlyph('check', {
   label: 'Done',
   grid: false,
   solid: true,
+  anim: 'reveal',
   dot: '0.5rem',
 });
+// @ts-expect-error — anim is a closed union.
+renderGlyph('check', { anim: 'spin' });
 const cells: GlyphCell[] = glyphCells('spark');
 const cellOn: boolean = cells[0].on;
 const gname: GlyphName = 'heart';

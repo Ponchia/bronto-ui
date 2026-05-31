@@ -16,17 +16,23 @@ policy.
 
 - **`@ponchia/ui/glyphs` — a 43-glyph dot-matrix display-icon set.** A frozen
   16×16 bitmap registry (`GLYPHS`, `GLYPH_NAMES`, `GLYPH_SIZE`) with `glyph()`,
-  `glyphCells()`, and `renderGlyph(name, { label, grid, dot, gap })` — an
-  SSR-safe HTML string, decorative (`aria-hidden`) by default and `role="img"`
-  when labelled. Covers navigation (`arrow-*`, `chevron-*`), actions (`check`,
-  `close`, `plus`, `minus`, `search`, `menu`, `gear`), status (`info`,
-  `warning`, `bell`, `lock`) and common marks (`home`, `user`, `heart`,
-  `star`, `spark` — the two-tone accent demo). Two render modes from one
-  source: the default dot look for **display** sizes, and **`solid: true`**
+  `glyphCells()`, and `renderGlyph(name, { label, grid, solid, anim, dot, gap })`
+  — an SSR-safe HTML string, decorative (`aria-hidden`) by default and
+  `role="img"` when labelled. Covers navigation (`arrow-*`, `chevron-*`),
+  actions (`check`, `close`, `plus`, `minus`, `search`, `menu`, `gear`,
+  `edit`, `trash`, `download`, `upload`, `link`, `refresh`), media (`play`,
+  `pause`), state (`eye`, `eye-off`), theming (`sun`, `moon`), objects
+  (`mail`, `file`, `folder`, `clock`, `home`, `user`, `heart`, `star`,
+  `bell`, `lock`, `info`, `warning`), layout (`grid`, `more-vertical`,
+  `more-horizontal`) and `spark` (the two-tone accent demo). Three knobs from
+  one source: the default dot look for **display** sizes; **`solid: true`**
   (or `data-bronto-glyph-solid`) which fuses the cells into a square, gapless
-  pixel glyph that stays legible as an **inline icon down to ~16px**. The
-  `GlyphName` literal union is generated and CI-drift-checked from the
-  runtime, like the `cls`/token maps.
+  pixel glyph legible as an **inline icon down to ~16px**; and opt-in
+  **`anim`** (`reveal` powers the cells on in a scan, `pulse` makes the glyph
+  breathe) — decorative only, disabled under `prefers-reduced-motion`, with
+  the meaning kept in the static frame + label. The `GlyphName` literal union
+  is generated and CI-drift-checked from the runtime, like the `cls`/token
+  maps.
 - **`initDotGlyph()` behavior.** Expands `[data-bronto-glyph]` placeholders
   into a `.ui-dotmatrix` grid in place (optional `data-bronto-glyph-label`),
   idempotent, with a cleanup that fully reverts — the DOM counterpart to
@@ -39,7 +45,9 @@ policy.
   falls back to the previous `minmax(0, 1fr)` when unset), the latter to
   square off the cells (`--dotmatrix-dot-radius: 0`) for the solid pixel-glyph
   look. Both default to the prior behaviour, so existing matrices are
-  unchanged.
+  unchanged. Adds opt-in `ui-dotmatrix--reveal` / `ui-dotmatrix--pulse`
+  animation modifiers (`cls.dotmatrixReveal` / `cls.dotmatrixPulse`), both
+  reduced-motion-aware.
 
 ## 0.3.5 — 2026-05-29
 

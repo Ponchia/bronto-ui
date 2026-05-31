@@ -63,6 +63,8 @@ export declare const cls: {
   readonly dotmatrixCell: 'ui-dotmatrix__cell';
   readonly dotmatrixCellHot: 'ui-dotmatrix__cell--hot';
   readonly dotmatrixCellAccent: 'ui-dotmatrix__cell--accent';
+  readonly dotmatrixReveal: 'ui-dotmatrix--reveal';
+  readonly dotmatrixPulse: 'ui-dotmatrix--pulse';
   readonly dotfield: 'ui-dotfield';
   readonly dotrule: 'ui-dotrule';
   readonly dotbar: 'ui-dotbar';

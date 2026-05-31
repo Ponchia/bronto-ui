@@ -63,6 +63,10 @@ export interface RenderGlyphOptions {
    *  of separated dots — the legible mode at small/inline sizes (~16–24px).
    *  Implies glyph-only. Default false (the dot-matrix display look). */
   solid?: boolean;
+  /** Opt into a decorative animation (disabled under `prefers-reduced-motion`;
+   *  meaning stays in the static frame + `label`). `'reveal'` powers the cells
+   *  on in a scan; `'pulse'` makes the glyph breathe. */
+  anim?: 'reveal' | 'pulse';
   /** Expose as `role="img"` with this label; omit for decorative (aria-hidden). */
   label?: string;
   /** CSS length for one dot (sets `--dotmatrix-dot`; sanitized — a value that

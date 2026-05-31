@@ -172,6 +172,13 @@ easier dropped than inlined. Size with `--dotmatrix-dot` (and a tight
 It is still a pixel-grid aesthetic, not a hairline vector set — but it now
 spans both inline-icon and display use from one source.
 
+**Animation** is opt-in via `anim` (`renderGlyph(name, { anim: 'reveal' })`)
+or `data-bronto-glyph-anim`: `reveal` powers the cells on in a scan (a
+dot-matrix booting up), `pulse` makes the glyph breathe for a live/attention
+state. It's **decorative only** — disabled under `prefers-reduced-motion`,
+and the meaning still lives in the static frame + `label`, never in the
+motion. Don't animate to convey information a reduced-motion user would miss.
+
 ## When to add a behavior
 
 The CSS is the framework; `@ponchia/ui/behaviors` is the *sanctioned*

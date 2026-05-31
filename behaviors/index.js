@@ -1277,6 +1277,16 @@ export function initDotGlyph({ root } = {}) {
     // `data-bronto-glyph-solid` → square, gapless pixel glyph (legible small),
     // the DOM counterpart to renderGlyph's `solid` option. Implies glyph-only.
     const solid = el.hasAttribute('data-bronto-glyph-solid');
+    // `data-bronto-glyph-anim="reveal|pulse"` → decorative animation (the DOM
+    // counterpart to renderGlyph's `anim`; reduced-motion-safe via CSS).
+    const animAttr = el.getAttribute('data-bronto-glyph-anim');
+    const animClass =
+      animAttr === 'reveal'
+        ? 'ui-dotmatrix--reveal'
+        : animAttr === 'pulse'
+          ? 'ui-dotmatrix--pulse'
+          : null;
+    const hadAnimClass = animClass ? el.classList.contains(animClass) : false;
     const hadMatrix = el.classList.contains('ui-dotmatrix');
     const hadCols = el.style.getPropertyValue('--dotmatrix-cols');
     const hadRadius = el.style.getPropertyValue('--dotmatrix-dot-radius');
@@ -1286,6 +1296,7 @@ export function initDotGlyph({ root } = {}) {
     const hadAriaLabel = el.getAttribute('aria-label');
 
     el.classList.add('ui-dotmatrix');
+    if (animClass) el.classList.add(animClass);
     el.style.setProperty('--dotmatrix-cols', String(GLYPH_SIZE));
     if (solid) {
       el.style.setProperty('--dotmatrix-dot-radius', '0');
@@ -1300,7 +1311,7 @@ export function initDotGlyph({ root } = {}) {
     }
 
     const frag = document.createDocumentFragment();
-    for (const c of cells) {
+    cells.forEach((c, i) => {
       const span = document.createElement('span');
       span.className = !c.on
         ? 'ui-dotmatrix__cell'
@@ -1310,13 +1321,15 @@ export function initDotGlyph({ root } = {}) {
             ? 'ui-dotmatrix__cell ui-dotmatrix__cell--accent'
             : 'ui-dotmatrix__cell';
       if (!c.on && solid) span.style.background = 'transparent'; // glyph-only
+      if (animAttr === 'reveal') span.style.setProperty('--i', String(i)); // scan stagger
       frag.appendChild(span);
-    }
+    });
     el.appendChild(frag);
 
     cleanups.push(() => {
       el.querySelectorAll(':scope > .ui-dotmatrix__cell').forEach((n) => n.remove());
       if (!hadMatrix) el.classList.remove('ui-dotmatrix');
+      if (animClass && !hadAnimClass) el.classList.remove(animClass);
       if (solid) {
         if (hadRadius) el.style.setProperty('--dotmatrix-dot-radius', hadRadius);
         else el.style.removeProperty('--dotmatrix-dot-radius');

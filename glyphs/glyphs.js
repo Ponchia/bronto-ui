@@ -871,11 +871,15 @@ function cssLen(v) {
  * `solid: true` renders the lit cells as square, gapless pixels (a filled
  * silhouette) instead of separated dots — the legible mode at small/inline
  * sizes (~16–24px) where the dot look fragments. It implies glyph-only.
+ *
+ * `anim` opts into a decorative animation (disabled under reduced-motion;
+ * the static frame + `label` still carry the meaning): `'reveal'` powers the
+ * cells on in a scan, `'pulse'` makes the glyph breathe.
  */
 export function renderGlyph(name, options = {}) {
   const cells = glyphCells(name);
   if (!cells.length) return '';
-  const { grid = true, solid = false, label, dot, gap } = options;
+  const { grid = true, solid = false, anim, label, dot, gap } = options;
 
   const style = [`--dotmatrix-cols:${GLYPH_SIZE}`];
   const dotLen = dot && cssLen(dot);
@@ -885,6 +889,15 @@ export function renderGlyph(name, options = {}) {
   if (solid) style.push('--dotmatrix-dot-radius:0', '--dotmatrix-gap:0');
   else if (gapLen) style.push(`--dotmatrix-gap:${gapLen}`);
 
+  const cls =
+    anim === 'reveal'
+      ? 'ui-dotmatrix ui-dotmatrix--reveal'
+      : anim === 'pulse'
+        ? 'ui-dotmatrix ui-dotmatrix--pulse'
+        : 'ui-dotmatrix';
+  // `reveal` staggers each cell by its row-major index via `--i`.
+  const stagger = anim === 'reveal';
+
   const a11y = label ? `role="img" aria-label="${esc(label)}"` : 'aria-hidden="true"';
 
   // Off cells keep the cell class (so they hold their grid track and 1:1
@@ -892,13 +905,15 @@ export function renderGlyph(name, options = {}) {
   // background, for the glyph-only look, without collapsing all-off rows.
   const showPanel = grid && !solid;
   const inner = cells
-    .map((c) => {
-      if (c.on) return `<span class="${cellClass(c)}"></span>`;
-      return showPanel
-        ? '<span class="ui-dotmatrix__cell"></span>'
-        : '<span class="ui-dotmatrix__cell" style="background:transparent"></span>';
+    .map((c, i) => {
+      const cl = c.on ? cellClass(c) : 'ui-dotmatrix__cell';
+      const cellStyle = [];
+      if (!c.on && !showPanel) cellStyle.push('background:transparent');
+      if (stagger) cellStyle.push(`--i:${i}`);
+      const s = cellStyle.length ? ` style="${cellStyle.join(';')}"` : '';
+      return `<span class="${cl}"${s}></span>`;
     })
     .join('');
 
-  return `<div class="ui-dotmatrix" style="${style.join(';')}" ${a11y}>${inner}</div>`;
+  return `<div class="${cls}" style="${style.join(';')}" ${a11y}>${inner}</div>`;
 }
