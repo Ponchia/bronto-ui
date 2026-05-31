@@ -164,7 +164,8 @@ Done in-repo:
 Remaining (npm-account side, cannot be done in-repo):
 
 - **`@ponchia` scope + `NPM_TOKEN`** — create the scope on npm, add an
-  automation token with publish rights as the `NPM_TOKEN` repo secret.
+  automation token with publish rights as the `NPM_TOKEN` secret scoped
+  to the `npm-publish` Environment (so only the gated publish job reads it).
 - **Consumers** — the consuming apps switch their dependency specifier
   from the tarball URL to `@ponchia/ui` after the first publish
   (separate repos; not changed here).
