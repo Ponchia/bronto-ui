@@ -1,0 +1,61 @@
+{
+  "$comment": "@ponchia/ui data-viz palette resolved to static hex per theme, for non-CSS render targets (canvas/SVG/charting libs). Series 1 = the resolved brand accent. Generated from tokens/charts.js — do not edit by hand; run `npm run charts:build`. Drift-checked in CI.",
+  "light": {
+    "categorical": [
+      "#d71921",
+      "#e69f00",
+      "#56b4e9",
+      "#009e73",
+      "#f0e442",
+      "#0072b2",
+      "#cc79a7",
+      "#4d5358"
+    ],
+    "sequential": [
+      "#ffe4e1",
+      "#f9bdb7",
+      "#ed8c84",
+      "#d55753",
+      "#ac3031",
+      "#79191b"
+    ],
+    "diverging": [
+      "#0c54a0",
+      "#558ac0",
+      "#aac8e3",
+      "#d9dfe5",
+      "#e0b491",
+      "#ce7a3b",
+      "#b95115"
+    ]
+  },
+  "dark": {
+    "categorical": [
+      "#ff3b41",
+      "#e69f00",
+      "#56b4e9",
+      "#009e73",
+      "#f0e442",
+      "#0072b2",
+      "#cc79a7",
+      "#4d5358"
+    ],
+    "sequential": [
+      "#551112",
+      "#8d1a1e",
+      "#c13c3b",
+      "#e66e68",
+      "#f8a49d",
+      "#fed2cd"
+    ],
+    "diverging": [
+      "#5aa3ec",
+      "#4683c5",
+      "#3e5f8a",
+      "#44484d",
+      "#a56b38",
+      "#e18e4b",
+      "#f9a870"
+    ]
+  }
+}

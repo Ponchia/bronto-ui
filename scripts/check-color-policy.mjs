@@ -320,6 +320,15 @@ for (const file of readdirSync(cssDir).filter((f) => f.endsWith('.css') && !isDe
         `css/${file}:${i + 1} raw color function "${line.match(RAW_FN)[1]}(…)" — use a tiered token (ADR-0001 rule 1)`,
       );
     }
+    // Tier-4 data-viz tokens are charts-only — never UI chrome (ADR-0001 rule 4).
+    // They live in the opt-in css/dataviz.css (a definition file, exempt here);
+    // a reference from any core component CSS is leakage.
+    const leak = line.match(/var\(\s*(--(?:chart|cat|data)-[\w-]*)/);
+    if (leak) {
+      errors.push(
+        `css/${file}:${i + 1} references "${leak[1]}" — Tier-4 data-viz tokens are charts-only, not UI chrome (ADR-0001)`,
+      );
+    }
     // Named colors only count on the value side of a declaration (avoid
     // matching selectors / at-rules / property fragments).
     const value = line.includes(':') ? line.slice(line.indexOf(':') + 1) : '';

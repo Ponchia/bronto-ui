@@ -64,6 +64,23 @@ like `data-theme` (the derived accent family only recomputes at `:root`):
 Each re-points the one `--accent` (OKLCH, per-theme, contrast-gated); status
 colours and the neutral canvas are untouched. Details in `docs/theming.md`.
 
+Optional data-viz palette for dashboards — opt-in, charts-only (never UI
+chrome), never in the default bundle:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/dataviz.css" />
+```
+
+```js
+import charts from '@ponchia/ui/charts.json' with { type: 'json' };
+// charts.dark.categorical → ['#ff3b41', …] (series 0 = the resolved accent)
+```
+
+`--chart-1..8` (categorical; series 1 = accent; colourblind-safe, gated under
+simulated protan/deutan/tritan), `--chart-seq-*` (sequential), `--chart-div-*`
+(diverging), and `--chart-pattern-1..8` (dot-matrix fills — pair colour N with
+pattern N; colour is never the sole signal). Details in `docs/theming.md`.
+
 ## Authoritative offline references (shipped in this package)
 
 Read these from `node_modules/@ponchia/ui/` — no network needed:

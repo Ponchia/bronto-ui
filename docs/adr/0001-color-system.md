@@ -1,6 +1,6 @@
 # ADR-0001 — Color system: governed evolution beyond monochrome
 
-Status: accepted (steps 1–6 implemented in 0.4.0; 7–8 deferred) · 2026-05-31 ·
+Status: accepted (steps 1–7 implemented in 0.4.0; 8 deferred to 0.5) · 2026-05-31 ·
 supersedes the informal "monochrome + one accent" framing in `README.md` /
 `package.json`
 
@@ -185,11 +185,19 @@ Hard acceptance criteria for every step below:
 6. **APCA advisory reporting.** *(done — `scripts/gen-contrast.mjs`)* APCA-W3
    0.1.9 `Lc` is computed beside the WCAG ratio for every pairing (core + skins)
    in `docs/contrast.md`. **Advisory only** — WCAG 2.1 AA stays the hard gate.
-7. **Categorical chart module last, only on real demand.** Optional
-   `css/dataviz.css` with 6–8 colorblind-safe categorical tokens (Wong/IBM
-   base) + sequential/diverging ramps, exported and packed but **never** in the
-   default bundle, and requiring labels/patterns so color is not the sole
-   signal.
+7. **Categorical chart module.** *(done in 0.4.0 — real demand arrived
+   (dashboards); `tokens/charts.js` → `css/dataviz.css` + `tokens/charts.json`
+   + `tokens/charts.d.ts`, gated by `check:charts`.)* Hybrid accent-led
+   (series 1 = `var(--accent)`) + Okabe-Ito colourblind-safe series 2–8 + a
+   sequential and a diverging ramp; **dot-matrix `--chart-pattern-*` fills** as
+   the mandated second channel. Gated for distinguishability under normal +
+   simulated protan/deutan/tritan vision (OKLab ΔE), `var(--chart-*)` forbidden
+   in core component CSS (charts-only), never in the default bundle. The
+   categorical fills are authored as the Okabe-Ito sRGB hex **verbatim** (a
+   CVD-proven *set* — re-deriving per-theme in OKLCH broke its colourblind
+   safety, which the gate caught); the ramps are OKLCH. A chart colour's WCAG
+   ratio vs the background is reported **advisory** (a fill is not body text;
+   the pattern + ΔE gate carry distinguishability).
 8. **Consider OKLCH default-ramp migration later** — only after resolver
    support and screenshot review prove acceptable diffs, as an opt-in engine or
    a clearly documented minor/RC.
@@ -239,9 +247,10 @@ flagged):
 - **Build tooling stays dependency-free.** APCA + the OKLCH→sRGB conversion are
   hand-rolled in `scripts/gen-contrast.mjs` (zero new deps), matching the
   zero-dependency stance.
-- **Data-viz categorical color (step 7) is deferred** — no consumer demand yet;
-  the `--chart/--cat/--data-*` namespace stays reserved and gated. Building it
-  speculatively would violate "only on real demand" and the leakage risk.
+- **Data-viz categorical color (step 7) shipped in 0.4.0** — real demand
+  arrived (dashboards). Built as a governed Tier-4 module (opt-in, charts-only,
+  leakage-gated, CVD-distinguishability-gated). `--cat/--data-*` remain reserved
+  alternative-name guards; `--chart-*` is now the live data-viz namespace.
 - **No second UI accent / "duotone" stays Tier-3 ornament only** (rule 5).
 
 ## Method
