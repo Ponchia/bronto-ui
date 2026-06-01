@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 338 classes across 122 component groups
+- 364 classes across 123 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -288,9 +288,7 @@ each one matches a real selector in the stylesheet.
 | `cls.chartFallback` | `ui-chart__fallback` | part |
 | `cls.chartFill` | `ui-chart__fill` | part |
 | `cls.chartLabel` | `ui-chart__label` | part |
-| `cls.chartLegend` | `ui-chart__legend` | part |
 | `cls.chartPlot` | `ui-chart__plot` | part |
-| `cls.chartSwatch` | `ui-chart__swatch` | part |
 | `cls.chartTrack` | `ui-chart__track` | part |
 
 ### `.ui-check`
@@ -510,6 +508,39 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.label` | `ui-label` | base |
+
+### `.ui-legend`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.legend` | `ui-legend` | base |
+| `cls.legendCaption` | `ui-legend__caption` | part |
+| `cls.legendItem` | `ui-legend__item` | part |
+| `cls.legendLabel` | `ui-legend__label` | part |
+| `cls.legendSwatch` | `ui-legend__swatch` | part |
+| `cls.legendSwatch1` | `ui-legend__swatch--1` | modifier |
+| `cls.legendSwatch2` | `ui-legend__swatch--2` | modifier |
+| `cls.legendSwatch3` | `ui-legend__swatch--3` | modifier |
+| `cls.legendSwatch4` | `ui-legend__swatch--4` | modifier |
+| `cls.legendSwatch5` | `ui-legend__swatch--5` | modifier |
+| `cls.legendSwatch6` | `ui-legend__swatch--6` | modifier |
+| `cls.legendSwatch7` | `ui-legend__swatch--7` | modifier |
+| `cls.legendSwatch8` | `ui-legend__swatch--8` | modifier |
+| `cls.legendSwatchCircle` | `ui-legend__swatch--circle` | modifier |
+| `cls.legendSwatchLine` | `ui-legend__swatch--line` | modifier |
+| `cls.legendSymbol` | `ui-legend__symbol` | part |
+| `cls.legendTick` | `ui-legend__tick` | part |
+| `cls.legendTicks` | `ui-legend__ticks` | part |
+| `cls.legendTitle` | `ui-legend__title` | part |
+| `cls.legendTrack` | `ui-legend__track` | part |
+| `cls.legendValue` | `ui-legend__value` | part |
+| `cls.legendCompact` | `ui-legend--compact` | modifier |
+| `cls.legendDiverging` | `ui-legend--diverging` | modifier |
+| `cls.legendGradient` | `ui-legend--gradient` | modifier |
+| `cls.legendInteractive` | `ui-legend--interactive` | modifier |
+| `cls.legendThreshold` | `ui-legend--threshold` | modifier |
+| `cls.legendVertical` | `ui-legend--vertical` | modifier |
+| `cls.legendWithValues` | `ui-legend--with-values` | modifier |
 
 ### `.ui-lightbox`
 

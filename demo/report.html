@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="../dist/css/report.css" />
     <link rel="stylesheet" href="../dist/css/dataviz.css" />
     <link rel="stylesheet" href="../dist/css/annotations.css" />
+    <link rel="stylesheet" href="../dist/css/legend.css" />
   </head>
   <body>
     <main class="ui-report ui-report--numbered">
@@ -134,30 +135,30 @@
           <figcaption id="focus-chart-title" class="ui-chart__caption">
             Fig 1 - Weekly focus split, with fallback data
           </figcaption>
-          <ul class="ui-chart__legend" aria-label="Focus series">
-            <li>
+          <ul class="ui-legend" aria-label="Focus series">
+            <li class="ui-legend__item">
               <span
-                class="ui-chart__swatch"
+                class="ui-legend__swatch"
                 style="--chart-color: var(--chart-1); --chart-pattern: var(--chart-pattern-1)"
                 aria-hidden="true"
               ></span>
-              Research
+              <span class="ui-legend__label">Research</span>
             </li>
-            <li>
+            <li class="ui-legend__item">
               <span
-                class="ui-chart__swatch"
+                class="ui-legend__swatch"
                 style="--chart-color: var(--chart-2); --chart-pattern: var(--chart-pattern-2)"
                 aria-hidden="true"
               ></span>
-              Delivery
+              <span class="ui-legend__label">Delivery</span>
             </li>
-            <li>
+            <li class="ui-legend__item">
               <span
-                class="ui-chart__swatch"
+                class="ui-legend__swatch"
                 style="--chart-color: var(--chart-3); --chart-pattern: var(--chart-pattern-3)"
                 aria-hidden="true"
               ></span>
-              Maintenance
+              <span class="ui-legend__label">Maintenance</span>
             </li>
           </ul>
           <div class="ui-chart__plot" aria-hidden="true">

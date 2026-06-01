@@ -145,6 +145,28 @@ export interface InputIconOpts {
   /** Place the icon at the inline-end instead of the start. */
   end?: boolean;
 }
+export interface LegendOpts {
+  /** Stack entries vertically instead of the wrapping inline row. */
+  orient?: 'vertical';
+  /** Continuous colour ramp (\`gradient\`) or binned \`threshold\` key. Omit for the categorical default. */
+  type?: 'gradient' | 'threshold';
+  /** Use the 7-stop diverging ramp instead of the sequential one (gradient type). */
+  diverging?: boolean;
+  compact?: boolean;
+  /** Align a trailing \`__value\` column across rows. */
+  withValues?: boolean;
+  /** Entries are \`<button aria-pressed>\` toggles (pair with behaviors/legend.js). */
+  interactive?: boolean;
+}
+export interface LegendItemOpts {
+  /** Host-set inactive state. Equivalent to \`[aria-pressed="false"]\` on an interactive entry. */
+  inactive?: boolean;
+}
+export interface LegendSwatchOpts {
+  /** Categorical palette series 1–8 — sets the matching \`--chart-N\` colour. */
+  series?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+  shape?: 'circle' | 'line';
+}
 export interface AnnotationOpts {
   variant?: 'label' | 'callout' | 'elbow' | 'curve' | 'circle' | 'rect' | 'threshold' | 'badge' | 'bracket' | 'band' | 'slope' | 'compare' | 'cluster' | 'axis' | 'timeline' | 'evidence';
   tone?: 'accent' | 'muted' | 'success' | 'warning' | 'danger' | 'info';
@@ -178,6 +200,9 @@ export interface Ui {
   container(opts?: ContainerOpts): string;
   tag(opts?: TagOpts): string;
   inputIcon(opts?: InputIconOpts): string;
+  legend(opts?: LegendOpts): string;
+  legendItem(opts?: LegendItemOpts): string;
+  legendSwatch(opts?: LegendSwatchOpts): string;
   annotation(opts?: AnnotationOpts): string;
 }
 

@@ -224,34 +224,9 @@
   padding: var(--space-md);
 }
 
-.ui-chart__legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.ui-chart__legend > * {
-  align-items: center;
-  color: var(--text-soft);
-  display: inline-flex;
-  font-family: var(--mono);
-  font-size: var(--text-xs);
-  gap: 0.45rem;
-}
-
-.ui-chart__swatch {
-  background: var(--chart-color, var(--chart-1, var(--accent)));
-  background-image: var(--chart-pattern, var(--chart-pattern-1, none));
-  background-size: var(--chart-pattern-size, 8px);
-  border: 1px solid var(--line-strong);
-  block-size: 0.8rem;
-  flex: 0 0 auto;
-  inline-size: 0.8rem;
-}
-
+/* The chart's data key lives in the standalone, portable `.ui-legend`
+   (css/legend.css), not here — import it beside this kit when a chart needs
+   a legend. The chart owns only its plot + bars + fallback below. */
 .ui-chart__plot {
   display: grid;
   gap: var(--space-xs);
@@ -262,6 +237,13 @@
 
   display: grid;
   gap: 0.35rem;
+}
+
+/* An author `display` outranks the UA `[hidden]` rule, so re-assert it: a host
+   toggling a series (e.g. from a `bronto:legend:toggle` event) expects
+   `bar.hidden = true` to actually hide the bar. */
+.ui-chart__bar[hidden] {
+  display: none;
 }
 
 .ui-chart__label {
@@ -334,9 +316,8 @@
   /* Meaning-carrying chart fills must survive the print "economy" default
      (which drops backgrounds) without relying on a `.ui-print-exact`
      ancestor. The accent on `.ui-report__summary` is a border, so it already
-     prints. */
-  .ui-chart__fill,
-  .ui-chart__swatch {
+     prints. (Legend swatches print-protect themselves in css/legend.css.) */
+  .ui-chart__fill {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }

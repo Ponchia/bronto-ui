@@ -155,10 +155,11 @@ const cssDir = resolve(root, 'css');
 // Definition files where color literals legitimately live (tier sources).
 const isDefinitionFile = (f) => f === 'tokens.css' || f === 'dataviz.css' || f.startsWith('skins');
 // Files that legitimately CONSUME Tier-4 chart tokens because they ship chart
-// helpers (report.css's .ui-chart swatch/fill). They are exempt from the
-// charts-only leak check below, but stay under the raw-color scans — so a stray
-// raw hex in report.css is still caught (unlike a blanket definition-file exempt).
-const consumesChartTokens = (f) => f === 'report.css';
+// helpers (report.css's .ui-chart fill, legend.css's .ui-legend swatches/ramps).
+// They are exempt from the charts-only leak check below, but stay under the
+// raw-color scans — so a stray raw hex in either is still caught (unlike a
+// blanket definition-file exempt).
+const consumesChartTokens = (f) => f === 'report.css' || f === 'legend.css';
 const stripComments = (s) => s.replace(/\/\*[\s\S]*?\*\//g, '');
 const stripUrls = (s) => s.replace(/url\([^)]*\)/gi, 'url()');
 

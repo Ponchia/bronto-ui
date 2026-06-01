@@ -32,6 +32,7 @@ import {
   initDialog,
   initCarousel,
   initDotGlyph,
+  initLegend,
   toast,
 } from '../behaviors/index.js';
 
@@ -73,6 +74,7 @@ export const useTabs = (opts) => useBrontoBehavior(initTabs, opts);
 export const useDialog = (opts) => useBrontoBehavior(initDialog, opts);
 export const useCarousel = (opts) => useBrontoBehavior(initCarousel, opts);
 export const useDotGlyph = (opts) => useBrontoBehavior(initDotGlyph, opts);
+export const useLegend = (opts) => useBrontoBehavior(initLegend, opts);
 
 /** The `toast()` imperative (no lifecycle of its own). */
 export const useToast = () => toast;

@@ -14,6 +14,7 @@ import {
   initPopover,
   initTableSort,
   initCarousel,
+  initLegend,
   toast,
 } from '../behaviors/index.js';
 
@@ -1101,6 +1102,75 @@ test('initCarousel: SSR-safe', () => {
   for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
   assert.doesNotThrow(() => {
     const stop = initCarousel();
+    stop();
+  });
+});
+
+const legendMarkup = `
+  <ul class="ui-legend ui-legend--interactive" data-bronto-legend>
+    <li><button class="ui-legend__item" aria-pressed="true" data-series="a">
+      <span class="ui-legend__swatch"></span><span class="ui-legend__label">A</span>
+    </button></li>
+    <li><button class="ui-legend__item" aria-pressed="true" data-series="b">
+      <span class="ui-legend__swatch"></span><span class="ui-legend__label">B</span>
+    </button></li>
+  </ul>`;
+
+test('initLegend: click toggles aria-pressed + is-inactive and emits bronto:legend:toggle', () => {
+  const d = mount(legendMarkup);
+  initLegend();
+  const btn = d.querySelectorAll('.ui-legend__item')[0];
+  const events = [];
+  d.addEventListener('bronto:legend:toggle', (e) => events.push(e.detail));
+
+  // Click on an inner span — delegation must still resolve the item button.
+  btn
+    .querySelector('.ui-legend__swatch')
+    .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(btn.getAttribute('aria-pressed'), 'false');
+  assert.ok(btn.classList.contains('is-inactive'));
+  assert.deepEqual(events.at(-1), { series: 'a', active: false });
+
+  btn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(btn.getAttribute('aria-pressed'), 'true');
+  assert.ok(!btn.classList.contains('is-inactive'));
+  assert.deepEqual(events.at(-1), { series: 'a', active: true });
+});
+
+test('initLegend: falls back to the 0-based index when data-series is absent', () => {
+  const d = mount(`
+    <ul class="ui-legend ui-legend--interactive" data-bronto-legend>
+      <li><button class="ui-legend__item" aria-pressed="true"><span class="ui-legend__label">A</span></button></li>
+      <li><button class="ui-legend__item" aria-pressed="true"><span class="ui-legend__label">B</span></button></li>
+    </ul>`);
+  initLegend();
+  const second = d.querySelectorAll('.ui-legend__item')[1];
+  const events = [];
+  d.addEventListener('bronto:legend:toggle', (e) => events.push(e.detail));
+  second.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.deepEqual(events.at(-1), { series: 1, active: false });
+});
+
+test('initLegend: idempotent (re-init replaces, never stacks) and cleanup stops it', () => {
+  const d = mount(legendMarkup);
+  initLegend();
+  const stop = initLegend(); // must replace, not add a 2nd handler
+  const btn = d.querySelectorAll('.ui-legend__item')[0];
+  let count = 0;
+  d.addEventListener('bronto:legend:toggle', () => count++);
+
+  btn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(count, 1, 'fires exactly once');
+
+  stop();
+  btn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(count, 1, 'no-op after cleanup');
+});
+
+test('initLegend: SSR-safe', () => {
+  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
+  assert.doesNotThrow(() => {
+    const stop = initLegend();
     stop();
   });
 });

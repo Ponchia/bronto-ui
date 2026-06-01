@@ -23,9 +23,11 @@ const read = (rel) => readFileSync(resolve(root, rel), 'utf8');
 const classSources = [
   'docs/reporting.md',
   'docs/annotations.md',
+  'docs/legends.md',
   'llms.txt',
   'demo/report.html',
   'demo/annotations.html',
+  'demo/legends.html',
   ...walk('examples/report-static').filter((p) => /\.(html|js|css|md)$/.test(p)),
 ];
 
@@ -48,6 +50,7 @@ if (/annotations\.css/.test(core)) {
 const htmlSources = [
   'demo/report.html',
   'demo/annotations.html',
+  'demo/legends.html',
   ...walk('examples/report-static').filter((p) => /\.html$/.test(p)),
 ];
 for (const rel of htmlSources) {
@@ -65,8 +68,10 @@ const rawColor = /#[0-9a-fA-F]{3,8}\b|\b(?:rgba?|hsla?|oklch|oklab|lab|lch|hwb|c
 for (const rel of [
   'docs/reporting.md',
   'docs/annotations.md',
+  'docs/legends.md',
   'demo/report.html',
   'demo/annotations.html',
+  'demo/legends.html',
   ...walk('examples/report-static'),
 ]) {
   if (!/\.(md|html|css|js)$/.test(rel)) continue;

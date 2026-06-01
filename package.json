@@ -61,6 +61,7 @@
     "docs/usage.md",
     "docs/reporting.md",
     "docs/annotations.md",
+    "docs/legends.md",
     "docs/adr/0001-color-system.md",
     "docs/adr/0002-scope-and-2026-baseline.md",
     "docs/adr/0003-theme-model.md"
@@ -95,6 +96,7 @@
     "check:skins": "node scripts/check-skins.mjs",
     "check:charts": "node scripts/check-charts.mjs",
     "check:report": "node scripts/check-report.mjs",
+    "check:legend": "node scripts/check-legend.mjs",
     "check:types": "tsc -p tsconfig.json",
     "check:dtcg": "node scripts/check-dtcg.mjs",
     "check:resolved": "node scripts/check-resolved.mjs",
@@ -105,7 +107,7 @@
     "check:reference": "node scripts/check-reference.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:vscode": "node scripts/check-vscode-data.mjs",
-    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:tokens && npm run check:classes && npm run check:dts && npm run check:types && npm run check:dtcg && npm run check:resolved && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:release && npm run check:reference && npm run check:contrast && npm run check:vscode && npm run check:behaviors && npm run check:bindings && npm run check:glyphs && npm run check:color-policy && npm run check:skins && npm run check:charts && npm run check:report",
+    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:tokens && npm run check:classes && npm run check:dts && npm run check:types && npm run check:dtcg && npm run check:resolved && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:release && npm run check:reference && npm run check:contrast && npm run check:vscode && npm run check:behaviors && npm run check:bindings && npm run check:glyphs && npm run check:color-policy && npm run check:skins && npm run check:charts && npm run check:report && npm run check:legend",
     "test": "node --test \"test/*.test.mjs\"",
     "prepack": "npm run tokens:css:build && npm run tokens:build && npm run dtcg:build && npm run resolved:build && npm run dts:build && npm run reference:build && npm run contrast:build && npm run vscode:build && npm run skins:build && npm run charts:build && npm run dist:build && npm run glyphs:build",
     "prepublishOnly": "npm run check && npm test"
@@ -167,6 +169,7 @@
     "./css/dataviz.css": "./dist/css/dataviz.css",
     "./css/report.css": "./dist/css/report.css",
     "./css/annotations.css": "./dist/css/annotations.css",
+    "./css/legend.css": "./dist/css/legend.css",
     "./css/unlayered/tokens.css": "./css/tokens.css",
     "./css/unlayered/fonts.css": "./css/fonts.css",
     "./css/unlayered/base.css": "./css/base.css",
@@ -186,6 +189,7 @@
     "./css/unlayered/dataviz.css": "./css/dataviz.css",
     "./css/unlayered/report.css": "./css/report.css",
     "./css/unlayered/annotations.css": "./css/annotations.css",
+    "./css/unlayered/legend.css": "./css/legend.css",
     "./tokens": {
       "types": "./tokens/index.d.ts",
       "default": "./tokens/index.js"
@@ -204,6 +208,7 @@
     "./docs/usage.md": "./docs/usage.md",
     "./docs/reporting.md": "./docs/reporting.md",
     "./docs/annotations.md": "./docs/annotations.md",
+    "./docs/legends.md": "./docs/legends.md",
     "./docs/adr/0001-color-system.md": "./docs/adr/0001-color-system.md",
     "./docs/adr/0002-scope-and-2026-baseline.md": "./docs/adr/0002-scope-and-2026-baseline.md",
     "./docs/adr/0003-theme-model.md": "./docs/adr/0003-theme-model.md",

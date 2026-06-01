@@ -67,7 +67,7 @@ for (const theme of ['dark', 'light']) {
     await expect(page.locator('h1.ui-report__title')).toHaveCount(1);
     await expect(page.locator('table caption')).toHaveCount(2);
     await expect(page.locator('figure.ui-report__figure figcaption')).toHaveCount(1);
-    await expect(page.locator('.ui-chart__legend')).toHaveCount(1);
+    await expect(page.locator('.ui-legend')).toHaveCount(1);
     await expect(page.locator('.ui-chart__plot')).toHaveCount(1);
     await expect(page.locator('.ui-chart__bar')).toHaveCount(3);
     await expect(page.locator('.ui-chart__fallback table')).toHaveCount(1);

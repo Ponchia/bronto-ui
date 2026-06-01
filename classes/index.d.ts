@@ -254,8 +254,6 @@ export declare const cls: {
   readonly reportAppendix: 'ui-report__appendix';
   readonly reportFootnotes: 'ui-report__footnotes';
   readonly chart: 'ui-chart';
-  readonly chartLegend: 'ui-chart__legend';
-  readonly chartSwatch: 'ui-chart__swatch';
   readonly chartCaption: 'ui-chart__caption';
   readonly chartPlot: 'ui-chart__plot';
   readonly chartBar: 'ui-chart__bar';
@@ -263,6 +261,34 @@ export declare const cls: {
   readonly chartTrack: 'ui-chart__track';
   readonly chartFill: 'ui-chart__fill';
   readonly chartFallback: 'ui-chart__fallback';
+  readonly legend: 'ui-legend';
+  readonly legendVertical: 'ui-legend--vertical';
+  readonly legendCompact: 'ui-legend--compact';
+  readonly legendGradient: 'ui-legend--gradient';
+  readonly legendDiverging: 'ui-legend--diverging';
+  readonly legendThreshold: 'ui-legend--threshold';
+  readonly legendWithValues: 'ui-legend--with-values';
+  readonly legendInteractive: 'ui-legend--interactive';
+  readonly legendTitle: 'ui-legend__title';
+  readonly legendItem: 'ui-legend__item';
+  readonly legendSwatch: 'ui-legend__swatch';
+  readonly legendSwatchCircle: 'ui-legend__swatch--circle';
+  readonly legendSwatchLine: 'ui-legend__swatch--line';
+  readonly legendSwatch1: 'ui-legend__swatch--1';
+  readonly legendSwatch2: 'ui-legend__swatch--2';
+  readonly legendSwatch3: 'ui-legend__swatch--3';
+  readonly legendSwatch4: 'ui-legend__swatch--4';
+  readonly legendSwatch5: 'ui-legend__swatch--5';
+  readonly legendSwatch6: 'ui-legend__swatch--6';
+  readonly legendSwatch7: 'ui-legend__swatch--7';
+  readonly legendSwatch8: 'ui-legend__swatch--8';
+  readonly legendSymbol: 'ui-legend__symbol';
+  readonly legendLabel: 'ui-legend__label';
+  readonly legendValue: 'ui-legend__value';
+  readonly legendCaption: 'ui-legend__caption';
+  readonly legendTrack: 'ui-legend__track';
+  readonly legendTicks: 'ui-legend__ticks';
+  readonly legendTick: 'ui-legend__tick';
   readonly annotation: 'ui-annotation';
   readonly annotationSubject: 'ui-annotation__subject';
   readonly annotationConnector: 'ui-annotation__connector';
@@ -449,6 +475,28 @@ export interface InputIconOpts {
   /** Place the icon at the inline-end instead of the start. */
   end?: boolean;
 }
+export interface LegendOpts {
+  /** Stack entries vertically instead of the wrapping inline row. */
+  orient?: 'vertical';
+  /** Continuous colour ramp (`gradient`) or binned `threshold` key. Omit for the categorical default. */
+  type?: 'gradient' | 'threshold';
+  /** Use the 7-stop diverging ramp instead of the sequential one (gradient type). */
+  diverging?: boolean;
+  compact?: boolean;
+  /** Align a trailing `__value` column across rows. */
+  withValues?: boolean;
+  /** Entries are `<button aria-pressed>` toggles (pair with behaviors/legend.js). */
+  interactive?: boolean;
+}
+export interface LegendItemOpts {
+  /** Host-set inactive state. Equivalent to `[aria-pressed="false"]` on an interactive entry. */
+  inactive?: boolean;
+}
+export interface LegendSwatchOpts {
+  /** Categorical palette series 1–8 — sets the matching `--chart-N` colour. */
+  series?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+  shape?: 'circle' | 'line';
+}
 export interface AnnotationOpts {
   variant?: 'label' | 'callout' | 'elbow' | 'curve' | 'circle' | 'rect' | 'threshold' | 'badge' | 'bracket' | 'band' | 'slope' | 'compare' | 'cluster' | 'axis' | 'timeline' | 'evidence';
   tone?: 'accent' | 'muted' | 'success' | 'warning' | 'danger' | 'info';
@@ -482,6 +530,9 @@ export interface Ui {
   container(opts?: ContainerOpts): string;
   tag(opts?: TagOpts): string;
   inputIcon(opts?: InputIconOpts): string;
+  legend(opts?: LegendOpts): string;
+  legendItem(opts?: LegendItemOpts): string;
+  legendSwatch(opts?: LegendSwatchOpts): string;
   annotation(opts?: AnnotationOpts): string;
 }
 

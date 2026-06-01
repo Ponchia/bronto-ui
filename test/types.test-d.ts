@@ -79,6 +79,16 @@ ui.annotation({ tone: 'loud' });
 // @ts-expect-error — invalid annotation motion rejected.
 ui.annotation({ motion: 'blink' });
 
+const leg: string = ui.legend({ type: 'gradient', diverging: true });
+const legItem: string = ui.legendItem({ inactive: true });
+const legSwatch: string = ui.legendSwatch({ series: 3, shape: 'circle' });
+// @ts-expect-error — invalid legend type rejected.
+ui.legend({ type: 'pie' });
+// @ts-expect-error — series is the 1–8 categorical union, not an arbitrary number.
+ui.legendSwatch({ series: 9 });
+// @ts-expect-error — invalid swatch shape rejected.
+ui.legendSwatch({ shape: 'star' });
+
 const parts: ClassValue = ['a', false, ['b'], null];
 const joined: string = cx(parts, 'extra', undefined);
 

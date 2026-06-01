@@ -7,11 +7,13 @@
 
 ## Unreleased — 0.4.2
 
-Adds the opt-in SVG **annotations** layer on top of maintenance hardening from a
+Adds two opt-in analytical surfaces — the SVG **annotations** layer and the
+**legends / data-keys** layer — on top of maintenance hardening from a
 multi-perspective review. The hardening changes are surface-neutral (the
-pre-existing `dist/*` is byte-identical and `.ui-*`, tokens, behaviors, and
-bindings are unchanged); annotations are a new, additive, opt-in surface that
-the default bundle does not import.
+pre-existing `dist/*` is byte-identical); annotations and legends are new,
+additive, opt-in surfaces the default bundle does not import. One **breaking**
+change to the opt-in report kit: the chart data key moved into the new legend
+layer (see Changed).
 
 ### Added
 
@@ -26,6 +28,21 @@ the default bundle does not import.
   plus tiny geometry helpers that return SVG strings only — they own no chart
   scales, mutate no DOM, and provide no edit mode. Documented in
   [`docs/annotations.md`](docs/annotations.md) and gated by `check:report`.
+- **Legends / data keys** (`@ponchia/ui/css/legend.css`, `.ui-legend*`,
+  `ui.legend()`/`ui.legendItem()`/`ui.legendSwatch()`, `initLegend`): an opt-in,
+  standalone data-key layer that reads the `--chart-*` palette tokens.
+  Categorical, continuous gradient (sequential + `--diverging`), threshold, and
+  pattern keys; swatch colour set inline (`--chart-color`) or via
+  `.ui-legend__swatch--1..8` index helpers; vertical/compact/with-values
+  layouts. WCAG 1.4.1 by construction (the text label is the non-colour
+  channel), with `forced-colors` and print care. Optional interactive
+  (series-toggling) entries are `<button aria-pressed>` controls: `initLegend`
+  flips `aria-pressed`/`.is-inactive` and emits `bronto:legend:toggle`
+  (`{ series, active }`) — the host owns hiding the series and any `aria-live`
+  announcement (it is never a chart engine). Optional `useLegend` hook in the
+  React/Solid/Qwik bindings. New `check:legend` gate proves swatch colours are a
+  subset of `tokens/charts.js` and never a raw hex. Documented in
+  [`docs/legends.md`](docs/legends.md).
 
 ### Fixed
 
@@ -36,6 +53,13 @@ the default bundle does not import.
 
 ### Changed
 
+- **Breaking (opt-in report kit):** the chart data key moved out of
+  `css/report.css` into the standalone `css/legend.css`. `.ui-chart__legend` →
+  `.ui-legend` (now with `.ui-legend__item`/`.ui-legend__label` rows) and
+  `.ui-chart__swatch` → `.ui-legend__swatch`. Import `@ponchia/ui/css/legend.css`
+  beside the report kit; see [`MIGRATIONS.json`](MIGRATIONS.json) and
+  [`docs/legends.md`](docs/legends.md). The `--chart-color`/`--chart-pattern`
+  swatch contract is unchanged, so the rename is mechanical.
 - `docs/architecture.md` now ships in the package, so the offline rationale the
   shipped ADRs link to resolves inside the tarball.
 - `docs/stability.md` clarifies that `data-surface`/`data-density`/

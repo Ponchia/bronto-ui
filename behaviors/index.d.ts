@@ -156,3 +156,22 @@ export declare function toast(message: string, opts?: ToastOpts): Cleanup;
  * attributes.
  */
 export declare function initDotGlyph(opts?: DelegateOpts): Cleanup;
+
+/** `bronto:legend:toggle` CustomEvent detail. `series` is the entry's
+ *  `data-series`, or its 0-based index when unset. `active` is the new state
+ *  (`true` ⇒ series shown). */
+export interface LegendToggleDetail {
+  series: string | number;
+  active: boolean;
+}
+
+/**
+ * Wire `[data-bronto-legend]` interactive legends. Each `.ui-legend__item` is a
+ * `<button aria-pressed>`; activating it flips `aria-pressed`, toggles
+ * `.is-inactive`, and dispatches `bronto:legend:toggle`
+ * ({@link LegendToggleDetail}) on the legend. Bronto owns the control + its
+ * state only — the host hides its own series and owns any `aria-live`
+ * announcement (`aria-pressed="true"` ⇒ series shown). SSR-safe, idempotent per
+ * host. Returns a cleanup function.
+ */
+export declare function initLegend(opts?: DelegateOpts): Cleanup;
