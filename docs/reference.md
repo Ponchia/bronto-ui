@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 364 classes across 123 component groups
+- 381 classes across 125 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -211,6 +211,17 @@ each one matches a real selector in the stylesheet.
 | `cls.badgeMuted` | `ui-badge--muted` | modifier |
 | `cls.badgeSuccess` | `ui-badge--success` | modifier |
 | `cls.badgeWarning` | `ui-badge--warning` | modifier |
+
+### `.ui-bracket-note`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.bracketNote` | `ui-bracket-note` | base |
+| `cls.bracketNoteLabel` | `ui-bracket-note__label` | part |
+| `cls.bracketNoteDanger` | `ui-bracket-note--danger` | modifier |
+| `cls.bracketNoteEvidence` | `ui-bracket-note--evidence` | modifier |
+| `cls.bracketNoteInfo` | `ui-bracket-note--info` | modifier |
+| `cls.bracketNoteWarning` | `ui-bracket-note--warning` | modifier |
 
 ### `.ui-breadcrumb`
 
@@ -556,6 +567,22 @@ each one matches a real selector in the stylesheet.
 | `cls.link` | `ui-link` | base |
 | `cls.linkArrow` | `ui-link--arrow` | modifier |
 | `cls.linkCta` | `ui-link--cta` | modifier |
+
+### `.ui-mark`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.mark` | `ui-mark` | base |
+| `cls.markBox` | `ui-mark--box` | modifier |
+| `cls.markDanger` | `ui-mark--danger` | modifier |
+| `cls.markDraw` | `ui-mark--draw` | modifier |
+| `cls.markEvidence` | `ui-mark--evidence` | modifier |
+| `cls.markInfo` | `ui-mark--info` | modifier |
+| `cls.markMuted` | `ui-mark--muted` | modifier |
+| `cls.markStrike` | `ui-mark--strike` | modifier |
+| `cls.markSuccess` | `ui-mark--success` | modifier |
+| `cls.markUnderline` | `ui-mark--underline` | modifier |
+| `cls.markWarning` | `ui-mark--warning` | modifier |
 
 ### `.ui-matrix`
 

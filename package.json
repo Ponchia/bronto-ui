@@ -62,6 +62,7 @@
     "docs/reporting.md",
     "docs/annotations.md",
     "docs/legends.md",
+    "docs/marks.md",
     "docs/adr/0001-color-system.md",
     "docs/adr/0002-scope-and-2026-baseline.md",
     "docs/adr/0003-theme-model.md"
@@ -170,6 +171,7 @@
     "./css/report.css": "./dist/css/report.css",
     "./css/annotations.css": "./dist/css/annotations.css",
     "./css/legend.css": "./dist/css/legend.css",
+    "./css/marks.css": "./dist/css/marks.css",
     "./css/unlayered/tokens.css": "./css/tokens.css",
     "./css/unlayered/fonts.css": "./css/fonts.css",
     "./css/unlayered/base.css": "./css/base.css",
@@ -190,6 +192,7 @@
     "./css/unlayered/report.css": "./css/report.css",
     "./css/unlayered/annotations.css": "./css/annotations.css",
     "./css/unlayered/legend.css": "./css/legend.css",
+    "./css/unlayered/marks.css": "./css/marks.css",
     "./tokens": {
       "types": "./tokens/index.d.ts",
       "default": "./tokens/index.js"
@@ -209,6 +212,7 @@
     "./docs/reporting.md": "./docs/reporting.md",
     "./docs/annotations.md": "./docs/annotations.md",
     "./docs/legends.md": "./docs/legends.md",
+    "./docs/marks.md": "./docs/marks.md",
     "./docs/adr/0001-color-system.md": "./docs/adr/0001-color-system.md",
     "./docs/adr/0002-scope-and-2026-baseline.md": "./docs/adr/0002-scope-and-2026-baseline.md",
     "./docs/adr/0003-theme-model.md": "./docs/adr/0003-theme-model.md",

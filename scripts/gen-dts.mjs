@@ -172,6 +172,17 @@ export interface AnnotationOpts {
   tone?: 'accent' | 'muted' | 'success' | 'warning' | 'danger' | 'info';
   motion?: 'draw' | 'pulse' | 'reveal' | 'focus';
 }
+export interface MarkOpts {
+  /** How the mark is drawn. Omit for the highlight fill. */
+  style?: 'underline' | 'box' | 'strike';
+  /** \`evidence\` is the rationed accent; status tones for status-bearing emphasis; \`muted\` for de-emphasis. */
+  tone?: 'evidence' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
+  /** Draw-on highlight sweep (respects \`prefers-reduced-motion\`). */
+  motion?: 'draw';
+}
+export interface BracketNoteOpts {
+  tone?: 'evidence' | 'warning' | 'danger' | 'info';
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -204,6 +215,8 @@ export interface Ui {
   legendItem(opts?: LegendItemOpts): string;
   legendSwatch(opts?: LegendSwatchOpts): string;
   annotation(opts?: AnnotationOpts): string;
+  mark(opts?: MarkOpts): string;
+  bracketNote(opts?: BracketNoteOpts): string;
 }
 
 export declare const ui: Ui;
