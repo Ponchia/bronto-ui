@@ -40,6 +40,7 @@ import {
   initDialog,
   initCarousel,
   initDotGlyph,
+  initLegend,
   toast,
 } from '../behaviors/index.js';
 
@@ -117,6 +118,9 @@ export const useCarousel = (opts) =>
 export const useDotGlyph = (opts) =>
   // eslint-disable-next-line qwik/no-use-visible-task -- delegated DOM glue + cleanup
   useVisibleTask$((ctx) => start(initDotGlyph, opts, ctx));
+export const useLegend = (opts) =>
+  // eslint-disable-next-line qwik/no-use-visible-task -- delegated DOM glue + cleanup
+  useVisibleTask$((ctx) => start(initLegend, opts, ctx));
 
 /** The `toast()` imperative (no lifecycle of its own). */
 export const useToast = () => toast;

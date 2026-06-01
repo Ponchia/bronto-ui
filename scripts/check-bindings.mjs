@@ -26,6 +26,7 @@ const requiredHooks = [
   'useDialog',
   'useCarousel',
   'useDotGlyph',
+  'useLegend',
   'useToast',
   'useBrontoBehavior',
 ];
