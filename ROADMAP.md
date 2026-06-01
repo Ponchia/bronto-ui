@@ -50,11 +50,6 @@ without turning the project into a per-framework component suite.
 - **Binding parity.** Keep React/Solid/Qwik hook options and lifecycle behavior
   in parity with vanilla behaviors, with packed-example smoke tests (all three
   build from the tarball in CI) and runtime tests for scoped roots.
-- **Token source unification.** Generate `css/tokens.css` from the JS token
-  model (or vice-versa) so the dark palette is authored once instead of the
-  current three-way edit (`@media` block + `[data-theme]` block + `cssVars.dark`,
-  guarded by `check:tokens`). Tracked in
-  [ADR-0003](docs/adr/0003-theme-model.md).
 - **Browser proof for new surfaces.** Maintain real-browser checks for glyph
   mask rendering, OKLCH computed colors, and behavior paths that jsdom cannot
   faithfully model.

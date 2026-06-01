@@ -52,13 +52,15 @@ on top of the CSS, none of which require a framework commitment**:
   with URLs relative to the package (`../fonts/*`), so font hosting is
   decoupled from the token layer and resolves through bundlers or static
   serving without an absolute `/fonts` assumption.
-- **tokens/** — `css/tokens.css` is canonical for the theme palettes;
-  `index.js` (`cssVars`) is a hand-maintained, exact mirror of its `:root`
-  blocks and is the source the JSON artifacts (`index.json`, `tokens.dtcg.json`,
-  `resolved.json`) are generated from. `scripts/check-tokens.mjs` fails CI if the
-  mirror drifts from the stylesheet (and guards the intentional dark-palette
-  duplication). Collapsing the mirror by generating `tokens.css` from the JS
-  model is a tracked follow-up (see ADR-0003).
+- **tokens/** — `index.js` (`cssVars`) is the single source of truth for token
+  values. The four `:root` palette blocks of `css/tokens.css` are **generated**
+  from it (`scripts/gen-tokens-css.mjs`), as are the JSON artifacts (`index.json`,
+  `tokens.dtcg.json`, `resolved.json`). So the dark palette is authored once,
+  not in three places (the two CSS dark blocks are now identical by
+  construction), resolving the duplication ADR-0003 flagged. The CSS-only
+  presets (density / contrast / OLED) stay hand-authored below a marker and are
+  preserved across regeneration. `scripts/check-tokens.mjs` fails CI if
+  `css/tokens.css` drifts from the model.
 - **classes/** — `cls` is the flat registry; recipes only emit from it;
   `scripts/check-classes.mjs` enforces a bidirectional match with the
   stylesheet's `.ui-*` selectors. The class contract cannot silently rot.

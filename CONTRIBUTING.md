@@ -33,7 +33,12 @@ merge.
   bidirectional match with the stylesheet, and the `.d.ts` are
   **generated** (`npm run dts:build`) and drift-checked, so don't
   hand-edit `classes/index.d.ts` / `tokens/index.d.ts`.
-- Generated artifacts (`dist/`, `tokens/index.json`,
+- Token **values** live in `tokens/index.js` (`cssVars`) — the single source.
+  The four `:root` palette blocks of `css/tokens.css` are **generated** from it
+  (`npm run tokens:css:build`), so don't hand-edit them; edit `cssVars` and
+  regenerate. The CSS-only presets (density / contrast / OLED) below the
+  HAND-AUTHORED marker in `tokens.css` are hand-authored and preserved.
+- Other generated artifacts (`dist/`, `tokens/index.json`,
   `tokens/tokens.dtcg.json`, the `.d.ts`) are committed; rebuild with
   `npm run prepack` and commit the result.
 - Accessibility is a gate, not an afterthought: keyboard paths, both
