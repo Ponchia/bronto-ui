@@ -101,6 +101,8 @@ export function buildBundles() {
   const out = { 'dist/bronto.css': bundle('core.css') };
   for (const f of leafFiles()) out[`dist/css/${f}`] = layeredLeaf(f);
   for (const f of EXTRA_LEAVES) out[`dist/css/${f}`] = layeredLeaf(f);
+  // Convenience roll-up of the analytical leaves into one flattened bundle.
+  out['dist/css/analytical.css'] = bundle('analytical.css');
   return out;
 }
 

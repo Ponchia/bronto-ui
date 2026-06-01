@@ -61,15 +61,20 @@
       "codemod": "No class codemod needed (no renames). See docs/migrations/0.3-to-0.4.md; audit usage with: rg -- '--orange' ."
     },
     {
-      "from": "0.4.1",
-      "to": "0.4.2",
-      "summary": "The chart data key moved out of the report kit into the standalone, opt-in Legends layer (css/legend.css). The `.ui-chart__legend`/`.ui-chart__swatch` classes were removed.",
+      "from": "0.4",
+      "to": "0.5",
+      "summary": "Adds the analytical-primitives suite (annotations, legend, marks, connectors, spotlight, crosshair, selection + the analytical.css roll-up); all additive/opt-in. Two breaking changes: the chart data key moved out of the report kit into the standalone Legends layer (`.ui-chart__legend`/`.ui-chart__swatch` removed), and annotation arrowheads now render via the shared connectors geometry kernel (a small visual path change, no API change).",
       "safe": [{ "old": "ui-chart__swatch", "new": "ui-legend__swatch" }],
       "manual": [
         {
           "old": "ui-chart__legend",
           "new": "ui-legend",
           "note": "Also import '@ponchia/ui/css/legend.css' beside report.css, and wrap each entry's content as <li class=\"ui-legend__item\"> … <span class=\"ui-legend__label\">…</span>. The swatch's --chart-color/--chart-pattern inline contract is unchanged; the categorical --chart-N colour is also available via .ui-legend__swatch--N. See docs/legends.md."
+        },
+        {
+          "old": "connectorEndArrow (annotations)",
+          "new": "connectorEndArrow (unchanged API)",
+          "note": "No code change needed. The function signature is identical; only the rendered arrowhead path differs slightly now that it shares the connectors geometry kernel. Re-baseline any exact-path SVG snapshot tests of annotation arrowheads."
         }
       ],
       "codemod": "rg -l 'ui-chart__legend|ui-chart__swatch' then s/ui-chart__swatch/ui-legend__swatch/g and rework the ul.ui-chart__legend wrapper into ul.ui-legend with li.ui-legend__item rows. See docs/legends.md."
