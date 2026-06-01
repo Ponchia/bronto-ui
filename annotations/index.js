@@ -1,3 +1,7 @@
+// Shared SVG geometry primitives live in the connectors kernel; annotations
+// (figure callouts) build on them so a line/curve/arrow/dot is drawn one way.
+import { straightPath, curvePath, arrowHead, dotMark, angleBetween } from '../connectors/index.js';
+
 const PRECISION = 1000;
 
 function finite(name, value, fallback) {
@@ -337,24 +341,15 @@ export function evidenceMarkerPath({ x = 0, y = 0, width = 36, height = 36, padd
 }
 
 export function connectorEndDot({ x, y, radius = 3 } = {}) {
-  return circlePathAt(finite('x', x), finite('y', y), radius);
+  return dotMark({ x: finite('x', x), y: finite('y', y) }, radius);
 }
 
 export function connectorEndArrow({ x1 = 0, y1 = 0, x2, y2, size = 7 } = {}) {
   const start = { x: finite('x1', x1), y: finite('y1', y1) };
   const end = { x: finite('x2', x2), y: finite('y2', y2) };
   const s = dimension('size', size);
-  const len = Math.hypot(end.x - start.x, end.y - start.y);
-  if (len === 0 || s === 0) return '';
-  const ux = (end.x - start.x) / len;
-  const uy = (end.y - start.y) / len;
-  const nx = -uy;
-  const ny = ux;
-  const wing = s * 0.55;
-  const base = { x: end.x - ux * s, y: end.y - uy * s };
-  const left = { x: base.x + nx * wing, y: base.y + ny * wing };
-  const right = { x: base.x - nx * wing, y: base.y - ny * wing };
-  return `M${point(end.x, end.y)}L${point(left.x, left.y)}L${point(right.x, right.y)}Z`;
+  if (s === 0 || (end.x === start.x && end.y === start.y)) return '';
+  return arrowHead(end, angleBetween(start, end), s);
 }
 
 export function connectorLine(opts = {}) {
@@ -362,7 +357,7 @@ export function connectorLine(opts = {}) {
   if (dx === 0 && dy === 0) return '';
   const start = connectorStart(dx, dy, opts.subject);
   if (!start) return '';
-  return linePath(start, { x: dx, y: dy });
+  return straightPath(start, { x: dx, y: dy });
 }
 
 export function connectorElbow(opts = {}) {
@@ -391,19 +386,8 @@ export function connectorCurve(opts = {}) {
   if (!start) return '';
   const end = { x: dx, y: dy };
   if (samePoint(start, end)) return '';
-
-  const vx = end.x - start.x;
-  const vy = end.y - start.y;
-  const horizontal = Math.abs(vx) >= Math.abs(vy);
-  const c1 = horizontal
-    ? { x: start.x + vx * 0.35, y: start.y }
-    : { x: start.x, y: start.y + vy * 0.35 };
-  const c2 = horizontal ? { x: end.x - vx * 0.35, y: end.y } : { x: end.x, y: end.y - vy * 0.35 };
-
-  return `M${point(start.x, start.y)}C${point(c1.x, c1.y)} ${point(c2.x, c2.y)} ${point(
-    end.x,
-    end.y,
-  )}`;
+  // Annotation callouts use a gentler curve than the connectors default.
+  return curvePath(start, end, { curvature: 0.35 });
 }
 
 export function annotationParts(opts = {}) {

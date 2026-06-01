@@ -1,0 +1,21 @@
+/* ==========================================================================
+   analytical — convenience roll-up of the opt-in analytical-primitive layers.
+
+   Import this one file instead of the seven leaves when you're building
+   analytical / generated-report UI:
+
+     @import '@ponchia/ui';
+     @import '@ponchia/ui/css/analytical.css';
+
+   Add @ponchia/ui/css/dataviz.css for the chart colour palette (legend swatches
+   fall back to the accent without it) and @ponchia/ui/css/report.css for the
+   document grammar as needed — those are separate concerns, kept opt-in.
+   ========================================================================== */
+
+@import url('./annotations.css') layer(bronto);
+@import url('./legend.css') layer(bronto);
+@import url('./marks.css') layer(bronto);
+@import url('./connectors.css') layer(bronto);
+@import url('./spotlight.css') layer(bronto);
+@import url('./crosshair.css') layer(bronto);
+@import url('./selection.css') layer(bronto);

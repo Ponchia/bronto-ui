@@ -177,7 +177,7 @@ test('connector end helpers return deterministic SVG markers', () => {
     connectorEndDot({ x: 10, y: -5, radius: 2 }),
     'M10,-7A2,2 0 1 1 10,-3A2,2 0 1 1 10,-7Z',
   );
-  assert.equal(connectorEndArrow({ x2: 10, y2: 0, size: 4 }), 'M10,0L6,2.2L6,-2.2Z');
+  assert.equal(connectorEndArrow({ x2: 10, y2: 0, size: 4 }), 'M10,0L6.398,1.74L6.398,-1.74Z');
 });
 
 test('annotationParts assembles common subject, connector and note paths', () => {

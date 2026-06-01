@@ -97,6 +97,12 @@ simulated protan/deutan/tritan), `--chart-seq-*` (sequential), `--chart-div-*`
 (diverging), and `--chart-pattern-1..8` (dot-matrix fills — pair colour N with
 pattern N; colour is never the sole signal). Details in `docs/theming.md`.
 
+Building analytical / generated-report UI? Import the roll-up
+`@ponchia/ui/css/analytical.css` (bundles annotations + legend + marks +
+connectors + spotlight + crosshair + selection) instead of the seven leaves;
+add `css/dataviz.css` for chart colours and `css/report.css` for the document
+grammar. The individual layers (each opt-in, none in the default bundle):
+
 Optional SVG annotations for charts/reports — opt-in, never in the default
 bundle. This is Bronto's subject / connector / note grammar inspired by
 d3-annotation, not an authoring engine:

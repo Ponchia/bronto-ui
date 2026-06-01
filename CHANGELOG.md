@@ -5,15 +5,22 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
-## Unreleased — 0.4.2
+## Unreleased — 0.5.0
 
-Adds two opt-in analytical surfaces — the SVG **annotations** layer and the
-**legends / data-keys** layer — on top of maintenance hardening from a
-multi-perspective review. The hardening changes are surface-neutral (the
-pre-existing `dist/*` is byte-identical); annotations and legends are new,
-additive, opt-in surfaces the default bundle does not import. One **breaking**
-change to the opt-in report kit: the chart data key moved into the new legend
-layer (see Changed).
+A **minor** that builds out the "analytical & generated-report UI" identity: a
+full suite of opt-in **communication primitives** — SVG annotations, legends,
+text/evidence marks, leader-line connectors, a guided-focus spotlight, a
+crosshair/readout, a selection-state vocabulary, and a 1-D label-declutter
+helper — plus a consolidation pass over them. Each owns its visual grammar and
+pure geometry and refuses to own scales/state/hit-testing (no chart engine).
+
+Per the project's versioning policy, breaking changes ship in the minor. This
+release carries two: the opt-in report kit's chart data key moved into the new
+legend layer (`.ui-chart__legend`/`__swatch` removed — see Changed and
+[`MIGRATIONS.json`](MIGRATIONS.json)), and annotation arrowheads now render via
+the shared connectors geometry kernel (a small path-shape change). Everything
+else is additive and opt-in; the default `dist/bronto.css` is unaffected. Also
+folds in the 0.4.x maintenance hardening that had not yet been released.
 
 ### Added
 
@@ -85,6 +92,19 @@ layer (see Changed).
   deterministic, order-preserving **1-D** label de-overlap helper (sort, push
   apart by `size + gap`, slide to fit `max`) — pure, no DOM/scales. Not a 2-D
   collision solver. Documented in [`docs/annotations.md`](docs/annotations.md).
+- **Connectors** (`@ponchia/ui/connectors`, `@ponchia/ui/css/connectors.css`,
+  `initConnectors`, `useConnectors`, `ui.connector()`) and **Spotlight**
+  (`css/spotlight.css`, `initSpotlight`, `ui.spotlight()`) — leader lines between
+  DOM elements and a guided-focus overlay; both opt-in, geometry/visual only
+  (the host owns layout/tour state).
+- **Crosshair / readout** (`css/crosshair.css`, `initCrosshair`,
+  `ui.crosshair()`) and **selection states** (`css/selection.css`, `ui.sel()`) —
+  a plot ruler that reports pointer position (not data), and a cross-cutting
+  `.ui-sel--on/off/maybe` emphasis vocabulary (the host owns brush/hit-test).
+- **`@ponchia/ui/css/analytical.css`** — a convenience roll-up that bundles the
+  seven analytical leaves (annotations, legend, marks, connectors, spotlight,
+  crosshair, selection) into one import. Add `dataviz.css`/`report.css`
+  separately as needed.
 
 ### Fixed
 
@@ -102,6 +122,13 @@ layer (see Changed).
   beside the report kit; see [`MIGRATIONS.json`](MIGRATIONS.json) and
   [`docs/legends.md`](docs/legends.md). The `--chart-color`/`--chart-pattern`
   swatch contract is unchanged, so the rename is mechanical.
+- **Consolidation:** the SVG geometry is single-sourced in the `connectors`
+  kernel — `@ponchia/ui/annotations` now builds its connectors on it, so a
+  line/curve/arrow/dot is drawn one way across both. `connectorLine`/`Curve`/
+  `EndDot` output is byte-identical; **`connectorEndArrow` is the one
+  (minor-breaking) shape change** — the arrowhead now matches the connectors
+  arrowhead. New `check:helpers-dts` gate keeps the hand-maintained
+  `annotations`/`connectors` `.d.ts` in parity with their runtime exports.
 - `docs/architecture.md` now ships in the package, so the offline rationale the
   shipped ADRs link to resolves inside the tarball.
 - `docs/stability.md` clarifies that `data-surface`/`data-density`/
