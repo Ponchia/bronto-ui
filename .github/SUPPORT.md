@@ -5,10 +5,10 @@ requests.
 
 Before opening an issue:
 
-- Check the [README](README.md), the
-  [reference](docs/reference.md), [usage guide](docs/usage.md), and
-  [theming contract](docs/theming.md).
-- Skim the [ROADMAP](ROADMAP.md) — the item may be deliberately deferred
+- Check the [README](../README.md), the
+  [reference](../docs/reference.md), [usage guide](../docs/usage.md), and
+  [theming contract](../docs/theming.md).
+- Skim the [ROADMAP](../ROADMAP.md) — the item may be deliberately deferred
   or out of scope.
 - Search existing issues.
 - Reduce the problem to the smallest HTML + the `@ponchia/ui` version

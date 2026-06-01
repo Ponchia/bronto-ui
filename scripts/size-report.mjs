@@ -27,6 +27,7 @@ for (const rel of [
   'glyphs/glyphs.js',
   'react/index.js',
   'solid/index.js',
+  'qwik/index.js',
   'tokens/index.js',
   'tokens/skins.js',
   'tokens/charts.js',

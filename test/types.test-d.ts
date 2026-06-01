@@ -128,6 +128,18 @@ const rDismiss = rToast('hi', { tone: 'success' }); // Cleanup
 const sTabs: void = useTabsS({ root: () => document });
 void [rDialog, rDialogRef, rDialogResolver, rDismiss, sTabs];
 
+// Qwik bindings: same opts surface, and the root additionally accepts a Qwik
+// signal ({ value }) — a shape the React/Solid bindings deliberately don't.
+import { useDialog as useDialogQ, useToast as useToastQ } from '../qwik/index.js';
+const qDialog: void = useDialogQ({ root: document });
+const qDialogSignal: void = useDialogQ({ root: { value: document } }); // Qwik useSignal()
+const qDialogResolver: void = useDialogQ(() => ({ root: { current: document } }));
+const qToast = useToastQ();
+const qDismiss = qToast('hi', { tone: 'success' }); // Cleanup
+// @ts-expect-error — the React binding root does not accept a Qwik signal ({ value }) shape.
+const rRejectsSignal: void = useDialogR({ root: { value: document } });
+void [qDialog, qDialogSignal, qDialogResolver, qToast, qDismiss, rRejectsSignal];
+
 void [
   btn,
   appShell,

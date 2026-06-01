@@ -1,0 +1,109 @@
+import { hasDom, noop, bindOnce } from './internal.js';
+
+/**
+ * Client-side sortable + selectable data table. Wires
+ * `[data-bronto-sortable]`:
+ *
+ *  - clicking a header's `.ui-table__sort` (or a `th[data-sort]`)
+ *    sorts the tbody by that column, cycling `aria-sort`
+ *    none → ascending → descending and clearing the other headers.
+ *    Numeric columns (`data-sort="num"` or `.is-num` cells) sort
+ *    numerically; everything else, locale string compare.
+ *  - a `[data-bronto-select-all]` checkbox toggles every
+ *    `[data-bronto-select]` row checkbox and the rows'
+ *    `aria-selected`; toggling a row keeps the header checkbox's
+ *    checked/indeterminate state in sync. Emits `bronto:selectionchange`
+ *    ({ detail: { count } }) on the table.
+ *
+ * SSR-safe, idempotent per table; returns a cleanup function.
+ */
+export function initTableSort({ root } = {}) {
+  if (!hasDom()) return noop;
+  const host = root || document;
+  const tables = [];
+  if (host !== document && host.matches?.('[data-bronto-sortable]')) tables.push(host);
+  tables.push(...(host.querySelectorAll?.('[data-bronto-sortable]') ?? []));
+  const cleanups = [];
+
+  for (const table of tables) {
+    const tbody = table.tBodies[0];
+    if (!tbody) continue;
+
+    const colIndex = (th) => [...th.parentElement.children].indexOf(th);
+    const cellText = (row, i) => row.children[i]?.textContent.trim() ?? '';
+
+    const sortBy = (th, numeric) => {
+      const headers = th.closest('tr').querySelectorAll('th');
+      const dir = th.getAttribute('aria-sort') === 'ascending' ? 'descending' : 'ascending';
+      headers.forEach((h) => h.removeAttribute('aria-sort'));
+      th.setAttribute('aria-sort', dir);
+      const i = colIndex(th);
+      const sign = dir === 'ascending' ? 1 : -1;
+      const rows = [...tbody.rows].filter((r) => !r.classList.contains('ui-table__empty'));
+      rows.sort((a, b) => {
+        const x = cellText(a, i);
+        const y = cellText(b, i);
+        const cmp = numeric
+          ? (parseFloat(x.replace(/[^\d.-]/g, '')) || 0) -
+            (parseFloat(y.replace(/[^\d.-]/g, '')) || 0)
+          : x.localeCompare(y);
+        return cmp * sign;
+      });
+      rows.forEach((r) => tbody.appendChild(r));
+    };
+
+    const allBox = table.querySelector('[data-bronto-select-all]');
+    const rowBoxes = () => [...table.querySelectorAll('[data-bronto-select]')];
+    const syncAll = () => {
+      const boxes = rowBoxes();
+      const on = boxes.filter((b) => b.checked).length;
+      if (allBox) {
+        allBox.checked = on > 0 && on === boxes.length;
+        allBox.indeterminate = on > 0 && on < boxes.length;
+      }
+      table.dispatchEvent(
+        new CustomEvent('bronto:selectionchange', { detail: { count: on }, bubbles: true }),
+      );
+    };
+    const markRow = (box) => {
+      const tr = box.closest('tr');
+      if (tr) tr.setAttribute('aria-selected', String(box.checked));
+    };
+
+    const onClick = (e) => {
+      const sorter = e.target.closest('.ui-table__sort, th[data-sort]');
+      if (sorter && table.contains(sorter)) {
+        const th = sorter.closest('th');
+        const numeric =
+          (sorter.getAttribute('data-sort') || th.getAttribute('data-sort')) === 'num' ||
+          th.classList.contains('is-num');
+        sortBy(th, numeric);
+      }
+    };
+    const onChange = (e) => {
+      const t = e.target;
+      if (t.matches?.('[data-bronto-select-all]')) {
+        rowBoxes().forEach((b) => {
+          b.checked = t.checked;
+          markRow(b);
+        });
+        syncAll();
+      } else if (t.matches?.('[data-bronto-select]')) {
+        markRow(t);
+        syncAll();
+      }
+    };
+
+    const bound = bindOnce(table, 'tableSort', () => {
+      table.addEventListener('click', onClick);
+      table.addEventListener('change', onChange);
+      return () => {
+        table.removeEventListener('click', onClick);
+        table.removeEventListener('change', onChange);
+      };
+    });
+    cleanups.push(bound);
+  }
+
+  return () => cleanups.forEach((fn) => fn());
+}

@@ -95,25 +95,39 @@ test('every declared *Opts option is wired in its runtime recipe', async () => {
     const m = dts.match(new RegExp(`export interface ${iface} \\{([\\s\\S]*?)\\n\\}`));
     if (!m) return [];
     return [...m[1].matchAll(/^\s*(\w+)\??:\s*([^;]+);/gm)].map(([, name, type]) => {
-      const lit = type.match(/'([^']+)'/); // first union literal, e.g. 'ghost'
-      return { name, probe: lit ? lit[1] : /boolean/.test(type) ? true : null };
+      const lits = [...type.matchAll(/'([^']+)'/g)].map((x) => x[1]); // every union literal
+      const probes = lits.length ? lits : /boolean/.test(type) ? [true] : [];
+      return { name, probes, isEnum: lits.length > 1 };
     });
   };
 
   let checked = 0;
   for (const [recipe, iface] of Object.entries(recipeToOpts)) {
     const base = ui[recipe]();
-    for (const { name, probe } of optionsOf(iface)) {
-      if (probe === null) continue; // non-enum/non-boolean: skip (none today)
-      const withOpt = ui[recipe]({ [name]: probe });
-      assert.notEqual(
-        withOpt,
-        base,
-        `${recipe}: declared option "${name}" (= ${JSON.stringify(probe)}) is not wired ` +
-          `in the runtime recipe — index.d.ts ${iface} and classes/index.js drifted`,
+    for (const { name, probes, isEnum } of optionsOf(iface)) {
+      if (probes.length === 0) continue; // non-enum/non-boolean: skip (none today)
+      const outputs = probes.map((probe) => [probe, ui[recipe]({ [name]: probe })]);
+      checked += outputs.length;
+      // Wiring: at least one declared value must change the output from the
+      // default — otherwise the option does nothing.
+      assert.ok(
+        outputs.some(([, out]) => out !== base),
+        `${recipe}: declared option "${name}" (values ${JSON.stringify(probes)}) changes ` +
+          `nothing — index.d.ts ${iface} and classes/index.js drifted`,
       );
-      checked++;
+      // Per-variant: distinct enum literals must map to distinct output, so an
+      // unwired variant (silently collapsing to another) is caught — not just
+      // the first literal, which an earlier version of this test only probed.
+      if (isEnum) {
+        const distinct = new Set(outputs.map(([, out]) => out));
+        assert.equal(
+          distinct.size,
+          outputs.length,
+          `${recipe}: enum option "${name}" has variants that collide to identical ` +
+            `classes (${JSON.stringify(outputs)}) — a declared variant is unwired`,
+        );
+      }
     }
   }
-  assert.ok(checked >= 25, `expected to exercise the option surface, only checked ${checked}`);
+  assert.ok(checked >= 40, `expected to exercise the option surface, only checked ${checked}`);
 });

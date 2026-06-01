@@ -5,24 +5,10 @@
  *
  * Run: node scripts/check-vscode-data.mjs
  */
-import { readFileSync, existsSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { generated } from './gen-vscode-data.mjs';
+import { assertFresh } from './lib/assert-fresh.mjs';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const errors = [];
-
-for (const [rel, expected] of Object.entries(generated)) {
-  const abs = resolve(root, rel);
-  if (!existsSync(abs)) errors.push(`${rel} missing — run: npm run vscode:build`);
-  else if (readFileSync(abs, 'utf8') !== expected)
-    errors.push(`${rel} is stale — run: npm run vscode:build`);
-}
-
-if (errors.length) {
-  console.error(`✖ ${errors.length} vscode-data problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log('✓ classes/vscode.css-custom-data.json is the generated, in-sync token data');
+assertFresh(generated, {
+  label: 'classes/vscode.css-custom-data.json is the generated, in-sync token data',
+  buildHint: 'npm run vscode:build',
+});

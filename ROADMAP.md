@@ -8,7 +8,7 @@ without turning the project into a per-framework component suite.
 > direction; the changelog records what actually shipped. If they disagree, the
 > changelog wins. Last reconciled against `0.4.1`.
 
-## Shipped through 0.4.0
+## Shipped through 0.4.1
 
 - **Lifecycle and docs.** Release-hygiene gate, dated changelog,
   `MIGRATIONS.json`, deprecation policy, per-framework guides, Tailwind
@@ -25,9 +25,18 @@ without turning the project into a per-framework component suite.
 - **Glyphs.** `@ponchia/ui/glyphs`: 48 registered 16x16 dot-matrix glyphs,
   generated `GlyphName` types, display/solid DOM renderers, `initDotGlyph`, and
   the one-node `.ui-icon` mask renderer for dense icon-at-scale use.
-- **Framework bindings.** Optional `@ponchia/ui/react` and `@ponchia/ui/solid`
-  hooks over the behavior layer. They are thin lifecycle adapters, not component
-  libraries, and their peers remain optional.
+- **Framework bindings.** Optional `@ponchia/ui/react`, `@ponchia/ui/solid`, and
+  `@ponchia/ui/qwik` (`useVisibleTask$`) hooks over the behavior layer. They are
+  thin lifecycle adapters, not component libraries, and their peers remain
+  optional.
+- **CSS-native motion + theme model (0.4.1).** Zero-JS enter/exit for native
+  `<dialog>`, popover, toast, and accordion (`@starting-style` +
+  `transition-behavior: allow-discrete` / `::details-content`); scroll-driven
+  (`.ui-scroll-progress`/`.ui-scroll-reveal`) and View Transitions (`.ui-vt`) as
+  progressive enhancement; the `data-surface="oled"` true-black variant; the
+  readable dark re-tune; and [ADR-0002](docs/adr/0002-scope-and-2026-baseline.md)
+  (2026 baseline) + [ADR-0003](docs/adr/0003-theme-model.md) (theme model). See
+  the CHANGELOG for the full 0.4.1 surface.
 - **Color system.** ADR-0001 steps 1-8: color-policy gate, display colorways,
   Tier-3 dot-matrix expression tokens, OKLCH-authored colorways, APCA advisory
   reporting, opt-in data-viz palette, and OKLCH core accent ramp.
@@ -38,9 +47,9 @@ without turning the project into a per-framework component suite.
 
 ## Active hardening
 
-- **Binding parity.** Keep React/Solid hook options and lifecycle behavior in
-  parity with vanilla behaviors, with packed-example smoke tests and runtime
-  tests for scoped roots.
+- **Binding parity.** Keep React/Solid/Qwik hook options and lifecycle behavior
+  in parity with vanilla behaviors, with packed-example smoke tests (all three
+  build from the tarball in CI) and runtime tests for scoped roots.
 - **Browser proof for new surfaces.** Maintain real-browser checks for glyph
   mask rendering, OKLCH computed colors, and behavior paths that jsdom cannot
   faithfully model.
@@ -49,9 +58,6 @@ without turning the project into a per-framework component suite.
   remains the hard stop.
 - **Docs contract.** Keep `docs/stability.md`, README, SECURITY, ADR, and
   CHANGELOG in sync before every release.
-- **Behavior internals.** Split high-complexity behavior internals when it
-  reduces maintenance risk, while preserving the existing public barrel and
-  cleanup contracts.
 
 ## Later / under consideration
 
@@ -71,6 +77,6 @@ remain deliberate platform choices.
 ## Support expectations
 
 Solo-maintained, pre-1.0. Breaking changes ship in the **minor**; patches are
-non-breaking. Security issues: see `SECURITY.md` for private reporting.
+non-breaking. Security issues: see `.github/SECURITY.md` for private reporting.
 Best-effort response; no SLA. Adopters should pin the compatible minor and
 visual-test their own app on upgrade.

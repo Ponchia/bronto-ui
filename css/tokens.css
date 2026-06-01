@@ -1,11 +1,12 @@
 /* ==========================================================================
-   @ponchia/ui — design tokens
-   Nothing-inspired: monochrome surfaces, single red accent, dot-matrix type.
-   Dual light/dark. Variable names are stable so semantic classes inherit.
-   The Doto @font-face declarations live in fonts.css (bundled by
-   core.css/index.css) so font hosting is decoupled from these tokens —
-   a consumer can self-host Doto and still use the token layer by
-   overriding --display / --dot-font.
+   @ponchia/ui — design tokens   ⟨generated⟩
+   Single source of truth: tokens/index.js (`cssVars`). Edit token VALUES
+   there, then run `npm run tokens:css:build`. The four :root blocks below are
+   emitted from cssVars — the dark palette is authored ONCE (not the former two
+   CSS blocks + the JS mirror). check-tokens.mjs gates this file against cssVars.
+   The Doto @font-face lives in fonts.css; override --display / --dot-font to
+   self-host. CSS-only presets (density / contrast / OLED) are hand-authored
+   below the marker — they are intentionally not part of the JS token model.
    ========================================================================== */
 
 :root {
@@ -16,7 +17,7 @@
   --radius-sm: 1px;
   --radius-pill: 999px;
 
-  /* Spacing scale */
+  /* Spacing scale. */
   --space-2xs: 0.25rem;
   --space-xs: 0.5rem;
   --space-sm: 0.75rem;
@@ -27,8 +28,7 @@
 
   /* Type — Doto is the dot-matrix display face; body stays mono-grotesque. */
   --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', ui-monospace, monospace;
-  --sans:
-    'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --sans: 'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --dot-font: 'Doto', var(--mono);
   --display: var(--dot-font);
   --text-2xs: 0.68rem;
@@ -48,14 +48,11 @@
   --duration-base: 200ms;
   --duration-slow: 360ms;
 
-  /* Dot-matrix motif sizing */
+  /* Dot-matrix motif sizing. */
   --dot-size: 2px;
   --dot-gap: 14px;
 
-  /* Stacking-context scale. Replaces scattered magic z-indexes so
-     consumers can reason about (and override) layering coherently.
-     Values match the prior literals — purely a refactor, no visual
-     change. */
+  /* Stacking-context scale (values match the prior literals — pure refactor). */
   --z-base: 0;
   --z-raised: 10;
   --z-sticky: 20;
@@ -63,11 +60,7 @@
   --z-popover: 50;
   --z-toast: 60;
 
-  /* Accent ramp — a stepped family for charts / data-viz / multi-state
-     surfaces (the use case tokens/index.js advertises). Derived from the
-     single --accent knob via OKLCH color-mix against a per-theme white/black
-     endpoint. Using an explicit neutral endpoint avoids low-chroma background
-     hue differences between browser engines. */
+  /* Accent ramp — a stepped family for charts / data-viz, derived from the single --accent knob via OKLCH color-mix against a per-theme white/black endpoint. */
   --accent-1: color-mix(in oklch, var(--accent) 8%, var(--accent-ramp-end));
   --accent-2: color-mix(in oklch, var(--accent) 16%, var(--accent-ramp-end));
   --accent-3: color-mix(in oklch, var(--accent) 32%, var(--accent-ramp-end));
@@ -83,10 +76,7 @@
   --surface-5: var(--line);
   --surface-6: var(--line-strong);
 
-  /* Semantic tier — stable, prefixed aliases over the (shorter,
-     legacy) primitive names. New consumer code should target these:
-     re-skinning one role no longer means chasing component internals.
-     The short names below stay as permanent back-compat aliases. */
+  /* Semantic --bronto-color-* tier — stable, prefixed aliases over the primitives. */
   --bronto-color-bg: var(--bg);
   --bronto-color-surface: var(--panel);
   --bronto-color-surface-raised: var(--panel-strong);
@@ -102,7 +92,7 @@
   --bronto-color-danger: var(--danger);
   --bronto-color-info: var(--info);
 
-  /* Aliases kept for back-compat with existing semantic classes */
+  /* Aliases kept for back-compat with existing semantic classes. */
   --surface: var(--panel);
   --surface-raised: var(--panel-strong);
   --surface-muted: var(--panel-soft);
@@ -146,24 +136,15 @@
   --field-dot: rgb(10, 10, 10, 0.16);
   --field-dot-hot: rgb(10, 10, 10, 0.4);
   --field-dot-accent: color-mix(in srgb, var(--accent) 78%, transparent);
-
-  /* Solid by default: this token drives every focus outline, so it must
-     clear the 3:1 non-text contrast minimum. Override per theme/subtree
-     to tune the ring without touching --accent. */
   --focus-ring: var(--accent);
   --shadow: none;
   --shadow-raised: 0 0 0 1px var(--line-strong);
 }
 
 /* --------------------------------------------------------------------------
-   Dark — true black. The Nothing default.
-
-   The palette below is intentionally written twice: once under
-   `prefers-color-scheme: dark` (system default, unless overridden to light)
-   and once under `[data-theme='dark']` (explicit opt-in). Vanilla CSS can't
-   share one declaration block between a media query and a top-level selector
-   without a build step or nesting, neither of which this zero-dep package
-   has. Keep the two blocks in sync when editing dark tokens.
+   Dark — emitted from cssVars.dark under BOTH the system preference and the
+   explicit [data-theme='dark'] opt-in. Authored once in tokens/index.js, so
+   the two blocks below can no longer drift from each other.
    -------------------------------------------------------------------------- */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
@@ -240,6 +221,13 @@
   --shadow: none;
   --shadow-raised: 0 0 0 1px var(--line-strong);
 }
+
+/* ==========================================================================
+   HAND-AUTHORED BELOW — CSS-only presets (density / contrast / OLED) and the
+   theming-contract notes. These are intentionally NOT in the JS token model
+   (tokens/index.js), so they are preserved verbatim when the palette above is
+   regenerated by scripts/gen-tokens-css.mjs.
+   ========================================================================== */
 
 /* --------------------------------------------------------------------------
    Theming contract — the public override surface.

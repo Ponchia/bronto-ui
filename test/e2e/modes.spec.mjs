@@ -57,3 +57,29 @@ test('print: chrome is hidden, content + link URLs are kept', async ({ page }) =
   expect(r.main).not.toBe('none'); // content kept
   expect(r.afterContent).toContain('http'); // link target surfaced
 });
+
+test('surface=oled: dark surfaces flip to true black; the readable text token is untouched', async ({
+  page,
+}) => {
+  // data-surface / data-density / data-contrast are convenience presets, NOT
+  // part of the stability contract (see docs/stability.md). This is a cheap
+  // smoke that the OLED preset actually applies and only moves surfaces — text
+  // stays the re-tuned --text, which clears WCAG AA on pure black too.
+  await page.goto('/demo/', { waitUntil: 'networkidle' });
+  const v = await page.evaluate(() => {
+    const root = document.documentElement;
+    const read = () => {
+      const s = getComputedStyle(root);
+      return { bg: s.getPropertyValue('--bg').trim(), text: s.getPropertyValue('--text').trim() };
+    };
+    root.dataset.theme = 'dark';
+    delete root.dataset.surface;
+    const base = read();
+    root.dataset.surface = 'oled';
+    const oled = read();
+    return { base, oled };
+  });
+  expect(v.base.bg).toBe('#121212'); // elevated near-black dark base
+  expect(v.oled.bg).toBe('#000000'); // OLED preset flips --bg to true black
+  expect(v.oled.text).toBe('#e6e6e6'); // text untouched — stays the readable token
+});

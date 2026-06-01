@@ -77,10 +77,13 @@ early-warning that the Lc 36 regression would have tripped.
 - Re-tuning dark token *values* changes the default rendered output in dark mode
   → the dark Playwright visual baselines must be regenerated in the pinned Linux
   container (`visual-baselines.yml`). Kept in 0.4.1 per the maintainer's call.
-- The dark palette is written in three places (the `@media` block, the
-  `[data-theme]` block, and the `cssVars.dark` JS mirror), guarded by
-  `check:tokens`. Any dark edit is a three-way edit; deduping by generating
-  `tokens.css` from the JS model is a tracked follow-up.
+- The dark palette was originally written in three places (the `@media` block,
+  the `[data-theme]` block, and the `cssVars.dark` JS mirror). **Resolved in
+  0.4.2:** `tokens/index.js` (`cssVars`) is now the single source, and the four
+  `:root` palette blocks of `css/tokens.css` are generated from it
+  (`scripts/gen-tokens-css.mjs`); the two dark blocks are identical by
+  construction, so a dark edit is a one-place edit, still guarded by
+  `check:tokens`.
 - `data-surface` joins `data-theme`/`data-bronto-skin`/`data-density`/
   `data-contrast` as a documented root-level attribute (theming.md). The kitchen
   sink ships a unified picker (theme × colorway × surface) so the full axis set

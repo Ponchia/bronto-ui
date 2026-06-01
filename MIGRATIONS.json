@@ -1,5 +1,5 @@
 {
-  "$comment": "Machine-readable class-rename map for @ponchia/ui upgrades. Generated-by-hand from CHANGELOG BREAKING sections; consumed by docs/migrations/*.md and any codemod/sed recipe. 'safe' rules are mechanically rewritable (whole-class-token, no semantic change); 'manual' rules need human judgement (concept moved, not a 1:1 rename).",
+  "$comment": "Machine-readable rename/removal map for @ponchia/ui upgrades (classes, attributes, and tokens). Generated-by-hand from CHANGELOG BREAKING sections; consumed by docs/migrations/*.md and any codemod/sed recipe. 'safe' rules are mechanically rewritable (whole-token, no semantic change); 'manual' rules need human judgement (concept moved or removed, not a 1:1 rename).",
   "migrations": [
     {
       "from": "0.2",
@@ -45,6 +45,20 @@
         }
       ],
       "codemod": "See docs/migrations/0.2-to-0.3.md for a ready-to-run ripgrep+sed recipe covering the 'safe' rules."
+    },
+    {
+      "from": "0.3",
+      "to": "0.4",
+      "summary": "Additive colour-system release (ADR-0001); the default dist/bronto.css renders identically. No class or attribute renames. One orphan token pair removed.",
+      "safe": [],
+      "manual": [
+        {
+          "old": "--orange / --orange-soft",
+          "new": "(removed — re-declare in a consumer :root override if referenced)",
+          "note": "Orphan token pair: defined in the token mirrors but referenced by no shipped component and documented nowhere, and untiered under the new colour model. Removed under the CONTRIBUTING 'provably-unreferenced surface' exception. If you used it: :root { --orange: #a85f32; --orange-soft: rgb(168 95 50 / 0.13); }"
+        }
+      ],
+      "codemod": "No class codemod needed (no renames). See docs/migrations/0.3-to-0.4.md; audit usage with: rg -- '--orange' ."
     }
   ]
 }
