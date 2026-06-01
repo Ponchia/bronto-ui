@@ -47,13 +47,17 @@ because the modern platform makes it declarative:
 - **Shipped (0.4.1):** native `<dialog>` (modal/drawer) + backdrop **enter *and*
   exit** transitions via `@starting-style` + `transition-behavior: allow-discrete`
   — zero JS, reduced-motion-aware. (Previously the overlay only animated in.)
-- **Next, same approach:** popover/toast/disclosure enter/exit; **View
-  Transitions** (`@view-transition` cross-doc + `view-transition-name` morphs)
-  and **scroll-driven animations** as *progressive enhancement* (Chrome/Safari
-  strong, others catching up → must degrade to a static end-state);
-  `interpolate-size`/`calc-size(auto)` for auto-height disclosure when
-  cross-engine. We do **not** add a JS physics/animation runtime — the platform
-  is the engine.
+  Extended, same approach, to **popover** (both the native `[popover]` top-layer
+  and the `.is-open` fallback), **toast** (CSS fade-out on dismiss — the
+  behavior adds `.is-leaving` and removes on `transitionend`, falling back to
+  instant removal under reduced-motion), and **accordion** auto-height open/close
+  via `::details-content` + `interpolate-size: allow-keywords` (gated on
+  `@supports selector(::details-content)`; engines without it snap).
+- **Next, same approach:** **View Transitions** (`@view-transition` cross-doc +
+  `view-transition-name` morphs) and **scroll-driven animations** as
+  *progressive enhancement* (Chrome/Safari strong, others catching up → must
+  degrade to a static end-state). We do **not** add a JS physics/animation
+  runtime — the platform is the engine.
 - Continue the OKLCH / `light-dark()` / P3 work flagged in ADR-0001.
 
 ### Browser floor — deliberately modern

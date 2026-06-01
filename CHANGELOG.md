@@ -16,6 +16,22 @@ modern-platform motion direction (see [ADR-0002](docs/adr/0002-scope-and-2026-ba
   + `transition-behavior: allow-discrete` — previously they only animated in and
   vanished on close. Pure CSS, reduced-motion-aware (snaps with no flash), scoped
   to `dialog.ui-modal` so the controlled `.is-open` path is unchanged.
+- **Enter/exit motion extended to popover, toast, and accordion** (ADR-0002
+  "next, same approach"):
+  - **Popover** (`.ui-popover`) fades + slides both ways via the same
+    `@starting-style` + `allow-discrete` recipe, covering both the native
+    `[popover]` top-layer path and the `.is-open` fallback. Zero JS,
+    reduced-motion-aware.
+  - **Toast** (`.ui-toast`) now plays a CSS fade-out on dismiss instead of being
+    yanked from the DOM. The `toast()` behavior adds `.is-leaving` and removes
+    the node on `transitionend` (with a timeout fallback); it falls back to
+    instant removal under reduced-motion or where no transition is computed, so
+    the persistent `aria-live` region is undisturbed.
+  - **Accordion** (`.ui-accordion`, native `<details>`) animates auto-height
+    open/close via `::details-content` + `interpolate-size: allow-keywords` +
+    `content-visibility … allow-discrete`. Strict progressive enhancement —
+    gated on `@supports selector(::details-content)`; engines without it (today,
+    Firefox/Safari) simply snap, exactly as before.
 
 ### Changed
 

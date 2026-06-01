@@ -392,6 +392,37 @@ function toastElement(message, { tone, title }) {
   return el;
 }
 
+// Remove a toast, animating its exit when — and only when — a transition
+// is actually in effect. Detached nodes, reduced-motion, and the no-CSS
+// test/SSR env all resolve to instant removal, so the dismiss contract
+// (toast gone now, the aria-live stack stays resident) is unchanged there;
+// a real browser with motion gets the CSS `.is-leaving` fade-out, with a
+// timeout fallback so an interrupted/never-firing transitionend can't strand
+// a toast in the live region.
+function removeToast(el) {
+  const reduce =
+    typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cs =
+    !reduce && el.isConnected && typeof getComputedStyle === 'function'
+      ? getComputedStyle(el)
+      : null;
+  const dur = cs ? parseFloat(cs.transitionDuration) || 0 : 0;
+  if (dur <= 0) {
+    el.remove();
+    return;
+  }
+  el.classList.add('is-leaving');
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    el.remove();
+  };
+  el.addEventListener('transitionend', finish, { once: true });
+  const timer = setTimeout(finish, dur * 1000 + 120);
+  timer?.unref?.(); // don't keep a Node test process alive
+}
+
 function addToastClose(el, dismiss) {
   const close = document.createElement('button');
   close.type = 'button';
@@ -441,7 +472,7 @@ export function toast(message, { tone, title, duration = 4000, assertive, closab
     if (dismissed) return;
     dismissed = true;
     if (timer) clearTimeout(timer);
-    el.remove();
+    removeToast(el);
     // The stack is a persistent live region — never removed on drain, so
     // the next toast does not recreate (and thus mis-announce) it.
   };

@@ -543,6 +543,53 @@ test('toast: early dismiss cancels the deferred rAF insert (no zombie)', () => {
   }
 });
 
+test('toast: removes synchronously when no exit transition is in effect', () => {
+  // No getComputedStyle (the default test/SSR env) → no measurable
+  // transition → the dismiss contract stays synchronous (toast gone now,
+  // never flagged .is-leaving).
+  const d = mount('');
+  const dismiss = toast('bye', { duration: 0 });
+  const el = d.querySelector('.ui-toast');
+  assert.ok(el, 'toast present');
+  dismiss();
+  assert.equal(el.classList.contains('is-leaving'), false, 'never flagged leaving without motion');
+  assert.equal(d.querySelector('.ui-toast'), null, 'removed synchronously');
+});
+
+test('toast: animates its exit and is removed when the transition ends', () => {
+  // Simulate a real browser where .ui-toast carries an exit transition.
+  const d = mount('');
+  globalThis.getComputedStyle = () => ({ transitionDuration: '0.2s' });
+  try {
+    const dismiss = toast('bye', { duration: 0 });
+    const el = d.querySelector('.ui-toast');
+    dismiss();
+    assert.ok(el.classList.contains('is-leaving'), 'flagged .is-leaving to trigger the fade-out');
+    assert.ok(el.isConnected, 'kept resident while it animates out');
+    el.dispatchEvent(new dom.window.Event('transitionend'));
+    assert.equal(el.isConnected, false, 'removed once the exit transition ends');
+    assert.doesNotThrow(dismiss, 'a second dismiss is a harmless no-op');
+  } finally {
+    delete globalThis.getComputedStyle;
+  }
+});
+
+test('toast: reduced-motion removes synchronously even with a transition set', () => {
+  const d = mount('');
+  globalThis.getComputedStyle = () => ({ transitionDuration: '0.2s' });
+  globalThis.matchMedia = (q) => ({ matches: q.includes('reduce') });
+  try {
+    const dismiss = toast('bye', { duration: 0 });
+    const el = d.querySelector('.ui-toast');
+    dismiss();
+    assert.equal(el.classList.contains('is-leaving'), false, 'reduced-motion skips the fade-out');
+    assert.equal(el.isConnected, false, 'removed synchronously under reduced-motion');
+  } finally {
+    delete globalThis.getComputedStyle;
+    delete globalThis.matchMedia;
+  }
+});
+
 test('toast: toasts queued before the first frame keep FIFO order', () => {
   const d = mount('');
   const frames = [];
