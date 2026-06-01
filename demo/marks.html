@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — text marks specimen</title>
+    <meta
+      name="description"
+      content="Evidence/emphasis text-mark specimen for @ponchia/ui marks CSS."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/marks.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .marks-demo {
+        margin: 0 auto;
+        max-width: 64ch;
+        padding: 2rem 1rem 4rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="marks-demo ui-prose">
+      <h1 class="ui-display">Text marks specimen</h1>
+
+      <p>
+        The migration
+        <mark class="ui-mark ui-mark--evidence">cut p95 latency by 38%</mark>, but
+        <mark class="ui-mark ui-mark--danger ui-mark--underline">error rate doubled</mark>
+        in the first hour, and the
+        <mark class="ui-mark ui-mark--muted ui-mark--strike">old retry path</mark>
+        was removed. A
+        <mark class="ui-mark">plain neutral highlight</mark> stays monochrome, while
+        <mark class="ui-mark ui-mark--box ui-mark--info">a boxed note</mark> reads as an aside.
+      </p>
+
+      <p>
+        On load, this
+        <mark class="ui-mark ui-mark--evidence ui-mark--draw">drawn highlight</mark>
+        sweeps in (and respects reduced motion).
+      </p>
+
+      <blockquote class="ui-bracket-note ui-bracket-note--evidence">
+        <span class="ui-bracket-note__label">Source</span>
+        Q3 incident review, §4 — the regression was sustained for 47 minutes before rollback.
+      </blockquote>
+
+      <blockquote class="ui-bracket-note ui-bracket-note--warning">
+        <span class="ui-bracket-note__label">Caveat</span>
+        Sample size below 1,000 events; treat the percentile as indicative.
+      </blockquote>
+    </main>
+  </body>
+</html>

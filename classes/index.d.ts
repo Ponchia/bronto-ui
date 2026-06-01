@@ -324,6 +324,23 @@ export declare const cls: {
   readonly annotationPulse: 'ui-annotation--pulse';
   readonly annotationReveal: 'ui-annotation--reveal';
   readonly annotationFocus: 'ui-annotation--focus';
+  readonly mark: 'ui-mark';
+  readonly markEvidence: 'ui-mark--evidence';
+  readonly markSuccess: 'ui-mark--success';
+  readonly markWarning: 'ui-mark--warning';
+  readonly markDanger: 'ui-mark--danger';
+  readonly markInfo: 'ui-mark--info';
+  readonly markMuted: 'ui-mark--muted';
+  readonly markUnderline: 'ui-mark--underline';
+  readonly markBox: 'ui-mark--box';
+  readonly markStrike: 'ui-mark--strike';
+  readonly markDraw: 'ui-mark--draw';
+  readonly bracketNote: 'ui-bracket-note';
+  readonly bracketNoteLabel: 'ui-bracket-note__label';
+  readonly bracketNoteEvidence: 'ui-bracket-note--evidence';
+  readonly bracketNoteWarning: 'ui-bracket-note--warning';
+  readonly bracketNoteDanger: 'ui-bracket-note--danger';
+  readonly bracketNoteInfo: 'ui-bracket-note--info';
   readonly printOnly: 'ui-print-only';
   readonly screenOnly: 'ui-screen-only';
   readonly breakBefore: 'ui-break-before';
@@ -502,6 +519,17 @@ export interface AnnotationOpts {
   tone?: 'accent' | 'muted' | 'success' | 'warning' | 'danger' | 'info';
   motion?: 'draw' | 'pulse' | 'reveal' | 'focus';
 }
+export interface MarkOpts {
+  /** How the mark is drawn. Omit for the highlight fill. */
+  style?: 'underline' | 'box' | 'strike';
+  /** `evidence` is the rationed accent; status tones for status-bearing emphasis; `muted` for de-emphasis. */
+  tone?: 'evidence' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
+  /** Draw-on highlight sweep (respects `prefers-reduced-motion`). */
+  motion?: 'draw';
+}
+export interface BracketNoteOpts {
+  tone?: 'evidence' | 'warning' | 'danger' | 'info';
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -534,6 +562,8 @@ export interface Ui {
   legendItem(opts?: LegendItemOpts): string;
   legendSwatch(opts?: LegendSwatchOpts): string;
   annotation(opts?: AnnotationOpts): string;
+  mark(opts?: MarkOpts): string;
+  bracketNote(opts?: BracketNoteOpts): string;
 }
 
 export declare const ui: Ui;

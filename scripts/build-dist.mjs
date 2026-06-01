@@ -90,6 +90,7 @@ export const EXTRA_LEAVES = [
   'report.css',
   'annotations.css',
   'legend.css',
+  'marks.css',
 ];
 
 export function buildBundles() {

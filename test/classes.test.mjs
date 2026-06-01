@@ -108,6 +108,16 @@ test('the recipes added this cycle emit only registry classes', () => {
     'ui-legend__swatch ui-legend__swatch--8 ui-legend__swatch--circle',
   );
   assert.equal(ui.legendSwatch({ series: 99, shape: 'bogus' }), 'ui-legend__swatch');
+  assert.equal(ui.mark(), 'ui-mark');
+  assert.equal(
+    ui.mark({ style: 'underline', tone: 'evidence', motion: 'draw' }),
+    'ui-mark ui-mark--underline ui-mark--evidence ui-mark--draw',
+  );
+  assert.equal(ui.mark({ style: 'box', tone: 'danger' }), 'ui-mark ui-mark--box ui-mark--danger');
+  assert.equal(ui.mark({ style: 'bogus', tone: 'bogus' }), 'ui-mark');
+  assert.equal(ui.bracketNote(), 'ui-bracket-note');
+  assert.equal(ui.bracketNote({ tone: 'warning' }), 'ui-bracket-note ui-bracket-note--warning');
+  assert.equal(ui.bracketNote({ tone: 'bogus' }), 'ui-bracket-note');
 });
 
 test('every ui.* recipe is declared on the Ui interface in index.d.ts', async () => {
