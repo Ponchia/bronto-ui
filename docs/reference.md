@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 381 classes across 125 component groups
+- 400 classes across 128 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -331,6 +331,22 @@ each one matches a real selector in the stylesheet.
 | `cls.comboboxInput` | `ui-combobox__input` | part |
 | `cls.comboboxList` | `ui-combobox__list` | part |
 | `cls.comboboxOption` | `ui-combobox__option` | part |
+
+### `.ui-connector`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.connector` | `ui-connector` | base |
+| `cls.connectorEnd` | `ui-connector__end` | part |
+| `cls.connectorPath` | `ui-connector__path` | part |
+| `cls.connectorAccent` | `ui-connector--accent` | modifier |
+| `cls.connectorDanger` | `ui-connector--danger` | modifier |
+| `cls.connectorDashed` | `ui-connector--dashed` | modifier |
+| `cls.connectorDraw` | `ui-connector--draw` | modifier |
+| `cls.connectorInfo` | `ui-connector--info` | modifier |
+| `cls.connectorMuted` | `ui-connector--muted` | modifier |
+| `cls.connectorSuccess` | `ui-connector--success` | modifier |
+| `cls.connectorWarning` | `ui-connector--warning` | modifier |
 
 ### `.ui-container`
 
@@ -852,6 +868,14 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.spinner` | `ui-spinner` | base |
 
+### `.ui-spotlight`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.spotlight` | `ui-spotlight` | base |
+| `cls.spotlightHole` | `ui-spotlight__hole` | part |
+| `cls.spotlightRing` | `ui-spotlight--ring` | modifier |
+
 ### `.ui-stack`
 
 | Registry key | Class | Kind |
@@ -1012,6 +1036,16 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.tooltip` | `ui-tooltip` | base |
 | `cls.tooltipBubble` | `ui-tooltip__bubble` | part |
+
+### `.ui-tour-note`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.tourNote` | `ui-tour-note` | base |
+| `cls.tourNoteActions` | `ui-tour-note__actions` | part |
+| `cls.tourNoteBody` | `ui-tour-note__body` | part |
+| `cls.tourNoteStep` | `ui-tour-note__step` | part |
+| `cls.tourNoteTitle` | `ui-tour-note__title` | part |
 
 ### `.ui-visually-hidden`
 

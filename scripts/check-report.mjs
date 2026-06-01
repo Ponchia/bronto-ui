@@ -25,11 +25,15 @@ const classSources = [
   'docs/annotations.md',
   'docs/legends.md',
   'docs/marks.md',
+  'docs/connectors.md',
+  'docs/spotlight.md',
   'llms.txt',
   'demo/report.html',
   'demo/annotations.html',
   'demo/legends.html',
   'demo/marks.html',
+  'demo/connectors.html',
+  'demo/spotlight.html',
   ...walk('examples/report-static').filter((p) => /\.(html|js|css|md)$/.test(p)),
 ];
 
@@ -54,12 +58,20 @@ if (/legend\.css/.test(core)) {
 if (/marks\.css/.test(core)) {
   errors.push('css/core.css imports marks.css — marks CSS must stay opt-in');
 }
+if (/connectors\.css/.test(core)) {
+  errors.push('css/core.css imports connectors.css — connector CSS must stay opt-in');
+}
+if (/spotlight\.css/.test(core)) {
+  errors.push('css/core.css imports spotlight.css — spotlight CSS must stay opt-in');
+}
 
 const htmlSources = [
   'demo/report.html',
   'demo/annotations.html',
   'demo/legends.html',
   'demo/marks.html',
+  'demo/connectors.html',
+  'demo/spotlight.html',
   ...walk('examples/report-static').filter((p) => /\.html$/.test(p)),
 ];
 for (const rel of htmlSources) {
@@ -79,10 +91,14 @@ for (const rel of [
   'docs/annotations.md',
   'docs/legends.md',
   'docs/marks.md',
+  'docs/connectors.md',
+  'docs/spotlight.md',
   'demo/report.html',
   'demo/annotations.html',
   'demo/legends.html',
   'demo/marks.html',
+  'demo/connectors.html',
+  'demo/spotlight.html',
   ...walk('examples/report-static'),
 ]) {
   if (!/\.(md|html|css|js)$/.test(rel)) continue;

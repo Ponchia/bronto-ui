@@ -27,6 +27,8 @@ const requiredHooks = [
   'useCarousel',
   'useDotGlyph',
   'useLegend',
+  'useConnectors',
+  'useSpotlight',
   'useToast',
   'useBrontoBehavior',
 ];

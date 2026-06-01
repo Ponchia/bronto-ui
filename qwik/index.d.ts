@@ -48,6 +48,8 @@ export declare function useDialog(opts?: BrontoBindingOptsResolver): void;
 export declare function useCarousel(opts?: BrontoBindingOptsResolver): void;
 export declare function useDotGlyph(opts?: BrontoBindingOptsResolver): void;
 export declare function useLegend(opts?: BrontoBindingOptsResolver): void;
+export declare function useConnectors(opts?: BrontoBindingOptsResolver): void;
+export declare function useSpotlight(opts?: BrontoBindingOptsResolver): void;
 
 /** The `toast()` imperative (no lifecycle of its own). */
 export declare function useToast(): (message: string, opts?: ToastOpts) => Cleanup;
