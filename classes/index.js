@@ -417,6 +417,8 @@ export const cls = Object.freeze({
   keep: 'ui-keep',
   printExact: 'ui-print-exact',
   kbd: 'ui-kbd',
+  shortcut: 'ui-shortcut',
+  shortcutSep: 'ui-shortcut__sep',
   display: 'ui-display',
   mono: 'ui-mono',
   muted: 'ui-muted',

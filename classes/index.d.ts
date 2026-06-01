@@ -396,6 +396,8 @@ export declare const cls: {
   readonly keep: 'ui-keep';
   readonly printExact: 'ui-print-exact';
   readonly kbd: 'ui-kbd';
+  readonly shortcut: 'ui-shortcut';
+  readonly shortcutSep: 'ui-shortcut__sep';
   readonly display: 'ui-display';
   readonly mono: 'ui-mono';
   readonly muted: 'ui-muted';

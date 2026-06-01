@@ -101,6 +101,11 @@ hardening that had not yet been released.
   the host owns fetching, citation numbering, and trust. The first
   frontier-primitive beyond the analytical suite. Documented in
   [`docs/sources.md`](docs/sources.md).
+- **Keyboard-shortcut hint** (`.ui-shortcut` + `.ui-shortcut__sep`, core): a tiny
+  universal-chrome primitive that lays out one or more `.ui-kbd` keys as a chord
+  (`⌘`+`K`) or sequence (`G` then `I`) with a dim connective. The command tier's
+  smallest piece, broadly useful outside a palette (menu items, buttons,
+  tooltips). Class-only, like `.ui-kbd`.
 - **Label declutter** (`@ponchia/ui/annotations` `declutterLabels`): a
   deterministic, order-preserving **1-D** label de-overlap helper (sort, push
   apart by `size + gap`, slide to fit `max`) — pure, no DOM/scales. Not a 2-D
