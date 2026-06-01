@@ -132,10 +132,13 @@
   --mark-color: var(--info);
 }
 
-/* Forced colours: a highlight `background` is dropped, so keep meaning with an
-   underline; the bracket border and text-decoration survive as system colour. */
+/* Forced colours: only the highlight `background` is dropped, so add an
+   underline to the plain highlight mark to keep it visible. The styled marks
+   already carry a surviving channel — `--underline`/`--strike` use
+   text-decoration and `--box` a border — so they're excluded (otherwise the
+   underline would overwrite `--strike`'s line-through and lose its meaning). */
 @media (forced-colors: active) {
-  .ui-mark {
+  .ui-mark:not(.ui-mark--underline, .ui-mark--box, .ui-mark--strike) {
     text-decoration-line: underline;
   }
 }

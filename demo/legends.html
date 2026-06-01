@@ -223,7 +223,8 @@
       const status = document.getElementById('legend-status');
       document.addEventListener('bronto:legend:toggle', (e) => {
         const { series, active } = e.detail;
-        const bar = document.querySelector(`[data-series-bar="${series}"]`);
+        // CSS.escape: series ids are author data and may contain selector metacharacters.
+        const bar = document.querySelector(`[data-series-bar="${CSS.escape(series)}"]`);
         if (bar) bar.hidden = !active;
         status.textContent = `${series} ${active ? 'shown' : 'hidden'}`;
       });
