@@ -33,6 +33,9 @@ function mount(html) {
   return dom.window.document;
 }
 
+const childById = (root, id) =>
+  Array.from(root.querySelectorAll('[id]')).find((el) => el.id === id);
+
 beforeEach(() => dom?.window?.localStorage?.clear());
 afterEach(() => {
   for (const k of ['document', 'localStorage', 'CustomEvent', 'matchMedia']) delete globalThis[k];
@@ -117,6 +120,20 @@ test('dismissible removes target and is cancelable', () => {
   stop();
 });
 
+test('dismissible ignores malformed custom selectors instead of throwing', () => {
+  const d = mount(
+    '<div data-bronto-dismissible id="box"><button data-bronto-dismiss="[[bad">x</button></div>',
+  );
+  const stop = dismissible();
+  assert.doesNotThrow(() =>
+    d
+      .querySelector('[data-bronto-dismiss]')
+      .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true })),
+  );
+  assert.ok(d.getElementById('box'), 'malformed selector did not remove anything');
+  stop();
+});
+
 test('initDisclosure keeps aria-expanded and hidden in sync', () => {
   const d = mount(
     '<button data-bronto-disclosure aria-controls="p" aria-expanded="false">m</button>' +
@@ -133,6 +150,34 @@ test('initDisclosure keeps aria-expanded and hidden in sync', () => {
   btn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   assert.equal(btn.getAttribute('aria-expanded'), 'false');
   assert.equal(panel.hidden, true);
+});
+
+test('initDisclosure scoped root can target document-wide portal panels', () => {
+  const d = mount(
+    '<section id="scope"><button data-bronto-disclosure aria-controls="outside" aria-expanded="false">m</button></section>' +
+      '<div id="outside" hidden>panel</div>',
+  );
+  initDisclosure({ root: d.getElementById('scope') });
+  d.querySelector('[data-bronto-disclosure]').dispatchEvent(
+    new dom.window.MouseEvent('click', { bubbles: true }),
+  );
+  assert.equal(d.getElementById('outside').hidden, false, 'outside portal panel toggled');
+});
+
+test('initDisclosure scoped root resolves duplicate ids inside the root first', () => {
+  const d = mount(
+    '<div id="dup" hidden>outside</div>' +
+      '<section id="scope"><button data-bronto-disclosure aria-controls="dup" aria-expanded="false">m</button>' +
+      '<div id="dup" hidden>inside</div></section>',
+  );
+  const scope = d.getElementById('scope');
+  const inside = childById(scope, 'dup');
+  initDisclosure({ root: scope });
+  scope
+    .querySelector('[data-bronto-disclosure]')
+    .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(d.getElementById('dup').hidden, true, 'outside duplicate untouched');
+  assert.equal(inside.hidden, false, 'inside duplicate toggled');
 });
 
 test('initMenu closes the <details> on Escape, outside-click, and item activation', () => {
@@ -203,6 +248,50 @@ test('initDialog opens via data-bronto-open and closes via data-bronto-close', (
   stop();
   d.getElementById('open').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   assert.equal(dlg.open, false, 'no-op after cleanup');
+});
+
+test('initDialog scoped root can target document-wide portal dialogs', () => {
+  const d = mount(
+    '<section id="scope"><button data-bronto-open="inside" id="openIn">open</button>' +
+      '<dialog id="inside"></dialog>' +
+      '<button data-bronto-open="outside" id="openOut">open</button></section>' +
+      '<dialog id="outside" data-bronto-dialog-light><button data-bronto-close>x</button></dialog>',
+  );
+  const inside = stubDialog(d.getElementById('inside'));
+  const outside = stubDialog(d.getElementById('outside'));
+  initDialog({ root: d.getElementById('scope') });
+
+  d.getElementById('openIn').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(inside.open, true, 'inside dialog opened');
+
+  d.getElementById('openOut').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(outside.open, true, 'outside portal dialog opened');
+
+  d.querySelector('#outside [data-bronto-close]').dispatchEvent(
+    new dom.window.MouseEvent('click', { bubbles: true }),
+  );
+  assert.equal(outside.open, false, 'outside portal dialog close button works');
+
+  d.getElementById('openOut').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  outside.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(outside.open, false, 'outside portal dialog light-dismiss works');
+});
+
+test('initDialog scoped root resolves duplicate ids inside the root first', () => {
+  const d = mount(
+    '<dialog id="dup"></dialog>' +
+      '<section id="scope"><button data-bronto-open="dup">open</button>' +
+      '<dialog id="dup"></dialog></section>',
+  );
+  const scope = d.getElementById('scope');
+  const outside = stubDialog(d.getElementById('dup'));
+  const inside = stubDialog(childById(scope, 'dup'));
+  initDialog({ root: scope });
+  scope
+    .querySelector('[data-bronto-open]')
+    .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(outside.open, false, 'outside duplicate ignored');
+  assert.equal(inside.open, true, 'inside duplicate opened');
 });
 
 test('initDialog light-dismiss closes only when opted in via attribute', () => {
@@ -451,6 +540,53 @@ test('toast: early dismiss cancels the deferred rAF insert (no zombie)', () => {
     assert.ok(d.querySelector('.ui-toast-stack'), 'persistent live region still present');
   } finally {
     delete globalThis.requestAnimationFrame;
+  }
+});
+
+test('toast: removes synchronously when no exit transition is in effect', () => {
+  // No getComputedStyle (the default test/SSR env) → no measurable
+  // transition → the dismiss contract stays synchronous (toast gone now,
+  // never flagged .is-leaving).
+  const d = mount('');
+  const dismiss = toast('bye', { duration: 0 });
+  const el = d.querySelector('.ui-toast');
+  assert.ok(el, 'toast present');
+  dismiss();
+  assert.equal(el.classList.contains('is-leaving'), false, 'never flagged leaving without motion');
+  assert.equal(d.querySelector('.ui-toast'), null, 'removed synchronously');
+});
+
+test('toast: animates its exit and is removed when the transition ends', () => {
+  // Simulate a real browser where .ui-toast carries an exit transition.
+  const d = mount('');
+  globalThis.getComputedStyle = () => ({ transitionDuration: '0.2s' });
+  try {
+    const dismiss = toast('bye', { duration: 0 });
+    const el = d.querySelector('.ui-toast');
+    dismiss();
+    assert.ok(el.classList.contains('is-leaving'), 'flagged .is-leaving to trigger the fade-out');
+    assert.ok(el.isConnected, 'kept resident while it animates out');
+    el.dispatchEvent(new dom.window.Event('transitionend'));
+    assert.equal(el.isConnected, false, 'removed once the exit transition ends');
+    assert.doesNotThrow(dismiss, 'a second dismiss is a harmless no-op');
+  } finally {
+    delete globalThis.getComputedStyle;
+  }
+});
+
+test('toast: reduced-motion removes synchronously even with a transition set', () => {
+  const d = mount('');
+  globalThis.getComputedStyle = () => ({ transitionDuration: '0.2s' });
+  globalThis.matchMedia = (q) => ({ matches: q.includes('reduce') });
+  try {
+    const dismiss = toast('bye', { duration: 0 });
+    const el = d.querySelector('.ui-toast');
+    dismiss();
+    assert.equal(el.classList.contains('is-leaving'), false, 'reduced-motion skips the fade-out');
+    assert.equal(el.isConnected, false, 'removed synchronously under reduced-motion');
+  } finally {
+    delete globalThis.getComputedStyle;
+    delete globalThis.matchMedia;
   }
 });
 
@@ -734,6 +870,38 @@ test('initPopover: toggles panel, manages aria, Escape + outside close', () => {
   stop();
   trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   assert.equal(panel.classList.contains('is-open'), false, 'no-op after cleanup');
+});
+
+test('initPopover scoped root can target document-wide portal panels', () => {
+  const d = mount(
+    '<section id="scope"><button id="t" data-bronto-popover="outside">Info</button></section>' +
+      '<div class="ui-popover" id="outside">Details</div><button id="away">Away</button>',
+  );
+  const panel = d.getElementById('outside');
+  initPopover({ root: d.getElementById('scope') });
+  d.getElementById('t').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), true, 'outside portal panel opened');
+  d.getElementById('away').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), false, 'outside click closes portal panel');
+
+  d.getElementById('t').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  d.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), false, 'Escape closes portal panel');
+});
+
+test('initPopover scoped root resolves duplicate ids inside the root first', () => {
+  const d = mount(
+    '<div class="ui-popover" id="dup">Outside</div>' +
+      '<section id="scope"><button id="t" data-bronto-popover="dup">Info</button>' +
+      '<div class="ui-popover" id="dup">Inside</div></section>',
+  );
+  const scope = d.getElementById('scope');
+  const outside = d.getElementById('dup');
+  const inside = childById(scope, 'dup');
+  initPopover({ root: scope });
+  d.getElementById('t').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(outside.classList.contains('is-open'), false, 'outside duplicate ignored');
+  assert.equal(inside.classList.contains('is-open'), true, 'inside duplicate opened');
 });
 
 test('initPopover: SSR-safe', () => {

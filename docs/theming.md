@@ -4,13 +4,15 @@
 This is the **stable, supported surface** for re-branding without forking.
 Anything not listed here is internal and may change between minor versions.
 
-## The one knob: `--accent`
+## The brand knob: `--accent`
 
-The whole accent family derives from `--accent` via `color-mix()`:
+The accent family derives from `--accent` via `color-mix()` and the
+theme-owned neutral ramp endpoint:
 
 | Token                 | Derivation (light / dark)                    | Role |
 | --------------------- | -------------------------------------------- | ---- |
 | `--accent-strong`     | `--accent` mixed 83% with black / 84% white  | darker/lighter accent for hover, emphasis |
+| `--accent-ramp-end`   | white / black                                | neutral endpoint for the low-chroma OKLCH ramp |
 | `--accent-text`       | `var(--accent-strong)` (alias)               | **accent used as foreground text** — the on-surface, AA-safe one |
 | `--accent-soft`       | `--accent` at 10% / 14% over transparent     | tinted fills |
 | `--bg-accent`         | `--accent` at 6% / 8%                         | faint accent backgrounds |
@@ -49,6 +51,14 @@ fills — follows automatically, in both light and dark.
 - **Spacing** — override the `--space-2xs … --space-2xl` scale, or use a
   preset: `data-density="compact"` / `data-density="comfortable"` on any
   element (defaults to the middle scale).
+- **Dark surface** — the dark theme's base is a deliberately *elevated*
+  near-black (`--bg: #121212`) for readability: pure black + bright text
+  causes halation, and near-black-on-black surface steps are imperceptible.
+  For OLED power-saving or the original true-black "Nothing" look, opt in with
+  `data-surface="oled"` on `:root` (a root-level attribute like `data-theme`).
+  It only affects the dark theme and is a CSS-only preset (not in the JS token
+  model), so it never blacks out the light theme. See
+  [ADR-0003](adr/0003-theme-model.md) for the theme-model rationale.
 - **Radius** — `--radius-sm … --radius-xl`, `--radius-pill`. The Nothing
   default is near-sharp; raise these for a softer brand.
 - **Type** — `--display` (dot-matrix face), `--mono`, `--sans`. Override
@@ -115,7 +125,7 @@ is not. The values above are *measured* (white label on `#a8431a` =
 the same check. Don't set one global `--accent` and hope — that is why
 this example is split per theme.
 
-## Token tiers (0.3.1)
+## Token tiers
 
 Three additive, non-breaking tiers sit on top of the primitives. The
 short legacy names (`--panel`, `--line`, `--accent`, …) keep working
@@ -131,9 +141,11 @@ coarser-grained handles.
   primitives, so light/dark still Just Works.
 - **Accent ramp — `--accent-1 … --accent-6`.** A stepped family
   (subtle → bold) derived from the single `--accent` knob via
-  `color-mix` against the theme background. Re-brands and theme-adapts
-  automatically. This is the palette for charts / data-viz / multi-state
-  surfaces (the use case the JS token export advertises).
+  `color-mix(in oklch, …)` against a per-theme white/black endpoint
+  (`--accent-ramp-end`). Re-brands and theme-adapts automatically. Steps
+  1–4 are subtle surfaces; steps 5–6 are the accent and strong accent.
+  Exact hex outputs are visual tuning, but the token names and roles are
+  stable.
 - **Neutral ramp — `--surface-1 … --surface-6`** (low → high contrast
   against `--bg`) for layered surfaces without hand-picking greys.
 - **Stacking scale — `--z-base / -raised / -sticky / -overlay /

@@ -7,7 +7,8 @@
  * `solid-js` is an optional peer dependency.
  *
  * Behaviors delegate from a root (default `document`); call a primitive once in
- * a component that owns the relevant subtree, `{ root: el }` to scope it.
+ * a component that owns the relevant subtree, and pass a root resolver to scope
+ * it when the element is assigned by Solid's ref lifecycle.
  *
  *   import { useDialog, useToast } from '@ponchia/ui/solid';
  *   function App() {
@@ -34,11 +35,28 @@ import {
   toast,
 } from '../behaviors/index.js';
 
+function resolveMaybe(v) {
+  return typeof v === 'function' ? v() : v;
+}
+
+function resolveRoot(root) {
+  const value = resolveMaybe(root);
+  if (value && typeof value === 'object' && 'current' in value) return value.current;
+  return value;
+}
+
+function resolveOpts(opts) {
+  const value = resolveMaybe(opts);
+  if (!value || typeof value !== 'object') return undefined;
+  const root = resolveRoot(value.root);
+  return root ? { ...value, root } : { ...value, root: undefined };
+}
+
 /** Run a delegated behavior for the component's lifetime (init on mount, its
- *  returned cleanup on dispose). */
+ *  returned cleanup on dispose). Options resolve on mount, after refs exist. */
 export function useBrontoBehavior(init, opts) {
   onMount(() => {
-    const cleanup = init(opts);
+    const cleanup = init(resolveOpts(opts));
     if (typeof cleanup === 'function') onCleanup(cleanup);
   });
 }

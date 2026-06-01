@@ -1,0 +1,16 @@
+{
+  "name": "example-react-vite",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4176"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.2",
+    "vite": "^8.0.14",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
+  }
+}

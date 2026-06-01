@@ -54,6 +54,24 @@ function bindOnce(target, key, add) {
   return cleanup;
 }
 
+function byIdInHost(host, id) {
+  if (!id) return null;
+  if (host === document) return document.getElementById(id);
+  if (host.id === id) return host;
+  return (
+    Array.from(host.querySelectorAll?.('[id]') || []).find((el) => el.id === id) ||
+    document.getElementById(id)
+  );
+}
+
+function closestSafe(el, selector) {
+  try {
+    return el.closest(selector);
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Apply the persisted theme to <html data-theme>. Call as early as
  * possible (an inline module in <head>) to avoid a flash before the
@@ -145,7 +163,7 @@ export function dismissible({ root } = {}) {
     const btn = e.target.closest('[data-bronto-dismiss]');
     if (!btn || !host.contains(btn)) return;
     const sel = btn.getAttribute('data-bronto-dismiss');
-    const target = sel ? btn.closest(sel) : btn.closest('[data-bronto-dismissible]');
+    const target = sel ? closestSafe(btn, sel) : btn.closest('[data-bronto-dismissible]');
     if (!target) return;
     const ev = new CustomEvent('bronto:dismiss', { bubbles: true, cancelable: true });
     if (target.dispatchEvent(ev)) target.remove();
@@ -264,53 +282,154 @@ export function initTabs({ root } = {}) {
  * `close` event, so keyboard/SR users are never dropped at `<body>`.
  * SSR-safe and idempotent; returns cleanup.
  *
- * `root` scopes which triggers are delegated (default `document`); the
- * dialog itself is still resolved by id document-wide, because a modal
- * <dialog> is promoted to the top layer and is inherently document-global
- * (same model as `initThemeToggle`, where `root` scopes controls but the
- * theme applies to <html>).
+ * `root` scopes delegated triggers (default `document`). Controlled targets are
+ * resolved root-first, then document-wide, so scoped islands win duplicate-id
+ * conflicts without breaking body/portal-mounted overlays.
  */
 export function initDialog({ root } = {}) {
   if (!hasDom()) return noop;
   const host = root || document;
-  const onClick = (e) => {
-    const opener = e.target.closest('[data-bronto-open]');
-    if (opener && host.contains(opener)) {
-      const dlg = document.getElementById(opener.getAttribute('data-bronto-open'));
-      if (dlg && typeof dlg.showModal === 'function' && !dlg.open) {
-        dlg.addEventListener(
-          'close',
-          () => {
-            if (opener.isConnected && typeof opener.focus === 'function') opener.focus();
-          },
-          { once: true },
-        );
-        dlg.showModal();
-      }
-      return;
-    }
-    const closer = e.target.closest('[data-bronto-close]');
-    if (closer && host.contains(closer)) {
-      const dlg = closer.closest('dialog');
-      if (dlg && dlg.open) dlg.close();
-      return;
-    }
-    // Light-dismiss: a click whose target is the <dialog> itself is the
-    // backdrop (content sits in child elements).
-    const dlg = e.target;
+  const managedDialogs = new WeakSet();
+  const canManageDialog = (dlg, origin) => host.contains(origin) || managedDialogs.has(dlg);
+
+  const openFrom = (opener) => {
+    const dlg = byIdInHost(host, opener.getAttribute('data-bronto-open'));
+    if (!dlg || typeof dlg.showModal !== 'function' || dlg.open) return;
+    managedDialogs.add(dlg);
+    dlg.addEventListener(
+      'close',
+      () => {
+        if (opener.isConnected && typeof opener.focus === 'function') opener.focus();
+      },
+      { once: true },
+    );
+    dlg.showModal();
+  };
+
+  const closeFrom = (closer) => {
+    const dlg = closer.closest('dialog');
+    if (dlg && dlg.open && canManageDialog(dlg, closer)) dlg.close();
+  };
+
+  const lightDismiss = (dlg) => {
     if (
       dlg.tagName === 'DIALOG' &&
       dlg.open &&
       dlg.hasAttribute('data-bronto-dialog-light') &&
-      host.contains(dlg)
+      canManageDialog(dlg, dlg)
     ) {
       dlg.close();
     }
   };
+
+  const onClick = (e) => {
+    const opener = e.target.closest('[data-bronto-open]');
+    if (opener && host.contains(opener)) {
+      openFrom(opener);
+      return;
+    }
+    const closer = e.target.closest('[data-bronto-close]');
+    if (closer) {
+      closeFrom(closer);
+      return;
+    }
+    // Light-dismiss: a click whose target is the <dialog> itself is the
+    // backdrop (content sits in child elements).
+    lightDismiss(e.target);
+  };
   return bindOnce(host, 'dialog', () => {
-    host.addEventListener('click', onClick);
-    return () => host.removeEventListener('click', onClick);
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
   });
+}
+
+function toastStack(isAssertive) {
+  const stackSel = isAssertive
+    ? '.ui-toast-stack--assertive'
+    : '.ui-toast-stack:not(.ui-toast-stack--assertive)';
+  let stack = document.querySelector(stackSel);
+  const fresh = !stack;
+  if (!stack) {
+    stack = document.createElement('div');
+    stack.className = isAssertive ? 'ui-toast-stack ui-toast-stack--assertive' : 'ui-toast-stack';
+    stack.setAttribute('aria-live', isAssertive ? 'assertive' : 'polite');
+    if (isAssertive) stack.setAttribute('role', 'alert');
+    document.body.appendChild(stack);
+  }
+  return { stack, fresh };
+}
+
+function enqueueToast(place, freshStack) {
+  const canDefer = typeof requestAnimationFrame === 'function';
+  if (freshStack && canDefer) {
+    toastQueue.push(place);
+    toastFlushScheduled = true;
+    requestAnimationFrame(() => {
+      toastFlushScheduled = false;
+      for (const fn of toastQueue.splice(0)) fn();
+    });
+  } else if (toastFlushScheduled) {
+    toastQueue.push(place);
+  } else {
+    place();
+  }
+}
+
+function toastElement(message, { tone, title }) {
+  const el = document.createElement('div');
+  el.className = tone ? `ui-toast ui-toast--${tone}` : 'ui-toast';
+  // No per-item role: the stack itself is the live region; a nested
+  // live region risks double announcement in some SRs.
+  if (title) {
+    const t = document.createElement('p');
+    t.className = 'ui-toast__title';
+    t.textContent = title;
+    el.appendChild(t);
+  }
+  const body = document.createElement('div');
+  body.textContent = message;
+  el.appendChild(body);
+  return el;
+}
+
+// Remove a toast, animating its exit when — and only when — a transition
+// is actually in effect. Detached nodes, reduced-motion, and the no-CSS
+// test/SSR env all resolve to instant removal, so the dismiss contract
+// (toast gone now, the aria-live stack stays resident) is unchanged there;
+// a real browser with motion gets the CSS `.is-leaving` fade-out, with a
+// timeout fallback so an interrupted/never-firing transitionend can't strand
+// a toast in the live region.
+function removeToast(el) {
+  const reduce =
+    typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cs =
+    !reduce && el.isConnected && typeof getComputedStyle === 'function'
+      ? getComputedStyle(el)
+      : null;
+  const dur = cs ? parseFloat(cs.transitionDuration) || 0 : 0;
+  if (dur <= 0) {
+    el.remove();
+    return;
+  }
+  el.classList.add('is-leaving');
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    el.remove();
+  };
+  el.addEventListener('transitionend', finish, { once: true });
+  const timer = setTimeout(finish, dur * 1000 + 120);
+  timer?.unref?.(); // don't keep a Node test process alive
+}
+
+function addToastClose(el, dismiss) {
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'ui-toast__close';
+  close.setAttribute('aria-label', 'Dismiss');
+  close.addEventListener('click', dismiss);
+  el.appendChild(close);
 }
 
 /**
@@ -334,31 +453,8 @@ export function toast(message, { tone, title, duration = 4000, assertive, closab
   // role=alert nested in a polite parent — avoids the double
   // announcement that nesting causes in some screen readers.
   const isAssertive = assertive ?? tone === 'danger';
-  const stackSel = isAssertive
-    ? '.ui-toast-stack--assertive'
-    : '.ui-toast-stack:not(.ui-toast-stack--assertive)';
-  let stack = document.querySelector(stackSel);
-  const freshStack = !stack;
-  if (!stack) {
-    stack = document.createElement('div');
-    stack.className = isAssertive ? 'ui-toast-stack ui-toast-stack--assertive' : 'ui-toast-stack';
-    stack.setAttribute('aria-live', isAssertive ? 'assertive' : 'polite');
-    if (isAssertive) stack.setAttribute('role', 'alert');
-    document.body.appendChild(stack);
-  }
-  const el = document.createElement('div');
-  el.className = tone ? `ui-toast ui-toast--${tone}` : 'ui-toast';
-  // No per-item role: the stack itself is the live region; a nested
-  // live region risks double announcement in some SRs.
-  if (title) {
-    const t = document.createElement('p');
-    t.className = 'ui-toast__title';
-    t.textContent = title;
-    el.appendChild(t);
-  }
-  const body = document.createElement('div');
-  body.textContent = message;
-  el.appendChild(body);
+  const { stack, fresh: freshStack } = toastStack(isAssertive);
+  const el = toastElement(message, { tone, title });
   // Append after a frame the *first* time so the empty live region is
   // observed by AT before its first child arrives; once the region has
   // been observed, later toasts append synchronously.
@@ -369,28 +465,14 @@ export function toast(message, { tone, title, duration = 4000, assertive, closab
   const place = () => {
     if (!dismissed) stack.appendChild(el);
   };
-  const canDefer = typeof requestAnimationFrame === 'function';
-  if (freshStack && canDefer) {
-    toastQueue.push(place);
-    toastFlushScheduled = true;
-    requestAnimationFrame(() => {
-      toastFlushScheduled = false;
-      for (const fn of toastQueue.splice(0)) fn();
-    });
-  } else if (toastFlushScheduled) {
-    // A first-frame deferral is in flight — queue behind it so FIFO
-    // order holds and the region still isn't populated synchronously.
-    toastQueue.push(place);
-  } else {
-    place();
-  }
+  enqueueToast(place, freshStack);
 
   let timer;
   const dismiss = () => {
     if (dismissed) return;
     dismissed = true;
     if (timer) clearTimeout(timer);
-    el.remove();
+    removeToast(el);
     // The stack is a persistent live region — never removed on drain, so
     // the next toast does not recreate (and thus mis-announce) it.
   };
@@ -398,14 +480,7 @@ export function toast(message, { tone, title, duration = 4000, assertive, closab
   // it gets a dismiss affordance by default; any toast can opt in via
   // `closable`. The button carries no text node (glyph is a CSS
   // ::before) so the toast's announced/textContent stays the message.
-  if (closable ?? duration === 0) {
-    const close = document.createElement('button');
-    close.type = 'button';
-    close.className = 'ui-toast__close';
-    close.setAttribute('aria-label', 'Dismiss');
-    close.addEventListener('click', dismiss);
-    el.appendChild(close);
-  }
+  if (closable ?? duration === 0) addToastClose(el, dismiss);
   if (duration > 0) timer = setTimeout(dismiss, duration);
   return dismiss;
 }
@@ -422,7 +497,7 @@ export function initDisclosure({ root } = {}) {
     const trigger = e.target.closest('[data-bronto-disclosure]');
     if (!trigger || !host.contains(trigger)) return;
     const id = trigger.getAttribute('aria-controls');
-    const panel = id && document.getElementById(id);
+    const panel = byIdInHost(host, id);
     if (!panel) return;
     const open = trigger.getAttribute('aria-expanded') === 'true';
     trigger.setAttribute('aria-expanded', String(!open));
@@ -755,6 +830,24 @@ export function initCombobox({ root } = {}) {
       active = options.indexOf(vis[next]);
       setActive(options[active]);
     };
+    const activateEdge = (which) => {
+      if (list.hidden) return false;
+      const v = visible();
+      if (!v.length) return true;
+      active = options.indexOf(which === 'first' ? v[0] : v[v.length - 1]);
+      setActive(options[active]);
+      return true;
+    };
+    const selectActive = () => {
+      if (list.hidden || active < 0 || options[active].hidden) return false;
+      select(options[active]);
+      return true;
+    };
+    const closeIfOpen = () => {
+      if (list.hidden) return false;
+      close();
+      return true;
+    };
 
     const onInput = () => filter();
     const onKey = (e) => {
@@ -768,36 +861,16 @@ export function initCombobox({ root } = {}) {
           move(-1);
           break;
         case 'Home':
-          if (!list.hidden) {
-            e.preventDefault();
-            const v = visible();
-            if (v.length) {
-              active = options.indexOf(v[0]);
-              setActive(options[active]);
-            }
-          }
+          if (activateEdge('first')) e.preventDefault();
           break;
         case 'End':
-          if (!list.hidden) {
-            e.preventDefault();
-            const v = visible();
-            if (v.length) {
-              active = options.indexOf(v[v.length - 1]);
-              setActive(options[active]);
-            }
-          }
+          if (activateEdge('last')) e.preventDefault();
           break;
         case 'Enter':
-          if (!list.hidden && active >= 0 && !options[active].hidden) {
-            e.preventDefault();
-            select(options[active]);
-          }
+          if (selectActive()) e.preventDefault();
           break;
         case 'Escape':
-          if (!list.hidden) {
-            e.preventDefault();
-            close();
-          }
+          if (closeIfOpen()) e.preventDefault();
           break;
         case 'Tab':
           close();
@@ -904,8 +977,8 @@ export function initPopover({ root } = {}) {
 
   const onClick = (e) => {
     const trigger = e.target.closest?.('[data-bronto-popover]');
-    if (trigger) {
-      const panel = document.getElementById(trigger.getAttribute('data-bronto-popover'));
+    if (trigger && host.contains(trigger)) {
+      const panel = byIdInHost(host, trigger.getAttribute('data-bronto-popover'));
       if (!panel) return;
       e.preventDefault();
       if (openPanel === panel) close();
@@ -926,12 +999,12 @@ export function initPopover({ root } = {}) {
   };
 
   return bindOnce(host, 'popover', () => {
-    host.addEventListener('click', onClick);
+    document.addEventListener('click', onClick);
     document.addEventListener('keydown', onKey);
     view?.addEventListener('scroll', onReflow, true);
     view?.addEventListener('resize', onReflow);
     return () => {
-      host.removeEventListener('click', onClick);
+      document.removeEventListener('click', onClick);
       document.removeEventListener('keydown', onKey);
       view?.removeEventListener('scroll', onReflow, true);
       view?.removeEventListener('resize', onReflow);

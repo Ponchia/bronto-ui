@@ -20,6 +20,12 @@ CSS (pick one; do not import both):
 @import '@ponchia/ui/css';    /* css/core.css — @import fan-out, needs a bundler */
 ```
 
+`import '@ponchia/ui'` is supported only as a CSS side-effect import in a
+CSS-aware bundler. Do not import the package root from Node/runtime JS; use the
+explicit JS subpaths below.
+
+JS subpaths are ESM-only. In CommonJS, use dynamic `import()`.
+
 Everything lands in `@layer bronto`. Consumer styles in no layer (or a
 later layer) always win over framework styles regardless of selector
 specificity — this is the intended override mechanism; do not fight it
@@ -46,11 +52,13 @@ Optional vanilla behaviors (theme toggle, etc. — SSR-safe, tree-shakeable):
 import { applyStoredTheme } from '@ponchia/ui/behaviors';
 ```
 
-For React/Solid, optional thin hook bindings over those behaviors (peer deps
-`react` / `solid-js`, optional — core stays zero-dep):
+For React/Solid/Qwik, optional thin hook bindings over those behaviors (peer
+deps `react` / `solid-js` / `@builder.io/qwik`, optional — core stays zero-dep):
 
 ```js
-import { useDialog, useToast } from '@ponchia/ui/react'; // or '@ponchia/ui/solid'
+import { useDialog, useToast } from '@ponchia/ui/react'; // or '@ponchia/ui/solid' or '@ponchia/ui/qwik'
+// React: scope with { root: reactRef } or a resolver, not { root: ref.current } during render.
+// Qwik: hooks run in useVisibleTask$; scope with a Qwik signal — useDialog({ root: useSignal() }).
 ```
 
 Optional display glyphs — dot-matrix bitmaps on the `.ui-dotmatrix` primitive
@@ -89,6 +97,47 @@ simulated protan/deutan/tritan), `--chart-seq-*` (sequential), `--chart-div-*`
 (diverging), and `--chart-pattern-1..8` (dot-matrix fills — pair colour N with
 pattern N; colour is never the sole signal). Details in `docs/theming.md`.
 
+Optional static report layer for LLM-authored HTML reports — opt-in, never in
+the default bundle. Pair it with the normal bundle, and add data-viz only when
+the report contains charts. For standalone browser HTML, use real URLs; package
+specifiers only work after a bundler rewrites them:
+
+```html
+<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/bronto.css" />
+<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/report.css" />
+<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/dataviz.css" />
+```
+
+In Vite/webpack/etc., import `@ponchia/ui`, `@ponchia/ui/css/report.css`, and
+`@ponchia/ui/css/dataviz.css` instead.
+
+Canonical report skeleton:
+
+```html
+<main class="ui-report ui-report--numbered">
+  <header class="ui-report__cover">
+    <p class="ui-eyebrow">Report</p>
+    <h1 class="ui-report__title">System review</h1>
+    <p class="ui-report__subtitle">Static HTML, Chromium PDF-ready.</p>
+    <ol class="ui-report__meta"><li>2026-06-01</li><li>Generated</li></ol>
+  </header>
+  <section class="ui-report__section">
+    <h2 class="ui-report__section-head">Executive summary</h2>
+    <div class="ui-report__summary">
+      <div class="ui-prose"><p>Use prose only for narrative body content.</p></div>
+    </div>
+  </section>
+</main>
+```
+
+Report rules for agents: static output by default; do not initialize behaviors
+over untrusted generated content; sanitize arbitrary LLM/CMS/user HTML before
+rendering; use semantic headings; give tables captions and header cells; give
+charts captions, legends/direct labels, and fallback data; use
+`ui-chart__plot`/`ui-chart__bar`/`ui-chart__fill` for simple static bar charts;
+use `ui-report__section--unnumbered` for appendices in numbered reports; never
+use raw chromatic inline colors. Full cookbook: `docs/reporting.md`.
+
 ## Authoritative offline references (shipped in this package)
 
 Read these from `node_modules/@ponchia/ui/` — no network needed:
@@ -101,9 +150,14 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   the same source as the types and CI-drift-checked.
 - `docs/theming.md` — the token contract: which tokens to override, the
   light/dark model, and the rationed-accent rule.
+- `docs/stability.md` — the public API matrix: stable vs internal surfaces,
+  root-import contract, behavior trust boundary, and glyph-mask CSP note.
 - `docs/usage.md` — the decision guide: badge vs chip vs dot, default
   density, prose-in-card, when to add a behavior. Read this before
   re-implementing UI the framework already has an opinion about.
+- `docs/reporting.md` — static/PDF-first report cookbook for LLM-authored
+  reports, including report skeletons, chart rules, print utilities, and safety
+  boundaries.
 - `docs/contrast.md` — the published, CI-gated WCAG 2.1 contrast matrix
   for every contractual token pairing, per theme. Generated from the
   resolved palette; the build fails below the declared floor.
@@ -123,7 +177,7 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
 
 - Live kitchen-sink demo (every component, light/dark, RTL): https://ponchia.github.io/bronto-ui/
 - Architecture & the CSS-first decision: https://github.com/Ponchia/bronto-ui/blob/main/docs/architecture.md
-- Framework integration guides (Astro / SvelteKit / React-Solid / vanilla):
+- Framework integration guides (Astro / SvelteKit / React-Solid-Qwik / vanilla):
   https://github.com/Ponchia/bronto-ui/tree/main/docs/getting-started
 
 ## Rules an agent should respect
@@ -131,6 +185,9 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
 - Never invent `ui-*` class names. Every valid class is a member of
   `cls` in `classes/index.d.ts`; if it is not there, it does not exist.
 - Prefer the `ui.*()` recipes over hand-concatenating modifier strings.
+  Report/layout classes added in 0.4.1 are the exception: use `cls.report*`,
+  `cls.chart*`, `cls.printOnly`, or literal documented class names because
+  there are no `ui.report()` / `ui.chart()` recipes yet.
 - Override framework styles by writing your own rules outside
   `@layer bronto` — not with higher specificity or `!important`.
 - Color is tiered (ADR-0001): neutral canvas · one rationed accent · locked

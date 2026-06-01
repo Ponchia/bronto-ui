@@ -89,7 +89,7 @@ jobs:
 
       - run: npx playwright test
 
-  # Same consumer-tarball smoke as CI: build three real downstream apps
+  # Same consumer-tarball smoke as CI: build real downstream apps
   # against the PACKED tarball, so a broken published surface (bad exports
   # map, missing file, unresolved subpath) fails the release instead of
   # reaching consumers. validate's check:pack only inspects the file
@@ -101,7 +101,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        example: [vanilla-vite, astro, sveltekit]
+        example: [vanilla-vite, astro, sveltekit, react-vite, solid-vite, report-static]
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
@@ -119,7 +119,7 @@ jobs:
         run: |
           set -euo pipefail
           npm install --no-audit --no-fund
-          npm install --no-audit --no-fund "$GITHUB_WORKSPACE"/ponchia-ui-*.tgz
+          npm install --no-audit --no-fund --no-save "$GITHUB_WORKSPACE"/ponchia-ui-*.tgz
           npm run build
 
   publish-npm:

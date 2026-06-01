@@ -65,26 +65,26 @@ Overall: **all contractual pairings meet their floor ✅**.
 
 | Foreground | Background | Role | Held to | Ratio | APCA _(advisory)_ | Verdict |
 | --- | --- | --- | --- | --- | --- | --- |
-| `--text` | `--bg` | Body text on page background | AA text (4.5:1) | 18.76:1 | Lc 99 | ✅ pass |
-| `--text` | `--surface` | Body text on a card/panel | AA text (4.5:1) | 17.47:1 | Lc 99 | ✅ pass |
-| `--text` | `--surface-muted` | Body text on a muted panel | AA text (4.5:1) | 15.55:1 | Lc 98 | ✅ pass |
-| `--text-soft` | `--bg` | Secondary text on page background | AA text (4.5:1) | 12.04:1 | Lc 71 | ✅ pass |
-| `--text-soft` | `--surface` | Secondary text on a card | AA text (4.5:1) | 11.22:1 | Lc 71 | ✅ pass |
-| `--text-soft` | `--surface-muted` | Secondary text on a muted panel | AA text (4.5:1) | 9.98:1 | Lc 70 | ✅ pass |
-| `--text-dim` | `--bg` | Dim/meta text on page background | AA text (4.5:1) | 5.69:1 | Lc 37 | ✅ pass |
-| `--text-dim` | `--surface` | Dim/meta text on a card | AA text (4.5:1) | 5.30:1 | Lc 37 | ✅ pass |
-| `--text-dim` | `--surface-muted` | Dim/meta text on a muted panel | AA text (4.5:1) | 4.72:1 | Lc 36 | ✅ pass |
-| `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 6.88:1 | Lc 45 | ✅ pass |
-| `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 6.41:1 | Lc 45 | ✅ pass |
+| `--text` | `--bg` | Body text on page background | AA text (4.5:1) | 15.01:1 | Lc 91 | ✅ pass |
+| `--text` | `--surface` | Body text on a card/panel | AA text (4.5:1) | 13.65:1 | Lc 90 | ✅ pass |
+| `--text` | `--surface-muted` | Body text on a muted panel | AA text (4.5:1) | 12.44:1 | Lc 89 | ✅ pass |
+| `--text-soft` | `--bg` | Secondary text on page background | AA text (4.5:1) | 11.20:1 | Lc 73 | ✅ pass |
+| `--text-soft` | `--surface` | Secondary text on a card | AA text (4.5:1) | 10.19:1 | Lc 72 | ✅ pass |
+| `--text-soft` | `--surface-muted` | Secondary text on a muted panel | AA text (4.5:1) | 9.28:1 | Lc 71 | ✅ pass |
+| `--text-dim` | `--bg` | Dim/meta text on page background | AA text (4.5:1) | 7.16:1 | Lc 50 | ✅ pass |
+| `--text-dim` | `--surface` | Dim/meta text on a card | AA text (4.5:1) | 6.52:1 | Lc 49 | ✅ pass |
+| `--text-dim` | `--surface-muted` | Dim/meta text on a muted panel | AA text (4.5:1) | 5.94:1 | Lc 48 | ✅ pass |
+| `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 6.14:1 | Lc 45 | ✅ pass |
+| `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 5.58:1 | Lc 44 | ✅ pass |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 5.95:1 | Lc 43 | ✅ pass |
-| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 5.95:1 | Lc 41 | ✅ pass |
-| `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 5.55:1 | Lc 40 | ✅ pass |
-| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 5.95:1 | Lc 41 | ✅ pass |
-| `--success` | `--surface` | Success indicator vs a card | UI / large (3:1) | 8.70:1 | Lc 58 | ✅ pass |
-| `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 10.66:1 | Lc 68 | ✅ pass |
-| `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 6.00:1 | Lc 43 | ✅ pass |
-| `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 8.41:1 | Lc 56 | ✅ pass |
-| `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.01:1 | Lc 10 | ℹ️ not gated |
+| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 5.31:1 | Lc 40 | ✅ pass |
+| `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 4.83:1 | Lc 39 | ✅ pass |
+| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 5.31:1 | Lc 40 | ✅ pass |
+| `--success` | `--surface` | Success indicator vs a card | UI / large (3:1) | 7.58:1 | Lc 57 | ✅ pass |
+| `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 9.29:1 | Lc 67 | ✅ pass |
+| `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 5.23:1 | Lc 42 | ✅ pass |
+| `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 7.33:1 | Lc 55 | ✅ pass |
+| `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.29:1 | Lc 15 | ℹ️ not gated |
 
 ## Display colorways (skins)
 
@@ -112,12 +112,12 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 
 | Foreground | Background | Role | Held to | Ratio | APCA _(advisory)_ | Verdict |
 | --- | --- | --- | --- | --- | --- | --- |
-| `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 12.97:1 | Lc 75 | ✅ pass |
-| `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 12.08:1 | Lc 75 | ✅ pass |
+| `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 11.57:1 | Lc 75 | ✅ pass |
+| `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 10.52:1 | Lc 74 | ✅ pass |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 11.88:1 | Lc 72 | ✅ pass |
-| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 11.88:1 | Lc 70 | ✅ pass |
-| `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 11.07:1 | Lc 70 | ✅ pass |
-| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 11.88:1 | Lc 70 | ✅ pass |
+| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 10.60:1 | Lc 70 | ✅ pass |
+| `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 9.64:1 | Lc 69 | ✅ pass |
+| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 10.60:1 | Lc 70 | ✅ pass |
 
 ### E-ink — light
 
@@ -134,12 +134,12 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 
 | Foreground | Background | Role | Held to | Ratio | APCA _(advisory)_ | Verdict |
 | --- | --- | --- | --- | --- | --- | --- |
-| `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 13.98:1 | Lc 80 | ✅ pass |
-| `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 13.02:1 | Lc 79 | ✅ pass |
+| `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 12.47:1 | Lc 79 | ✅ pass |
+| `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 11.35:1 | Lc 78 | ✅ pass |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 12.86:1 | Lc 76 | ✅ pass |
-| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 12.86:1 | Lc 75 | ✅ pass |
-| `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 11.98:1 | Lc 74 | ✅ pass |
-| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 12.86:1 | Lc 75 | ✅ pass |
+| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 11.48:1 | Lc 74 | ✅ pass |
+| `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 10.44:1 | Lc 73 | ✅ pass |
+| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 11.48:1 | Lc 74 | ✅ pass |
 
 ### Phosphor Green — light
 
@@ -156,12 +156,12 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 
 | Foreground | Background | Role | Held to | Ratio | APCA _(advisory)_ | Verdict |
 | --- | --- | --- | --- | --- | --- | --- |
-| `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 14.54:1 | Lc 82 | ✅ pass |
-| `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 13.55:1 | Lc 82 | ✅ pass |
+| `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 12.97:1 | Lc 82 | ✅ pass |
+| `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 11.80:1 | Lc 81 | ✅ pass |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 13.75:1 | Lc 80 | ✅ pass |
-| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 13.75:1 | Lc 79 | ✅ pass |
-| `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 12.81:1 | Lc 79 | ✅ pass |
-| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 13.75:1 | Lc 79 | ✅ pass |
+| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 12.27:1 | Lc 79 | ✅ pass |
+| `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 11.16:1 | Lc 78 | ✅ pass |
+| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 12.27:1 | Lc 79 | ✅ pass |
 
 ## Data-viz palette (advisory)
 
@@ -191,14 +191,14 @@ the brand accent.
 
 | Series | Colour | Ratio _(advisory)_ | APCA _(advisory)_ |
 | --- | --- | --- | --- |
-| 1 _(accent)_ | `#ff3b41` | 5.95:1 | Lc 41 |
-| 2 | `#e69f00` | 9.32:1 | Lc 58 |
-| 3 | `#56b4e9` | 9.10:1 | Lc 57 |
-| 4 | `#009e73` | 6.14:1 | Lc 41 |
-| 5 | `#f0e442` | 15.88:1 | Lc 88 |
-| 6 | `#0072b2` | 4.05:1 | Lc 27 |
-| 7 | `#cc79a7` | 6.86:1 | Lc 45 |
-| 8 | `#4d5358` | 2.69:1 | Lc 15 |
+| 1 _(accent)_ | `#ff3b41` | 5.31:1 | Lc 40 |
+| 2 | `#e69f00` | 8.32:1 | Lc 58 |
+| 3 | `#56b4e9` | 8.12:1 | Lc 56 |
+| 4 | `#009e73` | 5.48:1 | Lc 40 |
+| 5 | `#f0e442` | 14.17:1 | Lc 87 |
+| 6 | `#0072b2` | 3.61:1 | Lc 26 |
+| 7 | `#cc79a7` | 6.12:1 | Lc 44 |
+| 8 | `#4d5358` | 2.40:1 | Lc 14 |
 
 ## Scope & caveats
 

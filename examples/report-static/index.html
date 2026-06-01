@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — static report example</title>
+    <meta name="description" content="Static report example built from @ponchia/ui." />
+  </head>
+  <body>
+    <main class="ui-report ui-report--numbered">
+      <header class="ui-report__cover ui-report__cover--compact ui-keep">
+        <p class="ui-eyebrow">Example report</p>
+        <h1 class="ui-report__title">Packed tarball smoke</h1>
+        <p class="ui-report__subtitle">
+          This page imports the report and data-viz CSS through package exports.
+        </p>
+        <ul class="ui-report__meta">
+          <li>Static HTML</li>
+          <li>Vite build</li>
+          <li>No behavior JS</li>
+        </ul>
+      </header>
+
+      <section class="ui-report__section">
+        <h2 class="ui-report__section-head">Summary</h2>
+        <div class="ui-report__summary">
+          <div class="ui-prose">
+            <p>
+              Reports compose the opt-in report layer with existing primitives such as stats,
+              alerts, prose, tables and chart helpers.
+            </p>
+          </div>
+        </div>
+        <div class="ui-statgrid">
+          <div class="ui-stat">
+            <span class="ui-stat__label">Exports</span>
+            <span class="ui-stat__value">3</span>
+            <span class="ui-stat__delta is-pos">resolved</span>
+          </div>
+          <div class="ui-stat">
+            <span class="ui-stat__label">Runtime JS</span>
+            <span class="ui-stat__value">0</span>
+            <span class="ui-stat__delta">required</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="ui-report__section">
+        <h2 class="ui-report__section-head">Evidence</h2>
+        <figure
+          class="ui-report__figure ui-chart ui-print-exact"
+          role="group"
+          aria-labelledby="example-chart"
+        >
+          <figcaption id="example-chart" class="ui-chart__caption">
+            Fig 1 - Import coverage
+          </figcaption>
+          <ul class="ui-chart__legend" aria-label="Import series">
+            <li>
+              <span
+                class="ui-chart__swatch"
+                style="--chart-color: var(--chart-1); --chart-pattern: var(--chart-pattern-1)"
+                aria-hidden="true"
+              ></span>
+              Core CSS
+            </li>
+            <li>
+              <span
+                class="ui-chart__swatch"
+                style="--chart-color: var(--chart-2); --chart-pattern: var(--chart-pattern-2)"
+                aria-hidden="true"
+              ></span>
+              Report CSS
+            </li>
+          </ul>
+          <div class="ui-chart__plot" aria-hidden="true">
+            <div
+              class="ui-chart__bar"
+              style="
+                --chart-value: 100%;
+                --chart-color: var(--chart-1);
+                --chart-pattern: var(--chart-pattern-1);
+              "
+            >
+              <div class="ui-chart__label"><span>Core CSS</span><span>loaded</span></div>
+              <div class="ui-chart__track"><div class="ui-chart__fill"></div></div>
+            </div>
+            <div
+              class="ui-chart__bar"
+              style="
+                --chart-value: 100%;
+                --chart-color: var(--chart-2);
+                --chart-pattern: var(--chart-pattern-2);
+              "
+            >
+              <div class="ui-chart__label"><span>Report CSS</span><span>loaded</span></div>
+              <div class="ui-chart__track"><div class="ui-chart__fill"></div></div>
+            </div>
+          </div>
+          <div class="ui-chart__fallback">
+            <div class="ui-table-wrap">
+              <table class="ui-table ui-table--dense">
+                <caption>
+                  Import coverage source data
+                </caption>
+                <thead>
+                  <tr>
+                    <th>Import</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>@ponchia/ui</td>
+                    <td>loaded</td>
+                  </tr>
+                  <tr>
+                    <td>@ponchia/ui/css/report.css</td>
+                    <td>loaded</td>
+                  </tr>
+                  <tr>
+                    <td>@ponchia/ui/css/dataviz.css</td>
+                    <td>loaded</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </figure>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

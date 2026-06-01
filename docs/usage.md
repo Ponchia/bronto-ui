@@ -60,6 +60,22 @@ Rule of thumb: state → dot, classification → badge, user-controlled value
   `.ui-card` itself, so card padding/border stays the card's and prose
   rhythm stays the content's. One responsibility per element.
 
+## Static reports
+
+Use the opt-in `@ponchia/ui/css/report.css` layer for static, PDF-first
+reports. A report composes `ui-report` + existing primitives: `ui-statgrid`
+for KPIs, `ui-alert` for persistent notices, `ui-table` for evidence,
+`ui-timeline` for events, `ui-meter` for measured values, and `ui-prose` only
+for narrative body content you do not fully control.
+
+Do not turn every report block into a card. Use `ui-report__summary`,
+`ui-report__finding`, and `ui-report__evidence` for document structure; use
+`ui-card` only when the block is genuinely a repeated card item. Charts use
+the report `ui-chart*` wrappers plus the opt-in data-viz tokens; simple static
+bar charts can use `ui-chart__plot`, `ui-chart__bar`, and `ui-chart__fill`.
+Always include a caption and fallback data. Full LLM/static report cookbook:
+[reporting.md](reporting.md).
+
 ## Buttons: variant and size
 
 - **primary** — the single most important action in a view. Aim for one.
@@ -148,12 +164,14 @@ infinite-clone track). It's a gallery: the user drives it.
 
 ## Display glyphs: when (and when not)
 
-`@ponchia/ui/glyphs` is a 43-glyph dot-matrix icon set — navigation
+`@ponchia/ui/glyphs` is a 48-glyph dot-matrix icon set — navigation
 (`arrow-*`, `chevron-*`), actions (`check`, `close`, `plus`, `minus`,
 `search`, `menu`, `gear`), status (`info`, `warning`, `bell`, `lock`) and
-common marks (`home`, `user`, `heart`, `star`, `spark`) — rendered on the
+common marks (`home`, `user`, `heart`, `star`, `spark`, circle-family marks) — rendered on the
 `.ui-dotmatrix` primitive, so they re-skin with the same `--field-dot*`
-tokens as every other dot surface (no SVG, no icon font).
+tokens as every other dot surface. The default and `solid` renderers emit
+dot-matrix DOM, not an icon font; the dense `.ui-icon` renderer uses an
+internal SVG data URL as a CSS mask so it can stay one DOM node.
 
 **Two rendering modes — pick by size.** The dots need physical room to
 read, so the default _dot_ look is for **display** sizes (~40px up: hero

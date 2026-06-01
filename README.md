@@ -3,7 +3,7 @@
 [![npm](https://img.shields.io/npm/v/@ponchia/ui?logo=npm)](https://www.npmjs.com/package/@ponchia/ui)
 [![npm provenance](https://img.shields.io/badge/npm-provenance-blue?logo=npm)](https://www.npmjs.com/package/@ponchia/ui#provenance)
 [![runtime deps](https://img.shields.io/badge/runtime%20deps-0-brightgreen)](https://github.com/Ponchia/bronto-ui/blob/main/package.json)
-[![dist](https://img.shields.io/badge/dist-~73kB%20%2F%20~13kB%20gzip-informational)](https://github.com/Ponchia/bronto-ui/blob/main/scripts/check-dist.mjs)
+[![dist](https://img.shields.io/badge/dist-~75kB%20%2F%20~13kB%20gzip-informational)](https://github.com/Ponchia/bronto-ui/blob/main/scripts/check-dist.mjs)
 [![CI](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Ponchia/bronto-ui/badge)](https://scorecard.dev/viewer/?uri=github.com/Ponchia/bronto-ui)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE)
@@ -34,7 +34,7 @@ Or drop it in with no build step, straight from a CDN:
 
 ## Quick start
 
-**1. Load the CSS.** One flattened, minified bundle — the whole framework, one request (~73 kB raw / ~13 kB gzip):
+**1. Load the CSS.** One flattened, minified bundle — the whole framework, one request (~75 kB raw / ~13 kB gzip):
 
 ```css
 @import '@ponchia/ui';            /* via a bundler */
@@ -79,7 +79,7 @@ toast('Saved', { tone: 'success' });   // body-anchored stack, no markup needed
 
 Behaviors cover theme persistence, disclosure, dropdown menus, native-`<dialog>` modals/drawers, tabs, combobox, form validation, table sort, carousel and toasts — wired by `data-bronto-*` attributes.
 
-**5. (Optional) display glyphs — a 43-glyph dot-matrix icon set:**
+**5. (Optional) display glyphs — a 48-glyph dot-matrix icon set:**
 
 ```js
 import { renderGlyph } from '@ponchia/ui/glyphs';
@@ -89,7 +89,7 @@ el.innerHTML = renderGlyph('search', { label: 'Search' });  // role="img"
 // import { initDotGlyph } from '@ponchia/ui/behaviors'; initDotGlyph();
 ```
 
-Arrows, chevrons, check/close/plus/minus, search/menu/gear, info/warning/bell/lock, home/user/heart/star/spark — rendered on the same `.ui-dotmatrix` primitive and re-skinned by the `--field-dot*` tokens (no SVG, no font). Default dot look is for **display** sizes; pass **`{ solid: true }`** to fuse the cells into a crisp pixel glyph that works as an **inline icon down to ~16px**.
+Arrows, chevrons, check/close/plus/minus, search/menu/gear, info/warning/bell/lock, home/user/heart/star/spark and circle-family marks are rendered on the same `.ui-dotmatrix` primitive and re-skinned by the `--field-dot*` tokens. Default dot look is for **display** sizes; pass **`{ solid: true }`** to fuse the cells into a crisp pixel glyph that works as an **inline icon down to ~16px**. For dense lists/tables, `renderGlyph(name, { render: 'mask' })` emits one `.ui-icon` element backed by an internal CSS mask.
 
 ## What's in the box
 
@@ -100,8 +100,9 @@ Arrows, chevrons, check/close/plus/minus, search/menu/gear, info/warning/bell/lo
 - **Disclosure & nav** — tabs, accordion, segmented, breadcrumb, pagination, `ui-steps`, `ui-timeline`, `ui-pagehead`, `ui-kbd`.
 - **Shells** — an admin dashboard shell (`ui-app-*`) and a content/marketing site shell (`ui-site*`, `ui-container`).
 - **Prose** — `.ui-prose` styles raw, unclassed semantic HTML (Markdown / CMS / LLM output) with zero classes.
+- **Reports** _(opt-in)_ — `@ponchia/ui/css/report.css`, a static/PDF-first report grammar for LLM-authored HTML: covers, sections, findings, evidence, figures, chart wrappers and print utilities.
 - **Motion & dots** — the dot-matrix motif kit: dot grid, status dots, dot loaders, the orbital spinner, matrix reveal — all reduced-motion aware.
-- **Glyphs** — `@ponchia/ui/glyphs`, a 43-glyph dot-matrix icon set on the `.ui-dotmatrix` primitive (display marks + crisp `solid` inline icons), no SVG/font.
+- **Glyphs** — `@ponchia/ui/glyphs`, a 48-glyph dot-matrix icon set on the `.ui-dotmatrix` primitive (display marks + crisp `solid` inline icons + one-node `.ui-icon` mask rendering).
 - **Colorways** _(opt-in)_ — `data-bronto-skin="amber-crt | phosphor-green | e-ink"`: a root-level recolour of the one accent (OKLCH, per-theme, contrast-gated), never in the default bundle.
 - **Data-viz** _(opt-in)_ — a colourblind-safe chart palette (`--chart-*` + dot-matrix pattern fills, resolved hex in `charts.json`), gated under simulated protan/deutan/tritan vision. Charts only, never UI chrome.
 
@@ -128,7 +129,7 @@ Not an afterthought — a gate. Every contractual token pairing has a declared W
 
 ## Works with anything
 
-The CSS is the framework, so it works with React, Svelte/SvelteKit, Astro, Vue, Solid or plain HTML — there's no component runtime to adopt. The optional `classes` and `behaviors` entrypoints pull in **no** UI framework and are SSR-safe. For React and Solid there are also **optional thin bindings** — `@ponchia/ui/react` and `@ponchia/ui/solid` wrap the behaviors as hooks (`useDialog`, `useToast`, …); `react`/`solid-js` are optional peer deps, so the core stays zero-dependency.
+The CSS is the framework, so it works with React, Svelte/SvelteKit, Astro, Vue, Solid, Qwik or plain HTML — there's no component runtime to adopt. The optional `classes` and `behaviors` entrypoints pull in **no** UI framework and are SSR-safe. For React, Solid and Qwik there are also **optional thin bindings** — `@ponchia/ui/react`, `@ponchia/ui/solid` and `@ponchia/ui/qwik` wrap the behaviors as hooks (`useDialog`, `useToast`, …); `react`/`solid-js`/`@builder.io/qwik` are optional peer deps, so the core stays zero-dependency.
 
 Per-framework getting-started guides + runnable example apps live in the repo:
 
@@ -137,37 +138,43 @@ Per-framework getting-started guides + runnable example apps live in the repo:
 | Vanilla / Vite / plain HTML | [vanilla.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/vanilla.md) | [`examples/vanilla-vite`](https://github.com/Ponchia/bronto-ui/tree/main/examples/vanilla-vite) |
 | Astro | [astro.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/astro.md) | [`examples/astro`](https://github.com/Ponchia/bronto-ui/tree/main/examples/astro) |
 | SvelteKit | [sveltekit.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/sveltekit.md) | [`examples/sveltekit`](https://github.com/Ponchia/bronto-ui/tree/main/examples/sveltekit) |
-| React / Solid (snippet) | [react-solid.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/react-solid.md) | — |
+| React | [react-solid.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/react-solid.md) | [`examples/react-vite`](https://github.com/Ponchia/bronto-ui/tree/main/examples/react-vite) |
+| Solid | [react-solid.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/react-solid.md) | [`examples/solid-vite`](https://github.com/Ponchia/bronto-ui/tree/main/examples/solid-vite) |
+| Qwik | [react-solid.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/react-solid.md) | [`examples/qwik-vite`](https://github.com/Ponchia/bronto-ui/tree/main/examples/qwik-vite) |
 | Tailwind / cascade-layer interop | [tailwind.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/interop/tailwind.md) | — |
 
 ## Extras
 
 - **Tokens as data** — `import tokens, { themeColor, cssVars } from '@ponchia/ui/tokens'` (plus `tokens.json`, W3C DTCG `tokens.dtcg.json`, and `tokens/resolved.json` — concrete hex per theme for canvas/SVG/MapLibre).
-- **Chart colours for dashboards** — `import charts from '@ponchia/ui/charts.json'` (resolved hex per theme; series 1 = your accent) and the opt-in `@ponchia/ui/css/dataviz.css`.
+- **Chart colours for dashboards** — `import charts from '@ponchia/ui/charts.json' with { type: 'json' }` in Node ESM, or the same path through a bundler JSON import (resolved hex per theme; series 1 = your accent) plus the opt-in `@ponchia/ui/css/dataviz.css`.
+- **Static reports for LLMs** — add `@ponchia/ui/css/report.css` for report structure and print utilities; pair with `@ponchia/ui/css/dataviz.css` only when the report contains charts. Full cookbook: `docs/reporting.md`.
+- **Modern-platform motion** — overlays (modal/drawer/popover), toasts and the `<details>` accordion animate **in and out** with zero JS (`@starting-style` + `allow-discrete`, `::details-content` + `interpolate-size`). Progressive-enhancement extras: `.ui-scroll-progress` / `.ui-scroll-reveal` (scroll-driven, no JS) and `.ui-vt` for View Transitions. All degrade to a static end-state and respect `prefers-reduced-motion`. For smooth **cross-document** navigations, add the document-global one-liner to your own top-level (unlayered) CSS: `@view-transition { navigation: auto; }`.
 - **Editor IntelliSense** — point VS Code at the shipped custom-data file so every token autocompletes in `var(--…)`:
   ```json
   { "css.customData": ["node_modules/@ponchia/ui/classes/vscode.css-custom-data.json"] }
   ```
-- **For AI coding agents** — the package ships `llms.txt` at its root plus `docs/reference.md`, `docs/usage.md`, `docs/theming.md`, `docs/contrast.md`, the color constitution `docs/adr/0001-color-system.md` and the `CHANGELOG` inside the tarball, so an offline agent has the full API and rationale without guessing.
+- **For AI coding agents** — the package ships `llms.txt` at its root plus `docs/reference.md`, `docs/usage.md`, `docs/reporting.md`, `docs/theming.md`, `docs/contrast.md`, `docs/stability.md`, the color constitution `docs/adr/0001-color-system.md` and the `CHANGELOG` inside the tarball, so an offline agent has the full API and rationale without guessing.
 
-> The package root is **CSS-only**: `@import '@ponchia/ui'` in CSS, never `import '@ponchia/ui'` in JS. The JS entrypoints are the explicit subpaths `/tokens`, `/classes`, `/behaviors`, `/glyphs`.
+> The package root is **CSS-only**. Use `@import '@ponchia/ui'` in CSS, or `import '@ponchia/ui'` only as a CSS side-effect import in a CSS-aware bundler (Vite, Astro, SvelteKit, webpack). Do not import the package root from Node/runtime JS. JS entrypoints are explicit subpaths: `/tokens`, `/classes`, `/behaviors`, `/glyphs`, `/react`, `/solid`, `/qwik`, `/skins`, and `/charts`.
+> JS subpaths are **ESM-only**. CommonJS consumers should use dynamic
+> `import('@ponchia/ui/behaviors')`.
 
 ## Browser support
 
-Evergreen only. The framework relies on cascade layers, `:has()`, `color-mix()`, CSS logical properties and native `<dialog>`. Floor: **Chrome/Edge 111+, Safari 16.4+, Firefox 121+** (early 2023 onward). No build-time fallback ships; pin an older tag if you need below this.
+Recent-evergreen, by design. The framework targets the modern web platform — cascade layers, `:has()`, `color-mix()`/`oklch()`, logical properties, native `<dialog>`, and the 2026 interaction primitives (`@starting-style`, `transition-behavior: allow-discrete`, `light-dark()`). Floor: **Chrome/Edge 125+, Safari 18+, Firefox 129+** (early–mid 2025). No fallback ships below this — pin an older tag if you need it. See [ADR-0002](https://github.com/Ponchia/bronto-ui/blob/main/docs/adr/0002-scope-and-2026-baseline.md) for the scope/greenfield rationale.
 
 ## Versioning
 
 Pre-1.0 and deliberately so. **Until `1.0.0`, breaking changes ship in the _minor_** (`0.x.0`); patches (`0.x.y`) are always non-breaking. Pin with the patch range — at `0.x`, `~0.4.0` (and equivalently `^0.4.0`) resolves to `>=0.4.0 <0.5.0`, giving you safe patches while holding back the next breaking minor. Every breaking change is called out under a **BREAKING** heading in the **[CHANGELOG](https://github.com/Ponchia/bronto-ui/blob/main/CHANGELOG.md)** with a migration note.
 
-Contractual (changes are breaking): the `--accent` derivation and token **names**, the `.ui-*` class and recipe names, the `data-bronto-*` attributes, and each behavior's cleanup contract. Not contractual (may change any release): token **values** (visual tuning) and internal leaf-file / `@layer` boundaries.
+Contractual (changes are breaking): token **names** and documented token roles, `.ui-*` class and recipe names, `data-bronto-*` attributes, exported behavior/glyph/binding function names and each behavior's cleanup contract. Not contractual (may change any release): exact token **values** and generated colour math outputs (visual tuning) unless a doc explicitly says the value is stable, plus internal leaf-file / `@layer` boundaries. See **[docs/stability.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/stability.md)** for the full public-surface matrix.
 
 Release candidates publish to the `next` dist-tag, never to `latest` — opt in with `npm i @ponchia/ui@next` to try an upcoming version early. A plain `npm i @ponchia/ui` only ever resolves a stable release.
 
 ## Links
 
 - **[Live demo](https://ponchia.github.io/bronto-ui/)** · **[Theme playground](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)**
-- **[Class reference](https://github.com/Ponchia/bronto-ui/blob/main/docs/reference.md)** · **[Usage guide](https://github.com/Ponchia/bronto-ui/blob/main/docs/usage.md)** · **[Theming](https://github.com/Ponchia/bronto-ui/blob/main/docs/theming.md)** · **[Contrast](https://github.com/Ponchia/bronto-ui/blob/main/docs/contrast.md)** · **[Color system (ADR-0001)](https://github.com/Ponchia/bronto-ui/blob/main/docs/adr/0001-color-system.md)**
+- **[Class reference](https://github.com/Ponchia/bronto-ui/blob/main/docs/reference.md)** · **[Usage guide](https://github.com/Ponchia/bronto-ui/blob/main/docs/usage.md)** · **[Theming](https://github.com/Ponchia/bronto-ui/blob/main/docs/theming.md)** · **[Contrast](https://github.com/Ponchia/bronto-ui/blob/main/docs/contrast.md)** · **[Color system (ADR-0001)](https://github.com/Ponchia/bronto-ui/blob/main/docs/adr/0001-color-system.md)** · **[Scope & 2026 baseline (ADR-0002)](https://github.com/Ponchia/bronto-ui/blob/main/docs/adr/0002-scope-and-2026-baseline.md)**
 - **[CHANGELOG](https://github.com/Ponchia/bronto-ui/blob/main/CHANGELOG.md)** · **[Roadmap](https://github.com/Ponchia/bronto-ui/blob/main/ROADMAP.md)** · **[Contributing](https://github.com/Ponchia/bronto-ui/blob/main/CONTRIBUTING.md)**
 
 ## License

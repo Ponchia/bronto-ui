@@ -72,9 +72,18 @@ machine-readable rename map. The 0.2 → 0.3 cut predates this policy
 
 ## Browser floor
 
-Evergreen only: Chrome/Edge 111+, Safari 16.4+, Firefox 121+ (cascade
-layers, `:has()`, `color-mix()`, logical properties, native
-`<dialog>`). Don't add fallbacks below this; pin an older tag instead.
+Recent-evergreen only — **Chrome/Edge 125+, Safari 18+, Firefox 129+**
+(early–mid 2025). On top of the prior baseline (cascade layers, `:has()`,
+`color-mix()`, logical properties, native `<dialog>`) this floor adds the
+2026 interaction primitives the framework now builds on:
+`@starting-style`, `transition-behavior: allow-discrete` (zero-JS
+enter/exit transitions), `oklch()`/relative color, and `light-dark()`.
+This is a deliberate, greenfield stance (see
+[ADR-0002](docs/adr/0002-scope-and-2026-baseline.md)): the framework targets
+the modern web platform and does **not** ship fallbacks below this floor —
+pin an older tag if you need to. Features that aren't yet cross-engine
+(View Transitions, scroll-driven animations, `interpolate-size`) are used
+only as progressive enhancement and degrade to a static end-state.
 
 ## Visual baselines
 
