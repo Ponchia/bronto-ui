@@ -94,6 +94,13 @@ hardening that had not yet been released.
   deterministic, order-preserving **1-D** label de-overlap helper (sort, push
   apart by `size + gap`, slide to fit `max`) — pure, no DOM/scales. Not a 2-D
   collision solver. Documented in [`docs/annotations.md`](docs/annotations.md).
+- **Direct labels** (`@ponchia/ui/annotations` `directLabels`): the
+  direct-labeling companion to `declutterLabels` — it declutters labels along an
+  axis **and** draws the leader from each anchor to its placed label, reusing the
+  connectors geometry kernel. Returns `[{ x, y, anchor, key, d }]` (the `d` feeds
+  a `ui-annotation__connector`). Deterministic and pure: no scales, no DOM, no
+  2-D placement (the 1-D core of Labella, completed with leaders). Documented in
+  [`docs/annotations.md`](docs/annotations.md).
 - **Connectors** (`@ponchia/ui/connectors`, `@ponchia/ui/css/connectors.css`,
   `initConnectors`, `useConnectors`, `ui.connector()`) and **Spotlight**
   (`css/spotlight.css`, `initSpotlight`, `ui.spotlight()`) — leader lines between

@@ -38,6 +38,7 @@ import {
   annotationTransform,
   axisThresholdPath,
   declutterLabels,
+  directLabels,
   bandSubjectPath,
   bracketSubjectPath,
   circleSubjectPath,
@@ -147,6 +148,18 @@ const labelPositions: number[] = declutterLabels(
   { gap: 2, min: 0, max: 100 },
 );
 void labelPositions;
+
+const directLabeled = directLabels(
+  [
+    { anchor: { x: 10, y: 50 }, size: 20, key: 'a' },
+    { anchor: { x: 30, y: 55 }, size: 20 },
+  ],
+  { axis: 'y', cross: 100, gap: 4, shape: 'curve' },
+);
+const leaderPath: string = directLabeled[0].d;
+const placedY: number = directLabeled[0].y;
+void leaderPath;
+void placedY;
 
 const parts: ClassValue = ['a', false, ['b'], null];
 const joined: string = cx(parts, 'extra', undefined);

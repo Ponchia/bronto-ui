@@ -134,6 +134,7 @@ selections, DOM nodes, or frameworks.
 | `noteTransform({ dx, dy, align, valign, width, height })` | Note transform from the subject anchor, with optional alignment. |
 | `notePlacement({ x, y, width, height, bounds, preferred })` | Bounded note offset, alignment and transform for one annotation. |
 | `declutterLabels(items, { gap, min, max })` | Adjusted centres for `items` (`[{ pos, size }]`) so labels don't overlap along one axis (order-preserving). |
+| `directLabels(items, { axis, cross, gap, min, max, shape })` | Decluttered label points **and** a leader path per item: `[{ x, y, anchor, key, d }]`. |
 
 `declutterLabels` is a deliberately small, deterministic **1-D** declutter for
 direct labels or axis ticks — sort, push overlaps apart by `size + gap`, slide
@@ -141,6 +142,28 @@ to fit under `max`. It is **not** a general 2-D collision solver: if more labels
 are requested than the axis can hold, the overflow is yours to resolve (fewer
 labels, a longer axis, or rotation). It returns numbers; you own the scale and
 the DOM.
+
+`directLabels` is the **direct-labeling** companion: it declutters labels along
+one axis _and_ draws the leader from each true anchor to its placed label,
+reusing the connector kernel. Each `items[i]` is `{ anchor: {x, y}, size, key? }`
+in figure coordinates; labels declutter along `axis` (`'y'` = a vertical column,
+the default) and sit at the fixed `cross` coordinate. It returns, in input
+order, the placed label point `{ x, y }`, the echoed `anchor`/`key`, and the
+leader path `d` (`shape`: `straight` · `elbow` · `curve`). Like everything here
+it owns no scales, no DOM, and no 2-D placement — map data → figure coordinates
+first, then drop each `d` into a `<path class="ui-annotation__connector">` and
+position the label at `{ x, y }`:
+
+```js
+import { directLabels } from '@ponchia/ui/annotations';
+
+// anchors are data points already projected into the figure's SVG coords
+const labels = directLabels(
+  points.map((p) => ({ anchor: p, size: 18, key: p.id })),
+  { axis: 'y', cross: width - 8, gap: 6, min: 12, max: height - 12 },
+);
+// labels[i] → { x, y, anchor, key, d }
+```
 | `circleSubjectPath({ radius })` | Circle subject path. |
 | `rectSubjectPath({ x, y, width, height, padding })` | Rect subject path. |
 | `thresholdPath({ x1, y1, x2, y2 })` | Arbitrary threshold/rule path. |

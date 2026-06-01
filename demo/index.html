@@ -228,20 +228,10 @@
         border-radius: var(--radius-sm);
         flex: 1;
       }
-      .anno-figure {
-        position: relative;
-      }
-      .anno-bars {
-        align-items: flex-end;
-        block-size: 8rem;
-        display: flex;
-        gap: 0.6rem;
-        padding-block-start: 1.5rem;
-      }
-      .anno-bars > span {
-        background: var(--panel-strong);
-        border: 1px solid var(--line-strong);
-        flex: 1;
+      .anno-svg {
+        block-size: auto;
+        inline-size: 100%;
+        max-block-size: 12rem;
       }
       /* A scoped, non-overlay illustration of the spotlight look (the real
          ui-spotlight is a fixed full-viewport overlay; see its demo link). */
@@ -1186,34 +1176,36 @@ ui.button({ variant: 'ghost' });</code></pre>
           <div>
             <h3 class="spec__name">Annotations</h3>
             <p class="spec__one">
-              A subject / connector / note grammar for SVG figures and report callouts — the
-              d3-annotation idea as a class vocabulary plus geometry helpers that return SVG strings.
+              A subject / connector / note grammar for SVG figures, plus geometry helpers that
+              return SVG strings — including <code>directLabels</code>, which declutters labels
+              along an axis and draws the leader from each anchor to its placed label.
             </p>
           </div>
           <div class="spec__demo">
-            <figure class="anno-figure" style="margin: 0">
-              <figcaption class="ui-annotation ui-annotation--callout ui-annotation--accent" style="margin-block-end: 0.5rem">
-                <span class="ui-annotation__title">Peak</span>
-                <span class="ui-annotation__body">Q3 — launch week</span>
+            <figure style="margin: 0">
+              <svg
+                id="anno-directlabels"
+                class="anno-svg"
+                viewBox="0 0 360 170"
+                role="img"
+                aria-label="A four-point series whose labels are decluttered into a leadered column on the right by directLabels"
+              ></svg>
+              <figcaption class="ui-muted" style="margin-block-start: 0.5rem">
+                Built live with <code>directLabels</code>: the four labels would collide at their
+                data <em>y</em>, so they declutter into a leadered column.
               </figcaption>
-              <div class="anno-bars" role="img" aria-label="Five bars; the second is the annotated peak">
-                <span style="block-size: 45%"></span>
-                <span style="block-size: 92%; background: var(--accent); border-color: var(--accent)"></span>
-                <span style="block-size: 60%"></span>
-                <span style="block-size: 38%"></span>
-                <span style="block-size: 70%"></span>
-              </div>
             </figure>
           </div>
           <details class="spec__code">
             <summary>Markup &amp; recipe</summary>
-            <pre><code>&lt;figcaption class="ui-annotation ui-annotation--callout ui-annotation--accent"&gt;
-  &lt;span class="ui-annotation__title"&gt;Peak&lt;/span&gt;
-  &lt;span class="ui-annotation__body"&gt;Q3 — launch week&lt;/span&gt;
-&lt;/figcaption&gt;
+            <pre><code>import { directLabels } from '@ponchia/ui/annotations';
 
-import { connectorLine, arrowHead } from '@ponchia/ui/annotations';
-ui.annotation({ variant: 'callout', tone: 'accent' });</code></pre>
+const labels = directLabels(
+  points.map((p) =&gt; ({ anchor: p, size: 22, key: p.id })),
+  { axis: 'y', cross: 296, gap: 6, min: 14, max: 156 },
+);
+// each → { x, y, anchor, key, d }
+//   &lt;path class="ui-annotation__connector" d={d}/&gt; + a label at { x, y }</code></pre>
           </details>
           <p class="spec__meta">
             <span class="ui-badge ui-badge--muted">opt-in</span>
@@ -1558,6 +1550,7 @@ ui.sel({ state: 'on' });</code></pre>
         toast,
       } from '../behaviors/index.js';
       import { ui, cx } from '../classes/index.js';
+      import { directLabels } from '../annotations/index.js';
       import { renderGlyph, GLYPH_NAMES } from '../glyphs/glyphs.js';
       import { skins, SKIN_NAMES } from '../tokens/skins.js';
 
@@ -1630,6 +1623,57 @@ ui.sel({ state: 'on' });</code></pre>
         pulseBox.innerHTML = renderGlyph('bell', { anim: 'pulse', dot: '0.34rem', gap: '0.1rem', label: 'Notifications' });
 
         glyphAnim.append(revealBox, replay, pulseBox);
+      }
+
+      // Live direct-labeling dogfood: a small series whose labels would collide
+      // at their data y; directLabels declutters them into a leadered column.
+      const annoSvg = document.getElementById('anno-directlabels');
+      if (annoSvg) {
+        const NS = 'http://www.w3.org/2000/svg';
+        const pts = [
+          { x: 30, y: 120, label: 'Jan' },
+          { x: 110, y: 96, label: 'Feb' },
+          { x: 190, y: 88, label: 'Mar' },
+          { x: 270, y: 44, label: 'Apr' },
+        ];
+        const labels = directLabels(
+          pts.map((p) => ({ anchor: { x: p.x, y: p.y }, size: 22, key: p.label })),
+          { axis: 'y', cross: 296, gap: 6, min: 14, max: 156 },
+        );
+        const make = (tag, attrs, text) => {
+          const el = document.createElementNS(NS, tag);
+          for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+          if (text != null) el.textContent = text;
+          return el;
+        };
+        annoSvg.appendChild(
+          make('polyline', {
+            points: pts.map((p) => `${p.x},${p.y}`).join(' '),
+            fill: 'none',
+            stroke: 'var(--line-strong)',
+            'stroke-width': '1.5',
+          }),
+        );
+        labels.forEach((l, i) => {
+          annoSvg.appendChild(make('path', { class: 'ui-annotation__connector', d: l.d }));
+          annoSvg.appendChild(
+            make('circle', { cx: l.anchor.x, cy: l.anchor.y, r: '3.5', fill: 'var(--accent)' }),
+          );
+          annoSvg.appendChild(
+            make(
+              'text',
+              {
+                class: 'ui-annotation__label',
+                x: l.x + 6,
+                y: l.y,
+                'dominant-baseline': 'middle',
+                'font-size': '12',
+                fill: 'var(--text-soft)',
+              },
+              pts[i].label,
+            ),
+          );
+        });
       }
 
       initThemeToggle();

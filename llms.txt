@@ -123,7 +123,11 @@ circle/rect/threshold subjects, badges, brackets, bands, slopes, comparisons,
 clusters, axis marks, timeline pins, and evidence markers. Motion is opt-in
 (`draw`, `reveal`, `pulse`, `focus`) and respects reduced-motion preferences.
 Use `notePlacement()` for one-note bounded placement, but do not treat it as a
-whole-chart collision solver. Status tones are only for status-bearing callouts.
+whole-chart collision solver. `declutterLabels(items,{gap,min,max})` is a
+deterministic 1-D declutter; `directLabels(items,{axis,cross,gap,min,max,shape})`
+adds the leader line (it declutters labels along an axis and returns each placed
+point plus a leader path `d` for `ui-annotation__connector`) — neither owns
+scales, DOM, or 2-D placement. Status tones are only for status-bearing callouts.
 Keep charts sparse; dense mobile figures need horizontal scrolling, a simplified
 SVG, or complete caption/fallback text. Details: `docs/annotations.md`.
 

@@ -1,6 +1,13 @@
 // Shared SVG geometry primitives live in the connectors kernel; annotations
 // (figure callouts) build on them so a line/curve/arrow/dot is drawn one way.
-import { straightPath, curvePath, arrowHead, dotMark, angleBetween } from '../connectors/index.js';
+import {
+  straightPath,
+  curvePath,
+  connectorPath,
+  arrowHead,
+  dotMark,
+  angleBetween,
+} from '../connectors/index.js';
 
 const PRECISION = 1000;
 
@@ -465,4 +472,51 @@ export function declutterLabels(items, opts = {}) {
   const out = new Array(nodes.length);
   for (const n of nodes) out[n.index] = roundedNumber(n.pos);
   return out;
+}
+
+/**
+ * Direct labeling: declutter labels along one axis and draw a leader line from
+ * each true anchor to its placed label. This is the 1-D core of Labella,
+ * completed with leaders via the shared connector kernel — deterministic and
+ * pure. It owns no scales (map data → figure coords first), no DOM, no
+ * nearest-anchor matching, and no 2-D placement; those stay the host's job.
+ *
+ * Each `items[i]` is `{ anchor: {x, y}, size, key? }`: `anchor` is the true
+ * data point in figure coordinates, `size` is the label's extent along the
+ * layout `axis`. Labels declutter along `axis` ('y' = a vertical column,
+ * default) and sit at the fixed `cross` coordinate on the other axis. Returns,
+ * in input order, the placed label point `{x, y}`, the echoed `anchor` and
+ * `key`, and the leader path `d` (anchor → label; `''` if they coincide) ready
+ * for a `<path class="ui-annotation__connector">`.
+ */
+export function directLabels(items, opts = {}) {
+  if (!Array.isArray(items)) throw new TypeError('items must be an array');
+  const axis = opts.axis === 'x' ? 'x' : 'y';
+  const cross = finite('cross', opts.cross, 0);
+  const shape = opts.shape === 'elbow' || opts.shape === 'curve' ? opts.shape : 'straight';
+
+  const anchors = items.map((it) => ({
+    anchor: { x: finite('anchor.x', it?.anchor?.x), y: finite('anchor.y', it?.anchor?.y) },
+    size: dimension('size', it?.size),
+    key: it?.key,
+  }));
+
+  const placed = declutterLabels(
+    anchors.map((a) => ({ pos: a.anchor[axis], size: a.size })),
+    { gap: opts.gap, min: opts.min, max: opts.max },
+  );
+
+  return anchors.map((a, i) => {
+    const labelPoint = axis === 'y' ? { x: cross, y: placed[i] } : { x: placed[i], y: cross };
+    const d = samePoint(a.anchor, labelPoint)
+      ? ''
+      : connectorPath({ from: a.anchor, to: labelPoint, shape });
+    return {
+      x: roundedNumber(labelPoint.x),
+      y: roundedNumber(labelPoint.y),
+      anchor: { x: roundedNumber(a.anchor.x), y: roundedNumber(a.anchor.y) },
+      key: a.key,
+      d,
+    };
+  });
 }
