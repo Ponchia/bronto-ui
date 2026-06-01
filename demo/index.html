@@ -3,14 +3,21 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="@ponchia/ui — a Nothing-inspired, CSS-first UI framework: monochrome surfaces, single red accent, dot-matrix display type. Live kitchen-sink demo." />
-    <title>@ponchia/ui — kitchen sink</title>
+    <meta
+      name="description"
+      content="@ponchia/ui (Bronto) — a CSS-first design system for interfaces that explain themselves. Live showcase + documentation: foundations, the standard component center, and the analytical communication primitives that are its differentiator."
+    />
+    <title>@ponchia/ui — design system showcase</title>
     <link rel="stylesheet" href="../dist/bronto.css" />
     <!-- Opt-in colorways (0.4.0). Not in the default bundle — a separate
          entrypoint a consumer adds on demand. Loaded here to demo the switcher. -->
     <link rel="stylesheet" href="../dist/css/skins.css" />
     <!-- Opt-in Tier-4 data-viz palette (0.4.0). Separate entrypoint; never bundled. -->
     <link rel="stylesheet" href="../dist/css/dataviz.css" />
+    <!-- Opt-in analytical suite (0.5.0): the roll-up of annotations, legend,
+         marks, connectors, spotlight, crosshair and selection. One entrypoint
+         so the differentiator tier below renders; never in the core bundle. -->
+    <link rel="stylesheet" href="../dist/css/analytical.css" />
     <style>
       /* No local @font-face: Doto ships in css/fonts.css (bundled by
          core.css) with URLs relative to the package, so it resolves here
@@ -26,6 +33,138 @@
       section {
         margin-top: 2.5rem;
       }
+
+      /* Hero / thesis */
+      .lede {
+        color: var(--text-soft);
+        font-size: 1.15rem;
+        line-height: 1.5;
+        max-width: 62ch;
+      }
+      .boundary {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+        margin-block-start: 1.25rem;
+      }
+      .boundary > div {
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        padding: 0.9rem 1rem;
+      }
+      .boundary dt {
+        color: var(--text-dim);
+        font-family: var(--mono);
+        font-size: var(--text-2xs);
+        letter-spacing: var(--tracking-wide);
+        text-transform: uppercase;
+      }
+      .boundary dd {
+        margin: 0.35rem 0 0;
+      }
+      .toc {
+        display: flex;
+        flex-wrap: wrap;
+        font-family: var(--mono);
+        font-size: var(--text-2xs);
+        gap: 0.4rem 0.5rem;
+        margin-block: 1.75rem 0;
+        padding: 0;
+        list-style: none;
+      }
+      .toc a {
+        border: 1px solid var(--line);
+        border-radius: var(--radius-pill);
+        color: var(--text-soft);
+        display: inline-block;
+        padding: 0.2rem 0.7rem;
+        text-decoration: none;
+      }
+
+      /* Tiers — the IA spine. */
+      .tier {
+        margin-block-start: 4rem;
+      }
+      .tier__head {
+        border-block-start: 2px solid var(--line-strong);
+        padding-block-start: 1rem;
+      }
+      .tier--star .tier__head {
+        border-block-start-color: var(--accent);
+      }
+      .tier__n {
+        color: var(--text-dim);
+        font-family: var(--mono);
+        font-size: var(--text-2xs);
+        letter-spacing: var(--tracking-wide);
+        text-transform: uppercase;
+      }
+      .tier__title {
+        margin: 0.25rem 0 0.4rem;
+      }
+      .tier__blurb {
+        color: var(--text-soft);
+        margin: 0;
+        max-width: 64ch;
+      }
+
+      /* Specimen card — live example + grammar + recipe + boundary + docs. */
+      .spec {
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        display: grid;
+        gap: 1rem;
+        margin-block-start: 1.5rem;
+        padding: 1.25rem;
+      }
+      .spec__name {
+        margin: 0;
+      }
+      .spec__one {
+        color: var(--text-soft);
+        margin: 0.3rem 0 0;
+        max-width: 64ch;
+      }
+      .spec__demo {
+        /* Render specimens on --bg (not --panel-soft): the accent-text tones in
+           the analytical primitives are contrast-gated against --bg, and on the
+           lighter panel they dip just under 4.5:1. */
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        padding: 1.25rem;
+      }
+      .spec__code summary {
+        color: var(--text-dim);
+        cursor: pointer;
+        font-family: var(--mono);
+        font-size: var(--text-2xs);
+        letter-spacing: var(--tracking-wide);
+        text-transform: uppercase;
+      }
+      .spec__code pre {
+        background: var(--panel-strong);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        font-family: var(--mono);
+        font-size: var(--text-2xs);
+        margin: 0.6rem 0 0;
+        overflow-x: auto;
+        padding: 0.8rem;
+      }
+      .spec__meta {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        font-size: var(--text-sm);
+        gap: 0.5rem 1rem;
+      }
+      .spec__boundary {
+        color: var(--text-dim);
+        flex: 1 1 18rem;
+      }
+
+      /* Palette swatches. */
       .swatches {
         display: grid;
         gap: 0.5rem;
@@ -46,6 +185,103 @@
         display: block;
         padding: 0.4rem 0.5rem;
       }
+
+      /* Analytical specimen stages (ported from the per-primitive demos). */
+      .legend-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+      }
+      .conn-stage {
+        block-size: 15rem;
+        position: relative;
+      }
+      .conn-node {
+        max-inline-size: 10rem;
+        position: absolute;
+        z-index: 1;
+      }
+      #node-a {
+        inset-block-start: 1rem;
+        inset-inline-start: 1rem;
+      }
+      #node-b {
+        inset-block-end: 1rem;
+        inset-inline-end: 1rem;
+      }
+      #node-c {
+        inset-block-start: 1.25rem;
+        inset-inline-end: 1.25rem;
+      }
+      .xh-plot {
+        block-size: 13rem;
+        position: relative;
+      }
+      .sel-row {
+        align-items: end;
+        block-size: 9rem;
+        display: flex;
+        gap: var(--space-sm);
+      }
+      .sel-bar {
+        background: var(--accent);
+        border-radius: var(--radius-sm);
+        flex: 1;
+      }
+      .anno-figure {
+        position: relative;
+      }
+      .anno-bars {
+        align-items: flex-end;
+        block-size: 8rem;
+        display: flex;
+        gap: 0.6rem;
+        padding-block-start: 1.5rem;
+      }
+      .anno-bars > span {
+        background: var(--panel-strong);
+        border: 1px solid var(--line-strong);
+        flex: 1;
+      }
+      /* A scoped, non-overlay illustration of the spotlight look (the real
+         ui-spotlight is a fixed full-viewport overlay; see its demo link). */
+      .spot-mock {
+        background: color-mix(in srgb, #000 55%, transparent);
+        border-radius: var(--radius-md);
+        min-block-size: 9rem;
+        padding: 1rem;
+        position: relative;
+      }
+      .spot-mock__hole {
+        background: var(--bg);
+        border: 2px solid var(--accent);
+        border-radius: var(--radius-md);
+        inset-block-start: 1rem;
+        inset-inline-start: 1rem;
+        padding: 0.6rem 0.9rem;
+        position: absolute;
+        z-index: 1;
+      }
+
+      /* Frontier — what's next, not yet built. */
+      .frontier {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+        margin-block-start: 1.5rem;
+      }
+      .frontier__card {
+        border: 1px dashed var(--line-strong);
+        border-radius: var(--radius-md);
+        padding: 1rem;
+      }
+      .frontier__card h3 {
+        margin: 0 0 0.3rem;
+      }
+      .frontier__card p {
+        color: var(--text-soft);
+        margin: 0;
+      }
     </style>
   </head>
   <body>
@@ -53,897 +289,711 @@
     <main class="wrap">
       <header class="ui-cluster ui-cluster--between">
         <div>
-          <p class="ui-eyebrow">@ponchia/ui</p>
-          <h1>Nothing<br />Kitchen&nbsp;Sink</h1>
+          <p class="ui-eyebrow">@ponchia/ui · Bronto</p>
+          <h1>Interfaces that<br />explain&nbsp;themselves</h1>
         </div>
         <span class="ui-cluster">
-        <button class="ui-button ui-button--ghost" id="dirBtn" type="button">
-          DIR: LTR
-        </button>
-        <button
-          class="ui-themetoggle__button"
-          id="themeBtn"
-          type="button"
-          data-bronto-theme-toggle
-        >
-          <span class="ui-themetoggle__prefix">Theme</span>
-          <span class="ui-themetoggle__label" id="themeLabel">Dark</span>
-          <span class="ui-themetoggle__track"><span class="ui-themetoggle__thumb"></span></span>
-        </button>
-        <select class="ui-select" id="skinSelect" aria-label="Colorway"></select>
-        <select class="ui-select" id="surfaceSelect" aria-label="Dark surface">
-          <option value="">Comfortable</option>
-          <option value="oled">OLED black</option>
-        </select>
+          <button class="ui-button ui-button--ghost" id="dirBtn" type="button">DIR: LTR</button>
+          <button
+            class="ui-themetoggle__button"
+            id="themeBtn"
+            type="button"
+            data-bronto-theme-toggle
+          >
+            <span class="ui-themetoggle__prefix">Theme</span>
+            <span class="ui-themetoggle__label" id="themeLabel">Dark</span>
+            <span class="ui-themetoggle__track"><span class="ui-themetoggle__thumb"></span></span>
+          </button>
+          <select class="ui-select" id="skinSelect" aria-label="Colorway"></select>
+          <select class="ui-select" id="surfaceSelect" aria-label="Dark surface">
+            <option value="">Comfortable</option>
+            <option value="oled">OLED black</option>
+          </select>
         </span>
       </header>
+
+      <p class="lede">
+        Bronto is a CSS-first design system. It does not try to out-catalog the generic UI kits on
+        the standard component center — it owns the layer that makes complex work legible:
+        explanation, provenance, relationships, generated reports, and durable state. This page is
+        the showcase <em>and</em> the documentation: every block is a live specimen with its class
+        grammar, recipe, and the one rule that keeps the system honest.
+      </p>
+
+      <dl class="boundary">
+        <div>
+          <dt>Bronto owns</dt>
+          <dd>
+            Visual grammar, the <code>.ui-*</code> class vocabulary, token use, accessibility
+            guidance, pure geometry helpers, and small idempotent behavior kernels.
+          </dd>
+        </div>
+        <div>
+          <dt>The host owns</dt>
+          <dd>
+            Domain state, data mapping, chart scales, tour order, command execution, persistence,
+            and any announcement that needs product-specific wording.
+          </dd>
+        </div>
+      </dl>
+
+      <ul class="toc" aria-label="Sections">
+        <li><a href="#foundations">01 · Foundations</a></li>
+        <li><a href="#standard">02 · Standard center</a></li>
+        <li><a href="#analytical">03 · Explain-themselves ★</a></li>
+        <li><a href="#frontier">04 · On the frontier</a></li>
+        <li><a href="../docs/#frontier-primitives.md">The thesis →</a></li>
+      </ul>
 
       <div
         class="ui-panel ui-cluster ui-cluster--between"
         data-bronto-dismissible
-        style="margin-top: 1rem"
+        style="margin-top: 1.5rem"
       >
         <span><span class="ui-dot ui-dot--accent"></span> Dismissible — wired via behaviors</span>
-        <button class="ui-button ui-button--subtle" type="button" data-bronto-dismiss>
-          Dismiss
-        </button>
+        <button class="ui-button ui-button--subtle" type="button" data-bronto-dismiss>Dismiss</button>
       </div>
 
-      <section data-shot="palette">
-        <h2 class="ui-eyebrow ui-eyebrow--muted">Palette</h2>
-        <div class="swatches">
-          <div class="sw"><i style="background: var(--bg)"></i><span>--bg</span></div>
-          <div class="sw"><i style="background: var(--panel)"></i><span>--panel</span></div>
-          <div class="sw"><i style="background: var(--panel-soft)"></i><span>--panel-soft</span></div>
-          <div class="sw"><i style="background: var(--accent)"></i><span>--accent</span></div>
-          <div class="sw"><i style="background: var(--success)"></i><span>--success</span></div>
-          <div class="sw"><i style="background: var(--danger)"></i><span>--danger</span></div>
+      <!-- ============================================================ -->
+      <!-- TIER 1 — FOUNDATIONS                                          -->
+      <!-- ============================================================ -->
+      <div class="tier" id="foundations">
+        <div class="tier__head">
+          <p class="tier__n">01 — Foundations</p>
+          <h2 class="tier__title">Tokens, theme, motion</h2>
+          <p class="tier__blurb">
+            Monochrome surfaces, a single rationed accent, dot-matrix display type. One
+            <code>--accent</code> knob re-brands; <code>data-theme</code>, colorways and surface are
+            root-level switches.
+          </p>
         </div>
-      </section>
 
-      <section class="ui-stack" data-shot="theming">
-        <h2 class="ui-eyebrow ui-eyebrow--muted">Theming contract — one knob re-brands</h2>
-        <div class="ui-cluster">
-          <button class="ui-button ui-button--subtle" type="button" data-accent="#d71921">
-            Red
-          </button>
-          <button class="ui-button ui-button--subtle" type="button" data-accent="#2f6df6">
-            Blue
-          </button>
-          <button class="ui-button ui-button--subtle" type="button" data-accent="#16a34a">
-            Green
-          </button>
-          <button class="ui-button ui-button--subtle" type="button" data-accent="#a855f7">
-            Violet
-          </button>
-          <span class="ui-segmented" role="radiogroup" aria-label="Density">
-            <label class="ui-segmented__option"
-              ><input type="radio" name="dens" value="compact" />Compact</label
+        <section data-shot="palette">
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Palette</h3>
+          <div class="swatches">
+            <div class="sw"><i style="background: var(--bg)"></i><span>--bg</span></div>
+            <div class="sw"><i style="background: var(--panel)"></i><span>--panel</span></div>
+            <div class="sw"><i style="background: var(--panel-soft)"></i><span>--panel-soft</span></div>
+            <div class="sw"><i style="background: var(--accent)"></i><span>--accent</span></div>
+            <div class="sw"><i style="background: var(--success)"></i><span>--success</span></div>
+            <div class="sw"><i style="background: var(--danger)"></i><span>--danger</span></div>
+          </div>
+        </section>
+
+        <section class="ui-stack" data-shot="theming">
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Theming contract — one knob re-brands</h3>
+          <div class="ui-cluster">
+            <button class="ui-button ui-button--subtle" type="button" data-accent="#d71921">Red</button>
+            <button class="ui-button ui-button--subtle" type="button" data-accent="#2f6df6">Blue</button>
+            <button class="ui-button ui-button--subtle" type="button" data-accent="#16a34a">Green</button>
+            <button class="ui-button ui-button--subtle" type="button" data-accent="#a855f7">Violet</button>
+            <span class="ui-segmented" role="radiogroup" aria-label="Density">
+              <label class="ui-segmented__option"
+                ><input type="radio" name="dens" value="compact" />Compact</label
+              >
+              <label class="ui-segmented__option"
+                ><input type="radio" name="dens" value="" checked />Default</label
+              >
+              <label class="ui-segmented__option"
+                ><input type="radio" name="dens" value="comfortable" />Roomy</label
+              >
+            </span>
+            <label class="ui-switch"
+              ><input type="checkbox" id="contrastChk" /><span class="ui-switch__track"
+                ><span class="ui-switch__thumb"></span></span
+              ><span class="ui-label" style="text-transform: none">High contrast</span></label
             >
-            <label class="ui-segmented__option"
-              ><input type="radio" name="dens" value="" checked />Default</label
-            >
-            <label class="ui-segmented__option"
-              ><input type="radio" name="dens" value="comfortable" />Roomy</label
-            >
-          </span>
-          <label class="ui-switch"
-            ><input type="checkbox" id="contrastChk" /><span class="ui-switch__track"
-              ><span class="ui-switch__thumb"></span></span
-            ><span class="ui-label" style="text-transform: none">High contrast</span></label
-          >
-        </div>
-      </section>
-
-      <section class="ui-stack" data-shot="buttons">
-        <h2 class="ui-eyebrow ui-eyebrow--muted">Buttons</h2>
-        <div class="ui-cluster">
-          <button class="ui-button">Primary</button>
-          <button class="ui-button ui-button--ghost">Ghost</button>
-          <button class="ui-button ui-button--subtle">Subtle</button>
-          <button class="ui-button ui-button--danger">Danger</button>
-          <button class="ui-button" disabled>Disabled</button>
-          <button class="ui-button ui-button--icon" aria-label="dot">•</button>
-        </div>
-      </section>
-
-      <section class="ui-stack" data-shot="badges">
-        <h2 class="ui-eyebrow ui-eyebrow--muted">Badges · Chips · Dots</h2>
-        <div class="ui-cluster">
-          <span class="ui-badge">Default</span>
-          <span class="ui-badge ui-badge--accent">Accent</span>
-          <span class="ui-badge ui-badge--success">Success</span>
-          <span class="ui-badge ui-badge--warning">Warning</span>
-          <span class="ui-badge ui-badge--danger">Danger</span>
-          <span class="ui-badge ui-badge--info">Info</span>
-          <span class="ui-chip">Chip</span>
-          <span class="ui-chip ui-chip--accent">Active</span>
-        </div>
-        <div class="ui-cluster">
-          <span class="ui-status"><span class="ui-dot ui-dot--live"></span> Online</span>
-          <span class="ui-status"><span class="ui-dot ui-dot--warning"></span> Degraded</span>
-          <span class="ui-status"><span class="ui-dot ui-dot--danger"></span> Down</span>
-          <span class="ui-status"><span class="ui-dot ui-dot--info"></span> Info</span>
-          <span class="ui-dotloader"><span></span><span></span><span></span></span>
-          <span class="ui-spinner"></span>
-          <span class="ui-caret">typing</span>
-        </div>
-        <div class="ui-dotbar" style="max-width: 18rem">
-          <i class="is-on"></i><i class="is-on"></i><i class="is-on"></i><i class="is-on"></i><i></i
-          ><i></i><i></i><i></i>
-        </div>
-      </section>
-
-      <section class="ui-grid" style="--grid-min: 15rem" data-shot="cards" data-shot-rtl>
-        <article class="ui-card ui-card--interactive">
-          <p class="ui-eyebrow">Card</p>
-          <h3>Interactive surface</h3>
-          <p>Flat, hairline border, lifts on hover. Colour stays rationed.</p>
-          <a class="ui-link ui-link--arrow" href="#">Open</a>
-        </article>
-        <article class="ui-card ui-card--accent ui-dotgrid">
-          <p class="ui-eyebrow">Card · accent</p>
-          <h3>Dot-grid backdrop</h3>
-          <p>The signature texture as a background utility.</p>
-        </article>
-        <div class="ui-panel">
-          <h2 class="ui-eyebrow ui-eyebrow--muted">Key / value</h2>
-          <dl class="ui-key-value">
-            <div><dt>Runtime</dt><dd>k3s · cluster</dd></div>
-            <div><dt>Status</dt><dd>Reconciled</dd></div>
-          </dl>
-        </div>
-      </section>
-
-      <section class="ui-stack" data-shot="form">
-        <h2 class="ui-eyebrow ui-eyebrow--muted">Form</h2>
-        <div class="ui-grid" style="--grid-min: 14rem">
-          <label class="ui-field"
-            ><span class="ui-label">Pair</span
-            ><input class="ui-input" value="BTC/EUR" /></label>
-          <label class="ui-field"
-            ><span class="ui-label">Mode</span
-            ><select class="ui-select">
-              <option>Paper</option>
-              <option>Live</option>
-            </select></label
-          >
-          <div class="ui-search"><input placeholder="Search decisions…" /></div>
-        </div>
-        <label class="ui-switch"
-          ><input type="checkbox" checked /><span class="ui-switch__track"
-            ><span class="ui-switch__thumb"></span></span
-          ><span class="ui-label" style="text-transform: none">Auto-execute</span></label
-        >
-      </section>
-
-      <section class="ui-stack" data-shot="table" data-shot-rtl>
-        <h2 class="ui-eyebrow ui-eyebrow--muted">Table · dense</h2>
-        <div class="ui-table-wrap">
-          <table class="ui-table ui-table--dense">
-            <thead>
-              <tr>
-                <th>Time</th>
-                <th>Pair</th>
-                <th class="is-num">Size</th>
-                <th class="is-num">P/L</th>
-                <th>State</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>09:42:01</td>
-                <td class="is-key">BTC/EUR</td>
-                <td class="is-num">0.014</td>
-                <td class="is-num is-pos">+€38.20</td>
-                <td><span class="ui-badge ui-badge--success">Filled</span></td>
-              </tr>
-              <tr>
-                <td>09:38:55</td>
-                <td class="is-key">ETH/EUR</td>
-                <td class="is-num">0.62</td>
-                <td class="is-num is-neg">−€11.04</td>
-                <td><span class="ui-badge ui-badge--danger">Stopped</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="ui-stack" data-shot="metrics">
-        <h2 class="ui-eyebrow ui-eyebrow--muted">Metrics</h2>
-        <div class="ui-app-metrics">
-          <div class="ui-app-metric">
-            <span class="ui-app-metric__label">Equity</span>
-            <span class="ui-app-metric__value">€12,408</span>
-            <span class="ui-app-metric__delta is-pos">+2.4% / 24h</span>
           </div>
-          <div class="ui-app-metric">
-            <span class="ui-app-metric__label">Open</span><span class="ui-app-metric__value">3</span>
-            <span class="ui-app-metric__delta">positions</span>
-          </div>
-          <div class="ui-app-metric">
-            <span class="ui-app-metric__label">Win rate</span
-            ><span class="ui-app-metric__value">61%</span>
-            <span class="ui-app-metric__delta is-neg">−4pt / wk</span>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="ui-stack" data-shot="motion">
-        <h2 class="ui-eyebrow ui-eyebrow--muted">Motion</h2>
-        <div class="ui-grid ui-stagger--auto" style="--grid-min: 9rem">
-          <div class="ui-card">Rise 1</div>
-          <div class="ui-card">Rise 2</div>
-          <div class="ui-card">Rise 3</div>
-          <div class="ui-card">Rise 4</div>
-        </div>
-        <div class="ui-skeleton" style="height: 1.4rem; max-width: 22rem"></div>
-        <hr class="ui-dotrule" />
-      </section>
-
-      <section class="ui-stack" data-shot="loaders">
-        <h2 class="ui-eyebrow ui-eyebrow--muted">Loaders · Progress</h2>
-        <div class="ui-cluster" style="gap: 1.5rem">
-          <span class="ui-dotspinner ui-dotspinner--sm"
-            ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-          ></span>
-          <span class="ui-dotspinner"
-            ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-          ></span>
-          <span class="ui-dotspinner ui-dotspinner--lg"
-            ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-          ></span>
-        </div>
-        <div class="ui-progress" style="max-width: 24rem">
-          <div class="ui-progress__bar" style="--value: 64"></div>
-        </div>
-        <div class="ui-progress ui-progress--indeterminate" style="max-width: 24rem">
-          <div class="ui-progress__bar"></div>
-        </div>
-        <div class="ui-dotbar ui-dotbar--indeterminate" style="max-width: 18rem">
-          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-        </div>
-      </section>
-
-      <section class="ui-stack" data-shot="alerts">
-        <h2 class="ui-eyebrow ui-eyebrow--muted">Alerts</h2>
-        <div class="ui-alert ui-alert--accent">
-          <p class="ui-alert__title">Heads up</p>
-          <p class="ui-alert__body">A rationed accent border carries the tone — no fill.</p>
-        </div>
-        <div class="ui-alert ui-alert--danger" data-bronto-dismissible>
-          <p class="ui-alert__body">Dismissible alert — wired via the shipped behavior.</p>
-          <button class="ui-alert__dismiss" type="button" data-bronto-dismiss aria-label="dismiss">
-            ✕
-          </button>
-        </div>
-        <div class="ui-alert ui-alert--info">
-          <p class="ui-alert__body">Info tone — the neutral status colour, AA-safe on surface.</p>
-        </div>
-      </section>
-
-      <section class="ui-stack" data-shot="tabs" data-shot-rtl>
-        <h2 class="ui-eyebrow ui-eyebrow--muted">Tabs · Accordion · Segmented</h2>
-        <div class="ui-tabs" data-bronto-tabs>
-          <div class="ui-tabs__list" role="tablist">
-            <button class="ui-tab is-active" role="tab" data-tab="a">Overview</button>
-            <button class="ui-tab" role="tab" data-tab="b">Activity</button>
-            <button class="ui-tab" role="tab" data-tab="c">Settings</button>
-          </div>
-          <div class="ui-tabs__panel" data-panel="a">First panel — CSS-only look, ARIA contract.</div>
-          <div class="ui-tabs__panel" data-panel="b" hidden>Second panel.</div>
-          <div class="ui-tabs__panel" data-panel="c" hidden>Third panel.</div>
-        </div>
-        <div class="ui-accordion">
-          <details class="ui-accordion__item" open>
-            <summary class="ui-accordion__summary">What is this</summary>
-            <div class="ui-accordion__body">Native &lt;details&gt;, styled — zero JS.</div>
-          </details>
-          <details class="ui-accordion__item">
-            <summary class="ui-accordion__summary">Second item</summary>
-            <div class="ui-accordion__body">The dot marker rotates into an arrow on open.</div>
-          </details>
-        </div>
-        <div class="ui-segmented" role="radiogroup" aria-label="Density">
-          <label class="ui-segmented__option"
-            ><input type="radio" name="density" checked />Compact</label
-          >
-          <label class="ui-segmented__option"
-            ><input type="radio" name="density" />Cozy</label
-          >
-          <label class="ui-segmented__option"
-            ><input type="radio" name="density" />Roomy</label
-          >
-        </div>
-        <div class="ui-cluster">
-          <button
-            class="ui-button ui-button--subtle"
-            type="button"
-            data-bronto-disclosure
-            aria-expanded="false"
-            aria-controls="discPanel"
-          >
-            Details ▾
-          </button>
-          <p id="discPanel" hidden>Disclosure body — toggled via the shipped behavior.</p>
-        </div>
-      </section>
-
-      <section class="ui-stack" data-shot="navigation" data-shot-rtl>
-        <h2 class="ui-eyebrow ui-eyebrow--muted">Breadcrumb · Pagination · Avatar</h2>
-        <ol class="ui-breadcrumb">
-          <li class="ui-breadcrumb__item"><a href="#">Home</a></li>
-          <li class="ui-breadcrumb__item"><a href="#">Projects</a></li>
-          <li class="ui-breadcrumb__item" aria-current="page">Detail</li>
-        </ol>
-        <ul class="ui-pagination">
-          <li>
-            <button class="ui-pagination__item" type="button" disabled aria-label="Previous page">
-              ‹
-            </button>
-          </li>
-          <li>
-            <button class="ui-pagination__item is-active" type="button" aria-current="page">
-              1
-            </button>
-          </li>
-          <li><button class="ui-pagination__item" type="button">2</button></li>
-          <li><button class="ui-pagination__item" type="button">3</button></li>
-          <li>
-            <button class="ui-pagination__item" type="button" aria-label="Next page">›</button>
-          </li>
-        </ul>
-        <div class="ui-cluster">
-          <span class="ui-avatar-group">
-            <span class="ui-avatar">ZT</span>
-            <span class="ui-avatar">AB</span>
-            <span class="ui-avatar">CD</span>
-          </span>
-          <span class="ui-avatar ui-avatar--sm">SM</span>
-          <span class="ui-avatar ui-avatar--lg">LG</span>
-        </div>
-      </section>
-
-      <section class="ui-stack" data-shot="overlay">
-        <h2 class="ui-eyebrow ui-eyebrow--muted">Overlay · Tooltip · Toast</h2>
-        <div class="ui-cluster">
-          <button class="ui-button" type="button" data-bronto-open="demoModal">Open modal</button>
-          <button class="ui-button ui-button--ghost" type="button" data-bronto-open="demoDrawer">
-            Open drawer
-          </button>
-          <button class="ui-button ui-button--subtle" type="button" id="toastBtn">
-            Push toast
-          </button>
-          <span class="ui-tooltip"
-            ><button class="ui-button ui-button--ghost" type="button">Hover me</button
-            ><span class="ui-tooltip__bubble" role="tooltip">Pure-CSS tooltip</span></span
-          >
-          <details class="ui-menu-host" data-bronto-menu>
-            <summary class="ui-button ui-button--subtle" style="list-style: none">Menu ▾</summary>
-            <div class="ui-menu">
-              <span class="ui-menu__label">Actions</span>
-              <button class="ui-menu__item" type="button">Duplicate</button>
-              <button class="ui-menu__item" type="button">Archive</button>
-              <hr class="ui-menu__sep" />
-              <button class="ui-menu__item" type="button">Delete</button>
+        <section class="ui-stack" data-shot="colorways">
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Display colorways</h3>
+          <p class="ui-muted">
+            Colorways re-point the one accent (not a second colour) for the whole page, like a theme.
+            Switch it — the accent, focus ring, dot-matrix and accent text all follow. Authored in
+            OKLCH and contrast-gated; phosphor skins add a dot-matrix
+            <code>--dotmatrix-glow</code> in dark.
+          </p>
+          <div
+            id="skinSwitch"
+            class="ui-cluster"
+            role="group"
+            aria-label="Choose a display colorway"
+            style="--cluster-gap: var(--space-xs)"
+          ></div>
+          <div id="skinPreview" class="ui-card ui-stack" style="margin-block-start: 1rem; gap: 1rem">
+            <p style="margin: 0">
+              Accent as text — <a href="#foundations">a themed link</a> and an
+              <span class="ui-badge ui-badge--accent">accent badge</span>.
+            </p>
+            <div class="ui-cluster" style="--cluster-gap: var(--space-xs); align-items: center">
+              <button type="button" class="ui-button">Save changes</button>
+              <button type="button" class="ui-button ui-button--subtle">Secondary</button>
+              <span class="ui-dot ui-dot--accent" aria-hidden="true"></span>
             </div>
-          </details>
-        </div>
-        <dialog class="ui-modal" id="demoModal" data-bronto-dialog-light>
-          <div class="ui-modal__head">
-            <h2 class="ui-modal__title">Confirm</h2>
-            <button class="ui-modal__close" type="button" data-bronto-close aria-label="close">
-              ✕
-            </button>
-          </div>
-          <div class="ui-modal__body">
-            <p>Native &lt;dialog&gt; styled Nothing-flat. Backdrop click closes it.</p>
-          </div>
-          <div class="ui-modal__foot">
-            <button class="ui-button ui-button--ghost" type="button" data-bronto-close>
-              Cancel
-            </button>
-            <button class="ui-button" type="button" data-bronto-close>Confirm</button>
-          </div>
-        </dialog>
-        <dialog class="ui-modal ui-modal--drawer" id="demoDrawer" data-bronto-dialog-light>
-          <div class="ui-modal__head">
-            <h2 class="ui-modal__title">Filters</h2>
-            <button class="ui-modal__close" type="button" data-bronto-close aria-label="close">
-              ✕
-            </button>
-          </div>
-          <div class="ui-modal__body"><p>Slide-in drawer; bottom sheet on mobile.</p></div>
-        </dialog>
-      </section>
-
-      <section class="ui-stack" data-shot="prose">
-        <h2 class="ui-eyebrow ui-eyebrow--muted">
-          Content — Markdown output, zero classes
-        </h2>
-        <!-- Everything below is exactly what a Markdown renderer emits:
-             semantic HTML, no class attributes. The single .ui-prose
-             wrapper does all the styling, so the document stays
-             machine-readable. -->
-        <article class="ui-prose">
-          <h2>Designing with restraint</h2>
-          <p>
-            This whole article is plain semantic HTML — the kind a Markdown
-            renderer produces — with <strong>no class attributes</strong> on
-            any element. One <code>ui-prose</code> wrapper styles it.
-          </p>
-          <h3>Why it matters</h3>
-          <p>
-            Keeping the markup clean means it stays
-            <a href="https://html.spec.whatwg.org/multipage/dom.html#semantics-2"
-              >portable and machine-readable</a
-            >: scrapers, RSS,
-            reader mode, and LLMs all parse it without fighting a
-            <mark>class-soup</mark> div tree.
-          </p>
-          <blockquote>
-            <p>Color is rationed. Structure carries the meaning.</p>
-          </blockquote>
-          <h4>A list</h4>
-          <ul>
-            <li>Square markers in the accent colour</li>
-            <li>
-              Nested items work too
-              <ul>
-                <li>Second level</li>
-              </ul>
-            </li>
-          </ul>
-          <ol>
-            <li>Ordered lists keep accent markers</li>
-            <li>Comfortable rhythm between items</li>
-          </ol>
-          <h4>Code</h4>
-          <p>Inline <code>const x = 1</code> and a block:</p>
-          <pre><code>import ui from '@ponchia/ui/classes';
-ui.button({ variant: 'ghost' });</code></pre>
-          <h4>A table</h4>
-          <table>
-            <thead>
-              <tr>
-                <th>Token</th>
-                <th>Role</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>--accent</td>
-                <td>the one brand knob</td>
-              </tr>
-              <tr>
-                <td>--space-md</td>
-                <td>rhythm unit</td>
-              </tr>
-            </tbody>
-          </table>
-          <hr />
-          <figure>
             <div
-              class="ui-dotgrid"
-              style="block-size: 4rem; inline-size: 100%; border: 1px solid var(--line)"
+              id="skinMatrix"
+              class="ui-dotmatrix"
+              data-bronto-glyph="spark"
+              data-bronto-glyph-label="spark glyph in the current colorway"
+              style="--dotmatrix-dot: 0.5rem; max-inline-size: 9rem"
             ></div>
-            <figcaption>Fig 1 — a dot-grid surface</figcaption>
-          </figure>
-        </article>
-      </section>
-
-      <section class="ui-stack" data-shot="site-shell">
-        <h2 class="ui-eyebrow ui-eyebrow--muted">Site shell — content-site layer</h2>
-
-        <div class="ui-siteheader" style="border: 1px solid var(--line); padding-inline: 1rem">
-          <span class="ui-siteheader__brand">Bronto</span>
-          <nav class="ui-sitenav" aria-label="Demo site">
-            <a href="#" aria-current="page">Home</a>
-            <a href="#">Work</a>
-            <a href="#">Writing</a>
-            <a href="#">About</a>
-          </nav>
-          <span class="ui-siteheader__actions">
-            <button class="ui-button ui-button--ghost" type="button">Contact</button>
-          </span>
-          <details class="ui-sitemenu">
-            <summary>Menu ▾</summary>
-            <div class="ui-sitemenu__panel">
-              <nav class="ui-sitenav" aria-label="Demo site (mobile)">
-                <a href="#" aria-current="page">Home</a>
-                <a href="#">Work</a>
-                <a href="#">Writing</a>
-                <a href="#">About</a>
-              </nav>
-            </div>
-          </details>
-        </div>
-
-        <article class="ui-prose ui-container ui-container--narrow" style="padding-inline: 0">
-          <ol class="ui-meta">
-            <li class="ui-meta__item">2026-05-15</li>
-            <li class="ui-meta__item">A. Author</li>
-            <li class="ui-meta__item">6 min read</li>
-          </ol>
-          <h3>On restraint</h3>
-          <p>A short content page using the narrow container + meta row + tags.</p>
-          <figure class="ui-quote">
-            <blockquote>Color is rationed. Structure carries the meaning.</blockquote>
-            <figcaption class="ui-quote__cite">— the Nothing brief</figcaption>
-          </figure>
-          <ul class="ui-tags">
-            <li class="ui-tag ui-tag--accent">design</li>
-            <li class="ui-tag">systems</li>
-            <li class="ui-tag">css</li>
-          </ul>
-        </article>
-
-        <p class="ui-eyebrow ui-eyebrow--muted" style="margin-block-start: 1rem">
-          Code — @ponchia/ui/shiki/nothing theme
-        </p>
-        <!-- Faithful render of the @ponchia/ui/shiki/nothing (dark) theme:
-             it carries its own editor.background (#0c0c0c), so it stays a
-             self-contained dark code surface in either page theme. -->
-        <pre style="background: #0c0c0c; border: 1px solid #2a2a2a; border-radius: var(--radius-md); padding: 1rem; overflow-x: auto"><code style="font-family: var(--mono); color: #f2f2f2"><span style="color:#858585">// rationed colour: one accent, the rest greyscale</span>
-<span style="color:#ff3b41">import</span> ui <span style="color:#ff3b41">from</span> <span style="color:#c4c4c4">'@ponchia/ui/classes'</span>;
-<span style="color:#ff3b41">const</span> cls = ui.<span style="color:#f2f2f2">button</span>({ variant: <span style="color:#c4c4c4">'ghost'</span> });</code></pre>
-
-        <div class="ui-sitefooter">
-          <span>© 2026 Bronto — built with @ponchia/ui</span>
-          <span class="ui-sitefooter__links">
-            <a href="#">GitHub</a>
-            <a href="#">npm</a>
-            <a href="#">RSS</a>
-          </span>
-        </div>
-      </section>
-
-      <section aria-labelledby="v04" class="ui-stack" style="margin-block-start: 3rem" data-shot="v031">
-        <h2 id="v04" class="ui-eyebrow">0.3.1 additions</h2>
-
-        <div class="ui-switcher">
-          <div class="ui-combobox" data-bronto-combobox>
-            <label class="ui-label" for="cbx">Combobox (APG)</label>
-            <input class="ui-input ui-combobox__input" id="cbx" />
-            <ul class="ui-combobox__list">
-              <li class="ui-combobox__option" data-value="apple">Apple</li>
-              <li class="ui-combobox__option" data-value="banana">Banana</li>
-              <li class="ui-combobox__option" data-value="cherry">Cherry</li>
-            </ul>
-            <p class="ui-combobox__empty" hidden>No matches</p>
           </div>
+        </section>
 
-          <div class="ui-stack">
-            <span class="ui-label">Popover &amp; loading</span>
-            <div class="ui-cluster">
-              <button class="ui-button ui-button--subtle" data-bronto-popover="pop1">
-                Open popover
-              </button>
-              <button class="ui-button" aria-busy="true">Saving</button>
+        <section class="ui-stack" data-shot="dataviz">
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Data-viz palette</h3>
+          <p class="ui-muted">
+            A colourblind-safe categorical palette (series 1 = the accent), each series colour
+            <strong>paired with a dot-matrix pattern</strong> so it never relies on colour alone.
+            Read hex from <code>@ponchia/ui/charts.json</code> for canvas/charting libs.
+          </p>
+          <figure style="margin: 0">
+            <div
+              role="img"
+              aria-label="Bar chart, six data series, illustrating the categorical palette and pattern fills"
+              style="display: flex; align-items: flex-end; gap: 0.6rem; block-size: 9rem; padding: 0.5rem 0; border-block-end: 1px solid var(--line)"
+            >
+              <span style="flex: 1; block-size: 72%; background-color: var(--chart-1); background-image: var(--chart-pattern-1); background-size: var(--chart-pattern-size)"></span>
+              <span style="flex: 1; block-size: 90%; background-color: var(--chart-2); background-image: var(--chart-pattern-2); background-size: var(--chart-pattern-size)"></span>
+              <span style="flex: 1; block-size: 54%; background-color: var(--chart-3); background-image: var(--chart-pattern-3); background-size: var(--chart-pattern-size)"></span>
+              <span style="flex: 1; block-size: 66%; background-color: var(--chart-4); background-image: var(--chart-pattern-4); background-size: var(--chart-pattern-size)"></span>
+              <span style="flex: 1; block-size: 40%; background-color: var(--chart-5); background-image: var(--chart-pattern-5); background-size: var(--chart-pattern-size)"></span>
+              <span style="flex: 1; block-size: 80%; background-color: var(--chart-6); background-image: var(--chart-pattern-6); background-size: var(--chart-pattern-size)"></span>
             </div>
+            <figcaption class="ui-muted" style="margin-block-start: 0.75rem">
+              Pair each series with <code>@ponchia/ui/css/legend.css</code> below for a reading key.
+            </figcaption>
+          </figure>
+        </section>
+
+        <section class="ui-stack" data-shot="motion">
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Motion</h3>
+          <div class="ui-grid ui-stagger--auto" style="--grid-min: 9rem">
+            <div class="ui-card">Rise 1</div>
+            <div class="ui-card">Rise 2</div>
+            <div class="ui-card">Rise 3</div>
+            <div class="ui-card">Rise 4</div>
+          </div>
+          <div class="ui-skeleton" style="height: 1.4rem; max-width: 22rem"></div>
+          <hr class="ui-dotrule" />
+        </section>
+
+        <section class="ui-stack" data-shot="glyphs">
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Display glyphs</h3>
+          <p class="ui-muted">
+            <code>@ponchia/ui/glyphs</code>, a dot-matrix icon set (a sample, default dot look, for
+            display sizes).
+          </p>
+          <div
+            id="glyphGallery"
+            class="ui-cluster"
+            style="--cluster-gap: var(--space-md); align-items: center"
+          ></div>
+
+          <p class="ui-muted">
+            Same glyphs in <code>solid</code> mode — crisp inline icons (~18px) inside buttons.
+          </p>
+          <div id="glyphButtons" class="ui-cluster" style="--cluster-gap: var(--space-xs)"></div>
+
+          <p class="ui-muted">
+            <code>render: 'mask'</code> — a one-node <code>.ui-icon</code> for icon-at-scale: scales
+            with the text, inherits <code>currentColor</code>.
+          </p>
+          <p id="glyphMask" style="font-size: 1.4rem; display: flex; gap: 0.6rem; align-items: center"></p>
+
+          <p class="ui-muted">
+            Animation (opt-in, reduced-motion-aware): <code>reveal</code> powers the cells on;
+            <code>pulse</code> breathes for a live state.
+          </p>
+          <div id="glyphAnim" class="ui-cluster" style="--cluster-gap: var(--space-lg); align-items: center"></div>
+        </section>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- TIER 2 — THE STANDARD CENTER                                  -->
+      <!-- ============================================================ -->
+      <div class="tier" id="standard">
+        <div class="tier__head">
+          <p class="tier__n">02 — The standard center</p>
+          <h2 class="tier__title">The components every kit has</h2>
+          <p class="tier__blurb">
+            Buttons, forms, tables, overlays, navigation. Bronto ships a complete, accessible set —
+            but this is not where it competes. Present and solid, kept compact on purpose.
+          </p>
+        </div>
+
+        <section class="ui-stack" data-shot="buttons">
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Buttons</h3>
+          <div class="ui-cluster">
+            <button class="ui-button">Primary</button>
+            <button class="ui-button ui-button--ghost">Ghost</button>
+            <button class="ui-button ui-button--subtle">Subtle</button>
+            <button class="ui-button ui-button--danger">Danger</button>
+            <button class="ui-button" disabled>Disabled</button>
+            <button class="ui-button ui-button--icon" aria-label="dot">•</button>
+          </div>
+        </section>
+
+        <section class="ui-stack" data-shot="badges">
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Badges · Chips · Dots</h3>
+          <div class="ui-cluster">
+            <span class="ui-badge">Default</span>
+            <span class="ui-badge ui-badge--accent">Accent</span>
+            <span class="ui-badge ui-badge--success">Success</span>
+            <span class="ui-badge ui-badge--warning">Warning</span>
+            <span class="ui-badge ui-badge--danger">Danger</span>
+            <span class="ui-badge ui-badge--info">Info</span>
+            <span class="ui-chip">Chip</span>
+            <span class="ui-chip ui-chip--accent">Active</span>
+            <span class="ui-badge ui-badge--success ui-badge--dot">Live</span>
+            <span class="ui-badge ui-badge--muted">Idle</span>
+          </div>
+          <div class="ui-cluster">
+            <span class="ui-status"><span class="ui-dot ui-dot--live"></span> Online</span>
+            <span class="ui-status"><span class="ui-dot ui-dot--warning"></span> Degraded</span>
+            <span class="ui-status"><span class="ui-dot ui-dot--danger"></span> Down</span>
+            <span class="ui-status"><span class="ui-dot ui-dot--info"></span> Info</span>
+            <span class="ui-caret">typing</span>
+          </div>
+          <div class="ui-dotbar" style="max-width: 18rem">
+            <i class="is-on"></i><i class="is-on"></i><i class="is-on"></i><i class="is-on"></i><i></i
+            ><i></i><i></i><i></i>
+          </div>
+        </section>
+
+        <section class="ui-stack" data-shot="loaders">
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Loaders · Progress</h3>
+          <div class="ui-cluster" style="gap: 1.5rem">
+            <span class="ui-dotspinner ui-dotspinner--sm"
+              ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+            ></span>
+            <span class="ui-dotspinner"
+              ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+            ></span>
+            <span class="ui-spinner"></span>
+            <span class="ui-dotloader"><span></span><span></span><span></span></span>
+          </div>
+          <div class="ui-progress" style="max-width: 24rem">
+            <div class="ui-progress__bar" style="--value: 64"></div>
+          </div>
+          <div class="ui-progress ui-progress--indeterminate" style="max-width: 24rem">
+            <div class="ui-progress__bar"></div>
+          </div>
+          <div class="ui-dotbar ui-dotbar--indeterminate" style="max-width: 18rem">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </section>
+
+        <section class="ui-grid" style="--grid-min: 15rem" data-shot="cards" data-shot-rtl>
+          <article class="ui-card ui-card--interactive">
+            <p class="ui-eyebrow">Card</p>
+            <h4>Interactive surface</h4>
+            <p>Flat, hairline border, lifts on hover. Colour stays rationed.</p>
+            <a class="ui-link ui-link--arrow" href="#standard">Open</a>
+          </article>
+          <article class="ui-card ui-card--accent ui-dotgrid">
+            <p class="ui-eyebrow">Card · accent</p>
+            <h4>Dot-grid backdrop</h4>
+            <p>The signature texture as a background utility.</p>
+          </article>
+          <div class="ui-panel">
+            <h4 class="ui-eyebrow ui-eyebrow--muted">Key / value</h4>
+            <dl class="ui-key-value">
+              <div><dt>Runtime</dt><dd>k3s · cluster</dd></div>
+              <div><dt>Status</dt><dd>Reconciled</dd></div>
+            </dl>
+          </div>
+        </section>
+
+        <section class="ui-stack" data-shot="form">
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Forms</h3>
+          <div class="ui-grid" style="--grid-min: 14rem">
+            <label class="ui-field"
+              ><span class="ui-label">Pair</span><input class="ui-input" value="BTC/EUR"
+            /></label>
+            <label class="ui-field"
+              ><span class="ui-label">Mode</span
+              ><select class="ui-select">
+                <option>Paper</option>
+                <option>Live</option>
+              </select></label
+            >
+            <div class="ui-search"><input placeholder="Search decisions…" /></div>
+            <div class="ui-combobox" data-bronto-combobox>
+              <label class="ui-label" for="cbx">Combobox (APG)</label>
+              <input class="ui-input ui-combobox__input" id="cbx" />
+              <ul class="ui-combobox__list">
+                <li class="ui-combobox__option" data-value="apple">Apple</li>
+                <li class="ui-combobox__option" data-value="banana">Banana</li>
+                <li class="ui-combobox__option" data-value="cherry">Cherry</li>
+              </ul>
+              <p class="ui-combobox__empty" hidden>No matches</p>
+            </div>
+            <div class="ui-stack">
+              <span class="ui-label">Input group / file / range</span>
+              <span class="ui-input-group">
+                <span class="ui-input-group__addon">https://</span>
+                <input class="ui-input" aria-label="Site" value="bronto.test" />
+              </span>
+              <input class="ui-file" type="file" aria-label="Upload" />
+              <input class="ui-range" type="range" aria-label="Amount" />
+            </div>
+            <div class="ui-field" style="max-inline-size: 22rem">
+              <label class="ui-label" for="demoIconInput">Search with icon</label>
+              <span class="ui-input-icon">
+                <span class="ui-input-icon__icon" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="7" cy="7" r="4.5"></circle>
+                    <path d="M10.5 10.5 L14 14"></path>
+                  </svg>
+                </span>
+                <input class="ui-input" id="demoIconInput" type="search" placeholder="Filter…" />
+              </span>
+            </div>
+          </div>
+          <div class="ui-cluster" style="align-items: center">
+            <label class="ui-switch"
+              ><input type="checkbox" checked /><span class="ui-switch__track"
+                ><span class="ui-switch__thumb"></span></span
+              ><span class="ui-label" style="text-transform: none">Auto-execute</span></label
+            >
+            <label class="ui-switch">
+              <input type="checkbox" role="switch" />
+              <span class="ui-switch__track"><span class="ui-switch__thumb"></span></span>
+              <span>role=switch (announces on/off)</span>
+            </label>
+            <button class="ui-button" aria-busy="true">Saving</button>
+            <button class="ui-button ui-button--subtle" data-bronto-popover="pop1">Open popover</button>
             <div class="ui-popover" id="pop1">Collision-aware, dependency-free.</div>
           </div>
-
-          <div class="ui-stack">
-            <span class="ui-label">Input group / file / range</span>
-            <span class="ui-input-group">
-              <span class="ui-input-group__addon">https://</span>
-              <input class="ui-input" aria-label="Site" value="bronto.test" />
-            </span>
-            <input class="ui-file" type="file" aria-label="Upload" />
-            <input class="ui-range" type="range" aria-label="Amount" />
-          </div>
-        </div>
-
-        <form data-bronto-validate class="ui-stack" novalidate>
-          <div class="ui-field">
-            <label class="ui-label" for="em">Email (required)</label>
-            <input class="ui-input" id="em" name="em" type="email" required />
-            <p class="ui-hint" data-bronto-error></p>
-          </div>
-          <div class="ui-error-summary" data-bronto-error-summary hidden></div>
-          <button class="ui-button" type="submit">Validate</button>
-        </form>
-
-        <div class="ui-table-wrap">
-          <table class="ui-table ui-table--selectable" data-bronto-sortable>
-            <thead>
-              <tr>
-                <th class="ui-table__select">
-                  <input type="checkbox" data-bronto-select-all aria-label="Select all" />
-                </th>
-                <th><button class="ui-table__sort" data-sort>Name</button></th>
-                <th class="is-num"><button class="ui-table__sort" data-sort="num">Score</button></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><input type="checkbox" data-bronto-select aria-label="Select Bob" /></td>
-                <td>Bob</td>
-                <td class="is-num">30</td>
-              </tr>
-              <tr>
-                <td><input type="checkbox" data-bronto-select aria-label="Select Ann" /></td>
-                <td>Ann</td>
-                <td class="is-num">9</td>
-              </tr>
-              <tr>
-                <td><input type="checkbox" data-bronto-select aria-label="Select Cy" /></td>
-                <td>Cy</td>
-                <td class="is-num">100</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <label class="ui-switch">
-          <input type="checkbox" role="switch" />
-          <span class="ui-switch__track"><span class="ui-switch__thumb"></span></span>
-          <span>role=switch (announces on/off)</span>
-        </label>
-      </section>
-
-      <section aria-labelledby="v05" class="ui-stack" style="margin-block-start: 3rem" data-shot="v032">
-        <h2 id="v05" class="ui-eyebrow">0.3.2 additions</h2>
-
-        <div class="ui-statgrid">
-          <div class="ui-stat">
-            <span class="ui-stat__label">Revenue</span>
-            <span class="ui-stat__value">€48.2k</span>
-            <span class="ui-stat__delta is-pos">▲ 12%</span>
-          </div>
-          <div class="ui-stat">
-            <span class="ui-stat__label">Churn</span>
-            <span class="ui-stat__value">1.8%</span>
-            <span class="ui-stat__delta is-neg">▼ 0.3%</span>
-          </div>
-          <div class="ui-stat">
-            <span class="ui-stat__label">Open</span>
-            <span class="ui-stat__value">17</span>
-            <span class="ui-stat__delta">— flat</span>
-          </div>
-        </div>
-
-        <div class="ui-cluster">
-          <span class="ui-badge ui-badge--success ui-badge--dot">Live</span>
-          <span class="ui-badge ui-badge--muted">Idle</span>
-          <a class="ui-link ui-link--cta" href="#v05">Read the case study</a>
-          <p class="ui-eyebrow ui-eyebrow--sm">Dense label</p>
-        </div>
-
-        <table class="ui-table">
-          <thead>
-            <tr>
-              <th scope="col">Account</th>
-              <th scope="col" class="ui-num">Gain</th>
-              <th scope="col" class="ui-num">Loss</th>
-              <th scope="col" class="ui-num">Flat</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">Net</th>
-              <td class="ui-num ui-num--pos">+1,240.00</td>
-              <td class="ui-num ui-num--neg">−318.50</td>
-              <td class="ui-num ui-num--muted">0.00</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <a class="ui-card ui-card--interactive" href="#v05" style="max-inline-size: 22rem">
-          <span class="ui-eyebrow ui-eyebrow--sm">Interactive card</span>
-          <strong>Keyboard focus now cues the whole card</strong>
-        </a>
-
-        <div
-          class="ui-dotmatrix"
-          aria-hidden="true"
-          style="--dotmatrix-cols: 12; max-inline-size: 18rem"
-        >
-          <span class="ui-dotmatrix__cell"></span>
-          <span class="ui-dotmatrix__cell ui-dotmatrix__cell--hot"></span>
-          <span class="ui-dotmatrix__cell"></span>
-          <span class="ui-dotmatrix__cell ui-dotmatrix__cell--accent"></span>
-          <span class="ui-dotmatrix__cell"></span>
-          <span class="ui-dotmatrix__cell"></span>
-          <span class="ui-dotmatrix__cell ui-dotmatrix__cell--hot"></span>
-          <span class="ui-dotmatrix__cell"></span>
-          <span class="ui-dotmatrix__cell"></span>
-          <span class="ui-dotmatrix__cell ui-dotmatrix__cell--accent"></span>
-          <span class="ui-dotmatrix__cell"></span>
-          <span class="ui-dotmatrix__cell"></span>
-          <span class="ui-dotmatrix__cell ui-dotmatrix__cell--hot"></span>
-          <span class="ui-dotmatrix__cell"></span>
-          <span class="ui-dotmatrix__cell"></span>
-          <span class="ui-dotmatrix__cell"></span>
-          <span class="ui-dotmatrix__cell ui-dotmatrix__cell--accent"></span>
-          <span class="ui-dotmatrix__cell"></span>
-          <span class="ui-dotmatrix__cell"></span>
-          <span class="ui-dotmatrix__cell ui-dotmatrix__cell--hot"></span>
-          <span class="ui-dotmatrix__cell"></span>
-          <span class="ui-dotmatrix__cell"></span>
-          <span class="ui-dotmatrix__cell"></span>
-          <span class="ui-dotmatrix__cell"></span>
-        </div>
-
-        <header class="ui-siteheader ui-siteheader--sticky">
-          <span class="ui-siteheader__brand">Sticky header</span>
-        </header>
-        <div class="ui-container ui-container--wide">
-          <p class="ui-muted">ui-container--wide · ui-siteheader--sticky (structural)</p>
-        </div>
-      </section>
-
-      <section aria-labelledby="v06" class="ui-stack" style="margin-block-start: 3rem" data-shot="v035" data-shot-rtl>
-        <h2 id="v06" class="ui-eyebrow">0.3.5 additions</h2>
-
-        <!-- Page header — eyebrow + title + actions, one hairline. -->
-        <div class="ui-pagehead">
-          <div class="ui-stack" style="--stack-gap: var(--space-2xs)">
-            <p class="ui-eyebrow ui-eyebrow--sm">Settings</p>
-            <h3 class="ui-pagehead__title">Billing</h3>
-          </div>
-          <div class="ui-pagehead__actions">
-            <button class="ui-button ui-button--subtle ui-button--sm" type="button">Export</button>
-            <button class="ui-button ui-button--sm" type="button">New invoice</button>
-          </div>
-        </div>
-
-        <!-- Steps — current via aria-current="step", completed via --done. -->
-        <ol class="ui-steps" style="max-inline-size: 32rem">
-          <li class="ui-steps__item ui-steps__item--done">Account</li>
-          <li class="ui-steps__item" aria-current="step">Profile</li>
-          <li class="ui-steps__item">Confirm</li>
-        </ol>
-
-        <!-- Timeline — hairline spine, aria-current marks the live event. -->
-        <ol class="ui-timeline" style="max-inline-size: 32rem">
-          <li class="ui-timeline__item" aria-current="true">
-            <span class="ui-timeline__time">09:42</span>
-            <span>Deploy started</span>
-          </li>
-          <li class="ui-timeline__item">
-            <span class="ui-timeline__time">09:31</span>
-            <span>Build passed</span>
-          </li>
-          <li class="ui-timeline__item">
-            <span class="ui-timeline__time">09:20</span>
-            <span>Commit pushed</span>
-          </li>
-        </ol>
-
-        <!-- Meter — measured value, toned by threshold (not task progress). -->
-        <div class="ui-stack" style="--stack-gap: var(--space-xs); max-inline-size: 24rem">
-          <span class="ui-eyebrow ui-eyebrow--sm">Coverage · disk · errors</span>
-          <div
-            class="ui-meter ui-meter--success"
-            role="meter"
-            aria-label="Coverage"
-            aria-valuenow="72"
-            aria-valuemin="0"
-            aria-valuemax="100"
-          >
-            <span class="ui-meter__fill" style="--value: 72"></span>
-          </div>
-          <div
-            class="ui-meter ui-meter--warning"
-            role="meter"
-            aria-label="Disk usage"
-            aria-valuenow="48"
-            aria-valuemin="0"
-            aria-valuemax="100"
-          >
-            <span class="ui-meter__fill" style="--value: 48"></span>
-          </div>
-          <div
-            class="ui-meter ui-meter--danger"
-            role="meter"
-            aria-label="Error rate"
-            aria-valuenow="91"
-            aria-valuemin="0"
-            aria-valuemax="100"
-          >
-            <span class="ui-meter__fill" style="--value: 91"></span>
-          </div>
-        </div>
-
-        <!-- Input with a leading icon inside the control. -->
-        <div class="ui-field" style="max-inline-size: 22rem">
-          <label class="ui-label" for="demoIconInput">Search</label>
-          <span class="ui-input-icon">
-            <span class="ui-input-icon__icon" aria-hidden="true">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                <circle cx="7" cy="7" r="4.5"></circle>
-                <path d="M10.5 10.5 L14 14"></path>
-              </svg>
-            </span>
-            <input class="ui-input" id="demoIconInput" type="search" placeholder="Filter…" />
-          </span>
-        </div>
-
-        <!-- Keyboard key glyph. -->
-        <p class="ui-muted">
-          Press <kbd class="ui-kbd">⌘</kbd> <kbd class="ui-kbd">K</kbd> to search,
-          <kbd class="ui-kbd">Esc</kbd> to close.
-        </p>
-
-        <!-- Carousel — scroll-snap track (native swipe) + thumbnails +
-             counter, wired by initCarousel. A full-screen gallery is the
-             same markup inside a <dialog class="ui-lightbox"> (below). -->
-        <div
-          class="ui-carousel"
-          data-bronto-carousel
-          data-bronto-carousel-label="Sample photos"
-          style="max-inline-size: 30rem"
-        >
-          <div class="ui-carousel__stage">
-            <div class="ui-carousel__viewport">
-              <div class="ui-carousel__slide">
-                <div class="ui-ratio" style="--ratio: 16/9; background: var(--panel-soft)">
-                  <svg viewBox="0 0 160 90" aria-hidden="true">
-                    <text x="80" y="53" text-anchor="middle" fill="#8a8a8a" font-size="26" font-family="monospace">01</text>
-                  </svg>
-                </div>
-              </div>
-              <div class="ui-carousel__slide">
-                <div class="ui-ratio" style="--ratio: 16/9; background: var(--panel-strong)">
-                  <svg viewBox="0 0 160 90" aria-hidden="true">
-                    <text x="80" y="53" text-anchor="middle" fill="#8a8a8a" font-size="26" font-family="monospace">02</text>
-                  </svg>
-                </div>
-              </div>
-              <div class="ui-carousel__slide">
-                <div class="ui-ratio" style="--ratio: 16/9; background: var(--panel-soft)">
-                  <svg viewBox="0 0 160 90" aria-hidden="true">
-                    <text x="80" y="53" text-anchor="middle" fill="#8a8a8a" font-size="26" font-family="monospace">03</text>
-                  </svg>
-                </div>
-              </div>
+          <form data-bronto-validate class="ui-stack" novalidate>
+            <div class="ui-field">
+              <label class="ui-label" for="em">Email (required)</label>
+              <input class="ui-input" id="em" name="em" type="email" required />
+              <p class="ui-hint" data-bronto-error></p>
             </div>
-            <button class="ui-carousel__prev" data-bronto-carousel-prev></button>
-            <button class="ui-carousel__next" data-bronto-carousel-next></button>
-            <p class="ui-carousel__status"></p>
-          </div>
-          <ul class="ui-carousel__thumbs">
-            <li>
-              <button class="ui-carousel__thumb" aria-label="Photo 1">
-                <svg viewBox="0 0 160 90" aria-hidden="true" style="display: block; inline-size: 100%; block-size: 100%; background: var(--panel-soft)"></svg>
-              </button>
-            </li>
-            <li>
-              <button class="ui-carousel__thumb" aria-label="Photo 2">
-                <svg viewBox="0 0 160 90" aria-hidden="true" style="display: block; inline-size: 100%; block-size: 100%; background: var(--panel-strong)"></svg>
-              </button>
-            </li>
-            <li>
-              <button class="ui-carousel__thumb" aria-label="Photo 3">
-                <svg viewBox="0 0 160 90" aria-hidden="true" style="display: block; inline-size: 100%; block-size: 100%; background: var(--panel-soft)"></svg>
-              </button>
-            </li>
-          </ul>
-        </div>
+            <div class="ui-error-summary" data-bronto-error-summary hidden></div>
+            <button class="ui-button" type="submit">Validate</button>
+          </form>
+        </section>
 
-        <!-- Lightbox = the same carousel inside a native <dialog>. -->
-        <div class="ui-cluster">
-          <button
-            class="ui-button ui-button--ghost ui-button--sm"
-            data-bronto-open="lbDemo"
-            type="button"
+        <section class="ui-stack" data-shot="table" data-shot-rtl>
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Data table — dense, sortable, selectable</h3>
+          <div class="ui-table-wrap">
+            <table class="ui-table ui-table--dense">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Pair</th>
+                  <th class="is-num">Size</th>
+                  <th class="is-num">P/L</th>
+                  <th>State</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>09:42:01</td>
+                  <td class="is-key">BTC/EUR</td>
+                  <td class="is-num">0.014</td>
+                  <td class="is-num is-pos">+€38.20</td>
+                  <td><span class="ui-badge ui-badge--success">Filled</span></td>
+                </tr>
+                <tr>
+                  <td>09:38:55</td>
+                  <td class="is-key">ETH/EUR</td>
+                  <td class="is-num">0.62</td>
+                  <td class="is-num is-neg">−€11.04</td>
+                  <td><span class="ui-badge ui-badge--danger">Stopped</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="ui-table-wrap">
+            <table class="ui-table ui-table--selectable" data-bronto-sortable>
+              <thead>
+                <tr>
+                  <th class="ui-table__select">
+                    <input type="checkbox" data-bronto-select-all aria-label="Select all" />
+                  </th>
+                  <th><button class="ui-table__sort" data-sort>Name</button></th>
+                  <th class="is-num"><button class="ui-table__sort" data-sort="num">Score</button></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox" data-bronto-select aria-label="Select Bob" /></td>
+                  <td>Bob</td>
+                  <td class="is-num">30</td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" data-bronto-select aria-label="Select Ann" /></td>
+                  <td>Ann</td>
+                  <td class="is-num">9</td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" data-bronto-select aria-label="Select Cy" /></td>
+                  <td>Cy</td>
+                  <td class="is-num">100</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="ui-stack" data-shot="metrics">
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Metrics &amp; stats</h3>
+          <div class="ui-app-metrics">
+            <div class="ui-app-metric">
+              <span class="ui-app-metric__label">Equity</span>
+              <span class="ui-app-metric__value">€12,408</span>
+              <span class="ui-app-metric__delta is-pos">+2.4% / 24h</span>
+            </div>
+            <div class="ui-app-metric">
+              <span class="ui-app-metric__label">Open</span><span class="ui-app-metric__value">3</span>
+              <span class="ui-app-metric__delta">positions</span>
+            </div>
+            <div class="ui-app-metric">
+              <span class="ui-app-metric__label">Win rate</span
+              ><span class="ui-app-metric__value">61%</span>
+              <span class="ui-app-metric__delta is-neg">−4pt / wk</span>
+            </div>
+          </div>
+          <div class="ui-statgrid">
+            <div class="ui-stat">
+              <span class="ui-stat__label">Revenue</span>
+              <span class="ui-stat__value">€48.2k</span>
+              <span class="ui-stat__delta is-pos">▲ 12%</span>
+            </div>
+            <div class="ui-stat">
+              <span class="ui-stat__label">Churn</span>
+              <span class="ui-stat__value">1.8%</span>
+              <span class="ui-stat__delta is-neg">▼ 0.3%</span>
+            </div>
+            <div class="ui-stat">
+              <span class="ui-stat__label">Open</span>
+              <span class="ui-stat__value">17</span>
+              <span class="ui-stat__delta">— flat</span>
+            </div>
+          </div>
+          <div class="ui-stack" style="--stack-gap: var(--space-xs); max-inline-size: 24rem">
+            <span class="ui-eyebrow ui-eyebrow--sm">Coverage · disk · errors (meters)</span>
+            <div
+              class="ui-meter ui-meter--success"
+              role="meter"
+              aria-label="Coverage"
+              aria-valuenow="72"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              <span class="ui-meter__fill" style="--value: 72"></span>
+            </div>
+            <div
+              class="ui-meter ui-meter--warning"
+              role="meter"
+              aria-label="Disk usage"
+              aria-valuenow="48"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              <span class="ui-meter__fill" style="--value: 48"></span>
+            </div>
+            <div
+              class="ui-meter ui-meter--danger"
+              role="meter"
+              aria-label="Error rate"
+              aria-valuenow="91"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              <span class="ui-meter__fill" style="--value: 91"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="ui-stack" data-shot="alerts">
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Alerts</h3>
+          <div class="ui-alert ui-alert--accent">
+            <p class="ui-alert__title">Heads up</p>
+            <p class="ui-alert__body">A rationed accent border carries the tone — no fill.</p>
+          </div>
+          <div class="ui-alert ui-alert--danger" data-bronto-dismissible>
+            <p class="ui-alert__body">Dismissible alert — wired via the shipped behavior.</p>
+            <button class="ui-alert__dismiss" type="button" data-bronto-dismiss aria-label="dismiss">
+              ✕
+            </button>
+          </div>
+          <div class="ui-alert ui-alert--info">
+            <p class="ui-alert__body">Info tone — the neutral status colour, AA-safe on surface.</p>
+          </div>
+        </section>
+
+        <section class="ui-stack" data-shot="tabs" data-shot-rtl>
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Tabs · Accordion · Segmented · Disclosure</h3>
+          <div class="ui-tabs" data-bronto-tabs>
+            <div class="ui-tabs__list" role="tablist">
+              <button class="ui-tab is-active" role="tab" data-tab="a">Overview</button>
+              <button class="ui-tab" role="tab" data-tab="b">Activity</button>
+              <button class="ui-tab" role="tab" data-tab="c">Settings</button>
+            </div>
+            <div class="ui-tabs__panel" data-panel="a">First panel — CSS-only look, ARIA contract.</div>
+            <div class="ui-tabs__panel" data-panel="b" hidden>Second panel.</div>
+            <div class="ui-tabs__panel" data-panel="c" hidden>Third panel.</div>
+          </div>
+          <div class="ui-accordion">
+            <details class="ui-accordion__item" open>
+              <summary class="ui-accordion__summary">What is this</summary>
+              <div class="ui-accordion__body">Native &lt;details&gt;, styled — zero JS.</div>
+            </details>
+            <details class="ui-accordion__item">
+              <summary class="ui-accordion__summary">Second item</summary>
+              <div class="ui-accordion__body">The dot marker rotates into an arrow on open.</div>
+            </details>
+          </div>
+          <div class="ui-segmented" role="radiogroup" aria-label="Density">
+            <label class="ui-segmented__option"
+              ><input type="radio" name="density" checked />Compact</label
+            >
+            <label class="ui-segmented__option"><input type="radio" name="density" />Cozy</label>
+            <label class="ui-segmented__option"><input type="radio" name="density" />Roomy</label>
+          </div>
+          <div class="ui-cluster">
+            <button
+              class="ui-button ui-button--subtle"
+              type="button"
+              data-bronto-disclosure
+              aria-expanded="false"
+              aria-controls="discPanel"
+            >
+              Details ▾
+            </button>
+            <p id="discPanel" hidden>Disclosure body — toggled via the shipped behavior.</p>
+          </div>
+        </section>
+
+        <section class="ui-stack" data-shot="navigation" data-shot-rtl>
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Navigation · Page header · Steps · Timeline</h3>
+          <div class="ui-pagehead">
+            <div class="ui-stack" style="--stack-gap: var(--space-2xs)">
+              <p class="ui-eyebrow ui-eyebrow--sm">Settings</p>
+              <h4 class="ui-pagehead__title">Billing</h4>
+            </div>
+            <div class="ui-pagehead__actions">
+              <button class="ui-button ui-button--subtle ui-button--sm" type="button">Export</button>
+              <button class="ui-button ui-button--sm" type="button">New invoice</button>
+            </div>
+          </div>
+          <ol class="ui-breadcrumb">
+            <li class="ui-breadcrumb__item"><a href="#standard">Home</a></li>
+            <li class="ui-breadcrumb__item"><a href="#standard">Projects</a></li>
+            <li class="ui-breadcrumb__item" aria-current="page">Detail</li>
+          </ol>
+          <ul class="ui-pagination">
+            <li>
+              <button class="ui-pagination__item" type="button" disabled aria-label="Previous page">
+                ‹
+              </button>
+            </li>
+            <li>
+              <button class="ui-pagination__item is-active" type="button" aria-current="page">1</button>
+            </li>
+            <li><button class="ui-pagination__item" type="button">2</button></li>
+            <li><button class="ui-pagination__item" type="button">3</button></li>
+            <li><button class="ui-pagination__item" type="button" aria-label="Next page">›</button></li>
+          </ul>
+          <ol class="ui-steps" style="max-inline-size: 32rem">
+            <li class="ui-steps__item ui-steps__item--done">Account</li>
+            <li class="ui-steps__item" aria-current="step">Profile</li>
+            <li class="ui-steps__item">Confirm</li>
+          </ol>
+          <ol class="ui-timeline" style="max-inline-size: 32rem">
+            <li class="ui-timeline__item" aria-current="true">
+              <span class="ui-timeline__time">09:42</span>
+              <span>Deploy started</span>
+            </li>
+            <li class="ui-timeline__item">
+              <span class="ui-timeline__time">09:31</span>
+              <span>Build passed</span>
+            </li>
+            <li class="ui-timeline__item">
+              <span class="ui-timeline__time">09:20</span>
+              <span>Commit pushed</span>
+            </li>
+          </ol>
+          <div class="ui-cluster" style="align-items: center">
+            <span class="ui-avatar-group">
+              <span class="ui-avatar">ZT</span>
+              <span class="ui-avatar">AB</span>
+              <span class="ui-avatar">CD</span>
+            </span>
+            <span class="ui-avatar ui-avatar--sm">SM</span>
+            <span class="ui-avatar ui-avatar--lg">LG</span>
+            <span class="ui-muted"
+              >Press <kbd class="ui-kbd">⌘</kbd> <kbd class="ui-kbd">K</kbd></span
+            >
+          </div>
+        </section>
+
+        <section class="ui-stack" data-shot="overlay">
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Overlay · Tooltip · Toast · Menu</h3>
+          <div class="ui-cluster">
+            <button class="ui-button" type="button" data-bronto-open="demoModal">Open modal</button>
+            <button class="ui-button ui-button--ghost" type="button" data-bronto-open="demoDrawer">
+              Open drawer
+            </button>
+            <button class="ui-button ui-button--subtle" type="button" id="toastBtn">Push toast</button>
+            <span class="ui-tooltip"
+              ><button class="ui-button ui-button--ghost" type="button">Hover me</button
+              ><span class="ui-tooltip__bubble" role="tooltip">Pure-CSS tooltip</span></span
+            >
+            <details class="ui-menu-host" data-bronto-menu>
+              <summary class="ui-button ui-button--subtle" style="list-style: none">Menu ▾</summary>
+              <div class="ui-menu">
+                <span class="ui-menu__label">Actions</span>
+                <button class="ui-menu__item" type="button">Duplicate</button>
+                <button class="ui-menu__item" type="button">Archive</button>
+                <hr class="ui-menu__sep" />
+                <button class="ui-menu__item" type="button">Delete</button>
+              </div>
+            </details>
+            <button
+              class="ui-button ui-button--ghost ui-button--sm"
+              data-bronto-open="lbDemo"
+              type="button"
+            >
+              Open gallery
+            </button>
+          </div>
+          <dialog class="ui-modal" id="demoModal" data-bronto-dialog-light>
+            <div class="ui-modal__head">
+              <h4 class="ui-modal__title">Confirm</h4>
+              <button class="ui-modal__close" type="button" data-bronto-close aria-label="close">✕</button>
+            </div>
+            <div class="ui-modal__body">
+              <p>Native &lt;dialog&gt; styled Nothing-flat. Backdrop click closes it.</p>
+            </div>
+            <div class="ui-modal__foot">
+              <button class="ui-button ui-button--ghost" type="button" data-bronto-close>Cancel</button>
+              <button class="ui-button" type="button" data-bronto-close>Confirm</button>
+            </div>
+          </dialog>
+          <dialog class="ui-modal ui-modal--drawer" id="demoDrawer" data-bronto-dialog-light>
+            <div class="ui-modal__head">
+              <h4 class="ui-modal__title">Filters</h4>
+              <button class="ui-modal__close" type="button" data-bronto-close aria-label="close">✕</button>
+            </div>
+            <div class="ui-modal__body"><p>Slide-in drawer; bottom sheet on mobile.</p></div>
+          </dialog>
+        </section>
+
+        <section class="ui-stack" data-shot="media">
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Carousel · Lightbox</h3>
+          <div
+            class="ui-carousel"
+            data-bronto-carousel
+            data-bronto-carousel-label="Sample photos"
+            style="max-inline-size: 30rem"
           >
-            Open gallery
-          </button>
-        </div>
-        <dialog class="ui-lightbox" id="lbDemo" data-bronto-dialog-light aria-label="Photo gallery">
-          <button
-            class="ui-button ui-button--icon ui-lightbox__close"
-            data-bronto-close
-            type="button"
-            aria-label="Close gallery"
-          >
-            ×
-          </button>
-          <div class="ui-carousel" data-bronto-carousel data-bronto-carousel-loop data-bronto-carousel-label="Gallery">
             <div class="ui-carousel__stage">
               <div class="ui-carousel__viewport">
                 <div class="ui-carousel__slide">
@@ -960,146 +1010,530 @@ ui.button({ variant: 'ghost' });</code></pre>
                     </svg>
                   </div>
                 </div>
+                <div class="ui-carousel__slide">
+                  <div class="ui-ratio" style="--ratio: 16/9; background: var(--panel-soft)">
+                    <svg viewBox="0 0 160 90" aria-hidden="true">
+                      <text x="80" y="53" text-anchor="middle" fill="#8a8a8a" font-size="26" font-family="monospace">03</text>
+                    </svg>
+                  </div>
+                </div>
               </div>
               <button class="ui-carousel__prev" data-bronto-carousel-prev></button>
               <button class="ui-carousel__next" data-bronto-carousel-next></button>
               <p class="ui-carousel__status"></p>
             </div>
-          </div>
-        </dialog>
-      </section>
-
-      <section aria-labelledby="v07" class="ui-stack" style="margin-block-start: 3rem">
-        <h2 id="v07" class="ui-eyebrow">0.3.6 additions</h2>
-
-        <!-- Display glyphs — the @ponchia/ui/glyphs set. The gallery
-             is generated from GLYPH_NAMES in the module script below as
-             [data-bronto-glyph] placeholders, then expanded by initDotGlyph().
-             A display set: crisp from ~40px up, not a 16px inline-icon set. -->
-        <p class="ui-muted">
-          Display glyphs — <code>@ponchia/ui/glyphs</code>, a dot-matrix icon set
-          (a sample, default dot look, for display sizes).
-        </p>
-        <div
-          id="glyphGallery"
-          class="ui-cluster"
-          style="--cluster-gap: var(--space-md); align-items: center"
-        ></div>
-
-        <p class="ui-muted">
-          Same glyphs in <code>solid</code> mode — crisp inline icons (~18px) inside buttons.
-        </p>
-        <div id="glyphButtons" class="ui-cluster" style="--cluster-gap: var(--space-xs)"></div>
-
-        <p class="ui-muted">
-          <code>render: 'mask'</code> — a one-node <code>.ui-icon</code> for icon-at-scale: scales
-          with the text, inherits <code>currentColor</code>. New circle-family glyphs shown.
-        </p>
-        <p id="glyphMask" style="font-size: 1.4rem; display: flex; gap: 0.6rem; align-items: center"></p>
-
-        <p class="ui-muted">
-          Animation (opt-in, reduced-motion-aware): <code>reveal</code> powers the cells on;
-          <code>pulse</code> breathes for a live state.
-        </p>
-        <div id="glyphAnim" class="ui-cluster" style="--cluster-gap: var(--space-lg); align-items: center"></div>
-      </section>
-
-      <section aria-labelledby="v08" class="ui-stack" style="margin-block-start: 3rem">
-        <h2 id="v08" class="ui-eyebrow">0.4.0 — display colorways</h2>
-
-        <!-- Opt-in `data-bronto-skin` colorways: re-point the ONE accent to a
-             different single hue (authored in OKLCH, every accent AA-gated in
-             docs/contrast.md). It is a ROOT-LEVEL choice like data-theme — the
-             switcher sets data-bronto-skin on <html>, so the whole page (incl.
-             the sample below) follows. "Default" clears it back to red. -->
-        <p class="ui-muted">
-          Colorways re-point the one accent (not a second colour) for the whole page, like a
-          theme. Switch it — the accent, focus ring, dot-matrix and accent text all follow.
-          Authored in OKLCH and contrast-gated; phosphor skins add a dot-matrix
-          <code>--dotmatrix-glow</code> in dark.
-        </p>
-        <div
-          id="skinSwitch"
-          class="ui-cluster"
-          role="group"
-          aria-label="Choose a display colorway"
-          style="--cluster-gap: var(--space-xs)"
-        ></div>
-
-        <div id="skinPreview" class="ui-card ui-stack" style="margin-block-start: 1rem; gap: 1rem">
-          <p style="margin: 0">
-            Accent as text — <a href="#v08">a themed link</a> and an
-            <span class="ui-badge ui-badge--accent">accent badge</span>.
-          </p>
-          <div class="ui-cluster" style="--cluster-gap: var(--space-xs); align-items: center">
-            <button type="button" class="ui-button">Save changes</button>
-            <button type="button" class="ui-button ui-button--subtle">Secondary</button>
-            <span class="ui-dot ui-dot--accent" aria-hidden="true"></span>
-          </div>
-          <div
-            id="skinMatrix"
-            class="ui-dotmatrix"
-            data-bronto-glyph="spark"
-            data-bronto-glyph-label="spark glyph in the current colorway"
-            style="--dotmatrix-dot: 0.5rem; max-inline-size: 9rem"
-          ></div>
-        </div>
-      </section>
-
-      <section aria-labelledby="v08b" class="ui-stack" style="margin-block-start: 3rem">
-        <h2 id="v08b" class="ui-eyebrow">0.4.0 — data-viz palette</h2>
-
-        <!-- Opt-in Tier-4 chart palette (`@ponchia/ui/css/dataviz.css`): a hybrid
-             accent-led, colourblind-safe categorical set (series 1 = the brand
-             accent), gated for distinguishability under simulated protan/deutan/
-             tritan vision. Colour is never the sole signal — each series pairs a
-             colour with a dot-matrix pattern fill. Charts-only, never UI chrome.
-             Hex for canvas/charting libs ships in tokens/charts.json. -->
-        <p class="ui-muted">
-          A colourblind-safe categorical palette (series 1 = the accent), each series
-          colour <strong>paired with a dot-matrix pattern</strong> so it never relies on colour
-          alone. Read hex from <code>@ponchia/ui/charts.json</code> for canvas/charting libs.
-        </p>
-
-        <figure style="margin: 0">
-          <div
-            role="img"
-            aria-label="Bar chart, six data series, illustrating the categorical palette and pattern fills"
-            style="display: flex; align-items: flex-end; gap: 0.6rem; block-size: 9rem; padding: 0.5rem 0; border-block-end: 1px solid var(--line)"
-          >
-            <span style="flex: 1; block-size: 72%; background-color: var(--chart-1); background-image: var(--chart-pattern-1); background-size: var(--chart-pattern-size)"></span>
-            <span style="flex: 1; block-size: 90%; background-color: var(--chart-2); background-image: var(--chart-pattern-2); background-size: var(--chart-pattern-size)"></span>
-            <span style="flex: 1; block-size: 54%; background-color: var(--chart-3); background-image: var(--chart-pattern-3); background-size: var(--chart-pattern-size)"></span>
-            <span style="flex: 1; block-size: 66%; background-color: var(--chart-4); background-image: var(--chart-pattern-4); background-size: var(--chart-pattern-size)"></span>
-            <span style="flex: 1; block-size: 40%; background-color: var(--chart-5); background-image: var(--chart-pattern-5); background-size: var(--chart-pattern-size)"></span>
-            <span style="flex: 1; block-size: 80%; background-color: var(--chart-6); background-image: var(--chart-pattern-6); background-size: var(--chart-pattern-size)"></span>
-          </div>
-          <figcaption class="ui-muted" style="margin-block-start: 0.75rem">
-            <ul
-              style="display: flex; flex-wrap: wrap; gap: 0.5rem 1.1rem; list-style: none; margin: 0; padding: 0; font-family: var(--mono); font-size: var(--text-2xs)"
-            >
-              <li style="display: inline-flex; align-items: center; gap: 0.4rem">
-                <span aria-hidden="true" style="inline-size: 0.85rem; block-size: 0.85rem; border-radius: 2px; background-color: var(--chart-1); background-image: var(--chart-pattern-1); background-size: var(--chart-pattern-size)"></span>Accent
+            <ul class="ui-carousel__thumbs">
+              <li>
+                <button class="ui-carousel__thumb" aria-label="Photo 1">
+                  <svg viewBox="0 0 160 90" aria-hidden="true" style="display: block; inline-size: 100%; block-size: 100%; background: var(--panel-soft)"></svg>
+                </button>
               </li>
-              <li style="display: inline-flex; align-items: center; gap: 0.4rem">
-                <span aria-hidden="true" style="inline-size: 0.85rem; block-size: 0.85rem; border-radius: 2px; background-color: var(--chart-2); background-image: var(--chart-pattern-2); background-size: var(--chart-pattern-size)"></span>Sessions
+              <li>
+                <button class="ui-carousel__thumb" aria-label="Photo 2">
+                  <svg viewBox="0 0 160 90" aria-hidden="true" style="display: block; inline-size: 100%; block-size: 100%; background: var(--panel-strong)"></svg>
+                </button>
               </li>
-              <li style="display: inline-flex; align-items: center; gap: 0.4rem">
-                <span aria-hidden="true" style="inline-size: 0.85rem; block-size: 0.85rem; border-radius: 2px; background-color: var(--chart-3); background-image: var(--chart-pattern-3); background-size: var(--chart-pattern-size)"></span>Signups
-              </li>
-              <li style="display: inline-flex; align-items: center; gap: 0.4rem">
-                <span aria-hidden="true" style="inline-size: 0.85rem; block-size: 0.85rem; border-radius: 2px; background-color: var(--chart-4); background-image: var(--chart-pattern-4); background-size: var(--chart-pattern-size)"></span>Revenue
-              </li>
-              <li style="display: inline-flex; align-items: center; gap: 0.4rem">
-                <span aria-hidden="true" style="inline-size: 0.85rem; block-size: 0.85rem; border-radius: 2px; background-color: var(--chart-5); background-image: var(--chart-pattern-5); background-size: var(--chart-pattern-size)"></span>Errors
-              </li>
-              <li style="display: inline-flex; align-items: center; gap: 0.4rem">
-                <span aria-hidden="true" style="inline-size: 0.85rem; block-size: 0.85rem; border-radius: 2px; background-color: var(--chart-6); background-image: var(--chart-pattern-6); background-size: var(--chart-pattern-size)"></span>Latency
+              <li>
+                <button class="ui-carousel__thumb" aria-label="Photo 3">
+                  <svg viewBox="0 0 160 90" aria-hidden="true" style="display: block; inline-size: 100%; block-size: 100%; background: var(--panel-soft)"></svg>
+                </button>
               </li>
             </ul>
-          </figcaption>
-        </figure>
-      </section>
+          </div>
+          <dialog class="ui-lightbox" id="lbDemo" data-bronto-dialog-light aria-label="Photo gallery">
+            <button
+              class="ui-button ui-button--icon ui-lightbox__close"
+              data-bronto-close
+              type="button"
+              aria-label="Close gallery"
+            >
+              ×
+            </button>
+            <div class="ui-carousel" data-bronto-carousel data-bronto-carousel-loop data-bronto-carousel-label="Gallery">
+              <div class="ui-carousel__stage">
+                <div class="ui-carousel__viewport">
+                  <div class="ui-carousel__slide">
+                    <div class="ui-ratio" style="--ratio: 16/9; background: var(--panel-soft)">
+                      <svg viewBox="0 0 160 90" aria-hidden="true">
+                        <text x="80" y="53" text-anchor="middle" fill="#8a8a8a" font-size="26" font-family="monospace">01</text>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="ui-carousel__slide">
+                    <div class="ui-ratio" style="--ratio: 16/9; background: var(--panel-strong)">
+                      <svg viewBox="0 0 160 90" aria-hidden="true">
+                        <text x="80" y="53" text-anchor="middle" fill="#8a8a8a" font-size="26" font-family="monospace">02</text>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <button class="ui-carousel__prev" data-bronto-carousel-prev></button>
+                <button class="ui-carousel__next" data-bronto-carousel-next></button>
+                <p class="ui-carousel__status"></p>
+              </div>
+            </div>
+          </dialog>
+        </section>
+
+        <section class="ui-stack" data-shot="prose">
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Content — Markdown output, zero classes</h3>
+          <!-- Everything below is exactly what a Markdown renderer emits:
+               semantic HTML, no class attributes. The single .ui-prose
+               wrapper does all the styling, so the document stays
+               machine-readable. -->
+          <article class="ui-prose">
+            <h2>Designing with restraint</h2>
+            <p>
+              This whole article is plain semantic HTML — the kind a Markdown renderer produces —
+              with <strong>no class attributes</strong> on any element. One <code>ui-prose</code>
+              wrapper styles it.
+            </p>
+            <h3>Why it matters</h3>
+            <p>
+              Keeping the markup clean means it stays
+              <a href="https://html.spec.whatwg.org/multipage/dom.html#semantics-2"
+                >portable and machine-readable</a
+              >: scrapers, RSS, reader mode, and LLMs all parse it without fighting a
+              <mark>class-soup</mark> div tree.
+            </p>
+            <blockquote>
+              <p>Color is rationed. Structure carries the meaning.</p>
+            </blockquote>
+            <ul>
+              <li>Square markers in the accent colour</li>
+              <li>
+                Nested items work too
+                <ul>
+                  <li>Second level</li>
+                </ul>
+              </li>
+            </ul>
+            <pre><code>import ui from '@ponchia/ui/classes';
+ui.button({ variant: 'ghost' });</code></pre>
+          </article>
+        </section>
+
+        <section class="ui-stack" data-shot="site-shell">
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Site shell — content-site layer</h3>
+          <div class="ui-siteheader" style="border: 1px solid var(--line); padding-inline: 1rem">
+            <span class="ui-siteheader__brand">Bronto</span>
+            <nav class="ui-sitenav" aria-label="Demo site">
+              <a href="#standard" aria-current="page">Home</a>
+              <a href="#standard">Work</a>
+              <a href="#standard">Writing</a>
+              <a href="#standard">About</a>
+            </nav>
+            <span class="ui-siteheader__actions">
+              <button class="ui-button ui-button--ghost" type="button">Contact</button>
+            </span>
+            <details class="ui-sitemenu">
+              <summary>Menu ▾</summary>
+              <div class="ui-sitemenu__panel">
+                <nav class="ui-sitenav" aria-label="Demo site (mobile)">
+                  <a href="#standard" aria-current="page">Home</a>
+                  <a href="#standard">Work</a>
+                  <a href="#standard">Writing</a>
+                  <a href="#standard">About</a>
+                </nav>
+              </div>
+            </details>
+          </div>
+          <article class="ui-prose ui-container ui-container--narrow" style="padding-inline: 0">
+            <ol class="ui-meta">
+              <li class="ui-meta__item">2026-05-15</li>
+              <li class="ui-meta__item">A. Author</li>
+              <li class="ui-meta__item">6 min read</li>
+            </ol>
+            <h4>On restraint</h4>
+            <p>A short content page using the narrow container + meta row + tags.</p>
+            <figure class="ui-quote">
+              <blockquote>Color is rationed. Structure carries the meaning.</blockquote>
+              <figcaption class="ui-quote__cite">— the Nothing brief</figcaption>
+            </figure>
+            <ul class="ui-tags">
+              <li class="ui-tag ui-tag--accent">design</li>
+              <li class="ui-tag">systems</li>
+              <li class="ui-tag">css</li>
+            </ul>
+          </article>
+          <div class="ui-sitefooter">
+            <span>© 2026 Bronto — built with @ponchia/ui</span>
+            <span class="ui-sitefooter__links">
+              <a href="#standard">GitHub</a>
+              <a href="#standard">npm</a>
+              <a href="#standard">RSS</a>
+            </span>
+          </div>
+        </section>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- TIER 3 ★ — INTERFACES THAT EXPLAIN THEMSELVES                 -->
+      <!-- ============================================================ -->
+      <div class="tier tier--star" id="analytical">
+        <div class="tier__head">
+          <p class="tier__n">03 — The differentiator ★</p>
+          <h2 class="tier__title">Interfaces that explain themselves</h2>
+          <p class="tier__blurb">
+            The 0.5.0 analytical suite: communication primitives for charts, reports and analytical
+            UI. Each owns its visual grammar and pure geometry and refuses to own scales, state or
+            hit-testing — that is the line that keeps Bronto from becoming a chart engine. All
+            opt-in via <code>@ponchia/ui/css/analytical.css</code>.
+          </p>
+        </div>
+
+        <article class="spec" id="spec-annotations">
+          <div>
+            <h3 class="spec__name">Annotations</h3>
+            <p class="spec__one">
+              A subject / connector / note grammar for SVG figures and report callouts — the
+              d3-annotation idea as a class vocabulary plus geometry helpers that return SVG strings.
+            </p>
+          </div>
+          <div class="spec__demo">
+            <figure class="anno-figure" style="margin: 0">
+              <figcaption class="ui-annotation ui-annotation--callout ui-annotation--accent" style="margin-block-end: 0.5rem">
+                <span class="ui-annotation__title">Peak</span>
+                <span class="ui-annotation__body">Q3 — launch week</span>
+              </figcaption>
+              <div class="anno-bars" role="img" aria-label="Five bars; the second is the annotated peak">
+                <span style="block-size: 45%"></span>
+                <span style="block-size: 92%; background: var(--accent); border-color: var(--accent)"></span>
+                <span style="block-size: 60%"></span>
+                <span style="block-size: 38%"></span>
+                <span style="block-size: 70%"></span>
+              </div>
+            </figure>
+          </div>
+          <details class="spec__code">
+            <summary>Markup &amp; recipe</summary>
+            <pre><code>&lt;figcaption class="ui-annotation ui-annotation--callout ui-annotation--accent"&gt;
+  &lt;span class="ui-annotation__title"&gt;Peak&lt;/span&gt;
+  &lt;span class="ui-annotation__body"&gt;Q3 — launch week&lt;/span&gt;
+&lt;/figcaption&gt;
+
+import { connectorLine, arrowHead } from '@ponchia/ui/annotations';
+ui.annotation({ variant: 'callout', tone: 'accent' });</code></pre>
+          </details>
+          <p class="spec__meta">
+            <span class="ui-badge ui-badge--muted">opt-in</span>
+            <span class="spec__boundary">Owns grammar + SVG-string geometry. No scales, no DOM, no edit mode.</span>
+            <a class="ui-link ui-link--arrow" href="./annotations.html">Full specimen</a>
+            <a class="ui-link ui-link--arrow" href="../docs/#annotations.md">Docs</a>
+          </p>
+        </article>
+
+        <article class="spec" id="spec-legends">
+          <div>
+            <h3 class="spec__name">Legends &amp; data keys</h3>
+            <p class="spec__one">
+              Standalone reading keys that read the <code>--chart-*</code> palette tokens, so chart
+              meaning never drifts from the colours. Interactive variant toggles a series.
+            </p>
+          </div>
+          <div class="spec__demo">
+            <div class="legend-grid">
+              <div>
+                <p class="ui-legend__caption">Categorical (colour + redundant pattern)</p>
+                <ul class="ui-legend" aria-label="Focus series">
+                  <li class="ui-legend__item">
+                    <span class="ui-legend__swatch" style="--chart-color: var(--chart-1); --chart-pattern: var(--chart-pattern-1)" aria-hidden="true"></span>
+                    <span class="ui-legend__label">Research</span>
+                  </li>
+                  <li class="ui-legend__item">
+                    <span class="ui-legend__swatch" style="--chart-color: var(--chart-2); --chart-pattern: var(--chart-pattern-2)" aria-hidden="true"></span>
+                    <span class="ui-legend__label">Delivery</span>
+                  </li>
+                  <li class="ui-legend__item">
+                    <span class="ui-legend__swatch" style="--chart-color: var(--chart-3); --chart-pattern: var(--chart-pattern-3)" aria-hidden="true"></span>
+                    <span class="ui-legend__label">Maintenance</span>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <p class="ui-legend__caption">Interactive — toggle a series</p>
+                <ul class="ui-legend ui-legend--interactive" data-bronto-legend aria-label="Toggle series">
+                  <li>
+                    <button class="ui-legend__item" type="button" aria-pressed="true" data-series="research">
+                      <span class="ui-legend__swatch ui-legend__swatch--1" aria-hidden="true"></span>
+                      <span class="ui-legend__label">Research</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="ui-legend__item" type="button" aria-pressed="true" data-series="delivery">
+                      <span class="ui-legend__swatch ui-legend__swatch--2" aria-hidden="true"></span>
+                      <span class="ui-legend__label">Delivery</span>
+                    </button>
+                  </li>
+                </ul>
+                <div class="ui-chart__plot" aria-hidden="true">
+                  <div class="ui-chart__bar" data-series-bar="research" style="--chart-value: 82%; --chart-color: var(--chart-1)">
+                    <div class="ui-chart__track"><div class="ui-chart__fill"></div></div>
+                  </div>
+                  <div class="ui-chart__bar" data-series-bar="delivery" style="--chart-value: 54%; --chart-color: var(--chart-2)">
+                    <div class="ui-chart__track"><div class="ui-chart__fill"></div></div>
+                  </div>
+                </div>
+                <p class="ui-visually-hidden" role="status" aria-live="polite" id="legend-status"></p>
+              </div>
+            </div>
+          </div>
+          <details class="spec__code">
+            <summary>Markup &amp; recipe</summary>
+            <pre><code>&lt;ul class="ui-legend ui-legend--interactive" data-bronto-legend&gt;
+  &lt;li&gt;&lt;button class="ui-legend__item" aria-pressed="true" data-series="research"&gt;
+    &lt;span class="ui-legend__swatch ui-legend__swatch--1"&gt;&lt;/span&gt;
+    &lt;span class="ui-legend__label"&gt;Research&lt;/span&gt;
+  &lt;/button&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+import { initLegend } from '@ponchia/ui/behaviors';
+initLegend(); // emits bronto:legend:toggle { series, active }</code></pre>
+          </details>
+          <p class="spec__meta">
+            <span class="ui-badge ui-badge--muted">opt-in</span>
+            <span class="spec__boundary">Flips the control + announces; the host hides the series.</span>
+            <a class="ui-link ui-link--arrow" href="./legends.html">Full specimen</a>
+            <a class="ui-link ui-link--arrow" href="../docs/#legends.md">Docs</a>
+          </p>
+        </article>
+
+        <article class="spec" id="spec-marks">
+          <div>
+            <h3 class="spec__name">Text marks &amp; evidence</h3>
+            <p class="spec__one">
+              The prose counterpart to annotations: sober, report-grade highlights, underlines,
+              boxes and passage brackets for running text. Monochrome by default; the accent is the
+              opt-in <code>--accent</code> tone.
+            </p>
+          </div>
+          <div class="spec__demo ui-prose">
+            <p style="margin: 0">
+              The migration <mark class="ui-mark ui-mark--accent">cut p95 latency by 38%</mark>, but
+              <mark class="ui-mark ui-mark--danger ui-mark--underline">error rate doubled</mark> in the
+              first hour, and the
+              <mark class="ui-mark ui-mark--muted ui-mark--strike">old retry path</mark> was removed.
+              A <mark class="ui-mark">plain neutral highlight</mark> stays monochrome, while
+              <mark class="ui-mark ui-mark--box ui-mark--info">a boxed note</mark> reads as an aside.
+            </p>
+            <blockquote class="ui-bracket-note ui-bracket-note--accent" style="margin-block-end: 0">
+              <span class="ui-bracket-note__label">Source</span>
+              Q3 incident review, §4 — sustained for 47 minutes before rollback.
+            </blockquote>
+          </div>
+          <details class="spec__code">
+            <summary>Markup &amp; recipe</summary>
+            <pre><code>&lt;mark class="ui-mark ui-mark--accent"&gt;cut p95 latency by 38%&lt;/mark&gt;
+&lt;blockquote class="ui-bracket-note ui-bracket-note--accent"&gt;…&lt;/blockquote&gt;
+
+ui.mark({ tone: 'accent', motion: 'draw' });
+ui.bracketNote({ tone: 'accent' });</code></pre>
+          </details>
+          <p class="spec__meta">
+            <span class="ui-badge ui-badge--muted">opt-in · CSS only</span>
+            <span class="spec__boundary">Visual emphasis only; state meaning lives in the words (WCAG 1.4.1).</span>
+            <a class="ui-link ui-link--arrow" href="./marks.html">Full specimen</a>
+            <a class="ui-link ui-link--arrow" href="../docs/#marks.md">Docs</a>
+          </p>
+        </article>
+
+        <article class="spec" id="spec-connectors">
+          <div>
+            <h3 class="spec__name">Connectors</h3>
+            <p class="spec__one">
+              Leader lines between DOM regions, drawn from measured <code>DOMRect</code>s — straight,
+              elbow or curve, with an arrow or dot end. Pure geometry; the behavior only tracks
+              layout.
+            </p>
+          </div>
+          <div class="spec__demo">
+            <div class="conn-stage">
+              <div id="node-a" class="conn-node ui-card"><p style="margin: 0">Source</p></div>
+              <div id="node-b" class="conn-node ui-card ui-card--accent"><p style="margin: 0">Target</p></div>
+              <div id="node-c" class="conn-node ui-card"><p style="margin: 0">Aside</p></div>
+              <svg
+                class="ui-connector ui-connector--accent"
+                data-bronto-connector
+                data-from="node-a"
+                data-to="node-b"
+                data-shape="curve"
+                data-end="arrow"
+                aria-hidden="true"
+              ></svg>
+              <svg
+                class="ui-connector ui-connector--muted ui-connector--dashed"
+                data-bronto-connector
+                data-from="node-a"
+                data-to="node-c"
+                data-shape="elbow"
+                data-end="dot"
+                aria-hidden="true"
+              ></svg>
+            </div>
+          </div>
+          <details class="spec__code">
+            <summary>Markup &amp; recipe</summary>
+            <pre><code>&lt;svg class="ui-connector ui-connector--accent" data-bronto-connector
+     data-from="node-a" data-to="node-b" data-shape="curve" data-end="arrow"&gt;&lt;/svg&gt;
+
+import { initConnectors } from '@ponchia/ui/behaviors';
+import { connectRects } from '@ponchia/ui/connectors'; // pure geometry</code></pre>
+          </details>
+          <p class="spec__meta">
+            <span class="ui-badge ui-badge--muted">opt-in</span>
+            <span class="spec__boundary">Owns geometry + layout tracking; the relationship's meaning is in DOM order.</span>
+            <a class="ui-link ui-link--arrow" href="./connectors.html">Full specimen</a>
+            <a class="ui-link ui-link--arrow" href="../docs/#connectors.md">Docs</a>
+          </p>
+        </article>
+
+        <article class="spec" id="spec-spotlight">
+          <div>
+            <h3 class="spec__name">Spotlight</h3>
+            <p class="spec__one">
+              The visual language of guided focus: a dimmed backdrop with a cut-out ring and a tour
+              note. Bronto owns the look and the cutout position, not the tour state machine. (It is
+              a full-viewport overlay — the live version opens in its own demo.)
+            </p>
+          </div>
+          <div class="spec__demo">
+            <div class="spot-mock" aria-hidden="true">
+              <div class="spot-mock__hole"><span class="ui-button ui-button--sm">Save</span></div>
+              <div class="ui-tour-note" style="position: static; max-inline-size: 18rem; margin-inline-start: auto">
+                <span class="ui-tour-note__step">Step 1 of 3</span>
+                <h4 class="ui-tour-note__title">Save your work</h4>
+                <p class="ui-tour-note__body">Changes autosave, but you can force a save here.</p>
+              </div>
+            </div>
+          </div>
+          <details class="spec__code">
+            <summary>Markup &amp; recipe</summary>
+            <pre><code>&lt;div class="ui-spotlight ui-spotlight--ring" data-bronto-spotlight data-target="save-button"&gt;
+  &lt;div class="ui-spotlight__hole"&gt;&lt;/div&gt;
+  &lt;div class="ui-tour-note"&gt;…&lt;/div&gt;
+&lt;/div&gt;
+
+import { initSpotlight } from '@ponchia/ui/behaviors';</code></pre>
+          </details>
+          <p class="spec__meta">
+            <span class="ui-badge ui-badge--muted">opt-in</span>
+            <span class="spec__boundary">Owns the cutout look + position; the host owns step order and persistence.</span>
+            <a class="ui-link ui-link--arrow" href="./spotlight.html">Live overlay demo</a>
+            <a class="ui-link ui-link--arrow" href="../docs/#spotlight.md">Docs</a>
+          </p>
+        </article>
+
+        <article class="spec" id="spec-crosshair">
+          <div>
+            <h3 class="spec__name">Crosshair &amp; readout</h3>
+            <p class="spec__one">
+              A pointer-tracking ruler with a pinned readout. Move the pointer over the plot — Bronto
+              reports the position as pixels and 0–1 fractions; it never maps pixels to data values.
+            </p>
+          </div>
+          <div class="spec__demo">
+            <figure class="xh-plot ui-dotgrid" data-bronto-crosshair style="margin: 0">
+              <div class="ui-crosshair" aria-hidden="true">
+                <div class="ui-crosshair__line ui-crosshair__line--x"></div>
+                <div class="ui-crosshair__line ui-crosshair__line--y"></div>
+                <div class="ui-readout" id="xh-readout">—</div>
+              </div>
+            </figure>
+            <p role="status" aria-live="off" id="xh-status" class="ui-mono" style="margin-block-end: 0">
+              Pointer: —
+            </p>
+          </div>
+          <details class="spec__code">
+            <summary>Markup &amp; recipe</summary>
+            <pre><code>&lt;figure data-bronto-crosshair&gt;
+  &lt;div class="ui-crosshair"&gt;&lt;div class="ui-crosshair__line ui-crosshair__line--x"&gt;&lt;/div&gt;…&lt;/div&gt;
+&lt;/figure&gt;
+
+initCrosshair(); // emits bronto:crosshair:move { x, y, fx, fy }</code></pre>
+          </details>
+          <p class="spec__meta">
+            <span class="ui-badge ui-badge--muted">opt-in</span>
+            <span class="spec__boundary">Reports position only; the host maps the fraction to a data value.</span>
+            <a class="ui-link ui-link--arrow" href="./crosshair.html">Full specimen</a>
+            <a class="ui-link ui-link--arrow" href="../docs/#crosshair.md">Docs</a>
+          </p>
+        </article>
+
+        <article class="spec" id="spec-selection">
+          <div>
+            <h3 class="spec__name">Selection states</h3>
+            <p class="spec__one">
+              A cross-cutting vocabulary for selected / candidate / excluded — the same classes on
+              bars, table rows, list items or map regions. The host decides what's selected; these
+              render the result.
+            </p>
+          </div>
+          <div class="spec__demo">
+            <div class="sel-row" role="img" aria-label="Bars: one selected, one candidate, three excluded">
+              <div class="sel-bar ui-sel ui-sel--off" style="block-size: 40%"></div>
+              <div class="sel-bar ui-sel ui-sel--on" style="block-size: 90%"></div>
+              <div class="sel-bar ui-sel ui-sel--maybe" style="block-size: 65%"></div>
+              <div class="sel-bar ui-sel ui-sel--off" style="block-size: 30%"></div>
+              <div class="sel-bar ui-sel ui-sel--off" style="block-size: 55%"></div>
+            </div>
+          </div>
+          <details class="spec__code">
+            <summary>Markup &amp; recipe</summary>
+            <pre><code>&lt;div class="ui-sel ui-sel--on"&gt;…&lt;/div&gt;     &lt;!-- selected --&gt;
+&lt;div class="ui-sel ui-sel--maybe"&gt;…&lt;/div&gt;  &lt;!-- live-brush candidate --&gt;
+&lt;div class="ui-sel ui-sel--off"&gt;…&lt;/div&gt;    &lt;!-- excluded --&gt;
+
+ui.sel({ state: 'on' });</code></pre>
+          </details>
+          <p class="spec__meta">
+            <span class="ui-badge ui-badge--muted">opt-in · CSS only</span>
+            <span class="spec__boundary">Renders selection emphasis; the host owns brush + hit-testing.</span>
+            <a class="ui-link ui-link--arrow" href="./selection.html">Full specimen</a>
+            <a class="ui-link ui-link--arrow" href="../docs/#selection.md">Docs</a>
+          </p>
+        </article>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- TIER 4 — ON THE FRONTIER                                      -->
+      <!-- ============================================================ -->
+      <div class="tier" id="frontier">
+        <div class="tier__head">
+          <p class="tier__n">04 — On the frontier</p>
+          <h2 class="tier__title">What the system owns next</h2>
+          <p class="tier__blurb">
+            The same boundary, applied to more of the "interfaces that explain themselves" surface.
+            Planned, not yet built — the full rationale is in
+            <a href="../docs/#frontier-primitives.md">the frontier-primitives thesis</a>.
+          </p>
+        </div>
+        <div class="frontier">
+          <div class="frontier__card">
+            <h3>Source &amp; provenance</h3>
+            <p>Citations, source cards, "where did this come from?" — a trust grammar, not just footnotes.</p>
+          </div>
+          <div class="frontier__card">
+            <h3>Lifecycle &amp; system state</h3>
+            <p>Saving, queued, offline, stale, conflicted — persistent state with persistent UI, not toasts.</p>
+          </div>
+          <div class="frontier__card">
+            <h3>Command-first UI</h3>
+            <p>A <code>ui-shortcut</code> primitive, then a command-palette shell. The host owns the action registry.</p>
+          </div>
+          <div class="frontier__card">
+            <h3>Workbench</h3>
+            <p>Inspectors, property rows, selection bars, accessible splitters — the half-consistent workbench, standardised.</p>
+          </div>
+          <div class="frontier__card">
+            <h3>Relationships</h3>
+            <p>Target rings, hotspots and linkage labels beyond connectors — lightweight "this controls that".</p>
+          </div>
+          <div class="frontier__card">
+            <h3>AI trust surfaces</h3>
+            <p>Origin labels, generated-content wrappers, tool-call logs — the trust layer around generated output, not a chat kit.</p>
+          </div>
+        </div>
+      </div>
     </main>
 
     <!-- The demo drives itself with the package's own shipped modules,
@@ -1118,6 +1552,9 @@ ui.button({ variant: 'ghost' });</code></pre>
         initTableSort,
         initCarousel,
         initDotGlyph,
+        initLegend,
+        initConnectors,
+        initCrosshair,
         toast,
       } from '../behaviors/index.js';
       import { ui, cx } from '../classes/index.js';
@@ -1125,15 +1562,12 @@ ui.button({ variant: 'ghost' });</code></pre>
       import { skins, SKIN_NAMES } from '../tokens/skins.js';
 
       // A representative slice of the glyph set (full list in the docs).
-      // Each glyph is a GLYPH_SIZE² grid, so showing the full set here would add
-      // ~11k decorative nodes and slow the demo's axe scan — keep it light.
       const GALLERY = [
         'arrow-right', 'chevron-down', 'check', 'close', 'plus', 'search',
         'menu', 'gear', 'edit', 'trash', 'download', 'play', 'eye', 'sun',
         'bell', 'heart', 'home', 'user', 'star', 'spark',
       ];
 
-      // Build the glyph gallery, then let initDotGlyph() expand the placeholders.
       const gallery = document.getElementById('glyphGallery');
       if (gallery) {
         for (const name of GALLERY) {
@@ -1153,7 +1587,6 @@ ui.button({ variant: 'ghost' });</code></pre>
         }
       }
 
-      // Solid mode: the same bitmaps as crisp ~18px inline icons in buttons.
       const glyphButtons = document.getElementById('glyphButtons');
       if (glyphButtons) {
         for (const [name, text] of [
@@ -1167,33 +1600,24 @@ ui.button({ variant: 'ghost' });</code></pre>
           btn.type = 'button';
           btn.className = name === 'plus' ? 'ui-button' : 'ui-button ui-button--subtle';
           btn.style.cssText = 'display: inline-flex; align-items: center; gap: 0.45rem';
-          btn.innerHTML =
-            renderGlyph(name, { solid: true, dot: '1.2px' }) + `<span>${text}</span>`;
+          btn.innerHTML = renderGlyph(name, { solid: true, dot: '1.2px' }) + `<span>${text}</span>`;
           glyphButtons.appendChild(btn);
         }
       }
 
-      // Mask render: one-node inline icons at text size, incl. the new circle family.
       const glyphMask = document.getElementById('glyphMask');
       if (glyphMask) {
-        glyphMask.innerHTML =
-          ['search', 'check-circle', 'x-circle', 'plus-circle', 'circle', 'external', 'gear']
-            .filter((n) => GLYPH_NAMES.includes(n))
-            .map((n) => renderGlyph(n, { render: 'mask', label: n }))
-            .join('');
+        glyphMask.innerHTML = ['search', 'check-circle', 'x-circle', 'plus-circle', 'circle', 'external', 'gear']
+          .filter((n) => GLYPH_NAMES.includes(n))
+          .map((n) => renderGlyph(n, { render: 'mask', label: n }))
+          .join('');
       }
 
-      // Animation: a reveal glyph (with a replay button — re-inserting the
-      // element restarts the CSS animation) and a continuously pulsing one.
       const glyphAnim = document.getElementById('glyphAnim');
       if (glyphAnim) {
         const revealBox = document.createElement('span');
         const drawReveal = () => {
-          revealBox.innerHTML = renderGlyph('spark', {
-            anim: 'reveal',
-            dot: '0.34rem',
-            gap: '0.1rem',
-          });
+          revealBox.innerHTML = renderGlyph('spark', { anim: 'reveal', dot: '0.34rem', gap: '0.1rem' });
         };
         drawReveal();
         const replay = document.createElement('button');
@@ -1203,12 +1627,7 @@ ui.button({ variant: 'ghost' });</code></pre>
         replay.addEventListener('click', drawReveal);
 
         const pulseBox = document.createElement('span');
-        pulseBox.innerHTML = renderGlyph('bell', {
-          anim: 'pulse',
-          dot: '0.34rem',
-          gap: '0.1rem',
-          label: 'Notifications',
-        });
+        pulseBox.innerHTML = renderGlyph('bell', { anim: 'pulse', dot: '0.34rem', gap: '0.1rem', label: 'Notifications' });
 
         glyphAnim.append(revealBox, replay, pulseBox);
       }
@@ -1225,14 +1644,37 @@ ui.button({ variant: 'ghost' });</code></pre>
       initTableSort();
       initCarousel(); // wires both the inline carousel and the lightbox's
       initDotGlyph(); // expands [data-bronto-glyph] placeholders (incl. the skin preview)
+      initConnectors(); // draws + tracks the leader lines in the analytical tier
+      initCrosshair(); // pointer-tracking crosshair in the analytical tier
+      initLegend(); // interactive legend toggle in the analytical tier
 
-      // Unified theme picker. Three independent, persisted axes — all set as
-      // attributes on <html>, exactly how a real consumer themes a page:
-      //   • light/dark  → data-theme       (the initThemeToggle button)
-      //   • colorway    → data-bronto-skin (re-points the one accent; opt-in skins.css)
-      //   • dark surface→ data-surface     (comfortable elevated-grey vs OLED true-black)
-      // The toolbar <select>s and the showcase button group below drive the
-      // same state through one applySkin/applySurface, so they stay in sync.
+      // Legend: host-owned. Bronto flips the control + announces; we hide the bar.
+      const legendStatus = document.getElementById('legend-status');
+      document.addEventListener('bronto:legend:toggle', (e) => {
+        const { series, active } = e.detail;
+        const bar = document.querySelector(`[data-series-bar="${CSS.escape(series)}"]`);
+        if (bar) bar.hidden = !active;
+        if (legendStatus) legendStatus.textContent = `${series} ${active ? 'shown' : 'hidden'}`;
+      });
+
+      // Crosshair: host-owned. Bronto reports position; we map + render the readout.
+      const xhReadout = document.getElementById('xh-readout');
+      const xhStatus = document.getElementById('xh-status');
+      const plot = document.querySelector('[data-bronto-crosshair]');
+      if (plot) {
+        plot.addEventListener('bronto:crosshair:move', (e) => {
+          const { fx, fy } = e.detail;
+          const text = `x ${(fx * 100).toFixed(0)}% · y ${((1 - fy) * 100).toFixed(0)}%`;
+          xhReadout.textContent = text;
+          xhStatus.textContent = `Pointer: ${text}`;
+        });
+        plot.addEventListener('bronto:crosshair:leave', () => {
+          xhStatus.textContent = 'Pointer: —';
+        });
+      }
+
+      // Unified theme picker: light/dark (data-theme), colorway (data-bronto-skin),
+      // dark surface (data-surface) — all set on <html>, the way a real consumer themes.
       const themeRoot = document.documentElement;
       const SKIN_KEY = 'bronto-skin';
       const SURFACE_KEY = 'bronto-surface';
@@ -1287,8 +1729,6 @@ ui.button({ variant: 'ghost' });</code></pre>
       }
       if (surfaceSelect) surfaceSelect.addEventListener('change', () => applySurface(surfaceSelect.value));
 
-      // Restore persisted colorway + surface (theme itself is restored by
-      // applyStoredTheme in the shared module).
       let storedSkin = '';
       let storedSurface = '';
       try {
@@ -1304,13 +1744,10 @@ ui.button({ variant: 'ghost' });</code></pre>
         toast('Order filled — BTC/EUR', { tone: 'success', title: 'Done' });
       });
 
-      // Theming contract: one --accent knob re-brands; density/contrast
-      // are data-attribute presets. All set on <html> (or any subtree).
+      // Theming contract: one --accent knob re-brands; density/contrast are presets.
       const docEl = document.documentElement;
       for (const b of document.querySelectorAll('[data-accent]'))
-        b.addEventListener('click', () =>
-          docEl.style.setProperty('--accent', b.dataset.accent)
-        );
+        b.addEventListener('click', () => docEl.style.setProperty('--accent', b.dataset.accent));
       for (const r of document.querySelectorAll('input[name="dens"]'))
         r.addEventListener('change', () => {
           if (r.value) docEl.dataset.density = r.value;
@@ -1329,9 +1766,7 @@ ui.button({ variant: 'ghost' });</code></pre>
         dirBtn.textContent = rtl ? 'DIR: LTR' : 'DIR: RTL';
       });
 
-      // Keep the demo's label in sync (cosmetic; the shared module does
-      // the real work). Driven by the bronto:themechange event so it
-      // never races the delegated click handler.
+      // Keep the demo's theme label in sync (cosmetic; the shared module does the work).
       const root = document.documentElement;
       const label = document.getElementById('themeLabel');
       const sync = () => {
@@ -1345,7 +1780,7 @@ ui.button({ variant: 'ghost' });</code></pre>
         ui.button({ variant: 'ghost' }) === 'ui-button ui-button--ghost',
         'classes recipe mismatch'
       );
-      console.log('demo wired via @ponchia/ui modules', cx('ok'));
+      console.log('showcase wired via @ponchia/ui modules', cx('ok'));
     </script>
   </body>
 </html>
