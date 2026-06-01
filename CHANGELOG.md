@@ -146,6 +146,11 @@ folds in the 0.4.x maintenance hardening that had not yet been released.
   class-recipe wiring test, the APCA advisory widened to the accent text across
   the core palette and every colorway (still advisory; WCAG 2.1 AA stays the
   hard gate), an OLED computed-style smoke test, and several doc reconciliations.
+- The `check:dist` payload ceiling was raised to 80 kB raw / 14.5 kB gzip (from
+  78 kB / 13.5 kB). The default bundle was sitting ~21 bytes under the old gzip
+  gate — the analytical primitives are opt-in leaves and stay out of it, so this
+  is residual prior growth; the bump restores a real ~3% raw / ~7% gzip margin
+  so an ordinary token addition no longer trips an unrelated PR.
 
 ## 0.4.1 — 2026-06-01
 
