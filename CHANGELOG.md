@@ -1,7 +1,8 @@
 # Changelog
 
-> **Versioning:** pre-1.0, breaking changes ship in the _minor_. Pin
-> `~0.x`; `^0.x` does **not** protect you. See README → Versioning, and
+> **Versioning:** pre-1.0, breaking changes ship in the _minor_. Pin to the
+> minor — `~0.4.0` (equivalently `^0.4.0`) resolves to `>=0.4.0 <0.5.0`; a bare
+> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
 ## 0.4.1 — 2026-06-01
@@ -79,6 +80,9 @@ modern-platform motion direction (see [ADR-0002](docs/adr/0002-scope-and-2026-ba
 - **[ADR-0003](docs/adr/0003-theme-model.md)** records the theme model: a binary
   light/dark base × one-knob derivation × orthogonal axes (colorway, surface,
   contrast, density), and why a flat named-theme catalog is rejected.
+- React and Solid Vite examples, CI/release matrix coverage for those examples,
+  runtime binding tests, public API stability docs, a release runbook, and
+  `npm run size:report`.
 
 ### Changed
 
@@ -116,12 +120,6 @@ modern-platform motion direction (see [ADR-0002](docs/adr/0002-scope-and-2026-ba
 - The one-node glyph mask path now includes a WebKit-prefixed mask declaration,
   and the OKLCH accent ramp uses an explicit white/black neutral endpoint for
   cross-engine browser parity.
-
-### Added
-
-- React and Solid Vite examples, CI/release matrix coverage for those examples,
-  runtime binding tests, public API stability docs, a release runbook, and
-  `npm run size:report`.
 
 ## 0.4.0 — 2026-05-31
 

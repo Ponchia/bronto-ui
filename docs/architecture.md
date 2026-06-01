@@ -52,9 +52,13 @@ on top of the CSS, none of which require a framework commitment**:
   with URLs relative to the package (`../fonts/*`), so font hosting is
   decoupled from the token layer and resolves through bundlers or static
   serving without an absolute `/fonts` assumption.
-- **tokens/** — `index.js` is the single source; `index.json` is generated.
-  `scripts/check-tokens.mjs` fails CI if it drifts from `css/tokens.css`
-  (and incidentally guards the intentional dark-palette duplication).
+- **tokens/** — `css/tokens.css` is canonical for the theme palettes;
+  `index.js` (`cssVars`) is a hand-maintained, exact mirror of its `:root`
+  blocks and is the source the JSON artifacts (`index.json`, `tokens.dtcg.json`,
+  `resolved.json`) are generated from. `scripts/check-tokens.mjs` fails CI if the
+  mirror drifts from the stylesheet (and guards the intentional dark-palette
+  duplication). Collapsing the mirror by generating `tokens.css` from the JS
+  model is a tracked follow-up (see ADR-0003).
 - **classes/** — `cls` is the flat registry; recipes only emit from it;
   `scripts/check-classes.mjs` enforces a bidirectional match with the
   stylesheet's `.ui-*` selectors. The class contract cannot silently rot.
