@@ -84,7 +84,7 @@ export function leafFiles() {
 /** Opt-in leaves that ship as their own layered entrypoint but are
  *  deliberately NOT in the default bundle (ADR-0001: colorways + data-viz are
  *  opt-in). They still get a `dist/css/*` layered file so a direct import is safe. */
-export const EXTRA_LEAVES = ['skins.css', 'dataviz.css', 'report.css'];
+export const EXTRA_LEAVES = ['skins.css', 'dataviz.css', 'report.css', 'annotations.css'];
 
 export function buildBundles() {
   const out = { 'dist/bronto.css': bundle('core.css') };

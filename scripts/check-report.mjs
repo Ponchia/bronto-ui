@@ -3,7 +3,7 @@
  *
  * Keeps the LLM/static-report docs and fixtures honest:
  *  - every mentioned ui-* class is in the public cls registry
- *  - report.css stays opt-in, never imported by core.css
+ *  - report.css / annotations.css stay opt-in, never imported by core.css
  *  - static report examples do not depend on remote executable/media assets
  *  - report examples do not use raw chromatic inline colors
  *
@@ -22,8 +22,10 @@ const read = (rel) => readFileSync(resolve(root, rel), 'utf8');
 
 const classSources = [
   'docs/reporting.md',
+  'docs/annotations.md',
   'llms.txt',
   'demo/report.html',
+  'demo/annotations.html',
   ...walk('examples/report-static').filter((p) => /\.(html|js|css|md)$/.test(p)),
 ];
 
@@ -39,9 +41,13 @@ const core = read('css/core.css');
 if (/report\.css/.test(core)) {
   errors.push('css/core.css imports report.css — report CSS must stay opt-in');
 }
+if (/annotations\.css/.test(core)) {
+  errors.push('css/core.css imports annotations.css — annotation CSS must stay opt-in');
+}
 
 const htmlSources = [
   'demo/report.html',
+  'demo/annotations.html',
   ...walk('examples/report-static').filter((p) => /\.html$/.test(p)),
 ];
 for (const rel of htmlSources) {
@@ -56,7 +62,13 @@ for (const rel of htmlSources) {
 }
 
 const rawColor = /#[0-9a-fA-F]{3,8}\b|\b(?:rgba?|hsla?|oklch|oklab|lab|lch|hwb|color)\(/i;
-for (const rel of ['docs/reporting.md', 'demo/report.html', ...walk('examples/report-static')]) {
+for (const rel of [
+  'docs/reporting.md',
+  'docs/annotations.md',
+  'demo/report.html',
+  'demo/annotations.html',
+  ...walk('examples/report-static'),
+]) {
   if (!/\.(md|html|css|js)$/.test(rel)) continue;
   const src = read(rel);
   const inlineStyles = [

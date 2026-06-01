@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — annotation specimen</title>
+    <meta
+      name="description"
+      content="SVG annotation specimen for @ponchia/ui annotations CSS and geometry helpers."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/report.css" />
+    <link rel="stylesheet" href="../dist/css/dataviz.css" />
+    <link rel="stylesheet" href="../dist/css/annotations.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .annotation-demo {
+        margin: 0 auto;
+        max-width: 1180px;
+        padding: 2rem 1rem 4rem;
+      }
+
+      .annotation-demo__lede {
+        max-width: 72ch;
+      }
+
+      .annotation-demo__examples {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 28rem), 1fr));
+      }
+
+      .annotation-applied,
+      .annotation-specimen {
+        display: block;
+        height: auto;
+        inline-size: 100%;
+      }
+
+      .annotation-specimen-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .annotation-specimen__panel {
+        fill: var(--panel-soft);
+        stroke: var(--line);
+        stroke-width: 1;
+        vector-effect: non-scaling-stroke;
+      }
+
+      .annotation-specimen__grid {
+        stroke: var(--line);
+        stroke-width: 1;
+        vector-effect: non-scaling-stroke;
+      }
+
+      .annotation-specimen__axis {
+        stroke: var(--text-dim);
+        stroke-width: 1.5;
+        vector-effect: non-scaling-stroke;
+      }
+
+      .annotation-specimen__data {
+        fill: var(--chart-color);
+        opacity: 0.88;
+      }
+
+      .annotation-specimen__line {
+        fill: none;
+        stroke: var(--text-soft);
+        stroke-width: 1.5;
+        vector-effect: non-scaling-stroke;
+      }
+
+      @media (max-width: 720px) {
+        .annotation-demo {
+          padding-inline: 0.5rem;
+        }
+
+        .annotation-specimen {
+          min-inline-size: 920px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="annotation-demo ui-report ui-report--compact">
+      <header class="ui-report__cover ui-report__cover--compact ui-keep">
+        <p class="ui-eyebrow">SVG annotation specimen</p>
+        <h1 class="ui-report__title">Bronto annotations</h1>
+        <p class="ui-report__subtitle annotation-demo__lede">
+          A Bronto-native subject, connector and note system for chart callouts, report figures and
+          generated analytical SVG.
+        </p>
+        <ul class="ui-report__meta">
+          <li>Opt-in CSS</li>
+          <li>Zero dependencies</li>
+          <li>SVG-first helpers</li>
+        </ul>
+      </header>
+
+      <section class="ui-report__section ui-report__section--unnumbered">
+        <h2 class="ui-report__section-head">Applied examples</h2>
+        <div class="annotation-demo__examples">
+          <figure
+            class="ui-report__figure ui-chart ui-print-exact ui-keep"
+            role="group"
+            aria-labelledby="capacity-example-caption"
+          >
+            <figcaption id="capacity-example-caption" class="ui-chart__caption">
+              Capacity chart with four restrained annotations.
+            </figcaption>
+            <svg
+              class="annotation-applied"
+              viewBox="0 0 520 260"
+              role="img"
+              aria-labelledby="capacity-example-title capacity-example-desc"
+            >
+              <title id="capacity-example-title">Capacity chart with selected annotations</title>
+              <desc id="capacity-example-desc">
+                A baseline label, threshold, peak callout and risk band annotate weekly capacity.
+              </desc>
+              <rect class="annotation-specimen__panel" x="28" y="24" width="464" height="190" />
+              <line class="annotation-specimen__grid" x1="56" y1="174" x2="464" y2="174" />
+              <line class="annotation-specimen__grid" x1="56" y1="136" x2="464" y2="136" />
+              <line class="annotation-specimen__grid" x1="56" y1="98" x2="464" y2="98" />
+              <line class="annotation-specimen__axis" x1="56" y1="194" x2="464" y2="194" />
+              <rect
+                class="annotation-specimen__data"
+                style="--chart-color: var(--chart-1)"
+                x="82"
+                y="146"
+                width="42"
+                height="48"
+              />
+              <rect
+                class="annotation-specimen__data"
+                style="--chart-color: var(--chart-2)"
+                x="158"
+                y="118"
+                width="42"
+                height="76"
+              />
+              <rect
+                class="annotation-specimen__data"
+                style="--chart-color: var(--chart-3)"
+                x="234"
+                y="76"
+                width="42"
+                height="118"
+              />
+              <rect
+                class="annotation-specimen__data"
+                style="--chart-color: var(--chart-4)"
+                x="310"
+                y="110"
+                width="42"
+                height="84"
+              />
+              <rect
+                class="annotation-specimen__data"
+                style="--chart-color: var(--chart-5)"
+                x="386"
+                y="132"
+                width="42"
+                height="62"
+              />
+
+              <g
+                class="ui-annotation ui-annotation--label ui-annotation--muted"
+                transform="translate(58, 222)"
+              >
+                <g class="ui-annotation__note">
+                  <text class="ui-annotation__title">Baseline</text>
+                  <text class="ui-annotation__label" y="16">10 h floor</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--threshold ui-annotation--danger"
+                transform="translate(0, 98)"
+              >
+                <path class="ui-annotation__subject" d="M56,0L464,0" />
+                <path class="ui-annotation__connector" d="M404,0L438,-34" />
+                <g class="ui-annotation__note" transform="translate(356, -66)">
+                  <rect x="-8" y="-18" width="112" height="44" />
+                  <path class="ui-annotation__note-line" d="M0,20H88" />
+                  <text class="ui-annotation__title" y="-4">Threshold</text>
+                  <text class="ui-annotation__label" y="14">Capacity cap</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--circle ui-annotation--accent ui-annotation--draw"
+                transform="translate(255, 76)"
+                style="--annotation-delay: 120ms"
+              >
+                <path
+                  class="ui-annotation__subject"
+                  d="M0,-18A18,18 0 1 1 0,18A18,18 0 1 1 0,-18Z"
+                />
+                <path class="ui-annotation__connector" d="M-15,-10L-74,-54" />
+                <g class="ui-annotation__note" transform="translate(-168, -68)">
+                  <rect x="-8" y="-18" width="102" height="44" />
+                  <path class="ui-annotation__note-line" d="M0,20H78" />
+                  <text class="ui-annotation__title" y="-4">Peak</text>
+                  <text class="ui-annotation__label" y="14">Week 3</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--band ui-annotation--warning"
+                transform="translate(302, 110)"
+              >
+                <path class="ui-annotation__subject" d="M0,0H132V84H0Z" />
+                <path class="ui-annotation__connector" d="M118,72L146,102" />
+                <g class="ui-annotation__note" transform="translate(146, 102)">
+                  <rect x="-8" y="-18" width="98" height="44" />
+                  <text class="ui-annotation__title" y="-4">Risk</text>
+                  <text class="ui-annotation__label" y="14">Late work</text>
+                </g>
+              </g>
+            </svg>
+          </figure>
+
+          <figure
+            class="ui-report__figure ui-chart ui-print-exact ui-keep"
+            role="group"
+            aria-labelledby="timeline-example-caption"
+          >
+            <figcaption id="timeline-example-caption" class="ui-chart__caption">
+              Incident timeline with comparison, event and evidence markers.
+            </figcaption>
+            <svg
+              class="annotation-applied"
+              viewBox="0 0 520 260"
+              role="img"
+              aria-labelledby="timeline-example-title timeline-example-desc"
+            >
+              <title id="timeline-example-title">Incident timeline with selected annotations</title>
+              <desc id="timeline-example-desc">
+                Comparison, event and evidence annotations mark the important incident moments.
+              </desc>
+              <rect class="annotation-specimen__panel" x="28" y="52" width="464" height="142" />
+              <line class="annotation-specimen__axis" x1="56" y1="142" x2="464" y2="142" />
+              <circle cx="120" cy="142" r="4" fill="var(--text-dim)" />
+              <circle cx="210" cy="142" r="4" fill="var(--text-dim)" />
+              <circle cx="310" cy="142" r="4" fill="var(--text-dim)" />
+              <circle cx="402" cy="142" r="4" fill="var(--text-dim)" />
+
+              <g
+                class="ui-annotation ui-annotation--compare ui-annotation--accent"
+                transform="translate(120, 162)"
+              >
+                <path
+                  class="ui-annotation__subject"
+                  d="M0,0C22,0 22,12 45,12C45,12 45,24 45,24C45,12 68,12 68,0C68,0 68,0 90,0"
+                />
+                <path class="ui-annotation__connector" d="M45,24L45,46" />
+                <g class="ui-annotation__note" transform="translate(6, 62)">
+                  <rect x="-8" y="-18" width="112" height="44" />
+                  <text class="ui-annotation__title" y="-4">Compare</text>
+                  <text class="ui-annotation__label" y="14">Before fix</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--timeline ui-annotation--info"
+                transform="translate(310, 142)"
+              >
+                <path class="ui-annotation__subject" d="M0,0L8,18H-8Z" />
+                <path class="ui-annotation__connector" d="M0,0L-48,-54" />
+                <g class="ui-annotation__note" transform="translate(-126, -82)">
+                  <rect x="-8" y="-18" width="116" height="44" />
+                  <text class="ui-annotation__title" y="-4">Deploy</text>
+                  <text class="ui-annotation__label" y="14">Patch lands</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--evidence ui-annotation--accent ui-annotation--focus"
+                transform="translate(402, 142)"
+              >
+                <rect class="ui-annotation__badge" x="-14" y="-14" width="28" height="28" />
+                <path class="ui-annotation__connector" d="M14,0L42,-52" />
+                <g class="ui-annotation__note" transform="translate(42, -52)">
+                  <rect x="-8" y="-18" width="106" height="44" />
+                  <path class="ui-annotation__note-line" d="M0,20H82" />
+                  <text class="ui-annotation__title" y="-4">Evidence</text>
+                  <text class="ui-annotation__label" y="14">Trace link</text>
+                </g>
+              </g>
+            </svg>
+          </figure>
+        </div>
+      </section>
+
+      <section class="ui-report__section ui-report__section--unnumbered">
+        <h2 class="ui-report__section-head">Variant specimen</h2>
+        <figure
+          class="ui-report__figure ui-chart ui-print-exact ui-keep"
+          role="group"
+          aria-labelledby="annotation-specimen-caption"
+        >
+          <figcaption id="annotation-specimen-caption" class="ui-chart__caption">
+            Annotation variants across chart, comparison and event-analysis use cases.
+          </figcaption>
+          <div
+            class="annotation-specimen-scroll"
+            role="region"
+            tabindex="0"
+            aria-label="Scrollable annotation specimen"
+          >
+            <svg
+              class="annotation-specimen"
+              data-annotation-specimen
+              viewBox="0 0 960 760"
+              width="100%"
+              height="760"
+              role="img"
+              aria-labelledby="annotation-specimen-title annotation-specimen-desc"
+            >
+              <title id="annotation-specimen-title">Bronto annotation variant specimen</title>
+              <desc id="annotation-specimen-desc">
+                Sixteen visible annotations demonstrate labels, callouts, connectors, subjects,
+                comparison marks, clusters, axis marks, timeline events and evidence notes.
+              </desc>
+
+              <rect class="annotation-specimen__panel" x="36" y="36" width="888" height="250" />
+              <line class="annotation-specimen__grid" x1="72" y1="232" x2="890" y2="232" />
+              <line class="annotation-specimen__grid" x1="72" y1="184" x2="890" y2="184" />
+              <line class="annotation-specimen__grid" x1="72" y1="136" x2="890" y2="136" />
+              <line class="annotation-specimen__grid" x1="72" y1="88" x2="890" y2="88" />
+              <line class="annotation-specimen__axis" x1="72" y1="248" x2="890" y2="248" />
+              <line class="annotation-specimen__axis" x1="72" y1="64" x2="72" y2="248" />
+              <rect
+                class="annotation-specimen__data"
+                style="--chart-color: var(--chart-1)"
+                x="104"
+                y="202"
+                width="58"
+                height="46"
+              />
+              <rect
+                class="annotation-specimen__data"
+                style="--chart-color: var(--chart-2)"
+                x="214"
+                y="164"
+                width="58"
+                height="84"
+              />
+              <rect
+                class="annotation-specimen__data"
+                style="--chart-color: var(--chart-3)"
+                x="324"
+                y="112"
+                width="58"
+                height="136"
+              />
+              <rect
+                class="annotation-specimen__data"
+                style="--chart-color: var(--chart-4)"
+                x="434"
+                y="86"
+                width="58"
+                height="162"
+              />
+              <rect
+                class="annotation-specimen__data"
+                style="--chart-color: var(--chart-5)"
+                x="544"
+                y="132"
+                width="58"
+                height="116"
+              />
+              <rect
+                class="annotation-specimen__data"
+                style="--chart-color: var(--chart-6)"
+                x="654"
+                y="184"
+                width="58"
+                height="64"
+              />
+              <path
+                class="annotation-specimen__line"
+                d="M133,202L243,164L353,112L463,86L573,132L683,184"
+              />
+
+              <g
+                class="ui-annotation ui-annotation--label ui-annotation--muted"
+                transform="translate(82, 266)"
+              >
+                <g class="ui-annotation__note">
+                  <text class="ui-annotation__title">Label</text>
+                  <text class="ui-annotation__label" y="16">Baseline axis</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--callout ui-annotation--accent ui-annotation--reveal"
+                transform="translate(243, 164)"
+              >
+                <path class="ui-annotation__connector" d="M0,0L-108,-118" />
+                <path
+                  class="ui-annotation__connector-end"
+                  d="M0,-3A3,3 0 1 1 0,3A3,3 0 1 1 0,-3Z"
+                />
+                <g class="ui-annotation__note" transform="translate(-206, -142)">
+                  <rect x="-8" y="-18" width="126" height="44" />
+                  <path class="ui-annotation__note-line" d="M0,20H82" />
+                  <text class="ui-annotation__title" y="-4">Callout</text>
+                  <text class="ui-annotation__label" y="14">Point context</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--elbow ui-annotation--warning"
+                transform="translate(353, 112)"
+              >
+                <path class="ui-annotation__connector" d="M0,0L46,-46L132,-46" />
+                <g class="ui-annotation__note" transform="translate(132, -46)">
+                  <rect x="-8" y="-18" width="116" height="44" />
+                  <path class="ui-annotation__note-line" d="M0,20H92" />
+                  <text class="ui-annotation__title" y="-4">Elbow</text>
+                  <text class="ui-annotation__label" y="14">Dogleg note</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--curve ui-annotation--success"
+                transform="translate(573, 132)"
+              >
+                <path class="ui-annotation__connector" d="M0,0C46,0 74,60 126,60" />
+                <g class="ui-annotation__note" transform="translate(126, 60)">
+                  <rect x="-8" y="-18" width="120" height="44" />
+                  <path class="ui-annotation__note-line" d="M0,20H96" />
+                  <text class="ui-annotation__title" y="-4">Curve</text>
+                  <text class="ui-annotation__label" y="14">Recovery bend</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--circle ui-annotation--accent ui-annotation--draw"
+                transform="translate(463, 86)"
+              >
+                <path
+                  class="ui-annotation__subject"
+                  d="M0,-22A22,22 0 1 1 0,22A22,22 0 1 1 0,-22Z"
+                />
+                <path class="ui-annotation__connector" d="M17,-14L76,-68" />
+                <g class="ui-annotation__note" transform="translate(76, -68)">
+                  <rect x="-8" y="-18" width="112" height="44" />
+                  <path class="ui-annotation__note-line" d="M0,20H90" />
+                  <text class="ui-annotation__title" y="-4">Circle</text>
+                  <text class="ui-annotation__label" y="14">Peak focus</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--rect ui-annotation--info"
+                transform="translate(133, 202)"
+              >
+                <path class="ui-annotation__subject" d="M-34,-10H34V56H-34Z" />
+                <path class="ui-annotation__connector" d="M34,-4L144,-74" />
+                <g class="ui-annotation__note" transform="translate(144, -74)">
+                  <rect x="-8" y="-18" width="108" height="44" />
+                  <path class="ui-annotation__note-line" d="M0,20H84" />
+                  <text class="ui-annotation__title" y="-4">Rect</text>
+                  <text class="ui-annotation__label" y="14">Range mark</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--threshold ui-annotation--danger"
+                transform="translate(0, 136)"
+              >
+                <path class="ui-annotation__subject" d="M72,0L890,0" />
+                <path class="ui-annotation__connector" d="M760,0L812,-42" />
+                <g class="ui-annotation__note" transform="translate(812, -42)">
+                  <rect x="-8" y="-18" width="112" height="44" />
+                  <path class="ui-annotation__note-line" d="M0,20H86" />
+                  <text class="ui-annotation__title" y="-4">Threshold</text>
+                  <text class="ui-annotation__label" y="14">Target line</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--badge ui-annotation--info ui-annotation--pulse"
+                transform="translate(683, 184)"
+              >
+                <circle class="ui-annotation__badge" r="14" />
+                <text class="ui-annotation__title" text-anchor="middle" dominant-baseline="central">
+                  1
+                </text>
+              </g>
+
+              <rect class="annotation-specimen__panel" x="36" y="330" width="888" height="190" />
+              <line class="annotation-specimen__axis" x1="90" y1="470" x2="870" y2="470" />
+              <path
+                class="annotation-specimen__line"
+                d="M112,442L232,420L352,392L472,404L592,356L712,382L844,342"
+              />
+
+              <g
+                class="ui-annotation ui-annotation--bracket ui-annotation--muted"
+                transform="translate(112, 474)"
+              >
+                <path class="ui-annotation__subject" d="M0,0V18H240V0" />
+                <path class="ui-annotation__connector" d="M120,18L156,48" />
+                <g class="ui-annotation__note" transform="translate(156, 48)">
+                  <rect x="-8" y="-18" width="126" height="44" />
+                  <text class="ui-annotation__title" y="-4">Bracket</text>
+                  <text class="ui-annotation__label" y="14">First window</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--band ui-annotation--warning"
+                transform="translate(420, 344)"
+              >
+                <path class="ui-annotation__subject" d="M0,0H190V72H0Z" />
+                <path class="ui-annotation__connector" d="M160,8L216,-30" />
+                <g class="ui-annotation__note" transform="translate(216, -30)">
+                  <rect x="-8" y="-18" width="112" height="44" />
+                  <path class="ui-annotation__note-line" d="M0,20H88" />
+                  <text class="ui-annotation__title" y="-4">Band</text>
+                  <text class="ui-annotation__label" y="14">Risk interval</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--slope ui-annotation--success"
+                transform="translate(596, 382)"
+              >
+                <path class="ui-annotation__subject" d="M0,0L248,-40" />
+                <path class="ui-annotation__connector" d="M188,-30L214,-82" />
+                <g class="ui-annotation__note" transform="translate(214, -82)">
+                  <rect x="-8" y="-18" width="112" height="44" />
+                  <path class="ui-annotation__note-line" d="M0,20H88" />
+                  <text class="ui-annotation__title" y="-4">Slope</text>
+                  <text class="ui-annotation__label" y="14">Trend change</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--compare ui-annotation--accent"
+                transform="translate(102, 350)"
+              >
+                <path
+                  class="ui-annotation__subject"
+                  d="M0,0C26,0 26,14 52,14C52,14 52,28 52,28C52,14 78,14 78,0C78,0 78,0 104,0"
+                />
+                <path class="ui-annotation__connector" d="M52,28L52,68" />
+                <g class="ui-annotation__note" transform="translate(16, 88)">
+                  <rect x="-8" y="-18" width="118" height="44" />
+                  <text class="ui-annotation__title" y="-4">Compare</text>
+                  <text class="ui-annotation__label" y="14">Before/after</text>
+                </g>
+              </g>
+
+              <rect class="annotation-specimen__panel" x="36" y="564" width="888" height="150" />
+              <line class="annotation-specimen__axis" x1="84" y1="660" x2="876" y2="660" />
+              <circle cx="206" cy="632" r="4" fill="var(--text-dim)" />
+              <circle cx="218" cy="642" r="4" fill="var(--text-dim)" />
+              <circle cx="232" cy="626" r="4" fill="var(--text-dim)" />
+              <circle cx="632" cy="660" r="4" fill="var(--text-dim)" />
+              <circle cx="760" cy="660" r="4" fill="var(--text-dim)" />
+
+              <g
+                class="ui-annotation ui-annotation--cluster ui-annotation--danger"
+                transform="translate(206, 632)"
+              >
+                <path
+                  class="ui-annotation__subject"
+                  d="M0,-12A12,12 0 1 1 0,12A12,12 0 1 1 0,-12ZM22,-2A12,12 0 1 1 22,22A12,12 0 1 1 22,-2ZM36,-18A12,12 0 1 1 36,6A12,12 0 1 1 36,-18Z"
+                />
+                <path class="ui-annotation__connector" d="M40,-20L92,-58" />
+                <g class="ui-annotation__note" transform="translate(92, -58)">
+                  <rect x="-8" y="-18" width="118" height="44" />
+                  <path class="ui-annotation__note-line" d="M0,20H92" />
+                  <text class="ui-annotation__title" y="-4">Cluster</text>
+                  <text class="ui-annotation__label" y="14">Outliers</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--axis ui-annotation--muted"
+                transform="translate(632, 660)"
+              >
+                <path class="ui-annotation__subject" d="M0,-24V24" />
+                <path class="ui-annotation__connector" d="M0,-24L-96,-58" />
+                <g class="ui-annotation__note" transform="translate(-204, -72)">
+                  <rect x="-8" y="-18" width="126" height="44" />
+                  <text class="ui-annotation__title" y="-4">Axis</text>
+                  <text class="ui-annotation__label" y="14">Milestone</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--timeline ui-annotation--info"
+                transform="translate(760, 660)"
+              >
+                <path class="ui-annotation__subject" d="M0,0L8,18H-8Z" />
+                <path class="ui-annotation__connector" d="M0,18L46,48" />
+                <g class="ui-annotation__note" transform="translate(46, 48)">
+                  <rect x="-8" y="-18" width="106" height="44" />
+                  <text class="ui-annotation__title" y="-4">Timeline</text>
+                  <text class="ui-annotation__label" y="14">Event pin</text>
+                </g>
+              </g>
+
+              <g
+                class="ui-annotation ui-annotation--evidence ui-annotation--accent ui-annotation--focus"
+                transform="translate(478, 632)"
+              >
+                <rect class="ui-annotation__badge" x="-18" y="-18" width="36" height="36" />
+                <path class="ui-annotation__connector" d="M18,0L112,-58" />
+                <g class="ui-annotation__note" transform="translate(112, -58)">
+                  <rect x="-8" y="-18" width="122" height="44" />
+                  <path class="ui-annotation__note-line" d="M0,20H98" />
+                  <text class="ui-annotation__title" y="-4">Evidence</text>
+                  <text class="ui-annotation__label" y="14">Linked proof</text>
+                </g>
+              </g>
+            </svg>
+          </div>
+
+          <div class="ui-chart__fallback">
+            <div class="ui-table-wrap">
+              <table class="ui-table ui-table--dense">
+                <caption>
+                  Annotation specimen fallback
+                </caption>
+                <thead>
+                  <tr>
+                    <th>Variant</th>
+                    <th>Use</th>
+                    <th>Tone</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="is-key">label</td>
+                    <td>Direct label for an obvious subject</td>
+                    <td>muted</td>
+                  </tr>
+                  <tr>
+                    <td class="is-key">callout</td>
+                    <td>Plain point callout</td>
+                    <td>accent</td>
+                  </tr>
+                  <tr>
+                    <td class="is-key">elbow</td>
+                    <td>Dogleg connector around chart marks</td>
+                    <td>warning</td>
+                  </tr>
+                  <tr>
+                    <td class="is-key">curve</td>
+                    <td>Organic connector for path changes</td>
+                    <td>success</td>
+                  </tr>
+                  <tr>
+                    <td class="is-key">circle</td>
+                    <td>Peak or local cluster subject</td>
+                    <td>accent</td>
+                  </tr>
+                  <tr>
+                    <td class="is-key">rect</td>
+                    <td>Bar, block or region subject</td>
+                    <td>info</td>
+                  </tr>
+                  <tr>
+                    <td class="is-key">threshold</td>
+                    <td>Limit or target rule</td>
+                    <td>danger</td>
+                  </tr>
+                  <tr>
+                    <td class="is-key">badge</td>
+                    <td>Compact numbered mark</td>
+                    <td>info</td>
+                  </tr>
+                  <tr>
+                    <td class="is-key">bracket</td>
+                    <td>Range span</td>
+                    <td>muted</td>
+                  </tr>
+                  <tr>
+                    <td class="is-key">band</td>
+                    <td>Interval or risk window</td>
+                    <td>warning</td>
+                  </tr>
+                  <tr>
+                    <td class="is-key">slope</td>
+                    <td>Trend change</td>
+                    <td>success</td>
+                  </tr>
+                  <tr>
+                    <td class="is-key">compare</td>
+                    <td>Before/after grouping</td>
+                    <td>accent</td>
+                  </tr>
+                  <tr>
+                    <td class="is-key">cluster</td>
+                    <td>Outlier group</td>
+                    <td>danger</td>
+                  </tr>
+                  <tr>
+                    <td class="is-key">axis</td>
+                    <td>Axis milestone</td>
+                    <td>muted</td>
+                  </tr>
+                  <tr>
+                    <td class="is-key">timeline</td>
+                    <td>Event pin</td>
+                    <td>info</td>
+                  </tr>
+                  <tr>
+                    <td class="is-key">evidence</td>
+                    <td>Proof or source link marker</td>
+                    <td>accent</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </figure>
+      </section>
+    </main>
+  </body>
+</html>

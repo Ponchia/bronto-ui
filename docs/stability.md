@@ -20,6 +20,7 @@ patches are non-breaking. This matrix defines what counts as public API.
 | Skins (`@ponchia/ui/skins`, `css/skins.css`) | Stable additive | Existing skin names stay valid. New skins are additive. Skins are root-level choices. |
 | Charts (`@ponchia/ui/charts`, `charts.json`, `css/dataviz.css`) | Stable additive | Token names, JSON shape, and 8 categorical slots are public. Exact palette values may tune if gates and release notes justify it. |
 | Reports (`css/report.css`, `.ui-report*`, `.ui-chart*`, print utilities) | Stable additive | Report class names, BEM part names, chart helper class names, and print utility names are public. Report CSS is opt-in and not imported by the default bundle. |
+| Annotations (`@ponchia/ui/annotations`, `css/annotations.css`, `.ui-annotation*`) | Stable additive | SVG annotation class names, recipe option names, and helper function names are public. Helper internals and exact path-control heuristics may tune before 1.0. |
 | Generated docs shipped in npm | Stable paths | `llms.txt` and exported docs paths stay shipped and resolvable within a compatible minor. Markdown/text assets are for reading unless your runtime has a loader. Generated content may change with the source contract. |
 | Demo, examples, tests, scripts | Internal | Useful for learning and verification, but not shipped runtime API unless a path is explicitly exported in `package.json`. |
 

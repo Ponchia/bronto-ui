@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../dist/bronto.css" />
     <link rel="stylesheet" href="../dist/css/report.css" />
     <link rel="stylesheet" href="../dist/css/dataviz.css" />
+    <link rel="stylesheet" href="../dist/css/annotations.css" />
   </head>
   <body>
     <main class="ui-report ui-report--numbered">
@@ -200,6 +201,141 @@
               </div>
             </div>
           </div>
+          <svg
+            viewBox="0 0 640 360"
+            width="100%"
+            height="360"
+            role="img"
+            aria-labelledby="focus-annotation-title focus-annotation-desc"
+          >
+            <title id="focus-annotation-title">Annotated focus chart</title>
+            <desc id="focus-annotation-desc">
+              Annotation styles mark the baseline, target threshold, week 4 peak, delivery watch
+              zone and recovery path.
+            </desc>
+            <rect x="44" y="40" width="552" height="240" fill="var(--panel-soft)" />
+            <line x1="60" y1="248" x2="584" y2="248" stroke="var(--line)" />
+            <line x1="60" y1="200" x2="584" y2="200" stroke="var(--line)" />
+            <line x1="60" y1="152" x2="584" y2="152" stroke="var(--line)" />
+            <line x1="60" y1="104" x2="584" y2="104" stroke="var(--line)" />
+            <rect x="76" y="210" width="74" height="38" fill="var(--chart-1)" />
+            <rect x="188" y="166" width="74" height="82" fill="var(--chart-2)" />
+            <rect x="300" y="122" width="74" height="126" fill="var(--chart-3)" />
+            <rect x="412" y="88" width="74" height="160" fill="var(--chart-1)" />
+            <rect x="524" y="146" width="50" height="102" fill="var(--chart-3)" />
+            <path
+              d="M113,210L225,166L337,122L449,88L549,146"
+              fill="none"
+              stroke="var(--text-dim)"
+              stroke-width="1.5"
+              vector-effect="non-scaling-stroke"
+            />
+            <g
+              class="ui-annotation ui-annotation--label ui-annotation--muted"
+              transform="translate(62, 268)"
+            >
+              <g class="ui-annotation__note">
+                <text class="ui-annotation__title">Baseline</text>
+                <text class="ui-annotation__label" y="16">7 h maintenance floor</text>
+              </g>
+            </g>
+            <g
+              class="ui-annotation ui-annotation--threshold ui-annotation--danger"
+              transform="translate(0, 152)"
+            >
+              <path class="ui-annotation__subject" d="M60,0L584,0" />
+              <path class="ui-annotation__connector" d="M520,0L568,-32" />
+              <circle class="ui-annotation__connector-end" cx="520" cy="0" r="3" />
+              <g class="ui-annotation__note" transform="translate(488, -66)">
+                <rect x="-8" y="-18" width="118" height="42" />
+                <path class="ui-annotation__note-line" d="M0,20H94" />
+                <text class="ui-annotation__title" y="-4">Threshold</text>
+                <text class="ui-annotation__label" y="14">Target ceiling</text>
+              </g>
+            </g>
+            <g
+              class="ui-annotation ui-annotation--circle ui-annotation--accent"
+              transform="translate(449, 88)"
+            >
+              <path class="ui-annotation__subject" d="M0,-22A22,22 0 1 1 0,22A22,22 0 1 1 0,-22Z" />
+              <path class="ui-annotation__connector" d="M-20.123,-9.281L-118,-54" />
+              <circle class="ui-annotation__connector-end" cx="-118" cy="-54" r="3" />
+              <g class="ui-annotation__note" transform="translate(-214, -76)">
+                <rect x="-8" y="-18" width="126" height="46" />
+                <path class="ui-annotation__note-line" d="M0,24H98" />
+                <text class="ui-annotation__title" y="-4">Peak</text>
+                <text class="ui-annotation__label" y="14">18 h research</text>
+              </g>
+            </g>
+            <g
+              class="ui-annotation ui-annotation--elbow ui-annotation--warning"
+              transform="translate(225, 166)"
+            >
+              <path class="ui-annotation__subject" d="M-46,-10H46V90H-46Z" />
+              <path class="ui-annotation__connector" d="M-46,-10L-92,-52L-148,-52" />
+              <g class="ui-annotation__note" transform="translate(-242, -62)">
+                <rect x="-8" y="-18" width="104" height="42" />
+                <path class="ui-annotation__note-line" d="M0,20H86" />
+                <text class="ui-annotation__title" y="-4">Watch</text>
+                <text class="ui-annotation__label" y="14">Delivery load</text>
+              </g>
+            </g>
+            <g
+              class="ui-annotation ui-annotation--curve ui-annotation--info"
+              transform="translate(549, 146)"
+            >
+              <path class="ui-annotation__subject" d="M0,-15A15,15 0 1 1 0,15A15,15 0 1 1 0,-15Z" />
+              <path class="ui-annotation__connector" d="M-13,6C-54,24 -88,52 -128,70" />
+              <g class="ui-annotation__note" transform="translate(-218, 76)">
+                <rect x="-8" y="-18" width="112" height="42" />
+                <path class="ui-annotation__note-line" d="M0,20H90" />
+                <text class="ui-annotation__title" y="-4">Curve</text>
+                <text class="ui-annotation__label" y="14">Recovery path</text>
+              </g>
+            </g>
+            <g
+              class="ui-annotation ui-annotation--rect ui-annotation--success"
+              transform="translate(337, 122)"
+            >
+              <path class="ui-annotation__subject" d="M-46,-12H46V136H-46Z" />
+              <path class="ui-annotation__connector" d="M46,20L112,48" />
+              <g class="ui-annotation__note" transform="translate(112, 48)">
+                <rect x="-8" y="-18" width="114" height="42" />
+                <path class="ui-annotation__note-line" d="M0,20H92" />
+                <text class="ui-annotation__title" y="-4">Stable</text>
+                <text class="ui-annotation__label" y="14">Midweek focus</text>
+              </g>
+            </g>
+            <g
+              class="ui-annotation ui-annotation--badge ui-annotation--accent"
+              transform="translate(113, 210)"
+            >
+              <circle class="ui-annotation__badge" r="13" />
+              <text class="ui-annotation__title" text-anchor="middle" dominant-baseline="central">
+                1
+              </text>
+            </g>
+            <g
+              class="ui-annotation ui-annotation--badge ui-annotation--muted"
+              transform="translate(584, 248)"
+            >
+              <circle class="ui-annotation__badge" r="10" />
+              <text class="ui-annotation__title" text-anchor="middle" dominant-baseline="central">
+                ?
+              </text>
+            </g>
+            <g
+              class="ui-annotation ui-annotation--callout ui-annotation--muted"
+              transform="translate(584, 248)"
+            >
+              <path class="ui-annotation__connector" d="M0,0L-86,48" />
+              <g class="ui-annotation__note" transform="translate(-180, 50)">
+                <path class="ui-annotation__note-line" d="M0,0H90" />
+                <text class="ui-annotation__title" y="-8">Open</text>
+                <text class="ui-annotation__label" y="12">Needs next data point</text>
+              </g>
+            </g>
+          </svg>
           <div class="ui-chart__fallback">
             <div class="ui-table-wrap">
               <table class="ui-table ui-table--dense">

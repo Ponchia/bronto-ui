@@ -263,6 +263,28 @@ dashboards: `--chart-1..8` (categorical), `--chart-seq-*` (sequential),
   Cap a chart at ~8 series. Full detail in [theming.md](theming.md) →
   "Data-viz palette".
 
+## SVG annotations: subject, connector, note
+
+`@ponchia/ui/css/annotations.css` (opt-in) adds Bronto-styled SVG annotations
+for reports and chart figures. It is a visual grammar, not a charting or
+authoring engine.
+
+- Compose each callout from `ui-annotation` plus a subject
+  (`ui-annotation__subject`), connector (`ui-annotation__connector`), and note
+  (`ui-annotation__note`, `ui-annotation__title`, `ui-annotation__label`).
+- Use `ui.annotation({ variant, tone, motion })` when building class strings in
+  JS. The default is a callout in the accent tone; motion is always opt-in.
+- Use `@ponchia/ui/annotations` when you want deterministic SVG path strings
+  for circle, rect, threshold, bracket, band, slope, comparison, cluster, axis,
+  timeline, line, elbow, or curve annotations. Use `notePlacement()` for a
+  single bounded note when you need a conservative first placement pass.
+- Status tones are only for status-bearing callouts; otherwise use `accent` for
+  the main insight and `muted` for secondary labels.
+- Keep annotated charts sparse. Dense figures need a scrollable SVG, a
+  simplified mobile SVG, or complete caption/fallback text.
+- Annotation text must be visible or represented in the figure caption, SVG
+  `<desc>`, or fallback table. Full detail in [annotations.md](annotations.md).
+
 ## When to add a behavior
 
 The CSS is the framework; `@ponchia/ui/behaviors` is the *sanctioned*

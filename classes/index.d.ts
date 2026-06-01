@@ -263,6 +263,41 @@ export declare const cls: {
   readonly chartTrack: 'ui-chart__track';
   readonly chartFill: 'ui-chart__fill';
   readonly chartFallback: 'ui-chart__fallback';
+  readonly annotation: 'ui-annotation';
+  readonly annotationSubject: 'ui-annotation__subject';
+  readonly annotationConnector: 'ui-annotation__connector';
+  readonly annotationConnectorEnd: 'ui-annotation__connector-end';
+  readonly annotationNote: 'ui-annotation__note';
+  readonly annotationNoteLine: 'ui-annotation__note-line';
+  readonly annotationTitle: 'ui-annotation__title';
+  readonly annotationLabel: 'ui-annotation__label';
+  readonly annotationBadge: 'ui-annotation__badge';
+  readonly annotationLabelVariant: 'ui-annotation--label';
+  readonly annotationCallout: 'ui-annotation--callout';
+  readonly annotationElbow: 'ui-annotation--elbow';
+  readonly annotationCurve: 'ui-annotation--curve';
+  readonly annotationCircle: 'ui-annotation--circle';
+  readonly annotationRect: 'ui-annotation--rect';
+  readonly annotationThreshold: 'ui-annotation--threshold';
+  readonly annotationBadgeVariant: 'ui-annotation--badge';
+  readonly annotationBracket: 'ui-annotation--bracket';
+  readonly annotationBand: 'ui-annotation--band';
+  readonly annotationSlope: 'ui-annotation--slope';
+  readonly annotationCompare: 'ui-annotation--compare';
+  readonly annotationCluster: 'ui-annotation--cluster';
+  readonly annotationAxis: 'ui-annotation--axis';
+  readonly annotationTimeline: 'ui-annotation--timeline';
+  readonly annotationEvidence: 'ui-annotation--evidence';
+  readonly annotationAccent: 'ui-annotation--accent';
+  readonly annotationMuted: 'ui-annotation--muted';
+  readonly annotationSuccess: 'ui-annotation--success';
+  readonly annotationWarning: 'ui-annotation--warning';
+  readonly annotationDanger: 'ui-annotation--danger';
+  readonly annotationInfo: 'ui-annotation--info';
+  readonly annotationDraw: 'ui-annotation--draw';
+  readonly annotationPulse: 'ui-annotation--pulse';
+  readonly annotationReveal: 'ui-annotation--reveal';
+  readonly annotationFocus: 'ui-annotation--focus';
   readonly printOnly: 'ui-print-only';
   readonly screenOnly: 'ui-screen-only';
   readonly breakBefore: 'ui-break-before';
@@ -414,6 +449,11 @@ export interface InputIconOpts {
   /** Place the icon at the inline-end instead of the start. */
   end?: boolean;
 }
+export interface AnnotationOpts {
+  variant?: 'label' | 'callout' | 'elbow' | 'curve' | 'circle' | 'rect' | 'threshold' | 'badge' | 'bracket' | 'band' | 'slope' | 'compare' | 'cluster' | 'axis' | 'timeline' | 'evidence';
+  tone?: 'accent' | 'muted' | 'success' | 'warning' | 'danger' | 'info';
+  motion?: 'draw' | 'pulse' | 'reveal' | 'focus';
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -442,6 +482,7 @@ export interface Ui {
   container(opts?: ContainerOpts): string;
   tag(opts?: TagOpts): string;
   inputIcon(opts?: InputIconOpts): string;
+  annotation(opts?: AnnotationOpts): string;
 }
 
 export declare const ui: Ui;
