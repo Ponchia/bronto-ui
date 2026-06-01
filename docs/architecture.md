@@ -68,6 +68,9 @@ on top of the CSS, none of which require a framework commitment**:
   SSR-safe. Chosen over Web Components (SSR/hydration friction with Astro
   islands and SvelteKit) and over per-framework packages (maintenance
   multiplier). Revisit Web Components only if stateful widgets accumulate.
+  `index.js` is a barrel; each behavior lives in its own module
+  (`dialog.js`, `combobox.js`, …) over a shared `internal.js` of DOM helpers,
+  so the public import surface is unchanged.
 - **glyphs/** — static bitmap data and SSR-safe render helpers. The
   256-cell DOM renderers are for display and solid inline icons; the `.ui-icon`
   mask renderer is for dense icon-at-scale use.

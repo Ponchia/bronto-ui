@@ -58,9 +58,6 @@ without turning the project into a per-framework component suite.
   remains the hard stop.
 - **Docs contract.** Keep `docs/stability.md`, README, SECURITY, ADR, and
   CHANGELOG in sync before every release.
-- **Behavior internals.** Split high-complexity behavior internals when it
-  reduces maintenance risk, while preserving the existing public barrel and
-  cleanup contracts.
 
 ## Later / under consideration
 
