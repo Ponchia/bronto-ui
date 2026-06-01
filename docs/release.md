@@ -2,7 +2,7 @@
 
 ## Before Tagging
 
-1. Reconcile `README.md`, `CHANGELOG.md`, `ROADMAP.md`, `SECURITY.md`, and
+1. Reconcile `README.md`, `CHANGELOG.md`, `ROADMAP.md`, `.github/SECURITY.md`, and
    `docs/adr/*` against the version being released.
 2. Run `npm run check`, `npm test`, and the Playwright suite in the pinned
    container when visual baselines changed.

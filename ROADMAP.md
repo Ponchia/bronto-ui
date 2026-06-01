@@ -85,6 +85,6 @@ remain deliberate platform choices.
 ## Support expectations
 
 Solo-maintained, pre-1.0. Breaking changes ship in the **minor**; patches are
-non-breaking. Security issues: see `SECURITY.md` for private reporting.
+non-breaking. Security issues: see `.github/SECURITY.md` for private reporting.
 Best-effort response; no SLA. Adopters should pin the compatible minor and
 visual-test their own app on upgrade.
