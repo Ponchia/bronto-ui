@@ -40,12 +40,6 @@
       .legend-demo__ramp {
         min-inline-size: 12rem;
       }
-
-      /* `.ui-chart__bar` sets `display`, which defeats the UA `[hidden]` rule —
-         so the host re-asserts it when hiding a toggled-off series. */
-      [data-series-bar][hidden] {
-        display: none;
-      }
     </style>
   </head>
   <body>
@@ -56,6 +50,9 @@
       <div class="legend-demo__grid">
         <section class="legend-demo__card" aria-labelledby="cat-h">
           <h2 id="cat-h" class="ui-eyebrow">Categorical (colour + pattern)</h2>
+          <p class="ui-legend__caption">
+            Series 1 is the un-patterned accent baseline; series 2+ add a redundant dot pattern.
+          </p>
           <ul class="ui-legend" aria-label="Focus series">
             <li class="ui-legend__item">
               <span

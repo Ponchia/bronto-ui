@@ -246,6 +246,12 @@
     forced-color-adjust: none;
   }
 
+  /* Keep the ramp's hues instead of collapsing to one system colour (the tick
+     labels still carry the scale either way). */
+  .ui-legend__track {
+    forced-color-adjust: none;
+  }
+
   .ui-legend__item.is-inactive,
   .ui-legend__item[aria-pressed='false'] {
     opacity: 1;
