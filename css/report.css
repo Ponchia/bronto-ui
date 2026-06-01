@@ -303,6 +303,8 @@
 }
 
 @media print {
+  /* Re-tokenises the base 18mm default (base.css) so report margins stay
+     themeable via --report-page-margin. */
   @page {
     margin: var(--report-page-margin);
   }
@@ -310,8 +312,33 @@
   .ui-report {
     --report-padding-block: 0;
 
+    /* Force an ink-on-white document regardless of the on-screen theme: the
+       palette tokens are [data-theme]-scoped raw values, so `color-scheme`
+       alone can't flip them. Re-point the handful the report renders with to
+       neutral (achromatic) ink/paper values so a dark-theme report doesn't
+       print light-grey text on white. */
+    color-scheme: light;
+
+    --text: #111;
+    --text-soft: #2a2a2a;
+    --text-dim: #555;
+    --panel: #fff;
+    --panel-soft: #f7f7f7;
+    --line: #d9d9d9;
+    --line-strong: #b3b3b3;
+
     inline-size: auto;
     padding: 0;
+  }
+
+  /* Meaning-carrying chart fills must survive the print "economy" default
+     (which drops backgrounds) without relying on a `.ui-print-exact`
+     ancestor. The accent on `.ui-report__summary` is a border, so it already
+     prints. */
+  .ui-chart__fill,
+  .ui-chart__swatch {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   .ui-report__cover {

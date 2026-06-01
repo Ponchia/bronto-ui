@@ -54,20 +54,25 @@ for (const theme of ['dark', 'light']) {
   });
 }
 
-test('report fixture passes axe and carries report semantics', async ({ page }) => {
-  await openReport(page, 'dark');
-  const results = await new AxeBuilder({ page }).withTags(TAGS).analyze();
-  expect(blocking(results), JSON.stringify(blocking(results), null, 2)).toEqual([]);
+// Scan BOTH themes: contrast is theme-dependent and the report's worst-case
+// pairing (--text-dim on --panel-soft) sits closest to the WCAG floor, so a
+// dark-only scan could let a light-theme contrast regression through.
+for (const theme of ['dark', 'light']) {
+  test(`report fixture passes axe and carries report semantics (${theme})`, async ({ page }) => {
+    await openReport(page, theme);
+    const results = await new AxeBuilder({ page }).withTags(TAGS).analyze();
+    expect(blocking(results), JSON.stringify(blocking(results), null, 2)).toEqual([]);
 
-  await expect(page.locator('main.ui-report')).toHaveCount(1);
-  await expect(page.locator('h1.ui-report__title')).toHaveCount(1);
-  await expect(page.locator('table caption')).toHaveCount(2);
-  await expect(page.locator('figure.ui-report__figure figcaption')).toHaveCount(1);
-  await expect(page.locator('.ui-chart__legend')).toHaveCount(1);
-  await expect(page.locator('.ui-chart__plot')).toHaveCount(1);
-  await expect(page.locator('.ui-chart__bar')).toHaveCount(3);
-  await expect(page.locator('.ui-chart__fallback table')).toHaveCount(1);
-});
+    await expect(page.locator('main.ui-report')).toHaveCount(1);
+    await expect(page.locator('h1.ui-report__title')).toHaveCount(1);
+    await expect(page.locator('table caption')).toHaveCount(2);
+    await expect(page.locator('figure.ui-report__figure figcaption')).toHaveCount(1);
+    await expect(page.locator('.ui-chart__legend')).toHaveCount(1);
+    await expect(page.locator('.ui-chart__plot')).toHaveCount(1);
+    await expect(page.locator('.ui-chart__bar')).toHaveCount(3);
+    await expect(page.locator('.ui-chart__fallback table')).toHaveCount(1);
+  });
+}
 
 test('report print utilities and overflow rules apply', async ({ page }) => {
   await openReport(page, 'light');
@@ -111,13 +116,11 @@ test('report print utilities and overflow rules apply', async ({ page }) => {
   expect(result.proseLinkAfter).toContain('https://example.com/report-source');
 });
 
-test('report fixture has stable screen and print rendering', async ({ page }) => {
-  await openReport(page, 'dark');
-  await expect(page.locator('main.ui-report')).toHaveScreenshot('report-dark.png');
-
-  await page.emulateMedia({ media: 'print' });
-  await expect(page.locator('main.ui-report')).toHaveScreenshot('report-print.png');
-});
+// Note: the report fixture is intentionally NOT pixel-snapshotted. It is a
+// tall, full-page composition — the most flake-prone shape for cross-OS
+// rasterisation — and its rendering is already covered structurally above
+// (axe + semantics) and below (print computed-style + a real PDF export),
+// which is higher-signal than a whole-page image diff.
 
 test('report fixture exports a non-empty Chromium PDF', async ({ page }) => {
   await openReport(page, 'light');

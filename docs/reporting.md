@@ -39,11 +39,11 @@ sanitize that content before rendering it and do not initialize
     <p class="ui-eyebrow">Quarterly review</p>
     <h1 class="ui-report__title">Personal systems report</h1>
     <p class="ui-report__subtitle">A static report generated from trusted data.</p>
-    <ol class="ui-report__meta">
+    <ul class="ui-report__meta">
       <li><time datetime="2026-06-01">2026-06-01</time></li>
       <li>Static HTML</li>
       <li>Chromium PDF-ready</li>
-    </ol>
+    </ul>
   </header>
 
   <nav class="ui-report__toc" aria-label="Report contents">
@@ -70,8 +70,8 @@ sanitize that content before rendering it and do not initialize
 
   <section id="findings" class="ui-report__section">
     <h2 class="ui-report__section-head">Findings</h2>
-    <article class="ui-report__finding">
-      <p class="ui-eyebrow">Finding</p>
+    <article class="ui-report__finding" aria-labelledby="finding-1">
+      <p class="ui-eyebrow" id="finding-1">Finding 1 — short title</p>
       <div class="ui-prose">
         <p>Use prose only for narrative body content.</p>
       </div>
@@ -83,10 +83,15 @@ sanitize that content before rendering it and do not initialize
 ## Composition rules
 
 - Use `ui-report` as the page-level wrapper. Add `ui-report--numbered` when
-  section headings should auto-number.
+  section headings should auto-number. Add `ui-report--compact` to tighten the
+  whole report's vertical rhythm (gap + page padding) for dense briefs — this
+  is the document-level density toggle, distinct from `ui-report__cover--compact`
+  below, which only shrinks the cover.
 - Use `ui-report__cover` for title, subtitle, author/date, and generation
   metadata. Add `ui-report__cover--compact` for short screen-first reports.
-  Use `ui-report__header` for compact in-page headers.
+  Use `ui-report__header` for a compact in-page header instead of a full cover
+  (same role, no tall hero block). Author `ui-report__meta` as a `<ul>` — the
+  facts it lists are unordered.
 - Use `ui-report__section` and `ui-report__section-head` for report chapters.
   Keep one `h1` for the report title; use ordered `h2`/`h3` headings after it.
 - Add `ui-report__section--unnumbered` to appendices, sources, or footnotes
@@ -98,13 +103,26 @@ sanitize that content before rendering it and do not initialize
   `ui-alert` for persistent notices, `ui-table` for structured evidence,
   `ui-timeline` for events, `ui-meter` for measured values, and `ui-num` for
   non-table numeric values.
+- Give `ui-report__finding` blocks an accessible name so the visual grouping is
+  also programmatic: point `aria-labelledby` at the block's `ui-eyebrow` label
+  (give it an `id`), or lead with a real heading. Do the same for a
+  multi-part `ui-report__evidence` block; a single evidence table is already
+  named by its own `<caption>`.
+- Name the `ui-report__sources` and `ui-report__footnotes` blocks
+  (`aria-labelledby` on their `ui-eyebrow`), and link footnotes both ways:
+  an in-text `<sup><a id="fnref1" href="#fn1">1</a></sup>` to an
+  `<ol><li id="fn1">… <a href="#fnref1">↩</a></li></ol>`. They are real
+  regions, not decoration.
 - Every `<table>` that carries report data should have a `<caption>`, header
-  cells, and `.is-num` on numeric columns. Keep raw Markdown tables inside
-  `ui-prose`; use `.ui-table` for curated evidence tables. If a
+  cells, and `.is-num` on numeric columns. (`.is-num`, `.is-pos`, `.is-neg`
+  and `.is-key` only take effect inside `.ui-table` cells and `.ui-stat`
+  deltas — they are not free-standing utilities.) Keep raw Markdown tables
+  inside `ui-prose`; use `.ui-table` for curated evidence tables. If a
   `ui-report__evidence` block contains only a `ui-table-wrap`, the report layer
   removes the inner frame so evidence tables do not look double-boxed.
 - Every `<figure>` should include a `figcaption` using
-  `ui-report__caption` or `ui-chart__caption`.
+  `ui-chart__caption` (chart figures) or `ui-report__caption` (any other
+  report figure); the two are interchangeable in style.
 - Do not use raw color values. Theme with `--accent`; use status tones for
   status; use chart tokens only in chart figures.
 
@@ -206,10 +224,22 @@ style itself.
 
 ## Print and PDF
 
-The supported export target is modern Chromium print/PDF with
-`printBackground: true`. Older HTML-to-PDF engines are not part of the browser
-floor and may not support cascade layers, `oklch()`, `color-mix()`, `:has()`,
-or modern paged-media behavior.
+The supported export target is modern Chromium print/PDF. Two ways to produce
+the file:
+
+- **By hand:** open the report in Chrome/Edge → Print (Cmd/Ctrl+P) → "Save as
+  PDF". In **More settings**, enable **Background graphics** (the dialog's
+  equivalent of `printBackground` — without it chart fills and swatches drop
+  out), and pick the paper size there. Paper size is a browser print setting,
+  not a token; the layer only themes the page _margin_ via
+  `--report-page-margin`.
+- **Headless (agents/CI):** `await page.pdf({ format: 'A4', printBackground: true })`
+  with Playwright or Puppeteer.
+
+The report prints ink-on-white regardless of the on-screen theme. Older
+HTML-to-PDF engines are not part of the browser floor and may not support
+cascade layers, `oklch()`, `color-mix()`, `:has()`, or modern paged-media
+behavior.
 
 - Use `ui-print-only` for content that should appear only in print.
 - Use `ui-screen-only` for navigation or helper content that should not print.
@@ -220,6 +250,12 @@ or modern paged-media behavior.
   export.
 - External links inside `ui-prose` print their URL automatically through the
   base print stylesheet.
+
+**Not provided** (use the browser's paged-media features, or author the markup
+yourself): running headers/footers with "Page X of Y", automatic table-of-contents
+pagination, multi-column layout, and automatic citation/footnote numbering. The
+report layer is a document grammar, not a paged-media or citation engine — do not
+fake page numbers with inert markup.
 
 ## LLM checklist
 
