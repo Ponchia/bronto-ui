@@ -18,8 +18,17 @@
          marks, connectors, spotlight, crosshair and selection. One entrypoint
          so the differentiator tier below renders; never in the core bundle. -->
     <link rel="stylesheet" href="../dist/css/analytical.css" />
-    <!-- Opt-in source/citation/provenance trust layer (0.5.0). Standalone leaf. -->
+    <!-- Opt-in app-tier leaves (0.5.0). Each a standalone entrypoint, never
+         bundled into core or the analytical roll-up; loaded here so their
+         differentiator-tier specimens below render as live, styled examples. -->
     <link rel="stylesheet" href="../dist/css/sources.css" />
+    <link rel="stylesheet" href="../dist/css/state.css" />
+    <link rel="stylesheet" href="../dist/css/generated.css" />
+    <link rel="stylesheet" href="../dist/css/workbench.css" />
+    <link rel="stylesheet" href="../dist/css/command.css" />
+    <!-- Opt-in report kit (0.5.0): the static chart-bar primitives the
+         standard-tier specimen renders. Standalone leaf, never bundled. -->
+    <link rel="stylesheet" href="../dist/css/report.css" />
     <style>
       /* No local @font-face: Doto ships in css/fonts.css (bundled by
          core.css) with URLs relative to the package, so it resolves here
