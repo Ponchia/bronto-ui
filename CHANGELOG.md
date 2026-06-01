@@ -139,6 +139,13 @@ hardening that had not yet been released.
   (minor-breaking) shape change** — the arrowhead now matches the connectors
   arrowhead. New `check:helpers-dts` gate keeps the hand-maintained
   `annotations`/`connectors` `.d.ts` in parity with their runtime exports.
+- The Doto webfont now ships as **woff2 only** (Brotli) instead of uncompressed
+  TTF: ~5.7 kB per weight vs ~137 kB, cutting the six-weight payload from ~823 kB
+  to ~35 kB (the dot-matrix glyphs compress ~96%) and shrinking the unpacked
+  tarball by roughly the same. No TTF fallback is carried — woff2 is supported by
+  the entire browser floor (ADR-0002: Chrome 125 / Safari 18 / Firefox 129).
+  `@font-face` is internal, so this is transparent to consumers; only self-hosts
+  that referenced `fonts/doto-*.ttf` directly need to point at `*.woff2`.
 - `docs/architecture.md` now ships in the package, so the offline rationale the
   shipped ADRs link to resolves inside the tarball.
 - `docs/stability.md` clarifies that `data-surface`/`data-density`/
