@@ -12,6 +12,7 @@ rewrites them:
 @import '@ponchia/ui/css/report.css';
 @import '@ponchia/ui/css/dataviz.css';
 @import '@ponchia/ui/css/annotations.css';
+@import '@ponchia/ui/css/legend.css';
 ```
 
 For standalone browser HTML, use real stylesheet URLs. Package specifiers like
@@ -22,11 +23,13 @@ For standalone browser HTML, use real stylesheet URLs. Package specifiers like
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/report.css" />
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/dataviz.css" />
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/annotations.css" />
+<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/legend.css" />
 ```
 
 If you copy the built CSS next to the report, keep the same relationship between
 `dist/bronto.css`, `dist/css/report.css`, `dist/css/dataviz.css`,
-`dist/css/annotations.css`, and `fonts/` so font URLs continue to resolve.
+`dist/css/annotations.css`, `dist/css/legend.css`, and `fonts/` so font URLs
+continue to resolve.
 
 The report layer is static and PDF-first. It does not initialize behaviors and
 does not sanitize content. If a report includes arbitrary LLM, CMS, or user HTML,
@@ -130,31 +133,33 @@ sanitize that content before rendering it and do not initialize
 
 ## Chart figure recipe
 
-The report layer supplies chart containers, legends, and a small static bar
-pattern, not a chart engine. For CSS/HTML/SVG charts, pair each chart color with
-a direct label, a pattern, or a fallback table.
+The report layer supplies chart containers and a small static bar pattern, not a
+chart engine. The data key is the standalone, portable `.ui-legend`
+(`@ponchia/ui/css/legend.css`) — see [legends.md](./legends.md). For
+CSS/HTML/SVG charts, pair each chart color with a direct label, a pattern, or a
+fallback table.
 
 ```html
 <figure class="ui-report__figure ui-chart ui-print-exact" role="group" aria-labelledby="chart-title">
   <figcaption id="chart-title" class="ui-chart__caption">
     Fig 1 - Weekly focus split
   </figcaption>
-  <ul class="ui-chart__legend" aria-label="Series">
-    <li>
+  <ul class="ui-legend" aria-label="Series">
+    <li class="ui-legend__item">
       <span
-        class="ui-chart__swatch"
+        class="ui-legend__swatch"
         style="--chart-color: var(--chart-1); --chart-pattern: var(--chart-pattern-1)"
         aria-hidden="true"
       ></span>
-      Research
+      <span class="ui-legend__label">Research</span>
     </li>
-    <li>
+    <li class="ui-legend__item">
       <span
-        class="ui-chart__swatch"
+        class="ui-legend__swatch"
         style="--chart-color: var(--chart-2); --chart-pattern: var(--chart-pattern-2)"
         aria-hidden="true"
       ></span>
-      Delivery
+      <span class="ui-legend__label">Delivery</span>
     </li>
   </ul>
   <div class="ui-chart__plot" aria-hidden="true">

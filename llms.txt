@@ -121,6 +121,28 @@ whole-chart collision solver. Status tones are only for status-bearing callouts.
 Keep charts sparse; dense mobile figures need horizontal scrolling, a simplified
 SVG, or complete caption/fallback text. Details: `docs/annotations.md`.
 
+Optional legends / data keys for charts and figures — opt-in, never in the
+default bundle. Reads the `--chart-*` tokens, so a key never drifts from its
+series:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/legend.css" />
+```
+
+Use a `ui-legend` container with `ui-legend__item` rows, each holding a
+`ui-legend__swatch` (decorative, `aria-hidden`) and a `ui-legend__label` (the
+required non-colour channel — WCAG 1.4.1; colour alone never carries meaning).
+Set the swatch colour inline (`style="--chart-color: var(--chart-3)"`, plus
+`--chart-pattern` to match a patterned mark) or with a `ui-legend__swatch--1..8`
+index helper. Variants: `ui-legend--vertical`/`--compact`/`--with-values`,
+`ui-legend--gradient` (+`--diverging`, with `ui-legend__track`/`__ticks`/`__tick`),
+and `ui-legend--threshold`. `ui.legend()`/`ui.legendItem()`/`ui.legendSwatch()`
+build the class strings. Interactive (series-toggling) legends are opt-in:
+author entries as `<button aria-pressed>` under `[data-bronto-legend]`, run
+`initLegend()` (or `useLegend()`), and listen for `bronto:legend:toggle`
+(`{ series, active }`) — Bronto flips the control state; you hide the series and
+own the `aria-live` announcement. Details: `docs/legends.md`.
+
 Optional static report layer for LLM-authored HTML reports — opt-in, never in
 the default bundle. Pair it with the normal bundle, and add data-viz only when
 the report contains charts. For standalone browser HTML, use real URLs; package
