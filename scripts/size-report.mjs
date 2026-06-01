@@ -34,6 +34,10 @@ for (const rel of [
   rows.push([rel, fileSize(rel), gzipSize(rel)]);
 }
 
+const reportCss = buildBundles()['dist/css/report.css'];
+const reportSize = cssSizes(reportCss);
+rows.push(['dist/css/report.css', reportSize.raw, reportSize.gzip]);
+
 const fonts = readdirSync(resolve(root, 'fonts'))
   .filter((name) => /\.(ttf|woff2?)$/i.test(name))
   .map((name) => `fonts/${name}`);

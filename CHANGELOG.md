@@ -11,6 +11,14 @@ modern-platform motion direction (see [ADR-0002](docs/adr/0002-scope-and-2026-ba
 
 ### Added
 
+- **Static report kit — `@ponchia/ui/css/report.css` + `docs/reporting.md`.**
+  An opt-in, PDF-first report layer for LLM-authored and hand-authored HTML:
+  report covers, headers, section numbering, summaries, findings, evidence
+  blocks, source/appendix/footnote blocks, chart wrappers/legends/fallback
+  tables, and print utilities (`ui-print-only`, `ui-screen-only`,
+  `ui-break-before`, `ui-break-after`, `ui-keep`, `ui-print-exact`). It stays
+  out of the default bundle, ships with the offline LLM docs, and is covered by
+  a report fixture, package/export checks, and class-contract validation.
 - **Zero-JS enter _and_ exit motion for native-`<dialog>` overlays.** Modal and
   drawer (and their backdrop) now fade/scale **both ways** via `@starting-style`
   + `transition-behavior: allow-discrete` — previously they only animated in and

@@ -58,6 +58,7 @@ const shippedDocs = new Set([
   'docs/contrast.md',
   'docs/stability.md',
   'docs/usage.md',
+  'docs/reporting.md',
   'docs/adr/0001-color-system.md',
   'docs/adr/0002-scope-and-2026-baseline.md',
 ]);
@@ -79,6 +80,9 @@ for (const p of files) {
 // Sanity: the runtime entrypoints must actually be present.
 for (const must of [
   'css/core.css',
+  'css/report.css',
+  'dist/css/report.css',
+  'docs/reporting.md',
   'tokens/index.js',
   'classes/index.js',
   'behaviors/index.js',

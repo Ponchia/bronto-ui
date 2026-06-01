@@ -60,6 +60,21 @@ Rule of thumb: state → dot, classification → badge, user-controlled value
   `.ui-card` itself, so card padding/border stays the card's and prose
   rhythm stays the content's. One responsibility per element.
 
+## Static reports
+
+Use the opt-in `@ponchia/ui/css/report.css` layer for static, PDF-first
+reports. A report composes `ui-report` + existing primitives: `ui-statgrid`
+for KPIs, `ui-alert` for persistent notices, `ui-table` for evidence,
+`ui-timeline` for events, `ui-meter` for measured values, and `ui-prose` only
+for narrative body content you do not fully control.
+
+Do not turn every report block into a card. Use `ui-report__summary`,
+`ui-report__finding`, and `ui-report__evidence` for document structure; use
+`ui-card` only when the block is genuinely a repeated card item. Charts use
+the report `ui-chart*` wrappers plus the opt-in data-viz tokens; always include
+a caption and fallback data. Full LLM/static report cookbook:
+[reporting.md](reporting.md).
+
 ## Buttons: variant and size
 
 - **primary** — the single most important action in a view. Aim for one.

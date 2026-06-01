@@ -17,6 +17,7 @@ excludes them).
 | [`react-vite`](react-vite)       | React + Vite     | [docs/getting-started/react-solid.md](../docs/getting-started/react-solid.md) |
 | [`solid-vite`](solid-vite)       | Solid + Vite     | [docs/getting-started/react-solid.md](../docs/getting-started/react-solid.md) |
 | [`qwik-vite`](qwik-vite)         | Qwik + Vite      | [docs/getting-started/react-solid.md](../docs/getting-started/react-solid.md) |
+| [`report-static`](report-static) | Static report + Vite | [docs/reporting.md](../docs/reporting.md) |
 
 ## Run one locally
 

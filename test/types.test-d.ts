@@ -30,6 +30,10 @@ import { charts, type ChartTokenName } from '../tokens/charts.js';
 const btn: 'ui-button' = cls.button;
 const appShell: 'ui-app-shell' = cls.appShell;
 const tt: 'ui-themetoggle__button' = cls.themetoggleButton;
+const report: 'ui-report' = cls.report;
+const reportSection: 'ui-report__section' = cls.reportSection;
+const chart: 'ui-chart' = cls.chart;
+const printOnly: 'ui-print-only' = cls.printOnly;
 
 // @ts-expect-error — unknown cls key is now a compile error (was `string`).
 cls.definitelyNotAKey;
@@ -125,6 +129,10 @@ void [
   btn,
   appShell,
   tt,
+  report,
+  reportSection,
+  chart,
+  printOnly,
   a,
   b,
   joined,

@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — static report</title>
+    <meta
+      name="description"
+      content="Static, PDF-first report fixture for @ponchia/ui report CSS."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/report.css" />
+    <link rel="stylesheet" href="../dist/css/dataviz.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .report-bars {
+        display: grid;
+        gap: var(--space-xs);
+      }
+
+      .report-bar {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .report-bar__label {
+        align-items: center;
+        color: var(--text-soft);
+        display: flex;
+        font-family: var(--mono);
+        font-size: var(--text-xs);
+        justify-content: space-between;
+      }
+
+      .report-bar__track {
+        background: var(--panel-soft);
+        border: 1px solid var(--line);
+        block-size: 0.8rem;
+      }
+
+      .report-bar__fill {
+        background: var(--chart-color);
+        background-image: var(--chart-pattern);
+        background-size: var(--chart-pattern-size);
+        block-size: 100%;
+        inline-size: var(--bar-value);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="ui-report ui-report--numbered">
+      <header class="ui-report__cover ui-keep">
+        <p class="ui-eyebrow">Static report fixture</p>
+        <h1 class="ui-report__title">Personal systems review</h1>
+        <p class="ui-report__subtitle">
+          A trusted, static HTML report composed from report primitives, tables, prose, metrics,
+          chart helpers and print utilities.
+        </p>
+        <ol class="ui-report__meta">
+          <li><time datetime="2026-06-01">2026-06-01</time></li>
+          <li>Chromium PDF-ready</li>
+          <li>No JavaScript</li>
+        </ol>
+        <p class="ui-print-only">Print copy: generated for archive review.</p>
+      </header>
+
+      <nav class="ui-report__toc ui-screen-only" aria-label="Report contents">
+        <p class="ui-eyebrow ui-eyebrow--muted">Contents</p>
+        <ol>
+          <li><a href="#summary">Executive summary</a></li>
+          <li><a href="#findings">Findings and evidence</a></li>
+          <li><a href="#chart">Focus split</a></li>
+          <li><a href="#appendix">Appendix</a></li>
+        </ol>
+      </nav>
+
+      <section id="summary" class="ui-report__section">
+        <h2 class="ui-report__section-head">Executive summary</h2>
+        <div class="ui-report__summary ui-keep">
+          <div class="ui-prose">
+            <p>
+              The system is stable enough for personal project reports. The main remaining work is
+              to keep generated HTML constrained to the public class contract and to export reports
+              through a modern browser print pipeline.
+            </p>
+            <p>
+              External references stay visible when printed, for example
+              <a href="https://example.com/report-source">the source index</a>.
+            </p>
+          </div>
+        </div>
+
+        <div class="ui-statgrid">
+          <div class="ui-stat">
+            <span class="ui-stat__label">Open risks</span>
+            <span class="ui-stat__value">3</span>
+            <span class="ui-stat__delta is-neg">+1 this week</span>
+          </div>
+          <div class="ui-stat">
+            <span class="ui-stat__label">Coverage</span>
+            <span class="ui-stat__value">92%</span>
+            <span class="ui-stat__delta is-pos">+4 pt</span>
+          </div>
+          <div class="ui-stat">
+            <span class="ui-stat__label">Artifacts</span>
+            <span class="ui-stat__value">14</span>
+            <span class="ui-stat__delta">static files</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="findings" class="ui-report__section">
+        <h2 class="ui-report__section-head">Findings and evidence</h2>
+        <article class="ui-report__finding ui-keep">
+          <p class="ui-eyebrow">Finding</p>
+          <div class="ui-prose">
+            <p>
+              Report output should stay static by default. Interactive behaviors belong in the host
+              application, not in generated report body content.
+            </p>
+          </div>
+        </article>
+
+        <div class="ui-report__evidence">
+          <p class="ui-eyebrow ui-eyebrow--muted">Evidence table</p>
+          <div class="ui-table-wrap">
+            <table class="ui-table ui-table--dense">
+              <caption>
+                Report readiness checks
+              </caption>
+              <thead>
+                <tr>
+                  <th>Check</th>
+                  <th>Status</th>
+                  <th class="is-num">Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="is-key">Class contract</td>
+                  <td><span class="ui-badge ui-badge--success">Pass</span></td>
+                  <td class="is-num is-pos">98</td>
+                </tr>
+                <tr>
+                  <td class="is-key">Print path</td>
+                  <td><span class="ui-badge ui-badge--warning">Watch</span></td>
+                  <td class="is-num">74</td>
+                </tr>
+                <tr>
+                  <td class="is-key">Remote assets</td>
+                  <td><span class="ui-badge ui-badge--success">None</span></td>
+                  <td class="is-num is-pos">100</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="chart" class="ui-report__section ui-break-before ui-break-after">
+        <h2 class="ui-report__section-head">Focus split</h2>
+        <figure
+          class="ui-report__figure ui-chart ui-print-exact ui-keep"
+          role="group"
+          aria-labelledby="focus-chart-title"
+        >
+          <figcaption id="focus-chart-title" class="ui-chart__caption">
+            Fig 1 - Weekly focus split, with fallback data
+          </figcaption>
+          <ul class="ui-chart__legend" aria-label="Focus series">
+            <li>
+              <span
+                class="ui-chart__swatch"
+                style="--chart-color: var(--chart-1); --chart-pattern: var(--chart-pattern-1)"
+                aria-hidden="true"
+              ></span>
+              Research
+            </li>
+            <li>
+              <span
+                class="ui-chart__swatch"
+                style="--chart-color: var(--chart-2); --chart-pattern: var(--chart-pattern-2)"
+                aria-hidden="true"
+              ></span>
+              Delivery
+            </li>
+            <li>
+              <span
+                class="ui-chart__swatch"
+                style="--chart-color: var(--chart-3); --chart-pattern: var(--chart-pattern-3)"
+                aria-hidden="true"
+              ></span>
+              Maintenance
+            </li>
+          </ul>
+          <div class="report-bars" aria-hidden="true">
+            <div class="report-bar">
+              <div class="report-bar__label"><span>Research</span><span>18 h</span></div>
+              <div class="report-bar__track">
+                <div
+                  class="report-bar__fill"
+                  style="
+                    --bar-value: 82%;
+                    --chart-color: var(--chart-1);
+                    --chart-pattern: var(--chart-pattern-1);
+                  "
+                ></div>
+              </div>
+            </div>
+            <div class="report-bar">
+              <div class="report-bar__label"><span>Delivery</span><span>11 h</span></div>
+              <div class="report-bar__track">
+                <div
+                  class="report-bar__fill"
+                  style="
+                    --bar-value: 50%;
+                    --chart-color: var(--chart-2);
+                    --chart-pattern: var(--chart-pattern-2);
+                  "
+                ></div>
+              </div>
+            </div>
+            <div class="report-bar">
+              <div class="report-bar__label"><span>Maintenance</span><span>7 h</span></div>
+              <div class="report-bar__track">
+                <div
+                  class="report-bar__fill"
+                  style="
+                    --bar-value: 32%;
+                    --chart-color: var(--chart-3);
+                    --chart-pattern: var(--chart-pattern-3);
+                  "
+                ></div>
+              </div>
+            </div>
+          </div>
+          <div class="ui-chart__fallback">
+            <div class="ui-table-wrap">
+              <table class="ui-table ui-table--dense">
+                <caption>
+                  Focus chart source data
+                </caption>
+                <thead>
+                  <tr>
+                    <th>Series</th>
+                    <th class="is-num">Hours</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Research</td>
+                    <td class="is-num">18</td>
+                  </tr>
+                  <tr>
+                    <td>Delivery</td>
+                    <td class="is-num">11</td>
+                  </tr>
+                  <tr>
+                    <td>Maintenance</td>
+                    <td class="is-num">7</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </figure>
+      </section>
+
+      <section id="appendix" class="ui-report__section ui-break-before">
+        <h2 class="ui-report__section-head">Appendix</h2>
+        <div class="ui-report__appendix">
+          <p class="ui-eyebrow">Method</p>
+          <p>
+            The fixture intentionally includes report sections, findings, tables, charts, print
+            utilities and prose links so automated checks cover the report contract.
+          </p>
+        </div>
+        <footer class="ui-report__sources">
+          <p class="ui-eyebrow ui-eyebrow--muted">Sources</p>
+          <ol>
+            <li>Local report fixture data.</li>
+            <li>Package class registry and token contracts.</li>
+          </ol>
+        </footer>
+        <section class="ui-report__footnotes">
+          <p class="ui-eyebrow ui-eyebrow--muted">Footnotes</p>
+          <p>All values are synthetic and used only for layout verification.</p>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>

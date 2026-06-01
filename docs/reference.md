@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 266 classes across 113 component groups
+- 296 classes across 121 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -179,6 +179,18 @@ each one matches a real selector in the stylesheet.
 | `cls.breadcrumb` | `ui-breadcrumb` | base |
 | `cls.breadcrumbItem` | `ui-breadcrumb__item` | part |
 
+### `.ui-break-after`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.breakAfter` | `ui-break-after` | base |
+
+### `.ui-break-before`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.breakBefore` | `ui-break-before` | base |
+
 ### `.ui-button`
 
 | Registry key | Class | Kind |
@@ -225,6 +237,16 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.center` | `ui-center` | base |
+
+### `.ui-chart`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.chart` | `ui-chart` | base |
+| `cls.chartCaption` | `ui-chart__caption` | part |
+| `cls.chartFallback` | `ui-chart__fallback` | part |
+| `cls.chartLegend` | `ui-chart__legend` | part |
+| `cls.chartSwatch` | `ui-chart__swatch` | part |
 
 ### `.ui-check`
 
@@ -426,6 +448,12 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.kbd` | `ui-kbd` | base |
 
+### `.ui-keep`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.keep` | `ui-keep` | base |
+
 ### `.ui-key-value`
 
 | Registry key | Class | Kind |
@@ -553,6 +581,18 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.popover` | `ui-popover` | base |
 
+### `.ui-print-exact`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.printExact` | `ui-print-exact` | base |
+
+### `.ui-print-only`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.printOnly` | `ui-print-only` | base |
+
 ### `.ui-progress`
 
 | Registry key | Class | Kind |
@@ -587,11 +627,41 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.ratio` | `ui-ratio` | base |
 
+### `.ui-report`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.report` | `ui-report` | base |
+| `cls.reportAppendix` | `ui-report__appendix` | part |
+| `cls.reportCaption` | `ui-report__caption` | part |
+| `cls.reportCover` | `ui-report__cover` | part |
+| `cls.reportEvidence` | `ui-report__evidence` | part |
+| `cls.reportFigure` | `ui-report__figure` | part |
+| `cls.reportFinding` | `ui-report__finding` | part |
+| `cls.reportFootnotes` | `ui-report__footnotes` | part |
+| `cls.reportHeader` | `ui-report__header` | part |
+| `cls.reportMeta` | `ui-report__meta` | part |
+| `cls.reportSection` | `ui-report__section` | part |
+| `cls.reportSectionHead` | `ui-report__section-head` | part |
+| `cls.reportSources` | `ui-report__sources` | part |
+| `cls.reportSubtitle` | `ui-report__subtitle` | part |
+| `cls.reportSummary` | `ui-report__summary` | part |
+| `cls.reportTitle` | `ui-report__title` | part |
+| `cls.reportToc` | `ui-report__toc` | part |
+| `cls.reportCompact` | `ui-report--compact` | modifier |
+| `cls.reportNumbered` | `ui-report--numbered` | modifier |
+
 ### `.ui-reveal`
 
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.reveal` | `ui-reveal` | base |
+
+### `.ui-screen-only`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.screenOnly` | `ui-screen-only` | base |
 
 ### `.ui-scroll-progress`
 

@@ -36,7 +36,9 @@
  * tokens.css is the tier-definition file, so it is exempt from the raw-color
  * scan (it is where the literals legitimately live); it is still covered by
  * invariant 1 via tokens/index.js. Future skin/data-viz definition files
- * (css/skins/*, css/dataviz.css) are exempt from the raw-color scan the same way.
+ * (css/skins/*, css/dataviz.css) are exempt from the raw-color scan the same
+ * way. report.css is also exempt because its chart helper may reference
+ * Tier-4 chart tokens; it is still opt-in and checked to stay out of core.css.
  *
  * Run: node scripts/check-color-policy.mjs
  */
@@ -153,7 +155,8 @@ for (const block of ['global', 'light', 'dark']) {
 // --- 3. No raw chromatic color in component CSS -----------------------------
 const cssDir = resolve(root, 'css');
 // Definition files where color literals legitimately live (tier sources).
-const isDefinitionFile = (f) => f === 'tokens.css' || f === 'dataviz.css' || f.startsWith('skins');
+const isDefinitionFile = (f) =>
+  f === 'tokens.css' || f === 'dataviz.css' || f === 'report.css' || f.startsWith('skins');
 const stripComments = (s) => s.replace(/\/\*[\s\S]*?\*\//g, '');
 const stripUrls = (s) => s.replace(/url\([^)]*\)/gi, 'url()');
 
