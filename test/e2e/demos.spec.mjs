@@ -46,6 +46,12 @@ for (const theme of ['dark', 'light']) {
         }
       }, theme);
       await page.goto(`/demo/${demo}.html`, { waitUntil: 'networkidle' });
+      // The standalone demo pages hard-code data-theme="light" and do not
+      // restore from localStorage, so the seed above is a no-op for them —
+      // force the attribute to genuinely exercise both themes (otherwise the
+      // "dark" pass silently re-scans light mode).
+      await page.evaluate((t) => document.documentElement.setAttribute('data-theme', t), theme);
+      await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
       await settle(page);
 
       const { consoleErrors, pageErrors, badResponses } = guards;
@@ -69,6 +75,7 @@ for (const theme of ['dark', 'light']) {
         }
       }, theme);
       await page.goto(`/demo/${demo}.html`, { waitUntil: 'networkidle' });
+      await page.evaluate((t) => document.documentElement.setAttribute('data-theme', t), theme);
 
       const { consoleErrors, pageErrors, badResponses } = guards;
       expect(consoleErrors, consoleErrors.join('\n')).toEqual([]);
