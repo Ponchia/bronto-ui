@@ -48,7 +48,7 @@ relationship it depicts is also clear from the content/DOM order.
 | --- | --- |
 | `data-from` / `data-to` | ids of the elements to connect (required). |
 | `data-shape` | `straight` (default), `elbow`, `curve`. |
-| `data-from-side` / `data-to-side` | `top`/`right`/`bottom`/`left`/`center`. Omit both to auto-pick facing edges. |
+| `data-from-side` / `data-to-side` | `top`/`right`/`bottom`/`left`/`center`. Omit a side to auto-pick it (set neither for fully automatic facing edges). |
 | `data-end` | `arrow` (default), `dot`, `none`. |
 
 Tones: `ui-connector--accent` / `--muted` / `--success` / `--warning` /
@@ -78,6 +78,9 @@ const head = arrowHead(to, angle); // place at the endpoint
 - `connectRects(opts)` → `{ d, from, to, angle }`.
 - `arrowHead(point, angle, size)` / `dotMark(point, radius)` — end markers.
 - `autoSides(fromRect, toRect)` / `angleBetween(from, to)`.
+- `endTangentAngle(from, to, shape)` — the angle the path *arrives* at `to`
+  (chord for `straight`, axis-aligned for `elbow`/`curve`); rotate an end marker
+  by this so it points along the path. `connectRects().angle` already uses it.
 
 ## Coordinate model
 

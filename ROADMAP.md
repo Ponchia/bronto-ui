@@ -6,7 +6,21 @@ without turning the project into a per-framework component suite.
 
 > **Source of truth is [`CHANGELOG.md`](CHANGELOG.md).** This file describes
 > direction; the changelog records what actually shipped. If they disagree, the
-> changelog wins. Last reconciled against `0.4.1`.
+> changelog wins. Last reconciled against `0.5.0` (Unreleased).
+
+## In progress for 0.5.0 (merged, unreleased)
+
+- **Analytical communication primitives.** An opt-in suite for analytical and
+  generated-report UI, each owning only its visual grammar + pure geometry (no
+  scales/state/hit-testing, no chart engine): SVG **annotations**, **legends**,
+  text/evidence **marks**, leader-line **connectors** (+ the pure
+  `@ponchia/ui/connectors` geometry kernel that annotations now build on),
+  guided-focus **spotlight**, **crosshair**/readout, a cross-cutting
+  **selection** vocabulary, and a 1-D `declutterLabels` helper. The
+  `@ponchia/ui/css/analytical.css` roll-up bundles them. New gates:
+  `check:legend`, `check:helpers-dts`. Two breaking changes (minor): the report
+  kit's chart key moved to the legend layer, and annotation arrowheads now use
+  the shared geometry kernel. See the CHANGELOG `Unreleased — 0.5.0` section.
 
 ## Shipped through 0.4.1
 
