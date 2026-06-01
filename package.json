@@ -208,7 +208,6 @@
     "./css/unlayered/spotlight.css": "./css/spotlight.css",
     "./css/unlayered/crosshair.css": "./css/crosshair.css",
     "./css/unlayered/selection.css": "./css/selection.css",
-    "./css/unlayered/analytical.css": "./css/analytical.css",
     "./tokens": {
       "types": "./tokens/index.d.ts",
       "default": "./tokens/index.js"

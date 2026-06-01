@@ -54,17 +54,25 @@
   transform: translateY(var(--crosshair-y));
 }
 
-/* An axis value chip (host sets its text + which edge it sits on). */
+/* An axis value chip (host sets its text + which edge it sits on). On the
+   accent fill it uses the tested on-accent text (same as buttons). */
 .ui-crosshair__badge {
   background: var(--crosshair-color);
   border-radius: var(--radius-sm);
-  color: var(--accent-text);
+  color: var(--button-text);
   font-family: var(--mono);
   font-size: var(--text-2xs);
   padding-block: 0.05rem;
   padding-inline: 0.3rem;
   position: absolute;
   white-space: nowrap;
+}
+
+/* The muted crosshair's grey fill can't carry on-accent text — use a neutral chip. */
+.ui-crosshair--muted .ui-crosshair__badge {
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  color: var(--text);
 }
 
 /* A pinned readout chip — host fills the content; it follows the crosshair. */

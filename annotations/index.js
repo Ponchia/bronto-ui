@@ -357,7 +357,10 @@ export function connectorLine(opts = {}) {
   if (dx === 0 && dy === 0) return '';
   const start = connectorStart(dx, dy, opts.subject);
   if (!start) return '';
-  return straightPath(start, { x: dx, y: dy });
+  const end = { x: dx, y: dy };
+  // Guard a trim that rounds onto the note anchor (straightPath has no guard).
+  if (samePoint(start, end)) return '';
+  return straightPath(start, end);
 }
 
 export function connectorElbow(opts = {}) {

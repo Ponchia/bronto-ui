@@ -7,7 +7,9 @@
  * same drift `check-bindings`/`check-dts` close for the other layers.
  *
  * Source-parsed (no import) so it needs no build step. Type-only exports
- * (`export interface`/`export type`) are intentionally ignored.
+ * (`export interface`/`export type`) are intentionally ignored. This checks
+ * export *names* only — not parameter/return signatures (tsc on
+ * test/types.test-d.ts exercises the actual call shapes).
  *
  * Run: node scripts/check-helpers-dts.mjs
  */

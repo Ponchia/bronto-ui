@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   anchorPoint,
   angleBetween,
+  endTangentAngle,
   straightPath,
   elbowPath,
   curvePath,
@@ -88,6 +89,34 @@ test('explicit sides + shape override auto', () => {
   });
   assert.deepEqual(out.from, { x: 10, y: 20 });
   assert.deepEqual(out.to, { x: 110, y: 100 });
+});
+
+test('endTangentAngle: chord for straight, axis-aligned for elbow/curve', () => {
+  assert.equal(endTangentAngle({ x: 0, y: 0 }, { x: 10, y: 0 }, 'straight'), 0);
+  assert.equal(endTangentAngle({ x: 0, y: 0 }, { x: 100, y: 40 }, 'elbow'), 0); // dx-dominant, +x
+  assert.equal(endTangentAngle({ x: 0, y: 0 }, { x: -100, y: 40 }, 'elbow'), Math.PI); // -x
+  assert.equal(endTangentAngle({ x: 0, y: 0 }, { x: 40, y: 100 }, 'curve'), Math.PI / 2); // dy-dominant
+  assert.equal(endTangentAngle({ x: 0, y: 0 }, { x: 40, y: -100 }, 'curve'), -Math.PI / 2);
+});
+
+test('connectRects: elbow arrowhead angle is the end tangent, not the chord', () => {
+  const out = connectRects({
+    fromRect: { x: 0, y: 0, width: 20, height: 20 },
+    toRect: { x: 100, y: 100, width: 20, height: 20 },
+    shape: 'elbow',
+  });
+  // arrives vertically (dy-dominant after anchoring) — axis-aligned, not the diagonal chord
+  assert.equal(out.angle, Math.PI / 2);
+});
+
+test('connectRects: a one-sided override is honored; the other side auto-picks', () => {
+  const out = connectRects({
+    fromRect: { x: 0, y: 0, width: 20, height: 20 },
+    toRect: { x: 100, y: 0, width: 20, height: 20 },
+    fromSide: 'top',
+  });
+  assert.deepEqual(out.from, { x: 10, y: 0 }); // explicit 'top' respected
+  assert.deepEqual(out.to, { x: 100, y: 10 }); // auto-picked 'left'
 });
 
 test('non-finite inputs throw', () => {

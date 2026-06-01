@@ -60,4 +60,7 @@ export declare function autoSides(
   fromRect: Rect,
   toRect: Rect,
 ): { from: Side; to: Side };
+/** Angle (radians) at which a `shape` path arrives at `to` — the chord for
+ *  `straight`, axis-aligned for `elbow`/`curve`. Use it to rotate an end marker. */
+export declare function endTangentAngle(from: Point, to: Point, shape?: ConnectorShape): number;
 export declare function connectRects(opts: ConnectRectsOptions): ConnectRectsResult;

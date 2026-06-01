@@ -156,14 +156,24 @@ export function autoSides(fromRect, toRect) {
  * auto), builds the path, and returns `{ d, from, to, angle }` so the caller can
  * place an arrowhead/dot at `to` rotated by `angle`.
  */
+/** Angle (radians) at which a `shape` path *arrives* at `to` — straight is the
+ *  chord; elbow/curve arrive axis-aligned along the dominant axis. Rotate an
+ *  end marker by this so it points along the path, not the chord. */
+export function endTangentAngle(from, to, shape = 'straight') {
+  if (shape === 'straight') return angleBetween(from, to);
+  const dx = finite('to.x', to?.x) - finite('from.x', from?.x);
+  const dy = finite('to.y', to?.y) - finite('from.y', from?.y);
+  if (Math.abs(dx) >= Math.abs(dy)) return dx >= 0 ? 0 : Math.PI;
+  return dy >= 0 ? Math.PI / 2 : -Math.PI / 2;
+}
+
 export function connectRects(opts = {}) {
   const { fromRect, toRect, shape = 'straight', curvature, mid } = opts;
-  const sides =
-    opts.fromSide && opts.toSide
-      ? { from: opts.fromSide, to: opts.toSide }
-      : autoSides(fromRect, toRect);
+  // Honor each side override independently; auto-pick whichever is unset.
+  const auto = autoSides(fromRect, toRect);
+  const sides = { from: opts.fromSide || auto.from, to: opts.toSide || auto.to };
   const from = anchorPoint(fromRect, sides.from);
   const to = anchorPoint(toRect, sides.to);
   const d = connectorPath({ from, to, shape, curvature, mid });
-  return { d, from, to, angle: angleBetween(from, to) };
+  return { d, from, to, angle: endTangentAngle(from, to, shape) };
 }

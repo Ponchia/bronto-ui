@@ -1178,7 +1178,7 @@ test('initLegend: SSR-safe', () => {
   });
 });
 
-test('initConnectors: draws a path with d + pathLength and an end marker', () => {
+test('initConnectors: draws a path with d and an end marker', () => {
   const d = mount(
     '<div style="position:relative"><span id="a">a</span><span id="b">b</span>' +
       '<svg class="ui-connector" data-bronto-connector data-from="a" data-to="b" data-end="arrow"></svg></div>',
@@ -1188,7 +1188,8 @@ test('initConnectors: draws a path with d + pathLength and an end marker', () =>
   const path = svg.querySelector('.ui-connector__path');
   assert.ok(path, 'path element created');
   assert.ok(path.getAttribute('d'), 'path has d');
-  assert.equal(path.getAttribute('pathLength'), '1');
+  // a plain (non-draw) connector must NOT carry pathLength (it would reframe a dash)
+  assert.equal(path.hasAttribute('pathLength'), false);
   assert.ok(svg.querySelector('.ui-connector__end'), 'arrow end created');
   assert.equal(typeof stop, 'function');
   assert.doesNotThrow(stop);
@@ -1205,6 +1206,18 @@ test('initConnectors: data-end="none" draws no end marker; missing target is ski
   assert.ok(first.querySelector('.ui-connector__path'), 'first drawn');
   assert.equal(first.querySelector('.ui-connector__end'), null, 'no end marker');
   assert.equal(second.querySelector('.ui-connector__path'), null, 'missing target → skipped');
+});
+
+test('initConnectors: pathLength is set only for draw connectors (dashed keeps its user-unit dasharray)', () => {
+  const d = mount(
+    '<div style="position:relative"><span id="a">a</span><span id="b">b</span>' +
+      '<svg class="ui-connector ui-connector--dashed" data-bronto-connector data-from="a" data-to="b"></svg>' +
+      '<svg class="ui-connector ui-connector--draw" data-bronto-connector data-from="a" data-to="b"></svg></div>',
+  );
+  initConnectors();
+  const [dashed, draw] = d.querySelectorAll('.ui-connector');
+  assert.equal(dashed.querySelector('.ui-connector__path').hasAttribute('pathLength'), false);
+  assert.equal(draw.querySelector('.ui-connector__path').getAttribute('pathLength'), '1');
 });
 
 test('initConnectors: SSR-safe', () => {
