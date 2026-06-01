@@ -27,7 +27,11 @@ export function initLegend({ root } = {}) {
     const next = !active;
     item.setAttribute('aria-pressed', String(next));
     item.classList.toggle('is-inactive', !next);
-    const items = [...legend.querySelectorAll('.ui-legend__item')];
+    // This legend's own items only — an item inside a nested [data-bronto-legend]
+    // belongs to that inner legend, so it must not shift this one's indices.
+    const items = [...legend.querySelectorAll('.ui-legend__item')].filter(
+      (el) => el.closest('[data-bronto-legend]') === legend,
+    );
     legend.dispatchEvent(
       new CustomEvent('bronto:legend:toggle', {
         bubbles: true,

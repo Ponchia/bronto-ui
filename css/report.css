@@ -239,6 +239,13 @@
   gap: 0.35rem;
 }
 
+/* An author `display` outranks the UA `[hidden]` rule, so re-assert it: a host
+   toggling a series (e.g. from a `bronto:legend:toggle` event) expects
+   `bar.hidden = true` to actually hide the bar. */
+.ui-chart__bar[hidden] {
+  display: none;
+}
+
 .ui-chart__label {
   align-items: center;
   color: var(--text-soft);
