@@ -85,9 +85,13 @@ sanitize that content before rendering it and do not initialize
 - Use `ui-report` as the page-level wrapper. Add `ui-report--numbered` when
   section headings should auto-number.
 - Use `ui-report__cover` for title, subtitle, author/date, and generation
-  metadata. Use `ui-report__header` for compact in-page headers.
+  metadata. Add `ui-report__cover--compact` for short screen-first reports.
+  Use `ui-report__header` for compact in-page headers.
 - Use `ui-report__section` and `ui-report__section-head` for report chapters.
   Keep one `h1` for the report title; use ordered `h2`/`h3` headings after it.
+- Add `ui-report__section--unnumbered` to appendices, sources, or footnotes
+  when the report uses `ui-report--numbered` but the section should not count as
+  a numbered chapter.
 - Use `ui-prose` only around narrative HTML you do not fully control, such as
   Markdown output. Do not wrap structured app/report UI in `ui-prose`.
 - Use existing primitives for shared meanings: `ui-statgrid` for KPIs,
@@ -96,7 +100,9 @@ sanitize that content before rendering it and do not initialize
   non-table numeric values.
 - Every `<table>` that carries report data should have a `<caption>`, header
   cells, and `.is-num` on numeric columns. Keep raw Markdown tables inside
-  `ui-prose`; use `.ui-table` for curated evidence tables.
+  `ui-prose`; use `.ui-table` for curated evidence tables. If a
+  `ui-report__evidence` block contains only a `ui-table-wrap`, the report layer
+  removes the inner frame so evidence tables do not look double-boxed.
 - Every `<figure>` should include a `figcaption` using
   `ui-report__caption` or `ui-chart__caption`.
 - Do not use raw color values. Theme with `--accent`; use status tones for
@@ -104,9 +110,9 @@ sanitize that content before rendering it and do not initialize
 
 ## Chart figure recipe
 
-The report layer supplies chart containers and legends, not a chart engine. For
-CSS/HTML/SVG charts, pair each chart color with a direct label, a pattern, or a
-fallback table.
+The report layer supplies chart containers, legends, and a small static bar
+pattern, not a chart engine. For CSS/HTML/SVG charts, pair each chart color with
+a direct label, a pattern, or a fallback table.
 
 ```html
 <figure class="ui-report__figure ui-chart ui-print-exact" role="group" aria-labelledby="chart-title">
@@ -131,6 +137,22 @@ fallback table.
       Delivery
     </li>
   </ul>
+  <div class="ui-chart__plot" aria-hidden="true">
+    <div
+      class="ui-chart__bar"
+      style="--chart-value: 72%; --chart-color: var(--chart-1); --chart-pattern: var(--chart-pattern-1)"
+    >
+      <div class="ui-chart__label"><span>Research</span><span>18 h</span></div>
+      <div class="ui-chart__track"><div class="ui-chart__fill"></div></div>
+    </div>
+    <div
+      class="ui-chart__bar"
+      style="--chart-value: 44%; --chart-color: var(--chart-2); --chart-pattern: var(--chart-pattern-2)"
+    >
+      <div class="ui-chart__label"><span>Delivery</span><span>11 h</span></div>
+      <div class="ui-chart__track"><div class="ui-chart__fill"></div></div>
+    </div>
+  </div>
   <div class="ui-chart__fallback">
     <div class="ui-table-wrap">
       <table class="ui-table ui-table--dense">
@@ -151,6 +173,36 @@ fallback table.
 For canvas or SVG libraries, import resolved series colors from
 `@ponchia/ui/charts.json` and keep the same legend/caption/fallback structure in
 the surrounding HTML.
+
+## Timeline recipe
+
+Incident reviews and research logs should use the existing timeline primitive
+with its required item and time parts. Do not emit a bare list and expect it to
+style itself.
+
+```html
+<ol class="ui-timeline">
+  <li class="ui-timeline__item">
+    <time class="ui-timeline__time" datetime="2026-06-01T09:12:00">09:12</time>
+    <span>Latency alert fired for p95 over threshold.</span>
+  </li>
+  <li class="ui-timeline__item" aria-current="step">
+    <time class="ui-timeline__time" datetime="2026-06-01T09:54:00">09:54</time>
+    <span>Latency returned to baseline.</span>
+  </li>
+</ol>
+```
+
+## Common templates
+
+- Executive brief: compact cover, one summary block, KPI `ui-statgrid`, short
+  findings, and sources.
+- Research brief: compact header, decision frame, evidence table, quotes or
+  prose excerpts, and sources.
+- Incident review: compact cover, summary, `ui-timeline`, corrective-action
+  evidence table, and footnotes.
+- Project status: compact header, KPI `ui-statgrid`, chart figure with fallback
+  data, print-only notes, and unnumbered appendix.
 
 ## Print and PDF
 

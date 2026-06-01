@@ -8,7 +8,7 @@
   </head>
   <body>
     <main class="ui-report ui-report--numbered">
-      <header class="ui-report__cover ui-keep">
+      <header class="ui-report__cover ui-report__cover--compact ui-keep">
         <p class="ui-eyebrow">Example report</p>
         <h1 class="ui-report__title">Packed tarball smoke</h1>
         <p class="ui-report__subtitle">
@@ -73,6 +73,30 @@
               Report CSS
             </li>
           </ul>
+          <div class="ui-chart__plot" aria-hidden="true">
+            <div
+              class="ui-chart__bar"
+              style="
+                --chart-value: 100%;
+                --chart-color: var(--chart-1);
+                --chart-pattern: var(--chart-pattern-1);
+              "
+            >
+              <div class="ui-chart__label"><span>Core CSS</span><span>loaded</span></div>
+              <div class="ui-chart__track"><div class="ui-chart__fill"></div></div>
+            </div>
+            <div
+              class="ui-chart__bar"
+              style="
+                --chart-value: 100%;
+                --chart-color: var(--chart-2);
+                --chart-pattern: var(--chart-pattern-2);
+              "
+            >
+              <div class="ui-chart__label"><span>Report CSS</span><span>loaded</span></div>
+              <div class="ui-chart__track"><div class="ui-chart__fill"></div></div>
+            </div>
+          </div>
           <div class="ui-chart__fallback">
             <div class="ui-table-wrap">
               <table class="ui-table ui-table--dense">

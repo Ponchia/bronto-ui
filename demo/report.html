@@ -11,48 +11,10 @@
     <link rel="stylesheet" href="../dist/bronto.css" />
     <link rel="stylesheet" href="../dist/css/report.css" />
     <link rel="stylesheet" href="../dist/css/dataviz.css" />
-    <style>
-      body {
-        margin: 0;
-      }
-
-      .report-bars {
-        display: grid;
-        gap: var(--space-xs);
-      }
-
-      .report-bar {
-        display: grid;
-        gap: 0.35rem;
-      }
-
-      .report-bar__label {
-        align-items: center;
-        color: var(--text-soft);
-        display: flex;
-        font-family: var(--mono);
-        font-size: var(--text-xs);
-        justify-content: space-between;
-      }
-
-      .report-bar__track {
-        background: var(--panel-soft);
-        border: 1px solid var(--line);
-        block-size: 0.8rem;
-      }
-
-      .report-bar__fill {
-        background: var(--chart-color);
-        background-image: var(--chart-pattern);
-        background-size: var(--chart-pattern-size);
-        block-size: 100%;
-        inline-size: var(--bar-value);
-      }
-    </style>
   </head>
   <body>
     <main class="ui-report ui-report--numbered">
-      <header class="ui-report__cover ui-keep">
+      <header class="ui-report__cover ui-report__cover--compact ui-keep">
         <p class="ui-eyebrow">Static report fixture</p>
         <h1 class="ui-report__title">Personal systems review</h1>
         <p class="ui-report__subtitle">
@@ -125,7 +87,6 @@
         </article>
 
         <div class="ui-report__evidence">
-          <p class="ui-eyebrow ui-eyebrow--muted">Evidence table</p>
           <div class="ui-table-wrap">
             <table class="ui-table ui-table--dense">
               <caption>
@@ -196,44 +157,44 @@
               Maintenance
             </li>
           </ul>
-          <div class="report-bars" aria-hidden="true">
-            <div class="report-bar">
-              <div class="report-bar__label"><span>Research</span><span>18 h</span></div>
-              <div class="report-bar__track">
-                <div
-                  class="report-bar__fill"
-                  style="
-                    --bar-value: 82%;
-                    --chart-color: var(--chart-1);
-                    --chart-pattern: var(--chart-pattern-1);
-                  "
-                ></div>
+          <div class="ui-chart__plot" aria-hidden="true">
+            <div
+              class="ui-chart__bar"
+              style="
+                --chart-value: 82%;
+                --chart-color: var(--chart-1);
+                --chart-pattern: var(--chart-pattern-1);
+              "
+            >
+              <div class="ui-chart__label"><span>Research</span><span>18 h</span></div>
+              <div class="ui-chart__track">
+                <div class="ui-chart__fill"></div>
               </div>
             </div>
-            <div class="report-bar">
-              <div class="report-bar__label"><span>Delivery</span><span>11 h</span></div>
-              <div class="report-bar__track">
-                <div
-                  class="report-bar__fill"
-                  style="
-                    --bar-value: 50%;
-                    --chart-color: var(--chart-2);
-                    --chart-pattern: var(--chart-pattern-2);
-                  "
-                ></div>
+            <div
+              class="ui-chart__bar"
+              style="
+                --chart-value: 50%;
+                --chart-color: var(--chart-2);
+                --chart-pattern: var(--chart-pattern-2);
+              "
+            >
+              <div class="ui-chart__label"><span>Delivery</span><span>11 h</span></div>
+              <div class="ui-chart__track">
+                <div class="ui-chart__fill"></div>
               </div>
             </div>
-            <div class="report-bar">
-              <div class="report-bar__label"><span>Maintenance</span><span>7 h</span></div>
-              <div class="report-bar__track">
-                <div
-                  class="report-bar__fill"
-                  style="
-                    --bar-value: 32%;
-                    --chart-color: var(--chart-3);
-                    --chart-pattern: var(--chart-pattern-3);
-                  "
-                ></div>
+            <div
+              class="ui-chart__bar"
+              style="
+                --chart-value: 32%;
+                --chart-color: var(--chart-3);
+                --chart-pattern: var(--chart-pattern-3);
+              "
+            >
+              <div class="ui-chart__label"><span>Maintenance</span><span>7 h</span></div>
+              <div class="ui-chart__track">
+                <div class="ui-chart__fill"></div>
               </div>
             </div>
           </div>
@@ -269,7 +230,10 @@
         </figure>
       </section>
 
-      <section id="appendix" class="ui-report__section ui-break-before">
+      <section
+        id="appendix"
+        class="ui-report__section ui-report__section--unnumbered ui-break-before"
+      >
         <h2 class="ui-report__section-head">Appendix</h2>
         <div class="ui-report__appendix">
           <p class="ui-eyebrow">Method</p>

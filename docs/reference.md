@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 296 classes across 121 component groups
+- 303 classes across 121 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -243,10 +243,15 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.chart` | `ui-chart` | base |
+| `cls.chartBar` | `ui-chart__bar` | part |
 | `cls.chartCaption` | `ui-chart__caption` | part |
 | `cls.chartFallback` | `ui-chart__fallback` | part |
+| `cls.chartFill` | `ui-chart__fill` | part |
+| `cls.chartLabel` | `ui-chart__label` | part |
 | `cls.chartLegend` | `ui-chart__legend` | part |
+| `cls.chartPlot` | `ui-chart__plot` | part |
 | `cls.chartSwatch` | `ui-chart__swatch` | part |
+| `cls.chartTrack` | `ui-chart__track` | part |
 
 ### `.ui-check`
 
@@ -635,6 +640,7 @@ each one matches a real selector in the stylesheet.
 | `cls.reportAppendix` | `ui-report__appendix` | part |
 | `cls.reportCaption` | `ui-report__caption` | part |
 | `cls.reportCover` | `ui-report__cover` | part |
+| `cls.reportCoverCompact` | `ui-report__cover--compact` | modifier |
 | `cls.reportEvidence` | `ui-report__evidence` | part |
 | `cls.reportFigure` | `ui-report__figure` | part |
 | `cls.reportFinding` | `ui-report__finding` | part |
@@ -642,6 +648,7 @@ each one matches a real selector in the stylesheet.
 | `cls.reportHeader` | `ui-report__header` | part |
 | `cls.reportMeta` | `ui-report__meta` | part |
 | `cls.reportSection` | `ui-report__section` | part |
+| `cls.reportSectionUnnumbered` | `ui-report__section--unnumbered` | modifier |
 | `cls.reportSectionHead` | `ui-report__section-head` | part |
 | `cls.reportSources` | `ui-report__sources` | part |
 | `cls.reportSubtitle` | `ui-report__subtitle` | part |

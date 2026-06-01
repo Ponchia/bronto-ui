@@ -19,6 +19,9 @@ modern-platform motion direction (see [ADR-0002](docs/adr/0002-scope-and-2026-ba
   `ui-break-before`, `ui-break-after`, `ui-keep`, `ui-print-exact`). It stays
   out of the default bundle, ships with the offline LLM docs, and is covered by
   a report fixture, package/export checks, and class-contract validation.
+  The layer also includes compact covers, unnumbered report sections, simple
+  static chart-bar primitives, and evidence-table framing rules so generated
+  reports need less private CSS.
 - **Zero-JS enter _and_ exit motion for native-`<dialog>` overlays.** Modal and
   drawer (and their backdrop) now fade/scale **both ways** via `@starting-style`
   + `transition-behavior: allow-discrete` — previously they only animated in and

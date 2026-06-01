@@ -64,6 +64,8 @@ test('report fixture passes axe and carries report semantics', async ({ page }) 
   await expect(page.locator('table caption')).toHaveCount(2);
   await expect(page.locator('figure.ui-report__figure figcaption')).toHaveCount(1);
   await expect(page.locator('.ui-chart__legend')).toHaveCount(1);
+  await expect(page.locator('.ui-chart__plot')).toHaveCount(1);
+  await expect(page.locator('.ui-chart__bar')).toHaveCount(3);
   await expect(page.locator('.ui-chart__fallback table')).toHaveCount(1);
 });
 
@@ -79,6 +81,13 @@ test('report print utilities and overflow rules apply', async ({ page }) => {
       breakBefore: css('.ui-break-before').breakBefore,
       breakAfter: css('.ui-break-after').breakAfter,
       keepInside: css('.ui-keep').breakInside,
+      evidencePadding: css('.ui-report__evidence').paddingTop,
+      unnumberedBefore: getComputedStyle(
+        document.querySelector('.ui-report__section--unnumbered .ui-report__section-head'),
+        '::before',
+      ).content,
+      firstFillWidth: document.querySelector('.ui-chart__fill').getBoundingClientRect().width,
+      firstTrackWidth: document.querySelector('.ui-chart__track').getBoundingClientRect().width,
       exact:
         css('.ui-print-exact').webkitPrintColorAdjust || css('.ui-print-exact').printColorAdjust,
       proseLinkAfter: getComputedStyle(
@@ -94,6 +103,10 @@ test('report print utilities and overflow rules apply', async ({ page }) => {
   expect(result.breakBefore).toBe('page');
   expect(result.breakAfter).toBe('page');
   expect(result.keepInside).toBe('avoid');
+  expect(result.evidencePadding).toBe('0px');
+  expect(['none', 'normal', '']).toContain(result.unnumberedBefore);
+  expect(result.firstFillWidth).toBeGreaterThan(0);
+  expect(result.firstFillWidth).toBeLessThan(result.firstTrackWidth);
   expect(result.exact).toBe('exact');
   expect(result.proseLinkAfter).toContain('https://example.com/report-source');
 });

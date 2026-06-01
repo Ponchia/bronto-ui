@@ -13,7 +13,10 @@ test('cls is the frozen registry', () => {
   assert.equal(cls.button, 'ui-button');
   assert.equal(cls.report, 'ui-report');
   assert.equal(cls.reportSection, 'ui-report__section');
+  assert.equal(cls.reportSectionUnnumbered, 'ui-report__section--unnumbered');
   assert.equal(cls.chart, 'ui-chart');
+  assert.equal(cls.chartPlot, 'ui-chart__plot');
+  assert.equal(cls.chartFill, 'ui-chart__fill');
   assert.equal(cls.printOnly, 'ui-print-only');
 });
 

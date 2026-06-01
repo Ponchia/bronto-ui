@@ -32,7 +32,10 @@ const appShell: 'ui-app-shell' = cls.appShell;
 const tt: 'ui-themetoggle__button' = cls.themetoggleButton;
 const report: 'ui-report' = cls.report;
 const reportSection: 'ui-report__section' = cls.reportSection;
+const reportSectionUnnumbered: 'ui-report__section--unnumbered' = cls.reportSectionUnnumbered;
 const chart: 'ui-chart' = cls.chart;
+const chartPlot: 'ui-chart__plot' = cls.chartPlot;
+const chartFill: 'ui-chart__fill' = cls.chartFill;
 const printOnly: 'ui-print-only' = cls.printOnly;
 
 // @ts-expect-error — unknown cls key is now a compile error (was `string`).
@@ -131,7 +134,10 @@ void [
   tt,
   report,
   reportSection,
+  reportSectionUnnumbered,
   chart,
+  chartPlot,
+  chartFill,
   printOnly,
   a,
   b,

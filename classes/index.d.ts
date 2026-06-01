@@ -236,6 +236,7 @@ export declare const cls: {
   readonly reportCompact: 'ui-report--compact';
   readonly reportNumbered: 'ui-report--numbered';
   readonly reportCover: 'ui-report__cover';
+  readonly reportCoverCompact: 'ui-report__cover--compact';
   readonly reportHeader: 'ui-report__header';
   readonly reportTitle: 'ui-report__title';
   readonly reportSubtitle: 'ui-report__subtitle';
@@ -243,6 +244,7 @@ export declare const cls: {
   readonly reportToc: 'ui-report__toc';
   readonly reportSummary: 'ui-report__summary';
   readonly reportSection: 'ui-report__section';
+  readonly reportSectionUnnumbered: 'ui-report__section--unnumbered';
   readonly reportSectionHead: 'ui-report__section-head';
   readonly reportFinding: 'ui-report__finding';
   readonly reportEvidence: 'ui-report__evidence';
@@ -255,6 +257,11 @@ export declare const cls: {
   readonly chartLegend: 'ui-chart__legend';
   readonly chartSwatch: 'ui-chart__swatch';
   readonly chartCaption: 'ui-chart__caption';
+  readonly chartPlot: 'ui-chart__plot';
+  readonly chartBar: 'ui-chart__bar';
+  readonly chartLabel: 'ui-chart__label';
+  readonly chartTrack: 'ui-chart__track';
+  readonly chartFill: 'ui-chart__fill';
   readonly chartFallback: 'ui-chart__fallback';
   readonly printOnly: 'ui-print-only';
   readonly screenOnly: 'ui-screen-only';

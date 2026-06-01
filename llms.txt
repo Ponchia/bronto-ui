@@ -133,8 +133,10 @@ Canonical report skeleton:
 Report rules for agents: static output by default; do not initialize behaviors
 over untrusted generated content; sanitize arbitrary LLM/CMS/user HTML before
 rendering; use semantic headings; give tables captions and header cells; give
-charts captions, legends/direct labels, and fallback data; never use raw
-chromatic inline colors. Full cookbook: `docs/reporting.md`.
+charts captions, legends/direct labels, and fallback data; use
+`ui-chart__plot`/`ui-chart__bar`/`ui-chart__fill` for simple static bar charts;
+use `ui-report__section--unnumbered` for appendices in numbered reports; never
+use raw chromatic inline colors. Full cookbook: `docs/reporting.md`.
 
 ## Authoritative offline references (shipped in this package)
 
