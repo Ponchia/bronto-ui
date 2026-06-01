@@ -21,9 +21,10 @@ legend layer (`.ui-chart__legend`/`__swatch` removed — see Changed and
 [`MIGRATIONS.json`](MIGRATIONS.json)), annotation arrowheads now render via
 the shared connectors geometry kernel (a small path-shape change), and the
 opt-in marks' rationed-accent tone was renamed `evidence`→`accent` to match the
-rest of the analytical tone vocabulary. Everything else is additive and opt-in;
-the default `dist/bronto.css` is unaffected. Also folds in the 0.4.x maintenance
-hardening that had not yet been released.
+rest of the analytical tone vocabulary. Everything else is additive and opt-in,
+save for the tiny `.ui-shortcut` keyboard-hint primitive that joins the core
+layer; the rest of the default `dist/bronto.css` is unchanged. Also folds in the
+0.4.x maintenance hardening that had not yet been released.
 
 ### Added
 
@@ -57,7 +58,7 @@ hardening that had not yet been released.
   `.ui-bracket-note*`, `ui.mark()`/`ui.bracketNote()`): an opt-in layer of
   sober, report-grade emphasis for running prose — the counterpart to SVG
   annotations (annotations call out a figure, marks call out a sentence). Inline
-  `.ui-mark` (highlight/underline/box/strike; `--evidence` accent + status
+  `.ui-mark` (highlight/underline/box/strike; `--accent` + status
   tones; `--draw` reduced-motion-safe sweep) for use on `<mark>`, and
   `.ui-bracket-note` for bracketing a whole passage. Pure CSS on semantic
   tokens, monochrome by default, with `forced-colors` care. Documented in

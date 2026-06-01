@@ -181,4 +181,4 @@ Release candidates publish to the `next` dist-tag, never to `latest` — opt in 
 
 [MIT](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE) © Ponchia.
 
-The bundled **Doto** font (`fonts/*.ttf`) is © 2024 The Doto Project Authors and licensed separately under the [SIL Open Font License 1.1](https://github.com/Ponchia/bronto-ui/blob/main/fonts/OFL.txt) — see `fonts/OFL.txt`.
+The bundled **Doto** font (`fonts/*.woff2`) is © 2024 The Doto Project Authors and licensed separately under the [SIL Open Font License 1.1](https://github.com/Ponchia/bronto-ui/blob/main/fonts/OFL.txt) — see `fonts/OFL.txt`.

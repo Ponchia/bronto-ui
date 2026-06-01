@@ -135,6 +135,23 @@ selections, DOM nodes, or frameworks.
 | `notePlacement({ x, y, width, height, bounds, preferred })` | Bounded note offset, alignment and transform for one annotation. |
 | `declutterLabels(items, { gap, min, max })` | Adjusted centres for `items` (`[{ pos, size }]`) so labels don't overlap along one axis (order-preserving). |
 | `directLabels(items, { axis, cross, gap, min, max, shape })` | Decluttered label points **and** a leader path per item: `[{ x, y, anchor, key, d }]`. |
+| `circleSubjectPath({ radius })` | Circle subject path. |
+| `rectSubjectPath({ x, y, width, height, padding })` | Rect subject path. |
+| `thresholdPath({ x1, y1, x2, y2 })` | Arbitrary threshold/rule path. |
+| `axisThresholdPath({ orientation, value, start, end })` | Horizontal or vertical axis-aligned threshold. |
+| `bracketSubjectPath({ x1, y1, x2, y2, depth })` | Dogleg bracket path. |
+| `bandSubjectPath({ x, y, width, height, padding })` | Band or interval path. |
+| `slopeSubjectPath({ x1, y1, x2, y2 })` | Trend segment path. |
+| `comparisonBracePath({ x1, y1, x2, y2, depth })` | Comparison brace path. |
+| `outlierClusterPath({ points, radius })` | Repeated circle subjects for a cluster. |
+| `timelineEventPath({ size, direction })` | Event pin marker path. |
+| `evidenceMarkerPath({ x, y, width, height, padding })` | Centered square/rect evidence marker path. |
+| `connectorLine({ dx, dy, subject })` | Straight connector, trimmed against circle/rect subjects. |
+| `connectorElbow({ dx, dy, subject })` | D3-like dogleg connector. |
+| `connectorCurve({ dx, dy, subject })` | Deterministic cubic connector. |
+| `connectorEndDot({ x, y, radius })` | Dot marker path. |
+| `connectorEndArrow({ x1, y1, x2, y2, size })` | Arrow marker path. |
+| `annotationParts(options)` | Convenience object with `transform`, `subject`, `connector`, and `note`. |
 
 `declutterLabels` is a deliberately small, deterministic **1-D** declutter for
 direct labels or axis ticks — sort, push overlaps apart by `size + gap`, slide
@@ -164,23 +181,6 @@ const labels = directLabels(
 );
 // labels[i] → { x, y, anchor, key, d }
 ```
-| `circleSubjectPath({ radius })` | Circle subject path. |
-| `rectSubjectPath({ x, y, width, height, padding })` | Rect subject path. |
-| `thresholdPath({ x1, y1, x2, y2 })` | Arbitrary threshold/rule path. |
-| `axisThresholdPath({ orientation, value, start, end })` | Horizontal or vertical axis-aligned threshold. |
-| `bracketSubjectPath({ x1, y1, x2, y2, depth })` | Dogleg bracket path. |
-| `bandSubjectPath({ x, y, width, height, padding })` | Band or interval path. |
-| `slopeSubjectPath({ x1, y1, x2, y2 })` | Trend segment path. |
-| `comparisonBracePath({ x1, y1, x2, y2, depth })` | Comparison brace path. |
-| `outlierClusterPath({ points, radius })` | Repeated circle subjects for a cluster. |
-| `timelineEventPath({ size, direction })` | Event pin marker path. |
-| `evidenceMarkerPath({ x, y, width, height, padding })` | Centered square/rect evidence marker path. |
-| `connectorLine({ dx, dy, subject })` | Straight connector, trimmed against circle/rect subjects. |
-| `connectorElbow({ dx, dy, subject })` | D3-like dogleg connector. |
-| `connectorCurve({ dx, dy, subject })` | Deterministic cubic connector. |
-| `connectorEndDot({ x, y, radius })` | Dot marker path. |
-| `connectorEndArrow({ x1, y1, x2, y2, size })` | Arrow marker path. |
-| `annotationParts(options)` | Convenience object with `transform`, `subject`, `connector`, and `note`. |
 
 All numeric inputs must be finite. Negative radius, width, height, padding, and
 marker size throw `RangeError`; non-finite values throw `TypeError`. Path

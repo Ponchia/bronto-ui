@@ -68,6 +68,11 @@ pointer select. It emits:
 - `bronto:command:select` — `{ value, label }`. The host executes and closes.
 - `bronto:command:close` — on Escape. The host closes the dialog.
 
+> **Permission boundary:** `initCommand()` owns the `hidden` attribute on items
+> (that is how it filters), so it will reveal any item you pre-hid the moment the
+> query changes. To gate a command by permission, **omit it from the DOM** —
+> don't render it hidden.
+
 ```js
 const dialog = document.getElementById('cmdk');
 document.querySelector('[data-bronto-command]').addEventListener('bronto:command:select', (e) => {
