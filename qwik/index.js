@@ -43,6 +43,7 @@ import {
   initLegend,
   initConnectors,
   initSpotlight,
+  initCrosshair,
   toast,
 } from '../behaviors/index.js';
 
@@ -129,6 +130,9 @@ export const useConnectors = (opts) =>
 export const useSpotlight = (opts) =>
   // eslint-disable-next-line qwik/no-use-visible-task -- delegated DOM glue + cleanup
   useVisibleTask$((ctx) => start(initSpotlight, opts, ctx));
+export const useCrosshair = (opts) =>
+  // eslint-disable-next-line qwik/no-use-visible-task -- delegated DOM glue + cleanup
+  useVisibleTask$((ctx) => start(initCrosshair, opts, ctx));
 
 /** The `toast()` imperative (no lifecycle of its own). */
 export const useToast = () => toast;

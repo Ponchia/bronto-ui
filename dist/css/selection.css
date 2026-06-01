@@ -1,0 +1,1 @@
+@layer bronto{.ui-sel{transition: opacity 0.12s ease,outline-color 0.12s ease}@media (prefers-reduced-motion: reduce){.ui-sel{transition: none}}.ui-sel--on{outline: 2px solid var(--accent);outline-offset: 1px}.ui-sel--off{opacity: 0.35}.ui-sel--maybe{outline: 1px dashed var(--accent);outline-offset: 1px}@media (forced-colors: active){.ui-sel--on{outline-color: Highlight}}}

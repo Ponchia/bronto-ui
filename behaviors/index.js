@@ -29,3 +29,4 @@ export { initDotGlyph } from './glyph.js';
 export { initLegend } from './legend.js';
 export { initConnectors } from './connectors.js';
 export { initSpotlight } from './spotlight.js';
+export { initCrosshair } from './crosshair.js';

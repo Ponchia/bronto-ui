@@ -197,6 +197,35 @@ resize/scroll and when `data-target` changes — so advance a tour by updating
 design; put the real guidance text in the focusable `ui-tour-note`. Details:
 `docs/spotlight.md`.
 
+Optional crosshair / readout for reading a value off a plot — opt-in, never in
+the default bundle. Reports the pointer position; the host maps it to data:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/crosshair.css" />
+```
+
+Mark the plot `[data-bronto-crosshair]` (position: relative) and put a
+`ui-crosshair` overlay inside it with `ui-crosshair__line ui-crosshair__line--x`
+and/or `--y`, optional `ui-crosshair__badge`, and a `ui-readout` chip.
+`initCrosshair()` (or `useCrosshair()`) sets `--crosshair-x/y` (px) on pointer
+move, toggles `is-active`, and dispatches `bronto:crosshair:move`
+({ x, y, fx, fy } — px + 0..1 fractions) / `bronto:crosshair:leave`. It does NOT
+find the nearest datum or map pixels→data (that needs your scales). `ui.crosshair({ muted })`.
+Details: `docs/crosshair.md`.
+
+Optional selection-state vocabulary — opt-in, cross-cutting, CSS only. The carve
+from brush/lasso: Bronto does not do region selection/hit-testing; it ships only
+the states an item can be in:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/selection.css" />
+```
+
+Apply `ui-sel` + `ui-sel--on` (selected), `ui-sel--off` (excluded), or
+`ui-sel--maybe` (live-brush candidate) to any data element (chart mark, table
+row, list item, map region) from YOUR selection/brush logic — Bronto only styles
+them. `ui.sel({ state: 'on'|'off'|'maybe' })`. Details: `docs/selection.md`.
+
 Optional static report layer for LLM-authored HTML reports — opt-in, never in
 the default bundle. Pair it with the normal bundle, and add data-viz only when
 the report contains charts. For standalone browser HTML, use real URLs; package

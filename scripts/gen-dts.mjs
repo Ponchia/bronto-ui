@@ -193,6 +193,14 @@ export interface SpotlightOpts {
   /** Add a ring around the cutout. */
   ring?: boolean;
 }
+export interface CrosshairOpts {
+  /** A subtler, neutral crosshair instead of the accent. */
+  muted?: boolean;
+}
+export interface SelOpts {
+  /** Selection emphasis: \`on\` (selected), \`off\` (excluded), \`maybe\` (live-brush candidate). */
+  state?: 'on' | 'off' | 'maybe';
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -229,6 +237,8 @@ export interface Ui {
   bracketNote(opts?: BracketNoteOpts): string;
   connector(opts?: ConnectorOpts): string;
   spotlight(opts?: SpotlightOpts): string;
+  crosshair(opts?: CrosshairOpts): string;
+  sel(opts?: SelOpts): string;
 }
 
 export declare const ui: Ui;

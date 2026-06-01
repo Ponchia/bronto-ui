@@ -210,3 +210,27 @@ export declare function connectorLine(options: ConnectorOptions): string;
 export declare function connectorElbow(options: ConnectorOptions): string;
 export declare function connectorCurve(options: ConnectorOptions): string;
 export declare function annotationParts(options?: AnnotationPartsOptions): AnnotationParts;
+
+export interface DeclutterLabelItem {
+  /** Desired centre coordinate along the axis. */
+  pos: number;
+  /** The label's extent along the axis. */
+  size: number;
+}
+export interface DeclutterLabelsOptions {
+  /** Minimum gap kept between adjacent labels. Default 0. */
+  gap?: number;
+  /** Lower bound of the axis. Default -Infinity. */
+  min?: number;
+  /** Upper bound of the axis. Default Infinity. */
+  max?: number;
+}
+/**
+ * 1-D label declutter: nudge overlapping labels apart, order-preserving and
+ * deterministic. Returns the adjusted centre per input item (input order). Not
+ * a general 2-D collision solver.
+ */
+export declare function declutterLabels(
+  items: DeclutterLabelItem[],
+  opts?: DeclutterLabelsOptions,
+): number[];

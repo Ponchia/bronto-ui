@@ -4,6 +4,7 @@ import {
   annotationParts,
   annotationTransform,
   axisThresholdPath,
+  declutterLabels,
   bandSubjectPath,
   bracketSubjectPath,
   circleSubjectPath,
@@ -282,4 +283,66 @@ test('helpers reject invalid geometry', () => {
   assert.throws(() => connectorLine({ dx: Number.NaN, dy: 0 }), TypeError);
   assert.throws(() => connectorLine({ dx: 10, dy: 10, subject: { type: 'point' } }), TypeError);
   assert.throws(() => annotationParts({ subject: { type: 'point' } }), TypeError);
+});
+
+test('declutterLabels leaves non-overlapping labels in place', () => {
+  const out = declutterLabels([
+    { pos: 0, size: 10 },
+    { pos: 40, size: 10 },
+    { pos: 80, size: 10 },
+  ]);
+  assert.deepEqual(out, [0, 40, 80]);
+});
+
+test('declutterLabels separates overlapping labels by size + gap, order-preserving', () => {
+  // three labels of size 10 all near 50 → centres must be >= 10 apart (+2 gap)
+  const out = declutterLabels(
+    [
+      { pos: 50, size: 10 },
+      { pos: 52, size: 10 },
+      { pos: 48, size: 10 },
+    ],
+    { gap: 2 },
+  );
+  // output is in INPUT order; sort to check spacing
+  const sorted = [...out].sort((a, b) => a - b);
+  for (let i = 1; i < sorted.length; i++) {
+    assert.ok(
+      sorted[i] - sorted[i - 1] >= 12 - 1e-9,
+      `gap >= 12 (got ${sorted[i] - sorted[i - 1]})`,
+    );
+  }
+  assert.equal(out.length, 3);
+});
+
+test('declutterLabels sweeps up from min and slides to fit under max', () => {
+  // two size-10 labels at 0 with min 0 → first centre 5, second 15
+  assert.deepEqual(
+    declutterLabels(
+      [
+        { pos: 0, size: 10 },
+        { pos: 0, size: 10 },
+      ],
+      { min: 0 },
+    ),
+    [5, 15],
+  );
+  // overflow past max=18 slides the run up by 2 → [3, 13]
+  assert.deepEqual(
+    declutterLabels(
+      [
+        { pos: 0, size: 10 },
+        { pos: 0, size: 10 },
+      ],
+      { min: 0, max: 18 },
+    ),
+    [3, 13],
+  );
+});
+
+test('declutterLabels validates inputs', () => {
+  assert.throws(() => declutterLabels('nope'), TypeError);
+  assert.throws(() => declutterLabels([{ pos: NaN, size: 1 }]), TypeError);
+  assert.throws(() => declutterLabels([{ pos: 0, size: -1 }]), RangeError);
+  assert.throws(() => declutterLabels([], { min: 10, max: 0 }), RangeError);
 });
