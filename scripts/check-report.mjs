@@ -24,10 +24,12 @@ const classSources = [
   'docs/reporting.md',
   'docs/annotations.md',
   'docs/legends.md',
+  'docs/marks.md',
   'llms.txt',
   'demo/report.html',
   'demo/annotations.html',
   'demo/legends.html',
+  'demo/marks.html',
   ...walk('examples/report-static').filter((p) => /\.(html|js|css|md)$/.test(p)),
 ];
 
@@ -46,11 +48,18 @@ if (/report\.css/.test(core)) {
 if (/annotations\.css/.test(core)) {
   errors.push('css/core.css imports annotations.css — annotation CSS must stay opt-in');
 }
+if (/legend\.css/.test(core)) {
+  errors.push('css/core.css imports legend.css — legend CSS must stay opt-in');
+}
+if (/marks\.css/.test(core)) {
+  errors.push('css/core.css imports marks.css — marks CSS must stay opt-in');
+}
 
 const htmlSources = [
   'demo/report.html',
   'demo/annotations.html',
   'demo/legends.html',
+  'demo/marks.html',
   ...walk('examples/report-static').filter((p) => /\.html$/.test(p)),
 ];
 for (const rel of htmlSources) {
@@ -69,9 +78,11 @@ for (const rel of [
   'docs/reporting.md',
   'docs/annotations.md',
   'docs/legends.md',
+  'docs/marks.md',
   'demo/report.html',
   'demo/annotations.html',
   'demo/legends.html',
+  'demo/marks.html',
   ...walk('examples/report-static'),
 ]) {
   if (!/\.(md|html|css|js)$/.test(rel)) continue;

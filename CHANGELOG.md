@@ -43,6 +43,15 @@ layer (see Changed).
   React/Solid/Qwik bindings. New `check:legend` gate proves swatch colours are a
   subset of `tokens/charts.js` and never a raw hex. Documented in
   [`docs/legends.md`](docs/legends.md).
+- **Text marks / evidence** (`@ponchia/ui/css/marks.css`, `.ui-mark*`,
+  `.ui-bracket-note*`, `ui.mark()`/`ui.bracketNote()`): an opt-in layer of
+  sober, report-grade emphasis for running prose — the counterpart to SVG
+  annotations (annotations call out a figure, marks call out a sentence). Inline
+  `.ui-mark` (highlight/underline/box/strike; `--evidence` accent + status
+  tones; `--draw` reduced-motion-safe sweep) for use on `<mark>`, and
+  `.ui-bracket-note` for bracketing a whole passage. Pure CSS on semantic
+  tokens, monochrome by default, with `forced-colors` care. Documented in
+  [`docs/marks.md`](docs/marks.md).
 
 ### Fixed
 
