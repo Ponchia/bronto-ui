@@ -93,6 +93,8 @@ export const EXTRA_LEAVES = [
   'marks.css',
   'connectors.css',
   'spotlight.css',
+  'crosshair.css',
+  'selection.css',
 ];
 
 export function buildBundles() {

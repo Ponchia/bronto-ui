@@ -29,6 +29,7 @@ const requiredHooks = [
   'useLegend',
   'useConnectors',
   'useSpotlight',
+  'useCrosshair',
   'useToast',
   'useBrontoBehavior',
 ];

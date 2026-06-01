@@ -27,6 +27,8 @@ const classSources = [
   'docs/marks.md',
   'docs/connectors.md',
   'docs/spotlight.md',
+  'docs/crosshair.md',
+  'docs/selection.md',
   'llms.txt',
   'demo/report.html',
   'demo/annotations.html',
@@ -34,6 +36,8 @@ const classSources = [
   'demo/marks.html',
   'demo/connectors.html',
   'demo/spotlight.html',
+  'demo/crosshair.html',
+  'demo/selection.html',
   ...walk('examples/report-static').filter((p) => /\.(html|js|css|md)$/.test(p)),
 ];
 
@@ -64,6 +68,12 @@ if (/connectors\.css/.test(core)) {
 if (/spotlight\.css/.test(core)) {
   errors.push('css/core.css imports spotlight.css — spotlight CSS must stay opt-in');
 }
+if (/crosshair\.css/.test(core)) {
+  errors.push('css/core.css imports crosshair.css — crosshair CSS must stay opt-in');
+}
+if (/selection\.css/.test(core)) {
+  errors.push('css/core.css imports selection.css — selection CSS must stay opt-in');
+}
 
 const htmlSources = [
   'demo/report.html',
@@ -72,6 +82,8 @@ const htmlSources = [
   'demo/marks.html',
   'demo/connectors.html',
   'demo/spotlight.html',
+  'demo/crosshair.html',
+  'demo/selection.html',
   ...walk('examples/report-static').filter((p) => /\.html$/.test(p)),
 ];
 for (const rel of htmlSources) {
@@ -93,12 +105,16 @@ for (const rel of [
   'docs/marks.md',
   'docs/connectors.md',
   'docs/spotlight.md',
+  'docs/crosshair.md',
+  'docs/selection.md',
   'demo/report.html',
   'demo/annotations.html',
   'demo/legends.html',
   'demo/marks.html',
   'demo/connectors.html',
   'demo/spotlight.html',
+  'demo/crosshair.html',
+  'demo/selection.html',
   ...walk('examples/report-static'),
 ]) {
   if (!/\.(md|html|css|js)$/.test(rel)) continue;

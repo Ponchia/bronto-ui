@@ -437,3 +437,45 @@ export function annotationParts(opts = {}) {
 
   return { transform, subject, connector, note };
 }
+
+/**
+ * Declutter labels along ONE axis: nudge overlapping labels apart so each keeps
+ * `gap` from its neighbours, sweeping up from `min`; if the run overflows `max`
+ * it slides up to fit. Deterministic and order-preserving — NOT a general 2-D
+ * collision solver (with more labels than the range holds, the overflow past
+ * `min` is the caller's to resolve: fewer labels, a longer axis, or rotation).
+ *
+ * `items`: `[{ pos, size }]` — `pos` is the desired centre coordinate along the
+ * axis, `size` the label's extent along it. Returns the adjusted centre per
+ * input item, in the original order.
+ */
+export function declutterLabels(items, opts = {}) {
+  if (!Array.isArray(items)) throw new TypeError('items must be an array');
+  const gap = dimension('gap', opts.gap, 0);
+  const min = opts.min == null ? -Infinity : finite('min', opts.min);
+  const max = opts.max == null ? Infinity : finite('max', opts.max);
+  if (max < min) throw new RangeError('max must be greater than or equal to min');
+
+  const nodes = items.map((it, index) => ({
+    index,
+    half: dimension('size', it?.size) / 2,
+    pos: finite('pos', it?.pos),
+  }));
+  const order = [...nodes].sort((a, b) => a.pos - b.pos);
+
+  let floor = min;
+  for (const n of order) {
+    const center = Math.max(n.pos, floor + n.half);
+    n.pos = center;
+    floor = center + n.half + gap;
+  }
+  if (max !== Infinity && order.length) {
+    const last = order[order.length - 1];
+    const overflow = last.pos + last.half - max;
+    if (overflow > 0) for (const n of order) n.pos -= overflow;
+  }
+
+  const out = new Array(nodes.length);
+  for (const n of nodes) out[n.index] = roundedNumber(n.pos);
+  return out;
+}

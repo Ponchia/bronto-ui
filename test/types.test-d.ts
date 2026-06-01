@@ -37,6 +37,7 @@ import {
   annotationParts,
   annotationTransform,
   axisThresholdPath,
+  declutterLabels,
   bandSubjectPath,
   bracketSubjectPath,
   circleSubjectPath,
@@ -111,6 +112,12 @@ const spot: string = ui.spotlight({ ring: true });
 // @ts-expect-error — connector motion is only 'draw'.
 ui.connector({ motion: 'pulse' });
 
+const xh: string = ui.crosshair({ muted: true });
+const selOn: string = ui.sel({ state: 'on' });
+void [xh, selOn];
+// @ts-expect-error — selection state is a closed union.
+ui.sel({ state: 'highlighted' });
+
 // Connectors geometry: object-shaped options, string/coordinate returns.
 const connOut: ConnectRectsResult = connectRects({
   fromRect: { x: 0, y: 0, width: 20, height: 20 },
@@ -131,6 +138,15 @@ const anchorX: number = anchor.x;
 // @ts-expect-error — shape is a closed union.
 connectorPath({ from: { x: 0, y: 0 }, to: { x: 1, y: 1 }, shape: 'zigzag' });
 void [connD, connAngle, head, pathStr, anchorX];
+
+const labelPositions: number[] = declutterLabels(
+  [
+    { pos: 10, size: 8 },
+    { pos: 12, size: 8 },
+  ],
+  { gap: 2, min: 0, max: 100 },
+);
+void labelPositions;
 
 const parts: ClassValue = ['a', false, ['b'], null];
 const joined: string = cx(parts, 'extra', undefined);

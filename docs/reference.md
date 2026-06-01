@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 400 classes across 128 component groups
+- 411 classes across 131 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -361,6 +361,17 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.cq` | `ui-cq` | base |
+
+### `.ui-crosshair`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.crosshair` | `ui-crosshair` | base |
+| `cls.crosshairBadge` | `ui-crosshair__badge` | part |
+| `cls.crosshairLine` | `ui-crosshair__line` | part |
+| `cls.crosshairLineX` | `ui-crosshair__line--x` | modifier |
+| `cls.crosshairLineY` | `ui-crosshair__line--y` | modifier |
+| `cls.crosshairMuted` | `ui-crosshair--muted` | modifier |
 
 ### `.ui-display`
 
@@ -746,6 +757,12 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.ratio` | `ui-ratio` | base |
 
+### `.ui-readout`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.readout` | `ui-readout` | base |
+
 ### `.ui-report`
 
 | Registry key | Class | Kind |
@@ -808,6 +825,15 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.segmented` | `ui-segmented` | base |
 | `cls.segmentedOption` | `ui-segmented__option` | part |
+
+### `.ui-sel`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.sel` | `ui-sel` | base |
+| `cls.selMaybe` | `ui-sel--maybe` | modifier |
+| `cls.selOff` | `ui-sel--off` | modifier |
+| `cls.selOn` | `ui-sel--on` | modifier |
 
 ### `.ui-select`
 

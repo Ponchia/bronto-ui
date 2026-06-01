@@ -378,6 +378,19 @@ export const cls = Object.freeze({
   tourNoteTitle: 'ui-tour-note__title',
   tourNoteBody: 'ui-tour-note__body',
   tourNoteActions: 'ui-tour-note__actions',
+  // crosshair (plot ruler + readout — css/crosshair.css)
+  crosshair: 'ui-crosshair',
+  crosshairMuted: 'ui-crosshair--muted',
+  crosshairLine: 'ui-crosshair__line',
+  crosshairLineX: 'ui-crosshair__line--x',
+  crosshairLineY: 'ui-crosshair__line--y',
+  crosshairBadge: 'ui-crosshair__badge',
+  readout: 'ui-readout',
+  // selection-state vocabulary (cross-cutting — css/selection.css)
+  sel: 'ui-sel',
+  selOn: 'ui-sel--on',
+  selOff: 'ui-sel--off',
+  selMaybe: 'ui-sel--maybe',
   printOnly: 'ui-print-only',
   screenOnly: 'ui-screen-only',
   breakBefore: 'ui-break-before',
@@ -632,6 +645,14 @@ export const ui = {
       motion === 'draw' && cls.connectorDraw,
     ),
   spotlight: ({ ring } = {}) => j(cls.spotlight, ring && cls.spotlightRing),
+  crosshair: ({ muted } = {}) => j(cls.crosshair, muted && cls.crosshairMuted),
+  sel: ({ state } = {}) =>
+    j(
+      cls.sel,
+      state === 'on' && cls.selOn,
+      state === 'off' && cls.selOff,
+      state === 'maybe' && cls.selMaybe,
+    ),
 };
 
 export default ui;

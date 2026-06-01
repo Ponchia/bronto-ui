@@ -35,6 +35,7 @@ import {
   initLegend,
   initConnectors,
   initSpotlight,
+  initCrosshair,
   toast,
 } from '../behaviors/index.js';
 
@@ -77,6 +78,7 @@ export const useDotGlyph = (opts) => useBrontoBehavior(initDotGlyph, opts);
 export const useLegend = (opts) => useBrontoBehavior(initLegend, opts);
 export const useConnectors = (opts) => useBrontoBehavior(initConnectors, opts);
 export const useSpotlight = (opts) => useBrontoBehavior(initSpotlight, opts);
+export const useCrosshair = (opts) => useBrontoBehavior(initCrosshair, opts);
 
 /** The `toast()` imperative (no lifecycle of its own). */
 export const useToast = () => toast;
