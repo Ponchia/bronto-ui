@@ -70,6 +70,11 @@
           <span class="ui-themetoggle__label" id="themeLabel">Dark</span>
           <span class="ui-themetoggle__track"><span class="ui-themetoggle__thumb"></span></span>
         </button>
+        <select class="ui-select" id="skinSelect" aria-label="Colorway"></select>
+        <select class="ui-select" id="surfaceSelect" aria-label="Dark surface">
+          <option value="">Comfortable</option>
+          <option value="oled">OLED black</option>
+        </select>
         </span>
       </header>
 
@@ -1221,27 +1226,79 @@ ui.button({ variant: 'ghost' });</code></pre>
       initCarousel(); // wires both the inline carousel and the lightbox's
       initDotGlyph(); // expands [data-bronto-glyph] placeholders (incl. the skin preview)
 
-      // Colorway switcher: set data-bronto-skin on the preview region only, so
-      // the rest of the page keeps the default red. "Default" clears it.
+      // Unified theme picker. Three independent, persisted axes — all set as
+      // attributes on <html>, exactly how a real consumer themes a page:
+      //   • light/dark  → data-theme       (the initThemeToggle button)
+      //   • colorway    → data-bronto-skin (re-points the one accent; opt-in skins.css)
+      //   • dark surface→ data-surface     (comfortable elevated-grey vs OLED true-black)
+      // The toolbar <select>s and the showcase button group below drive the
+      // same state through one applySkin/applySurface, so they stay in sync.
+      const themeRoot = document.documentElement;
+      const SKIN_KEY = 'bronto-skin';
+      const SURFACE_KEY = 'bronto-surface';
+      const skinSelect = document.getElementById('skinSelect');
+      const surfaceSelect = document.getElementById('surfaceSelect');
       const skinSwitch = document.getElementById('skinSwitch');
-      if (skinSwitch) {
-        const root = document.documentElement; // colorways are root-level, like data-theme
-        const setSkin = (value, pressedBtn) => {
-          if (value) root.setAttribute('data-bronto-skin', value);
-          else root.removeAttribute('data-bronto-skin');
+      const skinOptions = [['', 'Default'], ...SKIN_NAMES.map((n) => [n, skins[n].label])];
+      const persist = (key, value) => {
+        try {
+          if (value) localStorage.setItem(key, value);
+          else localStorage.removeItem(key);
+        } catch {
+          /* storage blocked — still applies for this session */
+        }
+      };
+
+      const applySkin = (value) => {
+        if (value) themeRoot.setAttribute('data-bronto-skin', value);
+        else themeRoot.removeAttribute('data-bronto-skin');
+        persist(SKIN_KEY, value);
+        if (skinSelect) skinSelect.value = value;
+        if (skinSwitch)
           for (const b of skinSwitch.children)
-            b.setAttribute('aria-pressed', String(b === pressedBtn));
-        };
-        for (const [value, label] of [['', 'Default'], ...SKIN_NAMES.map((n) => [n, skins[n].label])]) {
+            b.setAttribute('aria-pressed', String(b.dataset.skin === value));
+      };
+      const applySurface = (value) => {
+        if (value) themeRoot.setAttribute('data-surface', value);
+        else themeRoot.removeAttribute('data-surface');
+        persist(SURFACE_KEY, value);
+        if (surfaceSelect) surfaceSelect.value = value;
+      };
+
+      if (skinSelect) {
+        for (const [value, label] of skinOptions) {
+          const opt = document.createElement('option');
+          opt.value = value;
+          opt.textContent = label;
+          skinSelect.appendChild(opt);
+        }
+        skinSelect.addEventListener('change', () => applySkin(skinSelect.value));
+      }
+      if (skinSwitch) {
+        for (const [value, label] of skinOptions) {
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'ui-button ui-button--sm';
           btn.textContent = label;
-          btn.setAttribute('aria-pressed', value === '' ? 'true' : 'false');
-          btn.addEventListener('click', () => setSkin(value, btn));
+          btn.dataset.skin = value;
+          btn.addEventListener('click', () => applySkin(value));
           skinSwitch.appendChild(btn);
         }
       }
+      if (surfaceSelect) surfaceSelect.addEventListener('change', () => applySurface(surfaceSelect.value));
+
+      // Restore persisted colorway + surface (theme itself is restored by
+      // applyStoredTheme in the shared module).
+      let storedSkin = '';
+      let storedSurface = '';
+      try {
+        storedSkin = localStorage.getItem(SKIN_KEY) || '';
+        storedSurface = localStorage.getItem(SURFACE_KEY) || '';
+      } catch {
+        /* storage blocked */
+      }
+      applySkin(SKIN_NAMES.includes(storedSkin) ? storedSkin : '');
+      applySurface(storedSurface === 'oled' ? 'oled' : '');
 
       document.getElementById('toastBtn').addEventListener('click', () => {
         toast('Order filled — BTC/EUR', { tone: 'success', title: 'Done' });

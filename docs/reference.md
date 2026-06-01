@@ -1087,17 +1087,17 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 
 | Token | Value |
 | --- | --- |
-| `--bg` | `#000000` |
-| `--bg-elevated` | `#0a0a0a` |
+| `--bg` | `#121212` |
+| `--bg-elevated` | `#181818` |
 | `--bg-accent` | `color-mix(in srgb, var(--accent) 8%, transparent)` |
-| `--panel` | `#0c0c0c` |
-| `--panel-strong` | `#141414` |
-| `--panel-soft` | `#1a1a1a` |
-| `--line` | `#2a2a2a` |
-| `--line-strong` | `#444444` |
-| `--text` | `#f2f2f2` |
-| `--text-soft` | `#c4c4c4` |
-| `--text-dim` | `#858585` |
+| `--panel` | `#1c1c1c` |
+| `--panel-strong` | `#222222` |
+| `--panel-soft` | `#242424` |
+| `--line` | `#383838` |
+| `--line-strong` | `#555555` |
+| `--text` | `#e6e6e6` |
+| `--text-soft` | `#c8c8c8` |
+| `--text-dim` | `#a0a0a0` |
 | `--accent` | `#ff3b41` |
 | `--accent-ramp-end` | `#000000` |
 | `--accent-strong` | `color-mix(in srgb, var(--accent) 84%, #fff)` |

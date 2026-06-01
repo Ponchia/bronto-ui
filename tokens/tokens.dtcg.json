@@ -630,11 +630,11 @@
       "bg": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#000000"
+          "$value": "#121212"
         },
         "elevated": {
           "$type": "color",
-          "$value": "#0a0a0a"
+          "$value": "#181818"
         },
         "accent": {
           "$type": "color",
@@ -647,39 +647,39 @@
       "panel": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#0c0c0c"
+          "$value": "#1c1c1c"
         },
         "strong": {
           "$type": "color",
-          "$value": "#141414"
+          "$value": "#222222"
         },
         "soft": {
           "$type": "color",
-          "$value": "#1a1a1a"
+          "$value": "#242424"
         }
       },
       "line": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#2a2a2a"
+          "$value": "#383838"
         },
         "strong": {
           "$type": "color",
-          "$value": "#444444"
+          "$value": "#555555"
         }
       },
       "text": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#f2f2f2"
+          "$value": "#e6e6e6"
         },
         "soft": {
           "$type": "color",
-          "$value": "#c4c4c4"
+          "$value": "#c8c8c8"
         },
         "dim": {
           "$type": "color",
-          "$value": "#858585"
+          "$value": "#a0a0a0"
         }
       },
       "accent": {

@@ -51,6 +51,14 @@ fills — follows automatically, in both light and dark.
 - **Spacing** — override the `--space-2xs … --space-2xl` scale, or use a
   preset: `data-density="compact"` / `data-density="comfortable"` on any
   element (defaults to the middle scale).
+- **Dark surface** — the dark theme's base is a deliberately *elevated*
+  near-black (`--bg: #121212`) for readability: pure black + bright text
+  causes halation, and near-black-on-black surface steps are imperceptible.
+  For OLED power-saving or the original true-black "Nothing" look, opt in with
+  `data-surface="oled"` on `:root` (a root-level attribute like `data-theme`).
+  It only affects the dark theme and is a CSS-only preset (not in the JS token
+  model), so it never blacks out the light theme. See
+  [ADR-0003](adr/0003-theme-model.md) for the theme-model rationale.
 - **Radius** — `--radius-sm … --radius-xl`, `--radius-pill`. The Nothing
   default is near-sharp; raise these for a softer brand.
 - **Type** — `--display` (dot-matrix face), `--mono`, `--sans`. Override

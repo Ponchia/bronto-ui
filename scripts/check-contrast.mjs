@@ -51,6 +51,31 @@ for (const [theme, rows] of [
   }
 }
 
+// 2b. APCA advisory (NOT gated, dark-theme text). WCAG 2.x over-rates dark-mode
+// contrast — it saturates near black, so a pairing can read poorly yet "pass"
+// 4.5:1 (the dark `--text-dim` regression was APCA Lc 36 at WCAG 4.7:1). APCA
+// is perceptual and polarity-aware, so we track it on dark text and WARN (never
+// fail) below the role target. Promoting this to a hard gate is an ADR-0001
+// decision (APCA stays advisory while WCAG 3 is a Working Draft) — see
+// docs/contrast.md. Accent-derived text (--accent-text/--button-text) is
+// accent-constrained and WCAG-gated, so it is intentionally not tracked here.
+const APCA_TARGET = { '--text': 60, '--text-soft': 60, '--text-dim': 45 };
+const apcaWarnings = [];
+for (const x of dark) {
+  const target = APCA_TARGET[x.fg];
+  if (target == null || x.apca == null) continue;
+  if (x.apca < target) {
+    apcaWarnings.push(
+      `dark: ${x.fg} on ${x.bg} (${x.role}) is APCA Lc ${Math.round(x.apca)}, below the ` +
+        `advisory Lc ${target} for readable ${x.fg === '--text-dim' ? 'dim/meta' : 'body'} text`,
+    );
+  }
+}
+if (apcaWarnings.length) {
+  console.warn(`⚠ ${apcaWarnings.length} dark-theme APCA advisory shortfall(s) (not gated):`);
+  for (const w of apcaWarnings) console.warn(`  - ${w}`);
+}
+
 if (errors.length) {
   console.error(`✖ ${errors.length} contrast problem(s):`);
   for (const e of errors) console.error(`  - ${e}`);

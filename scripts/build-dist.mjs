@@ -104,9 +104,10 @@ export function buildBundles() {
  *  ceiling was nudged 13.0→13.5 kB at 0.4.1 for the native-`<dialog>`
  *  enter+exit motion (`@starting-style` + `allow-discrete`); the raw ceiling
  *  was then nudged 76→77 kB for the popover/toast/accordion motion plus the
- *  scroll-driven + view-transition enhancements (gzip held — it compresses
- *  well, sitting ~13.1 kB). */
-export const BUDGET = { raw: 77_000, gzip: 13_500 };
+ *  scroll-driven + view-transition enhancements, then 77→78 kB for the
+ *  `data-surface="oled"` dark-surface preset (ADR-0003). Gzip held — these are
+ *  repetitive grayscale tokens that compress well, sitting ~13.2 kB. */
+export const BUDGET = { raw: 78_000, gzip: 13_500 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };

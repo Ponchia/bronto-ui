@@ -66,9 +66,30 @@ modern-platform motion direction (see [ADR-0002](docs/adr/0002-scope-and-2026-ba
   signal: `useDialog({ root: useSignal() })`. `@builder.io/qwik` is an **optional**
   peer dependency, so the core stays zero-dependency. New `examples/qwik-vite`
   builds it through the real Qwik optimizer.
+- **OLED true-black surface variant — `data-surface="oled"`.** The dark base is
+  now a readable elevated near-black (see Changed); this opt-in root attribute
+  restores pure black for OLED power-saving and the original "Nothing" look.
+  CSS-only preset (like `data-density`/`data-contrast`), scoped to the dark
+  theme. Documented in `docs/theming.md`.
+- **APCA advisory for dark text.** `check:contrast` now emits a non-failing
+  warning when a dark text pairing falls below its perceptual APCA target (WCAG
+  stays the hard gate) — the early-warning that would have caught the illegible
+  dim text. The kitchen-sink demo gains a unified theme picker (theme × colorway
+  × surface, all persisted).
+- **[ADR-0003](docs/adr/0003-theme-model.md)** records the theme model: a binary
+  light/dark base × one-knob derivation × orthogonal axes (colorway, surface,
+  contrast, density), and why a flat named-theme catalog is rejected.
 
 ### Changed
 
+- **Dark theme re-tuned for readability.** The dark base moved off pure `#000`
+  to an elevated near-black (`--bg #121212`, panels `#1c1c1c`/`#222`/`#242424`,
+  lines `#383838`/`#555`); body text eased `#f2f2f2 → #e6e6e6` (APCA Lc 99 → ~91,
+  removing halation) and **dim/meta text raised `#858585 → #a0a0a0`** (APCA
+  Lc ~36 → ~49 — the actual "hard to read" fix). WCAG 2.x over-rates contrast on
+  pure black, so pairings "passed" while reading poorly; the re-tune clears WCAG
+  AA on every pairing and lifts perceptual (APCA) contrast. Accent and status
+  colours are unchanged; true black stays available via `data-surface="oled"`.
 - **Browser floor raised to Chrome/Edge 125+, Safari 18+, Firefox 129+**
   (early–mid 2025). A deliberate greenfield stance (ADR-0002) so the framework
   can build natively on `@starting-style`, `transition-behavior: allow-discrete`,

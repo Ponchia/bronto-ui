@@ -59,7 +59,8 @@
     "docs/usage.md",
     "docs/reporting.md",
     "docs/adr/0001-color-system.md",
-    "docs/adr/0002-scope-and-2026-baseline.md"
+    "docs/adr/0002-scope-and-2026-baseline.md",
+    "docs/adr/0003-theme-model.md"
   ],
   "style": "./dist/bronto.css",
   "scripts": {
@@ -197,6 +198,7 @@
     "./docs/reporting.md": "./docs/reporting.md",
     "./docs/adr/0001-color-system.md": "./docs/adr/0001-color-system.md",
     "./docs/adr/0002-scope-and-2026-baseline.md": "./docs/adr/0002-scope-and-2026-baseline.md",
+    "./docs/adr/0003-theme-model.md": "./docs/adr/0003-theme-model.md",
     "./classes": {
       "types": "./classes/index.d.ts",
       "default": "./classes/index.js"
