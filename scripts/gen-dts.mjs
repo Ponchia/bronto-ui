@@ -183,6 +183,16 @@ export interface MarkOpts {
 export interface BracketNoteOpts {
   tone?: 'evidence' | 'warning' | 'danger' | 'info';
 }
+export interface ConnectorOpts {
+  tone?: 'accent' | 'muted' | 'success' | 'warning' | 'danger' | 'info';
+  dashed?: boolean;
+  /** Stroke the line in once (respects \`prefers-reduced-motion\`). */
+  motion?: 'draw';
+}
+export interface SpotlightOpts {
+  /** Add a ring around the cutout. */
+  ring?: boolean;
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -217,6 +227,8 @@ export interface Ui {
   annotation(opts?: AnnotationOpts): string;
   mark(opts?: MarkOpts): string;
   bracketNote(opts?: BracketNoteOpts): string;
+  connector(opts?: ConnectorOpts): string;
+  spotlight(opts?: SpotlightOpts): string;
 }
 
 export declare const ui: Ui;

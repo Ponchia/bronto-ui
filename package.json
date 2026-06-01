@@ -47,6 +47,7 @@
     "behaviors",
     "glyphs",
     "annotations",
+    "connectors",
     "react",
     "solid",
     "qwik",
@@ -63,6 +64,8 @@
     "docs/annotations.md",
     "docs/legends.md",
     "docs/marks.md",
+    "docs/connectors.md",
+    "docs/spotlight.md",
     "docs/adr/0001-color-system.md",
     "docs/adr/0002-scope-and-2026-baseline.md",
     "docs/adr/0003-theme-model.md"
@@ -172,6 +175,8 @@
     "./css/annotations.css": "./dist/css/annotations.css",
     "./css/legend.css": "./dist/css/legend.css",
     "./css/marks.css": "./dist/css/marks.css",
+    "./css/connectors.css": "./dist/css/connectors.css",
+    "./css/spotlight.css": "./dist/css/spotlight.css",
     "./css/unlayered/tokens.css": "./css/tokens.css",
     "./css/unlayered/fonts.css": "./css/fonts.css",
     "./css/unlayered/base.css": "./css/base.css",
@@ -193,6 +198,8 @@
     "./css/unlayered/annotations.css": "./css/annotations.css",
     "./css/unlayered/legend.css": "./css/legend.css",
     "./css/unlayered/marks.css": "./css/marks.css",
+    "./css/unlayered/connectors.css": "./css/connectors.css",
+    "./css/unlayered/spotlight.css": "./css/spotlight.css",
     "./tokens": {
       "types": "./tokens/index.d.ts",
       "default": "./tokens/index.js"
@@ -213,6 +220,8 @@
     "./docs/annotations.md": "./docs/annotations.md",
     "./docs/legends.md": "./docs/legends.md",
     "./docs/marks.md": "./docs/marks.md",
+    "./docs/connectors.md": "./docs/connectors.md",
+    "./docs/spotlight.md": "./docs/spotlight.md",
     "./docs/adr/0001-color-system.md": "./docs/adr/0001-color-system.md",
     "./docs/adr/0002-scope-and-2026-baseline.md": "./docs/adr/0002-scope-and-2026-baseline.md",
     "./docs/adr/0003-theme-model.md": "./docs/adr/0003-theme-model.md",
@@ -231,6 +240,10 @@
     "./annotations": {
       "types": "./annotations/index.d.ts",
       "default": "./annotations/index.js"
+    },
+    "./connectors": {
+      "types": "./connectors/index.d.ts",
+      "default": "./connectors/index.js"
     },
     "./react": {
       "types": "./react/index.d.ts",

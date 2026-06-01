@@ -357,6 +357,27 @@ export const cls = Object.freeze({
   bracketNoteWarning: 'ui-bracket-note--warning',
   bracketNoteDanger: 'ui-bracket-note--danger',
   bracketNoteInfo: 'ui-bracket-note--info',
+  // connectors (leader lines — css/connectors.css)
+  connector: 'ui-connector',
+  connectorPath: 'ui-connector__path',
+  connectorEnd: 'ui-connector__end',
+  connectorDashed: 'ui-connector--dashed',
+  connectorAccent: 'ui-connector--accent',
+  connectorMuted: 'ui-connector--muted',
+  connectorSuccess: 'ui-connector--success',
+  connectorWarning: 'ui-connector--warning',
+  connectorDanger: 'ui-connector--danger',
+  connectorInfo: 'ui-connector--info',
+  connectorDraw: 'ui-connector--draw',
+  // spotlight (guided-focus overlay — css/spotlight.css)
+  spotlight: 'ui-spotlight',
+  spotlightHole: 'ui-spotlight__hole',
+  spotlightRing: 'ui-spotlight--ring',
+  tourNote: 'ui-tour-note',
+  tourNoteStep: 'ui-tour-note__step',
+  tourNoteTitle: 'ui-tour-note__title',
+  tourNoteBody: 'ui-tour-note__body',
+  tourNoteActions: 'ui-tour-note__actions',
   printOnly: 'ui-print-only',
   screenOnly: 'ui-screen-only',
   breakBefore: 'ui-break-before',
@@ -598,6 +619,19 @@ export const ui = {
       tone === 'danger' && cls.bracketNoteDanger,
       tone === 'info' && cls.bracketNoteInfo,
     ),
+  connector: ({ tone, dashed, motion } = {}) =>
+    j(
+      cls.connector,
+      tone === 'accent' && cls.connectorAccent,
+      tone === 'muted' && cls.connectorMuted,
+      tone === 'success' && cls.connectorSuccess,
+      tone === 'warning' && cls.connectorWarning,
+      tone === 'danger' && cls.connectorDanger,
+      tone === 'info' && cls.connectorInfo,
+      dashed && cls.connectorDashed,
+      motion === 'draw' && cls.connectorDraw,
+    ),
+  spotlight: ({ ring } = {}) => j(cls.spotlight, ring && cls.spotlightRing),
 };
 
 export default ui;

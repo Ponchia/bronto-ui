@@ -26,6 +26,14 @@ import {
 import { skins, SKIN_NAMES, type SkinName } from '../tokens/skins.js';
 import { charts, type ChartTokenName } from '../tokens/charts.js';
 import {
+  connectRects,
+  connectorPath,
+  arrowHead,
+  anchorPoint,
+  type ConnectRectsResult,
+  type Side,
+} from '../connectors/index.js';
+import {
   annotationParts,
   annotationTransform,
   axisThresholdPath,
@@ -97,6 +105,32 @@ ui.mark({ style: 'wavy' });
 ui.mark({ tone: 'accent' });
 // @ts-expect-error — bracket-note tone is a closed union (no 'success').
 ui.bracketNote({ tone: 'success' });
+
+const conn: string = ui.connector({ tone: 'accent', dashed: true, motion: 'draw' });
+const spot: string = ui.spotlight({ ring: true });
+// @ts-expect-error — connector motion is only 'draw'.
+ui.connector({ motion: 'pulse' });
+
+// Connectors geometry: object-shaped options, string/coordinate returns.
+const connOut: ConnectRectsResult = connectRects({
+  fromRect: { x: 0, y: 0, width: 20, height: 20 },
+  toRect: { x: 80, y: 40, width: 20, height: 20 },
+  shape: 'curve',
+});
+const connD: string = connOut.d;
+const connAngle: number = connOut.angle;
+const head: string = arrowHead(connOut.to, connOut.angle);
+const pathStr: string = connectorPath({
+  from: { x: 0, y: 0 },
+  to: { x: 10, y: 10 },
+  shape: 'elbow',
+});
+const side: Side = 'right';
+const anchor = anchorPoint({ x: 0, y: 0, width: 10, height: 10 }, side);
+const anchorX: number = anchor.x;
+// @ts-expect-error — shape is a closed union.
+connectorPath({ from: { x: 0, y: 0 }, to: { x: 1, y: 1 }, shape: 'zigzag' });
+void [connD, connAngle, head, pathStr, anchorX];
 
 const parts: ClassValue = ['a', false, ['b'], null];
 const joined: string = cx(parts, 'extra', undefined);

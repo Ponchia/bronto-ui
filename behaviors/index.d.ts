@@ -175,3 +175,23 @@ export interface LegendToggleDetail {
  * host. Returns a cleanup function.
  */
 export declare function initLegend(opts?: DelegateOpts): Cleanup;
+
+/**
+ * Draw + keep leader lines in sync. Each `[data-bronto-connector]` is a
+ * `.ui-connector` SVG overlaying a positioned container; `data-from`/`data-to`
+ * are the ids of the elements to connect (with optional `data-shape`,
+ * `data-from-side`/`data-to-side`, `data-end`). Computes geometry via the
+ * `@ponchia/ui/connectors` helpers and redraws on resize/scroll. Bronto owns no
+ * layout. SSR-safe, idempotent per host; returns a cleanup that disconnects
+ * observers/listeners. Re-run after adding/removing connectors.
+ */
+export declare function initConnectors(opts?: DelegateOpts): Cleanup;
+
+/**
+ * Position a spotlight cutout over a target. Each `[data-bronto-spotlight]` is a
+ * `.ui-spotlight` overlay; `data-target` is the id of the element to highlight.
+ * Sets `--spot-x/y/w/h` and re-places on resize/scroll and when `data-target`
+ * changes. NOT a tour engine — the host owns step order/advancing/visibility.
+ * SSR-safe, idempotent per host; returns a cleanup function.
+ */
+export declare function initSpotlight(opts?: DelegateOpts): Cleanup;

@@ -118,6 +118,14 @@ test('the recipes added this cycle emit only registry classes', () => {
   assert.equal(ui.bracketNote(), 'ui-bracket-note');
   assert.equal(ui.bracketNote({ tone: 'warning' }), 'ui-bracket-note ui-bracket-note--warning');
   assert.equal(ui.bracketNote({ tone: 'bogus' }), 'ui-bracket-note');
+  assert.equal(ui.connector(), 'ui-connector');
+  assert.equal(
+    ui.connector({ tone: 'accent', dashed: true, motion: 'draw' }),
+    'ui-connector ui-connector--accent ui-connector--dashed ui-connector--draw',
+  );
+  assert.equal(ui.connector({ tone: 'bogus' }), 'ui-connector');
+  assert.equal(ui.spotlight(), 'ui-spotlight');
+  assert.equal(ui.spotlight({ ring: true }), 'ui-spotlight ui-spotlight--ring');
 });
 
 test('every ui.* recipe is declared on the Ui interface in index.d.ts', async () => {

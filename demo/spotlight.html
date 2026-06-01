@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — spotlight specimen</title>
+    <meta name="description" content="Guided-focus overlay specimen for @ponchia/ui spotlight." />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/spotlight.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .spot-demo {
+        margin: 0 auto;
+        max-width: 56rem;
+        padding: 2rem 1rem 6rem;
+      }
+
+      .spot-toolbar {
+        display: flex;
+        gap: var(--space-sm);
+        margin-block: var(--space-lg);
+      }
+
+      .spot-note {
+        inset-block-start: 30%;
+        inset-inline-start: 50%;
+        position: absolute;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="spot-demo">
+      <h1 class="ui-display">Spotlight specimen</h1>
+      <p>A guided-focus overlay. Bronto owns the look + cutout position, not the tour.</p>
+
+      <div class="spot-toolbar">
+        <button class="ui-button" type="button" id="save-button">Save</button>
+        <button class="ui-button ui-button--ghost" type="button" id="export-button">Export</button>
+        <button class="ui-button ui-button--ghost" type="button" id="share-button">Share</button>
+      </div>
+
+      <p>
+        Use the buttons below to move the spotlight between targets — the cutout follows
+        <code>data-target</code> without any tour state in Bronto.
+      </p>
+      <div class="ui-cluster">
+        <button class="ui-button ui-button--subtle" type="button" data-spot="save-button">
+          Focus Save
+        </button>
+        <button class="ui-button ui-button--subtle" type="button" data-spot="export-button">
+          Focus Export
+        </button>
+        <button class="ui-button ui-button--subtle" type="button" data-spot="share-button">
+          Focus Share
+        </button>
+      </div>
+    </main>
+
+    <div
+      class="ui-spotlight ui-spotlight--ring"
+      data-bronto-spotlight
+      data-target="save-button"
+      role="region"
+      aria-label="Tour"
+    >
+      <div class="ui-spotlight__hole"></div>
+      <div class="ui-tour-note spot-note">
+        <span class="ui-tour-note__step">Step 1 of 3</span>
+        <h2 class="ui-tour-note__title">Save your work</h2>
+        <p class="ui-tour-note__body">Changes autosave, but you can force a save here.</p>
+        <div class="ui-tour-note__actions">
+          <button class="ui-button ui-button--ghost" type="button">Skip</button>
+          <button class="ui-button" type="button">Next</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initSpotlight } from '../behaviors/index.js';
+      initSpotlight();
+      // Host-owned: clicking a control re-points the spotlight; Bronto repositions.
+      const spot = document.querySelector('[data-bronto-spotlight]');
+      for (const btn of document.querySelectorAll('[data-spot]')) {
+        btn.addEventListener('click', () => {
+          spot.dataset.target = btn.dataset.spot;
+        });
+      }
+    </script>
+  </body>
+</html>
