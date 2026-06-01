@@ -298,6 +298,20 @@ selection (pair with `ui-sel` states on the items). Layout/affordances only —
 resizable split panes and drag handles are deferred. Class-only. Details:
 `docs/workbench.md`.
 
+Optional command palette — opt-in CSS shell (`css/command.css`) + `initCommand`
+behavior. Filter + keyboard-navigate a DOM-authored command list:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/command.css" />
+```
+
+`ui-command` (+`__input`/`__list`/`__group`/`__item`/`__shortcut`/`__meta`/
+`__empty`); `initCommand()` owns filtering, roving focus (Down/Up/Home/End),
+Enter→`bronto:command:select` ({value,label}) and Escape→`bronto:command:close`.
+The HOST owns the action registry + execution; NO global Cmd/Ctrl+K (open it
+yourself, e.g. a <dialog> via initDialog). Pairs with `ui-shortcut`. Binding:
+`useCommand()` (react/solid/qwik). Details: `docs/command.md`.
+
 Optional static report layer for LLM-authored HTML reports — opt-in, never in
 the default bundle. Pair it with the normal bundle, and add data-viz only when
 the report contains charts. For standalone browser HTML, use real URLs; package

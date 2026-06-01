@@ -120,11 +120,14 @@ Good first build:
 - Later optional behavior only for auto-updating elapsed time or progress text
   if a real consumer needs it.
 
-### 3. Command-first UI — 🟡 `ui-shortcut` shipped in 0.5.0
+### 3. Command-first UI — ✅ shipped in 0.5.0
 
-The keyboard-hint primitive (`.ui-shortcut` + `.ui-shortcut__sep` over `.ui-kbd`)
-landed first, as recommended below — it is core chrome. The `ui-command` palette
-shell and `data-bronto-command` behavior remain the opt-in part, still to build.
+The keyboard-hint primitive (`.ui-shortcut` + `.ui-shortcut__sep` over `.ui-kbd`,
+core chrome) landed first, then the `ui-command` palette: the
+`@ponchia/ui/css/command.css` shell + the `initCommand` `data-bronto-command`
+behavior (filter, roving focus, `bronto:command:select`/`close`) + `useCommand`
+bindings. The host still owns the action registry and execution — Bronto only
+filters and navigates.
 
 Why it matters: command palettes turn a product from a page collection into a
 tool. Existing libraries such as cmdk and kbar are good, but Bronto can own the

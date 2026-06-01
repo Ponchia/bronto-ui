@@ -33,6 +33,7 @@ const classSources = [
   'docs/state.md',
   'docs/generated.md',
   'docs/workbench.md',
+  'docs/command.md',
   'llms.txt',
   'demo/report.html',
   'demo/annotations.html',
@@ -46,6 +47,7 @@ const classSources = [
   'demo/state.html',
   'demo/generated.html',
   'demo/workbench.html',
+  'demo/command.html',
   ...walk('examples/report-static').filter((p) => /\.(html|js|css|md)$/.test(p)),
 ];
 
@@ -94,6 +96,9 @@ if (/generated\.css/.test(core)) {
 if (/workbench\.css/.test(core)) {
   errors.push('css/core.css imports workbench.css — workbench CSS must stay opt-in');
 }
+if (/command\.css/.test(core)) {
+  errors.push('css/core.css imports command.css — command CSS must stay opt-in');
+}
 
 const htmlSources = [
   'demo/report.html',
@@ -108,6 +113,7 @@ const htmlSources = [
   'demo/state.html',
   'demo/generated.html',
   'demo/workbench.html',
+  'demo/command.html',
   ...walk('examples/report-static').filter((p) => /\.html$/.test(p)),
 ];
 for (const rel of htmlSources) {
@@ -135,6 +141,7 @@ for (const rel of [
   'docs/state.md',
   'docs/generated.md',
   'docs/workbench.md',
+  'docs/command.md',
   'demo/report.html',
   'demo/annotations.html',
   'demo/legends.html',
@@ -147,6 +154,7 @@ for (const rel of [
   'demo/state.html',
   'demo/generated.html',
   'demo/workbench.html',
+  'demo/command.html',
   ...walk('examples/report-static'),
 ]) {
   if (!/\.(md|html|css|js)$/.test(rel)) continue;

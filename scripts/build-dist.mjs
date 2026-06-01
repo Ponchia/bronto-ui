@@ -99,6 +99,7 @@ export const EXTRA_LEAVES = [
   'state.css',
   'generated.css',
   'workbench.css',
+  'command.css',
 ];
 
 export function buildBundles() {

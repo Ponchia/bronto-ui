@@ -128,6 +128,15 @@ hardening that had not yet been released.
   inspector panel, denser property rows, and a raised selection action bar.
   Layout + affordances only; resizable split panes and drag handles are
   deferred. Documented in [`docs/workbench.md`](docs/workbench.md).
+- **Command palette** (`@ponchia/ui/css/command.css`, `.ui-command` (+
+  `__input`/`__list`/`__group`/`__item`/`__shortcut`/`__meta`/`__empty`),
+  `initCommand`, `useCommand`): an opt-in CSS shell + behavior — filter +
+  keyboard-navigate a DOM-authored command list (roving focus, group hiding,
+  full keyboard), emitting `bronto:command:select` ({ value, label }) and
+  `bronto:command:close`. Bronto navigates; the host owns the action registry,
+  routing, and execution. No global Cmd/Ctrl+K. Completes the command tier
+  (frontier #3) atop the shipped `ui-shortcut`. Documented in
+  [`docs/command.md`](docs/command.md).
 - **Label declutter** (`@ponchia/ui/annotations` `declutterLabels`): a
   deterministic, order-preserving **1-D** label de-overlap helper (sort, push
   apart by `size + gap`, slide to fit `max`) — pure, no DOM/scales. Not a 2-D

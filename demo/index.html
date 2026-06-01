@@ -1697,6 +1697,60 @@ ui.originLabel({ ai: true });</code></pre>
             <a class="ui-link ui-link--arrow" href="../docs/#workbench.md">Docs</a>
           </p>
         </article>
+
+        <article class="spec" id="spec-command">
+          <div>
+            <h3 class="spec__name">Command palette</h3>
+            <p class="spec__one">
+              Filter + keyboard-navigate a command list (live below — try typing or the arrow keys).
+              Bronto navigates; the host owns the action registry. No global Cmd/Ctrl+K — open it
+              yourself in a dialog.
+            </p>
+          </div>
+          <div class="spec__demo">
+            <div class="ui-command" data-bronto-command style="max-inline-size: 26rem">
+              <input class="ui-command__input" aria-label="Command" placeholder="Type a command…" />
+              <ul class="ui-command__list">
+                <li class="ui-command__group">Navigation</li>
+                <li class="ui-command__item" data-value="dashboard">
+                  <span>Go to dashboard</span>
+                  <span class="ui-command__shortcut"
+                    ><kbd class="ui-kbd">G</kbd> <kbd class="ui-kbd">D</kbd></span
+                  >
+                </li>
+                <li class="ui-command__item" data-value="settings">
+                  <span>Open settings</span>
+                  <span class="ui-command__shortcut"
+                    ><kbd class="ui-kbd">G</kbd> <kbd class="ui-kbd">S</kbd></span
+                  >
+                </li>
+                <li class="ui-command__group">Actions</li>
+                <li class="ui-command__item" data-value="invoice">
+                  <span>New invoice</span><span class="ui-command__meta">Create</span>
+                </li>
+              </ul>
+              <p class="ui-command__empty" hidden>No commands</p>
+            </div>
+          </div>
+          <details class="spec__code">
+            <summary>Markup &amp; recipe</summary>
+            <pre><code>&lt;div class="ui-command" data-bronto-command&gt;
+  &lt;input class="ui-command__input" /&gt;
+  &lt;ul class="ui-command__list"&gt;&lt;li class="ui-command__item" data-value="…"&gt;…&lt;/li&gt;&lt;/ul&gt;
+&lt;/div&gt;
+
+initCommand(); // emits bronto:command:select { value, label } — host runs it
+useCommand();  // react/solid/qwik</code></pre>
+          </details>
+          <p class="spec__meta">
+            <span class="ui-badge ui-badge--muted">opt-in</span>
+            <span class="spec__boundary"
+              >Filters + navigates; the host owns the action registry, routing, execution.</span
+            >
+            <a class="ui-link ui-link--arrow" href="./command.html">Full specimen</a>
+            <a class="ui-link ui-link--arrow" href="../docs/#command.md">Docs</a>
+          </p>
+        </article>
       </div>
 
       <!-- ============================================================ -->
@@ -1713,13 +1767,6 @@ ui.originLabel({ ai: true });</code></pre>
           </p>
         </div>
         <div class="frontier">
-          <div class="frontier__card">
-            <h3>Command palette</h3>
-            <p>
-              The <code>ui-shortcut</code> hint shipped; the <code>ui-command</code> palette shell +
-              filtering behavior is next. The host owns the action registry.
-            </p>
-          </div>
           <div class="frontier__card">
             <h3>Resizable panes</h3>
             <p>An accessible ARIA window-splitter and drag/resize handles, on top of the shipped workbench inspector.</p>
@@ -1751,6 +1798,7 @@ ui.originLabel({ ai: true });</code></pre>
         initLegend,
         initConnectors,
         initCrosshair,
+        initCommand,
         toast,
       } from '../behaviors/index.js';
       import { ui, cx } from '../classes/index.js';
@@ -1895,6 +1943,7 @@ ui.originLabel({ ai: true });</code></pre>
       initConnectors(); // draws + tracks the leader lines in the analytical tier
       initCrosshair(); // pointer-tracking crosshair in the analytical tier
       initLegend(); // interactive legend toggle in the analytical tier
+      initCommand(); // command-palette filtering in the frontier tier
 
       // Legend: host-owned. Bronto flips the control + announces; we hide the bar.
       const legendStatus = document.getElementById('legend-status');

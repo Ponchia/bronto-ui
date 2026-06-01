@@ -72,6 +72,7 @@
     "docs/state.md",
     "docs/generated.md",
     "docs/workbench.md",
+    "docs/command.md",
     "docs/adr/0001-color-system.md",
     "docs/adr/0002-scope-and-2026-baseline.md",
     "docs/adr/0003-theme-model.md"
@@ -190,6 +191,7 @@
     "./css/state.css": "./dist/css/state.css",
     "./css/generated.css": "./dist/css/generated.css",
     "./css/workbench.css": "./dist/css/workbench.css",
+    "./css/command.css": "./dist/css/command.css",
     "./css/analytical.css": "./dist/css/analytical.css",
     "./css/unlayered/tokens.css": "./css/tokens.css",
     "./css/unlayered/fonts.css": "./css/fonts.css",
@@ -220,6 +222,7 @@
     "./css/unlayered/state.css": "./css/state.css",
     "./css/unlayered/generated.css": "./css/generated.css",
     "./css/unlayered/workbench.css": "./css/workbench.css",
+    "./css/unlayered/command.css": "./css/command.css",
     "./tokens": {
       "types": "./tokens/index.d.ts",
       "default": "./tokens/index.js"
@@ -248,6 +251,7 @@
     "./docs/state.md": "./docs/state.md",
     "./docs/generated.md": "./docs/generated.md",
     "./docs/workbench.md": "./docs/workbench.md",
+    "./docs/command.md": "./docs/command.md",
     "./docs/adr/0001-color-system.md": "./docs/adr/0001-color-system.md",
     "./docs/adr/0002-scope-and-2026-baseline.md": "./docs/adr/0002-scope-and-2026-baseline.md",
     "./docs/adr/0003-theme-model.md": "./docs/adr/0003-theme-model.md",

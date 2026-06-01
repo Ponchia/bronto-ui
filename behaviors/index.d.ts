@@ -215,3 +215,23 @@ export interface CrosshairMoveDetail {
  * returns a cleanup function.
  */
 export declare function initCrosshair(opts?: DelegateOpts): Cleanup;
+
+/** `bronto:command:select` CustomEvent detail — the chosen command's value and
+ *  visible label. The host executes it; Bronto only filters and navigates. */
+export interface CommandSelectDetail {
+  value: string;
+  label: string;
+}
+
+/**
+ * Filter + keyboard-navigate a DOM-authored command list inside
+ * `[data-bronto-command]` (the `.ui-command` shell). Owns ids,
+ * `role=combobox/listbox/option`, `aria-activedescendant`, a roving active item,
+ * substring filtering (hiding empty groups), full keyboard
+ * (Down/Up/Home/End/Enter/Escape), and pointer select. Emits
+ * `bronto:command:select` ({@link CommandSelectDetail}) on choose and
+ * `bronto:command:close` on Escape; the host owns the action registry, routing,
+ * and execution. No global Cmd/Ctrl+K. SSR-safe, idempotent per instance;
+ * returns a cleanup function.
+ */
+export declare function initCommand(opts?: DelegateOpts): Cleanup;

@@ -24,6 +24,7 @@ const SHOWCASE = [
   'state',
   'generated',
   'workbench',
+  'command',
   'report',
 ];
 

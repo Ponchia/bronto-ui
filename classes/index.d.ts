@@ -424,6 +424,14 @@ export declare const cls: {
   readonly selectionbar: 'ui-selectionbar';
   readonly selectionbarCount: 'ui-selectionbar__count';
   readonly selectionbarActions: 'ui-selectionbar__actions';
+  readonly command: 'ui-command';
+  readonly commandInput: 'ui-command__input';
+  readonly commandList: 'ui-command__list';
+  readonly commandGroup: 'ui-command__group';
+  readonly commandItem: 'ui-command__item';
+  readonly commandShortcut: 'ui-command__shortcut';
+  readonly commandMeta: 'ui-command__meta';
+  readonly commandEmpty: 'ui-command__empty';
   readonly printOnly: 'ui-print-only';
   readonly screenOnly: 'ui-screen-only';
   readonly breakBefore: 'ui-break-before';
