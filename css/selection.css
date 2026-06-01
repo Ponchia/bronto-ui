@@ -1,0 +1,45 @@
+/* ==========================================================================
+   selection — opt-in, cross-cutting selection-emphasis vocabulary.
+
+   The carve-out from "brush/lasso": Bronto does NOT do region selection or
+   hit-testing (that needs the host's scales/geometry). It ships only the
+   *states* an item can be in once the host has decided — reusable on a chart
+   mark, a table row, a list item, a map region. The host adds/removes these
+   classes from its own brush/filter logic. Not imported by core.css.
+
+     in the selection → .ui-sel--on   ·   excluded → .ui-sel--off
+     would-be-selected (live brush) → .ui-sel--maybe
+   ========================================================================== */
+
+.ui-sel {
+  transition:
+    opacity 0.12s ease,
+    outline-color 0.12s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-sel {
+    transition: none;
+  }
+}
+
+.ui-sel--on {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.ui-sel--off {
+  /* opacity is not overridden in forced-colors, so excluded stays distinct. */
+  opacity: 0.35;
+}
+
+.ui-sel--maybe {
+  outline: 1px dashed var(--accent);
+  outline-offset: 1px;
+}
+
+@media (forced-colors: active) {
+  .ui-sel--on {
+    outline-color: Highlight;
+  }
+}

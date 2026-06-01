@@ -360,6 +360,17 @@ export declare const cls: {
   readonly tourNoteTitle: 'ui-tour-note__title';
   readonly tourNoteBody: 'ui-tour-note__body';
   readonly tourNoteActions: 'ui-tour-note__actions';
+  readonly crosshair: 'ui-crosshair';
+  readonly crosshairMuted: 'ui-crosshair--muted';
+  readonly crosshairLine: 'ui-crosshair__line';
+  readonly crosshairLineX: 'ui-crosshair__line--x';
+  readonly crosshairLineY: 'ui-crosshair__line--y';
+  readonly crosshairBadge: 'ui-crosshair__badge';
+  readonly readout: 'ui-readout';
+  readonly sel: 'ui-sel';
+  readonly selOn: 'ui-sel--on';
+  readonly selOff: 'ui-sel--off';
+  readonly selMaybe: 'ui-sel--maybe';
   readonly printOnly: 'ui-print-only';
   readonly screenOnly: 'ui-screen-only';
   readonly breakBefore: 'ui-break-before';
@@ -559,6 +570,14 @@ export interface SpotlightOpts {
   /** Add a ring around the cutout. */
   ring?: boolean;
 }
+export interface CrosshairOpts {
+  /** A subtler, neutral crosshair instead of the accent. */
+  muted?: boolean;
+}
+export interface SelOpts {
+  /** Selection emphasis: `on` (selected), `off` (excluded), `maybe` (live-brush candidate). */
+  state?: 'on' | 'off' | 'maybe';
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -595,6 +614,8 @@ export interface Ui {
   bracketNote(opts?: BracketNoteOpts): string;
   connector(opts?: ConnectorOpts): string;
   spotlight(opts?: SpotlightOpts): string;
+  crosshair(opts?: CrosshairOpts): string;
+  sel(opts?: SelOpts): string;
 }
 
 export declare const ui: Ui;

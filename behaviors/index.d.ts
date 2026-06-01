@@ -195,3 +195,23 @@ export declare function initConnectors(opts?: DelegateOpts): Cleanup;
  * SSR-safe, idempotent per host; returns a cleanup function.
  */
 export declare function initSpotlight(opts?: DelegateOpts): Cleanup;
+
+/** `bronto:crosshair:move` CustomEvent detail — pointer position over the plot
+ *  in pixels and as 0..1 fractions. Bronto reports where; mapping to data is
+ *  the host's. */
+export interface CrosshairMoveDetail {
+  x: number;
+  y: number;
+  fx: number;
+  fy: number;
+}
+
+/**
+ * Track the pointer over `[data-bronto-crosshair]` plots and drive a contained
+ * `.ui-crosshair` overlay: sets `--crosshair-x/y` (px), marks `.is-active`, and
+ * dispatches `bronto:crosshair:move` ({@link CrosshairMoveDetail}) /
+ * `bronto:crosshair:leave`. Reports the pointer position only — it does not find
+ * the nearest datum or map pixels to data. SSR-safe, idempotent per plot;
+ * returns a cleanup function.
+ */
+export declare function initCrosshair(opts?: DelegateOpts): Cleanup;

@@ -68,6 +68,23 @@ layer (see Changed).
   re-places on resize/scroll and when `data-target` changes. Deliberately **not**
   a tour engine — the host owns step order/advancing/visibility. `useSpotlight`
   in the bindings. Documented in [`docs/spotlight.md`](docs/spotlight.md).
+- **Crosshair / readout** (`@ponchia/ui/css/crosshair.css`, `.ui-crosshair*`,
+  `.ui-readout`, `initCrosshair`, `ui.crosshair()`): an opt-in plot ruler +
+  pinned readout. `initCrosshair` tracks the pointer over a
+  `[data-bronto-crosshair]` plot, sets `--crosshair-x/y`, and dispatches
+  `bronto:crosshair:move` with px + 0–1 fractions — it reports position only and
+  never maps pixels to data (that needs the host's scales). `useCrosshair` in the
+  bindings. Documented in [`docs/crosshair.md`](docs/crosshair.md).
+- **Selection states** (`@ponchia/ui/css/selection.css`, `.ui-sel*`,
+  `ui.sel()`): a tiny cross-cutting selection-emphasis vocabulary
+  (`--on`/`--off`/`--maybe`) reusable on chart marks, table rows, list items, or
+  map regions. The carve-out from brush/lasso — Bronto styles the states; the
+  host owns the selection/hit-test logic. Documented in
+  [`docs/selection.md`](docs/selection.md).
+- **Label declutter** (`@ponchia/ui/annotations` `declutterLabels`): a
+  deterministic, order-preserving **1-D** label de-overlap helper (sort, push
+  apart by `size + gap`, slide to fit `max`) — pure, no DOM/scales. Not a 2-D
+  collision solver. Documented in [`docs/annotations.md`](docs/annotations.md).
 
 ### Fixed
 

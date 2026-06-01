@@ -133,6 +133,14 @@ selections, DOM nodes, or frameworks.
 | `annotationTransform({ x, y })` | Group transform for the subject anchor. |
 | `noteTransform({ dx, dy, align, valign, width, height })` | Note transform from the subject anchor, with optional alignment. |
 | `notePlacement({ x, y, width, height, bounds, preferred })` | Bounded note offset, alignment and transform for one annotation. |
+| `declutterLabels(items, { gap, min, max })` | Adjusted centres for `items` (`[{ pos, size }]`) so labels don't overlap along one axis (order-preserving). |
+
+`declutterLabels` is a deliberately small, deterministic **1-D** declutter for
+direct labels or axis ticks — sort, push overlaps apart by `size + gap`, slide
+to fit under `max`. It is **not** a general 2-D collision solver: if more labels
+are requested than the axis can hold, the overflow is yours to resolve (fewer
+labels, a longer axis, or rotation). It returns numbers; you own the scale and
+the DOM.
 | `circleSubjectPath({ radius })` | Circle subject path. |
 | `rectSubjectPath({ x, y, width, height, padding })` | Rect subject path. |
 | `thresholdPath({ x1, y1, x2, y2 })` | Arbitrary threshold/rule path. |

@@ -17,6 +17,7 @@ import {
   initLegend,
   initConnectors,
   initSpotlight,
+  initCrosshair,
   toast,
 } from '../behaviors/index.js';
 
@@ -1232,6 +1233,29 @@ test('initSpotlight: SSR-safe', () => {
   for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
   assert.doesNotThrow(() => {
     const stop = initSpotlight();
+    stop();
+  });
+});
+
+test('initCrosshair: wires a plot without throwing and cleans up', () => {
+  const d = mount(
+    '<figure data-bronto-crosshair><div class="ui-crosshair">' +
+      '<div class="ui-crosshair__line ui-crosshair__line--x"></div></div></figure>',
+  );
+  const stop = initCrosshair();
+  const plot = d.querySelector('[data-bronto-crosshair]');
+  // jsdom getBoundingClientRect is all-zero → onMove guards out, but must not throw.
+  assert.doesNotThrow(() =>
+    plot.dispatchEvent(new dom.window.MouseEvent('pointermove', { clientX: 5, clientY: 5 })),
+  );
+  assert.equal(typeof stop, 'function');
+  assert.doesNotThrow(stop);
+});
+
+test('initCrosshair: SSR-safe', () => {
+  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
+  assert.doesNotThrow(() => {
+    const stop = initCrosshair();
     stop();
   });
 });

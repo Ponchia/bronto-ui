@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — selection states specimen</title>
+    <meta
+      name="description"
+      content="Cross-cutting selection-emphasis vocabulary for @ponchia/ui."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/selection.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .sel-demo {
+        margin: 0 auto;
+        max-width: 56rem;
+        padding: 2rem 1rem 6rem;
+      }
+
+      .sel-row {
+        align-items: end;
+        display: flex;
+        gap: var(--space-sm);
+        block-size: 12rem;
+      }
+
+      .sel-bar {
+        background: var(--accent);
+        border-radius: var(--radius-sm);
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="sel-demo">
+      <h1 class="ui-display">Selection states specimen</h1>
+      <p>
+        The host decides what's selected; these classes render the result — here a bar chart with
+        one bar selected, one a live-brush candidate, the rest excluded.
+      </p>
+
+      <div
+        class="sel-row"
+        role="img"
+        aria-label="Bars: one selected, one candidate, three excluded"
+      >
+        <div class="sel-bar ui-sel ui-sel--off" style="block-size: 40%"></div>
+        <div class="sel-bar ui-sel ui-sel--on" style="block-size: 90%"></div>
+        <div class="sel-bar ui-sel ui-sel--maybe" style="block-size: 65%"></div>
+        <div class="sel-bar ui-sel ui-sel--off" style="block-size: 30%"></div>
+        <div class="sel-bar ui-sel ui-sel--off" style="block-size: 55%"></div>
+      </div>
+
+      <p>
+        Selection emphasis also applies to table rows, list items, or map regions — same classes.
+      </p>
+    </main>
+  </body>
+</html>

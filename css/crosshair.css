@@ -1,0 +1,92 @@
+/* ==========================================================================
+   crosshair — opt-in ruler + readout for reading a value off a plot.
+
+   A pointer-tracking crosshair (vertical/horizontal rules), axis value badges,
+   and a pinned readout chip — the *visual* language of precise reading. Bronto
+   draws the rules and (via `initCrosshair`) tracks the pointer, setting
+   `--crosshair-x/y` (pixels within the plot) and emitting the pointer position
+   as a fraction. It does NOT find the nearest data point or map pixels to data
+   — that needs the host's scales. Not imported by core.css.
+   ========================================================================== */
+
+.ui-crosshair {
+  --crosshair-x: 0;
+  --crosshair-y: 0;
+  --crosshair-color: var(--accent);
+
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  transition: opacity 0.12s ease;
+}
+
+.ui-crosshair.is-active {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-crosshair {
+    transition: none;
+  }
+}
+
+.ui-crosshair--muted {
+  --crosshair-color: var(--line-strong);
+}
+
+.ui-crosshair__line {
+  background: var(--crosshair-color);
+  position: absolute;
+}
+
+.ui-crosshair__line--x {
+  inline-size: 1px;
+  inset-block: 0;
+  inset-inline-start: 0;
+  transform: translateX(var(--crosshair-x));
+}
+
+.ui-crosshair__line--y {
+  block-size: 1px;
+  inset-block-start: 0;
+  inset-inline: 0;
+  transform: translateY(var(--crosshair-y));
+}
+
+/* An axis value chip (host sets its text + which edge it sits on). */
+.ui-crosshair__badge {
+  background: var(--crosshair-color);
+  border-radius: var(--radius-sm);
+  color: var(--accent-text);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  padding-block: 0.05rem;
+  padding-inline: 0.3rem;
+  position: absolute;
+  white-space: nowrap;
+}
+
+/* A pinned readout chip — host fills the content; it follows the crosshair. */
+.ui-readout {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-raised);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  padding-block: 0.2rem;
+  padding-inline: 0.4rem;
+  pointer-events: none;
+  position: absolute;
+  transform: translate(var(--crosshair-x), var(--crosshair-y));
+}
+
+@media (forced-colors: active) {
+  .ui-crosshair__line {
+    background: CanvasText;
+  }
+}

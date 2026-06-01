@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — crosshair specimen</title>
+    <meta name="description" content="Crosshair + readout specimen for @ponchia/ui." />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/crosshair.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .xh-demo {
+        margin: 0 auto;
+        max-width: 56rem;
+        padding: 2rem 1rem 6rem;
+      }
+
+      .xh-plot {
+        block-size: 18rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        position: relative;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="xh-demo">
+      <h1 class="ui-display">Crosshair specimen</h1>
+      <p>
+        Move the pointer over the plot. Bronto reports the position; the host maps it to a value.
+      </p>
+
+      <figure class="xh-plot" data-bronto-crosshair>
+        <div class="ui-crosshair" aria-hidden="true">
+          <div class="ui-crosshair__line ui-crosshair__line--x"></div>
+          <div class="ui-crosshair__line ui-crosshair__line--y"></div>
+          <div class="ui-readout" id="readout">—</div>
+        </div>
+      </figure>
+      <p role="status" aria-live="off" id="status" class="ui-mono">Pointer: —</p>
+    </main>
+
+    <script type="module">
+      import { initCrosshair } from '../behaviors/index.js';
+      initCrosshair();
+      const readout = document.getElementById('readout');
+      const status = document.getElementById('status');
+      const plot = document.querySelector('[data-bronto-crosshair]');
+      plot.addEventListener('bronto:crosshair:move', (e) => {
+        const { fx, fy } = e.detail;
+        const text = `x ${(fx * 100).toFixed(0)}% · y ${((1 - fy) * 100).toFixed(0)}%`;
+        readout.textContent = text;
+        status.textContent = `Pointer: ${text}`;
+      });
+      plot.addEventListener('bronto:crosshair:leave', () => {
+        status.textContent = 'Pointer: —';
+      });
+    </script>
+  </body>
+</html>
