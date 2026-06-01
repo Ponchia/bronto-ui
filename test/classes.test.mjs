@@ -17,6 +17,15 @@ test('cls is the frozen registry', () => {
   assert.equal(cls.chart, 'ui-chart');
   assert.equal(cls.chartPlot, 'ui-chart__plot');
   assert.equal(cls.chartFill, 'ui-chart__fill');
+  assert.equal(cls.annotation, 'ui-annotation');
+  assert.equal(cls.annotationSubject, 'ui-annotation__subject');
+  assert.equal(cls.annotationConnector, 'ui-annotation__connector');
+  assert.equal(cls.annotationNote, 'ui-annotation__note');
+  assert.equal(cls.annotationCallout, 'ui-annotation--callout');
+  assert.equal(cls.annotationBracket, 'ui-annotation--bracket');
+  assert.equal(cls.annotationBand, 'ui-annotation--band');
+  assert.equal(cls.annotationDraw, 'ui-annotation--draw');
+  assert.equal(cls.annotationAccent, 'ui-annotation--accent');
   assert.equal(cls.printOnly, 'ui-print-only');
 });
 
@@ -66,6 +75,20 @@ test('the recipes added this cycle emit only registry classes', () => {
   assert.equal(ui.meter({ tone: 'bogus' }), 'ui-meter');
   assert.equal(ui.inputIcon(), 'ui-input-icon');
   assert.equal(ui.inputIcon({ end: true }), 'ui-input-icon ui-input-icon--end');
+  assert.equal(ui.annotation(), 'ui-annotation ui-annotation--callout ui-annotation--accent');
+  assert.equal(
+    ui.annotation({ variant: 'circle', tone: 'warning' }),
+    'ui-annotation ui-annotation--circle ui-annotation--warning',
+  );
+  assert.equal(
+    ui.annotation({ variant: 'bracket', tone: 'info', motion: 'draw' }),
+    'ui-annotation ui-annotation--bracket ui-annotation--info ui-annotation--draw',
+  );
+  assert.equal(
+    ui.annotation({ variant: 'evidence', motion: 'focus' }),
+    'ui-annotation ui-annotation--evidence ui-annotation--accent ui-annotation--focus',
+  );
+  assert.equal(ui.annotation({ variant: 'bogus', tone: 'bogus' }), 'ui-annotation');
 });
 
 test('every ui.* recipe is declared on the Ui interface in index.d.ts', async () => {

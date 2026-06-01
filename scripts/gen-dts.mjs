@@ -145,6 +145,11 @@ export interface InputIconOpts {
   /** Place the icon at the inline-end instead of the start. */
   end?: boolean;
 }
+export interface AnnotationOpts {
+  variant?: 'label' | 'callout' | 'elbow' | 'curve' | 'circle' | 'rect' | 'threshold' | 'badge' | 'bracket' | 'band' | 'slope' | 'compare' | 'cluster' | 'axis' | 'timeline' | 'evidence';
+  tone?: 'accent' | 'muted' | 'success' | 'warning' | 'danger' | 'info';
+  motion?: 'draw' | 'pulse' | 'reveal' | 'focus';
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -173,6 +178,7 @@ export interface Ui {
   container(opts?: ContainerOpts): string;
   tag(opts?: TagOpts): string;
   inputIcon(opts?: InputIconOpts): string;
+  annotation(opts?: AnnotationOpts): string;
 }
 
 export declare const ui: Ui;

@@ -16,8 +16,8 @@
 CSS (pick one; do not import both):
 
 ```css
-@import '@ponchia/ui';        /* dist/bronto.css — flattened, minified, one file (recommended) */
-@import '@ponchia/ui/css';    /* css/core.css — @import fan-out, needs a bundler */
+@import '@ponchia/ui'; /* dist/bronto.css — flattened, minified, one file (recommended) */
+@import '@ponchia/ui/css'; /* css/core.css — @import fan-out, needs a bundler */
 ```
 
 `import '@ponchia/ui'` is supported only as a CSS side-effect import in a
@@ -74,7 +74,7 @@ like `data-theme` (the derived accent family only recomputes at `:root`):
 
 ```html
 <link rel="stylesheet" href="@ponchia/ui/css/skins.css" />
-<html data-bronto-skin="amber-crt | phosphor-green | e-ink">
+<html data-bronto-skin="amber-crt | phosphor-green | e-ink"></html>
 ```
 
 Each re-points the one `--accent` (OKLCH, per-theme, contrast-gated); status
@@ -96,6 +96,30 @@ import charts from '@ponchia/ui/charts.json' with { type: 'json' };
 simulated protan/deutan/tritan), `--chart-seq-*` (sequential), `--chart-div-*`
 (diverging), and `--chart-pattern-1..8` (dot-matrix fills — pair colour N with
 pattern N; colour is never the sole signal). Details in `docs/theming.md`.
+
+Optional SVG annotations for charts/reports — opt-in, never in the default
+bundle. This is Bronto's subject / connector / note grammar inspired by
+d3-annotation, not an authoring engine:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/annotations.css" />
+```
+
+```js
+import { annotationParts, connectorLine, circleSubjectPath } from '@ponchia/ui/annotations';
+```
+
+Use `ui-annotation` groups inside SVG with `ui-annotation__subject`,
+`ui-annotation__connector`, `ui-annotation__note`, `ui-annotation__title`, and
+`ui-annotation__label`. `ui.annotation({ variant, tone, motion })` builds the
+base class string. Variants cover labels, callouts, elbow/curve connectors,
+circle/rect/threshold subjects, badges, brackets, bands, slopes, comparisons,
+clusters, axis marks, timeline pins, and evidence markers. Motion is opt-in
+(`draw`, `reveal`, `pulse`, `focus`) and respects reduced-motion preferences.
+Use `notePlacement()` for one-note bounded placement, but do not treat it as a
+whole-chart collision solver. Status tones are only for status-bearing callouts.
+Keep charts sparse; dense mobile figures need horizontal scrolling, a simplified
+SVG, or complete caption/fallback text. Details: `docs/annotations.md`.
 
 Optional static report layer for LLM-authored HTML reports — opt-in, never in
 the default bundle. Pair it with the normal bundle, and add data-viz only when
@@ -119,7 +143,10 @@ Canonical report skeleton:
     <p class="ui-eyebrow">Report</p>
     <h1 class="ui-report__title">System review</h1>
     <p class="ui-report__subtitle">Static HTML, Chromium PDF-ready.</p>
-    <ol class="ui-report__meta"><li>2026-06-01</li><li>Generated</li></ol>
+    <ol class="ui-report__meta">
+      <li>2026-06-01</li>
+      <li>Generated</li>
+    </ol>
   </header>
   <section class="ui-report__section">
     <h2 class="ui-report__section-head">Executive summary</h2>
@@ -158,6 +185,8 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
 - `docs/reporting.md` — static/PDF-first report cookbook for LLM-authored
   reports, including report skeletons, chart rules, print utilities, and safety
   boundaries.
+- `docs/annotations.md` — SVG annotation recipes and helper guidance for
+  analytical figures.
 - `docs/contrast.md` — the published, CI-gated WCAG 2.1 contrast matrix
   for every contractual token pairing, per theme. Generated from the
   resolved palette; the build fails below the declared floor.
@@ -171,6 +200,8 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
 - `glyphs/glyphs.d.ts` — the `GlyphName` literal union plus `renderGlyph` /
   `glyphCells` signatures for the display glyphs. (The DOM form,
   `initDotGlyph`, is declared in `behaviors/index.d.ts`.)
+- `annotations/index.d.ts` — no-dependency SVG path helpers for Bronto
+  annotation geometry.
 - `classes/vscode.css-custom-data.json` — editor autocomplete for tokens.
 
 ## Human-browsable references (not shipped in the npm tarball, by design)
@@ -187,7 +218,8 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
 - Prefer the `ui.*()` recipes over hand-concatenating modifier strings.
   Report/layout classes added in 0.4.1 are the exception: use `cls.report*`,
   `cls.chart*`, `cls.printOnly`, or literal documented class names because
-  there are no `ui.report()` / `ui.chart()` recipes yet.
+  there are no `ui.report()` / `ui.chart()` recipes yet. Annotations do have a
+  `ui.annotation()` recipe for variant/tone selection.
 - Override framework styles by writing your own rules outside
   `@layer bronto` — not with higher specificity or `!important`.
 - Color is tiered (ADR-0001): neutral canvas · one rationed accent · locked
@@ -195,4 +227,4 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   tokens — re-point `--accent` (or a `data-bronto-skin` colorway), use status
   tokens for status, and `--chart-*` (from `css/dataviz.css`) for charts only.
   Don't add raw hues to components; `check:color-policy` enforces this.
-- Pre-1.0 SemVer: breaking changes ship in the *minor*. Pin `~0.x`.
+- Pre-1.0 SemVer: breaking changes ship in the _minor_. Pin `~0.x`.
