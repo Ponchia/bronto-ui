@@ -238,3 +238,27 @@ Recommended next order after the 0.5.0 analytical suite:
 
 This order keeps Bronto differentiated while staying inside its core philosophy:
 small, framework-agnostic primitives that make complex interfaces clearer.
+
+## Inspiration watchlist
+
+These are examples of the kind of older or under-supported work worth mining for
+ideas. They are not dependency recommendations; the useful part is the shape of
+the primitive, not the implementation stack.
+
+| Project | Useful idea | Bronto-shaped lesson |
+| --- | --- | --- |
+| Susie Lu `d3-annotation` | Subject / connector / note grammar for explaining SVG figures. | Keep annotation as a grammar, not a chart engine or editor. |
+| Susie Lu `d3-legend` | Colour, size, and symbol legends as reusable figure keys. | Legends belong in the design system because they explain visual encodings. |
+| Twitter `labella.js` | One-dimensional label collision avoidance for timelines and dense axes. | A tiny `declutterLabels` helper can be more valuable than another component. |
+| `D3-Labeler` / `d3fc-label-layout` | Greedy/simulated-annealing label placement. | Direct labels need layout helpers; host still owns chart scales and data. |
+| `d3-lasso` | Possible / not-possible / selected / not-selected states while drawing a region. | Bronto should own selection vocabulary and maybe region visuals, not hit-testing. |
+| `leader-line` / `react-xarrows` | Lines and arrows between DOM elements. | DOMRect connectors are broadly useful, but should be styleable and token-bound. |
+| LinkedIn `hopscotch` / `chardin.js` | Guided tours as target + note + step metadata. | Bronto should own spotlight visuals, not the tour state machine. |
+| `Waypoints` / `gumshoe` | Scroll-triggered section awareness and scrollspy navigation. | Long documents and reports may need section-progress/navigation affordances. |
+| `mark.js`, `Rangy`, `TextHighlighter` | Search hits, user text selections, persistent text highlights. | Evidence/source marks need careful semantics around ranges and generated content. |
+| `Mousetrap` / `Keypress` | Keyboard shortcut grammar and key sequences. | Command-first UI needs shortcut display and action dispatch boundaries. |
+| `Split.js` | Small, unopinionated resizable split views. | Workbench panes are worth styling; behavior must follow accessible splitter rules. |
+| jQuery Steps / old wizard plugins | Multi-step flows with progress, validation, and branching. | If Bronto adds stepper/wizard UI, it should be state vocabulary first. |
+| `progressbar.js` | Lightweight progress shapes and determinate/indeterminate motion. | Lifecycle/job UI should make long-running work persistent and legible. |
+| `react-json-view` / old JSON viewers | Inspectable structured data with collapse/copy/path affordances. | Generated/tool output needs compact inspector primitives without a React lock-in. |
+| old diff viewers / `jsdifflib` | Side-by-side and inline change explanation. | Review/report UI may need diff primitives, but parsing belongs outside Bronto. |
