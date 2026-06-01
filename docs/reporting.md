@@ -1,8 +1,8 @@
 # Static reports
 
 `@ponchia/ui` can dress static, LLM-authored HTML reports without a component
-runtime. Load the normal bundle, then opt in to the report layer and the chart
-palette only when the report needs them.
+runtime. Load the normal bundle, then opt in to the report layer, chart palette,
+and annotation layer only when the report needs them.
 
 In a bundled app, package specifiers are fine because Vite or another bundler
 rewrites them:
@@ -11,6 +11,7 @@ rewrites them:
 @import '@ponchia/ui';
 @import '@ponchia/ui/css/report.css';
 @import '@ponchia/ui/css/dataviz.css';
+@import '@ponchia/ui/css/annotations.css';
 ```
 
 For standalone browser HTML, use real stylesheet URLs. Package specifiers like
@@ -20,11 +21,12 @@ For standalone browser HTML, use real stylesheet URLs. Package specifiers like
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/bronto.css" />
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/report.css" />
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/dataviz.css" />
+<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/annotations.css" />
 ```
 
 If you copy the built CSS next to the report, keep the same relationship between
-`dist/bronto.css`, `dist/css/report.css`, `dist/css/dataviz.css`, and `fonts/`
-so font URLs continue to resolve.
+`dist/bronto.css`, `dist/css/report.css`, `dist/css/dataviz.css`,
+`dist/css/annotations.css`, and `fonts/` so font URLs continue to resolve.
 
 The report layer is static and PDF-first. It does not initialize behaviors and
 does not sanitize content. If a report includes arbitrary LLM, CMS, or user HTML,
@@ -191,6 +193,34 @@ a direct label, a pattern, or a fallback table.
 For canvas or SVG libraries, import resolved series colors from
 `@ponchia/ui/charts.json` and keep the same legend/caption/fallback structure in
 the surrounding HTML.
+
+## Annotation recipe
+
+When a report chart needs an explicit callout, import
+`@ponchia/ui/css/annotations.css` and layer SVG annotations inside the same
+`ui-report__figure`. Keep the subject/connector/note text visible in the SVG or
+represented by the figure caption/fallback data.
+
+```html
+<svg viewBox="0 0 360 160" role="img" aria-labelledby="annotated-title annotated-desc">
+  <title id="annotated-title">Weekly focus chart with peak callout</title>
+  <desc id="annotated-desc">The annotation marks the research peak.</desc>
+  <g class="ui-annotation ui-annotation--circle ui-annotation--accent" transform="translate(210, 58)">
+    <path class="ui-annotation__subject" d="M0,-18A18,18 0 1 1 0,18A18,18 0 1 1 0,-18Z" />
+    <path class="ui-annotation__connector" d="M15.556,-7.424L84,-40" />
+    <g class="ui-annotation__note" transform="translate(84, -40)">
+      <path class="ui-annotation__note-line" d="M0,0H92" />
+      <text class="ui-annotation__title" y="-8">Peak</text>
+      <text class="ui-annotation__label" y="12">18 research hours</text>
+    </g>
+  </g>
+</svg>
+```
+
+For generated SVG, use `@ponchia/ui/annotations` to compute connector and
+subject path strings. Full annotation recipes and the complete variant list are
+in `docs/annotations.md`; the shipped `demo/annotations.html` page is the
+visual specimen.
 
 ## Timeline recipe
 

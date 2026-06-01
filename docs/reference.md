@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 303 classes across 121 component groups
+- 338 classes across 122 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -65,6 +65,46 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.animateMatrix` | `ui-animate-matrix` | base |
+
+### `.ui-annotation`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.annotation` | `ui-annotation` | base |
+| `cls.annotationBadge` | `ui-annotation__badge` | part |
+| `cls.annotationConnector` | `ui-annotation__connector` | part |
+| `cls.annotationConnectorEnd` | `ui-annotation__connector-end` | part |
+| `cls.annotationLabel` | `ui-annotation__label` | part |
+| `cls.annotationNote` | `ui-annotation__note` | part |
+| `cls.annotationNoteLine` | `ui-annotation__note-line` | part |
+| `cls.annotationSubject` | `ui-annotation__subject` | part |
+| `cls.annotationTitle` | `ui-annotation__title` | part |
+| `cls.annotationAccent` | `ui-annotation--accent` | modifier |
+| `cls.annotationAxis` | `ui-annotation--axis` | modifier |
+| `cls.annotationBadgeVariant` | `ui-annotation--badge` | modifier |
+| `cls.annotationBand` | `ui-annotation--band` | modifier |
+| `cls.annotationBracket` | `ui-annotation--bracket` | modifier |
+| `cls.annotationCallout` | `ui-annotation--callout` | modifier |
+| `cls.annotationCircle` | `ui-annotation--circle` | modifier |
+| `cls.annotationCluster` | `ui-annotation--cluster` | modifier |
+| `cls.annotationCompare` | `ui-annotation--compare` | modifier |
+| `cls.annotationCurve` | `ui-annotation--curve` | modifier |
+| `cls.annotationDanger` | `ui-annotation--danger` | modifier |
+| `cls.annotationDraw` | `ui-annotation--draw` | modifier |
+| `cls.annotationElbow` | `ui-annotation--elbow` | modifier |
+| `cls.annotationEvidence` | `ui-annotation--evidence` | modifier |
+| `cls.annotationFocus` | `ui-annotation--focus` | modifier |
+| `cls.annotationInfo` | `ui-annotation--info` | modifier |
+| `cls.annotationLabelVariant` | `ui-annotation--label` | modifier |
+| `cls.annotationMuted` | `ui-annotation--muted` | modifier |
+| `cls.annotationPulse` | `ui-annotation--pulse` | modifier |
+| `cls.annotationRect` | `ui-annotation--rect` | modifier |
+| `cls.annotationReveal` | `ui-annotation--reveal` | modifier |
+| `cls.annotationSlope` | `ui-annotation--slope` | modifier |
+| `cls.annotationSuccess` | `ui-annotation--success` | modifier |
+| `cls.annotationThreshold` | `ui-annotation--threshold` | modifier |
+| `cls.annotationTimeline` | `ui-annotation--timeline` | modifier |
+| `cls.annotationWarning` | `ui-annotation--warning` | modifier |
 
 ### `.ui-app-content`
 

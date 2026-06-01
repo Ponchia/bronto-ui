@@ -71,6 +71,19 @@ for (const theme of ['dark', 'light']) {
     await expect(page.locator('.ui-chart__plot')).toHaveCount(1);
     await expect(page.locator('.ui-chart__bar')).toHaveCount(3);
     await expect(page.locator('.ui-chart__fallback table')).toHaveCount(1);
+    await expect(page.locator('.ui-annotation')).toHaveCount(9);
+    await expect(page.locator('.ui-annotation--label')).toHaveCount(1);
+    await expect(page.locator('.ui-annotation--threshold')).toHaveCount(1);
+    await expect(page.locator('.ui-annotation--circle')).toHaveCount(1);
+    await expect(page.locator('.ui-annotation--elbow')).toHaveCount(1);
+    await expect(page.locator('.ui-annotation--curve')).toHaveCount(1);
+    await expect(page.locator('.ui-annotation--rect')).toHaveCount(1);
+    await expect(page.locator('.ui-annotation--badge')).toHaveCount(2);
+    await expect(page.locator('.ui-annotation--callout')).toHaveCount(1);
+    await expect(page.getByText('18 h research')).toHaveCount(1);
+    await expect(
+      page.locator('.ui-annotation--threshold .ui-annotation__connector'),
+    ).toHaveAttribute('d', /L/);
   });
 }
 
@@ -93,6 +106,7 @@ test('report print utilities and overflow rules apply', async ({ page }) => {
       ).content,
       firstFillWidth: document.querySelector('.ui-chart__fill').getBoundingClientRect().width,
       firstTrackWidth: document.querySelector('.ui-chart__track').getBoundingClientRect().width,
+      annotationStroke: css('.ui-annotation__connector').vectorEffect,
       exact:
         css('.ui-print-exact').webkitPrintColorAdjust || css('.ui-print-exact').printColorAdjust,
       proseLinkAfter: getComputedStyle(
@@ -112,6 +126,7 @@ test('report print utilities and overflow rules apply', async ({ page }) => {
   expect(['none', 'normal', '']).toContain(result.unnumberedBefore);
   expect(result.firstFillWidth).toBeGreaterThan(0);
   expect(result.firstFillWidth).toBeLessThan(result.firstTrackWidth);
+  expect(result.annotationStroke).toBe('non-scaling-stroke');
   expect(result.exact).toBe('exact');
   expect(result.proseLinkAfter).toContain('https://example.com/report-source');
 });

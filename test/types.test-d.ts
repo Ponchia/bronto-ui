@@ -25,6 +25,30 @@ import {
 } from '../glyphs/glyphs.js';
 import { skins, SKIN_NAMES, type SkinName } from '../tokens/skins.js';
 import { charts, type ChartTokenName } from '../tokens/charts.js';
+import {
+  annotationParts,
+  annotationTransform,
+  axisThresholdPath,
+  bandSubjectPath,
+  bracketSubjectPath,
+  circleSubjectPath,
+  comparisonBracePath,
+  connectorEndArrow,
+  connectorEndDot,
+  connectorCurve,
+  connectorElbow,
+  connectorLine,
+  evidenceMarkerPath,
+  notePlacement,
+  noteTransform,
+  outlierClusterPath,
+  rectSubjectPath,
+  slopeSubjectPath,
+  thresholdPath,
+  timelineEventPath,
+  type AnnotationPartsOptions,
+  type ConnectorOptions,
+} from '../annotations/index.js';
 
 // cls values are literal, not widened to `string`.
 const btn: 'ui-button' = cls.button;
@@ -36,6 +60,8 @@ const reportSectionUnnumbered: 'ui-report__section--unnumbered' = cls.reportSect
 const chart: 'ui-chart' = cls.chart;
 const chartPlot: 'ui-chart__plot' = cls.chartPlot;
 const chartFill: 'ui-chart__fill' = cls.chartFill;
+const annotation: 'ui-annotation' = cls.annotation;
+const annotationConnector: 'ui-annotation__connector' = cls.annotationConnector;
 const printOnly: 'ui-print-only' = cls.printOnly;
 
 // @ts-expect-error — unknown cls key is now a compile error (was `string`).
@@ -44,8 +70,14 @@ cls.definitelyNotAKey;
 // Recipes return strings; options are typed unions.
 const a: string = ui.button({ variant: 'ghost' });
 const b: string = ui.tab({ active: true });
+const ann: string = ui.annotation({ variant: 'curve', tone: 'warning' });
+const annMotion: string = ui.annotation({ variant: 'bracket', tone: 'info', motion: 'draw' });
 // @ts-expect-error — invalid variant rejected.
 ui.button({ variant: 'nope' });
+// @ts-expect-error — invalid annotation tone rejected.
+ui.annotation({ tone: 'loud' });
+// @ts-expect-error — invalid annotation motion rejected.
+ui.annotation({ motion: 'blink' });
 
 const parts: ClassValue = ['a', false, ['b'], null];
 const joined: string = cx(parts, 'extra', undefined);
@@ -115,6 +147,91 @@ const series1: string = charts.light.categorical[0];
 const badChart: ChartTokenName = '--chart-99';
 void [chartTok, series1, badChart];
 
+// Annotations: helper subpath types are object-shaped and finite geometry stays
+// a runtime concern.
+const annTransform: string = annotationTransform({ x: 10, y: 20 });
+const noteTx: string = noteTransform({ x: 80, y: 30, align: 'middle', valign: 'bottom' });
+const notePlaced = notePlacement({
+  x: 100,
+  y: 60,
+  width: 80,
+  height: 30,
+  bounds: { width: 240, height: 140 },
+  preferred: 'right',
+});
+const notePlacedTransform: string = notePlaced.transform;
+const notePlacedDx: number = notePlaced.dx;
+const circlePath: string = circleSubjectPath({ radius: 12 });
+const rectPath: string = rectSubjectPath({ width: 40, height: 20, padding: 2 });
+const threshold: string = thresholdPath({ x2: 100, y2: 0 });
+const axisThreshold: string = axisThresholdPath({ orientation: 'vertical', value: 20, end: 120 });
+const bracket: string = bracketSubjectPath({ x1: 0, y1: 0, x2: 100, y2: 0, depth: 12 });
+const band: string = bandSubjectPath({ x: 0, y: 10, width: 80, height: 24, padding: 2 });
+const slope: string = slopeSubjectPath({ x1: 0, y1: 80, x2: 80, y2: 20 });
+const brace: string = comparisonBracePath({ x1: 0, y1: 0, x2: 80, y2: 0 });
+const clusterPath: string = outlierClusterPath({ points: [{ x: 0, y: 0 }], radius: 4 });
+const eventPath: string = timelineEventPath({ size: 10, direction: 'up' });
+const evidencePath: string = evidenceMarkerPath({ width: 20, height: 10 });
+const endDot: string = connectorEndDot({ x: 80, y: 20, radius: 3 });
+const endArrow: string = connectorEndArrow({ x1: 0, y1: 0, x2: 80, y2: 20, size: 7 });
+const connectorOpts: ConnectorOptions = {
+  dx: 80,
+  dy: -30,
+  subject: { type: 'circle', radius: 16, radiusPadding: 4 },
+};
+const line: string = connectorLine(connectorOpts);
+const elbow: string = connectorElbow({
+  dx: 80,
+  dy: 30,
+  subject: { type: 'rect', width: 20, height: 10 },
+});
+const curve: string = connectorCurve({ dx: 80, dy: 30 });
+const partsOpts: AnnotationPartsOptions = {
+  type: 'elbow',
+  dx: 70,
+  dy: -24,
+  subject: { type: 'evidence', width: 20, height: 10 },
+};
+const partsOut: string = annotationParts(partsOpts).connector;
+// @ts-expect-error — radius is required for circle subject paths.
+circleSubjectPath({});
+// @ts-expect-error — subject type is a closed union.
+connectorLine({ dx: 1, dy: 1, subject: { type: 'point' } });
+// @ts-expect-error — annotation parts subject type is a closed union.
+annotationParts({ subject: { type: 'point' } });
+// @ts-expect-error — note alignment is a closed union.
+noteTransform({ align: 'left' });
+notePlacement({
+  width: 80,
+  height: 30,
+  bounds: { width: 240, height: 140 },
+  // @ts-expect-error — note placement side is a closed union.
+  preferred: 'diagonal',
+});
+void [
+  annTransform,
+  noteTx,
+  notePlacedTransform,
+  notePlacedDx,
+  circlePath,
+  rectPath,
+  threshold,
+  axisThreshold,
+  bracket,
+  band,
+  slope,
+  brace,
+  clusterPath,
+  eventPath,
+  evidencePath,
+  endDot,
+  endArrow,
+  line,
+  elbow,
+  curve,
+  partsOut,
+];
+
 // Framework bindings: the ./react + ./solid hook types resolve from the .d.ts
 // (no react/solid-js needed to type-check), take the behaviors' opts, and the
 // toast hook returns the imperative.
@@ -150,9 +267,13 @@ void [
   chart,
   chartPlot,
   chartFill,
+  annotation,
+  annotationConnector,
   printOnly,
   a,
   b,
+  ann,
+  annMotion,
   joined,
   soft,
   th,

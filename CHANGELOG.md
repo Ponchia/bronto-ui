@@ -7,9 +7,25 @@
 
 ## Unreleased — 0.4.2
 
-Maintenance hardening from a multi-perspective review. No consumer-facing API
-change — the shipped `dist/*` is byte-identical and the public surfaces
-(`.ui-*`, tokens, behaviors, bindings) are unchanged.
+Adds the opt-in SVG **annotations** layer on top of maintenance hardening from a
+multi-perspective review. The hardening changes are surface-neutral (the
+pre-existing `dist/*` is byte-identical and `.ui-*`, tokens, behaviors, and
+bindings are unchanged); annotations are a new, additive, opt-in surface that
+the default bundle does not import.
+
+### Added
+
+- **SVG annotations** (`@ponchia/ui/css/annotations.css`,
+  `@ponchia/ui/annotations`, `.ui-annotation*`, `ui.annotation()`): an opt-in
+  annotation layer for charts, reports, and analytical figures, following the
+  d3-annotation grammar (a **subject** marks the thing, a **connector** points
+  away, a **note** carries the text). Ships a class grammar (variants for
+  label/callout/elbow/curve/circle/rect/threshold/badge/bracket/band/slope/
+  compare/cluster/axis/timeline/evidence, six tones, and opt-in
+  `draw`/`reveal`/`pulse`/`focus` motion that respects `prefers-reduced-motion`)
+  plus tiny geometry helpers that return SVG strings only — they own no chart
+  scales, mutate no DOM, and provide no edit mode. Documented in
+  [`docs/annotations.md`](docs/annotations.md) and gated by `check:report`.
 
 ### Fixed
 
