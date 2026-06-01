@@ -5,6 +5,39 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased — 0.4.2
+
+Maintenance hardening from a multi-perspective review. No consumer-facing API
+change — the shipped `dist/*` is byte-identical and the public surfaces
+(`.ui-*`, tokens, behaviors, bindings) are unchanged.
+
+### Fixed
+
+- The optional Qwik binding (`@ponchia/ui/qwik`) is now built from the packed
+  tarball in CI **and** release, alongside React/Solid — closing a coverage gap
+  (it was documented as optimizer-proven but no job actually built it). Also
+  covered by `check:pack`, the size report, and the dead-code config.
+
+### Changed
+
+- `docs/architecture.md` now ships in the package, so the offline rationale the
+  shipped ADRs link to resolves inside the tarball.
+- `docs/stability.md` clarifies that `data-surface`/`data-density`/
+  `data-contrast` are **convenience presets**, not part of the stability
+  contract; `data-theme` (light/dark) remains the contractual base.
+
+### Internal
+
+- Token values are single-sourced in `tokens/index.js` (`cssVars`); the
+  `css/tokens.css` palette is generated from it, so the dark palette is authored
+  once instead of in three places (the shipped CSS is byte-identical).
+- `behaviors/index.js` is split into per-behavior modules behind the same public
+  barrel (no surface change).
+- Drift-gate consolidation (`assertFresh`), a Qwik type smoke + stronger
+  class-recipe wiring test, the APCA advisory widened to the accent text across
+  the core palette and every colorway (still advisory; WCAG 2.1 AA stays the
+  hard gate), an OLED computed-style smoke test, and several doc reconciliations.
+
 ## 0.4.1 — 2026-06-01
 
 Patch hardening for the public framework surface, plus the first step of the
