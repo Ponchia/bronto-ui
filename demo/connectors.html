@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — connectors specimen</title>
+    <meta name="description" content="Leader-line specimen for @ponchia/ui connectors." />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/connectors.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .conn-demo {
+        margin: 0 auto;
+        max-width: 56rem;
+        padding: 2rem 1rem 6rem;
+      }
+
+      .conn-stage {
+        block-size: 22rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        position: relative;
+      }
+
+      .conn-node {
+        max-inline-size: 12rem;
+        position: absolute;
+        /* Cards sit above the leader lines so the strokes don't cross their text. */
+        z-index: 1;
+      }
+
+      #node-a {
+        inset-block-start: 1.5rem;
+        inset-inline-start: 1.5rem;
+      }
+
+      #node-b {
+        inset-block-end: 1.5rem;
+        inset-inline-end: 1.5rem;
+      }
+
+      #node-c {
+        inset-block-start: 2rem;
+        inset-inline-end: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="conn-demo">
+      <h1 class="ui-display">Connectors specimen</h1>
+      <p>Leader lines between elements. Opt-in; not in the core bundle.</p>
+
+      <div class="conn-stage">
+        <div id="node-a" class="conn-node ui-card"><p>Source — origin card</p></div>
+        <div id="node-b" class="conn-node ui-card ui-card--accent">
+          <p>Target — destination card</p>
+        </div>
+        <div id="node-c" class="conn-node ui-card"><p>Aside — a related note</p></div>
+
+        <svg
+          class="ui-connector ui-connector--accent"
+          data-bronto-connector
+          data-from="node-a"
+          data-to="node-b"
+          data-shape="curve"
+          data-end="arrow"
+          aria-hidden="true"
+        ></svg>
+        <svg
+          class="ui-connector ui-connector--muted ui-connector--dashed"
+          data-bronto-connector
+          data-from="node-a"
+          data-to="node-c"
+          data-shape="elbow"
+          data-end="dot"
+          aria-hidden="true"
+        ></svg>
+      </div>
+    </main>
+
+    <script type="module">
+      import { initConnectors } from '../behaviors/index.js';
+      initConnectors();
+    </script>
+  </body>
+</html>

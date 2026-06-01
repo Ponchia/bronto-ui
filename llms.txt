@@ -162,6 +162,41 @@ brackets a whole passage — the prose analogue of `ui-annotation--bracket`.
 strings. A mark is visual only; if the emphasis carries meaning the words don't,
 state it in the text (WCAG 1.4.1). Details: `docs/marks.md`.
 
+Optional connectors / leader lines between two DOM elements — opt-in, never in
+the default bundle. Pure geometry + an optional draw/track behavior; owns no
+layout:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/connectors.css" />
+```
+
+Place a `ui-connector` SVG (`data-bronto-connector`, `aria-hidden`) as an
+overlay inside a `position: relative` container holding both endpoints; set
+`data-from`/`data-to` (element ids), optional `data-shape`
+(straight|elbow|curve), `data-from-side`/`data-to-side`, and `data-end`
+(arrow|dot|none). `initConnectors()` (or `useConnectors()`) draws the path and
+redraws on resize/scroll. Tones `ui-connector--accent`/`--muted`/status,
+`ui-connector--dashed`, `ui-connector--draw`. Pure helpers from
+`@ponchia/ui/connectors` (`connectRects`, `connectorPath`, `arrowHead`,
+`anchorPoint`, …) return SVG strings for SSR/canvas. Details: `docs/connectors.md`.
+
+Optional spotlight / guided-focus overlay — opt-in, never in the default
+bundle. The visual language of a tour, NOT a tour engine (the host owns step
+order/advancing/visibility):
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/spotlight.css" />
+```
+
+A `ui-spotlight` overlay (`data-bronto-spotlight`, `data-target=<element id>`)
+contains a `ui-spotlight__hole` (the box-shadow cutout) and a `ui-tour-note`
+callout (`__step`/`__title`/`__body`/`__actions`). `initSpotlight()` (or
+`useSpotlight()`) measures the target and sets `--spot-x/y/w/h`, re-placing on
+resize/scroll and when `data-target` changes — so advance a tour by updating
+`data-target`. `ui-spotlight--ring` adds a ring. The overlay is non-blocking by
+design; put the real guidance text in the focusable `ui-tour-note`. Details:
+`docs/spotlight.md`.
+
 Optional static report layer for LLM-authored HTML reports — opt-in, never in
 the default bundle. Pair it with the normal bundle, and add data-viz only when
 the report contains charts. For standalone browser HTML, use real URLs; package

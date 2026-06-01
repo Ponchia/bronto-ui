@@ -15,6 +15,8 @@ import {
   initTableSort,
   initCarousel,
   initLegend,
+  initConnectors,
+  initSpotlight,
   toast,
 } from '../behaviors/index.js';
 
@@ -1171,6 +1173,65 @@ test('initLegend: SSR-safe', () => {
   for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
   assert.doesNotThrow(() => {
     const stop = initLegend();
+    stop();
+  });
+});
+
+test('initConnectors: draws a path with d + pathLength and an end marker', () => {
+  const d = mount(
+    '<div style="position:relative"><span id="a">a</span><span id="b">b</span>' +
+      '<svg class="ui-connector" data-bronto-connector data-from="a" data-to="b" data-end="arrow"></svg></div>',
+  );
+  const stop = initConnectors();
+  const svg = d.querySelector('.ui-connector');
+  const path = svg.querySelector('.ui-connector__path');
+  assert.ok(path, 'path element created');
+  assert.ok(path.getAttribute('d'), 'path has d');
+  assert.equal(path.getAttribute('pathLength'), '1');
+  assert.ok(svg.querySelector('.ui-connector__end'), 'arrow end created');
+  assert.equal(typeof stop, 'function');
+  assert.doesNotThrow(stop);
+});
+
+test('initConnectors: data-end="none" draws no end marker; missing target is skipped', () => {
+  const d = mount(
+    '<div style="position:relative"><span id="a">a</span><span id="b">b</span>' +
+      '<svg class="ui-connector" data-bronto-connector data-from="a" data-to="b" data-end="none"></svg>' +
+      '<svg class="ui-connector" data-bronto-connector data-from="a" data-to="missing"></svg></div>',
+  );
+  initConnectors();
+  const [first, second] = d.querySelectorAll('.ui-connector');
+  assert.ok(first.querySelector('.ui-connector__path'), 'first drawn');
+  assert.equal(first.querySelector('.ui-connector__end'), null, 'no end marker');
+  assert.equal(second.querySelector('.ui-connector__path'), null, 'missing target → skipped');
+});
+
+test('initConnectors: SSR-safe', () => {
+  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
+  assert.doesNotThrow(() => {
+    const stop = initConnectors();
+    stop();
+  });
+});
+
+test('initSpotlight: sets the cutout custom properties from the target', () => {
+  const d = mount(
+    '<button id="t">t</button>' +
+      '<div class="ui-spotlight" data-bronto-spotlight data-target="t"><div class="ui-spotlight__hole"></div></div>',
+  );
+  const stop = initSpotlight();
+  const spot = d.querySelector('.ui-spotlight');
+  // jsdom getBoundingClientRect is all-zero, but the props must be set (px units).
+  assert.match(spot.style.getPropertyValue('--spot-w'), /px$/);
+  assert.match(spot.style.getPropertyValue('--spot-x'), /px$/);
+  assert.equal(typeof stop, 'function');
+  assert.doesNotThrow(stop);
+});
+
+test('initSpotlight: SSR-safe', () => {
+  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
+  assert.doesNotThrow(() => {
+    const stop = initSpotlight();
     stop();
   });
 });

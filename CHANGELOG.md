@@ -52,6 +52,22 @@ layer (see Changed).
   `.ui-bracket-note` for bracketing a whole passage. Pure CSS on semantic
   tokens, monochrome by default, with `forced-colors` care. Documented in
   [`docs/marks.md`](docs/marks.md).
+- **Connectors / leader lines** (`@ponchia/ui/css/connectors.css`,
+  `@ponchia/ui/connectors`, `.ui-connector*`, `initConnectors`, `ui.connector()`):
+  an opt-in layer that draws a line between two DOM elements (the
+  page-coordinate cousin of annotations). Pure geometry helpers
+  (`connectRects`/`connectorPath`/`arrowHead`/…) that return SVG strings and own
+  no DOM, an `.ui-connector` overlay grammar (straight/elbow/curve, arrow/dot
+  ends, tones, dashed, `--draw`), and an optional `initConnectors` behavior that
+  draws + tracks on resize/scroll. `useConnectors` in the bindings. Documented in
+  [`docs/connectors.md`](docs/connectors.md).
+- **Spotlight / guided focus** (`@ponchia/ui/css/spotlight.css`, `.ui-spotlight*`,
+  `.ui-tour-note*`, `initSpotlight`, `ui.spotlight()`): an opt-in guided-focus
+  overlay — a box-shadow cutout over a target element, optional ring, and a
+  callout note. `initSpotlight` positions the cutout (`--spot-x/y/w/h`) and
+  re-places on resize/scroll and when `data-target` changes. Deliberately **not**
+  a tour engine — the host owns step order/advancing/visibility. `useSpotlight`
+  in the bindings. Documented in [`docs/spotlight.md`](docs/spotlight.md).
 
 ### Fixed
 
