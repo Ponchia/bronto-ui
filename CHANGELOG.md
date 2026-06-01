@@ -15,12 +15,14 @@ helper — plus a consolidation pass over them. Each owns its visual grammar and
 pure geometry and refuses to own scales/state/hit-testing (no chart engine).
 
 Per the project's versioning policy, breaking changes ship in the minor. This
-release carries two: the opt-in report kit's chart data key moved into the new
+release carries three: the opt-in report kit's chart data key moved into the new
 legend layer (`.ui-chart__legend`/`__swatch` removed — see Changed and
-[`MIGRATIONS.json`](MIGRATIONS.json)), and annotation arrowheads now render via
-the shared connectors geometry kernel (a small path-shape change). Everything
-else is additive and opt-in; the default `dist/bronto.css` is unaffected. Also
-folds in the 0.4.x maintenance hardening that had not yet been released.
+[`MIGRATIONS.json`](MIGRATIONS.json)), annotation arrowheads now render via
+the shared connectors geometry kernel (a small path-shape change), and the
+opt-in marks' rationed-accent tone was renamed `evidence`→`accent` to match the
+rest of the analytical tone vocabulary. Everything else is additive and opt-in;
+the default `dist/bronto.css` is unaffected. Also folds in the 0.4.x maintenance
+hardening that had not yet been released.
 
 ### Added
 
@@ -122,6 +124,14 @@ folds in the 0.4.x maintenance hardening that had not yet been released.
   beside the report kit; see [`MIGRATIONS.json`](MIGRATIONS.json) and
   [`docs/legends.md`](docs/legends.md). The `--chart-color`/`--chart-pattern`
   swatch contract is unchanged, so the rename is mechanical.
+- **Breaking (opt-in marks):** the rationed-accent **tone** on `.ui-mark` and
+  `.ui-bracket-note` was renamed `evidence` → `accent` (`ui-mark--evidence` →
+  `ui-mark--accent`, `ui-bracket-note--evidence` → `ui-bracket-note--accent`;
+  `ui.mark({ tone: 'accent' })` / `ui.bracketNote({ tone: 'accent' })`) so the
+  accent tone reads the same across every analytical primitive (it already was
+  `accent` on `ui.connector`/`ui.annotation`). `.ui-annotation--evidence` is
+  **unchanged** — it is a marker _variant_ (a proof/source shape), not a tone.
+  Mechanical whole-token rename; see [`MIGRATIONS.json`](MIGRATIONS.json).
 - **Consolidation:** the SVG geometry is single-sourced in the `connectors`
   kernel — `@ponchia/ui/annotations` now builds its connectors on it, so a
   line/curve/arrow/dot is drawn one way across both. `connectorLine`/`Curve`/

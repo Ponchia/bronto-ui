@@ -325,7 +325,7 @@ export declare const cls: {
   readonly annotationReveal: 'ui-annotation--reveal';
   readonly annotationFocus: 'ui-annotation--focus';
   readonly mark: 'ui-mark';
-  readonly markEvidence: 'ui-mark--evidence';
+  readonly markAccent: 'ui-mark--accent';
   readonly markSuccess: 'ui-mark--success';
   readonly markWarning: 'ui-mark--warning';
   readonly markDanger: 'ui-mark--danger';
@@ -337,7 +337,7 @@ export declare const cls: {
   readonly markDraw: 'ui-mark--draw';
   readonly bracketNote: 'ui-bracket-note';
   readonly bracketNoteLabel: 'ui-bracket-note__label';
-  readonly bracketNoteEvidence: 'ui-bracket-note--evidence';
+  readonly bracketNoteAccent: 'ui-bracket-note--accent';
   readonly bracketNoteWarning: 'ui-bracket-note--warning';
   readonly bracketNoteDanger: 'ui-bracket-note--danger';
   readonly bracketNoteInfo: 'ui-bracket-note--info';
@@ -552,13 +552,13 @@ export interface AnnotationOpts {
 export interface MarkOpts {
   /** How the mark is drawn. Omit for the highlight fill. */
   style?: 'underline' | 'box' | 'strike';
-  /** `evidence` is the rationed accent; status tones for status-bearing emphasis; `muted` for de-emphasis. */
-  tone?: 'evidence' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
+  /** `accent` is the rationed accent; status tones for status-bearing emphasis; `muted` for de-emphasis. */
+  tone?: 'accent' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
   /** Draw-on highlight sweep (respects `prefers-reduced-motion`). */
   motion?: 'draw';
 }
 export interface BracketNoteOpts {
-  tone?: 'evidence' | 'warning' | 'danger' | 'info';
+  tone?: 'accent' | 'warning' | 'danger' | 'info';
 }
 export interface ConnectorOpts {
   tone?: 'accent' | 'muted' | 'success' | 'warning' | 'danger' | 'info';

@@ -98,12 +98,12 @@ ui.legendSwatch({ series: 9 });
 // @ts-expect-error — invalid swatch shape rejected.
 ui.legendSwatch({ shape: 'star' });
 
-const mk: string = ui.mark({ style: 'underline', tone: 'evidence', motion: 'draw' });
+const mk: string = ui.mark({ style: 'underline', tone: 'accent', motion: 'draw' });
 const bn: string = ui.bracketNote({ tone: 'warning' });
 // @ts-expect-error — invalid mark style rejected.
 ui.mark({ style: 'wavy' });
-// @ts-expect-error — invalid mark tone rejected.
-ui.mark({ tone: 'accent' });
+// @ts-expect-error — the old 'evidence' tone was renamed to 'accent' (0.5.0).
+ui.mark({ tone: 'evidence' });
 // @ts-expect-error — bracket-note tone is a closed union (no 'success').
 ui.bracketNote({ tone: 'success' });
 

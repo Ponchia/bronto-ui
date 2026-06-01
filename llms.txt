@@ -159,10 +159,10 @@ figure; marks call out a sentence):
 
 Put `ui-mark` on a `<mark>` for inline emphasis (semantic, not just visual).
 Styles: default highlight, `ui-mark--underline`, `ui-mark--box`,
-`ui-mark--strike`. Tones: `ui-mark--evidence` (the rationed accent),
+`ui-mark--strike`. Tones: `ui-mark--accent` (the rationed accent),
 `--success`/`--warning`/`--danger`/`--info` (status-bearing only), `--muted`.
 `ui-mark--draw` sweeps the highlight in (reduced-motion-safe). `ui-bracket-note`
-(+ `ui-bracket-note__label`, tones `--evidence`/`--warning`/`--danger`/`--info`)
+(+ `ui-bracket-note__label`, tones `--accent`/`--warning`/`--danger`/`--info`)
 brackets a whole passage — the prose analogue of `ui-annotation--bracket`.
 `ui.mark({ style, tone, motion })` / `ui.bracketNote({ tone })` build the class
 strings. A mark is visual only; if the emphasis carries meaning the words don't,

@@ -175,13 +175,13 @@ export interface AnnotationOpts {
 export interface MarkOpts {
   /** How the mark is drawn. Omit for the highlight fill. */
   style?: 'underline' | 'box' | 'strike';
-  /** \`evidence\` is the rationed accent; status tones for status-bearing emphasis; \`muted\` for de-emphasis. */
-  tone?: 'evidence' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
+  /** \`accent\` is the rationed accent; status tones for status-bearing emphasis; \`muted\` for de-emphasis. */
+  tone?: 'accent' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
   /** Draw-on highlight sweep (respects \`prefers-reduced-motion\`). */
   motion?: 'draw';
 }
 export interface BracketNoteOpts {
-  tone?: 'evidence' | 'warning' | 'danger' | 'info';
+  tone?: 'accent' | 'warning' | 'danger' | 'info';
 }
 export interface ConnectorOpts {
   tone?: 'accent' | 'muted' | 'success' | 'warning' | 'danger' | 'info';

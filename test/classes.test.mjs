@@ -110,8 +110,8 @@ test('the recipes added this cycle emit only registry classes', () => {
   assert.equal(ui.legendSwatch({ series: 99, shape: 'bogus' }), 'ui-legend__swatch');
   assert.equal(ui.mark(), 'ui-mark');
   assert.equal(
-    ui.mark({ style: 'underline', tone: 'evidence', motion: 'draw' }),
-    'ui-mark ui-mark--underline ui-mark--evidence ui-mark--draw',
+    ui.mark({ style: 'underline', tone: 'accent', motion: 'draw' }),
+    'ui-mark ui-mark--underline ui-mark--accent ui-mark--draw',
   );
   assert.equal(ui.mark({ style: 'box', tone: 'danger' }), 'ui-mark ui-mark--box ui-mark--danger');
   assert.equal(ui.mark({ style: 'bogus', tone: 'bogus' }), 'ui-mark');

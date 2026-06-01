@@ -63,9 +63,18 @@
     {
       "from": "0.4",
       "to": "0.5",
-      "summary": "Adds the analytical-primitives suite (annotations, legend, marks, connectors, spotlight, crosshair, selection + the analytical.css roll-up); all additive/opt-in. Two breaking changes: the chart data key moved out of the report kit into the standalone Legends layer (`.ui-chart__legend`/`.ui-chart__swatch` removed), and annotation arrowheads now render via the shared connectors geometry kernel (a small visual path change, no API change).",
-      "safe": [{ "old": "ui-chart__swatch", "new": "ui-legend__swatch" }],
+      "summary": "Adds the analytical-primitives suite (annotations, legend, marks, connectors, spotlight, crosshair, selection + the analytical.css roll-up); all additive/opt-in. Three breaking changes: the chart data key moved out of the report kit into the standalone Legends layer (`.ui-chart__legend`/`.ui-chart__swatch` removed); annotation arrowheads now render via the shared connectors geometry kernel (a small visual path change, no API change); and the marks/bracket-note rationed-accent tone was renamed `evidence`→`accent` to match the annotation/connector tone vocabulary (`.ui-annotation--evidence` stays — it's a marker variant, not a tone).",
+      "safe": [
+        { "old": "ui-chart__swatch", "new": "ui-legend__swatch" },
+        { "old": "ui-mark--evidence", "new": "ui-mark--accent" },
+        { "old": "ui-bracket-note--evidence", "new": "ui-bracket-note--accent" }
+      ],
       "manual": [
+        {
+          "old": "ui.mark({ tone: 'evidence' }) / ui.bracketNote({ tone: 'evidence' })",
+          "new": "tone: 'accent'",
+          "note": "The rationed-accent tone option on the mark/bracket-note recipes is now 'accent' (was 'evidence'), matching ui.connector/ui.annotation. Do NOT rewrite ui.annotation({ variant: 'evidence' }) or the 'evidence' subject marker — those are a marker shape, not a tone, and are unchanged."
+        },
         {
           "old": "ui-chart__legend",
           "new": "ui-legend",

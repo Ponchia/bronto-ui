@@ -218,8 +218,8 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.bracketNote` | `ui-bracket-note` | base |
 | `cls.bracketNoteLabel` | `ui-bracket-note__label` | part |
+| `cls.bracketNoteAccent` | `ui-bracket-note--accent` | modifier |
 | `cls.bracketNoteDanger` | `ui-bracket-note--danger` | modifier |
-| `cls.bracketNoteEvidence` | `ui-bracket-note--evidence` | modifier |
 | `cls.bracketNoteInfo` | `ui-bracket-note--info` | modifier |
 | `cls.bracketNoteWarning` | `ui-bracket-note--warning` | modifier |
 
@@ -600,10 +600,10 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.mark` | `ui-mark` | base |
+| `cls.markAccent` | `ui-mark--accent` | modifier |
 | `cls.markBox` | `ui-mark--box` | modifier |
 | `cls.markDanger` | `ui-mark--danger` | modifier |
 | `cls.markDraw` | `ui-mark--draw` | modifier |
-| `cls.markEvidence` | `ui-mark--evidence` | modifier |
 | `cls.markInfo` | `ui-mark--info` | modifier |
 | `cls.markMuted` | `ui-mark--muted` | modifier |
 | `cls.markStrike` | `ui-mark--strike` | modifier |

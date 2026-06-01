@@ -341,7 +341,7 @@ export const cls = Object.freeze({
   annotationFocus: 'ui-annotation--focus',
   // marks (evidence/emphasis for running text — css/marks.css)
   mark: 'ui-mark',
-  markEvidence: 'ui-mark--evidence',
+  markAccent: 'ui-mark--accent',
   markSuccess: 'ui-mark--success',
   markWarning: 'ui-mark--warning',
   markDanger: 'ui-mark--danger',
@@ -353,7 +353,7 @@ export const cls = Object.freeze({
   markDraw: 'ui-mark--draw',
   bracketNote: 'ui-bracket-note',
   bracketNoteLabel: 'ui-bracket-note__label',
-  bracketNoteEvidence: 'ui-bracket-note--evidence',
+  bracketNoteAccent: 'ui-bracket-note--accent',
   bracketNoteWarning: 'ui-bracket-note--warning',
   bracketNoteDanger: 'ui-bracket-note--danger',
   bracketNoteInfo: 'ui-bracket-note--info',
@@ -616,7 +616,7 @@ export const ui = {
       style === 'underline' && cls.markUnderline,
       style === 'box' && cls.markBox,
       style === 'strike' && cls.markStrike,
-      tone === 'evidence' && cls.markEvidence,
+      tone === 'accent' && cls.markAccent,
       tone === 'success' && cls.markSuccess,
       tone === 'warning' && cls.markWarning,
       tone === 'danger' && cls.markDanger,
@@ -627,7 +627,7 @@ export const ui = {
   bracketNote: ({ tone } = {}) =>
     j(
       cls.bracketNote,
-      tone === 'evidence' && cls.bracketNoteEvidence,
+      tone === 'accent' && cls.bracketNoteAccent,
       tone === 'warning' && cls.bracketNoteWarning,
       tone === 'danger' && cls.bracketNoteDanger,
       tone === 'info' && cls.bracketNoteInfo,
