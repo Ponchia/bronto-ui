@@ -144,7 +144,7 @@ the legend out of chart-engine territory):
 ```html
 <ul class="ui-legend ui-legend--interactive" data-bronto-legend aria-label="Series">
   <li>
-    <button class="ui-legend__item" aria-pressed="true" data-series="research">
+    <button type="button" class="ui-legend__item" aria-pressed="true" data-series="research">
       <span class="ui-legend__swatch ui-legend__swatch--1" aria-hidden="true"></span>
       <span class="ui-legend__label">Research</span>
     </button>

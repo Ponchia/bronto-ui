@@ -44,3 +44,14 @@ test('forced-colors: a highlight mark keeps an underline so it survives', async 
   const decoration = await mark.evaluate((el) => getComputedStyle(el).textDecorationLine);
   expect(decoration).toContain('underline');
 });
+
+test('forced-colors: a --strike mark keeps line-through (not overwritten by the underline fallback)', async ({
+  page,
+}) => {
+  await page.emulateMedia({ forcedColors: 'active' });
+  await open(page);
+  const strike = page.locator('mark.ui-mark--strike').first();
+  const decoration = await strike.evaluate((el) => getComputedStyle(el).textDecorationLine);
+  expect(decoration).toContain('line-through');
+  expect(decoration).not.toContain('underline');
+});
