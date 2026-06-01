@@ -32,6 +32,21 @@ modern-platform motion direction (see [ADR-0002](docs/adr/0002-scope-and-2026-ba
     `content-visibility … allow-discrete`. Strict progressive enhancement —
     gated on `@supports selector(::details-content)`; engines without it (today,
     Firefox/Safari) simply snap, exactly as before.
+- **Scroll-driven motion (progressive enhancement).** `.ui-scroll-progress` (a
+  reading-progress bar on a `scroll(root block)` timeline, RTL-aware) and
+  `.ui-scroll-reveal` (a JS-free, IntersectionObserver-free reveal on a `view()`
+  timeline). Both are gated on `@supports (animation-timeline: …)` and
+  `prefers-reduced-motion: no-preference`, so engines without scroll timelines
+  (today, Firefox/Safari) keep a static end-state and reduced-motion users get
+  no movement.
+- **View Transitions (progressive enhancement).** A `.ui-vt` helper
+  (`view-transition-name: var(--ui-vt-name)`) to morph an element across a
+  same-document `startViewTransition()` or a cross-document navigation, an
+  on-brand default for the `::view-transition-*(root)` cross-fade, and a
+  **reduced-motion kill-switch** for the `::view-transition-*` pseudo-tree
+  (which the platform does *not* quiet automatically). Cross-document nav stays
+  a documented one-liner you add yourself (`@view-transition { navigation: auto }`
+  is document-global, so it can't be layered or scoped by the framework).
 - **Optional Qwik bindings — `@ponchia/ui/qwik`.** Same thin-adapter shape as
   the React/Solid bindings (`useDialog`, `useToast`, … `useBrontoBehavior`, plus
   the `cls`/`ui`/`cx` + `applyStoredTheme` re-exports), wrapping the SSR-safe
@@ -49,8 +64,10 @@ modern-platform motion direction (see [ADR-0002](docs/adr/0002-scope-and-2026-ba
   `oklch()`/relative color, and `light-dark()`. No fallbacks ship below the
   floor; not-yet-cross-engine features (View Transitions, scroll-driven
   animations) are enhancement-only and degrade to a static end-state.
-- Bundle gzip budget nudged 13.0 → 13.5 kB to seat the dialog enter/exit motion
-  (the raw budget and headroom posture are unchanged).
+- Bundle budget nudged for the new motion: gzip 13.0 → 13.5 kB (for the dialog
+  enter/exit work) and raw 76 → 77 kB (for the popover/toast/accordion motion
+  plus the scroll-driven + view-transition CSS). Gzip held at ~13.1 kB — it
+  compresses well — so the compressed payload still has headroom.
 
 ### Fixed
 

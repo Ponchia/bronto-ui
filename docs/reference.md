@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 263 classes across 110 component groups
+- 266 classes across 113 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -593,6 +593,18 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.reveal` | `ui-reveal` | base |
 
+### `.ui-scroll-progress`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.scrollProgress` | `ui-scroll-progress` | base |
+
+### `.ui-scroll-reveal`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.scrollReveal` | `ui-scroll-reveal` | base |
+
 ### `.ui-search`
 
 | Registry key | Class | Kind |
@@ -831,6 +843,12 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.visuallyHidden` | `ui-visually-hidden` | base |
+
+### `.ui-vt`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.vt` | `ui-vt` | base |
 
 ## Table-local state classes
 

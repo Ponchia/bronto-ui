@@ -109,3 +109,72 @@ test('accordion animates auto-height where the platform supports it (else snaps)
   expect(probe.transitionProperty).toMatch(/block-size|height/);
   expect(parseFloat(probe.transitionDuration)).toBeGreaterThan(0);
 });
+
+test('scroll-driven primitives bind a scroll/view timeline where supported (else static)', async ({
+  page,
+}) => {
+  await open(page);
+  const supported = await page.evaluate(() => CSS.supports('animation-timeline: scroll()'));
+  const probe = await page.evaluate(() => {
+    const bar = document.createElement('div');
+    bar.className = 'ui-scroll-progress';
+    const rev = document.createElement('div');
+    rev.className = 'ui-scroll-reveal';
+    rev.textContent = 'x';
+    document.body.append(bar, rev);
+    const cb = getComputedStyle(bar);
+    const cr = getComputedStyle(rev);
+    const out = {
+      barName: cb.animationName,
+      barTimeline: cb.animationTimeline,
+      barTransform: cb.transform,
+      revName: cr.animationName,
+      revTimeline: cr.animationTimeline,
+    };
+    bar.remove();
+    rev.remove();
+    return out;
+  });
+  if (supported) {
+    expect(probe.barName).toContain('uiScrollGrow');
+    expect(probe.barTimeline).toMatch(/scroll/);
+    expect(probe.revName).toContain('uiRise');
+    expect(probe.revTimeline).toMatch(/view/);
+  } else {
+    // Degrade to a static end state — no animation bound at all.
+    expect(probe.barName).toBe('none');
+    expect(probe.revName).toBe('none');
+  }
+});
+
+test('.ui-vt exposes a view-transition-name driven by --ui-vt-name', async ({ page }) => {
+  await open(page);
+  const supported = await page.evaluate(() => CSS.supports('view-transition-name: none'));
+  test.skip(!supported, 'engine lacks view-transition-name (e.g. Firefox) — inert, by design');
+  const name = await page.evaluate(() => {
+    const el = document.createElement('div');
+    el.className = 'ui-vt';
+    el.style.setProperty('--ui-vt-name', 'hero');
+    document.body.appendChild(el);
+    const v = getComputedStyle(el).viewTransitionName;
+    el.remove();
+    return v;
+  });
+  expect(name).toBe('hero');
+});
+
+test('a same-document view transition runs to completion where supported (else degrades)', async ({
+  page,
+}) => {
+  await open(page);
+  const result = await page.evaluate(async () => {
+    if (typeof document.startViewTransition !== 'function') return 'unsupported';
+    const t = document.startViewTransition(() => {
+      document.body.dataset.vtRan = '1';
+    });
+    await t.finished;
+    return document.body.dataset.vtRan;
+  });
+  // Chromium runs it; engines without the API degrade to a plain DOM update.
+  expect(['1', 'unsupported']).toContain(result);
+});

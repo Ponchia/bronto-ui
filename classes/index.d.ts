@@ -248,6 +248,9 @@ export declare const cls: {
   readonly animateFade: 'ui-animate-fade';
   readonly animateDot: 'ui-animate-dot';
   readonly animateMatrix: 'ui-animate-matrix';
+  readonly scrollProgress: 'ui-scroll-progress';
+  readonly scrollReveal: 'ui-scroll-reveal';
+  readonly vt: 'ui-vt';
   readonly appShell: 'ui-app-shell';
   readonly appShellFull: 'ui-app-shell--full';
   readonly appRail: 'ui-app-rail';

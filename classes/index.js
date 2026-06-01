@@ -262,6 +262,9 @@ export const cls = Object.freeze({
   animateFade: 'ui-animate-fade',
   animateDot: 'ui-animate-dot',
   animateMatrix: 'ui-animate-matrix',
+  scrollProgress: 'ui-scroll-progress',
+  scrollReveal: 'ui-scroll-reveal',
+  vt: 'ui-vt',
   // admin shell (was the legacy .app-* vocabulary; promoted in 0.3.0)
   appShell: 'ui-app-shell',
   appShellFull: 'ui-app-shell--full',

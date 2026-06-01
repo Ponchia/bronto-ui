@@ -102,8 +102,11 @@ export function buildBundles() {
  *  Bump deliberately (and note it in the CHANGELOG) when real growth
  *  justifies it — this is the consumer-facing payload contract. The gzip
  *  ceiling was nudged 13.0→13.5 kB at 0.4.1 for the native-`<dialog>`
- *  enter+exit motion (`@starting-style` + `allow-discrete`). */
-export const BUDGET = { raw: 76_000, gzip: 13_500 };
+ *  enter+exit motion (`@starting-style` + `allow-discrete`); the raw ceiling
+ *  was then nudged 76→77 kB for the popover/toast/accordion motion plus the
+ *  scroll-driven + view-transition enhancements (gzip held — it compresses
+ *  well, sitting ~13.1 kB). */
+export const BUDGET = { raw: 77_000, gzip: 13_500 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };

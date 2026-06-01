@@ -53,12 +53,19 @@ because the modern platform makes it declarative:
   instant removal under reduced-motion), and **accordion** auto-height open/close
   via `::details-content` + `interpolate-size: allow-keywords` (gated on
   `@supports selector(::details-content)`; engines without it snap).
-- **Next, same approach:** **View Transitions** (`@view-transition` cross-doc +
-  `view-transition-name` morphs) and **scroll-driven animations** as
-  *progressive enhancement* (Chrome/Safari strong, others catching up → must
-  degrade to a static end-state). We do **not** add a JS physics/animation
-  runtime — the platform is the engine.
-- Continue the OKLCH / `light-dark()` / P3 work flagged in ADR-0001.
+- **Shipped (0.4.1), progressive enhancement:** **scroll-driven** primitives
+  (`.ui-scroll-progress`, `.ui-scroll-reveal`) on `scroll()` / `view()`
+  timelines, gated on `@supports (animation-timeline: …)` so they degrade to a
+  static end-state, and **View Transitions** — a `.ui-vt` `view-transition-name`
+  helper, an on-brand `::view-transition-*(root)` cross-fade, and a
+  reduced-motion kill-switch for the VT pseudo-tree (which does *not* honour
+  reduced-motion on its own). The document-global cross-document opt-in
+  (`@view-transition { navigation: auto }`) is documented rather than shipped —
+  it can't be layered or scoped, so it stays the consumer's one-liner. No JS
+  animation runtime — the platform is the engine.
+- **Next:** track the not-yet-cross-engine features to general availability
+  (scroll-driven + `interpolate-size` are Chromium-led today) and continue the
+  OKLCH / `light-dark()` / P3 work flagged in ADR-0001.
 
 ### Browser floor — deliberately modern
 Floor raised to **Chrome/Edge 125+, Safari 18+, Firefox 129+** (early–mid 2025)
