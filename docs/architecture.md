@@ -52,9 +52,15 @@ on top of the CSS, none of which require a framework commitment**:
   with URLs relative to the package (`../fonts/*`), so font hosting is
   decoupled from the token layer and resolves through bundlers or static
   serving without an absolute `/fonts` assumption.
-- **tokens/** — `index.js` is the single source; `index.json` is generated.
-  `scripts/check-tokens.mjs` fails CI if it drifts from `css/tokens.css`
-  (and incidentally guards the intentional dark-palette duplication).
+- **tokens/** — `index.js` (`cssVars`) is the single source of truth for token
+  values. The four `:root` palette blocks of `css/tokens.css` are **generated**
+  from it (`scripts/gen-tokens-css.mjs`), as are the JSON artifacts (`index.json`,
+  `tokens.dtcg.json`, `resolved.json`). So the dark palette is authored once,
+  not in three places (the two CSS dark blocks are now identical by
+  construction), resolving the duplication ADR-0003 flagged. The CSS-only
+  presets (density / contrast / OLED) stay hand-authored below a marker and are
+  preserved across regeneration. `scripts/check-tokens.mjs` fails CI if
+  `css/tokens.css` drifts from the model.
 - **classes/** — `cls` is the flat registry; recipes only emit from it;
   `scripts/check-classes.mjs` enforces a bidirectional match with the
   stylesheet's `.ui-*` selectors. The class contract cannot silently rot.
@@ -62,6 +68,9 @@ on top of the CSS, none of which require a framework commitment**:
   SSR-safe. Chosen over Web Components (SSR/hydration friction with Astro
   islands and SvelteKit) and over per-framework packages (maintenance
   multiplier). Revisit Web Components only if stateful widgets accumulate.
+  `index.js` is a barrel; each behavior lives in its own module
+  (`dialog.js`, `combobox.js`, …) over a shared `internal.js` of DOM helpers,
+  so the public import surface is unchanged.
 - **glyphs/** — static bitmap data and SSR-safe render helpers. The
   256-cell DOM renderers are for display and solid inline icons; the `.ui-icon`
   mask renderer is for dense icon-at-scale use.

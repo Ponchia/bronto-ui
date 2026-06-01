@@ -10,9 +10,12 @@ machine-checked.
 
 ```bash
 npm ci
-npm run check   # 14 gates: lint, format, exports, tokens, classes,
-                #            dts, types, dtcg, shiki, dist, pack,
-                #            release, reference, vscode
+npm run check   # the full integrity suite: lint, format, exports; the
+                #   token / class / dts / dtcg / resolved / reference /
+                #   vscode generated-artifact drift gates; types, shiki,
+                #   dist budget, pack allowlist, release stamp, contrast;
+                #   behaviors / bindings / glyphs parity; color-policy,
+                #   skins, charts, report
 npm test        # node:test unit + type-d + contract tests
 ```
 
@@ -30,7 +33,12 @@ merge.
   bidirectional match with the stylesheet, and the `.d.ts` are
   **generated** (`npm run dts:build`) and drift-checked, so don't
   hand-edit `classes/index.d.ts` / `tokens/index.d.ts`.
-- Generated artifacts (`dist/`, `tokens/index.json`,
+- Token **values** live in `tokens/index.js` (`cssVars`) — the single source.
+  The four `:root` palette blocks of `css/tokens.css` are **generated** from it
+  (`npm run tokens:css:build`), so don't hand-edit them; edit `cssVars` and
+  regenerate. The CSS-only presets (density / contrast / OLED) below the
+  HAND-AUTHORED marker in `tokens.css` are hand-authored and preserved.
+- Other generated artifacts (`dist/`, `tokens/index.json`,
   `tokens/tokens.dtcg.json`, the `.d.ts`) are committed; rebuild with
   `npm run prepack` and commit the result.
 - Accessibility is a gate, not an afterthought: keyboard paths, both

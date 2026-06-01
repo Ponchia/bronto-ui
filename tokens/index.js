@@ -4,16 +4,20 @@
  * For consumers that need token values in JS rather than CSS: charting,
  * canvas, inline styles, theme-aware logic, Style Dictionary / Figma sync.
  *
- * `cssVars` is the canonical, exact mirror of the :root blocks in
- * css/tokens.css — keyed by the real custom-property name, values are
- * the verbatim CSS strings. scripts/check-tokens.mjs fails CI if this
- * drifts from the stylesheet, so the two cannot silently diverge.
+ * `cssVars` is the SINGLE SOURCE of truth for token values — keyed by the
+ * real custom-property name, values are the verbatim CSS strings. The four
+ * :root palette blocks of css/tokens.css are GENERATED from it
+ * (scripts/gen-tokens-css.mjs), so the dark palette is authored once here
+ * rather than in three places (the two CSS dark blocks + a JS mirror).
+ * scripts/check-tokens.mjs fails CI if css/tokens.css drifts from this model.
  *
  * `tokens` is an ergonomic view derived programmatically from `cssVars`
  * (no second hand-maintained copy, so nothing to keep in sync).
  */
 
-/** Exact mirror of css/tokens.css. Do not reshape — the sync check is literal. */
+/** Single source for token values; the css/tokens.css palette blocks are
+ *  generated from this (scripts/gen-tokens-css.mjs). Edit values here, then run
+ *  `npm run tokens:css:build`. Do not reshape — the generators consume it literally. */
 export const cssVars = {
   // Global :root — scales, shared with both themes.
   global: {

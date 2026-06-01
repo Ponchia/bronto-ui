@@ -1,8 +1,42 @@
 # Changelog
 
-> **Versioning:** pre-1.0, breaking changes ship in the _minor_. Pin
-> `~0.x`; `^0.x` does **not** protect you. See README → Versioning, and
+> **Versioning:** pre-1.0, breaking changes ship in the _minor_. Pin to the
+> minor — `~0.4.0` (equivalently `^0.4.0`) resolves to `>=0.4.0 <0.5.0`; a bare
+> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
+
+## Unreleased — 0.4.2
+
+Maintenance hardening from a multi-perspective review. No consumer-facing API
+change — the shipped `dist/*` is byte-identical and the public surfaces
+(`.ui-*`, tokens, behaviors, bindings) are unchanged.
+
+### Fixed
+
+- The optional Qwik binding (`@ponchia/ui/qwik`) is now built from the packed
+  tarball in CI **and** release, alongside React/Solid — closing a coverage gap
+  (it was documented as optimizer-proven but no job actually built it). Also
+  covered by `check:pack`, the size report, and the dead-code config.
+
+### Changed
+
+- `docs/architecture.md` now ships in the package, so the offline rationale the
+  shipped ADRs link to resolves inside the tarball.
+- `docs/stability.md` clarifies that `data-surface`/`data-density`/
+  `data-contrast` are **convenience presets**, not part of the stability
+  contract; `data-theme` (light/dark) remains the contractual base.
+
+### Internal
+
+- Token values are single-sourced in `tokens/index.js` (`cssVars`); the
+  `css/tokens.css` palette is generated from it, so the dark palette is authored
+  once instead of in three places (the shipped CSS is byte-identical).
+- `behaviors/index.js` is split into per-behavior modules behind the same public
+  barrel (no surface change).
+- Drift-gate consolidation (`assertFresh`), a Qwik type smoke + stronger
+  class-recipe wiring test, the APCA advisory widened to the accent text across
+  the core palette and every colorway (still advisory; WCAG 2.1 AA stays the
+  hard gate), an OLED computed-style smoke test, and several doc reconciliations.
 
 ## 0.4.1 — 2026-06-01
 
@@ -79,6 +113,9 @@ modern-platform motion direction (see [ADR-0002](docs/adr/0002-scope-and-2026-ba
 - **[ADR-0003](docs/adr/0003-theme-model.md)** records the theme model: a binary
   light/dark base × one-knob derivation × orthogonal axes (colorway, surface,
   contrast, density), and why a flat named-theme catalog is rejected.
+- React and Solid Vite examples, CI/release matrix coverage for those examples,
+  runtime binding tests, public API stability docs, a release runbook, and
+  `npm run size:report`.
 
 ### Changed
 
@@ -116,12 +153,6 @@ modern-platform motion direction (see [ADR-0002](docs/adr/0002-scope-and-2026-ba
 - The one-node glyph mask path now includes a WebKit-prefixed mask declaration,
   and the OKLCH accent ramp uses an explicit white/black neutral endpoint for
   cross-engine browser parity.
-
-### Added
-
-- React and Solid Vite examples, CI/release matrix coverage for those examples,
-  runtime binding tests, public API stability docs, a release runbook, and
-  `npm run size:report`.
 
 ## 0.4.0 — 2026-05-31
 

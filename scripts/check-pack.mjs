@@ -53,6 +53,7 @@ for (const p of files) {
 // so it cannot rot; `theming.md` is the stable token contract. Everything
 // else under docs/ stays dev-only. Keep this in lockstep with `files`.
 const shippedDocs = new Set([
+  'docs/architecture.md',
   'docs/reference.md',
   'docs/theming.md',
   'docs/contrast.md',
@@ -90,6 +91,7 @@ for (const must of [
   'glyphs/glyphs.js',
   'react/index.js',
   'solid/index.js',
+  'qwik/index.js',
 ]) {
   if (!files.includes(must)) errors.push(`expected entrypoint missing from package: ${must}`);
 }

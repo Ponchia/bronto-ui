@@ -52,6 +52,7 @@
     "shiki",
     "llms.txt",
     "CHANGELOG.md",
+    "docs/architecture.md",
     "docs/reference.md",
     "docs/theming.md",
     "docs/contrast.md",
@@ -70,6 +71,7 @@
     "check:format": "prettier --check .",
     "size:report": "node scripts/size-report.mjs",
     "tokens:build": "node scripts/gen-tokens-json.mjs",
+    "tokens:css:build": "node scripts/gen-tokens-css.mjs",
     "dtcg:build": "node scripts/gen-dtcg.mjs",
     "resolved:build": "node scripts/gen-resolved.mjs",
     "dts:build": "node scripts/gen-dts.mjs",
@@ -103,7 +105,7 @@
     "check:vscode": "node scripts/check-vscode-data.mjs",
     "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:tokens && npm run check:classes && npm run check:dts && npm run check:types && npm run check:dtcg && npm run check:resolved && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:release && npm run check:reference && npm run check:contrast && npm run check:vscode && npm run check:behaviors && npm run check:bindings && npm run check:glyphs && npm run check:color-policy && npm run check:skins && npm run check:charts && npm run check:report",
     "test": "node --test \"test/*.test.mjs\"",
-    "prepack": "npm run tokens:build && npm run dtcg:build && npm run resolved:build && npm run dts:build && npm run reference:build && npm run contrast:build && npm run vscode:build && npm run skins:build && npm run charts:build && npm run dist:build && npm run glyphs:build",
+    "prepack": "npm run tokens:css:build && npm run tokens:build && npm run dtcg:build && npm run resolved:build && npm run dts:build && npm run reference:build && npm run contrast:build && npm run vscode:build && npm run skins:build && npm run charts:build && npm run dist:build && npm run glyphs:build",
     "prepublishOnly": "npm run check && npm test"
   },
   "devDependencies": {
@@ -190,6 +192,7 @@
     "./tokens/resolved.json": "./tokens/resolved.json",
     "./shiki/nothing.json": "./shiki/nothing.json",
     "./llms.txt": "./llms.txt",
+    "./docs/architecture.md": "./docs/architecture.md",
     "./docs/reference.md": "./docs/reference.md",
     "./docs/theming.md": "./docs/theming.md",
     "./docs/contrast.md": "./docs/contrast.md",
