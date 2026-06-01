@@ -36,6 +36,8 @@ on top of the CSS, none of which require a framework commitment**:
 ├── tokens/      design tokens as JS/JSON, for JS/canvas/tooling     [optional]
 ├── classes/     typed class-name contract + recipe builders         [optional]
 ├── behaviors/   vanilla, SSR-safe JS for stateful widgets           [optional]
+├── connectors/  pure SVG leader-line geometry kernel (no DOM)        [optional]
+├── annotations/ pure SVG callout geometry (builds on connectors)     [optional]
 ├── glyphs/      dot-matrix glyph registry/renderers                 [optional]
 ├── react/       thin React hooks over behaviors                     [optional peer]
 ├── solid/       thin Solid primitives over behaviors                [optional peer]
@@ -90,6 +92,8 @@ gating" below), so a version that fails any invariant never reaches npm.
 | `tokens.css` ⇄ `tokens/index.js` ⇄ `.json`      | `check-tokens.mjs`  |
 | `classes` `cls` ⇄ `.ui-*` selectors             | `check-classes.mjs` |
 | `classes`/`tokens` `.d.ts` ⇄ JS runtime (exact) | `check-dts.mjs`     |
+| `annotations`/`connectors` hand-written `.d.ts` ⇄ exports | `check-helpers-dts.mjs` |
+| legend swatch colours ⊆ `charts.js` · opt-in   | `check-legend.mjs`  |
 | `tokens.dtcg.json` ⇄ token model                | `check-dtcg.mjs`    |
 | color tokens tiered · no raw chromatic color in components | `check-color-policy.mjs` |
 | `css/skins.css` ⇄ `tokens/skins.js` · colorways opt-in | `check-skins.mjs` |

@@ -247,6 +247,11 @@ test('annotationParts assembles common subject, connector and note paths', () =>
 test('helpers return blank paths when there is no drawable segment', () => {
   assert.equal(connectorLine({ dx: 0, dy: 0 }), '');
   assert.equal(connectorLine({ dx: 10, dy: 0, subject: { type: 'circle', radius: 10 } }), '');
+  // trim that rounds onto the note anchor → empty, not a degenerate "M x,y L x,y"
+  assert.equal(
+    connectorLine({ dx: 1000, dy: 0, subject: { type: 'rect', width: 1999.999, height: 10 } }),
+    '',
+  );
   assert.equal(circleSubjectPath({ radius: 0 }), '');
   assert.equal(rectSubjectPath({ width: 0, height: 10 }), '');
   assert.equal(timelineEventPath({ size: 0 }), '');

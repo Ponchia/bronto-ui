@@ -29,7 +29,8 @@
 }
 
 .ui-sel--off {
-  /* opacity is not overridden in forced-colors, so excluded stays distinct. */
+  /* opacity survives forced-colors, so an excluded item stays dimmer than the
+     selected/candidate items (which carry a solid/dashed outline). */
   opacity: 0.35;
 }
 

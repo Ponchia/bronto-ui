@@ -51,7 +51,10 @@ export function initConnectors({ root } = {}) {
         svg.appendChild(path);
       }
       path.setAttribute('d', d);
-      path.setAttribute('pathLength', '1');
+      // pathLength="1" normalises the draw animation, but it would also reframe
+      // a dashed line's user-unit dasharray — so only set it for draw connectors.
+      if (svg.classList.contains('ui-connector--draw')) path.setAttribute('pathLength', '1');
+      else path.removeAttribute('pathLength');
 
       const kind = svg.dataset.end || 'arrow';
       let cap = svg.querySelector('.ui-connector__end');
