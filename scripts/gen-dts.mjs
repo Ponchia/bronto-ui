@@ -201,6 +201,21 @@ export interface SelOpts {
   /** Selection emphasis: \`on\` (selected), \`off\` (excluded), \`maybe\` (live-brush candidate). */
   state?: 'on' | 'off' | 'maybe';
 }
+/** Trust state for the source/citation/provenance layer. Pair with an author-written label — never colour alone. */
+export type SrcState = 'verified' | 'unverified' | 'generated' | 'reviewed' | 'stale' | 'conflict';
+export interface CitationOpts {
+  /** Render as a named-source pill (leading tone dot) instead of an inline \`[n]\` reference. */
+  chip?: boolean;
+  state?: SrcState;
+}
+export interface SourceOpts {
+  /** Sets the source card's tone border. */
+  state?: SrcState;
+}
+export interface ProvenanceOpts {
+  /** Sets the provenance item's tone dot. */
+  state?: SrcState;
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -239,6 +254,9 @@ export interface Ui {
   spotlight(opts?: SpotlightOpts): string;
   crosshair(opts?: CrosshairOpts): string;
   sel(opts?: SelOpts): string;
+  citation(opts?: CitationOpts): string;
+  source(opts?: SourceOpts): string;
+  provenance(opts?: ProvenanceOpts): string;
 }
 
 export declare const ui: Ui;

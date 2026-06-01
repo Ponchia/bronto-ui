@@ -391,6 +391,25 @@ export const cls = Object.freeze({
   selOn: 'ui-sel--on',
   selOff: 'ui-sel--off',
   selMaybe: 'ui-sel--maybe',
+  // source / citation / provenance — the trust layer (css/sources.css)
+  citation: 'ui-citation',
+  citationChip: 'ui-citation--chip',
+  sourceList: 'ui-source-list',
+  sourceListItem: 'ui-source-list__item',
+  sourceCard: 'ui-source-card',
+  sourceCardTitle: 'ui-source-card__title',
+  sourceCardOrigin: 'ui-source-card__origin',
+  sourceCardTime: 'ui-source-card__time',
+  sourceCardExcerpt: 'ui-source-card__excerpt',
+  sourceCardActions: 'ui-source-card__actions',
+  provenance: 'ui-provenance',
+  provenanceItem: 'ui-provenance__item',
+  srcVerified: 'ui-src--verified',
+  srcUnverified: 'ui-src--unverified',
+  srcGenerated: 'ui-src--generated',
+  srcReviewed: 'ui-src--reviewed',
+  srcStale: 'ui-src--stale',
+  srcConflict: 'ui-src--conflict',
   printOnly: 'ui-print-only',
   screenOnly: 'ui-screen-only',
   breakBefore: 'ui-break-before',
@@ -458,6 +477,16 @@ export function cx(...parts) {
 }
 
 const j = (...p) => p.filter(Boolean).join(' ');
+
+// Trust-state → tone class, shared by the source/citation/provenance recipes.
+const srcTone = (state) =>
+  (state === 'verified' && cls.srcVerified) ||
+  (state === 'unverified' && cls.srcUnverified) ||
+  (state === 'generated' && cls.srcGenerated) ||
+  (state === 'reviewed' && cls.srcReviewed) ||
+  (state === 'stale' && cls.srcStale) ||
+  (state === 'conflict' && cls.srcConflict) ||
+  '';
 
 export const ui = {
   button: ({ variant, icon, size } = {}) =>
@@ -653,6 +682,9 @@ export const ui = {
       state === 'off' && cls.selOff,
       state === 'maybe' && cls.selMaybe,
     ),
+  citation: ({ chip, state } = {}) => j(cls.citation, chip && cls.citationChip, srcTone(state)),
+  source: ({ state } = {}) => j(cls.sourceCard, srcTone(state)),
+  provenance: ({ state } = {}) => j(cls.provenance, srcTone(state)),
 };
 
 export default ui;

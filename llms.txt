@@ -236,6 +236,23 @@ Apply `ui-sel` + `ui-sel--on` (selected), `ui-sel--off` (excluded), or
 row, list item, map region) from YOUR selection/brush logic — Bronto only styles
 them. `ui.sel({ state: 'on'|'off'|'maybe' })`. Details: `docs/selection.md`.
 
+Optional source/citation/provenance trust layer — opt-in, CSS only, never in
+the default bundle. The grammar for "where did this come from?" in generated
+reports/AI output:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/sources.css" />
+```
+
+`ui-citation` (inline ref on a real `<a>`/`<button>`; `--chip` = named-source
+pill), `ui-source-card` (+`__title`/`__origin`/`__time`/`__excerpt`/`__actions`),
+`ui-source-list` (+`__item`), and `ui-provenance` (+`__item`). A cross-cutting
+trust state sets the tone: `ui-src--verified`/`--reviewed`/`--generated`/
+`--unverified`/`--stale`/`--conflict` — always paired with an author-written
+label (never colour alone). Bronto styles + states; the host owns fetching,
+numbering, and trust. `ui.citation({chip,state})` / `ui.source({state})` /
+`ui.provenance({state})`. Details: `docs/sources.md`.
+
 Optional static report layer for LLM-authored HTML reports — opt-in, never in
 the default bundle. Pair it with the normal bundle, and add data-viz only when
 the report contains charts. For standalone browser HTML, use real URLs; package

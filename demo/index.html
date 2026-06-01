@@ -18,6 +18,8 @@
          marks, connectors, spotlight, crosshair and selection. One entrypoint
          so the differentiator tier below renders; never in the core bundle. -->
     <link rel="stylesheet" href="../dist/css/analytical.css" />
+    <!-- Opt-in source/citation/provenance trust layer (0.5.0). Standalone leaf. -->
+    <link rel="stylesheet" href="../dist/css/sources.css" />
     <style>
       /* No local @font-face: Doto ships in css/fonts.css (bundled by
          core.css) with URLs relative to the package, so it resolves here
@@ -1484,6 +1486,56 @@ ui.sel({ state: 'on' });</code></pre>
             <a class="ui-link ui-link--arrow" href="../docs/#selection.md">Docs</a>
           </p>
         </article>
+
+        <article class="spec" id="spec-sources">
+          <div>
+            <h3 class="spec__name">Sources, citations &amp; provenance</h3>
+            <p class="spec__one">
+              The trust layer for generated reports and AI output — "where did this come from?". A
+              cross-cutting <code>ui-src--*</code> state sets a rationed tone, always paired with a
+              label (never colour alone). The first frontier primitive beyond the analytical suite.
+            </p>
+          </div>
+          <div class="spec__demo">
+            <p class="ui-provenance" style="margin-block: 0 0.75rem">
+              <span class="ui-provenance__item ui-src--generated">Generated</span>
+              <span class="ui-provenance__item ui-src--verified">3 sources</span>
+              <span class="ui-provenance__item ui-src--reviewed">Human-reviewed</span>
+            </p>
+            <p style="margin: 0 0 0.75rem">
+              Latency fell 38%<a class="ui-citation" href="#spec-sources" aria-label="Source 1"
+                >[1]</a
+              >, but error rate doubled<a class="ui-citation" href="#spec-sources" aria-label="Source 2"
+                >[2]</a
+              >.
+            </p>
+            <article class="ui-source-card ui-src--verified">
+              <h4 class="ui-source-card__title">Q3 incident review, §4</h4>
+              <p class="ui-source-card__origin">ops.internal · postmortem</p>
+              <p class="ui-source-card__excerpt" style="margin: 0">
+                Sustained for 47 minutes before rollback; root cause was the deprecated retry path.
+              </p>
+            </article>
+          </div>
+          <details class="spec__code">
+            <summary>Markup &amp; recipe</summary>
+            <pre><code>&lt;a class="ui-citation" href="#s1" aria-label="Source 1"&gt;[1]&lt;/a&gt;
+&lt;article class="ui-source-card ui-src--verified"&gt;
+  &lt;h4 class="ui-source-card__title"&gt;…&lt;/h4&gt; &lt;p class="ui-source-card__origin"&gt;…&lt;/p&gt;
+&lt;/article&gt;
+
+ui.citation({ chip: true, state: 'verified' });
+ui.source({ state: 'generated' });  ui.provenance({ state: 'reviewed' });</code></pre>
+          </details>
+          <p class="spec__meta">
+            <span class="ui-badge ui-badge--muted">opt-in · CSS only</span>
+            <span class="spec__boundary"
+              >Owns grammar + trust states; the host owns fetching, numbering, and trust.</span
+            >
+            <a class="ui-link ui-link--arrow" href="./sources.html">Full specimen</a>
+            <a class="ui-link ui-link--arrow" href="../docs/#sources.md">Docs</a>
+          </p>
+        </article>
       </div>
 
       <!-- ============================================================ -->
@@ -1500,10 +1552,6 @@ ui.sel({ state: 'on' });</code></pre>
           </p>
         </div>
         <div class="frontier">
-          <div class="frontier__card">
-            <h3>Source &amp; provenance</h3>
-            <p>Citations, source cards, "where did this come from?" — a trust grammar, not just footnotes.</p>
-          </div>
           <div class="frontier__card">
             <h3>Lifecycle &amp; system state</h3>
             <p>Saving, queued, offline, stale, conflicted — persistent state with persistent UI, not toasts.</p>

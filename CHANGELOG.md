@@ -10,8 +10,9 @@
 A **minor** that builds out the "analytical & generated-report UI" identity: a
 full suite of opt-in **communication primitives** — SVG annotations, legends,
 text/evidence marks, leader-line connectors, a guided-focus spotlight, a
-crosshair/readout, a selection-state vocabulary, and a 1-D label-declutter
-helper — plus a consolidation pass over them. Each owns its visual grammar and
+crosshair/readout, a selection-state vocabulary, label declutter + direct labels
+(`declutterLabels`/`directLabels`), and a source/citation/provenance **trust
+layer** — plus a consolidation pass over them. Each owns its visual grammar and
 pure geometry and refuses to own scales/state/hit-testing (no chart engine).
 
 Per the project's versioning policy, breaking changes ship in the minor. This
@@ -90,6 +91,16 @@ hardening that had not yet been released.
   map regions. The carve-out from brush/lasso — Bronto styles the states; the
   host owns the selection/hit-test logic. Documented in
   [`docs/selection.md`](docs/selection.md).
+- **Sources, citations & provenance** (`@ponchia/ui/css/sources.css`,
+  `.ui-citation`/`.ui-source-card`/`.ui-source-list`/`.ui-provenance`,
+  `ui.citation()`/`ui.source()`/`ui.provenance()`): an opt-in, CSS-only **trust
+  layer** for generated reports and AI output — the grammar for "where did this
+  come from?". A cross-cutting `.ui-src--*` state (verified/reviewed/generated/
+  unverified/stale/conflict) sets a rationed tone, always paired with an
+  author-written label (never colour alone). Bronto owns the grammar + states;
+  the host owns fetching, citation numbering, and trust. The first
+  frontier-primitive beyond the analytical suite. Documented in
+  [`docs/sources.md`](docs/sources.md).
 - **Label declutter** (`@ponchia/ui/annotations` `declutterLabels`): a
   deterministic, order-preserving **1-D** label de-overlap helper (sort, push
   apart by `size + gap`, slide to fit `max`) — pure, no DOM/scales. Not a 2-D

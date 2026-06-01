@@ -371,6 +371,24 @@ export declare const cls: {
   readonly selOn: 'ui-sel--on';
   readonly selOff: 'ui-sel--off';
   readonly selMaybe: 'ui-sel--maybe';
+  readonly citation: 'ui-citation';
+  readonly citationChip: 'ui-citation--chip';
+  readonly sourceList: 'ui-source-list';
+  readonly sourceListItem: 'ui-source-list__item';
+  readonly sourceCard: 'ui-source-card';
+  readonly sourceCardTitle: 'ui-source-card__title';
+  readonly sourceCardOrigin: 'ui-source-card__origin';
+  readonly sourceCardTime: 'ui-source-card__time';
+  readonly sourceCardExcerpt: 'ui-source-card__excerpt';
+  readonly sourceCardActions: 'ui-source-card__actions';
+  readonly provenance: 'ui-provenance';
+  readonly provenanceItem: 'ui-provenance__item';
+  readonly srcVerified: 'ui-src--verified';
+  readonly srcUnverified: 'ui-src--unverified';
+  readonly srcGenerated: 'ui-src--generated';
+  readonly srcReviewed: 'ui-src--reviewed';
+  readonly srcStale: 'ui-src--stale';
+  readonly srcConflict: 'ui-src--conflict';
   readonly printOnly: 'ui-print-only';
   readonly screenOnly: 'ui-screen-only';
   readonly breakBefore: 'ui-break-before';
@@ -578,6 +596,21 @@ export interface SelOpts {
   /** Selection emphasis: `on` (selected), `off` (excluded), `maybe` (live-brush candidate). */
   state?: 'on' | 'off' | 'maybe';
 }
+/** Trust state for the source/citation/provenance layer. Pair with an author-written label — never colour alone. */
+export type SrcState = 'verified' | 'unverified' | 'generated' | 'reviewed' | 'stale' | 'conflict';
+export interface CitationOpts {
+  /** Render as a named-source pill (leading tone dot) instead of an inline `[n]` reference. */
+  chip?: boolean;
+  state?: SrcState;
+}
+export interface SourceOpts {
+  /** Sets the source card's tone border. */
+  state?: SrcState;
+}
+export interface ProvenanceOpts {
+  /** Sets the provenance item's tone dot. */
+  state?: SrcState;
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -616,6 +649,9 @@ export interface Ui {
   spotlight(opts?: SpotlightOpts): string;
   crosshair(opts?: CrosshairOpts): string;
   sel(opts?: SelOpts): string;
+  citation(opts?: CitationOpts): string;
+  source(opts?: SourceOpts): string;
+  provenance(opts?: ProvenanceOpts): string;
 }
 
 export declare const ui: Ui;

@@ -134,6 +134,19 @@ test('the recipes added this cycle emit only registry classes', () => {
   assert.equal(ui.sel({ state: 'bogus' }), 'ui-sel');
 });
 
+test('sources/citation/provenance recipes', () => {
+  assert.equal(ui.citation(), 'ui-citation');
+  assert.equal(
+    ui.citation({ chip: true, state: 'verified' }),
+    'ui-citation ui-citation--chip ui-src--verified',
+  );
+  assert.equal(ui.citation({ state: 'bogus' }), 'ui-citation');
+  assert.equal(ui.source(), 'ui-source-card');
+  assert.equal(ui.source({ state: 'generated' }), 'ui-source-card ui-src--generated');
+  assert.equal(ui.provenance({ state: 'reviewed' }), 'ui-provenance ui-src--reviewed');
+  assert.equal(ui.provenance({ state: 'conflict' }), 'ui-provenance ui-src--conflict');
+});
+
 test('every ui.* recipe is declared on the Ui interface in index.d.ts', async () => {
   const { readFileSync } = await import('node:fs');
   const dts = readFileSync(new URL('../classes/index.d.ts', import.meta.url), 'utf8');

@@ -119,6 +119,13 @@ void [xh, selOn];
 // @ts-expect-error — selection state is a closed union.
 ui.sel({ state: 'highlighted' });
 
+const cite: string = ui.citation({ chip: true, state: 'verified' });
+const src: string = ui.source({ state: 'generated' });
+const prov: string = ui.provenance({ state: 'reviewed' });
+void [cite, src, prov];
+// @ts-expect-error — trust state is a closed union.
+ui.source({ state: 'trustworthy' });
+
 // Connectors geometry: object-shaped options, string/coordinate returns.
 const connOut: ConnectRectsResult = connectRects({
   fromRect: { x: 0, y: 0, width: 20, height: 20 },

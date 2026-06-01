@@ -68,6 +68,7 @@
     "docs/spotlight.md",
     "docs/crosshair.md",
     "docs/selection.md",
+    "docs/sources.md",
     "docs/adr/0001-color-system.md",
     "docs/adr/0002-scope-and-2026-baseline.md",
     "docs/adr/0003-theme-model.md"
@@ -182,6 +183,7 @@
     "./css/spotlight.css": "./dist/css/spotlight.css",
     "./css/crosshair.css": "./dist/css/crosshair.css",
     "./css/selection.css": "./dist/css/selection.css",
+    "./css/sources.css": "./dist/css/sources.css",
     "./css/analytical.css": "./dist/css/analytical.css",
     "./css/unlayered/tokens.css": "./css/tokens.css",
     "./css/unlayered/fonts.css": "./css/fonts.css",
@@ -208,6 +210,7 @@
     "./css/unlayered/spotlight.css": "./css/spotlight.css",
     "./css/unlayered/crosshair.css": "./css/crosshair.css",
     "./css/unlayered/selection.css": "./css/selection.css",
+    "./css/unlayered/sources.css": "./css/sources.css",
     "./tokens": {
       "types": "./tokens/index.d.ts",
       "default": "./tokens/index.js"
@@ -232,6 +235,7 @@
     "./docs/spotlight.md": "./docs/spotlight.md",
     "./docs/crosshair.md": "./docs/crosshair.md",
     "./docs/selection.md": "./docs/selection.md",
+    "./docs/sources.md": "./docs/sources.md",
     "./docs/adr/0001-color-system.md": "./docs/adr/0001-color-system.md",
     "./docs/adr/0002-scope-and-2026-baseline.md": "./docs/adr/0002-scope-and-2026-baseline.md",
     "./docs/adr/0003-theme-model.md": "./docs/adr/0003-theme-model.md",

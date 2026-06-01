@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 411 classes across 131 component groups
+- 429 classes across 136 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -314,6 +314,13 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.chip` | `ui-chip` | base |
 | `cls.chipAccent` | `ui-chip--accent` | modifier |
+
+### `.ui-citation`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.citation` | `ui-citation` | base |
+| `cls.citationChip` | `ui-citation--chip` | modifier |
 
 ### `.ui-cluster`
 
@@ -738,6 +745,13 @@ each one matches a real selector in the stylesheet.
 | `cls.prose` | `ui-prose` | base |
 | `cls.proseCompact` | `ui-prose--compact` | modifier |
 
+### `.ui-provenance`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.provenance` | `ui-provenance` | base |
+| `cls.provenanceItem` | `ui-provenance__item` | part |
+
 ### `.ui-quote`
 
 | Registry key | Class | Kind |
@@ -888,6 +902,24 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.skiplink` | `ui-skiplink` | base |
 
+### `.ui-source-card`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.sourceCard` | `ui-source-card` | base |
+| `cls.sourceCardActions` | `ui-source-card__actions` | part |
+| `cls.sourceCardExcerpt` | `ui-source-card__excerpt` | part |
+| `cls.sourceCardOrigin` | `ui-source-card__origin` | part |
+| `cls.sourceCardTime` | `ui-source-card__time` | part |
+| `cls.sourceCardTitle` | `ui-source-card__title` | part |
+
+### `.ui-source-list`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.sourceList` | `ui-source-list` | base |
+| `cls.sourceListItem` | `ui-source-list__item` | part |
+
 ### `.ui-spinner`
 
 | Registry key | Class | Kind |
@@ -901,6 +933,17 @@ each one matches a real selector in the stylesheet.
 | `cls.spotlight` | `ui-spotlight` | base |
 | `cls.spotlightHole` | `ui-spotlight__hole` | part |
 | `cls.spotlightRing` | `ui-spotlight--ring` | modifier |
+
+### `.ui-src`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.srcConflict` | `ui-src--conflict` | modifier |
+| `cls.srcGenerated` | `ui-src--generated` | modifier |
+| `cls.srcReviewed` | `ui-src--reviewed` | modifier |
+| `cls.srcStale` | `ui-src--stale` | modifier |
+| `cls.srcUnverified` | `ui-src--unverified` | modifier |
+| `cls.srcVerified` | `ui-src--verified` | modifier |
 
 ### `.ui-stack`
 

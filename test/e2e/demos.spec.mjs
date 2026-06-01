@@ -20,6 +20,7 @@ const SHOWCASE = [
   'spotlight',
   'crosshair',
   'selection',
+  'sources',
   'report',
 ];
 

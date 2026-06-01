@@ -40,13 +40,20 @@ of this strategy:
 - `spotlight`: the visual language of guided focus without a tour engine.
 - `crosshair`: pointer/ruler/readout surface without chart-domain mapping.
 - `selection`: shared selected/excluded/candidate states without hit-testing.
+- `sources`: citation / source-card / source-list / provenance with a
+  trust-state grammar (candidate #1 below — now shipped in 0.5.0).
 
 These are intentionally not a chart framework. They are communication
 primitives.
 
 ## Next strong candidates
 
-### 1. Source, citation, and provenance UI
+### 1. Source, citation, and provenance UI — ✅ shipped in 0.5.0
+
+Shipped as `@ponchia/ui/css/sources.css` (`ui-citation`/`ui-source-card`/
+`ui-source-list`/`ui-provenance` + the cross-cutting `ui-src--*` trust states),
+matching the surface below. The optional `initSources()` behavior is still
+deferred until a consumer needs backref focus / preview toggles.
 
 Why it matters: AI output, generated reports, audit views, docs, and operational
 tools all need to answer "where did this come from?" Normal UI kits have tags
