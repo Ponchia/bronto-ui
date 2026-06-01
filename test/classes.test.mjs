@@ -89,6 +89,25 @@ test('the recipes added this cycle emit only registry classes', () => {
     'ui-annotation ui-annotation--evidence ui-annotation--accent ui-annotation--focus',
   );
   assert.equal(ui.annotation({ variant: 'bogus', tone: 'bogus' }), 'ui-annotation');
+  assert.equal(ui.legend(), 'ui-legend');
+  assert.equal(
+    ui.legend({ orient: 'vertical', type: 'gradient', diverging: true }),
+    'ui-legend ui-legend--vertical ui-legend--gradient ui-legend--diverging',
+  );
+  assert.equal(
+    ui.legend({ compact: true, withValues: true, interactive: true }),
+    'ui-legend ui-legend--compact ui-legend--with-values ui-legend--interactive',
+  );
+  assert.equal(ui.legend({ type: 'threshold' }), 'ui-legend ui-legend--threshold');
+  assert.equal(ui.legendItem(), 'ui-legend__item');
+  assert.equal(ui.legendItem({ inactive: true }), 'ui-legend__item is-inactive');
+  assert.equal(ui.legendSwatch(), 'ui-legend__swatch');
+  assert.equal(ui.legendSwatch({ series: 3 }), 'ui-legend__swatch ui-legend__swatch--3');
+  assert.equal(
+    ui.legendSwatch({ series: 8, shape: 'circle' }),
+    'ui-legend__swatch ui-legend__swatch--8 ui-legend__swatch--circle',
+  );
+  assert.equal(ui.legendSwatch({ series: 99, shape: 'bogus' }), 'ui-legend__swatch');
 });
 
 test('every ui.* recipe is declared on the Ui interface in index.d.ts', async () => {

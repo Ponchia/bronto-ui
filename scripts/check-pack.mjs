@@ -61,6 +61,7 @@ const shippedDocs = new Set([
   'docs/usage.md',
   'docs/reporting.md',
   'docs/annotations.md',
+  'docs/legends.md',
   'docs/adr/0001-color-system.md',
   'docs/adr/0002-scope-and-2026-baseline.md',
   'docs/adr/0003-theme-model.md',

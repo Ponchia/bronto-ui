@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — legend specimen</title>
+    <meta
+      name="description"
+      content="Data-key specimen for @ponchia/ui legend CSS and the interactive legend behavior."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/report.css" />
+    <link rel="stylesheet" href="../dist/css/dataviz.css" />
+    <link rel="stylesheet" href="../dist/css/legend.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .legend-demo {
+        margin: 0 auto;
+        max-width: 1180px;
+        padding: 2rem 1rem 4rem;
+      }
+
+      .legend-demo__grid {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+      }
+
+      .legend-demo__card {
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        display: grid;
+        gap: 0.75rem;
+        padding: 1rem;
+      }
+
+      .legend-demo__ramp {
+        min-inline-size: 12rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="legend-demo">
+      <h1 class="ui-display">Legend specimen</h1>
+      <p>Data keys that read the <code>--chart-*</code> palette. Opt-in; not in the core bundle.</p>
+
+      <div class="legend-demo__grid">
+        <section class="legend-demo__card" aria-labelledby="cat-h">
+          <h2 id="cat-h" class="ui-eyebrow">Categorical (colour + pattern)</h2>
+          <p class="ui-legend__caption">
+            Series 1 is the un-patterned accent baseline; series 2+ add a redundant dot pattern.
+          </p>
+          <ul class="ui-legend" aria-label="Focus series">
+            <li class="ui-legend__item">
+              <span
+                class="ui-legend__swatch"
+                style="--chart-color: var(--chart-1); --chart-pattern: var(--chart-pattern-1)"
+                aria-hidden="true"
+              ></span>
+              <span class="ui-legend__label">Research</span>
+            </li>
+            <li class="ui-legend__item">
+              <span
+                class="ui-legend__swatch"
+                style="--chart-color: var(--chart-2); --chart-pattern: var(--chart-pattern-2)"
+                aria-hidden="true"
+              ></span>
+              <span class="ui-legend__label">Delivery</span>
+            </li>
+            <li class="ui-legend__item">
+              <span
+                class="ui-legend__swatch"
+                style="--chart-color: var(--chart-3); --chart-pattern: var(--chart-pattern-3)"
+                aria-hidden="true"
+              ></span>
+              <span class="ui-legend__label">Maintenance</span>
+            </li>
+          </ul>
+        </section>
+
+        <section class="legend-demo__card" aria-labelledby="idx-h">
+          <h2 id="idx-h" class="ui-eyebrow">Index helpers + shapes, with values</h2>
+          <ul class="ui-legend ui-legend--with-values" aria-label="Coverage">
+            <li class="ui-legend__item">
+              <span
+                class="ui-legend__swatch ui-legend__swatch--1 ui-legend__swatch--circle"
+                aria-hidden="true"
+              ></span>
+              <span class="ui-legend__label">Core CSS</span>
+              <span class="ui-legend__value">62%</span>
+            </li>
+            <li class="ui-legend__item">
+              <span
+                class="ui-legend__swatch ui-legend__swatch--4 ui-legend__swatch--line"
+                aria-hidden="true"
+              ></span>
+              <span class="ui-legend__label">Report CSS</span>
+              <span class="ui-legend__value">28%</span>
+            </li>
+            <li class="ui-legend__item">
+              <span class="ui-legend__swatch ui-legend__swatch--8" aria-hidden="true"></span>
+              <span class="ui-legend__label">Other</span>
+              <span class="ui-legend__value">10%</span>
+            </li>
+          </ul>
+        </section>
+
+        <section class="legend-demo__card" aria-labelledby="seq-h">
+          <h2 id="seq-h" class="ui-eyebrow">Continuous (sequential)</h2>
+          <div
+            class="ui-legend ui-legend--gradient legend-demo__ramp"
+            role="group"
+            aria-label="Density"
+          >
+            <span class="ui-legend__track" aria-hidden="true"></span>
+            <span class="ui-legend__ticks">
+              <span class="ui-legend__tick">0</span>
+              <span class="ui-legend__tick">50</span>
+              <span class="ui-legend__tick">100</span>
+            </span>
+          </div>
+        </section>
+
+        <section class="legend-demo__card" aria-labelledby="div-h">
+          <h2 id="div-h" class="ui-eyebrow">Continuous (diverging)</h2>
+          <div
+            class="ui-legend ui-legend--gradient ui-legend--diverging legend-demo__ramp"
+            role="group"
+            aria-label="Change"
+          >
+            <span class="ui-legend__track" aria-hidden="true"></span>
+            <span class="ui-legend__ticks">
+              <span class="ui-legend__tick">−10</span>
+              <span class="ui-legend__tick">0</span>
+              <span class="ui-legend__tick">+10</span>
+            </span>
+          </div>
+        </section>
+
+        <section class="legend-demo__card" aria-labelledby="thr-h">
+          <h2 id="thr-h" class="ui-eyebrow">Threshold / binned</h2>
+          <div class="ui-legend ui-legend--threshold" role="group" aria-label="Load">
+            <span
+              class="ui-legend__swatch"
+              style="--chart-color: var(--chart-seq-2)"
+              aria-hidden="true"
+            ></span>
+            <span class="ui-legend__label">&lt; 10</span>
+            <span
+              class="ui-legend__swatch"
+              style="--chart-color: var(--chart-seq-4)"
+              aria-hidden="true"
+            ></span>
+            <span class="ui-legend__label">10 – 50</span>
+            <span
+              class="ui-legend__swatch"
+              style="--chart-color: var(--chart-seq-6)"
+              aria-hidden="true"
+            ></span>
+            <span class="ui-legend__label">&ge; 50</span>
+          </div>
+        </section>
+
+        <section class="legend-demo__card" aria-labelledby="int-h">
+          <h2 id="int-h" class="ui-eyebrow">Interactive (toggle a series)</h2>
+          <ul
+            class="ui-legend ui-legend--interactive"
+            data-bronto-legend
+            aria-label="Toggle series"
+          >
+            <li>
+              <button
+                class="ui-legend__item"
+                type="button"
+                aria-pressed="true"
+                data-series="research"
+              >
+                <span class="ui-legend__swatch ui-legend__swatch--1" aria-hidden="true"></span>
+                <span class="ui-legend__label">Research</span>
+              </button>
+            </li>
+            <li>
+              <button
+                class="ui-legend__item"
+                type="button"
+                aria-pressed="true"
+                data-series="delivery"
+              >
+                <span class="ui-legend__swatch ui-legend__swatch--2" aria-hidden="true"></span>
+                <span class="ui-legend__label">Delivery</span>
+              </button>
+            </li>
+          </ul>
+
+          <div class="ui-chart__plot" aria-hidden="true">
+            <div
+              class="ui-chart__bar"
+              data-series-bar="research"
+              style="--chart-value: 82%; --chart-color: var(--chart-1)"
+            >
+              <div class="ui-chart__track"><div class="ui-chart__fill"></div></div>
+            </div>
+            <div
+              class="ui-chart__bar"
+              data-series-bar="delivery"
+              style="--chart-value: 54%; --chart-color: var(--chart-2)"
+            >
+              <div class="ui-chart__track"><div class="ui-chart__fill"></div></div>
+            </div>
+          </div>
+          <p class="ui-visually-hidden" role="status" aria-live="polite" id="legend-status"></p>
+        </section>
+      </div>
+    </main>
+
+    <script type="module">
+      import { initLegend } from '../behaviors/index.js';
+      initLegend();
+      // Host-owned: hide the series and announce it. Bronto only flips the control.
+      const status = document.getElementById('legend-status');
+      document.addEventListener('bronto:legend:toggle', (e) => {
+        const { series, active } = e.detail;
+        const bar = document.querySelector(`[data-series-bar="${series}"]`);
+        if (bar) bar.hidden = !active;
+        status.textContent = `${series} ${active ? 'shown' : 'hidden'}`;
+      });
+    </script>
+  </body>
+</html>
