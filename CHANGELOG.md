@@ -32,6 +32,14 @@ modern-platform motion direction (see [ADR-0002](docs/adr/0002-scope-and-2026-ba
     `content-visibility … allow-discrete`. Strict progressive enhancement —
     gated on `@supports selector(::details-content)`; engines without it (today,
     Firefox/Safari) simply snap, exactly as before.
+- **Optional Qwik bindings — `@ponchia/ui/qwik`.** Same thin-adapter shape as
+  the React/Solid bindings (`useDialog`, `useToast`, … `useBrontoBehavior`, plus
+  the `cls`/`ui`/`cx` + `applyStoredTheme` re-exports), wrapping the SSR-safe
+  behaviors in Qwik's `useVisibleTask$` (run on visible, cleanup on dispose) so a
+  resumable page stays zero-JS until interaction. Scope a behavior with a Qwik
+  signal: `useDialog({ root: useSignal() })`. `@builder.io/qwik` is an **optional**
+  peer dependency, so the core stays zero-dependency. New `examples/qwik-vite`
+  builds it through the real Qwik optimizer.
 
 ### Changed
 

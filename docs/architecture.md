@@ -15,7 +15,7 @@ Status: accepted · 2026-05-15 · applies from v0.2.0
 
 `@ponchia/ui` is the shared design layer for several projects on
 different stacks: Astro, SvelteKit, and an
-open-ended set of future apps (React, Solid, plain HTML, server-rendered
+open-ended set of future apps (React, Solid, Qwik, plain HTML, server-rendered
 templates). The question driving this document: is plain CSS the right
 universal substrate, or should the framework ship per-framework components?
 
@@ -38,7 +38,8 @@ on top of the CSS, none of which require a framework commitment**:
 ├── behaviors/   vanilla, SSR-safe JS for stateful widgets           [optional]
 ├── glyphs/      dot-matrix glyph registry/renderers                 [optional]
 ├── react/       thin React hooks over behaviors                     [optional peer]
-└── solid/       thin Solid primitives over behaviors                [optional peer]
+├── solid/       thin Solid primitives over behaviors                [optional peer]
+└── qwik/        thin Qwik hooks over behaviors (useVisibleTask$)     [optional peer]
 ```
 
 ### Consequences of each layer
@@ -64,7 +65,7 @@ on top of the CSS, none of which require a framework commitment**:
 - **glyphs/** — static bitmap data and SSR-safe render helpers. The
   256-cell DOM renderers are for display and solid inline icons; the `.ui-icon`
   mask renderer is for dense icon-at-scale use.
-- **react/** / **solid/** — optional lifecycle adapters over `behaviors/`.
+- **react/** / **solid/** / **qwik/** — optional lifecycle adapters over `behaviors/`.
   They do not define markup, own state, or fork behavior logic; they only run
   the vanilla initializers on mount and cleanup on unmount/dispose.
 
@@ -153,7 +154,7 @@ Process still applies: bump `package.json`, land on `main`, go green, tag.
 ## Decision — distribution: npm public `@ponchia/ui`
 
 Decided 2026-05-15. The framework is consumed by a growing set of
-heterogeneous web frontends (Astro, SvelteKit, React, Solid, vanilla),
+heterogeneous web frontends (Astro, SvelteKit, React, Solid, Qwik, vanilla),
 several deploying via third-party CI. The only option where onboarding a new
 frontend is `npm i @ponchia/ui` with zero per-consumer config is **npm
 public**, and it uniquely also closes the release-gating gap (publish *is*
@@ -180,7 +181,7 @@ explained, not surprising.
   provenance.
 - Run `npm pack --dry-run --json` locally or from CI logs and confirm the
   intended file count/payload.
-- Build the packed examples matrix (vanilla, Astro, SvelteKit, React, Solid)
+- Build the packed examples matrix (vanilla, Astro, SvelteKit, React, Solid, Qwik)
   from the tarball, not a workspace link.
 - Confirm the GitHub Release body matches the curated changelog section.
 - If a bad package is published, deprecate that exact version on npm, publish a

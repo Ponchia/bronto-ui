@@ -52,12 +52,13 @@ Optional vanilla behaviors (theme toggle, etc. — SSR-safe, tree-shakeable):
 import { applyStoredTheme } from '@ponchia/ui/behaviors';
 ```
 
-For React/Solid, optional thin hook bindings over those behaviors (peer deps
-`react` / `solid-js`, optional — core stays zero-dep):
+For React/Solid/Qwik, optional thin hook bindings over those behaviors (peer
+deps `react` / `solid-js` / `@builder.io/qwik`, optional — core stays zero-dep):
 
 ```js
-import { useDialog, useToast } from '@ponchia/ui/react'; // or '@ponchia/ui/solid'
-// Scope with { root: reactRef } or a resolver callback, not { root: ref.current } during render.
+import { useDialog, useToast } from '@ponchia/ui/react'; // or '@ponchia/ui/solid' or '@ponchia/ui/qwik'
+// React: scope with { root: reactRef } or a resolver, not { root: ref.current } during render.
+// Qwik: hooks run in useVisibleTask$; scope with a Qwik signal — useDialog({ root: useSignal() }).
 ```
 
 Optional display glyphs — dot-matrix bitmaps on the `.ui-dotmatrix` primitive
@@ -132,7 +133,7 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
 
 - Live kitchen-sink demo (every component, light/dark, RTL): https://ponchia.github.io/bronto-ui/
 - Architecture & the CSS-first decision: https://github.com/Ponchia/bronto-ui/blob/main/docs/architecture.md
-- Framework integration guides (Astro / SvelteKit / React-Solid / vanilla):
+- Framework integration guides (Astro / SvelteKit / React-Solid-Qwik / vanilla):
   https://github.com/Ponchia/bronto-ui/tree/main/docs/getting-started
 
 ## Rules an agent should respect

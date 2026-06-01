@@ -15,7 +15,7 @@ patches are non-breaking. This matrix defines what counts as public API.
 | Behavior functions (`@ponchia/ui/behaviors`) | Stable | Exported function names, option names, custom events, SSR no-op behavior, idempotency, and cleanup-returning contract are public. |
 | Glyph registry/renderers (`@ponchia/ui/glyphs`) | Stable additive | Existing glyph names stay valid. New glyphs are additive. Renderer option names and accessibility defaults are public. |
 | `.ui-icon` mask renderer | Stable | Class name, `--icon-size`, currentColor inheritance, and `--icon-mask` contract are public. The internal data URL encoding is not. |
-| React/Solid bindings | Stable thin adapters | Hook/primitive names, optional peer behavior, root-ref/resolver support, and cleanup lifecycle are public. They remain wrappers over vanilla behaviors, not component APIs. |
+| React/Solid/Qwik bindings | Stable thin adapters | Hook/primitive names, optional peer behavior, root ref/signal/resolver support, and cleanup lifecycle are public. They remain wrappers over vanilla behaviors, not component APIs. |
 | Skins (`@ponchia/ui/skins`, `css/skins.css`) | Stable additive | Existing skin names stay valid. New skins are additive. Skins are root-level choices. |
 | Charts (`@ponchia/ui/charts`, `charts.json`, `css/dataviz.css`) | Stable additive | Token names, JSON shape, and 8 categorical slots are public. Exact palette values may tune if gates and release notes justify it. |
 | Generated docs shipped in npm | Stable paths | `llms.txt` and exported docs paths stay shipped and resolvable within a compatible minor. Markdown/text assets are for reading unless your runtime has a loader. Generated content may change with the source contract. |

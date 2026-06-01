@@ -193,3 +193,44 @@ test('Solid useDisclosure wires the real behavior end-to-end', () => {
     stdio: 'pipe',
   });
 });
+
+// Qwik binding. A full render-through-Qwik is proven by building
+// examples/qwik-vite through the real optimizer (CI examples job); here we
+// assert the module surface and that the hooks are genuinely wired to Qwik's
+// client lifecycle (not silent no-ops) — deterministic, no optimizer needed.
+test('Qwik binding exposes the full hook surface over @builder.io/qwik', async () => {
+  const qwik = await import('../qwik/index.js');
+  const hooks = [
+    'useThemeToggle',
+    'useDismissible',
+    'useDisclosure',
+    'useMenu',
+    'useFormValidation',
+    'useCombobox',
+    'usePopover',
+    'useTableSort',
+    'useTabs',
+    'useDialog',
+    'useCarousel',
+    'useDotGlyph',
+    'useToast',
+    'useBrontoBehavior',
+  ];
+  for (const name of hooks) assert.equal(typeof qwik[name], 'function', `${name} is exported`);
+  for (const name of ['applyStoredTheme', 'cls', 'ui', 'cx'])
+    assert.ok(qwik[name], `convenience export ${name} present`);
+
+  // useToast() is the SSR-safe imperative: returns toast(), which no-ops to a
+  // cleanup function when there is no DOM (no global document in this test).
+  const toast = qwik.useToast();
+  assert.equal(typeof toast, 'function');
+  assert.equal(typeof toast('hi'), 'function');
+});
+
+test('Qwik lifecycle hooks are real useVisibleTask$ wirings (throw outside a component)', async () => {
+  const { useDialog } = await import('../qwik/index.js');
+  // useVisibleTask$ asserts it runs inside a component invocation context;
+  // calling the hook bare must throw Qwik's context error — proof the hook
+  // delegates to Qwik's lifecycle rather than no-op'ing.
+  assert.throws(() => useDialog(), /./);
+});

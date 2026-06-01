@@ -1,4 +1,4 @@
-# React / Solid
+# React / Solid / Qwik
 
 `@ponchia/ui` ships **no per-framework component package** — that is a
 deliberate ADR (`docs/architecture.md`): the CSS is the framework and
@@ -6,8 +6,9 @@ the typed `cls`/`ui` recipes are already framework-agnostic. Only the
 imperative behaviors need a lifecycle wrapper.
 
 Since 0.4.0 those wrappers ship as **optional, thin bindings** —
-`@ponchia/ui/react` and `@ponchia/ui/solid` (`react` / `solid-js` are
-_optional_ peer deps). They're hooks over the same `init*` behaviors:
+`@ponchia/ui/react`, `@ponchia/ui/solid` and `@ponchia/ui/qwik`
+(`react` / `solid-js` / `@builder.io/qwik` are _optional_ peer deps).
+They're hooks over the same `init*` behaviors:
 
 ```tsx
 // React
@@ -131,6 +132,41 @@ useTabs(() => ({ root }));
 
 <main ref={root}>{/* dialog/tab markup */}</main>;
 ```
+
+## Qwik: `useVisibleTask$`
+
+`@ponchia/ui/qwik` (peer dep `@builder.io/qwik`) wraps each behavior in a
+`useVisibleTask$` — it runs when the owning component first becomes visible
+and registers cleanup on dispose, so a resumable, server-rendered page stays
+zero-JS until the user reaches that part of the UI. Same hook names as the
+React/Solid bindings:
+
+```tsx
+import { component$, useSignal } from '@builder.io/qwik';
+import { useDialog, useTabs, useToast, cls } from '@ponchia/ui/qwik';
+
+export default component$(() => {
+  const root = useSignal<HTMLElement>();
+  useDialog({ root }); // scope to this subtree via a Qwik signal
+  useTabs({ root });
+  const toast = useToast();
+  return (
+    <main ref={root}>
+      <button class={cls.button} onClick$={() => toast('Saved', { tone: 'success' })}>
+        Save
+      </button>
+      {/* dialog/tab markup */}
+    </main>
+  );
+});
+```
+
+Scope with a **Qwik signal** (`useSignal()`) rather than a function resolver:
+the signal is serializable, so the optimizer can lift the `useVisibleTask$`
+segment cleanly. The hand-rolled equivalent is a `useVisibleTask$` that calls
+the `init*` behavior and returns its cleanup via `ctx.cleanup(...)` — which is
+exactly what the binding does. The no-flash theme script is the same inline,
+render-blocking `<script>` in your root document (Qwik City: `src/root.tsx`).
 
 ## SSR (Next / SolidStart)
 

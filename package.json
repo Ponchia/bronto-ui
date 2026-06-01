@@ -48,6 +48,7 @@
     "glyphs",
     "react",
     "solid",
+    "qwik",
     "shiki",
     "llms.txt",
     "CHANGELOG.md",
@@ -104,6 +105,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
+    "@builder.io/qwik": "^1.20.0",
     "@playwright/test": "^1.60.0",
     "jsdom": "^29.1.1",
     "prettier": "^3.8.3",
@@ -116,10 +118,14 @@
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
+    "@builder.io/qwik": ">=1.5",
     "react": ">=18",
     "solid-js": ">=1.6"
   },
   "peerDependenciesMeta": {
+    "@builder.io/qwik": {
+      "optional": true
+    },
     "react": {
       "optional": true
     },
@@ -205,6 +211,10 @@
     "./solid": {
       "types": "./solid/index.d.ts",
       "default": "./solid/index.js"
+    },
+    "./qwik": {
+      "types": "./qwik/index.d.ts",
+      "default": "./qwik/index.js"
     },
     "./skins": {
       "types": "./tokens/skins.d.ts",

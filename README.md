@@ -128,7 +128,7 @@ Not an afterthought — a gate. Every contractual token pairing has a declared W
 
 ## Works with anything
 
-The CSS is the framework, so it works with React, Svelte/SvelteKit, Astro, Vue, Solid or plain HTML — there's no component runtime to adopt. The optional `classes` and `behaviors` entrypoints pull in **no** UI framework and are SSR-safe. For React and Solid there are also **optional thin bindings** — `@ponchia/ui/react` and `@ponchia/ui/solid` wrap the behaviors as hooks (`useDialog`, `useToast`, …); `react`/`solid-js` are optional peer deps, so the core stays zero-dependency.
+The CSS is the framework, so it works with React, Svelte/SvelteKit, Astro, Vue, Solid, Qwik or plain HTML — there's no component runtime to adopt. The optional `classes` and `behaviors` entrypoints pull in **no** UI framework and are SSR-safe. For React, Solid and Qwik there are also **optional thin bindings** — `@ponchia/ui/react`, `@ponchia/ui/solid` and `@ponchia/ui/qwik` wrap the behaviors as hooks (`useDialog`, `useToast`, …); `react`/`solid-js`/`@builder.io/qwik` are optional peer deps, so the core stays zero-dependency.
 
 Per-framework getting-started guides + runnable example apps live in the repo:
 
@@ -139,6 +139,7 @@ Per-framework getting-started guides + runnable example apps live in the repo:
 | SvelteKit | [sveltekit.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/sveltekit.md) | [`examples/sveltekit`](https://github.com/Ponchia/bronto-ui/tree/main/examples/sveltekit) |
 | React | [react-solid.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/react-solid.md) | [`examples/react-vite`](https://github.com/Ponchia/bronto-ui/tree/main/examples/react-vite) |
 | Solid | [react-solid.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/react-solid.md) | [`examples/solid-vite`](https://github.com/Ponchia/bronto-ui/tree/main/examples/solid-vite) |
+| Qwik | [react-solid.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/react-solid.md) | [`examples/qwik-vite`](https://github.com/Ponchia/bronto-ui/tree/main/examples/qwik-vite) |
 | Tailwind / cascade-layer interop | [tailwind.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/interop/tailwind.md) | — |
 
 ## Extras
@@ -151,7 +152,7 @@ Per-framework getting-started guides + runnable example apps live in the repo:
   ```
 - **For AI coding agents** — the package ships `llms.txt` at its root plus `docs/reference.md`, `docs/usage.md`, `docs/theming.md`, `docs/contrast.md`, `docs/stability.md`, the color constitution `docs/adr/0001-color-system.md` and the `CHANGELOG` inside the tarball, so an offline agent has the full API and rationale without guessing.
 
-> The package root is **CSS-only**. Use `@import '@ponchia/ui'` in CSS, or `import '@ponchia/ui'` only as a CSS side-effect import in a CSS-aware bundler (Vite, Astro, SvelteKit, webpack). Do not import the package root from Node/runtime JS. JS entrypoints are explicit subpaths: `/tokens`, `/classes`, `/behaviors`, `/glyphs`, `/react`, `/solid`, `/skins`, and `/charts`.
+> The package root is **CSS-only**. Use `@import '@ponchia/ui'` in CSS, or `import '@ponchia/ui'` only as a CSS side-effect import in a CSS-aware bundler (Vite, Astro, SvelteKit, webpack). Do not import the package root from Node/runtime JS. JS entrypoints are explicit subpaths: `/tokens`, `/classes`, `/behaviors`, `/glyphs`, `/react`, `/solid`, `/qwik`, `/skins`, and `/charts`.
 > JS subpaths are **ESM-only**. CommonJS consumers should use dynamic
 > `import('@ponchia/ui/behaviors')`.
 

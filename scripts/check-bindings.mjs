@@ -1,5 +1,5 @@
 /**
- * Name-parity gate for the optional framework bindings (react/, solid/):
+ * Name-parity gate for the optional framework bindings (react/, solid/, qwik/):
  * every export of index.js has a matching declaration in index.d.ts, and
  * vice versa. Like check-behaviors, but the binding modules import their
  * framework (react / solid-js) at the top, so we **source-parse** the export
@@ -63,7 +63,7 @@ function exportedNames(src) {
   return names;
 }
 
-for (const mod of ['react', 'solid']) {
+for (const mod of ['react', 'solid', 'qwik']) {
   const js = readFileSync(resolve(root, `${mod}/index.js`), 'utf8');
   const dts = readFileSync(resolve(root, `${mod}/index.d.ts`), 'utf8');
   const jsNames = exportedNames(js);
@@ -87,4 +87,4 @@ if (errors.length) {
   for (const e of errors) console.error(`  - ${e}`);
   process.exit(1);
 }
-console.log('✓ bindings: react/ and solid/ exports ⇄ their .d.ts declarations match');
+console.log('✓ bindings: react/, solid/ and qwik/ exports ⇄ their .d.ts declarations match');

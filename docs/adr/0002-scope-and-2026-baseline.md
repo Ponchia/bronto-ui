@@ -38,7 +38,7 @@ cost.
 - **Cross-target via tokens, not components.** `resolved.json` / DTCG feed
   canvas/SVG/MapLibre and Figma/Style-Dictionary; the design *language* travels
   even though components don't.
-- **Framework-agnostic, with optional thin React/Solid bindings.**
+- **Framework-agnostic, with optional thin React/Solid/Qwik bindings.**
 
 ### What we PURSUE (the 2026 leap that fits: CSS-native motion)
 "Motion as a first-class citizen / interruptible / layout morphing" is the one
