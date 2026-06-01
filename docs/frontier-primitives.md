@@ -85,7 +85,13 @@ Good first build:
 - No JS initially except maybe a generic `initSources()` later for backref focus
   or preview toggles.
 
-### 2. Lifecycle and system-state UI
+### 2. Lifecycle and system-state UI — 🟡 `ui-state` family shipped in 0.5.0
+
+Shipped as `@ponchia/ui/css/state.css` (`ui-state` + the canonical state matrix
++ `ui-syncbar`), matching the "good first build" below. `ui-job` (background
+progress) and `ui-conflict` (resolution affordances) remain deferred until a
+consumer needs them; `ui-review-state` is covered by the reviewed/needs-review
+state modifiers.
 
 Why it matters: serious apps spend a lot of time in states like saving, saved,
 queued, offline, stale, retrying, conflicted, locked, reviewed, and background

@@ -216,6 +216,23 @@ export interface ProvenanceOpts {
   /** Sets the provenance item's tone dot. */
   state?: SrcState;
 }
+/** Canonical lifecycle state — sets the tone; pair with the canonical label (see docs/state.md). */
+export type LifecycleState =
+  | 'saving'
+  | 'saved'
+  | 'queued'
+  | 'offline'
+  | 'stale'
+  | 'conflict'
+  | 'error'
+  | 'locked'
+  | 'reviewed'
+  | 'needs-review';
+export interface StateOpts {
+  state?: LifecycleState;
+  /** Pulse the indicator for an in-progress state (saving / syncing / retrying). Reduced-motion-safe. */
+  busy?: boolean;
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -257,6 +274,7 @@ export interface Ui {
   citation(opts?: CitationOpts): string;
   source(opts?: SourceOpts): string;
   provenance(opts?: ProvenanceOpts): string;
+  state(opts?: StateOpts): string;
 }
 
 export declare const ui: Ui;

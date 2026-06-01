@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — lifecycle state specimen</title>
+    <meta
+      name="description"
+      content="Lifecycle / system-state vocabulary specimen for @ponchia/ui (saving, saved, stale, conflict, …)."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/state.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .state-demo {
+        margin: 0 auto;
+        max-width: 60ch;
+        padding: 2rem 1rem 4rem;
+      }
+
+      .state-demo__grid {
+        display: grid;
+        gap: 0.75rem;
+        margin-block: 1.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="state-demo ui-prose">
+      <h1 class="ui-display">Lifecycle &amp; system state</h1>
+      <p>
+        The states real apps live in — with canonical wording and a rationed tone. Opt-in; not in
+        the core bundle. The label is the state; the tone is a second channel.
+      </p>
+
+      <div class="ui-syncbar">
+        <span class="ui-state ui-state--saving ui-state--busy">
+          <span class="ui-state__label">Saving…</span>
+        </span>
+        <button class="ui-button ui-button--subtle ui-button--sm" type="button">
+          View history
+        </button>
+      </div>
+
+      <div class="state-demo__grid">
+        <span class="ui-state ui-state--saved">
+          <span class="ui-state__label">All changes saved</span>
+          <span class="ui-state__detail">just now</span>
+        </span>
+        <span class="ui-state ui-state--queued">
+          <span class="ui-state__label">Queued</span>
+          <span class="ui-state__detail">3 ahead</span>
+        </span>
+        <span class="ui-state ui-state--offline">
+          <span class="ui-state__label">Offline</span>
+          <span class="ui-state__detail">reconnecting</span>
+        </span>
+        <span class="ui-state ui-state--stale">
+          <span class="ui-state__label">Out of date</span>
+        </span>
+        <span class="ui-state ui-state--conflict">
+          <span class="ui-state__label">Conflict</span>
+          <span class="ui-state__detail">local vs remote</span>
+        </span>
+        <span class="ui-state ui-state--error">
+          <span class="ui-state__label">Couldn't save</span>
+        </span>
+        <span class="ui-state ui-state--locked">
+          <span class="ui-state__label">Read-only</span>
+        </span>
+        <span class="ui-state ui-state--reviewed">
+          <span class="ui-state__label">Reviewed</span>
+          <span class="ui-state__detail">by A. Author</span>
+        </span>
+        <span class="ui-state ui-state--needs-review">
+          <span class="ui-state__label">Needs review</span>
+        </span>
+      </div>
+    </main>
+  </body>
+</html>

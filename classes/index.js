@@ -410,6 +410,22 @@ export const cls = Object.freeze({
   srcReviewed: 'ui-src--reviewed',
   srcStale: 'ui-src--stale',
   srcConflict: 'ui-src--conflict',
+  // lifecycle / system state (css/state.css)
+  state: 'ui-state',
+  stateLabel: 'ui-state__label',
+  stateDetail: 'ui-state__detail',
+  stateBusy: 'ui-state--busy',
+  stateSaving: 'ui-state--saving',
+  stateSaved: 'ui-state--saved',
+  stateQueued: 'ui-state--queued',
+  stateOffline: 'ui-state--offline',
+  stateStale: 'ui-state--stale',
+  stateConflict: 'ui-state--conflict',
+  stateError: 'ui-state--error',
+  stateLocked: 'ui-state--locked',
+  stateReviewed: 'ui-state--reviewed',
+  stateNeedsReview: 'ui-state--needs-review',
+  syncbar: 'ui-syncbar',
   printOnly: 'ui-print-only',
   screenOnly: 'ui-screen-only',
   breakBefore: 'ui-break-before',
@@ -479,6 +495,21 @@ export function cx(...parts) {
 }
 
 const j = (...p) => p.filter(Boolean).join(' ');
+
+// Lifecycle state → canonical tone class.
+const stateTone = (state) =>
+  ({
+    saving: cls.stateSaving,
+    saved: cls.stateSaved,
+    queued: cls.stateQueued,
+    offline: cls.stateOffline,
+    stale: cls.stateStale,
+    conflict: cls.stateConflict,
+    error: cls.stateError,
+    locked: cls.stateLocked,
+    reviewed: cls.stateReviewed,
+    'needs-review': cls.stateNeedsReview,
+  })[state] || '';
 
 // Trust-state → tone class, shared by the source/citation/provenance recipes.
 const srcTone = (state) =>
@@ -687,6 +718,7 @@ export const ui = {
   citation: ({ chip, state } = {}) => j(cls.citation, chip && cls.citationChip, srcTone(state)),
   source: ({ state } = {}) => j(cls.sourceCard, srcTone(state)),
   provenance: ({ state } = {}) => j(cls.provenance, srcTone(state)),
+  state: ({ state, busy } = {}) => j(cls.state, stateTone(state), busy && cls.stateBusy),
 };
 
 export default ui;

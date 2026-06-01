@@ -30,6 +30,7 @@ const classSources = [
   'docs/crosshair.md',
   'docs/selection.md',
   'docs/sources.md',
+  'docs/state.md',
   'llms.txt',
   'demo/report.html',
   'demo/annotations.html',
@@ -40,6 +41,7 @@ const classSources = [
   'demo/crosshair.html',
   'demo/selection.html',
   'demo/sources.html',
+  'demo/state.html',
   ...walk('examples/report-static').filter((p) => /\.(html|js|css|md)$/.test(p)),
 ];
 
@@ -79,6 +81,9 @@ if (/selection\.css/.test(core)) {
 if (/sources\.css/.test(core)) {
   errors.push('css/core.css imports sources.css — sources CSS must stay opt-in');
 }
+if (/\bstate\.css/.test(core)) {
+  errors.push('css/core.css imports state.css — state CSS must stay opt-in');
+}
 
 const htmlSources = [
   'demo/report.html',
@@ -90,6 +95,7 @@ const htmlSources = [
   'demo/crosshair.html',
   'demo/selection.html',
   'demo/sources.html',
+  'demo/state.html',
   ...walk('examples/report-static').filter((p) => /\.html$/.test(p)),
 ];
 for (const rel of htmlSources) {
@@ -114,6 +120,7 @@ for (const rel of [
   'docs/crosshair.md',
   'docs/selection.md',
   'docs/sources.md',
+  'docs/state.md',
   'demo/report.html',
   'demo/annotations.html',
   'demo/legends.html',
@@ -123,6 +130,7 @@ for (const rel of [
   'demo/crosshair.html',
   'demo/selection.html',
   'demo/sources.html',
+  'demo/state.html',
   ...walk('examples/report-static'),
 ]) {
   if (!/\.(md|html|css|js)$/.test(rel)) continue;

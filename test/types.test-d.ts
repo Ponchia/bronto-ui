@@ -126,6 +126,11 @@ void [cite, src, prov];
 // @ts-expect-error — trust state is a closed union.
 ui.source({ state: 'trustworthy' });
 
+const lifecycle: string = ui.state({ state: 'saving', busy: true });
+void lifecycle;
+// @ts-expect-error — lifecycle state is a closed union.
+ui.state({ state: 'thinking' });
+
 // Connectors geometry: object-shaped options, string/coordinate returns.
 const connOut: ConnectRectsResult = connectRects({
   fromRect: { x: 0, y: 0, width: 20, height: 20 },

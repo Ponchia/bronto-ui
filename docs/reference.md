@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 431 classes across 137 component groups
+- 446 classes across 139 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -974,6 +974,25 @@ each one matches a real selector in the stylesheet.
 | `cls.statLabel` | `ui-stat__label` | part |
 | `cls.statValue` | `ui-stat__value` | part |
 
+### `.ui-state`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.state` | `ui-state` | base |
+| `cls.stateDetail` | `ui-state__detail` | part |
+| `cls.stateLabel` | `ui-state__label` | part |
+| `cls.stateBusy` | `ui-state--busy` | modifier |
+| `cls.stateConflict` | `ui-state--conflict` | modifier |
+| `cls.stateError` | `ui-state--error` | modifier |
+| `cls.stateLocked` | `ui-state--locked` | modifier |
+| `cls.stateNeedsReview` | `ui-state--needs-review` | modifier |
+| `cls.stateOffline` | `ui-state--offline` | modifier |
+| `cls.stateQueued` | `ui-state--queued` | modifier |
+| `cls.stateReviewed` | `ui-state--reviewed` | modifier |
+| `cls.stateSaved` | `ui-state--saved` | modifier |
+| `cls.stateSaving` | `ui-state--saving` | modifier |
+| `cls.stateStale` | `ui-state--stale` | modifier |
+
 ### `.ui-statgrid`
 
 | Registry key | Class | Kind |
@@ -1013,6 +1032,12 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.switcher` | `ui-switcher` | base |
+
+### `.ui-syncbar`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.syncbar` | `ui-syncbar` | base |
 
 ### `.ui-tab`
 

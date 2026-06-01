@@ -106,6 +106,15 @@ hardening that had not yet been released.
   (`⌘`+`K`) or sequence (`G` then `I`) with a dim connective. The command tier's
   smallest piece, broadly useful outside a palette (menu items, buttons,
   tooltips). Class-only, like `.ui-kbd`.
+- **Lifecycle / system state** (`@ponchia/ui/css/state.css`, `.ui-state`
+  (+`__label`/`__detail`/`--busy`) with canonical state modifiers
+  (saving/saved/queued/offline/stale/conflict/error/locked/reviewed/
+  needs-review), `.ui-syncbar`, `ui.state()`): an opt-in, CSS-only vocabulary for
+  the states apps actually live in — a labelled state object with a rationed tone
+  and a page/document sync bar. The label is the state (never colour alone);
+  `--busy` pulses the indicator (reduced-motion-safe). Bronto ships the visual
+  states + canonical wording; the host owns the state machine, retry, and
+  persistence. Frontier candidate #2. Documented in [`docs/state.md`](docs/state.md).
 - **Label declutter** (`@ponchia/ui/annotations` `declutterLabels`): a
   deterministic, order-preserving **1-D** label de-overlap helper (sort, push
   apart by `size + gap`, slide to fit `max`) — pure, no DOM/scales. Not a 2-D

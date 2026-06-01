@@ -147,6 +147,17 @@ test('sources/citation/provenance recipes', () => {
   assert.equal(ui.provenance({ state: 'conflict' }), 'ui-provenance ui-src--conflict');
 });
 
+test('lifecycle state recipe', () => {
+  assert.equal(ui.state(), 'ui-state');
+  assert.equal(
+    ui.state({ state: 'saving', busy: true }),
+    'ui-state ui-state--saving ui-state--busy',
+  );
+  assert.equal(ui.state({ state: 'conflict' }), 'ui-state ui-state--conflict');
+  assert.equal(ui.state({ state: 'needs-review' }), 'ui-state ui-state--needs-review');
+  assert.equal(ui.state({ state: 'bogus' }), 'ui-state');
+});
+
 test('every ui.* recipe is declared on the Ui interface in index.d.ts', async () => {
   const { readFileSync } = await import('node:fs');
   const dts = readFileSync(new URL('../classes/index.d.ts', import.meta.url), 'utf8');

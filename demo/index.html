@@ -1543,6 +1543,58 @@ ui.source({ state: 'generated' });  ui.provenance({ state: 'reviewed' });</code>
             <a class="ui-link ui-link--arrow" href="../docs/#sources.md">Docs</a>
           </p>
         </article>
+
+        <article class="spec" id="spec-state">
+          <div>
+            <h3 class="spec__name">Lifecycle &amp; system state</h3>
+            <p class="spec__one">
+              The states apps actually live in — saving, saved, stale, conflict, … — with canonical
+              wording and a rationed tone. The label is the state; persistent state gets persistent
+              UI, not a toast.
+            </p>
+          </div>
+          <div class="spec__demo">
+            <div class="ui-syncbar" style="margin-block: 0 1rem">
+              <span class="ui-state ui-state--saving ui-state--busy">
+                <span class="ui-state__label">Saving…</span>
+              </span>
+              <button class="ui-button ui-button--subtle ui-button--sm" type="button">History</button>
+            </div>
+            <div style="display: grid; gap: 0.6rem">
+              <span class="ui-state ui-state--saved"
+                ><span class="ui-state__label">All changes saved</span
+                ><span class="ui-state__detail">just now</span></span
+              >
+              <span class="ui-state ui-state--stale"
+                ><span class="ui-state__label">Out of date</span></span
+              >
+              <span class="ui-state ui-state--conflict"
+                ><span class="ui-state__label">Conflict</span
+                ><span class="ui-state__detail">local vs remote</span></span
+              >
+              <span class="ui-state ui-state--needs-review"
+                ><span class="ui-state__label">Needs review</span></span
+              >
+            </div>
+          </div>
+          <details class="spec__code">
+            <summary>Markup &amp; recipe</summary>
+            <pre><code>&lt;span class="ui-state ui-state--saving ui-state--busy"&gt;
+  &lt;span class="ui-state__label"&gt;Saving…&lt;/span&gt;
+&lt;/span&gt;
+
+ui.state({ state: 'saving', busy: true });
+ui.state({ state: 'conflict' });</code></pre>
+          </details>
+          <p class="spec__meta">
+            <span class="ui-badge ui-badge--muted">opt-in · CSS only</span>
+            <span class="spec__boundary"
+              >Ships the visual states + wording; the host owns the state machine + persistence.</span
+            >
+            <a class="ui-link ui-link--arrow" href="./state.html">Full specimen</a>
+            <a class="ui-link ui-link--arrow" href="../docs/#state.md">Docs</a>
+          </p>
+        </article>
       </div>
 
       <!-- ============================================================ -->
@@ -1560,12 +1612,11 @@ ui.source({ state: 'generated' });  ui.provenance({ state: 'reviewed' });</code>
         </div>
         <div class="frontier">
           <div class="frontier__card">
-            <h3>Lifecycle &amp; system state</h3>
-            <p>Saving, queued, offline, stale, conflicted — persistent state with persistent UI, not toasts.</p>
-          </div>
-          <div class="frontier__card">
             <h3>Command-first UI</h3>
-            <p>A <code>ui-shortcut</code> primitive, then a command-palette shell. The host owns the action registry.</p>
+            <p>
+              The <code>ui-shortcut</code> hint shipped; the command-palette shell is next. The host
+              owns the action registry.
+            </p>
           </div>
           <div class="frontier__card">
             <h3>Workbench</h3>

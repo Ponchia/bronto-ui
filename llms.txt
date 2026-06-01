@@ -253,6 +253,22 @@ label (never colour alone). Bronto styles + states; the host owns fetching,
 numbering, and trust. `ui.citation({chip,state})` / `ui.source({state})` /
 `ui.provenance({state})`. Details: `docs/sources.md`.
 
+Optional lifecycle/system-state vocabulary — opt-in, CSS only, never in the
+default bundle. The states apps live in (saving/saved/queued/offline/stale/
+conflict/error/locked/reviewed/needs-review):
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/state.css" />
+```
+
+`ui-state` (+`__label`/`__detail`) carries a tone dot + the canonical label;
+the `ui-state--saving`/`--saved`/… modifier bakes the tone, `ui-state--busy`
+pulses the indicator for
+in-progress states (reduced-motion-safe). `ui-syncbar` is a page/document
+save-status strip. The label IS the state (never colour alone); the host owns
+the state machine, retry, and persistence — persistent state gets persistent UI,
+not a toast. `ui.state({ state, busy })`. Details: `docs/state.md`.
+
 Optional static report layer for LLM-authored HTML reports — opt-in, never in
 the default bundle. Pair it with the normal bundle, and add data-viz only when
 the report contains charts. For standalone browser HTML, use real URLs; package

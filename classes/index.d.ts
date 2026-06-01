@@ -389,6 +389,21 @@ export declare const cls: {
   readonly srcReviewed: 'ui-src--reviewed';
   readonly srcStale: 'ui-src--stale';
   readonly srcConflict: 'ui-src--conflict';
+  readonly state: 'ui-state';
+  readonly stateLabel: 'ui-state__label';
+  readonly stateDetail: 'ui-state__detail';
+  readonly stateBusy: 'ui-state--busy';
+  readonly stateSaving: 'ui-state--saving';
+  readonly stateSaved: 'ui-state--saved';
+  readonly stateQueued: 'ui-state--queued';
+  readonly stateOffline: 'ui-state--offline';
+  readonly stateStale: 'ui-state--stale';
+  readonly stateConflict: 'ui-state--conflict';
+  readonly stateError: 'ui-state--error';
+  readonly stateLocked: 'ui-state--locked';
+  readonly stateReviewed: 'ui-state--reviewed';
+  readonly stateNeedsReview: 'ui-state--needs-review';
+  readonly syncbar: 'ui-syncbar';
   readonly printOnly: 'ui-print-only';
   readonly screenOnly: 'ui-screen-only';
   readonly breakBefore: 'ui-break-before';
@@ -613,6 +628,23 @@ export interface ProvenanceOpts {
   /** Sets the provenance item's tone dot. */
   state?: SrcState;
 }
+/** Canonical lifecycle state — sets the tone; pair with the canonical label (see docs/state.md). */
+export type LifecycleState =
+  | 'saving'
+  | 'saved'
+  | 'queued'
+  | 'offline'
+  | 'stale'
+  | 'conflict'
+  | 'error'
+  | 'locked'
+  | 'reviewed'
+  | 'needs-review';
+export interface StateOpts {
+  state?: LifecycleState;
+  /** Pulse the indicator for an in-progress state (saving / syncing / retrying). Reduced-motion-safe. */
+  busy?: boolean;
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -654,6 +686,7 @@ export interface Ui {
   citation(opts?: CitationOpts): string;
   source(opts?: SourceOpts): string;
   provenance(opts?: ProvenanceOpts): string;
+  state(opts?: StateOpts): string;
 }
 
 export declare const ui: Ui;
