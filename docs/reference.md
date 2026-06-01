@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 263 classes across 110 component groups
+- 303 classes across 121 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -179,6 +179,18 @@ each one matches a real selector in the stylesheet.
 | `cls.breadcrumb` | `ui-breadcrumb` | base |
 | `cls.breadcrumbItem` | `ui-breadcrumb__item` | part |
 
+### `.ui-break-after`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.breakAfter` | `ui-break-after` | base |
+
+### `.ui-break-before`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.breakBefore` | `ui-break-before` | base |
+
 ### `.ui-button`
 
 | Registry key | Class | Kind |
@@ -225,6 +237,21 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.center` | `ui-center` | base |
+
+### `.ui-chart`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.chart` | `ui-chart` | base |
+| `cls.chartBar` | `ui-chart__bar` | part |
+| `cls.chartCaption` | `ui-chart__caption` | part |
+| `cls.chartFallback` | `ui-chart__fallback` | part |
+| `cls.chartFill` | `ui-chart__fill` | part |
+| `cls.chartLabel` | `ui-chart__label` | part |
+| `cls.chartLegend` | `ui-chart__legend` | part |
+| `cls.chartPlot` | `ui-chart__plot` | part |
+| `cls.chartSwatch` | `ui-chart__swatch` | part |
+| `cls.chartTrack` | `ui-chart__track` | part |
 
 ### `.ui-check`
 
@@ -426,6 +453,12 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.kbd` | `ui-kbd` | base |
 
+### `.ui-keep`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.keep` | `ui-keep` | base |
+
 ### `.ui-key-value`
 
 | Registry key | Class | Kind |
@@ -553,6 +586,18 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.popover` | `ui-popover` | base |
 
+### `.ui-print-exact`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.printExact` | `ui-print-exact` | base |
+
+### `.ui-print-only`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.printOnly` | `ui-print-only` | base |
+
 ### `.ui-progress`
 
 | Registry key | Class | Kind |
@@ -587,11 +632,55 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.ratio` | `ui-ratio` | base |
 
+### `.ui-report`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.report` | `ui-report` | base |
+| `cls.reportAppendix` | `ui-report__appendix` | part |
+| `cls.reportCaption` | `ui-report__caption` | part |
+| `cls.reportCover` | `ui-report__cover` | part |
+| `cls.reportCoverCompact` | `ui-report__cover--compact` | modifier |
+| `cls.reportEvidence` | `ui-report__evidence` | part |
+| `cls.reportFigure` | `ui-report__figure` | part |
+| `cls.reportFinding` | `ui-report__finding` | part |
+| `cls.reportFootnotes` | `ui-report__footnotes` | part |
+| `cls.reportHeader` | `ui-report__header` | part |
+| `cls.reportMeta` | `ui-report__meta` | part |
+| `cls.reportSection` | `ui-report__section` | part |
+| `cls.reportSectionUnnumbered` | `ui-report__section--unnumbered` | modifier |
+| `cls.reportSectionHead` | `ui-report__section-head` | part |
+| `cls.reportSources` | `ui-report__sources` | part |
+| `cls.reportSubtitle` | `ui-report__subtitle` | part |
+| `cls.reportSummary` | `ui-report__summary` | part |
+| `cls.reportTitle` | `ui-report__title` | part |
+| `cls.reportToc` | `ui-report__toc` | part |
+| `cls.reportCompact` | `ui-report--compact` | modifier |
+| `cls.reportNumbered` | `ui-report--numbered` | modifier |
+
 ### `.ui-reveal`
 
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.reveal` | `ui-reveal` | base |
+
+### `.ui-screen-only`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.screenOnly` | `ui-screen-only` | base |
+
+### `.ui-scroll-progress`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.scrollProgress` | `ui-scroll-progress` | base |
+
+### `.ui-scroll-reveal`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.scrollReveal` | `ui-scroll-reveal` | base |
 
 ### `.ui-search`
 
@@ -832,6 +921,12 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.visuallyHidden` | `ui-visually-hidden` | base |
 
+### `.ui-vt`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.vt` | `ui-vt` | base |
+
 ## Table-local state classes
 
 Not in `cls` by design — these are plain `is-*` state hooks scoped to
@@ -919,10 +1014,10 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--z-overlay` | `30` |
 | `--z-popover` | `50` |
 | `--z-toast` | `60` |
-| `--accent-1` | `color-mix(in oklch, var(--accent) 8%, var(--bg))` |
-| `--accent-2` | `color-mix(in oklch, var(--accent) 16%, var(--bg))` |
-| `--accent-3` | `color-mix(in oklch, var(--accent) 32%, var(--bg))` |
-| `--accent-4` | `color-mix(in oklch, var(--accent) 60%, var(--bg))` |
+| `--accent-1` | `color-mix(in oklch, var(--accent) 8%, var(--accent-ramp-end))` |
+| `--accent-2` | `color-mix(in oklch, var(--accent) 16%, var(--accent-ramp-end))` |
+| `--accent-3` | `color-mix(in oklch, var(--accent) 32%, var(--accent-ramp-end))` |
+| `--accent-4` | `color-mix(in oklch, var(--accent) 60%, var(--accent-ramp-end))` |
 | `--accent-5` | `var(--accent)` |
 | `--accent-6` | `var(--accent-strong)` |
 | `--surface-1` | `var(--bg)` |
@@ -967,6 +1062,7 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--text-soft` | `#353533` |
 | `--text-dim` | `#686863` |
 | `--accent` | `#d71921` |
+| `--accent-ramp-end` | `#ffffff` |
 | `--accent-strong` | `color-mix(in srgb, var(--accent) 83%, #000)` |
 | `--accent-text` | `var(--accent-strong)` |
 | `--accent-soft` | `color-mix(in srgb, var(--accent) 10%, transparent)` |
@@ -991,18 +1087,19 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 
 | Token | Value |
 | --- | --- |
-| `--bg` | `#000000` |
-| `--bg-elevated` | `#0a0a0a` |
+| `--bg` | `#121212` |
+| `--bg-elevated` | `#181818` |
 | `--bg-accent` | `color-mix(in srgb, var(--accent) 8%, transparent)` |
-| `--panel` | `#0c0c0c` |
-| `--panel-strong` | `#141414` |
-| `--panel-soft` | `#1a1a1a` |
-| `--line` | `#2a2a2a` |
-| `--line-strong` | `#444444` |
-| `--text` | `#f2f2f2` |
-| `--text-soft` | `#c4c4c4` |
-| `--text-dim` | `#858585` |
+| `--panel` | `#1c1c1c` |
+| `--panel-strong` | `#222222` |
+| `--panel-soft` | `#242424` |
+| `--line` | `#383838` |
+| `--line-strong` | `#555555` |
+| `--text` | `#e6e6e6` |
+| `--text-soft` | `#c8c8c8` |
+| `--text-dim` | `#a0a0a0` |
 | `--accent` | `#ff3b41` |
+| `--accent-ramp-end` | `#000000` |
 | `--accent-strong` | `color-mix(in srgb, var(--accent) 84%, #fff)` |
 | `--accent-text` | `var(--accent-strong)` |
 | `--accent-soft` | `color-mix(in srgb, var(--accent) 14%, transparent)` |

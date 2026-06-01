@@ -4,9 +4,128 @@
 > `~0.x`; `^0.x` does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## 0.4.1 — 2026-06-01
+
+Patch hardening for the public framework surface, plus the first step of the
+modern-platform motion direction (see [ADR-0002](docs/adr/0002-scope-and-2026-baseline.md)).
+
+### Added
+
+- **Static report kit — `@ponchia/ui/css/report.css` + `docs/reporting.md`.**
+  An opt-in, PDF-first report layer for LLM-authored and hand-authored HTML:
+  report covers, headers, section numbering, summaries, findings, evidence
+  blocks, source/appendix/footnote blocks, chart wrappers/legends/fallback
+  tables, and print utilities (`ui-print-only`, `ui-screen-only`,
+  `ui-break-before`, `ui-break-after`, `ui-keep`, `ui-print-exact`). It stays
+  out of the default bundle, ships with the offline LLM docs, and is covered by
+  a report fixture, package/export checks, and class-contract validation.
+  The layer also includes compact covers, unnumbered report sections, simple
+  static chart-bar primitives, and evidence-table framing rules so generated
+  reports need less private CSS.
+- **Zero-JS enter _and_ exit motion for native-`<dialog>` overlays.** Modal and
+  drawer (and their backdrop) now fade/scale **both ways** via `@starting-style`
+  + `transition-behavior: allow-discrete` — previously they only animated in and
+  vanished on close. Pure CSS, reduced-motion-aware (snaps with no flash), scoped
+  to `dialog.ui-modal` so the controlled `.is-open` path is unchanged.
+- **Enter/exit motion extended to popover, toast, and accordion** (ADR-0002
+  "next, same approach"):
+  - **Popover** (`.ui-popover`) fades + slides both ways via the same
+    `@starting-style` + `allow-discrete` recipe, covering both the native
+    `[popover]` top-layer path and the `.is-open` fallback. Zero JS,
+    reduced-motion-aware.
+  - **Toast** (`.ui-toast`) now plays a CSS fade-out on dismiss instead of being
+    yanked from the DOM. The `toast()` behavior adds `.is-leaving` and removes
+    the node on `transitionend` (with a timeout fallback); it falls back to
+    instant removal under reduced-motion or where no transition is computed, so
+    the persistent `aria-live` region is undisturbed.
+  - **Accordion** (`.ui-accordion`, native `<details>`) animates auto-height
+    open/close via `::details-content` + `interpolate-size: allow-keywords` +
+    `content-visibility … allow-discrete`. Strict progressive enhancement —
+    gated on `@supports selector(::details-content)`; engines without it (today,
+    Firefox/Safari) simply snap, exactly as before.
+- **Scroll-driven motion (progressive enhancement).** `.ui-scroll-progress` (a
+  reading-progress bar on a `scroll(root block)` timeline, RTL-aware) and
+  `.ui-scroll-reveal` (a JS-free, IntersectionObserver-free reveal on a `view()`
+  timeline). Both are gated on `@supports (animation-timeline: …)` and
+  `prefers-reduced-motion: no-preference`, so engines without scroll timelines
+  (today, Firefox/Safari) keep a static end-state and reduced-motion users get
+  no movement.
+- **View Transitions (progressive enhancement).** A `.ui-vt` helper
+  (`view-transition-name: var(--ui-vt-name)`) to morph an element across a
+  same-document `startViewTransition()` or a cross-document navigation, an
+  on-brand default for the `::view-transition-*(root)` cross-fade, and a
+  **reduced-motion kill-switch** for the `::view-transition-*` pseudo-tree
+  (which the platform does *not* quiet automatically). Cross-document nav stays
+  a documented one-liner you add yourself (`@view-transition { navigation: auto }`
+  is document-global, so it can't be layered or scoped by the framework).
+- **Optional Qwik bindings — `@ponchia/ui/qwik`.** Same thin-adapter shape as
+  the React/Solid bindings (`useDialog`, `useToast`, … `useBrontoBehavior`, plus
+  the `cls`/`ui`/`cx` + `applyStoredTheme` re-exports), wrapping the SSR-safe
+  behaviors in Qwik's `useVisibleTask$` (run on visible, cleanup on dispose) so a
+  resumable page stays zero-JS until interaction. Scope a behavior with a Qwik
+  signal: `useDialog({ root: useSignal() })`. `@builder.io/qwik` is an **optional**
+  peer dependency, so the core stays zero-dependency. New `examples/qwik-vite`
+  builds it through the real Qwik optimizer.
+- **OLED true-black surface variant — `data-surface="oled"`.** The dark base is
+  now a readable elevated near-black (see Changed); this opt-in root attribute
+  restores pure black for OLED power-saving and the original "Nothing" look.
+  CSS-only preset (like `data-density`/`data-contrast`), scoped to the dark
+  theme. Documented in `docs/theming.md`.
+- **APCA advisory for dark text.** `check:contrast` now emits a non-failing
+  warning when a dark text pairing falls below its perceptual APCA target (WCAG
+  stays the hard gate) — the early-warning that would have caught the illegible
+  dim text. The kitchen-sink demo gains a unified theme picker (theme × colorway
+  × surface, all persisted).
+- **[ADR-0003](docs/adr/0003-theme-model.md)** records the theme model: a binary
+  light/dark base × one-knob derivation × orthogonal axes (colorway, surface,
+  contrast, density), and why a flat named-theme catalog is rejected.
+
+### Changed
+
+- **Dark theme re-tuned for readability.** The dark base moved off pure `#000`
+  to an elevated near-black (`--bg #121212`, panels `#1c1c1c`/`#222`/`#242424`,
+  lines `#383838`/`#555`); body text eased `#f2f2f2 → #e6e6e6` (APCA Lc 99 → ~91,
+  removing halation) and **dim/meta text raised `#858585 → #a0a0a0`** (APCA
+  Lc ~36 → ~49 — the actual "hard to read" fix). WCAG 2.x over-rates contrast on
+  pure black, so pairings "passed" while reading poorly; the re-tune clears WCAG
+  AA on every pairing and lifts perceptual (APCA) contrast. Accent and status
+  colours are unchanged; true black stays available via `data-surface="oled"`.
+- **Browser floor raised to Chrome/Edge 125+, Safari 18+, Firefox 129+**
+  (early–mid 2025). A deliberate greenfield stance (ADR-0002) so the framework
+  can build natively on `@starting-style`, `transition-behavior: allow-discrete`,
+  `oklch()`/relative color, and `light-dark()`. No fallbacks ship below the
+  floor; not-yet-cross-engine features (View Transitions, scroll-driven
+  animations) are enhancement-only and degrade to a static end-state.
+- Bundle budget nudged for the new motion: gzip 13.0 → 13.5 kB (for the dialog
+  enter/exit work) and raw 76 → 77 kB (for the popover/toast/accordion motion
+  plus the scroll-driven + view-transition CSS). Gzip held at ~13.1 kB — it
+  compresses well — so the compressed payload still has headroom.
+
+### Fixed
+
+- React and Solid bindings now resolve scoped roots on mount, so `{ root: ref }`
+  and resolver callbacks work after framework refs are assigned. Nullish resolver
+  results normalize to default behavior instead of crashing destructuring
+  behavior initializers.
+- Scoped behavior roots now resolve controlled ids root-first, then
+  document-wide. This keeps existing body/portal-mounted dialogs, popovers, and
+  disclosure panels working while preventing earlier duplicate ids outside an
+  island from shadowing the in-root target.
+- `data-bronto-dismiss="<selector>"` ignores malformed selectors instead of
+  throwing during event handling.
+- The one-node glyph mask path now includes a WebKit-prefixed mask declaration,
+  and the OKLCH accent ramp uses an explicit white/black neutral endpoint for
+  cross-engine browser parity.
+
+### Added
+
+- React and Solid Vite examples, CI/release matrix coverage for those examples,
+  runtime binding tests, public API stability docs, a release runbook, and
+  `npm run size:report`.
+
 ## 0.4.0 — 2026-05-31
 
-The color-system release — [ADR-0001](docs/adr/0001-color-system.md) steps 1–7.
+The color-system release — [ADR-0001](docs/adr/0001-color-system.md) steps 1–8.
 A governed evolution beyond pure monochrome: the tier model is written down and
 **enforced** (`check:color-policy`), and the "Nothing" look is proven to be a
 _skin, not the architecture_ — opt-in **colorways** (amber CRT · phosphor green ·
@@ -34,11 +153,11 @@ categorical color lands later it ships as a governed, opt-in data-viz module
 ### Added
 
 - **The `--accent-1..6` ramp is now perceptually even (OKLCH).** Steps 1–4 mix
-  the accent toward the background `in oklch` instead of `in srgb` (ADR-0001
-  step 8), so the ramp reads as evenly-spaced — better for charts / multi-state
-  surfaces. `scripts/gen-resolved.mjs` learned to resolve `color-mix(in oklch,…)`
-  → hex (bit-for-bit matching browser `color-mix`), so `tokens/resolved.json`,
-  the DTCG export, and `docs/reference.md` all carry the new values. These are
+  the accent `in oklch` instead of using the old sRGB ramp (ADR-0001 step 8), so
+  the ramp reads as evenly-spaced. `scripts/gen-resolved.mjs` learned to resolve
+  `color-mix(in oklch,…)` → hex with the same one-channel tolerance browsers
+  show, so `tokens/resolved.json`, the DTCG export, and `docs/reference.md` all
+  carry the new values. These are
   token **values** (non-contractual under the 0.x policy) and the ramp is not
   consumed by any shipped component, so there is **no change to any component's
   rendering** — only consumers using `var(--accent-1..4)` directly see the
@@ -102,10 +221,9 @@ categorical color lands later it ships as a governed, opt-in data-viz module
 - **`check:skins` gate** — `css/skins.css` can't drift from `tokens/skins.js`,
   every skin defines `--accent`, and colorways stay out of the default bundle.
 - **[ADR-0001 — Color system](docs/adr/0001-color-system.md)** — the five-tier
-  color constitution and the backward-compatible roadmap. Steps 1–6 are
-  implemented in this release (gate + colorways + Tier-3 tokens + OKLCH for new
-  work + APCA advisory); the data-viz categorical module and any core-ramp
-  OKLCH migration are deliberately deferred.
+  color constitution and the backward-compatible roadmap. Steps 1–8 are
+  implemented in this release: gate + colorways + Tier-3 tokens + OKLCH for new
+  work + APCA advisory + data-viz + OKLCH core accent ramp.
 
 ## 0.3.6 — 2026-05-31
 

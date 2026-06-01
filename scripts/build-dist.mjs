@@ -84,7 +84,7 @@ export function leafFiles() {
 /** Opt-in leaves that ship as their own layered entrypoint but are
  *  deliberately NOT in the default bundle (ADR-0001: colorways + data-viz are
  *  opt-in). They still get a `dist/css/*` layered file so a direct import is safe. */
-export const EXTRA_LEAVES = ['skins.css', 'dataviz.css'];
+export const EXTRA_LEAVES = ['skins.css', 'dataviz.css', 'report.css'];
 
 export function buildBundles() {
   const out = { 'dist/bronto.css': bundle('core.css') };
@@ -100,8 +100,14 @@ export function buildBundles() {
  *  keeping ~10% raw / ~7% gzip headroom for ordinary growth: a few new
  *  components is fine, a runaway @import or an inlined asset trips it.
  *  Bump deliberately (and note it in the CHANGELOG) when real growth
- *  justifies it — this is the consumer-facing payload contract. */
-export const BUDGET = { raw: 76_000, gzip: 13_000 };
+ *  justifies it — this is the consumer-facing payload contract. The gzip
+ *  ceiling was nudged 13.0→13.5 kB at 0.4.1 for the native-`<dialog>`
+ *  enter+exit motion (`@starting-style` + `allow-discrete`); the raw ceiling
+ *  was then nudged 76→77 kB for the popover/toast/accordion motion plus the
+ *  scroll-driven + view-transition enhancements, then 77→78 kB for the
+ *  `data-surface="oled"` dark-surface preset (ADR-0003). Gzip held — these are
+ *  repetitive grayscale tokens that compress well, sitting ~13.2 kB. */
+export const BUDGET = { raw: 78_000, gzip: 13_500 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };

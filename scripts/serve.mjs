@@ -41,7 +41,7 @@ export function safePath(pathname) {
   return abs;
 }
 
-export function createDemoServer() {
+function createDemoServer() {
   return createServer(async (req, res) => {
     try {
       const pathname = decodeURIComponent(new URL(req.url, 'http://x').pathname);

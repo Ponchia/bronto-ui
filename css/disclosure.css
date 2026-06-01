@@ -128,6 +128,35 @@
   margin-block-start: 0;
 }
 
+/* Auto-height open/close for the native <details> accordion: animate the
+   content box from 0 to its intrinsic height. `interpolate-size:
+   allow-keywords` makes `auto` interpolable; `::details-content` exposes
+   the otherwise-anonymous content box; `content-visibility ... allow-discrete`
+   keeps the content laid out (and the dot marker's own rotation in sync)
+   through the close. Strict progressive enhancement — gated on
+   `@supports selector(::details-content)` (Chrome 131+/Safari 18.4+; Firefox
+   not yet) so engines without it just snap open/closed exactly as before —
+   and on `prefers-reduced-motion: no-preference`. */
+@supports selector(::details-content) {
+  @media (prefers-reduced-motion: no-preference) {
+    .ui-accordion {
+      interpolate-size: allow-keywords;
+    }
+
+    .ui-accordion__item::details-content {
+      block-size: 0;
+      overflow: hidden;
+      transition:
+        block-size var(--duration-base) var(--ease-out),
+        content-visibility var(--duration-base) allow-discrete;
+    }
+
+    .ui-accordion__item[open]::details-content {
+      block-size: auto;
+    }
+  }
+}
+
 /* --- Segmented control — CSS-only radio group --- */
 
 .ui-segmented {

@@ -129,6 +129,8 @@
   block-size: var(--icon-size, 1em);
   background: currentcolor;
   vertical-align: -0.125em;
+  /* stylelint-disable-next-line property-no-vendor-prefix -- Safari still needs the prefixed mask property. */
+  -webkit-mask: var(--icon-mask) center / contain no-repeat;
   mask: var(--icon-mask) center / contain no-repeat;
 }
 

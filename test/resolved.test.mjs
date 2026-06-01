@@ -29,6 +29,17 @@ test('resolved: color-mix is evaluated correctly (sRGB)', () => {
   assert.equal(r.dark['--focus-ring'], r.dark['--accent']);
 });
 
+test('resolved: OKLCH accent ramp is generated and kept in the static palette', () => {
+  assert.deepEqual(
+    [r.light['--accent-1'], r.light['--accent-2'], r.light['--accent-3'], r.light['--accent-4']],
+    ['#ffefed', '#ffe0db', '#fbc0b9', '#f1877d'],
+  );
+  assert.deepEqual(
+    [r.dark['--accent-1'], r.dark['--accent-2'], r.dark['--accent-3'], r.dark['--accent-4']],
+    ['#020000', '#0d0101', '#330506', '#80191c'],
+  );
+});
+
 test('resolved: non-colour tokens are dropped, not fabricated', () => {
   for (const k of ['--radius-md', '--space-md', '--shadow', '--mono', '--ease-spring']) {
     assert.ok(!(k in r.light), `${k} should not be in the resolved colour map`);

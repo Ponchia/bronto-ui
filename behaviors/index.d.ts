@@ -102,7 +102,9 @@ export declare function initTabs(opts?: DelegateOpts): Cleanup;
 /**
  * Wire native <dialog> open/close glue: `[data-bronto-open="id"]`,
  * `[data-bronto-close]`, and backdrop light-dismiss for dialogs marked
- * `[data-bronto-dialog-light]`. Returns a cleanup function.
+ * `[data-bronto-dialog-light]`. `root` scopes delegated controls; dialog ids
+ * resolve root-first, then document-wide for body/portal-mounted overlays.
+ * Returns a cleanup function.
  */
 export declare function initDialog(opts?: DelegateOpts): Cleanup;
 

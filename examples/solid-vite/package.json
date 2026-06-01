@@ -1,0 +1,15 @@
+{
+  "name": "example-solid-vite",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4177"
+  },
+  "devDependencies": {
+    "solid-js": "^1.9.13",
+    "vite": "^8.0.14",
+    "vite-plugin-solid": "^2.11.12"
+  }
+}

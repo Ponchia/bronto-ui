@@ -65,12 +65,13 @@
 
   /* Accent ramp — a stepped family for charts / data-viz / multi-state
      surfaces (the use case tokens/index.js advertises). Derived from the
-     single --accent knob via color-mix against the theme bg, so it
-     re-brands and theme-adapts automatically; no per-theme duplication. */
-  --accent-1: color-mix(in oklch, var(--accent) 8%, var(--bg));
-  --accent-2: color-mix(in oklch, var(--accent) 16%, var(--bg));
-  --accent-3: color-mix(in oklch, var(--accent) 32%, var(--bg));
-  --accent-4: color-mix(in oklch, var(--accent) 60%, var(--bg));
+     single --accent knob via OKLCH color-mix against a per-theme white/black
+     endpoint. Using an explicit neutral endpoint avoids low-chroma background
+     hue differences between browser engines. */
+  --accent-1: color-mix(in oklch, var(--accent) 8%, var(--accent-ramp-end));
+  --accent-2: color-mix(in oklch, var(--accent) 16%, var(--accent-ramp-end));
+  --accent-3: color-mix(in oklch, var(--accent) 32%, var(--accent-ramp-end));
+  --accent-4: color-mix(in oklch, var(--accent) 60%, var(--accent-ramp-end));
   --accent-5: var(--accent);
   --accent-6: var(--accent-strong);
 
@@ -128,6 +129,7 @@
   --text-soft: #353533;
   --text-dim: #686863;
   --accent: #d71921;
+  --accent-ramp-end: #ffffff;
   --accent-strong: color-mix(in srgb, var(--accent) 83%, #000);
   --accent-text: var(--accent-strong);
   --accent-soft: color-mix(in srgb, var(--accent) 10%, transparent);
@@ -167,18 +169,19 @@
   :root:not([data-theme='light']) {
     color-scheme: dark;
 
-    --bg: #000000;
-    --bg-elevated: #0a0a0a;
+    --bg: #121212;
+    --bg-elevated: #181818;
     --bg-accent: color-mix(in srgb, var(--accent) 8%, transparent);
-    --panel: #0c0c0c;
-    --panel-strong: #141414;
-    --panel-soft: #1a1a1a;
-    --line: #2a2a2a;
-    --line-strong: #444444;
-    --text: #f2f2f2;
-    --text-soft: #c4c4c4;
-    --text-dim: #858585;
+    --panel: #1c1c1c;
+    --panel-strong: #222222;
+    --panel-soft: #242424;
+    --line: #383838;
+    --line-strong: #555555;
+    --text: #e6e6e6;
+    --text-soft: #c8c8c8;
+    --text-dim: #a0a0a0;
     --accent: #ff3b41;
+    --accent-ramp-end: #000000;
     --accent-strong: color-mix(in srgb, var(--accent) 84%, #fff);
     --accent-text: var(--accent-strong);
     --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
@@ -204,18 +207,19 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --bg: #000000;
-  --bg-elevated: #0a0a0a;
+  --bg: #121212;
+  --bg-elevated: #181818;
   --bg-accent: color-mix(in srgb, var(--accent) 8%, transparent);
-  --panel: #0c0c0c;
-  --panel-strong: #141414;
-  --panel-soft: #1a1a1a;
-  --line: #2a2a2a;
-  --line-strong: #444444;
-  --text: #f2f2f2;
-  --text-soft: #c4c4c4;
-  --text-dim: #858585;
+  --panel: #1c1c1c;
+  --panel-strong: #222222;
+  --panel-soft: #242424;
+  --line: #383838;
+  --line-strong: #555555;
+  --text: #e6e6e6;
+  --text-soft: #c8c8c8;
+  --text-dim: #a0a0a0;
   --accent: #ff3b41;
+  --accent-ramp-end: #000000;
   --accent-strong: color-mix(in srgb, var(--accent) 84%, #fff);
   --accent-text: var(--accent-strong);
   --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
@@ -291,5 +295,31 @@
     --text-dim: var(--text-soft);
     --focus-ring: var(--accent);
     --shadow-raised: 0 0 0 1px var(--text);
+  }
+}
+
+/* OLED / true-black surface — opt-in brand variant for the dark theme.
+   The default dark base is a deliberately elevated near-black (#121212) for
+   readability: pure black + bright text causes halation, and #000→#0c0c0c
+   surface steps are imperceptible (so cards melt into the page). This preset
+   restores pure black for OLED power-saving and the original "Nothing" look.
+   CSS-only (not in the JS token model, like [data-density] / [data-contrast]),
+   and scoped to the dark theme so it never blacks out the light theme. Text
+   stays the re-tuned --text, which clears WCAG AA on #000 too. */
+:root[data-theme='dark'][data-surface='oled'] {
+  --bg: #000000;
+  --bg-elevated: #0a0a0a;
+  --panel: #101010;
+  --panel-strong: #161616;
+  --panel-soft: #1a1a1a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light'])[data-surface='oled'] {
+    --bg: #000000;
+    --bg-elevated: #0a0a0a;
+    --panel: #101010;
+    --panel-strong: #161616;
+    --panel-soft: #1a1a1a;
   }
 }

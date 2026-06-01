@@ -65,7 +65,11 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          ref: main
+          # The branch the workflow was dispatched on (default `main`). The
+          # baseline PR is opened against this same branch, so an intentional
+          # visual change on a feature branch can regenerate its own baselines
+          # (regen renders that branch's CSS) — not just post-merge on main.
+          ref: ${{ github.ref_name }}
 
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
@@ -126,7 +130,7 @@ jobs:
           else
             note="⚠️ Opened with the default GITHUB_TOKEN, so \`check\`/\`e2e\` will NOT run and \`main\` protection makes this **unmergeable**. This is expected — close it (cleanup.yml reaps it automatically). To make baseline regen mergeable, add a \`BASELINE_PAT\` secret, or just use the clean-e2e pattern and never run this workflow."
           fi
-          gh pr create --base main --head "$BRANCH" \
+          gh pr create --base "${{ github.ref_name }}" --head "$BRANCH" \
             --title "test(e2e): regenerate visual baselines" \
             --body "Automated: pixel baselines re-rendered in \`mcr.microsoft.com/playwright:v1.60.0-jammy\` (run ${GITHUB_RUN_ID}).
 

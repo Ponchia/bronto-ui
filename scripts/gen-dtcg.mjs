@@ -11,7 +11,8 @@
  * a static DTCG value. They are emitted with their `$type` and the raw
  * CSS in `$extensions["com.ponchia.css"]`, flagged `$value: null`, so
  * the file stays spec-shaped and honest rather than fabricating numbers.
- * The single resolvable knob is `color.<theme>.accent`.
+ * Static theme knobs such as `color.<theme>.accent` and
+ * `color.<theme>.accent.ramp-end` keep their literal values.
  *
  * Run: node scripts/gen-dtcg.mjs   (or: npm run dtcg:build)
  */
@@ -25,35 +26,28 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const isHex = (v) => /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(v);
 const isRgb = (v) => /^rgba?\(/i.test(v);
 const isCssExpr = (v) => v.includes('var(') || v.includes('color-mix(');
+const fontFamilyTokens = new Set(['mono', 'sans', 'display', 'dot-font']);
+const dimensionPrefixes = ['radius', 'space', 'text', 'tracking', 'dot'];
+
+const startsWithAny = (name, prefixes) => prefixes.some((prefix) => name.startsWith(prefix));
+const hasDimensionUnit = (v) => /(rem|px|em)$/.test(v);
+const hasColorName = (name) =>
+  /color|accent|bg|panel|line|text|surface|border|focus|field/.test(name);
+const typeRules = [
+  ['cubicBezier', (name) => name.startsWith('ease')],
+  ['duration', (name) => name.startsWith('duration')],
+  ['fontFamily', (name) => fontFamilyTokens.has(name)],
+  ['shadow', (name) => /shadow/.test(name)],
+  ['color', (_name, v) => isHex(v) || isRgb(v)],
+  ['dimension', (name, v) => hasDimensionUnit(v) || startsWithAny(name, dimensionPrefixes)],
+  ['color', (name) => hasColorName(name)],
+  ['number', (_name, v) => /^[0-9.]+$/.test(v)],
+];
 
 /** Best-effort DTCG $type from a token name + value. */
 function typeOf(name, v) {
-  if (/^(ease)/.test(name)) return 'cubicBezier';
-  if (/^duration/.test(name)) return 'duration';
-  if (name === 'mono' || name === 'sans' || name === 'display' || name === 'dot-font')
-    return 'fontFamily';
-  // Classify shadows by name first — `--shadow: none` must not fall
-  // through to `color` just because the name matches the colour regex.
-  if (/shadow/.test(name)) return 'shadow';
-  // A literal colour value is unambiguously a colour.
-  if (isHex(v) || isRgb(v)) return 'color';
-  // Dimension by value/name BEFORE the colour name-heuristic, so global
-  // size tokens (`text-2xs: 0.68rem`, `tracking-wide: 0.14em`) aren't
-  // mis-typed `color` merely because the name contains "text".
-  if (
-    /(rem|px|em)$/.test(v) ||
-    name.startsWith('radius') ||
-    name.startsWith('space') ||
-    name.startsWith('text') ||
-    name.startsWith('tracking') ||
-    name.startsWith('dot')
-  )
-    return 'dimension';
-  // Remaining colour-ish names are CSS-expr accents/aliases (var()/
-  // color-mix()) — emitted with $value:null + the CSS in $extensions.
-  if (/color|accent|bg|panel|line|text|surface|border|focus|field/.test(name)) return 'color';
-  if (/^[0-9.]+$/.test(v)) return 'number';
-  return 'string';
+  const rule = typeRules.find(([, matches]) => matches(name, v));
+  return rule ? rule[0] : 'string';
 }
 
 function token(name, v) {

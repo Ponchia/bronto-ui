@@ -1,0 +1,28 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "package.json",
+    "demo/**/*.html",
+    "examples/astro/astro.config.mjs",
+    "examples/react-vite/src/main.jsx",
+    "examples/react-vite/vite.config.js",
+    "examples/solid-vite/src/main.jsx",
+    "examples/solid-vite/vite.config.js",
+    "examples/sveltekit/src/routes/+layout.js",
+    "examples/sveltekit/svelte.config.js",
+    "examples/sveltekit/vite.config.js",
+    "examples/vanilla-vite/src/main.js",
+    "scripts/**/*.mjs",
+    "test/**/*.mjs"
+  ],
+  "project": ["**/*.{js,mjs,jsx,ts,d.ts}", "!dist/**", "!node_modules/**"],
+  "ignoreIssues": {
+    "classes/index.d.ts": ["duplicates"],
+    "classes/index.js": ["duplicates"],
+    "examples/**": ["unlisted"],
+    "tokens/charts.js": ["duplicates"],
+    "tokens/index.d.ts": ["duplicates"],
+    "tokens/index.js": ["duplicates"],
+    "tokens/skins.js": ["duplicates"]
+  }
+}

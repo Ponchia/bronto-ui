@@ -135,6 +135,14 @@
 .ui-toast {
   align-items: flex-start;
   animation: uiToastIn var(--duration-base) var(--ease-spring) both;
+
+  /* Exit is a transition (not a keyframe): the behavior adds `.is-leaving`
+     and removes the node when this transition ends. Entrance stays the
+     keyframe above — the transition only fires on the `.is-leaving`
+     property change, never on insert. */
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
   background: var(--panel-strong);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-md);
@@ -147,6 +155,15 @@
   padding: 0.7rem 0.85rem;
   pointer-events: auto;
   inline-size: 100%;
+}
+
+/* Leaving — fade + drop out. `animation: none` releases the entrance
+   keyframe's `both` fill (a filling animation outranks normal property
+   declarations, so without this the exit values would be ignored). */
+.ui-toast.is-leaving {
+  animation: none;
+  opacity: 0;
+  transform: translateY(6px) scale(0.98);
 }
 
 .ui-toast::before {
@@ -302,6 +319,41 @@
   display: none;
 }
 
+/* Enter AND exit motion — zero JS, the same `@starting-style` +
+   `transition-behavior: allow-discrete` recipe as the modal (overlay.css).
+   It covers BOTH paths initPopover can take: the native `[popover]` top
+   layer (where the `overlay` transition keeps the panel painted while it
+   animates out before leaving the layer) and the `.is-open` fallback (a
+   regular element, so `display allow-discrete` alone carries the exit).
+   Gated on `prefers-reduced-motion: no-preference`, so reduced-motion users
+   keep the instant open/close they had before. JS positions the panel via
+   `top`/`left`, so the entrance `transform` is free to animate. */
+@media (prefers-reduced-motion: no-preference) {
+  .ui-popover {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-out),
+      overlay var(--duration-fast) allow-discrete,
+      display var(--duration-fast) allow-discrete;
+  }
+
+  .ui-popover.is-open,
+  .ui-popover[popover]:popover-open {
+    opacity: 1;
+    transform: none;
+  }
+
+  @starting-style {
+    .ui-popover.is-open,
+    .ui-popover[popover]:popover-open {
+      opacity: 0;
+      transform: translateY(-4px) scale(0.98);
+    }
+  }
+}
+
 /* --- Progress — linear, determinate or indeterminate --- */
 
 .ui-progress {
@@ -336,6 +388,7 @@
 
   .ui-toast {
     animation: none;
+    transition: none;
   }
 }
 

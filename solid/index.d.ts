@@ -9,25 +9,46 @@ import type {
   ToastOpts,
 } from '../behaviors/index.js';
 
+export type BrontoBindingRoot =
+  | Document
+  | Element
+  | { current: Document | Element | null | undefined }
+  | (() => Document | Element | null | undefined)
+  | null
+  | undefined;
+
+export type BrontoBindingOpts<T extends DelegateOpts = DelegateOpts> = Omit<T, 'root'> & {
+  root?: BrontoBindingRoot;
+};
+
+export type BrontoBindingOptsResolver<T extends DelegateOpts = DelegateOpts> =
+  | BrontoBindingOpts<T>
+  | (() => BrontoBindingOpts<T> | null | undefined)
+  | null
+  | undefined;
+
 /** Run any delegated behavior for the component's lifetime (init on mount,
- *  its returned cleanup on dispose). */
+ *  its returned cleanup on dispose). The behavior is run once. Options resolve
+ *  on mount, so scoped roots may be refs or resolver callbacks. */
 export declare function useBrontoBehavior(
   init: (opts?: DelegateOpts) => Cleanup | void,
-  opts?: DelegateOpts,
+  opts?: BrontoBindingOptsResolver,
 ): void;
 
-export declare function useThemeToggle(opts?: ThemeStorageOpts & DelegateOpts): void;
-export declare function useDismissible(opts?: DelegateOpts): void;
-export declare function useDisclosure(opts?: DelegateOpts): void;
-export declare function useMenu(opts?: DelegateOpts): void;
-export declare function useFormValidation(opts?: DelegateOpts): void;
-export declare function useCombobox(opts?: DelegateOpts): void;
-export declare function usePopover(opts?: DelegateOpts): void;
-export declare function useTableSort(opts?: DelegateOpts): void;
-export declare function useTabs(opts?: DelegateOpts): void;
-export declare function useDialog(opts?: DelegateOpts): void;
-export declare function useCarousel(opts?: DelegateOpts): void;
-export declare function useDotGlyph(opts?: DelegateOpts): void;
+export declare function useThemeToggle(
+  opts?: BrontoBindingOptsResolver<ThemeStorageOpts & DelegateOpts>,
+): void;
+export declare function useDismissible(opts?: BrontoBindingOptsResolver): void;
+export declare function useDisclosure(opts?: BrontoBindingOptsResolver): void;
+export declare function useMenu(opts?: BrontoBindingOptsResolver): void;
+export declare function useFormValidation(opts?: BrontoBindingOptsResolver): void;
+export declare function useCombobox(opts?: BrontoBindingOptsResolver): void;
+export declare function usePopover(opts?: BrontoBindingOptsResolver): void;
+export declare function useTableSort(opts?: BrontoBindingOptsResolver): void;
+export declare function useTabs(opts?: BrontoBindingOptsResolver): void;
+export declare function useDialog(opts?: BrontoBindingOptsResolver): void;
+export declare function useCarousel(opts?: BrontoBindingOptsResolver): void;
+export declare function useDotGlyph(opts?: BrontoBindingOptsResolver): void;
 
 /** The `toast()` imperative (no lifecycle of its own). */
 export declare function useToast(): (message: string, opts?: ToastOpts) => Cleanup;

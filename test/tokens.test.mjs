@@ -15,7 +15,7 @@ test('themeColor falls back to light for unknown/empty', () => {
 test('cssVars mirror is keyed by real custom-property names', () => {
   assert.equal(cssVars.global['--radius-xl'], '4px');
   assert.equal(cssVars.light['--panel'], '#ffffff');
-  assert.equal(cssVars.dark['--bg'], '#000000');
+  assert.equal(cssVars.dark['--bg'], '#121212');
 });
 
 test('tokens is the -- stripped ergonomic view; default export === tokens', async () => {

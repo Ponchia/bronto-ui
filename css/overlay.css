@@ -26,9 +26,54 @@
 }
 
 .ui-modal[open] {
-  animation: uiToastIn var(--duration-base) var(--ease-spring) both;
   display: grid;
   grid-template-rows: auto 1fr auto;
+}
+
+/* Enter AND exit, zero JS — `@starting-style` + `transition-behavior:
+   allow-discrete` keep the native <dialog> (and its backdrop) in the top
+   layer while it transitions out on close, so it fades/scales both ways
+   instead of only animating in. Scoped to `dialog.ui-modal` so the
+   controlled `.is-open` (non-<dialog>) path keeps its own entrance.
+   Needs a 2026-era floor (see CONTRIBUTING → Browser floor). */
+dialog.ui-modal {
+  opacity: 0;
+  transform: translateY(6px) scale(0.98);
+  transition:
+    opacity var(--duration-base) var(--ease-spring),
+    transform var(--duration-base) var(--ease-spring),
+    overlay var(--duration-base) allow-discrete,
+    display var(--duration-base) allow-discrete;
+}
+
+dialog.ui-modal[open] {
+  opacity: 1;
+  transform: none;
+}
+
+@starting-style {
+  dialog.ui-modal[open] {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+}
+
+dialog.ui-modal::backdrop {
+  opacity: 0;
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    overlay var(--duration-base) allow-discrete,
+    display var(--duration-base) allow-discrete;
+}
+
+dialog.ui-modal[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  dialog.ui-modal[open]::backdrop {
+    opacity: 0;
+  }
 }
 
 /* Controlled (non-<dialog>) usage. A portal/React modal that can't be a
@@ -323,5 +368,11 @@
 @media (prefers-reduced-motion: reduce) {
   .ui-modal[open] {
     animation: none;
+  }
+
+  /* No enter/exit transition — snap to the open state (no flash). */
+  dialog.ui-modal,
+  dialog.ui-modal::backdrop {
+    transition: none;
   }
 }

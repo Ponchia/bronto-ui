@@ -7,19 +7,19 @@
     },
     {
       "name": "--accent-1",
-      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 8%, var(--bg))`"
+      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 8%, var(--accent-ramp-end))`"
     },
     {
       "name": "--accent-2",
-      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 16%, var(--bg))`"
+      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 16%, var(--accent-ramp-end))`"
     },
     {
       "name": "--accent-3",
-      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 32%, var(--bg))`"
+      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 32%, var(--accent-ramp-end))`"
     },
     {
       "name": "--accent-4",
-      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 60%, var(--bg))`"
+      "description": "Global scale token. Value: `color-mix(in oklch, var(--accent) 60%, var(--accent-ramp-end))`"
     },
     {
       "name": "--accent-5",
@@ -28,6 +28,10 @@
     {
       "name": "--accent-6",
       "description": "Global scale token. Value: `var(--accent-strong)`"
+    },
+    {
+      "name": "--accent-ramp-end",
+      "description": "Theme token. Light: `#ffffff` · Dark: `#000000`"
     },
     {
       "name": "--accent-soft",
@@ -43,7 +47,7 @@
     },
     {
       "name": "--bg",
-      "description": "Theme token. Light: `#f4f4f2` · Dark: `#000000`"
+      "description": "Theme token. Light: `#f4f4f2` · Dark: `#121212`"
     },
     {
       "name": "--bg-accent",
@@ -51,7 +55,7 @@
     },
     {
       "name": "--bg-elevated",
-      "description": "Theme token. Light: `#fbfbfa` · Dark: `#0a0a0a`"
+      "description": "Theme token. Light: `#fbfbfa` · Dark: `#181818`"
     },
     {
       "name": "--border",
@@ -199,11 +203,11 @@
     },
     {
       "name": "--line",
-      "description": "Theme token. Light: `#d8d8d4` · Dark: `#2a2a2a`"
+      "description": "Theme token. Light: `#d8d8d4` · Dark: `#383838`"
     },
     {
       "name": "--line-strong",
-      "description": "Theme token. Light: `#a8a8a2` · Dark: `#444444`"
+      "description": "Theme token. Light: `#a8a8a2` · Dark: `#555555`"
     },
     {
       "name": "--mono",
@@ -211,15 +215,15 @@
     },
     {
       "name": "--panel",
-      "description": "Theme token. Light: `#ffffff` · Dark: `#0c0c0c`"
+      "description": "Theme token. Light: `#ffffff` · Dark: `#1c1c1c`"
     },
     {
       "name": "--panel-soft",
-      "description": "Theme token. Light: `#ececea` · Dark: `#1a1a1a`"
+      "description": "Theme token. Light: `#ececea` · Dark: `#242424`"
     },
     {
       "name": "--panel-strong",
-      "description": "Theme token. Light: `#ffffff` · Dark: `#141414`"
+      "description": "Theme token. Light: `#ffffff` · Dark: `#222222`"
     },
     {
       "name": "--radius-lg",
@@ -327,7 +331,7 @@
     },
     {
       "name": "--text",
-      "description": "Theme token. Light: `#0a0a0a` · Dark: `#f2f2f2`"
+      "description": "Theme token. Light: `#0a0a0a` · Dark: `#e6e6e6`"
     },
     {
       "name": "--text-2xs",
@@ -339,7 +343,7 @@
     },
     {
       "name": "--text-dim",
-      "description": "Theme token. Light: `#686863` · Dark: `#858585`"
+      "description": "Theme token. Light: `#686863` · Dark: `#a0a0a0`"
     },
     {
       "name": "--text-lg",
@@ -351,7 +355,7 @@
     },
     {
       "name": "--text-soft",
-      "description": "Theme token. Light: `#353533` · Dark: `#c4c4c4`"
+      "description": "Theme token. Light: `#353533` · Dark: `#c8c8c8`"
     },
     {
       "name": "--text-xl",

@@ -7,8 +7,8 @@
  * the architecture ADR. `react` is an optional peer dependency.
  *
  * The behaviors delegate from a root (default `document`), so call a hook once
- * near the relevant subtree; pass `{ root: ref.current }` to scope it. The root
- * is captured on mount — keep it stable (a ref), like any effect dependency.
+ * near the relevant subtree; pass `{ root: ref }` or a resolver callback to
+ * scope it. The options resolve on mount, after refs have been assigned.
  *
  *   import { useDialog, useToast } from '@ponchia/ui/react';
  *   function App() {
@@ -35,11 +35,28 @@ import {
   toast,
 } from '../behaviors/index.js';
 
+function resolveMaybe(v) {
+  return typeof v === 'function' ? v() : v;
+}
+
+function resolveRoot(root) {
+  const value = resolveMaybe(root);
+  if (value && typeof value === 'object' && 'current' in value) return value.current;
+  return value;
+}
+
+function resolveOpts(opts) {
+  const value = resolveMaybe(opts);
+  if (!value || typeof value !== 'object') return undefined;
+  const root = resolveRoot(value.root);
+  return root ? { ...value, root } : { ...value, root: undefined };
+}
+
 /** Run a delegated behavior for the component's lifetime (init on mount, its
- *  returned cleanup on unmount). The behavior is run once; `opts` is captured
- *  on mount — pass a stable root (a ref) if you scope it. */
+ *  returned cleanup on unmount). The behavior is run once; `opts` resolves
+ *  on mount so refs are usable for scoped roots. */
 export function useBrontoBehavior(init, opts) {
-  useEffect(() => init(opts), []); // eslint-disable-line react-hooks/exhaustive-deps -- delegated once on mount
+  useEffect(() => init(resolveOpts(opts)), []); // eslint-disable-line react-hooks/exhaustive-deps -- delegated once on mount
 }
 
 export const useThemeToggle = (opts) => useBrontoBehavior(initThemeToggle, opts);

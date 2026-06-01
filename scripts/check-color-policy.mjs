@@ -72,6 +72,7 @@ const TIERS = {
   // Tier 1 — the single brand accent, its ramp, and accent-derived knobs.
   1: [
     '--accent',
+    '--accent-ramp-end',
     '--accent-strong',
     '--accent-soft',
     '--bg-accent',
@@ -153,6 +154,11 @@ for (const block of ['global', 'light', 'dark']) {
 const cssDir = resolve(root, 'css');
 // Definition files where color literals legitimately live (tier sources).
 const isDefinitionFile = (f) => f === 'tokens.css' || f === 'dataviz.css' || f.startsWith('skins');
+// Files that legitimately CONSUME Tier-4 chart tokens because they ship chart
+// helpers (report.css's .ui-chart swatch/fill). They are exempt from the
+// charts-only leak check below, but stay under the raw-color scans — so a stray
+// raw hex in report.css is still caught (unlike a blanket definition-file exempt).
+const consumesChartTokens = (f) => f === 'report.css';
 const stripComments = (s) => s.replace(/\/\*[\s\S]*?\*\//g, '');
 const stripUrls = (s) => s.replace(/url\([^)]*\)/gi, 'url()');
 
@@ -322,9 +328,10 @@ for (const file of readdirSync(cssDir).filter((f) => f.endsWith('.css') && !isDe
     }
     // Tier-4 data-viz tokens are charts-only — never UI chrome (ADR-0001 rule 4).
     // They live in the opt-in css/dataviz.css (a definition file, exempt here);
-    // a reference from any core component CSS is leakage.
+    // a reference from any core component CSS is leakage. Chart-helper files
+    // (report.css) are allowed to consume them in their .ui-chart parts.
     const leak = line.match(/var\(\s*(--(?:chart|cat|data)-[\w-]*)/);
-    if (leak) {
+    if (leak && !consumesChartTokens(file)) {
       errors.push(
         `css/${file}:${i + 1} references "${leak[1]}" — Tier-4 data-viz tokens are charts-only, not UI chrome (ADR-0001)`,
       );

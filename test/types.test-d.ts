@@ -30,6 +30,13 @@ import { charts, type ChartTokenName } from '../tokens/charts.js';
 const btn: 'ui-button' = cls.button;
 const appShell: 'ui-app-shell' = cls.appShell;
 const tt: 'ui-themetoggle__button' = cls.themetoggleButton;
+const report: 'ui-report' = cls.report;
+const reportSection: 'ui-report__section' = cls.reportSection;
+const reportSectionUnnumbered: 'ui-report__section--unnumbered' = cls.reportSectionUnnumbered;
+const chart: 'ui-chart' = cls.chart;
+const chartPlot: 'ui-chart__plot' = cls.chartPlot;
+const chartFill: 'ui-chart__fill' = cls.chartFill;
+const printOnly: 'ui-print-only' = cls.printOnly;
 
 // @ts-expect-error — unknown cls key is now a compile error (was `string`).
 cls.definitelyNotAKey;
@@ -114,15 +121,24 @@ void [chartTok, series1, badChart];
 import { useDialog as useDialogR, useToast as useToastR } from '../react/index.js';
 import { useTabs as useTabsS } from '../solid/index.js';
 const rDialog: void = useDialogR({ root: document });
+const rDialogRef: void = useDialogR({ root: { current: document } });
+const rDialogResolver: void = useDialogR(() => ({ root: document }));
 const rToast = useToastR();
 const rDismiss = rToast('hi', { tone: 'success' }); // Cleanup
-const sTabs: void = useTabsS();
-void [rDialog, rDismiss, sTabs];
+const sTabs: void = useTabsS({ root: () => document });
+void [rDialog, rDialogRef, rDialogResolver, rDismiss, sTabs];
 
 void [
   btn,
   appShell,
   tt,
+  report,
+  reportSection,
+  reportSectionUnnumbered,
+  chart,
+  chartPlot,
+  chartFill,
+  printOnly,
   a,
   b,
   joined,

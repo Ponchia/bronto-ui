@@ -132,9 +132,10 @@
       const picker = document.getElementById('picker');
       const grade = (r, threshold) => {
         const ok = r >= threshold;
-        return `<span class="${ok ? 'pg__pass' : 'pg__fail'}">${r.toFixed(2)}:1 ${
-          ok ? 'PASS' : 'FAIL'
-        }</span>`;
+        const el = document.createElement('span');
+        el.className = ok ? 'pg__pass' : 'pg__fail';
+        el.textContent = `${r.toFixed(2)}:1 ${ok ? 'PASS' : 'FAIL'}`;
+        return el;
       };
 
       function render() {
@@ -151,19 +152,34 @@
         };
         const bg = cs.getPropertyValue('--bg').trim();
 
-        document.getElementById('swatches').innerHTML = Object.entries(fam)
-          .map(
-            ([k, v]) =>
-              `<div class="pg__sw" style="background:${v};color:${v}" title="${k}: ${v}">` +
-              `<span style="mix-blend-mode:difference;color:#fff">${k.replace('--accent', 'a')}</span></div>`,
-          )
-          .join('');
+        const swatches = Object.entries(fam).map(([k, v]) => {
+          const swatch = document.createElement('div');
+          swatch.className = 'pg__sw';
+          swatch.style.background = v;
+          swatch.style.color = v;
+          swatch.title = `${k}: ${v}`;
+          const label = document.createElement('span');
+          label.style.mixBlendMode = 'difference';
+          label.style.color = '#fff';
+          label.textContent = k.replace('--accent', 'a');
+          swatch.append(label);
+          return swatch;
+        });
+        document.getElementById('swatches').replaceChildren(...swatches);
 
         const textR = ratio(fam['--accent-text'], bg);
         const accentR = ratio(fam['--accent'], bg);
-        document.getElementById('contrast').innerHTML =
-          `<li><span>--accent-text vs --bg (text ≥ 4.5)</span> ${grade(textR, 4.5)}</li>` +
-          `<li><span>--accent vs --bg (non-text ≥ 3.0)</span> ${grade(accentR, 3.0)}</li>`;
+        const contrastRows = [
+          ['--accent-text vs --bg (text >= 4.5)', grade(textR, 4.5)],
+          ['--accent vs --bg (non-text >= 3.0)', grade(accentR, 3.0)],
+        ].map(([label, result]) => {
+          const li = document.createElement('li');
+          const text = document.createElement('span');
+          text.textContent = label;
+          li.append(text, ' ', result);
+          return li;
+        });
+        document.getElementById('contrast').replaceChildren(...contrastRows);
 
         document.getElementById('css').textContent = `:root { --accent: ${val}; }`;
         document.getElementById('dtcg').textContent = JSON.stringify(

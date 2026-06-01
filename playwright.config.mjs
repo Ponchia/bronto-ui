@@ -13,7 +13,7 @@ import { defineConfig, devices } from '@playwright/test';
  * CSS-first lib is `:has()`, `color-mix()`, `<dialog>`, `:dir()` and
  * logical properties differing per engine.
  */
-const NON_PIXEL = /(a11y|quality|behavior)\.spec\.mjs/;
+const NON_PIXEL = /(a11y|quality|behavior|motion)\.spec\.mjs/;
 export default defineConfig({
   testDir: './test/e2e',
   fullyParallel: true,
