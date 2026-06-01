@@ -158,6 +158,11 @@ test('lifecycle state recipe', () => {
   assert.equal(ui.state({ state: 'bogus' }), 'ui-state');
 });
 
+test('originLabel recipe (AI-trust)', () => {
+  assert.equal(ui.originLabel(), 'ui-origin-label');
+  assert.equal(ui.originLabel({ ai: true }), 'ui-origin-label ui-origin-label--ai');
+});
+
 test('every ui.* recipe is declared on the Ui interface in index.d.ts', async () => {
   const { readFileSync } = await import('node:fs');
   const dts = readFileSync(new URL('../classes/index.d.ts', import.meta.url), 'utf8');

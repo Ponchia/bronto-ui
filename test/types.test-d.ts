@@ -131,6 +131,9 @@ void lifecycle;
 // @ts-expect-error — lifecycle state is a closed union.
 ui.state({ state: 'thinking' });
 
+const origin: string = ui.originLabel({ ai: true });
+void origin;
+
 // Connectors geometry: object-shaped options, string/coordinate returns.
 const connOut: ConnectRectsResult = connectRects({
   fromRect: { x: 0, y: 0, width: 20, height: 20 },

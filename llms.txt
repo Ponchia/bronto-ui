@@ -269,6 +269,35 @@ save-status strip. The label IS the state (never colour alone); the host owns
 the state machine, retry, and persistence — persistent state gets persistent UI,
 not a toast. `ui.state({ state, busy })`. Details: `docs/state.md`.
 
+Optional generated-content / AI-trust surfaces — opt-in, CSS only, never in the
+default bundle. NOT a chat kit; the trust surfaces around generated content:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/generated.css" />
+```
+
+`ui-generated` (+`__label`) marks a machine-authored region; `ui-origin-label`
+(+`--ai`) tags origin ("AI generated" / "Human reviewed"); `ui-reasoning`
+(+`__body`) and `ui-tool-log` / `ui-tool-call` (+`__name`/`__status`/`__body`)
+are quiet native-`<details>` collapsibles for reasoning + tool traces. Bronto
+styles disclosure/origin/trace; the host owns model metadata, redaction, and
+safety. No confidence/verdict widget (don't fabricate precision). `ui.originLabel({ ai })`.
+Details: `docs/generated.md`.
+
+Optional workbench primitives for tool UIs — opt-in, CSS only, never in the
+default bundle:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/workbench.css" />
+```
+
+`ui-inspector` (+`__header`/`__body`) is a selected-object detail panel;
+`ui-property` (+`__label`/`__value`) is a denser key/value row for it;
+`ui-selectionbar` (+`__count`/`__actions`) is a raised action bar for the current
+selection (pair with `ui-sel` states on the items). Layout/affordances only —
+resizable split panes and drag handles are deferred. Class-only. Details:
+`docs/workbench.md`.
+
 Optional static report layer for LLM-authored HTML reports — opt-in, never in
 the default bundle. Pair it with the normal bundle, and add data-viz only when
 the report contains charts. For standalone browser HTML, use real URLs; package

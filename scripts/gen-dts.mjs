@@ -233,6 +233,10 @@ export interface StateOpts {
   /** Pulse the indicator for an in-progress state (saving / syncing / retrying). Reduced-motion-safe. */
   busy?: boolean;
 }
+export interface OriginLabelOpts {
+  /** Accent-tint the label for AI/model-generated origin (vs a neutral tag). */
+  ai?: boolean;
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -275,6 +279,7 @@ export interface Ui {
   source(opts?: SourceOpts): string;
   provenance(opts?: ProvenanceOpts): string;
   state(opts?: StateOpts): string;
+  originLabel(opts?: OriginLabelOpts): string;
 }
 
 export declare const ui: Ui;

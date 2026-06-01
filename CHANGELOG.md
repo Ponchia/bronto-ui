@@ -115,6 +115,19 @@ hardening that had not yet been released.
   `--busy` pulses the indicator (reduced-motion-safe). Bronto ships the visual
   states + canonical wording; the host owns the state machine, retry, and
   persistence. Frontier candidate #2. Documented in [`docs/state.md`](docs/state.md).
+- **Generated content & AI trust** (`@ponchia/ui/css/generated.css`,
+  `.ui-generated`/`.ui-origin-label`/`.ui-reasoning`/`.ui-tool-log`/`.ui-tool-call`,
+  `ui.originLabel()`): an opt-in, CSS-only set of **trust surfaces** for AI /
+  system-generated content — a marked region, an origin label, and quiet
+  native-`<details>` reasoning + tool-call logs. Not a chat kit; no
+  fabricated-confidence widget. Bronto styles disclosure/origin/trace, the host
+  owns model metadata, redaction, and safety. Pairs with the source layer.
+  Documented in [`docs/generated.md`](docs/generated.md).
+- **Workbench** (`@ponchia/ui/css/workbench.css`, `.ui-inspector`/`.ui-property`/
+  `.ui-selectionbar`): an opt-in, CSS-only core for tool UIs — a selected-object
+  inspector panel, denser property rows, and a raised selection action bar.
+  Layout + affordances only; resizable split panes and drag handles are
+  deferred. Documented in [`docs/workbench.md`](docs/workbench.md).
 - **Label declutter** (`@ponchia/ui/annotations` `declutterLabels`): a
   deterministic, order-preserving **1-D** label de-overlap helper (sort, push
   apart by `size + gap`, slide to fit `max`) — pure, no DOM/scales. Not a 2-D

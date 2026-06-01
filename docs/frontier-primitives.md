@@ -154,7 +154,12 @@ Good first build:
 - Only then a behavior with roving focus, typeahead/filtering, Escape close,
   and a `bronto:command:select` event.
 
-### 4. Workbench UI
+### 4. Workbench UI — 🟡 inspector / property / selectionbar shipped in 0.5.0
+
+Shipped as `@ponchia/ui/css/workbench.css` (`ui-inspector`, `ui-property`,
+`ui-selectionbar`) — the low-risk CSS core below. Resizable split panes
+(`ui-splitter`, an ARIA window-splitter behavior) and drag handles remain
+deferred until a consumer needs them.
 
 Why it matters: real tools need inspectors, object action bars, split panes,
 resize handles, property rows, dense trees, and selected-object affordances.
@@ -212,7 +217,12 @@ Good first build:
 - CSS-only `ui-target-ring` and `ui-hotspot`.
 - Reuse connector geometry for any measured line.
 
-### 6. Generated-content and AI trust primitives
+### 6. Generated-content and AI trust primitives — 🟡 shipped in 0.5.0
+
+Shipped as `@ponchia/ui/css/generated.css` (`ui-generated`, `ui-origin-label`,
+`ui-reasoning`, `ui-tool-log` / `ui-tool-call`) — the origin/provenance labels,
+generated-content wrapper, and tool-call log of the "good first build" below.
+Chat-thread components and a `ui-confidence` widget are intentionally not shipped.
 
 Why it matters: AI interfaces are becoming common, but most UI systems either
 ship chat bubbles or nothing. Bronto should not become a chat framework. It

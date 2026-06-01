@@ -404,6 +404,26 @@ export declare const cls: {
   readonly stateReviewed: 'ui-state--reviewed';
   readonly stateNeedsReview: 'ui-state--needs-review';
   readonly syncbar: 'ui-syncbar';
+  readonly generated: 'ui-generated';
+  readonly generatedLabel: 'ui-generated__label';
+  readonly originLabel: 'ui-origin-label';
+  readonly originLabelAi: 'ui-origin-label--ai';
+  readonly reasoning: 'ui-reasoning';
+  readonly reasoningBody: 'ui-reasoning__body';
+  readonly toolLog: 'ui-tool-log';
+  readonly toolCall: 'ui-tool-call';
+  readonly toolCallName: 'ui-tool-call__name';
+  readonly toolCallStatus: 'ui-tool-call__status';
+  readonly toolCallBody: 'ui-tool-call__body';
+  readonly inspector: 'ui-inspector';
+  readonly inspectorHeader: 'ui-inspector__header';
+  readonly inspectorBody: 'ui-inspector__body';
+  readonly property: 'ui-property';
+  readonly propertyLabel: 'ui-property__label';
+  readonly propertyValue: 'ui-property__value';
+  readonly selectionbar: 'ui-selectionbar';
+  readonly selectionbarCount: 'ui-selectionbar__count';
+  readonly selectionbarActions: 'ui-selectionbar__actions';
   readonly printOnly: 'ui-print-only';
   readonly screenOnly: 'ui-screen-only';
   readonly breakBefore: 'ui-break-before';
@@ -645,6 +665,10 @@ export interface StateOpts {
   /** Pulse the indicator for an in-progress state (saving / syncing / retrying). Reduced-motion-safe. */
   busy?: boolean;
 }
+export interface OriginLabelOpts {
+  /** Accent-tint the label for AI/model-generated origin (vs a neutral tag). */
+  ai?: boolean;
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -687,6 +711,7 @@ export interface Ui {
   source(opts?: SourceOpts): string;
   provenance(opts?: ProvenanceOpts): string;
   state(opts?: StateOpts): string;
+  originLabel(opts?: OriginLabelOpts): string;
 }
 
 export declare const ui: Ui;

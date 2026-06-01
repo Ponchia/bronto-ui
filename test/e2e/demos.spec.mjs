@@ -22,6 +22,8 @@ const SHOWCASE = [
   'selection',
   'sources',
   'state',
+  'generated',
+  'workbench',
   'report',
 ];
 

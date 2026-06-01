@@ -1,0 +1,117 @@
+/* ==========================================================================
+   generated — opt-in trust surfaces for AI / system-generated content.
+
+   AI interfaces are becoming common, but most UI systems ship chat bubbles or
+   nothing. Bronto is not a chat framework — it owns the *trust* surfaces around
+   generated content: a marked region, an origin label, and quiet collapsible
+   reasoning / tool-call logs. Pairs with the source/citation layer
+   (css/sources.css). The host owns model metadata, reasoning-visibility policy,
+   tool execution, traces, redaction, and safety. Not imported by core.css.
+   ========================================================================== */
+
+/* --- Generated region — a marked wrapper for machine-authored content. --- */
+.ui-generated {
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+  border: 1px solid var(--line);
+  border-inline-start: 2px solid var(--accent);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: var(--space-xs);
+  padding: 0.85rem 1rem;
+  print-color-adjust: exact;
+}
+
+.ui-generated__label {
+  align-items: center;
+  color: var(--text-dim);
+  display: inline-flex;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  gap: 0.4rem;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+/* --- Origin label — "AI assisted" / "model output" / "human reviewed". --- */
+.ui-origin-label {
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--text-soft);
+  display: inline-flex;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  gap: 0.35rem;
+  letter-spacing: var(--tracking-wide);
+  padding: 0.08rem 0.55rem;
+  text-transform: uppercase;
+}
+
+.ui-origin-label--ai {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+/* --- Reasoning — a quiet, collapsible "how this was produced" block. --- */
+.ui-reasoning {
+  color: var(--text-dim);
+  font-size: var(--text-sm);
+}
+
+.ui-reasoning > summary {
+  color: var(--text-soft);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.ui-reasoning__body {
+  margin-block-start: var(--space-xs);
+}
+
+/* --- Tool log — a quiet, document-grade record of tool invocations. --- */
+.ui-tool-log {
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.ui-tool-call {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+}
+
+.ui-tool-call > summary {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+}
+
+.ui-tool-call__name {
+  color: var(--text);
+}
+
+.ui-tool-call__status {
+  color: var(--text-dim);
+  margin-inline-start: auto;
+}
+
+.ui-tool-call__body {
+  border-block-start: 1px solid var(--line);
+  color: var(--text-soft);
+  margin: 0;
+  overflow-x: auto;
+  padding: 0.5rem 0.6rem;
+  white-space: pre-wrap;
+}
+
+@media (forced-colors: active) {
+  .ui-generated {
+    border-inline-start-color: CanvasText;
+  }
+}

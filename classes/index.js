@@ -426,6 +426,28 @@ export const cls = Object.freeze({
   stateReviewed: 'ui-state--reviewed',
   stateNeedsReview: 'ui-state--needs-review',
   syncbar: 'ui-syncbar',
+  // generated content / AI-trust surfaces (css/generated.css)
+  generated: 'ui-generated',
+  generatedLabel: 'ui-generated__label',
+  originLabel: 'ui-origin-label',
+  originLabelAi: 'ui-origin-label--ai',
+  reasoning: 'ui-reasoning',
+  reasoningBody: 'ui-reasoning__body',
+  toolLog: 'ui-tool-log',
+  toolCall: 'ui-tool-call',
+  toolCallName: 'ui-tool-call__name',
+  toolCallStatus: 'ui-tool-call__status',
+  toolCallBody: 'ui-tool-call__body',
+  // workbench — inspector / property / selection bar (css/workbench.css)
+  inspector: 'ui-inspector',
+  inspectorHeader: 'ui-inspector__header',
+  inspectorBody: 'ui-inspector__body',
+  property: 'ui-property',
+  propertyLabel: 'ui-property__label',
+  propertyValue: 'ui-property__value',
+  selectionbar: 'ui-selectionbar',
+  selectionbarCount: 'ui-selectionbar__count',
+  selectionbarActions: 'ui-selectionbar__actions',
   printOnly: 'ui-print-only',
   screenOnly: 'ui-screen-only',
   breakBefore: 'ui-break-before',
@@ -719,6 +741,7 @@ export const ui = {
   source: ({ state } = {}) => j(cls.sourceCard, srcTone(state)),
   provenance: ({ state } = {}) => j(cls.provenance, srcTone(state)),
   state: ({ state, busy } = {}) => j(cls.state, stateTone(state), busy && cls.stateBusy),
+  originLabel: ({ ai } = {}) => j(cls.originLabel, ai && cls.originLabelAi),
 };
 
 export default ui;

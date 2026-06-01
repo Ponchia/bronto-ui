@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 446 classes across 139 component groups
+- 466 classes across 147 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -490,6 +490,13 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.file` | `ui-file` | base |
 
+### `.ui-generated`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.generated` | `ui-generated` | base |
+| `cls.generatedLabel` | `ui-generated__label` | part |
+
 ### `.ui-grid`
 
 | Registry key | Class | Kind |
@@ -529,6 +536,14 @@ each one matches a real selector in the stylesheet.
 | `cls.inputIcon` | `ui-input-icon` | base |
 | `cls.inputIconSlot` | `ui-input-icon__icon` | part |
 | `cls.inputIconEnd` | `ui-input-icon--end` | modifier |
+
+### `.ui-inspector`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.inspector` | `ui-inspector` | base |
+| `cls.inspectorBody` | `ui-inspector__body` | part |
+| `cls.inspectorHeader` | `ui-inspector__header` | part |
 
 ### `.ui-kbd`
 
@@ -690,6 +705,13 @@ each one matches a real selector in the stylesheet.
 | `cls.numNeg` | `ui-num--neg` | modifier |
 | `cls.numPos` | `ui-num--pos` | modifier |
 
+### `.ui-origin-label`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.originLabel` | `ui-origin-label` | base |
+| `cls.originLabelAi` | `ui-origin-label--ai` | modifier |
+
 ### `.ui-pagehead`
 
 | Registry key | Class | Kind |
@@ -738,6 +760,14 @@ each one matches a real selector in the stylesheet.
 | `cls.progressBar` | `ui-progress__bar` | part |
 | `cls.progressIndeterminate` | `ui-progress--indeterminate` | modifier |
 
+### `.ui-property`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.property` | `ui-property` | base |
+| `cls.propertyLabel` | `ui-property__label` | part |
+| `cls.propertyValue` | `ui-property__value` | part |
+
 ### `.ui-prose`
 
 | Registry key | Class | Kind |
@@ -776,6 +806,13 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.readout` | `ui-readout` | base |
+
+### `.ui-reasoning`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.reasoning` | `ui-reasoning` | base |
+| `cls.reasoningBody` | `ui-reasoning__body` | part |
 
 ### `.ui-report`
 
@@ -854,6 +891,14 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.select` | `ui-select` | base |
+
+### `.ui-selectionbar`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.selectionbar` | `ui-selectionbar` | base |
+| `cls.selectionbarActions` | `ui-selectionbar__actions` | part |
+| `cls.selectionbarCount` | `ui-selectionbar__count` | part |
 
 ### `.ui-shortcut`
 
@@ -1130,6 +1175,21 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.toastStack` | `ui-toast-stack` | base |
 | `cls.toastStackAssertive` | `ui-toast-stack--assertive` | modifier |
+
+### `.ui-tool-call`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.toolCall` | `ui-tool-call` | base |
+| `cls.toolCallBody` | `ui-tool-call__body` | part |
+| `cls.toolCallName` | `ui-tool-call__name` | part |
+| `cls.toolCallStatus` | `ui-tool-call__status` | part |
+
+### `.ui-tool-log`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.toolLog` | `ui-tool-log` | base |
 
 ### `.ui-tooltip`
 
