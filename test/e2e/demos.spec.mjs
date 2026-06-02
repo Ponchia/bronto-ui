@@ -26,6 +26,7 @@ const SHOWCASE = [
   'workbench',
   'command',
   'report',
+  'version-history-report',
 ];
 
 // The theme playground is a dev instrument whose colour swatches paint white

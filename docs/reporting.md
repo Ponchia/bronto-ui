@@ -36,6 +36,28 @@ does not sanitize content. If a report includes arbitrary LLM, CMS, or user HTML
 sanitize that content before rendering it and do not initialize
 `data-bronto-*` behaviors on the generated region.
 
+## The analytical toolbox in a report
+
+`css/report.css` gives you the document grammar (covers, sections, findings,
+evidence). The _content_ inside those sections is where the rest of the
+analytical layer earns its place. Each one is an opt-in import that stays out of
+the default bundle — add the leaves a given report actually needs, or pull the
+whole set with `@ponchia/ui/css/analytical.css`. Reach for:
+
+| Layer | Import | Reach for it when… |
+| --- | --- | --- |
+| **Marks** (`.ui-mark`, `.ui-bracket-note`) | `css/marks.css` | You want to emphasise a phrase _in prose_ — a highlight on the finding, an underline on a risk, or a bracket around an evidence/caveat passage. The inline counterpart to annotations. See [marks.md](./marks.md). |
+| **Sources / provenance** (`.ui-citation`, `.ui-source-card`, `.ui-source-list`, `.ui-provenance`) | `css/sources.css` | The report makes claims a reader will question — "where did this come from?". A CSS-only trust layer whose cross-cutting state modifier (`.ui-src--verified`, plus reviewed / generated / unverified / stale / conflict) sets a rationed tone, always paired with a written label, never colour alone. See [sources.md](./sources.md). |
+| **Annotations** (`.ui-annotation*`) | `css/annotations.css` | A figure needs an explicit callout — a peak, a limit, a watched region — or a small decorative margin mark. SVG only. See [annotations.md](./annotations.md) and the [off-chart + scaling notes](./annotations.md#using-annotations-off-chart) before you size one. |
+| **Legends / data keys** (`.ui-legend*`) | `css/legend.css` | A chart figure needs a colour key. WCAG 1.4.1 by construction. See [legends.md](./legends.md). |
+| **Generated-content trust** (`.ui-generated`, `.ui-origin-label`, `.ui-reasoning`, `.ui-tool-log`) | `css/generated.css` | The report (or a section of it) is AI/system-authored and should _say so_ — an origin label plus quiet, collapsible reasoning / tool-call logs. Pairs with the sources layer. See [generated.md](./generated.md). |
+| **Lifecycle / system state** (`.ui-state`, `.ui-syncbar`) | `css/state.css` | A status report needs to show the state a thing is in — saving / queued / stale / conflict / reviewed — as a labelled object, not a bare coloured dot. See [state.md](./state.md). |
+
+These compose with the report-native primitives already called out in
+[Composition rules](#composition-rules): `ui-statgrid`, `ui-alert`, `ui-table`,
+`ui-timeline`, `ui-meter`, and `ui-num`. None of them require behavior JS, so
+they are all safe in the static, PDF-first report path.
+
 ## Canonical skeleton
 
 ```html

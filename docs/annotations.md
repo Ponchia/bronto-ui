@@ -193,6 +193,80 @@ back to another side or a clamped note transform. It is not a collision solver
 for a whole chart. For dense annotation sets, pre-compute positions or author a
 mobile-specific SVG.
 
+### Using the helpers in a static, no-JS report
+
+The [report layer](./reporting.md) is static and ships no behavior JS, but these
+helpers are JS — so in a hand- or LLM-authored report you can't call them at
+render time. Bridge the gap by running them **once, at author/build time**, and
+pasting the returned strings straight into the SVG. The output is deterministic
+(path numbers are rounded to three decimals), so the strings are stable and
+diff-friendly.
+
+```js
+// author-time only — copy the logged strings into the static HTML
+import { circleSubjectPath, connectorLine } from '@ponchia/ui/annotations';
+
+circleSubjectPath({ radius: 15 });
+// "M0,-15A15,15 0 1 1 0,15A15,15 0 1 1 0,-15Z"
+connectorLine({ dx: 78, dy: -38, subject: { type: 'circle', radius: 15, radiusPadding: 0 } });
+// "M13.485,-6.57L78,-38"
+```
+
+The static markup then carries only the resolved strings — no runtime, no
+import:
+
+```html
+<g class="ui-annotation ui-annotation--circle ui-annotation--accent" transform="translate(34, 58)">
+  <path class="ui-annotation__subject" d="M0,-15A15,15 0 1 1 0,15A15,15 0 1 1 0,-15Z" />
+  <path class="ui-annotation__connector" d="M13.485,-6.57L78,-38" />
+  <g class="ui-annotation__note" transform="translate(78, -38)">…</g>
+</g>
+```
+
+## Using annotations off-chart
+
+Annotations are not only for charts. Two report uses worth calling out:
+
+- **A decorative margin mark.** A small `ui-annotation` group — a circled point
+  with a short note — adds a hand-annotated feel to a report cover or section
+  opener. It carries no data, so mark the whole SVG `aria-hidden="true"` and
+  `focusable="false"`: a screen reader should not read decoration.
+
+```html
+<svg width="440" height="92" viewBox="0 0 440 92" aria-hidden="true" focusable="false">
+  <g class="ui-annotation ui-annotation--circle ui-annotation--accent" transform="translate(34, 58)">
+    <path class="ui-annotation__subject" d="M0,-15A15,15 0 1 1 0,15A15,15 0 1 1 0,-15Z" />
+    <circle r="3.5" fill="var(--accent)" />
+    <path class="ui-annotation__connector" d="M13.485,-6.57L78,-38" />
+    <g class="ui-annotation__note" transform="translate(78, -38)">
+      <path class="ui-annotation__note-line" d="M0,0H188" />
+      <text class="ui-annotation__title" y="-8">You are here</text>
+      <text class="ui-annotation__label" y="12">a short, terse label</text>
+    </g>
+  </g>
+</svg>
+```
+
+- **Bracketing a passage of prose belongs to marks, not here.** To bracket a
+  sentence or paragraph in running text, use `.ui-bracket-note` from the
+  [marks layer](./marks.md) — it is the prose analogue of
+  `ui-annotation--bracket`. SVG annotations are for SVG figures.
+
+## Sizing: the user-unit trap
+
+Annotation text (`__title`, `__label`) is sized in **SVG user units**, so it
+scales with the figure. A 360-unit-wide chart stretched across a full report
+column is scaled roughly 2.5–3×, and the callout text scales with it — long
+notes turn huge and overflow the `viewBox` (SVG text is clipped, not wrapped).
+Two rules keep callouts readable:
+
+- **Keep note text terse** — a title and a few words, like the recipe examples
+  (`Peak`, `Limit`, `80 kB cap`). Push the full sentence into the figure caption,
+  the `<desc>`, or the fallback table.
+- **Constrain the figure width** so the user-unit → pixel scale stays near
+  1–1.5×: set a `max-inline-size` on the SVG instead of letting it stretch to the
+  whole column, or author the `viewBox` at roughly the rendered pixel size.
+
 ## Density and responsive rules
 
 Annotations are strongest when they explain the few things a reader would miss.

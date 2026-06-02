@@ -1,0 +1,889 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — version history report</title>
+    <meta
+      name="description"
+      content="A static, PDF-first report documenting every @ponchia/ui release from 0.1.0 to 0.5.0 and what each one added."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/report.css" />
+    <link rel="stylesheet" href="../dist/css/dataviz.css" />
+    <link rel="stylesheet" href="../dist/css/legend.css" />
+    <link rel="stylesheet" href="../dist/css/annotations.css" />
+    <link rel="stylesheet" href="../dist/css/marks.css" />
+  </head>
+  <body>
+    <main class="ui-report ui-report--numbered">
+      <!-- Cover -->
+      <header class="ui-report__cover ui-keep">
+        <p class="ui-eyebrow">Release retrospective</p>
+        <h1 class="ui-report__title">@ponchia/ui — the road to 0.5.0</h1>
+        <p class="ui-report__subtitle">
+          Every release from the first standalone <code>0.1.0</code> to the analytical-and-report
+          milestone <code>0.5.0</code>, and what each one added to the design system.
+        </p>
+        <ul class="ui-report__meta">
+          <li><time datetime="2026-06-02">2026-06-02</time></li>
+          <li>14 releases</li>
+          <li>Source: CHANGELOG.md</li>
+          <li>Chromium PDF-ready</li>
+        </ul>
+
+        <!-- Decorative off-chart annotation: a margin "pin" for vibe, not data. -->
+        <svg
+          class="ui-report__cover-mark"
+          width="440"
+          height="92"
+          viewBox="0 0 440 92"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <g
+            class="ui-annotation ui-annotation--circle ui-annotation--accent ui-annotation--draw"
+            transform="translate(34, 58)"
+          >
+            <path class="ui-annotation__subject" d="M0,-15A15,15 0 1 1 0,15A15,15 0 1 1 0,-15Z" />
+            <circle r="3.5" fill="var(--accent)" />
+            <path class="ui-annotation__connector" d="M13.485,-6.57L78,-38" />
+            <g class="ui-annotation__note" transform="translate(78, -38)">
+              <path class="ui-annotation__note-line" d="M0,0H188" />
+              <text class="ui-annotation__title" y="-8">You are here — 0.5.0</text>
+              <text class="ui-annotation__label" y="12">
+                14 releases in: the analytical &amp; report layer
+              </text>
+            </g>
+          </g>
+        </svg>
+
+        <p class="ui-print-only">Print copy: generated for archive review.</p>
+      </header>
+
+      <!-- Table of contents -->
+      <nav class="ui-report__toc ui-screen-only" aria-label="Report contents">
+        <p class="ui-eyebrow ui-eyebrow--muted">Contents</p>
+        <ol>
+          <li><a href="#summary">Executive summary</a></li>
+          <li><a href="#timeline">Release timeline</a></li>
+          <li><a href="#growth">How the surface grew</a></li>
+          <li><a href="#v01">0.1.x — the standalone package</a></li>
+          <li><a href="#v02">0.2.x — the optional layers</a></li>
+          <li><a href="#v03">0.3.x — adoption &amp; hardening</a></li>
+          <li><a href="#v04">0.4.x — color &amp; motion</a></li>
+          <li><a href="#v05">0.5.0 — the analytical &amp; report layer</a></li>
+          <li><a href="#matrix">Release matrix</a></li>
+          <li><a href="#sources">Sources</a></li>
+        </ol>
+      </nav>
+
+      <!-- Executive summary -->
+      <section id="summary" class="ui-report__section">
+        <h2 class="ui-report__section-head">Executive summary</h2>
+        <div class="ui-report__summary">
+          <div class="ui-prose">
+            <p>
+              <strong>@ponchia/ui</strong> is a CSS-first design system for interfaces that explain
+              themselves — it works in plain HTML, in every framework, and in PDF, with no component
+              runtime. Over 14 releases it grew from a re-skinned "Nothing"-inspired CSS bundle into
+              a governed system with a typed class contract, optional framework bindings, a
+              five-tier color constitution, CSS-native motion, and an opt-in
+              <em>analytical &amp; report</em> layer.
+            </p>
+            <p>
+              The throughline:
+              <mark class="ui-mark ui-mark--accent ui-mark--draw"
+                >keep plain CSS as the universal substrate</mark
+              >
+              and add thin, opt-in layers on top —
+              <mark class="ui-mark ui-mark--underline">never a component framework</mark>. Breaking
+              changes are rationed to the minor; everything else lands as additive, drift-checked
+              surface.
+            </p>
+          </div>
+        </div>
+        <div class="ui-statgrid">
+          <div class="ui-stat">
+            <span class="ui-stat__label">Releases</span>
+            <span class="ui-stat__value">14</span>
+            <span class="ui-stat__delta">0.1.0 → 0.5.0</span>
+          </div>
+          <div class="ui-stat">
+            <span class="ui-stat__label">Current</span>
+            <span class="ui-stat__value">0.5.0</span>
+            <span class="ui-stat__delta is-pos">2026-06-02</span>
+          </div>
+          <div class="ui-stat">
+            <span class="ui-stat__label">Runtime deps</span>
+            <span class="ui-stat__value">0</span>
+            <span class="ui-stat__delta">by design</span>
+          </div>
+          <div class="ui-stat">
+            <span class="ui-stat__label">CI gates</span>
+            <span class="ui-stat__value">24</span>
+            <span class="ui-stat__delta is-pos">+22 since 0.2</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Timeline -->
+      <section id="timeline" class="ui-report__section">
+        <h2 class="ui-report__section-head">Release timeline</h2>
+        <div class="ui-prose">
+          <p>
+            All 14 releases shipped between 2026-05-15 and 2026-06-02 — a tight, review-driven
+            cadence. The headline release of each line is marked live.
+          </p>
+        </div>
+        <ol class="ui-timeline">
+          <li class="ui-timeline__item">
+            <time class="ui-timeline__time" datetime="2026-05-15">May 15</time>
+            <span
+              ><strong>0.1.0</strong> — first standalone release; Nothing-inspired re-skin.</span
+            >
+          </li>
+          <li class="ui-timeline__item">
+            <time class="ui-timeline__time" datetime="2026-05-15">May 15</time>
+            <span
+              ><strong>0.2.0–0.2.2</strong> — cascade layers, tokens-as-data, typed classes,
+              behaviors, hardening.</span
+            >
+          </li>
+          <li class="ui-timeline__item">
+            <time class="ui-timeline__time" datetime="2026-05-16">May 16</time>
+            <span
+              ><strong>0.3.0</strong> — multi-POV review; legacy vocabulary removed, all surface
+              under <code>.ui-*</code>.</span
+            >
+          </li>
+          <li class="ui-timeline__item">
+            <time class="ui-timeline__time" datetime="2026-05-29">May 29</time>
+            <span
+              ><strong>0.3.1–0.3.6</strong> — six adoption/discoverability patches; glyphs
+              land.</span
+            >
+          </li>
+          <li class="ui-timeline__item">
+            <time class="ui-timeline__time" datetime="2026-05-31">May 31</time>
+            <span><strong>0.4.0</strong> — the color-system release (ADR-0001 steps 1–8).</span>
+          </li>
+          <li class="ui-timeline__item">
+            <time class="ui-timeline__time" datetime="2026-06-01">Jun 1</time>
+            <span><strong>0.4.1</strong> — CSS-native motion + static report kit (ADR-0002).</span>
+          </li>
+          <li class="ui-timeline__item" aria-current="step">
+            <time class="ui-timeline__time" datetime="2026-06-02">Jun 2</time>
+            <span><strong>0.5.0</strong> — the analytical &amp; generated-report layer.</span>
+          </li>
+        </ol>
+      </section>
+
+      <!-- Growth chart -->
+      <section id="growth" class="ui-report__section">
+        <h2 class="ui-report__section-head">How the surface grew</h2>
+        <div class="ui-prose">
+          <p>
+            The default bundle is gated by a raw-size budget on every release. Growth is deliberate
+            and recalibrated in the open — the analytical primitives that headline 0.5.0 are opt-in
+            leaves and stay
+            <em>out</em> of the default bundle.
+          </p>
+        </div>
+        <figure
+          class="ui-report__figure ui-chart ui-print-exact"
+          role="group"
+          aria-labelledby="growth-chart"
+        >
+          <figcaption id="growth-chart" class="ui-chart__caption">
+            Fig 1 — Default bundle raw size (kB) across selected releases
+          </figcaption>
+          <ul class="ui-legend" aria-label="Bundle metric">
+            <li class="ui-legend__item">
+              <span
+                class="ui-legend__swatch"
+                style="--chart-color: var(--chart-1); --chart-pattern: var(--chart-pattern-1)"
+                aria-hidden="true"
+              ></span>
+              <span class="ui-legend__label">dist/bronto.css — raw kB</span>
+            </li>
+          </ul>
+          <svg
+            class="ui-chart__svg"
+            viewBox="0 0 380 200"
+            role="img"
+            aria-labelledby="growth-svg-title growth-svg-desc"
+            style="
+              display: block;
+              inline-size: 100%;
+              max-inline-size: 560px;
+              margin-inline: auto;
+              font-family: system-ui, sans-serif;
+            "
+          >
+            <title id="growth-svg-title">Default bundle raw size by release</title>
+            <desc id="growth-svg-desc">
+              Measured dist/bronto.css raw size climbs from about 62 kB at 0.2.2 to 78.1 kB at
+              0.5.0, staying under the 80 kB budget ceiling marked by the threshold rule.
+            </desc>
+            <line x1="40" y1="175" x2="360" y2="175" stroke="var(--line)" />
+            <!-- bars: measured actual raw kB (not the budget cap) -->
+            <g fill="var(--chart-1)">
+              <rect x="51" y="74.25" width="32" height="100.75" />
+              <rect x="104" y="87.25" width="32" height="87.75" />
+              <rect x="157" y="71" width="32" height="104" />
+              <rect x="210" y="56.375" width="32" height="118.625" />
+              <rect x="264" y="49.875" width="32" height="125.125" />
+              <rect x="317" y="48.1" width="32" height="126.9" />
+            </g>
+            <g fill="var(--text-dim)" font-size="10" text-anchor="middle">
+              <text x="67" y="68">62</text>
+              <text x="120" y="81">54</text>
+              <text x="173" y="65">64</text>
+              <text x="226" y="50">73</text>
+              <text x="280" y="44">77</text>
+              <text x="333" y="42">78.1</text>
+            </g>
+            <g fill="var(--text-soft)" font-size="10" text-anchor="middle">
+              <text x="67" y="191">0.2.2</text>
+              <text x="120" y="191">0.3.0</text>
+              <text x="173" y="191">0.3.2</text>
+              <text x="226" y="191">0.3.5</text>
+              <text x="280" y="191">0.4.1</text>
+              <text x="333" y="191">0.5.0</text>
+            </g>
+            <!-- Annotation in its canonical home: the 80 kB budget ceiling -->
+            <g
+              class="ui-annotation ui-annotation--threshold ui-annotation--danger"
+              transform="translate(0, 45)"
+            >
+              <path class="ui-annotation__subject" d="M40,0L360,0" />
+              <path class="ui-annotation__connector" d="M120,0L120,-18" />
+              <g class="ui-annotation__note" transform="translate(120, -18)">
+                <text class="ui-annotation__title" y="-2">80 kB cap</text>
+                <text class="ui-annotation__label" y="12">budget ceiling</text>
+              </g>
+            </g>
+          </svg>
+          <div class="ui-chart__fallback">
+            <div class="ui-table-wrap">
+              <table class="ui-table ui-table--dense">
+                <caption>
+                  Default bundle raw size by release (approximate)
+                </caption>
+                <thead>
+                  <tr>
+                    <th>Release</th>
+                    <th class="is-num">Raw kB</th>
+                    <th class="is-num">Gzip kB</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>0.2.2</td>
+                    <td class="is-num">~62</td>
+                    <td class="is-num">~11</td>
+                  </tr>
+                  <tr>
+                    <td>0.3.0</td>
+                    <td class="is-num">~54</td>
+                    <td class="is-num">~10</td>
+                  </tr>
+                  <tr>
+                    <td>0.3.2</td>
+                    <td class="is-num">~64</td>
+                    <td class="is-num">~11</td>
+                  </tr>
+                  <tr>
+                    <td>0.3.5</td>
+                    <td class="is-num">~73</td>
+                    <td class="is-num">~12.7</td>
+                  </tr>
+                  <tr>
+                    <td>0.4.1</td>
+                    <td class="is-num">~77</td>
+                    <td class="is-num">~13.1</td>
+                  </tr>
+                  <tr>
+                    <td>0.5.0</td>
+                    <td class="is-num">78.1</td>
+                    <td class="is-num">13.6</td>
+                  </tr>
+                  <tr>
+                    <td>0.5.0 cap</td>
+                    <td class="is-num">80</td>
+                    <td class="is-num">14.5</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </figure>
+        <p class="ui-report__caption">
+          Bars are the <strong>measured</strong> <code>dist/bronto.css</code> raw size (0.5.0 = 78.1
+          kB, taken from the working tree); the threshold rule is the 80 kB gate ceiling, not a data
+          point. Earlier figures are the documented per-release CHANGELOG sizes. Opt-in leaves
+          (colorways, data-viz, analytical primitives, report kit) are excluded from the default
+          bundle by design.
+        </p>
+      </section>
+
+      <!-- 0.1.x -->
+      <section id="v01" class="ui-report__section">
+        <h2 class="ui-report__section-head">0.1.x — the standalone package</h2>
+
+        <article class="ui-report__finding ui-keep" aria-labelledby="f-010">
+          <p class="ui-eyebrow" id="f-010">0.1.0 · 2026-05-15 · First release</p>
+          <div class="ui-prose">
+            <p>
+              The library was extracted into its own standalone package and re-skinned to a
+              <strong>Nothing-inspired design language</strong>: a monochrome dual light/dark
+              palette, a single red accent, the Doto dot-matrix display type, flat hairline
+              surfaces, sharp radii, and no soft shadows.
+            </p>
+            <ul>
+              <li>
+                <strong>motion.css</strong> — keyframes plus reveal / stagger / skeleton / spinner /
+                caret utilities with full reduced-motion handling.
+              </li>
+              <li>
+                <strong>dots.css</strong> — dot-grid surfaces, dotted rules, the live-pulse status
+                dot, dot loaders and progress, matrix-reveal.
+              </li>
+              <li>
+                <strong>forms.css</strong> — input, select, textarea, search, switch, checkbox.
+              </li>
+              <li>
+                <strong>table.css</strong> — <code>ui-table</code> with dense / comfortable / lined
+                variants and numeric helpers.
+              </li>
+              <li>
+                An expanded <strong>admin shell</strong> (<code>app.css</code>): rail with dot nav,
+                blurred sticky topbar, toolbar, panel, metric tiles, empty state, mobile collapse.
+              </li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <!-- 0.2.x -->
+      <section id="v02" class="ui-report__section">
+        <h2 class="ui-report__section-head">0.2.x — the optional layers</h2>
+
+        <article class="ui-report__finding ui-keep" aria-labelledby="f-020">
+          <p class="ui-eyebrow" id="f-020">0.2.0 · 2026-05-15 · Architecture</p>
+          <div class="ui-prose">
+            <p>
+              The architectural turn:
+              <strong
+                >keep plain CSS as the universal substrate, add thin optional layers on top</strong
+              >. The whole framework now ships inside <code>@layer bronto</code>, so un-layered
+              consumer CSS overrides it without specificity fights.
+            </p>
+            <ul>
+              <li>
+                <strong>@ponchia/ui/tokens</strong> — design tokens as data (canonical JS, generated
+                JSON, typed <code>themeColor()</code>).
+              </li>
+              <li>
+                <strong>@ponchia/ui/classes</strong> — a typed class-name contract: the
+                <code>cls</code> registry, <code>ui.*</code> recipe builders, <code>cx()</code>.
+              </li>
+              <li>
+                <strong>@ponchia/ui/behaviors</strong> — vanilla, SSR-safe, dependency-free helpers
+                (theme, dismissible, disclosure).
+              </li>
+              <li>
+                Published to npm as <strong>@ponchia/ui</strong> with provenance; drift gates
+                <code>check-tokens</code> / <code>check-classes</code> added.
+              </li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="ui-report__finding ui-keep" aria-labelledby="f-021">
+          <p class="ui-eyebrow" id="f-021">0.2.1 · 2026-05-15 · Hygiene</p>
+          <div class="ui-prose">
+            <p>
+              Removed private project names and personal paths from shipped CSS comments and docs
+              (no selector or token changes). Supersedes 0.2.0, which still carried those
+              references.
+            </p>
+          </div>
+        </article>
+
+        <article class="ui-report__finding ui-keep" aria-labelledby="f-022">
+          <p class="ui-eyebrow" id="f-022">0.2.2 · 2026-05-15 · Framework hardening</p>
+          <div class="ui-prose">
+            <p>
+              Component and mobile expansion followed by a framework-grade hardening pass driven by
+              multi-agent review.
+            </p>
+            <ul>
+              <li><strong>RTL / logical properties</strong> across every file, lint-enforced.</li>
+              <li>
+                <strong>A11y</strong>: <code>initTabs</code> WAI-ARIA pattern, forced-colors
+                support, WCAG contrast fixes, an axe gate.
+              </li>
+              <li>
+                <strong>Theming contract</strong>: <code>--accent</code> as one knob; density and
+                high-contrast presets.
+              </li>
+              <li>
+                <strong>content.css</strong>: <code>.ui-prose</code> styles raw Markdown HTML with
+                zero per-element classes.
+              </li>
+              <li>
+                <strong>Prebuilt bundles</strong> (<code>dist/bronto.css</code>), Playwright visual
+                snapshots, DTCG token export, and a print stylesheet.
+              </li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <!-- 0.3.x -->
+      <section id="v03" class="ui-report__section">
+        <h2 class="ui-report__section-head">0.3.x — adoption &amp; hardening</h2>
+        <div class="ui-prose">
+          <p>
+            Seven releases of review-driven, mostly-additive adoption work. The 0.3.0 cleanup was
+            the one breaking gate; everything after it landed as patches under the 0.x "only the
+            minor may break" policy.
+          </p>
+        </div>
+
+        <article class="ui-report__finding ui-keep" aria-labelledby="f-030">
+          <p class="ui-eyebrow" id="f-030">0.3.0 · 2026-05-16 · Multi-POV review · BREAKING</p>
+          <div class="ui-prose">
+            <p>
+              A six-perspective review drove the big cleanup: the entire non-<code>ui-*</code>
+              legacy vocabulary was removed or migrated, so everything shipped now lives under the
+              <code>.ui-*</code> contract and the <code>check-classes</code> drift gate.
+            </p>
+            <ul>
+              <li>
+                New <code>--accent-text</code> token so a pale re-brand can't silently fail text
+                contrast; <code>--focus-ring</code> wired live.
+              </li>
+              <li>
+                Generated <strong>literal</strong> <code>.d.ts</code> types — mistyped class/token
+                keys are now compile errors.
+              </li>
+              <li>
+                Per-leaf imports are now layer-safe; the raw escape hatch moved to
+                <code>css/unlayered/*</code>.
+              </li>
+              <li>
+                First-class <code>site.css</code> content shell and <code>ui-quote</code>; an
+                optional Shiki theme.
+              </li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="ui-report__finding ui-keep" aria-labelledby="f-031">
+          <p class="ui-eyebrow" id="f-031">0.3.1 · 2026-05-16 · 12-POV adoption</p>
+          <div class="ui-prose">
+            <p>
+              <code>ui-combobox</code>, <code>ui-popover</code>, <code>initFormValidation</code>,
+              <code>initTableSort</code>, busy buttons; form/layout primitives; semantic
+              <code>--bronto-color-*</code>
+              and ramp tokens; a generated reference, framework guides, and example apps.
+            </p>
+          </div>
+        </article>
+
+        <article class="ui-report__finding ui-keep" aria-labelledby="f-032">
+          <p class="ui-eyebrow" id="f-032">0.3.2 · 2026-05-16 · Re-skin-proven adoption</p>
+          <div class="ui-prose">
+            <p>
+              Promotes genuinely generic, token-only primitives upstream:
+              <code>ui-stat</code>/<code>ui-statgrid</code>, <code>ui-link--cta</code>,
+              <code>ui-badge--dot</code>/<code>--muted</code>, <code>ui-num</code>,
+              <code>ui-dotmatrix</code>, <code>ui-container--wide</code> — all non-breaking, with
+              permanent aliases for the old shell-locked names.
+            </p>
+          </div>
+        </article>
+
+        <article class="ui-report__finding ui-keep" aria-labelledby="f-033">
+          <p class="ui-eyebrow" id="f-033">
+            0.3.3 · 2026-05-16 · Consumer evidence + discoverability
+          </p>
+          <div class="ui-prose">
+            <p>
+              <code>tokens/resolved.json</code> (every color resolved to hex per theme, for
+              canvas/WebGL/SVG); button size scale; a shell-agnostic <code>ui-empty-state</code>; a
+              controlled <code>ui-modal</code> <code>is-open</code> path; <code>llms.txt</code> and
+              shipped docs in the tarball for offline agents.
+            </p>
+          </div>
+        </article>
+
+        <article class="ui-report__finding ui-keep" aria-labelledby="f-034">
+          <p class="ui-eyebrow" id="f-034">0.3.4 · 2026-05-17 · A11y + adoption pass</p>
+          <div class="ui-prose">
+            <p>
+              A CI-gated <strong>WCAG 2.1 contrast matrix</strong> (<code>docs/contrast.md</code>,
+              <code>check:contrast</code>); a <code>docs/usage.md</code> decision guide; the
+              <code>info</code>
+              status tone wired through the full status family; a full re-skin recipe proving
+              "Nothing" is a token skin, not the architecture.
+            </p>
+          </div>
+        </article>
+
+        <article class="ui-report__finding ui-keep" aria-labelledby="f-035">
+          <p class="ui-eyebrow" id="f-035">0.3.5 · 2026-05-29 · Six requested primitives</p>
+          <div class="ui-prose">
+            <p>
+              Primitives adopters were hand-rolling:
+              <code>ui-pagehead</code>, <code>ui-steps</code>, <code>ui-timeline</code>,
+              <code>ui-meter</code>, <code>ui-kbd</code>, <code>ui-input-icon</code>, plus a
+              scroll-snap <code>ui-carousel</code> + <code>initCarousel</code> and a
+              <code>&lt;dialog&gt;</code>-based lightbox.
+            </p>
+          </div>
+        </article>
+
+        <article class="ui-report__finding ui-keep" aria-labelledby="f-036">
+          <p class="ui-eyebrow" id="f-036">0.3.6 · 2026-05-31 · Display glyphs</p>
+          <div class="ui-prose">
+            <p>
+              <code>@ponchia/ui/glyphs</code> — a frozen 43-glyph 16×16 dot-matrix display-icon set
+              rendered on the existing <code>.ui-dotmatrix</code> primitive (no SVG, no icon font),
+              with a <code>solid</code> mode legible as an inline icon down to ~16px and an
+              <code>initDotGlyph()</code> behavior. The <code>GlyphName</code>
+              union is generated and drift-checked.
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <!-- 0.4.x -->
+      <section id="v04" class="ui-report__section">
+        <h2 class="ui-report__section-head">0.4.x — color &amp; motion</h2>
+
+        <article class="ui-report__finding ui-keep" aria-labelledby="f-040">
+          <p class="ui-eyebrow" id="f-040">0.4.0 · 2026-05-31 · The color system · BREAKING</p>
+          <div class="ui-prose">
+            <p>
+              A governed evolution beyond pure monochrome —
+              <strong>ADR-0001 steps 1–8</strong>. The tier model is written down and
+              <em>enforced</em> (<code>check:color-policy</code>), and the "Nothing" look is proven
+              to be a skin, not the architecture.
+            </p>
+            <ul>
+              <li>
+                <strong>Colorways</strong> (<code>skins.css</code>): amber CRT · phosphor green ·
+                e-ink, each a contrast-gated one-hue re-point, opt-in only.
+              </li>
+              <li>
+                <strong>Data-viz palette</strong> (<code>dataviz.css</code>,
+                <code>charts.json</code>): accent-led + Okabe-Ito, colourblind-gated, with pattern
+                fills so colour is never the sole signal.
+              </li>
+              <li>
+                <strong>OKLCH</strong> authoring + a perceptually-even accent ramp; an
+                <strong>APCA</strong> advisory contrast track.
+              </li>
+              <li>
+                Optional <strong>React + Solid bindings</strong>; a one-node glyph mask render path
+                + <code>.ui-icon</code>.
+              </li>
+              <li>The only break: the orphan <code>--orange</code> token was removed.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="ui-report__finding ui-keep" aria-labelledby="f-041">
+          <p class="ui-eyebrow" id="f-041">0.4.1 · 2026-06-01 · Motion + the report kit</p>
+          <div class="ui-prose">
+            <p>
+              Patch hardening plus the first step of the modern-platform motion direction
+              (<strong>ADR-0002</strong>) — and the
+              <strong>static report kit</strong> this very document is built on.
+            </p>
+            <ul>
+              <li>
+                <strong>Static report kit</strong> (<code>css/report.css</code>,
+                <code>docs/reporting.md</code>): covers, sections, summaries, findings, evidence,
+                chart wrappers, and print utilities — PDF-first, opt-in, runtime-free.
+              </li>
+              <li>
+                <strong>Zero-JS enter <em>and</em> exit motion</strong> for dialog, drawer, popover,
+                toast, and accordion via <code>@starting-style</code> + <code>allow-discrete</code>.
+              </li>
+              <li>
+                <strong>Scroll-driven motion</strong> and <strong>View Transitions</strong> as
+                progressive enhancement; browser floor raised (Chrome 125 / Safari 18 / Firefox
+                129).
+              </li>
+              <li>
+                Optional <strong>Qwik</strong> bindings; OLED <code>data-surface="oled"</code>; a
+                re-tuned, more readable dark theme.
+              </li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <!-- 0.5.0 -->
+      <section id="v05" class="ui-report__section">
+        <h2 class="ui-report__section-head">0.5.0 — the analytical &amp; report layer</h2>
+
+        <div class="ui-report__summary">
+          <div class="ui-prose">
+            <p>
+              The release that builds out the "analytical &amp; generated-report UI" identity: a
+              full suite of opt-in <strong>communication primitives</strong>, each owning its own
+              visual grammar and pure geometry while refusing to own scales, state, or hit-testing —
+              so none of them is a chart engine.
+            </p>
+          </div>
+        </div>
+
+        <article class="ui-report__finding ui-keep" aria-labelledby="f-050a">
+          <p class="ui-eyebrow" id="f-050a">0.5.0 · 2026-06-02 · Added — the analytical suite</p>
+          <div class="ui-prose">
+            <ul>
+              <li>
+                <strong>SVG annotations</strong> (<code>annotations.css</code>) — the d3-annotation
+                grammar: subject · connector · note, with many variants, six tones, and
+                reduced-motion-safe draw/reveal motion.
+              </li>
+              <li>
+                <strong>Legends / data keys</strong> (<code>legend.css</code>) — a standalone
+                data-key layer reading the <code>--chart-*</code> palette; WCAG 1.4.1 by
+                construction; optional series-toggling.
+              </li>
+              <li>
+                <strong>Text marks / evidence</strong> (<code>marks.css</code>) — sober,
+                report-grade emphasis for running prose (the inline counterpart to SVG annotations).
+              </li>
+              <li>
+                <strong>Connectors / leader lines</strong> (<code>connectors.css</code>) — a line
+                between two DOM elements; the geometry kernel now single-sources both connectors and
+                annotations.
+              </li>
+              <li>
+                <strong>Spotlight</strong>, <strong>crosshair / readout</strong>, and
+                <strong>selection states</strong> — guided focus, a plot ruler that reports position
+                (not data), and an <code>on/off/maybe</code> emphasis vocabulary.
+              </li>
+              <li>
+                <strong>Sources, citations &amp; provenance</strong> (<code>sources.css</code>) — a
+                CSS-only trust layer: "where did this come from?", with
+                verified/reviewed/generated/unverified/stale/conflict states.
+              </li>
+              <li>
+                <strong>Label declutter</strong> + <strong>direct labels</strong> — deterministic
+                1-D de-overlap and direct-labeling helpers (pure, no DOM/scales).
+              </li>
+              <li>
+                Plus a <strong>command palette</strong>, <strong>workbench</strong> tool-UI core,
+                <strong>lifecycle/system state</strong>, <strong>generated-content</strong> trust
+                surfaces, the <code>.ui-shortcut</code> hint, and an
+                <code>analytical.css</code> roll-up.
+              </li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="ui-report__finding ui-keep" aria-labelledby="f-050b">
+          <p class="ui-eyebrow" id="f-050b">0.5.0 · Changed — three rationed breaks</p>
+          <div class="ui-prose">
+            <p>
+              Per the versioning policy, the minor carries the breaking changes — here, three small
+              ones, all mechanical:
+            </p>
+            <ol>
+              <li>
+                The chart data key moved out of the report kit into the standalone legend layer
+                (<code>.ui-chart__legend</code> → <code>.ui-legend</code>).
+              </li>
+              <li>
+                Annotation arrowheads now render via the shared connectors geometry kernel — a small
+                path-shape change.
+              </li>
+              <li>
+                The opt-in marks' rationed-accent tone was renamed <code>evidence</code> →
+                <code>accent</code> to match the rest of the analytical vocabulary.
+              </li>
+            </ol>
+            <p>
+              The default <code>dist/bronto.css</code> is otherwise unchanged. The Doto webfont also
+              moved to woff2-only, cutting the six-weight payload from ~823 kB to ~35 kB.
+            </p>
+          </div>
+          <blockquote class="ui-bracket-note ui-bracket-note--accent">
+            <span class="ui-bracket-note__label">Pinning</span>
+            Pre-1.0, breaking changes ship in the <em>minor</em> — pin to the minor
+            (<code>~0.5.0</code>). A bare <code>^0</code> / <code>*</code> wildcard does
+            <strong>not</strong> protect you.
+          </blockquote>
+        </article>
+
+        <div class="ui-statgrid">
+          <div class="ui-stat">
+            <span class="ui-stat__label">New CSS layers</span>
+            <span class="ui-stat__value">13</span>
+            <span class="ui-stat__delta is-pos">all opt-in</span>
+          </div>
+          <div class="ui-stat">
+            <span class="ui-stat__label">Breaking changes</span>
+            <span class="ui-stat__value">3</span>
+            <span class="ui-stat__delta">mechanical</span>
+          </div>
+          <div class="ui-stat">
+            <span class="ui-stat__label">Font payload</span>
+            <span class="ui-stat__value">35 kB</span>
+            <span class="ui-stat__delta is-pos">−96%</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Release matrix -->
+      <section id="matrix" class="ui-report__section">
+        <h2 class="ui-report__section-head">Release matrix</h2>
+        <div class="ui-table-wrap">
+          <table class="ui-table">
+            <caption>
+              Every @ponchia/ui release and its headline contribution
+            </caption>
+            <thead>
+              <tr>
+                <th>Version</th>
+                <th>Date</th>
+                <th>Kind</th>
+                <th>Headline</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0.1.0</td>
+                <td>2026-05-15</td>
+                <td>Initial</td>
+                <td>Standalone package, Nothing-inspired re-skin</td>
+              </tr>
+              <tr>
+                <td>0.2.0</td>
+                <td>2026-05-15</td>
+                <td>Minor</td>
+                <td>Cascade layers, tokens-as-data, typed classes, behaviors</td>
+              </tr>
+              <tr>
+                <td>0.2.1</td>
+                <td>2026-05-15</td>
+                <td>Patch</td>
+                <td>Scrub private references from shipped CSS</td>
+              </tr>
+              <tr>
+                <td>0.2.2</td>
+                <td>2026-05-15</td>
+                <td>Patch</td>
+                <td>RTL, a11y, theming contract, prebuilt bundles</td>
+              </tr>
+              <tr>
+                <td>0.3.0</td>
+                <td>2026-05-16</td>
+                <td class="is-key">Minor (breaking)</td>
+                <td>Legacy vocabulary removed; all surface under <code>.ui-*</code></td>
+              </tr>
+              <tr>
+                <td>0.3.1</td>
+                <td>2026-05-16</td>
+                <td>Patch</td>
+                <td>Combobox, popover, form validation, table sort</td>
+              </tr>
+              <tr>
+                <td>0.3.2</td>
+                <td>2026-05-16</td>
+                <td>Patch</td>
+                <td>Stat, num, dotmatrix and friends promoted upstream</td>
+              </tr>
+              <tr>
+                <td>0.3.3</td>
+                <td>2026-05-16</td>
+                <td>Patch</td>
+                <td>Resolved-color JSON, llms.txt, offline docs</td>
+              </tr>
+              <tr>
+                <td>0.3.4</td>
+                <td>2026-05-17</td>
+                <td>Patch</td>
+                <td>Gated WCAG contrast matrix, usage guide, info tone</td>
+              </tr>
+              <tr>
+                <td>0.3.5</td>
+                <td>2026-05-29</td>
+                <td>Patch</td>
+                <td>Six requested primitives + carousel/lightbox</td>
+              </tr>
+              <tr>
+                <td>0.3.6</td>
+                <td>2026-05-31</td>
+                <td>Patch</td>
+                <td>43-glyph dot-matrix icon set</td>
+              </tr>
+              <tr>
+                <td>0.4.0</td>
+                <td>2026-05-31</td>
+                <td class="is-key">Minor (breaking)</td>
+                <td>Color system: colorways, data-viz, OKLCH, bindings</td>
+              </tr>
+              <tr>
+                <td>0.4.1</td>
+                <td>2026-06-01</td>
+                <td>Patch</td>
+                <td>CSS-native motion + the static report kit</td>
+              </tr>
+              <tr>
+                <td>0.5.0</td>
+                <td>2026-06-02</td>
+                <td class="is-key">Minor (breaking)</td>
+                <td>The analytical &amp; generated-report layer</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Sources -->
+      <section id="sources" class="ui-report__section ui-report__section--unnumbered">
+        <h2 class="ui-report__section-head" id="sources-head">Sources</h2>
+        <div class="ui-report__sources" aria-labelledby="sources-head">
+          <div class="ui-prose">
+            <ul>
+              <li>
+                <strong>CHANGELOG.md</strong> — the curated, per-release narrative (and the GitHub
+                Release body since 0.4.0).
+              </li>
+              <li>
+                <strong>docs/adr/0001-color-system.md</strong> — the five-tier color constitution
+                behind 0.4.0.
+              </li>
+              <li>
+                <strong>docs/adr/0002-scope-and-2026-baseline.md</strong> — the modern-platform
+                motion direction and browser floor behind 0.4.1.
+              </li>
+              <li>
+                <strong>docs/reporting.md</strong> — the report grammar this document is composed
+                in.
+              </li>
+              <li>
+                <strong>package.json</strong> — current version <code>0.5.0</code>, zero runtime
+                dependencies.
+              </li>
+            </ul>
+          </div>
+        </div>
+        <p class="ui-report__caption">
+          Generated as a dogfooding test of the @ponchia/ui report layer — static HTML, no behavior
+          JS, Chromium PDF-ready.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
