@@ -104,6 +104,17 @@ mermaid.initialize(brontoMermaidTheme('dark')); // { theme: 'base', themeVariabl
 Annotate a rendered diagram with the SVG annotation layer as a build-time
 recipe. Details: `docs/mermaid.md`.
 
+D2 (d2lang.com) is themed the same way — it compiles to a frozen SVG, so the
+slots take resolved hex; the base ramp is monochrome and the accent is opt-in
+per node:
+
+```js
+import { brontoD2Vars } from '@ponchia/ui/d2';
+const source = brontoD2Vars() + 'a -> b'; // prepend the vars block, then render
+```
+
+Details: `docs/d2.md`.
+
 `--chart-1..8` (categorical; series 1 = accent; colourblind-safe, gated under
 simulated protan/deutan/tritan), `--chart-seq-*` (sequential), `--chart-div-*`
 (diverging), and `--chart-pattern-1..8` (dot-matrix fills — pair colour N with
@@ -392,6 +403,8 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   analytical figures.
 - `docs/mermaid.md` — theme Mermaid diagrams from bronto tokens (resolved
   `base` themeVariables, gated) and annotate the rendered SVG.
+- `docs/d2.md` — theme D2 diagrams from bronto tokens (theme-override slots,
+  monochrome base + opt-in accent, gated) and annotate the rendered SVG.
 - `docs/contrast.md` — the published, CI-gated WCAG 2.1 contrast matrix
   for every contractual token pairing, per theme. Generated from the
   resolved palette; the build fails below the declared floor.
