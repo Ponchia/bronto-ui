@@ -5,7 +5,7 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
-## Unreleased — 0.5.0
+## 0.5.0 — 2026-06-02
 
 A **minor** that builds out the "analytical & generated-report UI" identity: a
 full suite of opt-in **communication primitives** — SVG annotations, legends,

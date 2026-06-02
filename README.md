@@ -3,7 +3,7 @@
 [![npm](https://img.shields.io/npm/v/@ponchia/ui?logo=npm)](https://www.npmjs.com/package/@ponchia/ui)
 [![npm provenance](https://img.shields.io/badge/npm-provenance-blue?logo=npm)](https://www.npmjs.com/package/@ponchia/ui#provenance)
 [![runtime deps](https://img.shields.io/badge/runtime%20deps-0-brightgreen)](https://github.com/Ponchia/bronto-ui/blob/main/package.json)
-[![dist](https://img.shields.io/badge/dist-~75kB%20%2F%20~13kB%20gzip-informational)](https://github.com/Ponchia/bronto-ui/blob/main/scripts/check-dist.mjs)
+[![dist](https://img.shields.io/badge/dist-~76kB%20%2F%20~13kB%20gzip-informational)](https://github.com/Ponchia/bronto-ui/blob/main/scripts/check-dist.mjs)
 [![CI](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Ponchia/bronto-ui/badge)](https://scorecard.dev/viewer/?uri=github.com/Ponchia/bronto-ui)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE)
@@ -36,7 +36,7 @@ Or drop it in with no build step, straight from a CDN:
 
 ## Quick start
 
-**1. Load the CSS.** One flattened, minified bundle — the whole framework, one request (~75 kB raw / ~13 kB gzip):
+**1. Load the CSS.** One flattened, minified bundle — the whole framework, one request (~76 kB raw / ~13 kB gzip):
 
 ```css
 @import '@ponchia/ui';            /* via a bundler */
@@ -168,7 +168,7 @@ Recent-evergreen, by design. The framework targets the modern web platform — c
 
 ## Versioning
 
-Pre-1.0 and deliberately so. **Until `1.0.0`, breaking changes ship in the _minor_** (`0.x.0`); patches (`0.x.y`) are always non-breaking. Pin with the patch range — at `0.x`, `~0.4.0` (and equivalently `^0.4.0`) resolves to `>=0.4.0 <0.5.0`, giving you safe patches while holding back the next breaking minor. Every breaking change is called out under a **BREAKING** heading in the **[CHANGELOG](https://github.com/Ponchia/bronto-ui/blob/main/CHANGELOG.md)** with a migration note.
+Pre-1.0 and deliberately so. **Until `1.0.0`, breaking changes ship in the _minor_** (`0.x.0`); patches (`0.x.y`) are always non-breaking. Pin with the patch range — at `0.x`, `~0.5.0` (and equivalently `^0.5.0`) resolves to `>=0.5.0 <0.6.0`, giving you safe patches while holding back the next breaking minor. Every breaking change is called out under a **BREAKING** heading in the **[CHANGELOG](https://github.com/Ponchia/bronto-ui/blob/main/CHANGELOG.md)** with a migration note.
 
 Contractual (changes are breaking): token **names** and documented token roles, `.ui-*` class and recipe names, `data-bronto-*` attributes, exported behavior/glyph/binding function names and each behavior's cleanup contract. Not contractual (may change any release): exact token **values** and generated colour math outputs (visual tuning) unless a doc explicitly says the value is stable, plus internal leaf-file / `@layer` boundaries. See **[docs/stability.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/stability.md)** for the full public-surface matrix.
 
