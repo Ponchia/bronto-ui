@@ -8,6 +8,13 @@
       content="@ponchia/ui (Bronto) — a CSS-first design system for interfaces that explain themselves. Live showcase + documentation: foundations, the standard component center, and the analytical communication primitives that are its differentiator."
     />
     <title>@ponchia/ui — design system showcase</title>
+    <!-- Establish a cascade layer ORDERED BEFORE `bronto` so the motion-preview
+         rules in index.css can win: for !important declarations layer order is
+         reversed, so an earlier layer beats the library's layered-!important
+         reduced-motion reset. Must be declared before bronto.css is parsed. -->
+    <style>
+      @layer bronto-preview, bronto;
+    </style>
     <link rel="stylesheet" href="../dist/bronto.css" />
     <!-- Opt-in colorways (0.4.0). Not in the default bundle — a separate
          entrypoint a consumer adds on demand. Loaded here to demo the switcher. -->
@@ -29,261 +36,7 @@
     <!-- Opt-in report kit (0.5.0): the static chart-bar primitives the
          standard-tier specimen renders. Standalone leaf, never bundled. -->
     <link rel="stylesheet" href="../dist/css/report.css" />
-    <style>
-      /* No local @font-face: Doto ships in css/fonts.css (bundled by
-         core.css) with URLs relative to the package, so it resolves here
-         with zero demo-side setup — that is the portability fix in action. */
-      body {
-        margin: 0;
-      }
-      .wrap {
-        margin: 0 auto;
-        max-width: 1100px;
-        padding: 2rem 1.25rem 5rem;
-      }
-      section {
-        margin-top: 2.5rem;
-      }
-
-      /* Hero / thesis */
-      .lede {
-        color: var(--text-soft);
-        font-size: 1.15rem;
-        line-height: 1.5;
-        max-width: 62ch;
-      }
-      .boundary {
-        display: grid;
-        gap: 1rem;
-        grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-        margin-block-start: 1.25rem;
-      }
-      .boundary > div {
-        border: 1px solid var(--line);
-        border-radius: var(--radius-md);
-        padding: 0.9rem 1rem;
-      }
-      .boundary dt {
-        color: var(--text-dim);
-        font-family: var(--mono);
-        font-size: var(--text-2xs);
-        letter-spacing: var(--tracking-wide);
-        text-transform: uppercase;
-      }
-      .boundary dd {
-        margin: 0.35rem 0 0;
-      }
-      .toc {
-        display: flex;
-        flex-wrap: wrap;
-        font-family: var(--mono);
-        font-size: var(--text-2xs);
-        gap: 0.4rem 0.5rem;
-        margin-block: 1.75rem 0;
-        padding: 0;
-        list-style: none;
-      }
-      .toc a {
-        border: 1px solid var(--line);
-        border-radius: var(--radius-pill);
-        color: var(--text-soft);
-        display: inline-block;
-        padding: 0.2rem 0.7rem;
-        text-decoration: none;
-      }
-
-      /* Tiers — the IA spine. */
-      .tier {
-        margin-block-start: 4rem;
-      }
-      .tier__head {
-        border-block-start: 2px solid var(--line-strong);
-        padding-block-start: 1rem;
-      }
-      .tier--star .tier__head {
-        border-block-start-color: var(--accent);
-      }
-      .tier__n {
-        color: var(--text-dim);
-        font-family: var(--mono);
-        font-size: var(--text-2xs);
-        letter-spacing: var(--tracking-wide);
-        text-transform: uppercase;
-      }
-      .tier__title {
-        margin: 0.25rem 0 0.4rem;
-      }
-      .tier__blurb {
-        color: var(--text-soft);
-        margin: 0;
-        max-width: 64ch;
-      }
-
-      /* Specimen card — live example + grammar + recipe + boundary + docs. */
-      .spec {
-        border: 1px solid var(--line);
-        border-radius: var(--radius-md);
-        display: grid;
-        gap: 1rem;
-        margin-block-start: 1.5rem;
-        padding: 1.25rem;
-      }
-      .spec__name {
-        margin: 0;
-      }
-      .spec__one {
-        color: var(--text-soft);
-        margin: 0.3rem 0 0;
-        max-width: 64ch;
-      }
-      .spec__demo {
-        /* Render specimens on --bg (not --panel-soft): the accent-text tones in
-           the analytical primitives are contrast-gated against --bg, and on the
-           lighter panel they dip just under 4.5:1. */
-        background: var(--bg);
-        border: 1px solid var(--line);
-        border-radius: var(--radius-md);
-        padding: 1.25rem;
-      }
-      .spec__code summary {
-        color: var(--text-dim);
-        cursor: pointer;
-        font-family: var(--mono);
-        font-size: var(--text-2xs);
-        letter-spacing: var(--tracking-wide);
-        text-transform: uppercase;
-      }
-      .spec__code pre {
-        background: var(--panel-strong);
-        border: 1px solid var(--line);
-        border-radius: var(--radius-md);
-        font-family: var(--mono);
-        font-size: var(--text-2xs);
-        margin: 0.6rem 0 0;
-        overflow-x: auto;
-        padding: 0.8rem;
-      }
-      .spec__meta {
-        align-items: center;
-        display: flex;
-        flex-wrap: wrap;
-        font-size: var(--text-sm);
-        gap: 0.5rem 1rem;
-      }
-      .spec__boundary {
-        color: var(--text-dim);
-        flex: 1 1 18rem;
-      }
-
-      /* Palette swatches. */
-      .swatches {
-        display: grid;
-        gap: 0.5rem;
-        grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
-      }
-      .sw {
-        border: 1px solid var(--line);
-        border-radius: var(--radius-md);
-        font-family: var(--mono);
-        font-size: var(--text-2xs);
-        overflow: hidden;
-      }
-      .sw i {
-        display: block;
-        height: 3rem;
-      }
-      .sw span {
-        display: block;
-        padding: 0.4rem 0.5rem;
-      }
-
-      /* Analytical specimen stages (ported from the per-primitive demos). */
-      .legend-grid {
-        display: grid;
-        gap: 1rem;
-        grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-      }
-      .conn-stage {
-        block-size: 15rem;
-        position: relative;
-      }
-      .conn-node {
-        max-inline-size: 10rem;
-        position: absolute;
-        z-index: 1;
-      }
-      #node-a {
-        inset-block-start: 1rem;
-        inset-inline-start: 1rem;
-      }
-      #node-b {
-        inset-block-end: 1rem;
-        inset-inline-end: 1rem;
-      }
-      #node-c {
-        inset-block-start: 1.25rem;
-        inset-inline-end: 1.25rem;
-      }
-      .xh-plot {
-        block-size: 13rem;
-        position: relative;
-      }
-      .sel-row {
-        align-items: end;
-        block-size: 9rem;
-        display: flex;
-        gap: var(--space-sm);
-      }
-      .sel-bar {
-        background: var(--accent);
-        border-radius: var(--radius-sm);
-        flex: 1;
-      }
-      .anno-svg {
-        block-size: auto;
-        inline-size: 100%;
-        max-block-size: 12rem;
-      }
-      /* A scoped, non-overlay illustration of the spotlight look (the real
-         ui-spotlight is a fixed full-viewport overlay; see its demo link). */
-      .spot-mock {
-        background: color-mix(in srgb, #000 55%, transparent);
-        border-radius: var(--radius-md);
-        min-block-size: 9rem;
-        padding: 1rem;
-        position: relative;
-      }
-      .spot-mock__hole {
-        background: var(--bg);
-        border: 2px solid var(--accent);
-        border-radius: var(--radius-md);
-        inset-block-start: 1rem;
-        inset-inline-start: 1rem;
-        padding: 0.6rem 0.9rem;
-        position: absolute;
-        z-index: 1;
-      }
-
-      /* Frontier — what's next, not yet built. */
-      .frontier {
-        display: grid;
-        gap: 1rem;
-        grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-        margin-block-start: 1.5rem;
-      }
-      .frontier__card {
-        border: 1px dashed var(--line-strong);
-        border-radius: var(--radius-md);
-        padding: 1rem;
-      }
-      .frontier__card h3 {
-        margin: 0 0 0.3rem;
-      }
-      .frontier__card p {
-        color: var(--text-soft);
-        margin: 0;
-      }
-    </style>
+    <link rel="stylesheet" href="./index.css" />
   </head>
   <body>
     <div class="ui-dotfield" aria-hidden="true"></div>
@@ -295,6 +48,15 @@
         </div>
         <span class="ui-cluster">
           <button class="ui-button ui-button--ghost" id="dirBtn" type="button">DIR: LTR</button>
+          <button
+            class="ui-button ui-button--ghost"
+            id="motionBtn"
+            type="button"
+            aria-pressed="false"
+            title="Re-enable looping animations even if your OS has Reduce Motion on (demo preview only)"
+          >
+            Preview motion
+          </button>
           <button
             class="ui-themetoggle__button"
             id="themeBtn"
@@ -1200,6 +962,75 @@ ui.button({ variant: 'ghost' });</code></pre>
             </p>
           </div>
           <div class="spec__demo">
+            <figure style="margin: 0 0 1.5rem">
+              <svg
+                class="annotation-applied"
+                viewBox="0 -22 520 290"
+                role="img"
+                aria-labelledby="anno-cap-title anno-cap-desc"
+              >
+                <title id="anno-cap-title">Capacity chart with selected annotations</title>
+                <desc id="anno-cap-desc">
+                  A muted baseline label, a danger threshold line, an accent peak callout, and a
+                  warning risk band annotate weekly capacity.
+                </desc>
+                <rect class="annotation-specimen__panel" x="28" y="24" width="464" height="190" />
+                <line class="annotation-specimen__grid" x1="56" y1="174" x2="464" y2="174" />
+                <line class="annotation-specimen__grid" x1="56" y1="136" x2="464" y2="136" />
+                <line class="annotation-specimen__grid" x1="56" y1="98" x2="464" y2="98" />
+                <line class="annotation-specimen__axis" x1="56" y1="194" x2="464" y2="194" />
+                <rect class="annotation-specimen__data" style="--chart-color: var(--chart-1)" x="82" y="146" width="42" height="48" />
+                <rect class="annotation-specimen__data" style="--chart-color: var(--chart-2)" x="158" y="118" width="42" height="76" />
+                <rect class="annotation-specimen__data" style="--chart-color: var(--chart-3)" x="234" y="76" width="42" height="118" />
+                <rect class="annotation-specimen__data" style="--chart-color: var(--chart-4)" x="310" y="110" width="42" height="84" />
+                <rect class="annotation-specimen__data" style="--chart-color: var(--chart-5)" x="386" y="132" width="42" height="62" />
+
+                <g class="ui-annotation ui-annotation--label ui-annotation--muted" transform="translate(58, 222)">
+                  <g class="ui-annotation__note">
+                    <text class="ui-annotation__title">Baseline</text>
+                    <text class="ui-annotation__label" y="16">10 h floor</text>
+                  </g>
+                </g>
+
+                <g class="ui-annotation ui-annotation--threshold ui-annotation--danger" transform="translate(0, 98)">
+                  <path class="ui-annotation__subject" d="M56,0L464,0" />
+                  <path class="ui-annotation__connector" d="M404,0L438,-34" />
+                  <g class="ui-annotation__note" transform="translate(356, -66)">
+                    <rect x="-8" y="-18" width="112" height="44" />
+                    <path class="ui-annotation__note-line" d="M0,20H88" />
+                    <text class="ui-annotation__title" y="-4">Threshold</text>
+                    <text class="ui-annotation__label" y="14">Capacity cap</text>
+                  </g>
+                </g>
+
+                <g class="ui-annotation ui-annotation--circle ui-annotation--accent ui-annotation--draw" transform="translate(255, 76)" style="--annotation-delay: 120ms">
+                  <path class="ui-annotation__subject" d="M0,-18A18,18 0 1 1 0,18A18,18 0 1 1 0,-18Z" />
+                  <path class="ui-annotation__connector" d="M-15,-10L-74,-54" />
+                  <g class="ui-annotation__note" transform="translate(-168, -68)">
+                    <rect x="-8" y="-18" width="102" height="44" />
+                    <path class="ui-annotation__note-line" d="M0,20H78" />
+                    <text class="ui-annotation__title" y="-4">Peak</text>
+                    <text class="ui-annotation__label" y="14">Week 3</text>
+                  </g>
+                </g>
+
+                <g class="ui-annotation ui-annotation--band ui-annotation--warning" transform="translate(302, 110)">
+                  <path class="ui-annotation__subject" d="M0,0H132V84H0Z" />
+                  <path class="ui-annotation__connector" d="M118,72L146,102" />
+                  <g class="ui-annotation__note" transform="translate(146, 102)">
+                    <rect x="-8" y="-18" width="98" height="44" />
+                    <text class="ui-annotation__title" y="-4">Risk</text>
+                    <text class="ui-annotation__label" y="14">Late work</text>
+                  </g>
+                </g>
+              </svg>
+              <figcaption class="ui-muted" style="margin-block-start: 0.5rem">
+                The grammar on a real figure: a <strong>subject</strong> marks the thing, a
+                <strong>connector</strong> points away, a <strong>note</strong> carries the text —
+                here a muted baseline label, a danger threshold, an accent peak (with
+                <code>--draw</code> motion), and a warning band.
+              </figcaption>
+            </figure>
             <figure style="margin: 0">
               <svg
                 id="anno-directlabels"
@@ -1209,8 +1040,8 @@ ui.button({ variant: 'ghost' });</code></pre>
                 aria-label="A four-point series whose labels are decluttered into a leadered column on the right by directLabels"
               ></svg>
               <figcaption class="ui-muted" style="margin-block-start: 0.5rem">
-                Built live with <code>directLabels</code>: the four labels would collide at their
-                data <em>y</em>, so they declutter into a leadered column.
+                And the <code>directLabels</code> geometry helper: the four labels would collide at
+                their data <em>y</em>, so they declutter into a leadered column.
               </figcaption>
             </figure>
           </div>
@@ -1790,303 +1621,6 @@ useCommand();  // react/solid/qwik</code></pre>
 
     <!-- The demo drives itself with the package's own shipped modules,
          so it doubles as a live integration test of behaviors + classes. -->
-    <script type="module">
-      import {
-        initThemeToggle,
-        dismissible,
-        initDialog,
-        initTabs,
-        initDisclosure,
-        initMenu,
-        initCombobox,
-        initPopover,
-        initFormValidation,
-        initTableSort,
-        initCarousel,
-        initDotGlyph,
-        initLegend,
-        initConnectors,
-        initCrosshair,
-        initCommand,
-        toast,
-      } from '../behaviors/index.js';
-      import { ui, cx } from '../classes/index.js';
-      import { directLabels } from '../annotations/index.js';
-      import { renderGlyph, GLYPH_NAMES } from '../glyphs/glyphs.js';
-      import { skins, SKIN_NAMES } from '../tokens/skins.js';
-
-      // A representative slice of the glyph set (full list in the docs).
-      const GALLERY = [
-        'arrow-right', 'chevron-down', 'check', 'close', 'plus', 'search',
-        'menu', 'gear', 'edit', 'trash', 'download', 'play', 'eye', 'sun',
-        'bell', 'heart', 'home', 'user', 'star', 'spark',
-      ];
-
-      const gallery = document.getElementById('glyphGallery');
-      if (gallery) {
-        for (const name of GALLERY) {
-          const cell = document.createElement('span');
-          cell.className = 'ui-stack';
-          cell.style.cssText = '--stack-gap: var(--space-2xs); align-items: center';
-          const g = document.createElement('span');
-          g.setAttribute('data-bronto-glyph', name);
-          g.setAttribute('data-bronto-glyph-label', name);
-          g.style.cssText = '--dotmatrix-dot: 0.28rem; --dotmatrix-gap: 0.07rem';
-          const cap = document.createElement('span');
-          cap.className = 'ui-muted';
-          cap.style.fontSize = '0.6rem';
-          cap.textContent = name;
-          cell.append(g, cap);
-          gallery.appendChild(cell);
-        }
-      }
-
-      const glyphButtons = document.getElementById('glyphButtons');
-      if (glyphButtons) {
-        for (const [name, text] of [
-          ['search', 'Search'],
-          ['plus', 'New'],
-          ['check', 'Confirm'],
-          ['gear', 'Settings'],
-          ['close', 'Dismiss'],
-        ]) {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = name === 'plus' ? 'ui-button' : 'ui-button ui-button--subtle';
-          btn.style.cssText = 'display: inline-flex; align-items: center; gap: 0.45rem';
-          btn.innerHTML = renderGlyph(name, { solid: true, dot: '1.2px' }) + `<span>${text}</span>`;
-          glyphButtons.appendChild(btn);
-        }
-      }
-
-      const glyphMask = document.getElementById('glyphMask');
-      if (glyphMask) {
-        glyphMask.innerHTML = ['search', 'check-circle', 'x-circle', 'plus-circle', 'circle', 'external', 'gear']
-          .filter((n) => GLYPH_NAMES.includes(n))
-          .map((n) => renderGlyph(n, { render: 'mask', label: n }))
-          .join('');
-      }
-
-      const glyphAnim = document.getElementById('glyphAnim');
-      if (glyphAnim) {
-        const revealBox = document.createElement('span');
-        const drawReveal = () => {
-          revealBox.innerHTML = renderGlyph('spark', { anim: 'reveal', dot: '0.34rem', gap: '0.1rem' });
-        };
-        drawReveal();
-        const replay = document.createElement('button');
-        replay.type = 'button';
-        replay.className = 'ui-button ui-button--subtle ui-button--sm';
-        replay.textContent = 'Replay reveal';
-        replay.addEventListener('click', drawReveal);
-
-        const pulseBox = document.createElement('span');
-        pulseBox.innerHTML = renderGlyph('bell', { anim: 'pulse', dot: '0.34rem', gap: '0.1rem', label: 'Notifications' });
-
-        glyphAnim.append(revealBox, replay, pulseBox);
-      }
-
-      // Live direct-labeling dogfood: a small series whose labels would collide
-      // at their data y; directLabels declutters them into a leadered column.
-      const annoSvg = document.getElementById('anno-directlabels');
-      if (annoSvg) {
-        const NS = 'http://www.w3.org/2000/svg';
-        const pts = [
-          { x: 30, y: 120, label: 'Jan' },
-          { x: 110, y: 96, label: 'Feb' },
-          { x: 190, y: 88, label: 'Mar' },
-          { x: 270, y: 44, label: 'Apr' },
-        ];
-        const labels = directLabels(
-          pts.map((p) => ({ anchor: { x: p.x, y: p.y }, size: 22, key: p.label })),
-          { axis: 'y', cross: 296, gap: 6, min: 14, max: 156 },
-        );
-        const make = (tag, attrs, text) => {
-          const el = document.createElementNS(NS, tag);
-          for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
-          if (text != null) el.textContent = text;
-          return el;
-        };
-        annoSvg.appendChild(
-          make('polyline', {
-            points: pts.map((p) => `${p.x},${p.y}`).join(' '),
-            fill: 'none',
-            stroke: 'var(--line-strong)',
-            'stroke-width': '1.5',
-          }),
-        );
-        labels.forEach((l, i) => {
-          annoSvg.appendChild(make('path', { class: 'ui-annotation__connector', d: l.d }));
-          annoSvg.appendChild(
-            make('circle', { cx: l.anchor.x, cy: l.anchor.y, r: '3.5', fill: 'var(--accent)' }),
-          );
-          annoSvg.appendChild(
-            make(
-              'text',
-              {
-                class: 'ui-annotation__label',
-                x: l.x + 6,
-                y: l.y,
-                'dominant-baseline': 'middle',
-                'font-size': '12',
-                fill: 'var(--text-soft)',
-              },
-              pts[i].label,
-            ),
-          );
-        });
-      }
-
-      initThemeToggle();
-      dismissible();
-      initDialog();
-      initTabs(); // full keyboard a11y, wired from the shipped module
-      initDisclosure();
-      initMenu();
-      initCombobox();
-      initPopover();
-      initFormValidation();
-      initTableSort();
-      initCarousel(); // wires both the inline carousel and the lightbox's
-      initDotGlyph(); // expands [data-bronto-glyph] placeholders (incl. the skin preview)
-      initConnectors(); // draws + tracks the leader lines in the analytical tier
-      initCrosshair(); // pointer-tracking crosshair in the analytical tier
-      initLegend(); // interactive legend toggle in the analytical tier
-      initCommand(); // command-palette filtering in the frontier tier
-
-      // Legend: host-owned. Bronto flips the control + announces; we hide the bar.
-      const legendStatus = document.getElementById('legend-status');
-      document.addEventListener('bronto:legend:toggle', (e) => {
-        const { series, active } = e.detail;
-        const bar = document.querySelector(`[data-series-bar="${CSS.escape(series)}"]`);
-        if (bar) bar.hidden = !active;
-        if (legendStatus) legendStatus.textContent = `${series} ${active ? 'shown' : 'hidden'}`;
-      });
-
-      // Crosshair: host-owned. Bronto reports position; we map + render the readout.
-      const xhReadout = document.getElementById('xh-readout');
-      const xhStatus = document.getElementById('xh-status');
-      const plot = document.querySelector('[data-bronto-crosshair]');
-      if (plot) {
-        plot.addEventListener('bronto:crosshair:move', (e) => {
-          const { fx, fy } = e.detail;
-          const text = `x ${(fx * 100).toFixed(0)}% · y ${((1 - fy) * 100).toFixed(0)}%`;
-          xhReadout.textContent = text;
-          xhStatus.textContent = `Pointer: ${text}`;
-        });
-        plot.addEventListener('bronto:crosshair:leave', () => {
-          xhStatus.textContent = 'Pointer: —';
-        });
-      }
-
-      // Unified theme picker: light/dark (data-theme), colorway (data-bronto-skin),
-      // dark surface (data-surface) — all set on <html>, the way a real consumer themes.
-      const themeRoot = document.documentElement;
-      const SKIN_KEY = 'bronto-skin';
-      const SURFACE_KEY = 'bronto-surface';
-      const skinSelect = document.getElementById('skinSelect');
-      const surfaceSelect = document.getElementById('surfaceSelect');
-      const skinSwitch = document.getElementById('skinSwitch');
-      const skinOptions = [['', 'Default'], ...SKIN_NAMES.map((n) => [n, skins[n].label])];
-      const persist = (key, value) => {
-        try {
-          if (value) localStorage.setItem(key, value);
-          else localStorage.removeItem(key);
-        } catch {
-          /* storage blocked — still applies for this session */
-        }
-      };
-
-      const applySkin = (value) => {
-        if (value) themeRoot.setAttribute('data-bronto-skin', value);
-        else themeRoot.removeAttribute('data-bronto-skin');
-        persist(SKIN_KEY, value);
-        if (skinSelect) skinSelect.value = value;
-        if (skinSwitch)
-          for (const b of skinSwitch.children)
-            b.setAttribute('aria-pressed', String(b.dataset.skin === value));
-      };
-      const applySurface = (value) => {
-        if (value) themeRoot.setAttribute('data-surface', value);
-        else themeRoot.removeAttribute('data-surface');
-        persist(SURFACE_KEY, value);
-        if (surfaceSelect) surfaceSelect.value = value;
-      };
-
-      if (skinSelect) {
-        for (const [value, label] of skinOptions) {
-          const opt = document.createElement('option');
-          opt.value = value;
-          opt.textContent = label;
-          skinSelect.appendChild(opt);
-        }
-        skinSelect.addEventListener('change', () => applySkin(skinSelect.value));
-      }
-      if (skinSwitch) {
-        for (const [value, label] of skinOptions) {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'ui-button ui-button--sm';
-          btn.textContent = label;
-          btn.dataset.skin = value;
-          btn.addEventListener('click', () => applySkin(value));
-          skinSwitch.appendChild(btn);
-        }
-      }
-      if (surfaceSelect) surfaceSelect.addEventListener('change', () => applySurface(surfaceSelect.value));
-
-      let storedSkin = '';
-      let storedSurface = '';
-      try {
-        storedSkin = localStorage.getItem(SKIN_KEY) || '';
-        storedSurface = localStorage.getItem(SURFACE_KEY) || '';
-      } catch {
-        /* storage blocked */
-      }
-      applySkin(SKIN_NAMES.includes(storedSkin) ? storedSkin : '');
-      applySurface(storedSurface === 'oled' ? 'oled' : '');
-
-      document.getElementById('toastBtn').addEventListener('click', () => {
-        toast('Order filled — BTC/EUR', { tone: 'success', title: 'Done' });
-      });
-
-      // Theming contract: one --accent knob re-brands; density/contrast are presets.
-      const docEl = document.documentElement;
-      for (const b of document.querySelectorAll('[data-accent]'))
-        b.addEventListener('click', () => docEl.style.setProperty('--accent', b.dataset.accent));
-      for (const r of document.querySelectorAll('input[name="dens"]'))
-        r.addEventListener('change', () => {
-          if (r.value) docEl.dataset.density = r.value;
-          else delete docEl.dataset.density;
-        });
-      document.getElementById('contrastChk').addEventListener('change', (e) => {
-        if (e.target.checked) docEl.dataset.contrast = 'high';
-        else delete docEl.dataset.contrast;
-      });
-
-      // RTL toggle — proves the logical-properties sweep mirrors cleanly.
-      const dirBtn = document.getElementById('dirBtn');
-      dirBtn.addEventListener('click', () => {
-        const rtl = document.documentElement.dir === 'rtl';
-        document.documentElement.dir = rtl ? 'ltr' : 'rtl';
-        dirBtn.textContent = rtl ? 'DIR: LTR' : 'DIR: RTL';
-      });
-
-      // Keep the demo's theme label in sync (cosmetic; the shared module does the work).
-      const root = document.documentElement;
-      const label = document.getElementById('themeLabel');
-      const sync = () => {
-        label.textContent = root.getAttribute('data-theme') === 'light' ? 'Light' : 'Dark';
-      };
-      sync();
-      document.addEventListener('bronto:themechange', sync);
-
-      // Smoke-check the typed class recipes resolve to real classes.
-      console.assert(
-        ui.button({ variant: 'ghost' }) === 'ui-button ui-button--ghost',
-        'classes recipe mismatch'
-      );
-      console.log('showcase wired via @ponchia/ui modules', cx('ok'));
-    </script>
+    <script type="module" src="./index.js"></script>
   </body>
 </html>
