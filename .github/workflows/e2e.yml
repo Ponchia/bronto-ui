@@ -1,18 +1,29 @@
-# Reusable end-to-end gate: visual snapshots (chromium) + axe a11y both
-# themes + cross-engine firefox/webkit behavioural + forced-colors/
-# reduced-motion/print + no-console-error/404. Pinned to the container the
-# committed baselines were authored in, so screenshots are byte-stable
-# across machines (no cross-OS font flake).
+# Reusable end-to-end gate: visual snapshots + axe a11y both themes +
+# behavioural + forced-colors/reduced-motion/print + no-console-error/404,
+# optionally across firefox/webkit (see `cross_engine`). Pinned to the
+# container the committed baselines were authored in, so screenshots are
+# byte-stable across machines (no cross-OS font flake).
 #
-# Called by BOTH ci.yml and release.yml via `workflow_call`, so a release
-# runs EXACTLY the gate every PR runs — one definition, no drift. (These
-# used to be two near-identical copies that had already diverged: CI had a
-# registry-retry the release path lacked, so a release was strictly less
-# robust than a routine push.)
+# Called by BOTH ci.yml and release.yml via `workflow_call` — one
+# definition, no drift. (These used to be two near-identical copies that
+# had already diverged: CI had a registry-retry the release path lacked.)
+# CI calls it chromium-only for fast PR feedback; release.yml calls it with
+# cross_engine: true so the full firefox/webkit pass gates the publish.
 name: e2e
 
 on:
   workflow_call:
+    inputs:
+      cross_engine:
+        description: >
+          Run firefox + webkit too. Default false → chromium only (the
+          pixel/visual + a11y + behaviour gate, the high-frequency
+          regression surface, ~half the wall-clock). CI passes false on
+          PRs/main for fast feedback; release.yml passes true so the
+          cross-engine pass (the engine-specific `:has()`/`color-mix()`/
+          `<dialog>`/`@starting-style` risk) gates the actual publish.
+        type: boolean
+        default: false
 
 # Least privilege: this workflow only reads the repo.
 permissions:
@@ -54,7 +65,15 @@ jobs:
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
 
-      - run: npx playwright test
+      # chromium runs every spec including the pixel baselines; firefox +
+      # webkit (the per-config NON_PIXEL set) only join when cross_engine.
+      - name: Run e2e (${{ inputs.cross_engine && 'chromium + firefox + webkit' || 'chromium only' }})
+        run: |
+          if [ "${{ inputs.cross_engine }}" = "true" ]; then
+            npx playwright test
+          else
+            npx playwright test --project=chromium
+          fi
 
       - if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

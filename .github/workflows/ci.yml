@@ -15,6 +15,15 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Manual full run: dispatch on any branch to also exercise firefox +
+  # webkit (e.g. before merging a change that touches an engine-sensitive
+  # CSS primitive). PRs/main otherwise run chromium-only for speed.
+  workflow_dispatch:
+    inputs:
+      cross_engine:
+        description: 'Also run firefox + webkit (full cross-engine e2e)'
+        type: boolean
+        default: true
 
 # Least privilege: this workflow only reads the repo.
 permissions:
@@ -106,10 +115,16 @@ jobs:
     if: needs.changes.outputs.heavy == 'true'
     uses: ./.github/workflows/examples.yml
 
+  # chromium-only on PRs/main for fast feedback; full firefox/webkit pass
+  # is deferred to release.yml (and a manual workflow_dispatch). The
+  # high-frequency pixel/a11y regressions are caught here per-PR; the rarer
+  # engine-specific breaks gate the publish, not every merge.
   e2e:
     needs: changes
     if: needs.changes.outputs.heavy == 'true'
     uses: ./.github/workflows/e2e.yml
+    with:
+      cross_engine: ${{ github.event_name == 'workflow_dispatch' && inputs.cross_engine || false }}
 
   # Single aggregating gate — the ONLY required status check on `main`.
   # Requiring individual matrix legs by name (`examples (qwik-vite)` …) is

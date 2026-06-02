@@ -11,9 +11,11 @@
 # ungated — that path is legacy/fallback, not the documented install;
 # see docs/architecture.md.)
 #
-# The e2e + examples gates are the SAME reusable workflows ci.yml runs on
-# every PR (.github/workflows/{e2e,examples}.yml) — one definition, so a
-# release runs exactly what merge-to-main ran, never a drifted copy.
+# The e2e + examples gates are the SAME reusable workflows ci.yml runs
+# (.github/workflows/{e2e,examples}.yml) — one definition, never a drifted
+# copy. The release runs them at full strength: examples is identical, and
+# e2e adds the firefox/webkit cross-engine pass that PRs skip for speed —
+# so the publish is gated on cross-engine green even though merges aren't.
 #
 # DIST-TAG ROUTING: a stable tag (`v0.4.0`) publishes to `latest`, so
 # `npm i @ponchia/ui` resolves it. A SemVer prerelease tag (`v0.4.0-rc.1`,
@@ -75,12 +77,16 @@ jobs:
             exit 1
           fi
 
-  # Same gates CI runs on every PR — reused, not re-implemented (the two
-  # jobs used to be duplicated here and had already drifted: the release
-  # copies lacked the registry retry CI had). publish-npm needs these too;
-  # a release must not skip what merge-to-main runs.
+  # Reused, not re-implemented (these jobs used to be duplicated here and
+  # had drifted — the release copies lacked the registry retry CI had).
+  # publish-npm needs these; a release must not skip what merge-to-main
+  # runs, and adds the cross-engine e2e pass PRs defer.
   e2e:
+    # Full cross-engine pass gates the publish — PRs run chromium-only for
+    # speed, so the release is where firefox/webkit must go green.
     uses: ./.github/workflows/e2e.yml
+    with:
+      cross_engine: true
 
   examples:
     needs: validate
