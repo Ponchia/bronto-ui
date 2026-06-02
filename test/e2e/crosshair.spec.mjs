@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { applyTheme } from './_theme.mjs';
 
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'];
 const STRUCTURAL = new Set([
@@ -18,8 +19,7 @@ const blocking = (r) =>
 
 async function open(page, theme = 'light') {
   await page.goto('/demo/crosshair.html', { waitUntil: 'networkidle' });
-  await page.emulateMedia({ colorScheme: theme });
-  await page.evaluate((t) => document.documentElement.setAttribute('data-theme', t), theme);
+  await applyTheme(page, theme);
 }
 
 for (const theme of ['light', 'dark']) {

@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { applyTheme } from './_theme.mjs';
 
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'];
 const VARIANTS = [
@@ -43,11 +44,7 @@ function blocking(results) {
 
 async function openSpecimen(page, theme = 'light') {
   await page.goto('/demo/annotations.html', { waitUntil: 'networkidle' });
-  await page.evaluate(async (t) => {
-    document.documentElement.dataset.theme = t;
-    await document.fonts.ready;
-    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-  }, theme);
+  await applyTheme(page, theme);
 }
 
 for (const theme of ['light', 'dark']) {
@@ -146,7 +143,10 @@ test('annotation specimen scopes mobile overflow to the specimen scroller', asyn
     };
   });
 
-  expect(overflow.pageOverflow).toBe(0);
+  // ≤ 0 = no horizontal page overflow. WebKit reports a small negative value
+  // (scrollWidth excludes the classic scrollbar gutter that innerWidth counts);
+  // the point is the wide content is confined to the specimen's own scroller.
+  expect(overflow.pageOverflow).toBeLessThanOrEqual(0);
   expect(overflow.specimenOverflow).toBeGreaterThan(100);
 });
 
