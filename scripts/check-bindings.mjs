@@ -30,6 +30,7 @@ const requiredHooks = [
   'useConnectors',
   'useSpotlight',
   'useCrosshair',
+  'useCommand',
   'useToast',
   'useBrontoBehavior',
 ];

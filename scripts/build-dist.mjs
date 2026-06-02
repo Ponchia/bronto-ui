@@ -95,6 +95,11 @@ export const EXTRA_LEAVES = [
   'spotlight.css',
   'crosshair.css',
   'selection.css',
+  'sources.css',
+  'state.css',
+  'generated.css',
+  'workbench.css',
+  'command.css',
 ];
 
 export function buildBundles() {
@@ -119,8 +124,13 @@ export function buildBundles() {
  *  was then nudged 76→77 kB for the popover/toast/accordion motion plus the
  *  scroll-driven + view-transition enhancements, then 77→78 kB for the
  *  `data-surface="oled"` dark-surface preset (ADR-0003). Gzip held — these are
- *  repetitive grayscale tokens that compress well, sitting ~13.2 kB. */
-export const BUDGET = { raw: 78_000, gzip: 13_500 };
+ *  repetitive grayscale tokens that compress well, sitting ~13.2 kB. At 0.5.0
+ *  the headroom had eroded to ~21 bytes gzip / ~0.7 kB raw (the live bundle is
+ *  ~77.3 kB raw / ~13.5 kB gzip — the analytical primitives are opt-in leaves
+ *  that stay out of the default bundle, so this is residual prior growth);
+ *  raised to 80 kB raw / 14.5 kB gzip to restore a real ~3% raw / ~7% gzip
+ *  margin so an ordinary token addition no longer trips an unrelated PR. */
+export const BUDGET = { raw: 80_000, gzip: 14_500 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };

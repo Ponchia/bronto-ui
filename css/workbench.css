@@ -1,0 +1,83 @@
+/* ==========================================================================
+   workbench — opt-in inspector / property / selection-bar primitives.
+
+   Real tools need inspectors, property rows, and a bar of actions on the
+   current selection. Generic kits stop at cards/tables/forms, so every app
+   builds its own half-consistent workbench. This is the low-risk CSS core:
+   layout and affordances only. Resizable split panes (a focusable ARIA
+   window-splitter behavior) and drag handles are deliberately deferred until a
+   consumer needs them. Not imported by core.css.
+   ========================================================================== */
+
+/* --- Inspector — a panel of details for the selected object. --- */
+.ui-inspector {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+}
+
+.ui-inspector__header {
+  align-items: baseline;
+  border-block-end: 1px solid var(--line);
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: space-between;
+  padding-block-end: var(--space-xs);
+}
+
+.ui-inspector__body {
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+/* --- Property row — a label/value pair, denser than ui-key-value and tuned
+   for an inspector (the value can hold an input or a static read-out). --- */
+.ui-property {
+  align-items: baseline;
+  display: grid;
+  gap: var(--space-sm);
+  grid-template-columns: minmax(6rem, 38%) 1fr;
+}
+
+.ui-property__label {
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.ui-property__value {
+  color: var(--text);
+  font-size: var(--text-sm);
+  min-inline-size: 0;
+}
+
+/* --- Selection bar — actions on the current selection ("3 selected"). --- */
+.ui-selectionbar {
+  align-items: center;
+  background: var(--panel-strong);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-raised);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-md);
+  justify-content: space-between;
+  padding: 0.5rem 0.85rem;
+}
+
+.ui-selectionbar__count {
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+}
+
+.ui-selectionbar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}

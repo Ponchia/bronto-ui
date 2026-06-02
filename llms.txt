@@ -123,7 +123,11 @@ circle/rect/threshold subjects, badges, brackets, bands, slopes, comparisons,
 clusters, axis marks, timeline pins, and evidence markers. Motion is opt-in
 (`draw`, `reveal`, `pulse`, `focus`) and respects reduced-motion preferences.
 Use `notePlacement()` for one-note bounded placement, but do not treat it as a
-whole-chart collision solver. Status tones are only for status-bearing callouts.
+whole-chart collision solver. `declutterLabels(items,{gap,min,max})` is a
+deterministic 1-D declutter; `directLabels(items,{axis,cross,gap,min,max,shape})`
+adds the leader line (it declutters labels along an axis and returns each placed
+point plus a leader path `d` for `ui-annotation__connector`) — neither owns
+scales, DOM, or 2-D placement. Status tones are only for status-bearing callouts.
 Keep charts sparse; dense mobile figures need horizontal scrolling, a simplified
 SVG, or complete caption/fallback text. Details: `docs/annotations.md`.
 
@@ -159,10 +163,10 @@ figure; marks call out a sentence):
 
 Put `ui-mark` on a `<mark>` for inline emphasis (semantic, not just visual).
 Styles: default highlight, `ui-mark--underline`, `ui-mark--box`,
-`ui-mark--strike`. Tones: `ui-mark--evidence` (the rationed accent),
+`ui-mark--strike`. Tones: `ui-mark--accent` (the rationed accent),
 `--success`/`--warning`/`--danger`/`--info` (status-bearing only), `--muted`.
 `ui-mark--draw` sweeps the highlight in (reduced-motion-safe). `ui-bracket-note`
-(+ `ui-bracket-note__label`, tones `--evidence`/`--warning`/`--danger`/`--info`)
+(+ `ui-bracket-note__label`, tones `--accent`/`--warning`/`--danger`/`--info`)
 brackets a whole passage — the prose analogue of `ui-annotation--bracket`.
 `ui.mark({ style, tone, motion })` / `ui.bracketNote({ tone })` build the class
 strings. A mark is visual only; if the emphasis carries meaning the words don't,
@@ -231,6 +235,82 @@ Apply `ui-sel` + `ui-sel--on` (selected), `ui-sel--off` (excluded), or
 `ui-sel--maybe` (live-brush candidate) to any data element (chart mark, table
 row, list item, map region) from YOUR selection/brush logic — Bronto only styles
 them. `ui.sel({ state: 'on'|'off'|'maybe' })`. Details: `docs/selection.md`.
+
+Optional source/citation/provenance trust layer — opt-in, CSS only, never in
+the default bundle. The grammar for "where did this come from?" in generated
+reports/AI output:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/sources.css" />
+```
+
+`ui-citation` (inline ref on a real `<a>`/`<button>`; `--chip` = named-source
+pill), `ui-source-card` (+`__title`/`__origin`/`__time`/`__excerpt`/`__actions`),
+`ui-source-list` (+`__item`), and `ui-provenance` (+`__item`). A cross-cutting
+trust state sets the tone: `ui-src--verified`/`--reviewed`/`--generated`/
+`--unverified`/`--stale`/`--conflict` — always paired with an author-written
+label (never colour alone). Bronto styles + states; the host owns fetching,
+numbering, and trust. `ui.citation({chip,state})` / `ui.source({state})` /
+`ui.provenance({state})`. Details: `docs/sources.md`.
+
+Optional lifecycle/system-state vocabulary — opt-in, CSS only, never in the
+default bundle. The states apps live in (saving/saved/queued/offline/stale/
+conflict/error/locked/reviewed/needs-review):
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/state.css" />
+```
+
+`ui-state` (+`__label`/`__detail`) carries a tone dot + the canonical label;
+the `ui-state--saving`/`--saved`/… modifier bakes the tone, `ui-state--busy`
+pulses the indicator for
+in-progress states (reduced-motion-safe). `ui-syncbar` is a page/document
+save-status strip. The label IS the state (never colour alone); the host owns
+the state machine, retry, and persistence — persistent state gets persistent UI,
+not a toast. `ui.state({ state, busy })`. Details: `docs/state.md`.
+
+Optional generated-content / AI-trust surfaces — opt-in, CSS only, never in the
+default bundle. NOT a chat kit; the trust surfaces around generated content:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/generated.css" />
+```
+
+`ui-generated` (+`__label`) marks a machine-authored region; `ui-origin-label`
+(+`--ai`) tags origin ("AI generated" / "Human reviewed"); `ui-reasoning`
+(+`__body`) and `ui-tool-log` / `ui-tool-call` (+`__name`/`__status`/`__body`)
+are quiet native-`<details>` collapsibles for reasoning + tool traces. Bronto
+styles disclosure/origin/trace; the host owns model metadata, redaction, and
+safety. No confidence/verdict widget (don't fabricate precision). `ui.originLabel({ ai })`.
+Details: `docs/generated.md`.
+
+Optional workbench primitives for tool UIs — opt-in, CSS only, never in the
+default bundle:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/workbench.css" />
+```
+
+`ui-inspector` (+`__header`/`__body`) is a selected-object detail panel;
+`ui-property` (+`__label`/`__value`) is a denser key/value row for it;
+`ui-selectionbar` (+`__count`/`__actions`) is a raised action bar for the current
+selection (pair with `ui-sel` states on the items). Layout/affordances only —
+resizable split panes and drag handles are deferred. Class-only. Details:
+`docs/workbench.md`.
+
+Optional command palette — opt-in CSS shell (`css/command.css`) + `initCommand`
+behavior. Filter + keyboard-navigate a DOM-authored command list:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/command.css" />
+```
+
+`ui-command` (+`__input`/`__list`/`__group`/`__item`/`__shortcut`/`__meta`/
+`__empty`); `initCommand()` owns filtering, roving focus (Down/Up/Home/End),
+Enter→`bronto:command:select` ({value,label}) and Escape→`bronto:command:close`.
+The HOST owns the action registry + execution; NO global Cmd/Ctrl+K (open it
+yourself, e.g. a <dialog> via initDialog). Pairs with `ui-shortcut`. Binding:
+`useCommand()` (react/solid/qwik). Details: `docs/command.md`.
 
 Optional static report layer for LLM-authored HTML reports — opt-in, never in
 the default bundle. Pair it with the normal bundle, and add data-viz only when

@@ -325,7 +325,7 @@ export declare const cls: {
   readonly annotationReveal: 'ui-annotation--reveal';
   readonly annotationFocus: 'ui-annotation--focus';
   readonly mark: 'ui-mark';
-  readonly markEvidence: 'ui-mark--evidence';
+  readonly markAccent: 'ui-mark--accent';
   readonly markSuccess: 'ui-mark--success';
   readonly markWarning: 'ui-mark--warning';
   readonly markDanger: 'ui-mark--danger';
@@ -337,7 +337,7 @@ export declare const cls: {
   readonly markDraw: 'ui-mark--draw';
   readonly bracketNote: 'ui-bracket-note';
   readonly bracketNoteLabel: 'ui-bracket-note__label';
-  readonly bracketNoteEvidence: 'ui-bracket-note--evidence';
+  readonly bracketNoteAccent: 'ui-bracket-note--accent';
   readonly bracketNoteWarning: 'ui-bracket-note--warning';
   readonly bracketNoteDanger: 'ui-bracket-note--danger';
   readonly bracketNoteInfo: 'ui-bracket-note--info';
@@ -371,6 +371,67 @@ export declare const cls: {
   readonly selOn: 'ui-sel--on';
   readonly selOff: 'ui-sel--off';
   readonly selMaybe: 'ui-sel--maybe';
+  readonly citation: 'ui-citation';
+  readonly citationChip: 'ui-citation--chip';
+  readonly sourceList: 'ui-source-list';
+  readonly sourceListItem: 'ui-source-list__item';
+  readonly sourceCard: 'ui-source-card';
+  readonly sourceCardTitle: 'ui-source-card__title';
+  readonly sourceCardOrigin: 'ui-source-card__origin';
+  readonly sourceCardTime: 'ui-source-card__time';
+  readonly sourceCardExcerpt: 'ui-source-card__excerpt';
+  readonly sourceCardActions: 'ui-source-card__actions';
+  readonly provenance: 'ui-provenance';
+  readonly provenanceItem: 'ui-provenance__item';
+  readonly srcVerified: 'ui-src--verified';
+  readonly srcUnverified: 'ui-src--unverified';
+  readonly srcGenerated: 'ui-src--generated';
+  readonly srcReviewed: 'ui-src--reviewed';
+  readonly srcStale: 'ui-src--stale';
+  readonly srcConflict: 'ui-src--conflict';
+  readonly state: 'ui-state';
+  readonly stateLabel: 'ui-state__label';
+  readonly stateDetail: 'ui-state__detail';
+  readonly stateBusy: 'ui-state--busy';
+  readonly stateSaving: 'ui-state--saving';
+  readonly stateSaved: 'ui-state--saved';
+  readonly stateQueued: 'ui-state--queued';
+  readonly stateOffline: 'ui-state--offline';
+  readonly stateStale: 'ui-state--stale';
+  readonly stateConflict: 'ui-state--conflict';
+  readonly stateError: 'ui-state--error';
+  readonly stateLocked: 'ui-state--locked';
+  readonly stateReviewed: 'ui-state--reviewed';
+  readonly stateNeedsReview: 'ui-state--needs-review';
+  readonly syncbar: 'ui-syncbar';
+  readonly generated: 'ui-generated';
+  readonly generatedLabel: 'ui-generated__label';
+  readonly originLabel: 'ui-origin-label';
+  readonly originLabelAi: 'ui-origin-label--ai';
+  readonly reasoning: 'ui-reasoning';
+  readonly reasoningBody: 'ui-reasoning__body';
+  readonly toolLog: 'ui-tool-log';
+  readonly toolCall: 'ui-tool-call';
+  readonly toolCallName: 'ui-tool-call__name';
+  readonly toolCallStatus: 'ui-tool-call__status';
+  readonly toolCallBody: 'ui-tool-call__body';
+  readonly inspector: 'ui-inspector';
+  readonly inspectorHeader: 'ui-inspector__header';
+  readonly inspectorBody: 'ui-inspector__body';
+  readonly property: 'ui-property';
+  readonly propertyLabel: 'ui-property__label';
+  readonly propertyValue: 'ui-property__value';
+  readonly selectionbar: 'ui-selectionbar';
+  readonly selectionbarCount: 'ui-selectionbar__count';
+  readonly selectionbarActions: 'ui-selectionbar__actions';
+  readonly command: 'ui-command';
+  readonly commandInput: 'ui-command__input';
+  readonly commandList: 'ui-command__list';
+  readonly commandGroup: 'ui-command__group';
+  readonly commandItem: 'ui-command__item';
+  readonly commandShortcut: 'ui-command__shortcut';
+  readonly commandMeta: 'ui-command__meta';
+  readonly commandEmpty: 'ui-command__empty';
   readonly printOnly: 'ui-print-only';
   readonly screenOnly: 'ui-screen-only';
   readonly breakBefore: 'ui-break-before';
@@ -378,6 +439,8 @@ export declare const cls: {
   readonly keep: 'ui-keep';
   readonly printExact: 'ui-print-exact';
   readonly kbd: 'ui-kbd';
+  readonly shortcut: 'ui-shortcut';
+  readonly shortcutSep: 'ui-shortcut__sep';
   readonly display: 'ui-display';
   readonly mono: 'ui-mono';
   readonly muted: 'ui-muted';
@@ -552,13 +615,13 @@ export interface AnnotationOpts {
 export interface MarkOpts {
   /** How the mark is drawn. Omit for the highlight fill. */
   style?: 'underline' | 'box' | 'strike';
-  /** `evidence` is the rationed accent; status tones for status-bearing emphasis; `muted` for de-emphasis. */
-  tone?: 'evidence' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
+  /** `accent` is the rationed accent; status tones for status-bearing emphasis; `muted` for de-emphasis. */
+  tone?: 'accent' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
   /** Draw-on highlight sweep (respects `prefers-reduced-motion`). */
   motion?: 'draw';
 }
 export interface BracketNoteOpts {
-  tone?: 'evidence' | 'warning' | 'danger' | 'info';
+  tone?: 'accent' | 'warning' | 'danger' | 'info';
 }
 export interface ConnectorOpts {
   tone?: 'accent' | 'muted' | 'success' | 'warning' | 'danger' | 'info';
@@ -577,6 +640,42 @@ export interface CrosshairOpts {
 export interface SelOpts {
   /** Selection emphasis: `on` (selected), `off` (excluded), `maybe` (live-brush candidate). */
   state?: 'on' | 'off' | 'maybe';
+}
+/** Trust state for the source/citation/provenance layer. Pair with an author-written label — never colour alone. */
+export type SrcState = 'verified' | 'unverified' | 'generated' | 'reviewed' | 'stale' | 'conflict';
+export interface CitationOpts {
+  /** Render as a named-source pill (leading tone dot) instead of an inline `[n]` reference. */
+  chip?: boolean;
+  state?: SrcState;
+}
+export interface SourceOpts {
+  /** Sets the source card's tone border. */
+  state?: SrcState;
+}
+export interface ProvenanceOpts {
+  /** Sets the provenance item's tone dot. */
+  state?: SrcState;
+}
+/** Canonical lifecycle state — sets the tone; pair with the canonical label (see docs/state.md). */
+export type LifecycleState =
+  | 'saving'
+  | 'saved'
+  | 'queued'
+  | 'offline'
+  | 'stale'
+  | 'conflict'
+  | 'error'
+  | 'locked'
+  | 'reviewed'
+  | 'needs-review';
+export interface StateOpts {
+  state?: LifecycleState;
+  /** Pulse the indicator for an in-progress state (saving / syncing / retrying). Reduced-motion-safe. */
+  busy?: boolean;
+}
+export interface OriginLabelOpts {
+  /** Accent-tint the label for AI/model-generated origin (vs a neutral tag). */
+  ai?: boolean;
 }
 
 export interface Ui {
@@ -616,6 +715,11 @@ export interface Ui {
   spotlight(opts?: SpotlightOpts): string;
   crosshair(opts?: CrosshairOpts): string;
   sel(opts?: SelOpts): string;
+  citation(opts?: CitationOpts): string;
+  source(opts?: SourceOpts): string;
+  provenance(opts?: ProvenanceOpts): string;
+  state(opts?: StateOpts): string;
+  originLabel(opts?: OriginLabelOpts): string;
 }
 
 export declare const ui: Ui;

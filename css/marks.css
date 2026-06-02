@@ -8,7 +8,7 @@
 
    `.ui-mark` is an inline highlight (put it on a `<mark>`); `.ui-bracket-note`
    brackets a whole passage. Monochrome by default — the rationed accent is
-   opt-in via `--evidence`; status tones are only for status-bearing emphasis.
+   opt-in via `--accent`; status tones are only for status-bearing emphasis.
    ========================================================================== */
 
 .ui-mark {
@@ -28,9 +28,9 @@
   padding-inline: 0.18em;
 }
 
-/* Tones set the mark colour. Default is neutral ink; `--evidence` is the
+/* Tones set the mark colour. Default is neutral ink; `--accent` is the
    rationed accent; status tones only for status-bearing emphasis. */
-.ui-mark--evidence {
+.ui-mark--accent {
   --mark-color: var(--accent);
 }
 
@@ -116,7 +116,7 @@
   text-transform: uppercase;
 }
 
-.ui-bracket-note--evidence {
+.ui-bracket-note--accent {
   --mark-color: var(--accent);
 }
 

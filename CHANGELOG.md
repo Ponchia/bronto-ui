@@ -10,17 +10,21 @@
 A **minor** that builds out the "analytical & generated-report UI" identity: a
 full suite of opt-in **communication primitives** — SVG annotations, legends,
 text/evidence marks, leader-line connectors, a guided-focus spotlight, a
-crosshair/readout, a selection-state vocabulary, and a 1-D label-declutter
-helper — plus a consolidation pass over them. Each owns its visual grammar and
+crosshair/readout, a selection-state vocabulary, label declutter + direct labels
+(`declutterLabels`/`directLabels`), and a source/citation/provenance **trust
+layer** — plus a consolidation pass over them. Each owns its visual grammar and
 pure geometry and refuses to own scales/state/hit-testing (no chart engine).
 
 Per the project's versioning policy, breaking changes ship in the minor. This
-release carries two: the opt-in report kit's chart data key moved into the new
+release carries three: the opt-in report kit's chart data key moved into the new
 legend layer (`.ui-chart__legend`/`__swatch` removed — see Changed and
-[`MIGRATIONS.json`](MIGRATIONS.json)), and annotation arrowheads now render via
-the shared connectors geometry kernel (a small path-shape change). Everything
-else is additive and opt-in; the default `dist/bronto.css` is unaffected. Also
-folds in the 0.4.x maintenance hardening that had not yet been released.
+[`MIGRATIONS.json`](MIGRATIONS.json)), annotation arrowheads now render via
+the shared connectors geometry kernel (a small path-shape change), and the
+opt-in marks' rationed-accent tone was renamed `evidence`→`accent` to match the
+rest of the analytical tone vocabulary. Everything else is additive and opt-in,
+save for the tiny `.ui-shortcut` keyboard-hint primitive that joins the core
+layer; the rest of the default `dist/bronto.css` is unchanged. Also folds in the
+0.4.x maintenance hardening that had not yet been released.
 
 ### Added
 
@@ -54,7 +58,7 @@ folds in the 0.4.x maintenance hardening that had not yet been released.
   `.ui-bracket-note*`, `ui.mark()`/`ui.bracketNote()`): an opt-in layer of
   sober, report-grade emphasis for running prose — the counterpart to SVG
   annotations (annotations call out a figure, marks call out a sentence). Inline
-  `.ui-mark` (highlight/underline/box/strike; `--evidence` accent + status
+  `.ui-mark` (highlight/underline/box/strike; `--accent` + status
   tones; `--draw` reduced-motion-safe sweep) for use on `<mark>`, and
   `.ui-bracket-note` for bracketing a whole passage. Pure CSS on semantic
   tokens, monochrome by default, with `forced-colors` care. Documented in
@@ -88,10 +92,63 @@ folds in the 0.4.x maintenance hardening that had not yet been released.
   map regions. The carve-out from brush/lasso — Bronto styles the states; the
   host owns the selection/hit-test logic. Documented in
   [`docs/selection.md`](docs/selection.md).
+- **Sources, citations & provenance** (`@ponchia/ui/css/sources.css`,
+  `.ui-citation`/`.ui-source-card`/`.ui-source-list`/`.ui-provenance`,
+  `ui.citation()`/`ui.source()`/`ui.provenance()`): an opt-in, CSS-only **trust
+  layer** for generated reports and AI output — the grammar for "where did this
+  come from?". A cross-cutting `.ui-src--*` state (verified/reviewed/generated/
+  unverified/stale/conflict) sets a rationed tone, always paired with an
+  author-written label (never colour alone). Bronto owns the grammar + states;
+  the host owns fetching, citation numbering, and trust. The first
+  frontier-primitive beyond the analytical suite. Documented in
+  [`docs/sources.md`](docs/sources.md).
+- **Keyboard-shortcut hint** (`.ui-shortcut` + `.ui-shortcut__sep`, core): a tiny
+  universal-chrome primitive that lays out one or more `.ui-kbd` keys as a chord
+  (`⌘`+`K`) or sequence (`G` then `I`) with a dim connective. The command tier's
+  smallest piece, broadly useful outside a palette (menu items, buttons,
+  tooltips). Class-only, like `.ui-kbd`.
+- **Lifecycle / system state** (`@ponchia/ui/css/state.css`, `.ui-state`
+  (+`__label`/`__detail`/`--busy`) with canonical state modifiers
+  (saving/saved/queued/offline/stale/conflict/error/locked/reviewed/
+  needs-review), `.ui-syncbar`, `ui.state()`): an opt-in, CSS-only vocabulary for
+  the states apps actually live in — a labelled state object with a rationed tone
+  and a page/document sync bar. The label is the state (never colour alone);
+  `--busy` pulses the indicator (reduced-motion-safe). Bronto ships the visual
+  states + canonical wording; the host owns the state machine, retry, and
+  persistence. Frontier candidate #2. Documented in [`docs/state.md`](docs/state.md).
+- **Generated content & AI trust** (`@ponchia/ui/css/generated.css`,
+  `.ui-generated`/`.ui-origin-label`/`.ui-reasoning`/`.ui-tool-log`/`.ui-tool-call`,
+  `ui.originLabel()`): an opt-in, CSS-only set of **trust surfaces** for AI /
+  system-generated content — a marked region, an origin label, and quiet
+  native-`<details>` reasoning + tool-call logs. Not a chat kit; no
+  fabricated-confidence widget. Bronto styles disclosure/origin/trace, the host
+  owns model metadata, redaction, and safety. Pairs with the source layer.
+  Documented in [`docs/generated.md`](docs/generated.md).
+- **Workbench** (`@ponchia/ui/css/workbench.css`, `.ui-inspector`/`.ui-property`/
+  `.ui-selectionbar`): an opt-in, CSS-only core for tool UIs — a selected-object
+  inspector panel, denser property rows, and a raised selection action bar.
+  Layout + affordances only; resizable split panes and drag handles are
+  deferred. Documented in [`docs/workbench.md`](docs/workbench.md).
+- **Command palette** (`@ponchia/ui/css/command.css`, `.ui-command` (+
+  `__input`/`__list`/`__group`/`__item`/`__shortcut`/`__meta`/`__empty`),
+  `initCommand`, `useCommand`): an opt-in CSS shell + behavior — filter +
+  keyboard-navigate a DOM-authored command list (roving focus, group hiding,
+  full keyboard), emitting `bronto:command:select` ({ value, label }) and
+  `bronto:command:close`. Bronto navigates; the host owns the action registry,
+  routing, and execution. No global Cmd/Ctrl+K. Completes the command tier
+  (frontier #3) atop the shipped `ui-shortcut`. Documented in
+  [`docs/command.md`](docs/command.md).
 - **Label declutter** (`@ponchia/ui/annotations` `declutterLabels`): a
   deterministic, order-preserving **1-D** label de-overlap helper (sort, push
   apart by `size + gap`, slide to fit `max`) — pure, no DOM/scales. Not a 2-D
   collision solver. Documented in [`docs/annotations.md`](docs/annotations.md).
+- **Direct labels** (`@ponchia/ui/annotations` `directLabels`): the
+  direct-labeling companion to `declutterLabels` — it declutters labels along an
+  axis **and** draws the leader from each anchor to its placed label, reusing the
+  connectors geometry kernel. Returns `[{ x, y, anchor, key, d }]` (the `d` feeds
+  a `ui-annotation__connector`). Deterministic and pure: no scales, no DOM, no
+  2-D placement (the 1-D core of Labella, completed with leaders). Documented in
+  [`docs/annotations.md`](docs/annotations.md).
 - **Connectors** (`@ponchia/ui/connectors`, `@ponchia/ui/css/connectors.css`,
   `initConnectors`, `useConnectors`, `ui.connector()`) and **Spotlight**
   (`css/spotlight.css`, `initSpotlight`, `ui.spotlight()`) — leader lines between
@@ -122,6 +179,14 @@ folds in the 0.4.x maintenance hardening that had not yet been released.
   beside the report kit; see [`MIGRATIONS.json`](MIGRATIONS.json) and
   [`docs/legends.md`](docs/legends.md). The `--chart-color`/`--chart-pattern`
   swatch contract is unchanged, so the rename is mechanical.
+- **Breaking (opt-in marks):** the rationed-accent **tone** on `.ui-mark` and
+  `.ui-bracket-note` was renamed `evidence` → `accent` (`ui-mark--evidence` →
+  `ui-mark--accent`, `ui-bracket-note--evidence` → `ui-bracket-note--accent`;
+  `ui.mark({ tone: 'accent' })` / `ui.bracketNote({ tone: 'accent' })`) so the
+  accent tone reads the same across every analytical primitive (it already was
+  `accent` on `ui.connector`/`ui.annotation`). `.ui-annotation--evidence` is
+  **unchanged** — it is a marker _variant_ (a proof/source shape), not a tone.
+  Mechanical whole-token rename; see [`MIGRATIONS.json`](MIGRATIONS.json).
 - **Consolidation:** the SVG geometry is single-sourced in the `connectors`
   kernel — `@ponchia/ui/annotations` now builds its connectors on it, so a
   line/curve/arrow/dot is drawn one way across both. `connectorLine`/`Curve`/
@@ -129,6 +194,13 @@ folds in the 0.4.x maintenance hardening that had not yet been released.
   (minor-breaking) shape change** — the arrowhead now matches the connectors
   arrowhead. New `check:helpers-dts` gate keeps the hand-maintained
   `annotations`/`connectors` `.d.ts` in parity with their runtime exports.
+- The Doto webfont now ships as **woff2 only** (Brotli) instead of uncompressed
+  TTF: ~5.7 kB per weight vs ~137 kB, cutting the six-weight payload from ~823 kB
+  to ~35 kB (the dot-matrix glyphs compress ~96%) and shrinking the unpacked
+  tarball by roughly the same. No TTF fallback is carried — woff2 is supported by
+  the entire browser floor (ADR-0002: Chrome 125 / Safari 18 / Firefox 129).
+  `@font-face` is internal, so this is transparent to consumers; only self-hosts
+  that referenced `fonts/doto-*.ttf` directly need to point at `*.woff2`.
 - `docs/architecture.md` now ships in the package, so the offline rationale the
   shipped ADRs link to resolves inside the tarball.
 - `docs/stability.md` clarifies that `data-surface`/`data-density`/
@@ -146,6 +218,16 @@ folds in the 0.4.x maintenance hardening that had not yet been released.
   class-recipe wiring test, the APCA advisory widened to the accent text across
   the core palette and every colorway (still advisory; WCAG 2.1 AA stays the
   hard gate), an OLED computed-style smoke test, and several doc reconciliations.
+- New `demos.spec` e2e sweep runs the console-error / uncaught-exception /
+  failed-response guards **and** an axe scan over every per-feature demo page
+  (annotations, legends, marks, connectors, spotlight, crosshair, selection,
+  report) in both themes and cross-browser — previously only `/demo/` was
+  guarded, so a throw or 404 on those SVG-heavy pages could not fail CI.
+- The `check:dist` payload ceiling was raised to 80 kB raw / 14.5 kB gzip (from
+  78 kB / 13.5 kB). The default bundle was sitting ~21 bytes under the old gzip
+  gate — the analytical primitives are opt-in leaves and stay out of it, so this
+  is residual prior growth; the bump restores a real ~3% raw / ~7% gzip margin
+  so an ordinary token addition no longer trips an unrelated PR.
 
 ## 0.4.1 — 2026-06-01
 

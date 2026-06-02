@@ -18,6 +18,7 @@ import {
   initConnectors,
   initSpotlight,
   initCrosshair,
+  initCommand,
   toast,
 } from '../behaviors/index.js';
 
@@ -1269,6 +1270,82 @@ test('initCrosshair: SSR-safe', () => {
   for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
   assert.doesNotThrow(() => {
     const stop = initCrosshair();
+    stop();
+  });
+});
+
+const CMD = `
+  <div class="ui-command" data-bronto-command>
+    <input class="ui-command__input" aria-label="Command" />
+    <ul class="ui-command__list">
+      <li class="ui-command__group">Nav</li>
+      <li class="ui-command__item" data-value="home"><span>Go home</span></li>
+      <li class="ui-command__item" data-value="settings"><span>Open settings</span></li>
+      <li class="ui-command__group">Acts</li>
+      <li class="ui-command__item" data-value="new"><span>New invoice</span></li>
+    </ul>
+    <p class="ui-command__empty" hidden>No commands</p>
+  </div>`;
+
+test('initCommand: ARIA, filter (with group hide), roving nav, select + close events', () => {
+  const d = mount(CMD);
+  const stop = initCommand();
+  const box = d.querySelector('[data-bronto-command]');
+  const input = d.querySelector('.ui-command__input');
+  const list = d.querySelector('.ui-command__list');
+  const items = [...d.querySelectorAll('.ui-command__item')];
+  const groups = [...d.querySelectorAll('.ui-command__group')];
+
+  assert.equal(input.getAttribute('role'), 'combobox');
+  assert.equal(list.getAttribute('role'), 'listbox');
+  assert.equal(input.getAttribute('aria-controls'), list.id);
+  // Seeded: first item active.
+  assert.ok(items[0].classList.contains('is-active'));
+  assert.equal(input.getAttribute('aria-activedescendant'), items[0].id);
+
+  // Filter → only "settings" matches; the "Acts" group (no match) is hidden.
+  input.value = 'settings';
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  assert.deepEqual(
+    items.filter((it) => !it.hidden).map((it) => it.dataset.value),
+    ['settings'],
+  );
+  assert.equal(groups[1].hidden, true, 'empty group hidden');
+  assert.ok(items[1].classList.contains('is-active'), 'active moves to first visible');
+
+  // No match → empty shown.
+  input.value = 'zzz';
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  assert.equal(d.querySelector('.ui-command__empty').hidden, false);
+
+  // Clear → all visible; ArrowDown rovs, Enter selects, event fires.
+  input.value = '';
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  let picked;
+  box.addEventListener('bronto:command:select', (e) => (picked = e.detail));
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  assert.equal(picked.value, 'settings');
+  assert.equal(picked.label, 'Open settings');
+
+  // Escape emits close.
+  let closed = false;
+  box.addEventListener('bronto:command:close', () => (closed = true));
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  assert.equal(closed, true);
+
+  // Pointer select.
+  picked = undefined;
+  items[2].dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(picked.value, 'new');
+
+  stop();
+});
+
+test('initCommand: SSR-safe', () => {
+  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
+  assert.doesNotThrow(() => {
+    const stop = initCommand();
     stop();
   });
 });

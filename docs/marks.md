@@ -11,7 +11,7 @@ a hand-drawn highlighter.
 @import '@ponchia/ui/css/marks.css';
 ```
 
-Monochrome by default — the rationed accent is opt-in via `--evidence`, and the
+Monochrome by default — the rationed accent is opt-in via `--accent`, and the
 status tones are only for status-bearing emphasis.
 
 ## Inline marks — `.ui-mark`
@@ -20,7 +20,7 @@ Put `.ui-mark` on a `<mark>` so the emphasis is semantic, not just visual.
 
 ```html
 <p>
-  The migration <mark class="ui-mark ui-mark--evidence">cut p95 latency by 38%</mark>,
+  The migration <mark class="ui-mark ui-mark--accent">cut p95 latency by 38%</mark>,
   but <mark class="ui-mark ui-mark--danger ui-mark--underline">error rate doubled</mark>
   in the first hour.
 </p>
@@ -36,7 +36,7 @@ Put `.ui-mark` on a `<mark>` so the emphasis is semantic, not just visual.
 | Tone | Use |
 | --- | --- |
 | _(default)_ | Neutral ink emphasis (monochrome). |
-| `ui-mark--evidence` | The rationed accent — "this is the proof". |
+| `ui-mark--accent` | The rationed accent — "this is the proof". |
 | `ui-mark--success` / `--warning` / `--danger` / `--info` | Status-bearing emphasis only. |
 | `ui-mark--muted` | De-emphasis. |
 
@@ -50,22 +50,22 @@ Brackets a whole block and optionally labels it — the prose analogue of
 `ui-annotation--bracket`. Useful for "this paragraph is the evidence/caveat".
 
 ```html
-<blockquote class="ui-bracket-note ui-bracket-note--evidence">
+<blockquote class="ui-bracket-note ui-bracket-note--accent">
   <span class="ui-bracket-note__label">Source</span>
   Q3 incident review, §4 — sustained for 47 minutes before rollback.
 </blockquote>
 ```
 
-Tones: `--evidence` (accent), `--warning`, `--danger`, `--info`. The default is
-a neutral bracket.
+Tones: `--accent` (the rationed accent), `--warning`, `--danger`, `--info`. The
+default is a neutral bracket.
 
 ## Recipes
 
 ```js
 import { ui } from '@ponchia/ui/classes';
 
-ui.mark({ tone: 'evidence', motion: 'draw' });
-// "ui-mark ui-mark--evidence ui-mark--draw"
+ui.mark({ tone: 'accent', motion: 'draw' });
+// "ui-mark ui-mark--accent ui-mark--draw"
 ui.mark({ style: 'underline', tone: 'danger' });
 // "ui-mark ui-mark--underline ui-mark--danger"
 ui.bracketNote({ tone: 'warning' });

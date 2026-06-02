@@ -110,8 +110,8 @@ test('the recipes added this cycle emit only registry classes', () => {
   assert.equal(ui.legendSwatch({ series: 99, shape: 'bogus' }), 'ui-legend__swatch');
   assert.equal(ui.mark(), 'ui-mark');
   assert.equal(
-    ui.mark({ style: 'underline', tone: 'evidence', motion: 'draw' }),
-    'ui-mark ui-mark--underline ui-mark--evidence ui-mark--draw',
+    ui.mark({ style: 'underline', tone: 'accent', motion: 'draw' }),
+    'ui-mark ui-mark--underline ui-mark--accent ui-mark--draw',
   );
   assert.equal(ui.mark({ style: 'box', tone: 'danger' }), 'ui-mark ui-mark--box ui-mark--danger');
   assert.equal(ui.mark({ style: 'bogus', tone: 'bogus' }), 'ui-mark');
@@ -132,6 +132,35 @@ test('the recipes added this cycle emit only registry classes', () => {
   assert.equal(ui.sel({ state: 'on' }), 'ui-sel ui-sel--on');
   assert.equal(ui.sel({ state: 'maybe' }), 'ui-sel ui-sel--maybe');
   assert.equal(ui.sel({ state: 'bogus' }), 'ui-sel');
+});
+
+test('sources/citation/provenance recipes', () => {
+  assert.equal(ui.citation(), 'ui-citation');
+  assert.equal(
+    ui.citation({ chip: true, state: 'verified' }),
+    'ui-citation ui-citation--chip ui-src--verified',
+  );
+  assert.equal(ui.citation({ state: 'bogus' }), 'ui-citation');
+  assert.equal(ui.source(), 'ui-source-card');
+  assert.equal(ui.source({ state: 'generated' }), 'ui-source-card ui-src--generated');
+  assert.equal(ui.provenance({ state: 'reviewed' }), 'ui-provenance ui-src--reviewed');
+  assert.equal(ui.provenance({ state: 'conflict' }), 'ui-provenance ui-src--conflict');
+});
+
+test('lifecycle state recipe', () => {
+  assert.equal(ui.state(), 'ui-state');
+  assert.equal(
+    ui.state({ state: 'saving', busy: true }),
+    'ui-state ui-state--saving ui-state--busy',
+  );
+  assert.equal(ui.state({ state: 'conflict' }), 'ui-state ui-state--conflict');
+  assert.equal(ui.state({ state: 'needs-review' }), 'ui-state ui-state--needs-review');
+  assert.equal(ui.state({ state: 'bogus' }), 'ui-state');
+});
+
+test('originLabel recipe (AI-trust)', () => {
+  assert.equal(ui.originLabel(), 'ui-origin-label');
+  assert.equal(ui.originLabel({ ai: true }), 'ui-origin-label ui-origin-label--ai');
 });
 
 test('every ui.* recipe is declared on the Ui interface in index.d.ts', async () => {

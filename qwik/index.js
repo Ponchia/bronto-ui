@@ -44,6 +44,7 @@ import {
   initConnectors,
   initSpotlight,
   initCrosshair,
+  initCommand,
   toast,
 } from '../behaviors/index.js';
 
@@ -133,6 +134,9 @@ export const useSpotlight = (opts) =>
 export const useCrosshair = (opts) =>
   // eslint-disable-next-line qwik/no-use-visible-task -- delegated DOM glue + cleanup
   useVisibleTask$((ctx) => start(initCrosshair, opts, ctx));
+export const useCommand = (opts) =>
+  // eslint-disable-next-line qwik/no-use-visible-task -- delegated DOM glue + cleanup
+  useVisibleTask$((ctx) => start(initCommand, opts, ctx));
 
 /** The `toast()` imperative (no lifecycle of its own). */
 export const useToast = () => toast;

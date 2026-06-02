@@ -112,14 +112,18 @@
         return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
       };
       const parse = (s) => {
-        const cv = document.createElement('canvas').getContext('2d');
+        // Paint onto a 1x1 surface and read the pixel back. This resolves ANY
+        // CSS colour syntax (color-mix(), oklch(), color(srgb …), named) to
+        // integer 0–255 RGBA. Scraping ctx.fillStyle is unsafe: modern engines
+        // normalise color-mix() to `color(srgb r g b)` with 0–1 channels, which
+        // a `\d+` parser misreads (0.354 → 354), exploding the luminance — and
+        // --accent-text is exactly such a color-mix value.
+        const cv = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+        cv.clearRect(0, 0, 1, 1);
         cv.fillStyle = s;
-        const m = cv.fillStyle; // normalises any CSS colour to #rrggbb / rgb()
-        if (m.startsWith('#')) {
-          const n = parseInt(m.slice(1), 16);
-          return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-        }
-        return m.match(/\d+/g).slice(0, 3).map(Number);
+        cv.fillRect(0, 0, 1, 1);
+        const [r, g, b] = cv.getImageData(0, 0, 1, 1).data;
+        return [r, g, b];
       };
       const lum = ([r, g, b]) => 0.2126 * srgb(r) + 0.7152 * srgb(g) + 0.0722 * srgb(b);
       const ratio = (a, b) => {
