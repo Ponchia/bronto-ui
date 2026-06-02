@@ -104,6 +104,14 @@
         "$extensions": {
           "com.ponchia.css": "var(--dot-font)"
         }
+      },
+      "weight": {
+        "$type": "number",
+        "$value": "700"
+      },
+      "weight-strong": {
+        "$type": "number",
+        "$value": "800"
       }
     },
     "text": {

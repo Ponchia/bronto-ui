@@ -300,6 +300,7 @@
   display: grid;
   font-family: var(--display);
   font-size: var(--text-xl);
+  font-weight: var(--display-weight);
   gap: var(--space-sm);
   line-height: 1.2;
   margin-block: var(--space-xl);

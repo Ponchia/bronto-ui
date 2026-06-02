@@ -91,3 +91,20 @@
     fill: CanvasText;
   }
 }
+
+/* Print: keep the relationship lines and arrowheads in their meaning-carrying
+   colour, and settle any draw-on to a solid line (the draw needs JS to set
+   pathLength, which never runs for a static PDF). */
+@media print {
+  .ui-connector__path,
+  .ui-connector__end {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .ui-connector--draw .ui-connector__path {
+    animation: none;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+}

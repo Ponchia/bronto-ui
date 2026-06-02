@@ -31,6 +31,8 @@
   --sans: 'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --dot-font: 'Doto', var(--mono);
   --display: var(--dot-font);
+  --display-weight: 700;
+  --display-weight-strong: 800;
   --text-2xs: 0.68rem;
   --text-xs: 0.76rem;
   --text-sm: 0.86rem;
@@ -309,5 +311,35 @@
     --panel: #101010;
     --panel-strong: #161616;
     --panel-soft: #1a1a1a;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Print — force an ink-on-white document regardless of the on-screen theme.
+   The palette tokens are [data-theme]-scoped raw values, so `color-scheme`
+   alone can't flip them: re-point the neutrals to achromatic ink/paper and the
+   status/accent hues to their light-theme (print-legible) values. This lifts
+   the same remap report.css scopes to `.ui-report` up to :root, so a bare
+   .ui-card / .ui-statgrid / .ui-table (the markup an external LLM emits) also
+   prints dark-on-white instead of light-grey text or a dark panel on white.
+   Lives here, in the exempt tier-definition file, because it is a token-value
+   override (ADR-0001), not component styling. CSS-only, like the presets above.
+   -------------------------------------------------------------------------- */
+@media print {
+  :root {
+    color-scheme: light;
+
+    --text: #111;
+    --text-soft: #2a2a2a;
+    --text-dim: #555;
+    --panel: #fff;
+    --panel-soft: #f7f7f7;
+    --line: #d9d9d9;
+    --line-strong: #b3b3b3;
+    --success: #2f7d4f;
+    --danger: #c01622;
+    --warning: #806414;
+    --info: #1f63c4;
+    --accent: #d71921;
   }
 }

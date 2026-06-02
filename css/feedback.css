@@ -572,3 +572,14 @@
   border-color: var(--accent);
   color: var(--button-text);
 }
+
+/* Print: the progress/meter fill is the data (a measured proportion), so its
+   painted background must survive the print "economy" default. The fill tokens
+   are re-pointed to print-legible inks by the global print remap in base.css. */
+@media print {
+  .ui-progress__bar,
+  .ui-meter__fill {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

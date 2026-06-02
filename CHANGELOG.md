@@ -28,6 +28,9 @@ Additive maintenance on top of 0.5.0 — no breaking changes. The default
 - **`tokens/resolved.json` `scale` block** — the resolved non-colour scales
   (spacing/radius/type/z/motion, `var()` chains flattened), completing the
   token contract for non-CSS hosts (previously colour-only).
+- **`--display-weight` / `--display-weight-strong`** (700 / 800) — the weight of
+  the Doto dot-matrix display face, now a token. Themes/skins can re-tune how
+  heavy display text renders in one place.
 - On-brand **Mermaid** (`@ponchia/ui/mermaid`, `mermaid.json`) and **D2**
   (`@ponchia/ui/d2`, `d2.json`) theme maps — resolved per-theme palettes
   projected from the same tokens, gated. Diagrams stay the consumer's renderer;
@@ -38,6 +41,23 @@ Additive maintenance on top of 0.5.0 — no breaking changes. The default
 - Responsive/mobile hardening across the framework: `rem`-rooted type for WCAG
   1.4.4, coarse-pointer tap-target floors, combobox/tour-note viewport clamps,
   and `@media (hover)` gating — with a new responsive e2e sweep.
+- **Faint numbers on stat cards.** `.ui-stat__value` / `.ui-app-metric__value`
+  (and the report cover/section titles, rail brand, panel titles, `.ui-display`,
+  `.ui-quote`) set the Doto display face but no weight, so they rendered at the
+  thinnest cut (400). They now apply `--display-weight(-strong)` — visibly bolder
+  and more legible, on screen and in print.
+- **Painted data surfaces dropped in the PDF.** Headless-Chromium print drops
+  backgrounds by default, silently blanking the data-bearing fills. Dot-matrix
+  cells, the segmented meter, status dots, masked glyphs, highlight marks,
+  connector lines, and progress/meter fills now carry `print-color-adjust: exact`
+  so they survive the A4 print/PDF that the report kit targets.
+- **Dark-theme cards/tables printed dark-on-white.** The dark→ink token remap was
+  scoped to `.ui-report`; it is now lifted to the print `:root` (in the exempt
+  token-definition file), so a bare `.ui-card` / `.ui-statgrid` / `.ui-table` —
+  the markup an external LLM emits — also prints legibly.
+- Inline `ui-citation` no longer dumps its full URL mid-sentence when printed
+  (the reference list carries the URL); `ui-legend--with-values` values are
+  right-aligned for a clean tabular column.
 
 ### Documentation
 

@@ -34,6 +34,7 @@
   display: flex;
   font-family: var(--display);
   font-size: 1.05rem;
+  font-weight: var(--display-weight);
   gap: 0.5rem;
   letter-spacing: var(--tracking-wide);
   padding: 0.35rem 0.5rem;
@@ -155,6 +156,7 @@
   color: var(--text);
   font-family: var(--display);
   font-size: 1.1rem;
+  font-weight: var(--display-weight);
   letter-spacing: var(--tracking-wide);
   margin: 0;
   text-transform: uppercase;
@@ -209,6 +211,7 @@
   color: var(--text);
   font-family: var(--display);
   font-size: 0.95rem;
+  font-weight: var(--display-weight);
   letter-spacing: var(--tracking-wide);
   margin: 0;
   text-transform: uppercase;

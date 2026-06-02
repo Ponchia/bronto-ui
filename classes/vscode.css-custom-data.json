@@ -142,6 +142,14 @@
       "description": "Global scale token. Value: `var(--dot-font)`"
     },
     {
+      "name": "--display-weight",
+      "description": "Global scale token. Value: `700`"
+    },
+    {
+      "name": "--display-weight-strong",
+      "description": "Global scale token. Value: `800`"
+    },
+    {
       "name": "--dot-font",
       "description": "Global scale token. Value: `'Doto', var(--mono)`"
     },

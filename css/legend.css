@@ -205,6 +205,7 @@
 
 .ui-legend--with-values .ui-legend__value {
   margin-inline-start: 0;
+  text-align: end;
 }
 
 /* Interactive entries are real <button aria-pressed> controls. Bronto styles
