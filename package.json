@@ -101,6 +101,7 @@
     "mermaid:build": "node scripts/gen-mermaid.mjs",
     "d2:build": "node scripts/gen-d2.mjs",
     "reference:build": "node scripts/gen-reference.mjs",
+    "classes:json:build": "node scripts/gen-classes-json.mjs",
     "contrast:build": "node scripts/gen-contrast.mjs",
     "vscode:build": "node scripts/gen-vscode-data.mjs",
     "dist:build": "node scripts/build-dist.mjs",
@@ -127,7 +128,7 @@
     "check:attw": "attw --pack --ignore-rules no-resolution cjs-resolves-to-esm",
     "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:fresh && npm run check:classes && npm run check:types && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:publint && npm run check:attw && npm run check:release && npm run check:contrast && npm run check:behaviors && npm run check:dts-emit && npm run check:glyphs && npm run check:color-policy && npm run check:skins && npm run check:charts && npm run check:mermaid && npm run check:d2 && npm run check:report && npm run check:legend",
     "test": "node --test \"test/*.test.mjs\"",
-    "prepack": "npm run tokens:css:build && npm run tokens:build && npm run dtcg:build && npm run resolved:build && npm run dts:build && npm run dts:emit && npm run reference:build && npm run contrast:build && npm run vscode:build && npm run skins:build && npm run charts:build && npm run mermaid:build && npm run d2:build && npm run dist:build && npm run glyphs:build",
+    "prepack": "npm run tokens:css:build && npm run tokens:build && npm run dtcg:build && npm run resolved:build && npm run dts:build && npm run dts:emit && npm run reference:build && npm run classes:json:build && npm run contrast:build && npm run vscode:build && npm run skins:build && npm run charts:build && npm run mermaid:build && npm run d2:build && npm run dist:build && npm run glyphs:build",
     "prepublishOnly": "npm run check && npm test"
   },
   "devDependencies": {
@@ -269,6 +270,7 @@
       "types": "./classes/index.d.ts",
       "default": "./classes/index.js"
     },
+    "./classes.json": "./classes/classes.json",
     "./behaviors": {
       "types": "./behaviors/index.d.ts",
       "default": "./behaviors/index.js"

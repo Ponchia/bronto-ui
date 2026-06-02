@@ -73,6 +73,14 @@ test('the recipes added this cycle emit only registry classes', () => {
   assert.equal(ui.meter(), 'ui-meter');
   assert.equal(ui.meter({ tone: 'success' }), 'ui-meter ui-meter--success');
   assert.equal(ui.meter({ tone: 'bogus' }), 'ui-meter');
+  assert.equal(ui.delta(), 'ui-delta');
+  assert.equal(ui.delta({ dir: 'up' }), 'ui-delta ui-delta--up');
+  assert.equal(ui.delta({ dir: 'down', invert: true }), 'ui-delta ui-delta--down ui-delta--invert');
+  assert.equal(ui.delta({ dir: 'flat' }), 'ui-delta ui-delta--flat');
+  assert.equal(ui.delta({ dir: 'bogus' }), 'ui-delta');
+  assert.equal(ui.compare(), 'ui-compare');
+  assert.equal(ui.compare({ cols: 2 }), 'ui-compare ui-compare--2up');
+  assert.equal(ui.compare({ cols: 3 }), 'ui-compare');
   assert.equal(ui.inputIcon(), 'ui-input-icon');
   assert.equal(ui.inputIcon({ end: true }), 'ui-input-icon ui-input-icon--end');
   assert.equal(ui.annotation(), 'ui-annotation ui-annotation--callout ui-annotation--accent');

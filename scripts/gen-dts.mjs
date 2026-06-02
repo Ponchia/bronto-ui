@@ -70,6 +70,16 @@ export interface BadgeOpts {
 export interface NumOpts {
   tone?: 'pos' | 'neg' | 'muted';
 }
+export interface DeltaOpts {
+  /** Trend direction — sets the arrow glyph and the conventional tone. */
+  dir?: 'up' | 'down' | 'flat';
+  /** Swap only the tone when \`up\` is the bad direction (latency, error rate, cost). */
+  invert?: boolean;
+}
+export interface CompareOpts {
+  /** Pin exactly two equal columns (hard before/after) instead of the auto-fitting set. */
+  cols?: 2;
+}
 export interface ChipOpts {
   accent?: boolean;
 }
@@ -244,6 +254,8 @@ export interface Ui {
   card(opts?: CardOpts): string;
   badge(opts?: BadgeOpts): string;
   num(opts?: NumOpts): string;
+  delta(opts?: DeltaOpts): string;
+  compare(opts?: CompareOpts): string;
   chip(opts?: ChipOpts): string;
   link(opts?: LinkOpts): string;
   dot(opts?: DotOpts): string;

@@ -5,6 +5,53 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased — 0.5.1
+
+Additive maintenance on top of 0.5.0 — no breaking changes. The default
+`dist/bronto.css` is unchanged save for the two new core primitives below. Pin
+`~0.5`.
+
+### Added
+
+- **`ui-delta`** — a standalone trend/change indicator (core primitive): an
+  arrow glyph (the non-colour channel) plus the figure, with
+  `--up`/`--down`/`--flat`, and `--invert` to swap only the tone when "up" is
+  the bad direction (latency, error rate, cost). `ui.delta({ dir, invert })`.
+- **`ui-compare`** — a fluid side-by-side / before-after layout for the report
+  layer (`css/report.css`): `__col`, `__head`, and `--2up`.
+  `ui.compare({ cols })`.
+- **`@ponchia/ui/classes.json`** — the class vocabulary as language-neutral
+  data (`groups`/`classes`/`states`/`customProperties`), so a non-JS/non-TS
+  host or an external linter can validate emitted markup without executing the
+  ESM `cls` map or parsing the `.d.ts`. Generated from `cls`; drift-checked and
+  its `states`/`customProperties` gated against the stylesheet.
+- **`tokens/resolved.json` `scale` block** — the resolved non-colour scales
+  (spacing/radius/type/z/motion, `var()` chains flattened), completing the
+  token contract for non-CSS hosts (previously colour-only).
+- On-brand **Mermaid** (`@ponchia/ui/mermaid`, `mermaid.json`) and **D2**
+  (`@ponchia/ui/d2`, `d2.json`) theme maps — resolved per-theme palettes
+  projected from the same tokens, gated. Diagrams stay the consumer's renderer;
+  these are config only.
+
+### Fixed
+
+- Responsive/mobile hardening across the framework: `rem`-rooted type for WCAG
+  1.4.4, coarse-pointer tap-target floors, combobox/tour-note viewport clamps,
+  and `@media (hover)` gating — with a new responsive e2e sweep.
+
+### Documentation
+
+- LLM-authored static reports: a prominent CSS-loading note (bundler vs
+  `node_modules` vs CDN) and a copy-pasteable CDN report in
+  `docs/reporting.md`; clarified that `dist/bronto.css` does **not** include the
+  opt-in report/chart/legend/annotation layers; number/date formatting
+  guidance; and a standalone, no-build report reference
+  (`demo/report-standalone.html`).
+- Resolved the `is-*` self-contradiction: the framework's own
+  `is-num`/`is-pos`/`is-neg`/`is-key`/`is-open` state hooks are valid even
+  though they deliberately live outside `cls` (documented in
+  `docs/reference.md` and `classes.json`).
+
 ## 0.5.0 — 2026-06-02
 
 A **minor** that builds out the "analytical & generated-report UI" identity: a

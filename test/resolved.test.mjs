@@ -40,8 +40,21 @@ test('resolved: OKLCH accent ramp is generated and kept in the static palette', 
   );
 });
 
-test('resolved: non-colour tokens are dropped, not fabricated', () => {
+test('resolved: non-colour tokens are dropped from the colour palettes', () => {
   for (const k of ['--radius-md', '--space-md', '--shadow', '--mono', '--ease-spring']) {
     assert.ok(!(k in r.light), `${k} should not be in the resolved colour map`);
+  }
+});
+
+test('resolved: the scale block carries non-colour tokens, flattened, no var()/colour', () => {
+  assert.equal(r.scale['--space-md'], '1rem');
+  assert.equal(r.scale['--radius-md'], '2px');
+  // var() chain flattened to a usable font stack (--display → --dot-font → --mono).
+  assert.match(r.scale['--display'], /^'Doto',/);
+  assert.doesNotMatch(r.scale['--display'], /var\(/);
+  // No colour token leaked into the scale block.
+  for (const [name, v] of Object.entries(r.scale)) {
+    assert.doesNotMatch(v, /var\(|color-mix\(/, `scale ${name} unresolved: ${v}`);
+    assert.ok(!/^#|^rgba?\(/.test(v), `scale ${name} looks like a colour: ${v}`);
   }
 });

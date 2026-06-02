@@ -1,0 +1,228 @@
+<!doctype html>
+<!--
+  Canonical STANDALONE static report — no build step, no JavaScript.
+
+  This file links the built CSS by relative path (`../dist/...`) so it runs
+  straight from the repo. To copy this pattern into your own report, swap the
+  links for real URLs (the package specifiers below do NOT resolve in a browser):
+
+    ./node_modules/@ponchia/ui/dist/bronto.css            (installed)
+    https://cdn.jsdelivr.net/npm/@ponchia/ui@0.5.0/dist/bronto.css   (CDN, pinned)
+
+  Note: dist/bronto.css is the standard component set only. The report, chart,
+  annotation and legend layers are the separate opt-in leaves linked below.
+  Full cookbook: docs/reporting.md.
+-->
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — standalone static report</title>
+    <meta
+      name="description"
+      content="A complete, no-build, no-JS static report built from @ponchia/ui."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/report.css" />
+    <link rel="stylesheet" href="../dist/css/dataviz.css" />
+    <link rel="stylesheet" href="../dist/css/legend.css" />
+  </head>
+  <body>
+    <main class="ui-report ui-report--numbered">
+      <header class="ui-report__cover ui-report__cover--compact ui-keep">
+        <p class="ui-eyebrow">Service review</p>
+        <h1 class="ui-report__title">Platform reliability report</h1>
+        <p class="ui-report__subtitle">A static, PDF-ready report generated from trusted data.</p>
+        <ul class="ui-report__meta">
+          <li><time datetime="2026-06-02">Jun 2, 2026</time></li>
+          <li>Static HTML</li>
+          <li>No behavior JS</li>
+          <li>Chromium PDF-ready</li>
+        </ul>
+      </header>
+
+      <nav class="ui-report__toc ui-screen-only" aria-label="Report contents">
+        <p class="ui-eyebrow ui-eyebrow--muted">Contents</p>
+        <ol>
+          <li><a href="#summary">Executive summary</a></li>
+          <li><a href="#trend">Trend</a></li>
+          <li><a href="#migration">Before / after</a></li>
+          <li><a href="#evidence">Evidence</a></li>
+          <li><a href="#timeline">Incident timeline</a></li>
+        </ol>
+      </nav>
+
+      <section id="summary" class="ui-report__section" aria-labelledby="summary-head">
+        <h2 class="ui-report__section-head" id="summary-head">Executive summary</h2>
+        <div class="ui-report__summary">
+          <p>
+            Availability held at target while p95 latency improved after the June migration. One
+            incident, fully recovered, is reviewed below.
+          </p>
+        </div>
+        <div class="ui-statgrid">
+          <div class="ui-stat">
+            <span class="ui-stat__label">Availability</span>
+            <span class="ui-stat__value">99.97%</span>
+            <span class="ui-stat__delta is-pos">+0.04 pts</span>
+          </div>
+          <div class="ui-stat">
+            <span class="ui-stat__label">p95 latency</span>
+            <span class="ui-stat__value">172 ms</span>
+            <span class="ui-stat__delta is-pos">−48 ms</span>
+          </div>
+          <div class="ui-stat">
+            <span class="ui-stat__label">Open incidents</span>
+            <span class="ui-stat__value">1</span>
+            <span class="ui-stat__delta is-neg">+1 this week</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="trend" class="ui-report__section" aria-labelledby="trend-head">
+        <h2 class="ui-report__section-head" id="trend-head">Trend</h2>
+        <div class="ui-prose">
+          <p>
+            Quarter over quarter, throughput rose
+            <span class="ui-delta ui-delta--up">+12.4%</span> and error rate fell
+            <span class="ui-delta ui-delta--down">−0.3 pts</span>. Cost moved
+            <span class="ui-delta ui-delta--up ui-delta--invert">+$1.2k</span>
+            (up is unwelcome here), while support backlog was
+            <span class="ui-delta ui-delta--flat">unchanged</span>.
+          </p>
+        </div>
+      </section>
+
+      <section id="migration" class="ui-report__section" aria-labelledby="migration-head">
+        <h2 class="ui-report__section-head" id="migration-head">Before / after</h2>
+        <div class="ui-compare ui-compare--2up">
+          <div class="ui-compare__col">
+            <p class="ui-compare__head">Before migration</p>
+            <div class="ui-statgrid">
+              <div class="ui-stat">
+                <span class="ui-stat__label">p95 latency</span>
+                <span class="ui-stat__value">220 ms</span>
+              </div>
+            </div>
+          </div>
+          <div class="ui-compare__col">
+            <p class="ui-compare__head">After migration</p>
+            <div class="ui-statgrid">
+              <div class="ui-stat">
+                <span class="ui-stat__label">p95 latency</span>
+                <span class="ui-stat__value">172 ms</span>
+                <span class="ui-stat__delta is-pos">−48 ms</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="evidence" class="ui-report__section" aria-labelledby="evidence-head">
+        <h2 class="ui-report__section-head" id="evidence-head">Evidence</h2>
+
+        <figure
+          class="ui-report__figure ui-chart ui-print-exact ui-keep"
+          role="group"
+          aria-labelledby="chart-title"
+        >
+          <figcaption id="chart-title" class="ui-chart__caption">
+            Fig 1 — weekly request mix
+          </figcaption>
+          <ul class="ui-legend" aria-label="Series">
+            <li class="ui-legend__item">
+              <span
+                class="ui-legend__swatch"
+                style="--chart-color: var(--chart-1); --chart-pattern: var(--chart-pattern-1)"
+                aria-hidden="true"
+              ></span>
+              <span class="ui-legend__label">Reads</span>
+            </li>
+            <li class="ui-legend__item">
+              <span
+                class="ui-legend__swatch"
+                style="--chart-color: var(--chart-2); --chart-pattern: var(--chart-pattern-2)"
+                aria-hidden="true"
+              ></span>
+              <span class="ui-legend__label">Writes</span>
+            </li>
+          </ul>
+          <div class="ui-chart__plot" aria-hidden="true">
+            <div
+              class="ui-chart__bar"
+              style="
+                --chart-value: 68%;
+                --chart-color: var(--chart-1);
+                --chart-pattern: var(--chart-pattern-1);
+              "
+            >
+              <div class="ui-chart__label"><span>Reads</span><span>68%</span></div>
+              <div class="ui-chart__track"><div class="ui-chart__fill"></div></div>
+            </div>
+            <div
+              class="ui-chart__bar"
+              style="
+                --chart-value: 32%;
+                --chart-color: var(--chart-2);
+                --chart-pattern: var(--chart-pattern-2);
+              "
+            >
+              <div class="ui-chart__label"><span>Writes</span><span>32%</span></div>
+              <div class="ui-chart__track"><div class="ui-chart__fill"></div></div>
+            </div>
+          </div>
+          <div class="ui-chart__fallback">
+            <div class="ui-table-wrap">
+              <table class="ui-table ui-table--dense">
+                <caption>
+                  Request mix, last 7 days
+                </caption>
+                <thead>
+                  <tr>
+                    <th>Series</th>
+                    <th class="is-num">Share</th>
+                    <th class="is-num">Δ wk</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Reads</td>
+                    <td class="is-num">68%</td>
+                    <td class="is-num is-pos">+2</td>
+                  </tr>
+                  <tr>
+                    <td>Writes</td>
+                    <td class="is-num">32%</td>
+                    <td class="is-num is-neg">−2</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </figure>
+      </section>
+
+      <section id="timeline" class="ui-report__section" aria-labelledby="timeline-head">
+        <h2 class="ui-report__section-head" id="timeline-head">Incident timeline</h2>
+        <ol class="ui-timeline">
+          <li class="ui-timeline__item">
+            <time class="ui-timeline__time" datetime="2026-06-01T09:12:00">09:12</time>
+            <span>Latency alert fired for p95 over threshold.</span>
+          </li>
+          <li class="ui-timeline__item" aria-current="step">
+            <time class="ui-timeline__time" datetime="2026-06-01T09:54:00">09:54</time>
+            <span>Latency returned to baseline; incident closed.</span>
+          </li>
+        </ol>
+      </section>
+
+      <section
+        class="ui-report__section ui-report__section--unnumbered ui-report__footnotes"
+        aria-labelledby="notes-head"
+      >
+        <p class="ui-eyebrow ui-eyebrow--muted" id="notes-head">Notes</p>
+        <p>Figures are illustrative. Measured against the modern Chromium print/PDF target.</p>
+      </section>
+    </main>
+  </body>
+</html>
