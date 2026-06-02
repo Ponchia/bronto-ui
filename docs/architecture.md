@@ -80,6 +80,36 @@ on top of the CSS, none of which require a framework commitment**:
   They do not define markup, own state, or fork behavior logic; they only run
   the vanilla initializers on mount and cleanup on unmount/dispose.
 
+## Repository layout
+
+The repo root mixes five kinds of directory that look alike but follow very
+different rules. Two distinctions matter most: several are **path-frozen
+published subpaths** — the directory name _is_ the public import specifier
+(`@ponchia/ui/react` resolves to `./react/`), so they cannot be moved or
+renamed — and several are **generated** and must never be hand-edited (a
+generator overwrites them and a drift gate fails CI).
+
+| Path | Kind | Edit here? | Notes |
+| --- | --- | --- | --- |
+| `css/` | source | yes | The framework. Hand-authored `@layer bronto` CSS. (`css/tokens.css` palette blocks and `css/generated.css` are generated — see below.) |
+| `tokens/index.js` | source | yes | The single source of truth for token **values** (`cssVars`). |
+| `classes/index.js`, `behaviors/`, `annotations/`, `connectors/`, `react/`, `solid/`, `qwik/`, `glyphs/`, `shiki/` | source · published-subpath (path-frozen) | yes — but **do not move** | Authored ESM shipped as-is; the dir name is the public import path. The `.d.ts` beside them are generated/drift-checked (see below). |
+| `dist/` | generated | no | Build of `css/` (`npm run dist:build`); byte-checked by `check:dist`. |
+| `tokens/index.json`, `tokens/resolved.json`, `tokens/tokens.dtcg.json`, `tokens/charts.json`, `classes/index.d.ts`, `tokens/index.d.ts`, `tokens/{skins,charts}.d.ts`, `glyphs/glyphs.d.ts`, `classes/vscode.css-custom-data.json`, `docs/reference.md` | generated | no | Committed build artifacts; regenerate with `npm run prepack`, never hand-edit. Drift-checked in `npm run check`. |
+| `fonts/` | vendored | — | The Doto webfont (woff2) + its OFL license. |
+| `scripts/` | tooling | yes | `gen-*` regenerate artifacts, `check-*` are the drift/contract gates wired into `npm run check`, plus `build-dist`, `serve`, `size-report`. |
+| `docs/` | source (mostly) | yes | Hand-authored docs + ADRs; the curated subset in `package.json` `files` ships in the tarball. `docs/reference.md` is generated. |
+| `demo/`, `test/`, `examples/` | fixtures | yes | The self-driving demo/showcase, the unit + Playwright e2e suite, and consumer example apps built against the packed tarball. |
+| `.github/`, `*.config.mjs`, `.prettierrc`, `.stylelintrc.json`, `tsconfig.json`, `.editorconfig` | config | yes | CI workflows and tool config. |
+| `package.json`, `llms.txt`, `CHANGELOG.md`, `MIGRATIONS.json`, `README.md`, `CONTRIBUTING.md`, `ROADMAP.md`, `LICENSE` | meta | yes | Manifest, the agent entrypoint, the curated changelog, the rename map, and project docs. |
+
+The **path-frozen** dirs are the cost of zero-build, path-stable publishing:
+`files` map 1:1 to published paths and the consumer's own bundler tree-shakes
+the ESM, so there is no `src/` indirection (and no JS bundler — see the
+distribution decision below). **Generated** files are regenerated from their
+source and policed by a drift gate — edit the source, run the generator, commit
+the result.
+
 ## Drift control
 
 Every data mirror is backed by a check wired into `npm run check`, run by CI

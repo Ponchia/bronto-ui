@@ -178,7 +178,7 @@ Release candidates publish to the `next` dist-tag, never to `latest` — opt in 
 
 - **[Live demo](https://ponchia.github.io/bronto-ui/)** · **[Theme playground](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)**
 - **[Class reference](https://github.com/Ponchia/bronto-ui/blob/main/docs/reference.md)** · **[Usage guide](https://github.com/Ponchia/bronto-ui/blob/main/docs/usage.md)** · **[Theming](https://github.com/Ponchia/bronto-ui/blob/main/docs/theming.md)** · **[Contrast](https://github.com/Ponchia/bronto-ui/blob/main/docs/contrast.md)** · **[Color system (ADR-0001)](https://github.com/Ponchia/bronto-ui/blob/main/docs/adr/0001-color-system.md)** · **[Scope & 2026 baseline (ADR-0002)](https://github.com/Ponchia/bronto-ui/blob/main/docs/adr/0002-scope-and-2026-baseline.md)**
-- **[CHANGELOG](https://github.com/Ponchia/bronto-ui/blob/main/CHANGELOG.md)** · **[Roadmap](https://github.com/Ponchia/bronto-ui/blob/main/ROADMAP.md)** · **[Contributing](https://github.com/Ponchia/bronto-ui/blob/main/CONTRIBUTING.md)**
+- **[CHANGELOG](https://github.com/Ponchia/bronto-ui/blob/main/CHANGELOG.md)** · **[Roadmap](https://github.com/Ponchia/bronto-ui/blob/main/ROADMAP.md)** · **[Contributing](https://github.com/Ponchia/bronto-ui/blob/main/CONTRIBUTING.md)** · **[Repository layout](https://github.com/Ponchia/bronto-ui/blob/main/docs/architecture.md#repository-layout)**
 
 ## License
 

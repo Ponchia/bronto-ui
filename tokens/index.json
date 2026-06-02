@@ -1,4 +1,5 @@
 {
+  "$comment": "GENERATED from tokens/index.js — do not edit by hand. Run `npm run tokens:build`; drift-checked by check:tokens. A build artifact for non-JS tooling (Style Dictionary, Figma, other languages).",
   "cssVars": {
     "global": {
       "--radius-xl": "4px",

@@ -15,10 +15,9 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { cssVars, tokens } from '../tokens/index.js';
 import { tokensCss, TOKENS_CSS_PATH } from './gen-tokens-css.mjs';
+import { tokensJson, TOKENS_JSON_PATH } from './gen-tokens-json.mjs';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
 
 if (!existsSync(TOKENS_CSS_PATH))
@@ -26,10 +25,9 @@ if (!existsSync(TOKENS_CSS_PATH))
 else if (readFileSync(TOKENS_CSS_PATH, 'utf8') !== tokensCss())
   errors.push('css/tokens.css palette is stale vs tokens/index.js — run: npm run tokens:css:build');
 
-const jsonPath = resolve(root, 'tokens/index.json');
-const expectedJson = JSON.stringify({ cssVars, tokens }, null, 2) + '\n';
-if (!existsSync(jsonPath)) errors.push('tokens/index.json missing — run: npm run tokens:build');
-else if (readFileSync(jsonPath, 'utf8') !== expectedJson)
+if (!existsSync(TOKENS_JSON_PATH))
+  errors.push('tokens/index.json missing — run: npm run tokens:build');
+else if (readFileSync(TOKENS_JSON_PATH, 'utf8') !== tokensJson)
   errors.push('tokens/index.json is stale — run: npm run tokens:build');
 
 if (errors.length) {
