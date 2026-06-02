@@ -55,7 +55,9 @@ test('print: chrome is hidden, content + link URLs are kept', async ({ page }) =
   });
   expect(r.dotfield).toBe('none'); // decorative chrome dropped on paper
   expect(r.main).not.toBe('none'); // content kept
-  expect(r.afterContent).toContain('http'); // link target surfaced
+  // link target surfaced on paper. Chromium/WebKit resolve attr(href) to the
+  // URL in computed ::after content; Firefox returns the literal `attr(href)`.
+  expect(r.afterContent).toMatch(/http|attr\(href\)/);
 });
 
 test('surface=oled: dark surfaces flip to true black; the readable text token is untouched', async ({
