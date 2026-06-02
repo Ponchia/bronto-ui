@@ -20,6 +20,10 @@ tokens/charts.d.ts   linguist-generated
 tokens/skins.d.ts    linguist-generated
 glyphs/glyphs.d.ts   linguist-generated
 
+# Leaf declarations emitted from JSDoc by tsc (npm run dts:emit; tsconfig.dts.json)
+connectors/index.d.ts      linguist-generated
+connectors/index.d.ts.map  linguist-generated
+
 # Editor + reference data generated from the token / class model
 classes/vscode.css-custom-data.json  linguist-generated
 docs/reference.md                    linguist-generated

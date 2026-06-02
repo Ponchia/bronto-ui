@@ -92,6 +92,7 @@
     "dtcg:build": "node scripts/gen-dtcg.mjs",
     "resolved:build": "node scripts/gen-resolved.mjs",
     "dts:build": "node scripts/gen-dts.mjs",
+    "dts:emit": "tsc -p tsconfig.dts.json",
     "glyphs:build": "node scripts/gen-glyphs.mjs",
     "skins:build": "node scripts/gen-skins.mjs",
     "charts:build": "node scripts/gen-charts.mjs",
@@ -105,6 +106,7 @@
     "check:behaviors": "node scripts/check-behaviors.mjs",
     "check:bindings": "node scripts/check-bindings.mjs",
     "check:helpers-dts": "node scripts/check-helpers-dts.mjs",
+    "check:dts-emit": "node scripts/check-dts-emit.mjs",
     "check:glyphs": "node scripts/check-glyphs.mjs",
     "check:color-policy": "node scripts/check-color-policy.mjs",
     "check:skins": "node scripts/check-skins.mjs",
@@ -119,9 +121,9 @@
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:publint": "publint --strict",
     "check:attw": "attw --pack --ignore-rules no-resolution cjs-resolves-to-esm",
-    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:fresh && npm run check:classes && npm run check:types && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:publint && npm run check:attw && npm run check:release && npm run check:contrast && npm run check:behaviors && npm run check:bindings && npm run check:helpers-dts && npm run check:glyphs && npm run check:color-policy && npm run check:skins && npm run check:charts && npm run check:report && npm run check:legend",
+    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:fresh && npm run check:classes && npm run check:types && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:publint && npm run check:attw && npm run check:release && npm run check:contrast && npm run check:behaviors && npm run check:bindings && npm run check:helpers-dts && npm run check:dts-emit && npm run check:glyphs && npm run check:color-policy && npm run check:skins && npm run check:charts && npm run check:report && npm run check:legend",
     "test": "node --test \"test/*.test.mjs\"",
-    "prepack": "npm run tokens:css:build && npm run tokens:build && npm run dtcg:build && npm run resolved:build && npm run dts:build && npm run reference:build && npm run contrast:build && npm run vscode:build && npm run skins:build && npm run charts:build && npm run dist:build && npm run glyphs:build",
+    "prepack": "npm run tokens:css:build && npm run tokens:build && npm run dtcg:build && npm run resolved:build && npm run dts:build && npm run dts:emit && npm run reference:build && npm run contrast:build && npm run vscode:build && npm run skins:build && npm run charts:build && npm run dist:build && npm run glyphs:build",
     "prepublishOnly": "npm run check && npm test"
   },
   "devDependencies": {
