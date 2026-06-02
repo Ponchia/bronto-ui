@@ -8,7 +8,7 @@
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Ponchia/bronto-ui/badge)](https://scorecard.dev/viewer/?uri=github.com/Ponchia/bronto-ui)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE)
 
-**A CSS-first, framework-agnostic UI framework built on token-driven restraint — monochrome by default, one rationed accent, dot-matrix display type, hairline borders. Color is _tiered_: we don't decorate with it, we signal with it. The "Nothing"-inspired look is the default skin, not the architecture — opt-in colorways (amber CRT · phosphor green · e-ink), a dot-matrix icon set, and a colourblind-safe data-viz palette prove the one knob is real. Zero runtime dependencies; re-brand the whole thing with one CSS variable.**
+**A CSS-first design system for interfaces that explain themselves.** Works in plain HTML, every modern framework, and print/PDF — there's no component runtime to adopt. The look is a deliberate stance: a neutral monochrome canvas with **one _rationed_ accent** (colour _signals_, it never decorates), dot-matrix display type and hairline borders, re-skinnable from a single `--accent` knob (opt-in amber-CRT · phosphor-green · e-ink colorways). And beyond the standard component set it ships an opt-in **analytical & report layer** — SVG annotations, legends, leader-line connectors, a guided-focus spotlight, text marks, a colourblind-safe data-viz palette and a static/PDF report grammar — for dashboards and LLM-authored reports. Zero runtime dependencies; re-brand the whole thing with one CSS variable.
 
 ### [Live demo →](https://ponchia.github.io/bronto-ui/) &nbsp;·&nbsp; [Theme playground →](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)
 
@@ -19,6 +19,8 @@ The demo is the kitchen sink — every component, light/dark, RTL, live theming.
 ## What it is
 
 `@ponchia/ui` ships its design as **CSS**, not components. You drop in one stylesheet and style with semantic `ui-*` classes; an optional thin layer of typed class-name recipes and SSR-safe vanilla behaviors sits on top for the few things that genuinely need JS (theme persistence, dialogs, toasts, disclosure). The guiding principle is **color is rationed, structure carries meaning** — layout, type weight and the hairline do the work before a hue does, and the accent is a spotlight, not a paint bucket. Because everything lives in a single `@layer bronto`, your own un-layered CSS overrides the framework with no specificity fight and no `!important`.
+
+It ships a complete, accessible **standard component set** — but that's not where it competes. Its differentiator is an opt-in **analytical & communication layer** for interfaces that make complex work legible: annotations, legends, connectors, marks, a guided-focus spotlight, lifecycle/system-state and source-provenance vocabularies, and a static/PDF report grammar. Each owns only its visual grammar and pure geometry — no chart engine, no state, no hit-testing. See **[docs/frontier-primitives.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/frontier-primitives.md)** for the thesis.
 
 ## Install
 
@@ -100,6 +102,7 @@ Arrows, chevrons, check/close/plus/minus, search/menu/gear, info/warning/bell/lo
 - **Disclosure & nav** — tabs, accordion, segmented, breadcrumb, pagination, `ui-steps`, `ui-timeline`, `ui-pagehead`, `ui-kbd`.
 - **Shells** — an admin dashboard shell (`ui-app-*`) and a content/marketing site shell (`ui-site*`, `ui-container`).
 - **Prose** — `.ui-prose` styles raw, unclassed semantic HTML (Markdown / CMS / LLM output) with zero classes.
+- **Analytical & communication primitives** _(opt-in)_ — `@ponchia/ui/css/analytical.css`: SVG **annotations** (subject/connector/note), standalone **legends**/data-keys, text/evidence **marks**, leader-line **connectors** (+ a pure `@ponchia/ui/connectors` geometry kernel), a guided-focus **spotlight**, a **crosshair**/readout, and a cross-cutting **selection** vocabulary. Each owns its visual grammar + pure geometry and refuses scales/state/hit-testing — figures that explain themselves, not a chart engine. Plus standalone **`source`/provenance** (trust) and **lifecycle `state`** leaves.
 - **Reports** _(opt-in)_ — `@ponchia/ui/css/report.css`, a static/PDF-first report grammar for LLM-authored HTML: covers, sections, findings, evidence, figures, chart wrappers and print utilities.
 - **Motion & dots** — the dot-matrix motif kit: dot grid, status dots, dot loaders, the orbital spinner, matrix reveal — all reduced-motion aware.
 - **Glyphs** — `@ponchia/ui/glyphs`, a 48-glyph dot-matrix icon set on the `.ui-dotmatrix` primitive (display marks + crisp `solid` inline icons + one-node `.ui-icon` mask rendering).
@@ -117,7 +120,7 @@ Everything accent-colored derives from a single `--accent` variable via `color-m
 .promo  { --accent: #16a34a; }   /* …or just this section green */
 ```
 
-Buttons, focus rings, dot motifs, accent borders and soft fills all follow automatically. Light/dark is `data-theme="light"` / `"dark"` on `<html>` (defaults to `prefers-color-scheme`); `data-density` and `data-contrast` give density and contrast presets. A full re-skin (radius, display face, dot density, surfaces) is a handful more token overrides — the "Nothing" look is the **default skin, not the architecture**.
+Buttons, focus rings, dot motifs, accent borders and soft fills all follow automatically. Light/dark is `data-theme="light"` / `"dark"` on `<html>` (defaults to `prefers-color-scheme`); `data-density` and `data-contrast` give density and contrast presets. A full re-skin (radius, display face, dot density, surfaces) is a handful more token overrides — the default monochrome look is **one skin, not the architecture**.
 
 **One system, many skins.** That the knob is real isn't a claim — it ships: drop in `@ponchia/ui/css/skins.css` and set `data-bronto-skin="amber-crt | phosphor-green | e-ink"` on `<html>` for a complete, contrast-gated recolour (the derived accent family, focus ring, dot-matrix and glyphs all follow). Colour is governed in **tiers** — neutral canvas · one accent · locked status · display expression · opt-in data-viz — so it always earns its place; the full constitution is **[ADR-0001](https://github.com/Ponchia/bronto-ui/blob/main/docs/adr/0001-color-system.md)**.
 
