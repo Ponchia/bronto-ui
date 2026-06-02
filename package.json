@@ -54,6 +54,7 @@
     "shiki",
     "llms.txt",
     "CHANGELOG.md",
+    "MIGRATIONS.json",
     "docs/architecture.md",
     "docs/reference.md",
     "docs/theming.md",
