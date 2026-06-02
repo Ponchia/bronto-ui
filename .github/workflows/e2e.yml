@@ -1,0 +1,64 @@
+# Reusable end-to-end gate: visual snapshots (chromium) + axe a11y both
+# themes + cross-engine firefox/webkit behavioural + forced-colors/
+# reduced-motion/print + no-console-error/404. Pinned to the container the
+# committed baselines were authored in, so screenshots are byte-stable
+# across machines (no cross-OS font flake).
+#
+# Called by BOTH ci.yml and release.yml via `workflow_call`, so a release
+# runs EXACTLY the gate every PR runs — one definition, no drift. (These
+# used to be two near-identical copies that had already diverged: CI had a
+# registry-retry the release path lacked, so a release was strictly less
+# robust than a routine push.)
+name: e2e
+
+on:
+  workflow_call:
+
+# Least privilege: this workflow only reads the repo.
+permissions:
+  contents: read
+
+# Uniform npm network resilience for every npm invocation here (replaces
+# the ad-hoc `npm ci || sleep && npm ci` shell retry — npm's own
+# request-level retry is more robust and covers install AND build steps).
+env:
+  npm_config_fetch_retries: '5'
+  npm_config_fetch_retry_mintimeout: '10000'
+  npm_config_fetch_retry_maxtimeout: '120000'
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    # Backstop so a hung browser/webServer can't burn a runner for the 6h
+    # GitHub default. The suite itself is ~8 min.
+    timeout-minutes: 20
+    container:
+      image: mcr.microsoft.com/playwright:v1.60.0-jammy
+    # The job container runs as root but GitHub sets $HOME=/github/home
+    # (uid 1001); Firefox refuses to launch unless $HOME is owned by the
+    # current user. Documented Playwright-on-GHA workaround.
+    env:
+      HOME: /root
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      # No `cache: npm` here on purpose: inside the pinned container the
+      # setup-node npm cache never restores (the container's cache path
+      # isn't pre-seeded), so it only added a wasted post-step tar. The
+      # devDeps install in a few seconds regardless.
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 22
+
+      - run: npm ci
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+      - run: npx playwright test
+
+      - if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

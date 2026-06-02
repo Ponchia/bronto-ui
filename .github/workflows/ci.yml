@@ -1,11 +1,19 @@
-# Validation only. Runs on every branch push and PR.
+# Validation only. Runs on every PR, and on direct pushes to `main`.
+#
+# We deliberately do NOT also run on every branch push: a push and its PR
+# fall in different `concurrency` groups (push ref `refs/heads/<branch>`
+# vs PR ref `refs/pull/<n>/merge`), so each branch push with an open PR
+# ran the WHOLE pipeline — e2e included — twice. PRs already cover feature
+# branches; `main` pushes still run so a direct commit is validated and
+# Pages can deploy from a green commit.
+#
 # This workflow NEVER publishes or creates a release — see release.yml,
 # which is gated on `v*` tags. A push to main does not ship anything.
 name: CI
 
 on:
   push:
-    branches: ['**']
+    branches: [main]
   pull_request:
 
 # Least privilege: this workflow only reads the repo.
@@ -16,9 +24,64 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Uniform npm network resilience across jobs (replaces the ad-hoc
+# `npm ci || sleep && npm ci` retry — npm's own request-level retry is
+# more robust and covers install AND build steps).
+env:
+  npm_config_fetch_retries: '5'
+  npm_config_fetch_retry_mintimeout: '10000'
+  npm_config_fetch_retry_maxtimeout: '120000'
+
 jobs:
+  # Detect docs-only changes so the expensive cross-browser e2e (~8 min)
+  # and the 7-leg consumer-tarball matrix are skipped when nothing but
+  # Markdown/docs changed. `check` ALWAYS runs — it has doc-scanning gates
+  # (check:report validates docs use real classes; check:release validates
+  # the CHANGELOG). Self-contained git diff (no third-party action, in
+  # keeping with the repo's SHA-pinned/zero-extra-deps posture) and FAILS
+  # SAFE: any uncertainty (empty/unknown range, first push, force-push) →
+  # heavy=true → full pipeline.
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      heavy: ${{ steps.detect.outputs.heavy }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+      - id: detect
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT" = "pull_request" ]; then
+            files="$(git diff --name-only "$BASE_SHA"...HEAD || true)"
+          elif [ -n "${BEFORE_SHA:-}" ] && [ "$BEFORE_SHA" != "0000000000000000000000000000000000000000" ]; then
+            files="$(git diff --name-only "$BEFORE_SHA" HEAD || true)"
+          else
+            files=""   # unknown range → fail safe below
+          fi
+          # Only declare a docs-only change when the diff is NON-EMPTY and
+          # EVERY path is a doc; empty/unknown → heavy=true (run everything).
+          # `nondoc` = the changed paths that are NOT docs; if that's empty
+          # while `files` isn't, the change is docs-only. (Uses string
+          # emptiness, not `grep -q` exit codes — those differ BSD vs GNU.)
+          heavy=true
+          if [ -n "$files" ]; then
+            nondoc="$(printf '%s\n' "$files" | grep -vE '(\.md$|^docs/|^LICENSE$)' || true)"
+            [ -z "$nondoc" ] && heavy=false
+          fi
+          echo "Changed files:"; printf '%s\n' "$files"
+          echo "heavy=$heavy"
+          echo "heavy=$heavy" >> "$GITHUB_OUTPUT"
+
   check:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
@@ -27,82 +90,53 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install dependencies (retry once on a registry blip)
-        run: |
-          npm ci || (sleep 10 && npm ci)
+      - run: npm ci
 
-      # Stylelint + integrity checks (exports, tokens, classes, pack).
+      # Stylelint + integrity checks (exports, tokens, classes, pack, …).
       - run: npm run check
 
       # node:test — pure modules + jsdom behavior tests.
       - run: npm test
 
-  # Consumer smoke: pack the real tarball and build every example
-  # against it (not a workspace symlink), so a broken published
-  # surface — bad exports map, missing file, unresolved subpath —
-  # fails here before a release can ship it.
+  # Consumer smoke + end-to-end regression, defined ONCE as reusable
+  # workflows and shared with release.yml so the release path can't drift
+  # from what every PR runs. Skipped on docs-only changes (see `changes`).
   examples:
+    needs: [check, changes]
+    if: needs.changes.outputs.heavy == 'true'
+    uses: ./.github/workflows/examples.yml
+
+  e2e:
+    needs: changes
+    if: needs.changes.outputs.heavy == 'true'
+    uses: ./.github/workflows/e2e.yml
+
+  # Single aggregating gate — the ONLY required status check on `main`.
+  # Requiring individual matrix legs by name (`examples (qwik-vite)` …) is
+  # fragile: every added/renamed leg needs a manual branch-protection
+  # edit, and a forgotten one silently drops coverage (this is exactly how
+  # qwik-vite and report-static ended up NOT required). This job depends on
+  # the whole matrix, so leg changes never touch branch protection again.
+  # `if: always()` so it still reports when an upstream was skipped
+  # (docs-only) or failed; a skip counts as pass, a real failure does not.
+  ci-gate:
+    if: always()
+    needs: [check, examples, e2e]
     runs-on: ubuntu-latest
-    needs: check
-    strategy:
-      fail-fast: false
-      matrix:
-        example: [vanilla-vite, astro, sveltekit, react-vite, solid-vite, qwik-vite, report-static]
+    timeout-minutes: 5
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
-        with:
-          node-version: 22
-
-      - name: Install dependencies (retry once on a registry blip)
-        run: |
-          npm ci || (sleep 10 && npm ci)
-
-      # Pack the package exactly as a consumer would receive it.
-      - run: npm pack
-
-      - name: Build the ${{ matrix.example }} example from the tarball
-        working-directory: examples/${{ matrix.example }}
+      - name: Require every CI job to have passed (or been skipped)
+        env:
+          R_CHECK: ${{ needs.check.result }}
+          R_EXAMPLES: ${{ needs.examples.result }}
+          R_E2E: ${{ needs.e2e.result }}
         run: |
           set -euo pipefail
-          npm install --no-audit --no-fund
-          npm install --no-audit --no-fund --no-save "$GITHUB_WORKSPACE"/ponchia-ui-*.tgz
-          npm run build
-
-  # End-to-end regression: visual snapshots (chromium) + axe a11y incl.
-  # best-practice both themes + cross-engine firefox/webkit behavioural
-  # + forced-colors/reduced-motion/print + no-console-error/404. Pinned
-  # to the container the committed baselines were authored in, so
-  # screenshots are byte-stable across machines (no cross-OS font flake).
-  e2e:
-    runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.60.0-jammy
-    # The job container runs as root but GitHub sets $HOME=/github/home
-    # (uid 1001); Firefox refuses to launch unless $HOME is owned by the
-    # current user. Documented Playwright-on-GHA workaround.
-    env:
-      HOME: /root
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install dependencies (retry once on a registry blip)
-        run: |
-          npm ci || (sleep 10 && npm ci)
-        env:
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
-
-      - run: npx playwright test
-
-      - if: failure()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 7
+          echo "check=$R_CHECK examples=$R_EXAMPLES e2e=$R_E2E"
+          for r in "$R_CHECK" "$R_EXAMPLES" "$R_E2E"; do
+            if [ "$r" != "success" ] && [ "$r" != "skipped" ]; then
+              echo "::error::a required CI job did not pass (got '$r')"
+              exit 1
+            fi
+          done
+          echo "All required CI jobs passed (or were skipped on a docs-only change)."
