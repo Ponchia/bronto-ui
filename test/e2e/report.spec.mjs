@@ -128,7 +128,10 @@ test('report print utilities and overflow rules apply', async ({ page }) => {
   expect(result.firstFillWidth).toBeLessThan(result.firstTrackWidth);
   expect(result.annotationStroke).toBe('non-scaling-stroke');
   expect(result.exact).toBe('exact');
-  expect(result.proseLinkAfter).toContain('https://example.com/report-source');
+  // Chromium/WebKit resolve attr(href) in the computed ::after content;
+  // Firefox returns the unresolved `attr(href)` literal — both confirm the
+  // print rule surfaces the link target (it resolves at paint time in FF too).
+  expect(result.proseLinkAfter).toMatch(/https:\/\/example\.com\/report-source|attr\(href\)/);
 });
 
 // Note: the report fixture is intentionally NOT pixel-snapshotted. It is a
@@ -137,7 +140,10 @@ test('report print utilities and overflow rules apply', async ({ page }) => {
 // (axe + semantics) and below (print computed-style + a real PDF export),
 // which is higher-signal than a whole-page image diff.
 
-test('report fixture exports a non-empty Chromium PDF', async ({ page }) => {
+test('report fixture exports a non-empty Chromium PDF', async ({ page, browserName }) => {
+  // `page.pdf()` is a Chromium-only Playwright API; the print CSS it exercises
+  // is verified engine-agnostically by the print-utilities test above.
+  test.skip(browserName !== 'chromium', 'page.pdf() is Chromium-only in Playwright');
   await openReport(page, 'light');
   const pdf = await page.pdf({ format: 'A4', printBackground: true });
   expect(pdf.subarray(0, 4).toString()).toBe('%PDF');
