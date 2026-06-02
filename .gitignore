@@ -33,3 +33,10 @@ sonar-project.properties
 
 # Local Claude Code harness state
 .claude/
+
+# Core dumps. The Linux/amd64 Playwright image crashes its x86 chromium
+# under QEMU on Apple Silicon and drops `qemu_<exe>_<ts>.core` files (GBs
+# each) into the bind-mounted working dir. Never commit them — and don't
+# author baselines in a local container at all: use the "Update visual
+# baselines" workflow (see CONTRIBUTING.md "Visual baselines").
+*.core

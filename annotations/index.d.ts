@@ -234,3 +234,47 @@ export declare function declutterLabels(
   items: DeclutterLabelItem[],
   opts?: DeclutterLabelsOptions,
 ): number[];
+
+export interface DirectLabelItem {
+  /** The true data point the label refers to (figure coordinates). */
+  anchor: AnnotationPoint;
+  /** The label's extent along the layout axis. */
+  size: number;
+  /** Optional identifier, echoed back on the matching output (input order). */
+  key?: string | number;
+}
+export interface DirectLabelsOptions {
+  /** Axis the labels declutter along. 'y' = a vertical column. Default 'y'. */
+  axis?: 'x' | 'y';
+  /** Fixed coordinate on the other axis where the label column/row sits. Default 0. */
+  cross?: number;
+  /** Minimum gap kept between adjacent labels. Default 0. */
+  gap?: number;
+  /** Lower bound of the layout axis. Default -Infinity. */
+  min?: number;
+  /** Upper bound of the layout axis. Default Infinity. */
+  max?: number;
+  /** Leader-line shape. Default 'straight'. */
+  shape?: 'straight' | 'elbow' | 'curve';
+}
+export interface DirectLabel {
+  /** Placed label point — the leader's label-side end. */
+  x: number;
+  y: number;
+  /** The echoed input anchor. */
+  anchor: AnnotationPoint;
+  /** The echoed input key, if any. */
+  key?: string | number;
+  /** SVG path for the leader (anchor → label point); '' if they coincide. */
+  d: string;
+}
+/**
+ * Direct labeling: declutter labels along one axis and draw a leader from each
+ * anchor to its placed label (reusing the connector kernel). Deterministic and
+ * pure — no scales, no DOM, no 2-D placement. Output feeds a
+ * `<path class="ui-annotation__connector">` plus a label at `{x, y}`.
+ */
+export declare function directLabels(
+  items: DirectLabelItem[],
+  opts?: DirectLabelsOptions,
+): DirectLabel[];

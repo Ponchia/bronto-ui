@@ -29,6 +29,11 @@ const classSources = [
   'docs/spotlight.md',
   'docs/crosshair.md',
   'docs/selection.md',
+  'docs/sources.md',
+  'docs/state.md',
+  'docs/generated.md',
+  'docs/workbench.md',
+  'docs/command.md',
   'llms.txt',
   'demo/report.html',
   'demo/annotations.html',
@@ -38,6 +43,11 @@ const classSources = [
   'demo/spotlight.html',
   'demo/crosshair.html',
   'demo/selection.html',
+  'demo/sources.html',
+  'demo/state.html',
+  'demo/generated.html',
+  'demo/workbench.html',
+  'demo/command.html',
   ...walk('examples/report-static').filter((p) => /\.(html|js|css|md)$/.test(p)),
 ];
 
@@ -74,6 +84,21 @@ if (/crosshair\.css/.test(core)) {
 if (/selection\.css/.test(core)) {
   errors.push('css/core.css imports selection.css — selection CSS must stay opt-in');
 }
+if (/sources\.css/.test(core)) {
+  errors.push('css/core.css imports sources.css — sources CSS must stay opt-in');
+}
+if (/\bstate\.css/.test(core)) {
+  errors.push('css/core.css imports state.css — state CSS must stay opt-in');
+}
+if (/generated\.css/.test(core)) {
+  errors.push('css/core.css imports generated.css — generated CSS must stay opt-in');
+}
+if (/workbench\.css/.test(core)) {
+  errors.push('css/core.css imports workbench.css — workbench CSS must stay opt-in');
+}
+if (/command\.css/.test(core)) {
+  errors.push('css/core.css imports command.css — command CSS must stay opt-in');
+}
 
 const htmlSources = [
   'demo/report.html',
@@ -84,6 +109,11 @@ const htmlSources = [
   'demo/spotlight.html',
   'demo/crosshair.html',
   'demo/selection.html',
+  'demo/sources.html',
+  'demo/state.html',
+  'demo/generated.html',
+  'demo/workbench.html',
+  'demo/command.html',
   ...walk('examples/report-static').filter((p) => /\.html$/.test(p)),
 ];
 for (const rel of htmlSources) {
@@ -107,6 +137,11 @@ for (const rel of [
   'docs/spotlight.md',
   'docs/crosshair.md',
   'docs/selection.md',
+  'docs/sources.md',
+  'docs/state.md',
+  'docs/generated.md',
+  'docs/workbench.md',
+  'docs/command.md',
   'demo/report.html',
   'demo/annotations.html',
   'demo/legends.html',
@@ -115,6 +150,11 @@ for (const rel of [
   'demo/spotlight.html',
   'demo/crosshair.html',
   'demo/selection.html',
+  'demo/sources.html',
+  'demo/state.html',
+  'demo/generated.html',
+  'demo/workbench.html',
+  'demo/command.html',
   ...walk('examples/report-static'),
 ]) {
   if (!/\.(md|html|css|js)$/.test(rel)) continue;

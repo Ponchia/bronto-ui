@@ -2,9 +2,13 @@
    @ponchia/ui — Doto webfont (dot-matrix display face)
 
    URLs are relative to this file. When the package is consumed through a
-   bundler (Vite/astro/webpack) the `../fonts/*.ttf` references are rewritten
+   bundler (Vite/astro/webpack) the `../fonts/*.woff2` references are rewritten
    and the files emitted automatically. When served statically, ship the
    package's `fonts/` directory next to `css/` and it resolves as-is.
+
+   Shipped as woff2 only (Brotli-compressed) — ~5.7 kB per weight vs ~137 kB
+   uncompressed TTF. woff2 is supported by the whole browser floor (ADR-0002:
+   Chrome 125 / Safari 18 / Firefox 129), so no TTF fallback is carried.
 
    This file is optional: it is bundled into core.css/index.css, but a
    consumer that hosts Doto itself (or overrides `--display` / `--dot-font`)
@@ -16,7 +20,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('../fonts/doto-400.ttf') format('truetype');
+  src: url('../fonts/doto-400.woff2') format('woff2');
 }
 
 @font-face {
@@ -24,7 +28,7 @@
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('../fonts/doto-500.ttf') format('truetype');
+  src: url('../fonts/doto-500.woff2') format('woff2');
 }
 
 @font-face {
@@ -32,7 +36,7 @@
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('../fonts/doto-600.ttf') format('truetype');
+  src: url('../fonts/doto-600.woff2') format('woff2');
 }
 
 @font-face {
@@ -40,7 +44,7 @@
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('../fonts/doto-700.ttf') format('truetype');
+  src: url('../fonts/doto-700.woff2') format('woff2');
 }
 
 @font-face {
@@ -48,7 +52,7 @@
   font-style: normal;
   font-weight: 800;
   font-display: swap;
-  src: url('../fonts/doto-800.ttf') format('truetype');
+  src: url('../fonts/doto-800.woff2') format('woff2');
 }
 
 @font-face {
@@ -56,7 +60,7 @@
   font-style: normal;
   font-weight: 900;
   font-display: swap;
-  src: url('../fonts/doto-900.ttf') format('truetype');
+  src: url('../fonts/doto-900.woff2') format('woff2');
 }
 
 /* Data-saver: never *use* Doto, so the browser never fetches it. The

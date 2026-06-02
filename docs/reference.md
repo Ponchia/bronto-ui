@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 411 classes across 131 component groups
+- 474 classes across 148 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
@@ -218,8 +218,8 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.bracketNote` | `ui-bracket-note` | base |
 | `cls.bracketNoteLabel` | `ui-bracket-note__label` | part |
+| `cls.bracketNoteAccent` | `ui-bracket-note--accent` | modifier |
 | `cls.bracketNoteDanger` | `ui-bracket-note--danger` | modifier |
-| `cls.bracketNoteEvidence` | `ui-bracket-note--evidence` | modifier |
 | `cls.bracketNoteInfo` | `ui-bracket-note--info` | modifier |
 | `cls.bracketNoteWarning` | `ui-bracket-note--warning` | modifier |
 
@@ -315,6 +315,13 @@ each one matches a real selector in the stylesheet.
 | `cls.chip` | `ui-chip` | base |
 | `cls.chipAccent` | `ui-chip--accent` | modifier |
 
+### `.ui-citation`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.citation` | `ui-citation` | base |
+| `cls.citationChip` | `ui-citation--chip` | modifier |
+
 ### `.ui-cluster`
 
 | Registry key | Class | Kind |
@@ -331,6 +338,19 @@ each one matches a real selector in the stylesheet.
 | `cls.comboboxInput` | `ui-combobox__input` | part |
 | `cls.comboboxList` | `ui-combobox__list` | part |
 | `cls.comboboxOption` | `ui-combobox__option` | part |
+
+### `.ui-command`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.command` | `ui-command` | base |
+| `cls.commandEmpty` | `ui-command__empty` | part |
+| `cls.commandGroup` | `ui-command__group` | part |
+| `cls.commandInput` | `ui-command__input` | part |
+| `cls.commandItem` | `ui-command__item` | part |
+| `cls.commandList` | `ui-command__list` | part |
+| `cls.commandMeta` | `ui-command__meta` | part |
+| `cls.commandShortcut` | `ui-command__shortcut` | part |
 
 ### `.ui-connector`
 
@@ -483,6 +503,13 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.file` | `ui-file` | base |
 
+### `.ui-generated`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.generated` | `ui-generated` | base |
+| `cls.generatedLabel` | `ui-generated__label` | part |
+
 ### `.ui-grid`
 
 | Registry key | Class | Kind |
@@ -522,6 +549,14 @@ each one matches a real selector in the stylesheet.
 | `cls.inputIcon` | `ui-input-icon` | base |
 | `cls.inputIconSlot` | `ui-input-icon__icon` | part |
 | `cls.inputIconEnd` | `ui-input-icon--end` | modifier |
+
+### `.ui-inspector`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.inspector` | `ui-inspector` | base |
+| `cls.inspectorBody` | `ui-inspector__body` | part |
+| `cls.inspectorHeader` | `ui-inspector__header` | part |
 
 ### `.ui-kbd`
 
@@ -600,10 +635,10 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.mark` | `ui-mark` | base |
+| `cls.markAccent` | `ui-mark--accent` | modifier |
 | `cls.markBox` | `ui-mark--box` | modifier |
 | `cls.markDanger` | `ui-mark--danger` | modifier |
 | `cls.markDraw` | `ui-mark--draw` | modifier |
-| `cls.markEvidence` | `ui-mark--evidence` | modifier |
 | `cls.markInfo` | `ui-mark--info` | modifier |
 | `cls.markMuted` | `ui-mark--muted` | modifier |
 | `cls.markStrike` | `ui-mark--strike` | modifier |
@@ -683,6 +718,13 @@ each one matches a real selector in the stylesheet.
 | `cls.numNeg` | `ui-num--neg` | modifier |
 | `cls.numPos` | `ui-num--pos` | modifier |
 
+### `.ui-origin-label`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.originLabel` | `ui-origin-label` | base |
+| `cls.originLabelAi` | `ui-origin-label--ai` | modifier |
+
 ### `.ui-pagehead`
 
 | Registry key | Class | Kind |
@@ -731,12 +773,27 @@ each one matches a real selector in the stylesheet.
 | `cls.progressBar` | `ui-progress__bar` | part |
 | `cls.progressIndeterminate` | `ui-progress--indeterminate` | modifier |
 
+### `.ui-property`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.property` | `ui-property` | base |
+| `cls.propertyLabel` | `ui-property__label` | part |
+| `cls.propertyValue` | `ui-property__value` | part |
+
 ### `.ui-prose`
 
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.prose` | `ui-prose` | base |
 | `cls.proseCompact` | `ui-prose--compact` | modifier |
+
+### `.ui-provenance`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.provenance` | `ui-provenance` | base |
+| `cls.provenanceItem` | `ui-provenance__item` | part |
 
 ### `.ui-quote`
 
@@ -762,6 +819,13 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.readout` | `ui-readout` | base |
+
+### `.ui-reasoning`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.reasoning` | `ui-reasoning` | base |
+| `cls.reasoningBody` | `ui-reasoning__body` | part |
 
 ### `.ui-report`
 
@@ -841,6 +905,21 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.select` | `ui-select` | base |
 
+### `.ui-selectionbar`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.selectionbar` | `ui-selectionbar` | base |
+| `cls.selectionbarActions` | `ui-selectionbar__actions` | part |
+| `cls.selectionbarCount` | `ui-selectionbar__count` | part |
+
+### `.ui-shortcut`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.shortcut` | `ui-shortcut` | base |
+| `cls.shortcutSep` | `ui-shortcut__sep` | part |
+
 ### `.ui-sidebar`
 
 | Registry key | Class | Kind |
@@ -888,6 +967,24 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.skiplink` | `ui-skiplink` | base |
 
+### `.ui-source-card`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.sourceCard` | `ui-source-card` | base |
+| `cls.sourceCardActions` | `ui-source-card__actions` | part |
+| `cls.sourceCardExcerpt` | `ui-source-card__excerpt` | part |
+| `cls.sourceCardOrigin` | `ui-source-card__origin` | part |
+| `cls.sourceCardTime` | `ui-source-card__time` | part |
+| `cls.sourceCardTitle` | `ui-source-card__title` | part |
+
+### `.ui-source-list`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.sourceList` | `ui-source-list` | base |
+| `cls.sourceListItem` | `ui-source-list__item` | part |
+
 ### `.ui-spinner`
 
 | Registry key | Class | Kind |
@@ -901,6 +998,17 @@ each one matches a real selector in the stylesheet.
 | `cls.spotlight` | `ui-spotlight` | base |
 | `cls.spotlightHole` | `ui-spotlight__hole` | part |
 | `cls.spotlightRing` | `ui-spotlight--ring` | modifier |
+
+### `.ui-src`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.srcConflict` | `ui-src--conflict` | modifier |
+| `cls.srcGenerated` | `ui-src--generated` | modifier |
+| `cls.srcReviewed` | `ui-src--reviewed` | modifier |
+| `cls.srcStale` | `ui-src--stale` | modifier |
+| `cls.srcUnverified` | `ui-src--unverified` | modifier |
+| `cls.srcVerified` | `ui-src--verified` | modifier |
 
 ### `.ui-stack`
 
@@ -923,6 +1031,25 @@ each one matches a real selector in the stylesheet.
 | `cls.statDelta` | `ui-stat__delta` | part |
 | `cls.statLabel` | `ui-stat__label` | part |
 | `cls.statValue` | `ui-stat__value` | part |
+
+### `.ui-state`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.state` | `ui-state` | base |
+| `cls.stateDetail` | `ui-state__detail` | part |
+| `cls.stateLabel` | `ui-state__label` | part |
+| `cls.stateBusy` | `ui-state--busy` | modifier |
+| `cls.stateConflict` | `ui-state--conflict` | modifier |
+| `cls.stateError` | `ui-state--error` | modifier |
+| `cls.stateLocked` | `ui-state--locked` | modifier |
+| `cls.stateNeedsReview` | `ui-state--needs-review` | modifier |
+| `cls.stateOffline` | `ui-state--offline` | modifier |
+| `cls.stateQueued` | `ui-state--queued` | modifier |
+| `cls.stateReviewed` | `ui-state--reviewed` | modifier |
+| `cls.stateSaved` | `ui-state--saved` | modifier |
+| `cls.stateSaving` | `ui-state--saving` | modifier |
+| `cls.stateStale` | `ui-state--stale` | modifier |
 
 ### `.ui-statgrid`
 
@@ -963,6 +1090,12 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.switcher` | `ui-switcher` | base |
+
+### `.ui-syncbar`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.syncbar` | `ui-syncbar` | base |
 
 ### `.ui-tab`
 
@@ -1055,6 +1188,21 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.toastStack` | `ui-toast-stack` | base |
 | `cls.toastStackAssertive` | `ui-toast-stack--assertive` | modifier |
+
+### `.ui-tool-call`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.toolCall` | `ui-tool-call` | base |
+| `cls.toolCallBody` | `ui-tool-call__body` | part |
+| `cls.toolCallName` | `ui-tool-call__name` | part |
+| `cls.toolCallStatus` | `ui-tool-call__status` | part |
+
+### `.ui-tool-log`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.toolLog` | `ui-tool-log` | base |
 
 ### `.ui-tooltip`
 

@@ -59,3 +59,38 @@ test('quality — document structure (SEO / a11y landmarks)', async ({ page }) =
   await expect(page.locator('head meta[name="viewport"]')).toHaveCount(1);
   await expect(page.locator('main')).toHaveCount(1);
 });
+
+// The showcase claims every Tier-3 block is a *live, styled* specimen. Each
+// opt-in app-tier leaf (0.5.0) ships as its own entrypoint that is NOT in the
+// core bundle or the analytical roll-up, so it must be linked explicitly. A
+// missing <link> is invisible to the clean-console gate above (no failed
+// request — the stylesheet simply isn't requested), so assert the leaves are
+// actually applied: their sheets are loaded AND a marker class computes a
+// leaf-only value rather than the UA default.
+test('quality — opt-in showcase leaves are loaded and applied', async ({ page }) => {
+  await page.goto('/demo/', { waitUntil: 'networkidle' });
+
+  const leaves = [
+    'sources.css',
+    'state.css',
+    'generated.css',
+    'workbench.css',
+    'command.css',
+    'report.css',
+  ];
+  const loaded = await page.evaluate(() =>
+    [...document.styleSheets].map((s) => s.href || '').filter(Boolean),
+  );
+  for (const leaf of leaves) {
+    expect(
+      loaded.some((href) => href.endsWith(`/css/${leaf}`)),
+      `expected dist/css/${leaf} to be linked from demo/index.html`,
+    ).toBe(true);
+  }
+
+  // .ui-command and .ui-inspector are `display: grid` only when their leaf CSS
+  // applies (UA default for the <div> is block) — direct proof the styles took
+  // effect, not just that the <link> tag is present.
+  await expect(page.locator('.ui-command').first()).toHaveCSS('display', 'grid');
+  await expect(page.locator('.ui-inspector').first()).toHaveCSS('display', 'grid');
+});

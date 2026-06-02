@@ -341,7 +341,7 @@ export const cls = Object.freeze({
   annotationFocus: 'ui-annotation--focus',
   // marks (evidence/emphasis for running text — css/marks.css)
   mark: 'ui-mark',
-  markEvidence: 'ui-mark--evidence',
+  markAccent: 'ui-mark--accent',
   markSuccess: 'ui-mark--success',
   markWarning: 'ui-mark--warning',
   markDanger: 'ui-mark--danger',
@@ -353,7 +353,7 @@ export const cls = Object.freeze({
   markDraw: 'ui-mark--draw',
   bracketNote: 'ui-bracket-note',
   bracketNoteLabel: 'ui-bracket-note__label',
-  bracketNoteEvidence: 'ui-bracket-note--evidence',
+  bracketNoteAccent: 'ui-bracket-note--accent',
   bracketNoteWarning: 'ui-bracket-note--warning',
   bracketNoteDanger: 'ui-bracket-note--danger',
   bracketNoteInfo: 'ui-bracket-note--info',
@@ -391,6 +391,72 @@ export const cls = Object.freeze({
   selOn: 'ui-sel--on',
   selOff: 'ui-sel--off',
   selMaybe: 'ui-sel--maybe',
+  // source / citation / provenance — the trust layer (css/sources.css)
+  citation: 'ui-citation',
+  citationChip: 'ui-citation--chip',
+  sourceList: 'ui-source-list',
+  sourceListItem: 'ui-source-list__item',
+  sourceCard: 'ui-source-card',
+  sourceCardTitle: 'ui-source-card__title',
+  sourceCardOrigin: 'ui-source-card__origin',
+  sourceCardTime: 'ui-source-card__time',
+  sourceCardExcerpt: 'ui-source-card__excerpt',
+  sourceCardActions: 'ui-source-card__actions',
+  provenance: 'ui-provenance',
+  provenanceItem: 'ui-provenance__item',
+  srcVerified: 'ui-src--verified',
+  srcUnverified: 'ui-src--unverified',
+  srcGenerated: 'ui-src--generated',
+  srcReviewed: 'ui-src--reviewed',
+  srcStale: 'ui-src--stale',
+  srcConflict: 'ui-src--conflict',
+  // lifecycle / system state (css/state.css)
+  state: 'ui-state',
+  stateLabel: 'ui-state__label',
+  stateDetail: 'ui-state__detail',
+  stateBusy: 'ui-state--busy',
+  stateSaving: 'ui-state--saving',
+  stateSaved: 'ui-state--saved',
+  stateQueued: 'ui-state--queued',
+  stateOffline: 'ui-state--offline',
+  stateStale: 'ui-state--stale',
+  stateConflict: 'ui-state--conflict',
+  stateError: 'ui-state--error',
+  stateLocked: 'ui-state--locked',
+  stateReviewed: 'ui-state--reviewed',
+  stateNeedsReview: 'ui-state--needs-review',
+  syncbar: 'ui-syncbar',
+  // generated content / AI-trust surfaces (css/generated.css)
+  generated: 'ui-generated',
+  generatedLabel: 'ui-generated__label',
+  originLabel: 'ui-origin-label',
+  originLabelAi: 'ui-origin-label--ai',
+  reasoning: 'ui-reasoning',
+  reasoningBody: 'ui-reasoning__body',
+  toolLog: 'ui-tool-log',
+  toolCall: 'ui-tool-call',
+  toolCallName: 'ui-tool-call__name',
+  toolCallStatus: 'ui-tool-call__status',
+  toolCallBody: 'ui-tool-call__body',
+  // workbench — inspector / property / selection bar (css/workbench.css)
+  inspector: 'ui-inspector',
+  inspectorHeader: 'ui-inspector__header',
+  inspectorBody: 'ui-inspector__body',
+  property: 'ui-property',
+  propertyLabel: 'ui-property__label',
+  propertyValue: 'ui-property__value',
+  selectionbar: 'ui-selectionbar',
+  selectionbarCount: 'ui-selectionbar__count',
+  selectionbarActions: 'ui-selectionbar__actions',
+  // command palette shell (css/command.css + initCommand)
+  command: 'ui-command',
+  commandInput: 'ui-command__input',
+  commandList: 'ui-command__list',
+  commandGroup: 'ui-command__group',
+  commandItem: 'ui-command__item',
+  commandShortcut: 'ui-command__shortcut',
+  commandMeta: 'ui-command__meta',
+  commandEmpty: 'ui-command__empty',
   printOnly: 'ui-print-only',
   screenOnly: 'ui-screen-only',
   breakBefore: 'ui-break-before',
@@ -398,6 +464,8 @@ export const cls = Object.freeze({
   keep: 'ui-keep',
   printExact: 'ui-print-exact',
   kbd: 'ui-kbd',
+  shortcut: 'ui-shortcut',
+  shortcutSep: 'ui-shortcut__sep',
   display: 'ui-display',
   mono: 'ui-mono',
   muted: 'ui-muted',
@@ -458,6 +526,31 @@ export function cx(...parts) {
 }
 
 const j = (...p) => p.filter(Boolean).join(' ');
+
+// Lifecycle state → canonical tone class.
+const stateTone = (state) =>
+  ({
+    saving: cls.stateSaving,
+    saved: cls.stateSaved,
+    queued: cls.stateQueued,
+    offline: cls.stateOffline,
+    stale: cls.stateStale,
+    conflict: cls.stateConflict,
+    error: cls.stateError,
+    locked: cls.stateLocked,
+    reviewed: cls.stateReviewed,
+    'needs-review': cls.stateNeedsReview,
+  })[state] || '';
+
+// Trust-state → tone class, shared by the source/citation/provenance recipes.
+const srcTone = (state) =>
+  (state === 'verified' && cls.srcVerified) ||
+  (state === 'unverified' && cls.srcUnverified) ||
+  (state === 'generated' && cls.srcGenerated) ||
+  (state === 'reviewed' && cls.srcReviewed) ||
+  (state === 'stale' && cls.srcStale) ||
+  (state === 'conflict' && cls.srcConflict) ||
+  '';
 
 export const ui = {
   button: ({ variant, icon, size } = {}) =>
@@ -616,7 +709,7 @@ export const ui = {
       style === 'underline' && cls.markUnderline,
       style === 'box' && cls.markBox,
       style === 'strike' && cls.markStrike,
-      tone === 'evidence' && cls.markEvidence,
+      tone === 'accent' && cls.markAccent,
       tone === 'success' && cls.markSuccess,
       tone === 'warning' && cls.markWarning,
       tone === 'danger' && cls.markDanger,
@@ -627,7 +720,7 @@ export const ui = {
   bracketNote: ({ tone } = {}) =>
     j(
       cls.bracketNote,
-      tone === 'evidence' && cls.bracketNoteEvidence,
+      tone === 'accent' && cls.bracketNoteAccent,
       tone === 'warning' && cls.bracketNoteWarning,
       tone === 'danger' && cls.bracketNoteDanger,
       tone === 'info' && cls.bracketNoteInfo,
@@ -653,6 +746,11 @@ export const ui = {
       state === 'off' && cls.selOff,
       state === 'maybe' && cls.selMaybe,
     ),
+  citation: ({ chip, state } = {}) => j(cls.citation, chip && cls.citationChip, srcTone(state)),
+  source: ({ state } = {}) => j(cls.sourceCard, srcTone(state)),
+  provenance: ({ state } = {}) => j(cls.provenance, srcTone(state)),
+  state: ({ state, busy } = {}) => j(cls.state, stateTone(state), busy && cls.stateBusy),
+  originLabel: ({ ai } = {}) => j(cls.originLabel, ai && cls.originLabelAi),
 };
 
 export default ui;

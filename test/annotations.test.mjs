@@ -5,6 +5,7 @@ import {
   annotationTransform,
   axisThresholdPath,
   declutterLabels,
+  directLabels,
   bandSubjectPath,
   bracketSubjectPath,
   circleSubjectPath,
@@ -350,4 +351,55 @@ test('declutterLabels validates inputs', () => {
   assert.throws(() => declutterLabels([{ pos: NaN, size: 1 }]), TypeError);
   assert.throws(() => declutterLabels([{ pos: 0, size: -1 }]), RangeError);
   assert.throws(() => declutterLabels([], { min: 10, max: 0 }), RangeError);
+});
+
+test('directLabels: declutters along the axis and draws leaders to the placed labels', () => {
+  // Two anchors whose labels overlap on y; the second is nudged down, and each
+  // leader runs from the true anchor to the placed label at cross = 100.
+  const out = directLabels(
+    [
+      { anchor: { x: 10, y: 50 }, size: 20, key: 'a' },
+      { anchor: { x: 30, y: 55 }, size: 20, key: 'b' },
+    ],
+    { axis: 'y', cross: 100 },
+  );
+  assert.deepEqual(out, [
+    { x: 100, y: 50, anchor: { x: 10, y: 50 }, key: 'a', d: 'M10,50L100,50' },
+    { x: 100, y: 70, anchor: { x: 30, y: 55 }, key: 'b', d: 'M30,55L100,70' },
+  ]);
+});
+
+test('directLabels: axis "x" places along x at the fixed cross row', () => {
+  const out = directLabels(
+    [
+      { anchor: { x: 50, y: 5 }, size: 20 },
+      { anchor: { x: 55, y: 5 }, size: 20 },
+    ],
+    { axis: 'x', cross: 0 },
+  );
+  assert.equal(out[0].x, 50);
+  assert.equal(out[1].x, 70); // nudged right (centres kept 20 apart)
+  assert.equal(out[0].d, 'M50,5L50,0');
+  assert.equal(out[1].d, 'M55,5L70,0');
+});
+
+test('directLabels: shape draws the leader via the connector kernel', () => {
+  const [label] = directLabels([{ anchor: { x: 0, y: 0 }, size: 0 }], {
+    axis: 'y',
+    cross: 100,
+    shape: 'curve',
+  });
+  assert.equal(label.d, 'M0,0C50,0 50,0 100,0');
+});
+
+test('directLabels: a leader that lands on its anchor is empty; empty input is empty', () => {
+  const [label] = directLabels([{ anchor: { x: 10, y: 50 }, size: 0 }], { axis: 'y', cross: 10 });
+  assert.equal(label.d, '');
+  assert.deepEqual(directLabels([]), []);
+});
+
+test('directLabels: validates input', () => {
+  assert.throws(() => directLabels('nope'), TypeError);
+  assert.throws(() => directLabels([{ anchor: { x: NaN, y: 0 }, size: 10 }]), TypeError);
+  assert.throws(() => directLabels([{ anchor: { x: 0, y: 0 }, size: -1 }]), RangeError);
 });

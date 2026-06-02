@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — workbench specimen</title>
+    <meta
+      name="description"
+      content="Inspector, property rows and selection bar primitives for tool UIs."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/workbench.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .wb-demo {
+        margin: 0 auto;
+        max-width: 60ch;
+        padding: 2rem 1rem 4rem;
+      }
+
+      .wb-demo__stack {
+        display: grid;
+        gap: 1.5rem;
+        margin-block-start: 1.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wb-demo">
+      <h1 class="ui-display">Workbench</h1>
+      <p>
+        Inspector, property rows and a selection bar — the low-risk CSS core for real tools. Opt-in;
+        not in the core bundle.
+      </p>
+
+      <div class="wb-demo__stack">
+        <aside class="ui-inspector" aria-label="Inspector">
+          <div class="ui-inspector__header">
+            <h2 class="ui-eyebrow">Rectangle</h2>
+            <button class="ui-button ui-button--subtle ui-button--sm" type="button">Reset</button>
+          </div>
+          <div class="ui-inspector__body">
+            <div class="ui-property">
+              <span class="ui-property__label">Width</span>
+              <span class="ui-property__value">240 px</span>
+            </div>
+            <div class="ui-property">
+              <span class="ui-property__label">Height</span>
+              <span class="ui-property__value">96 px</span>
+            </div>
+            <div class="ui-property">
+              <span class="ui-property__label">Fill</span>
+              <span class="ui-property__value">
+                <input class="ui-input" aria-label="Fill" value="#121212" />
+              </span>
+            </div>
+            <div class="ui-property">
+              <span class="ui-property__label">Opacity</span>
+              <span class="ui-property__value">100%</span>
+            </div>
+          </div>
+        </aside>
+
+        <div class="ui-selectionbar">
+          <span class="ui-selectionbar__count">3 selected</span>
+          <span class="ui-selectionbar__actions">
+            <button class="ui-button ui-button--subtle ui-button--sm" type="button">Group</button>
+            <button class="ui-button ui-button--subtle ui-button--sm" type="button">Align</button>
+            <button class="ui-button ui-button--danger ui-button--sm" type="button">Delete</button>
+          </span>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

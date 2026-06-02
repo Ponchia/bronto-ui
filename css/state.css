@@ -1,0 +1,121 @@
+/* ==========================================================================
+   state — opt-in lifecycle / system-state vocabulary.
+
+   Serious apps spend a lot of time in states like saving, saved, queued,
+   offline, stale, conflicted, locked, and reviewed — usually improvised per
+   product, so even good apps feel inconsistent. This is the canonical set:
+   a labelled state object with a rationed tone, plus a page/document sync bar.
+
+   The state is carried by a tone dot AND an author-written label, never colour
+   alone (WCAG 1.4.1) — the label is the canonical wording (see docs/state.md).
+   Bronto ships the visual states; the host owns the state machine, retry
+   policy, persistence, and announcements. Persistent state gets persistent UI;
+   toasts are secondary. Not imported by core.css.
+   ========================================================================== */
+
+.ui-state {
+  --state-tone: var(--text-dim);
+
+  align-items: center;
+  display: inline-flex;
+  font-size: var(--text-sm);
+  gap: 0.4rem;
+}
+
+/* Leading state indicator — a tone dot. `--busy` makes it pulse. */
+.ui-state::before {
+  background: var(--state-tone);
+  border-radius: 50%;
+  block-size: 0.5rem;
+  content: '';
+  flex: none;
+  inline-size: 0.5rem;
+  print-color-adjust: exact;
+}
+
+.ui-state__label {
+  color: var(--text);
+}
+
+.ui-state__detail {
+  color: var(--text-dim);
+  font-size: var(--text-2xs);
+}
+
+/* In-progress states (saving / syncing / retrying): a pulsing indicator. */
+.ui-state--busy::before {
+  animation: uiStatePulse 1.1s ease-in-out infinite;
+}
+
+@keyframes uiStatePulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-state--busy::before {
+    animation: none;
+  }
+}
+
+/* Canonical states — each bakes in the right rationed tone. */
+.ui-state--saving {
+  --state-tone: var(--accent);
+}
+
+.ui-state--saved {
+  --state-tone: var(--success);
+}
+
+.ui-state--queued {
+  --state-tone: var(--text-dim);
+}
+
+.ui-state--offline {
+  --state-tone: var(--warning);
+}
+
+.ui-state--stale {
+  --state-tone: var(--warning);
+}
+
+.ui-state--conflict {
+  --state-tone: var(--danger);
+}
+
+.ui-state--error {
+  --state-tone: var(--danger);
+}
+
+.ui-state--locked {
+  --state-tone: var(--text-dim);
+}
+
+.ui-state--reviewed {
+  --state-tone: var(--success);
+}
+
+.ui-state--needs-review {
+  --state-tone: var(--warning);
+}
+
+/* Sync bar — a page/document-level save/sync status strip: a state on one side,
+   optional actions on the other. */
+.ui-syncbar {
+  align-items: center;
+  border-block-end: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-md);
+  justify-content: space-between;
+  padding-block: var(--space-xs);
+}
+
+/* Forced colours: the tone dot collapses to a system colour, so the
+   author-written label remains the state channel (it already must be). */
+@media (forced-colors: active) {
+  .ui-state::before {
+    background: CanvasText;
+  }
+}

@@ -27,6 +27,9 @@
   block-size: 0.5rem;
   margin-block-start: 0.32rem;
   inline-size: 0.5rem;
+
+  /* Keep the tone dot when printing (matches the legend swatch). */
+  print-color-adjust: exact;
 }
 
 .ui-alert > * {
@@ -174,6 +177,9 @@
   block-size: 0.5rem;
   margin-block-start: 0.3rem;
   inline-size: 0.5rem;
+
+  /* Keep the tone dot when printing (matches the legend swatch). */
+  print-color-adjust: exact;
 }
 
 .ui-toast__title {
@@ -228,6 +234,51 @@
 
 .ui-toast--info::before {
   background: var(--info);
+}
+
+/* Forced-colors (Windows HCM): system colours override the rationed tone
+   colour on the dot + border, so all tones would collapse to one appearance
+   (WCAG 1.4.1 — colour as the sole channel). Carry the tone as a distinct
+   glyph instead; rendered as text it survives HCM as CanvasText. The glyph is
+   inherited via --tone-glyph so one rule covers both alert and toast. */
+@media (forced-colors: active) {
+  .ui-alert::before,
+  .ui-toast::before {
+    background: none;
+    border-radius: 0;
+    content: var(--tone-glyph, '\2022'); /* • neutral default */
+    block-size: auto;
+    inline-size: auto;
+    margin-block-start: 0;
+    font-family: var(--mono);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .ui-alert--accent,
+  .ui-toast--accent {
+    --tone-glyph: '\25C6'; /* ◆ */
+  }
+
+  .ui-alert--success,
+  .ui-toast--success {
+    --tone-glyph: '\2713'; /* ✓ */
+  }
+
+  .ui-alert--warning,
+  .ui-toast--warning {
+    --tone-glyph: '\0021'; /* ! */
+  }
+
+  .ui-alert--danger,
+  .ui-toast--danger {
+    --tone-glyph: '\2715'; /* ✕ */
+  }
+
+  .ui-alert--info,
+  .ui-toast--info {
+    --tone-glyph: '\69'; /* i */
+  }
 }
 
 /* --- Tooltip — CSS-only, hover/focus, no JS --- */

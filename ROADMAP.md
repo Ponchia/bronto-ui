@@ -7,6 +7,12 @@ without turning the project into a per-framework component suite.
 > **Source of truth is [`CHANGELOG.md`](CHANGELOG.md).** This file describes
 > direction; the changelog records what actually shipped. If they disagree, the
 > changelog wins. Last reconciled against `0.5.0` (Unreleased).
+>
+> **Strategic north star:** Bronto should not out-catalog generic UI kits. It
+> should own framework-agnostic primitives for interfaces that explain
+> themselves: explanation, provenance, relationships, command access, workbench
+> ergonomics, generated reports, and durable system state. See
+> [`docs/frontier-primitives.md`](docs/frontier-primitives.md).
 
 ## In progress for 0.5.0 (merged, unreleased)
 

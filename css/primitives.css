@@ -649,6 +649,24 @@
   padding: 0.18rem 0.4rem;
 }
 
+/* --- Shortcut hint — one or more .ui-kbd keys as a chord or sequence, with a
+   connective __sep ("+" for a chord, "then" for a sequence). The reusable
+   keyboard-hint primitive (menu items, buttons, tooltips, command lists). --- */
+
+.ui-shortcut {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.25rem;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.ui-shortcut__sep {
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+}
+
 /* --- Timeline — vertical event list on a hairline spine. Use an <ol>;
    each <li> is a __item with an optional __time label. aria-current marks
    the live/most-recent event (accent marker). --- */

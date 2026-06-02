@@ -38,6 +38,7 @@ import {
   annotationTransform,
   axisThresholdPath,
   declutterLabels,
+  directLabels,
   bandSubjectPath,
   bracketSubjectPath,
   circleSubjectPath,
@@ -98,12 +99,12 @@ ui.legendSwatch({ series: 9 });
 // @ts-expect-error — invalid swatch shape rejected.
 ui.legendSwatch({ shape: 'star' });
 
-const mk: string = ui.mark({ style: 'underline', tone: 'evidence', motion: 'draw' });
+const mk: string = ui.mark({ style: 'underline', tone: 'accent', motion: 'draw' });
 const bn: string = ui.bracketNote({ tone: 'warning' });
 // @ts-expect-error — invalid mark style rejected.
 ui.mark({ style: 'wavy' });
-// @ts-expect-error — invalid mark tone rejected.
-ui.mark({ tone: 'accent' });
+// @ts-expect-error — the old 'evidence' tone was renamed to 'accent' (0.5.0).
+ui.mark({ tone: 'evidence' });
 // @ts-expect-error — bracket-note tone is a closed union (no 'success').
 ui.bracketNote({ tone: 'success' });
 
@@ -117,6 +118,21 @@ const selOn: string = ui.sel({ state: 'on' });
 void [xh, selOn];
 // @ts-expect-error — selection state is a closed union.
 ui.sel({ state: 'highlighted' });
+
+const cite: string = ui.citation({ chip: true, state: 'verified' });
+const src: string = ui.source({ state: 'generated' });
+const prov: string = ui.provenance({ state: 'reviewed' });
+void [cite, src, prov];
+// @ts-expect-error — trust state is a closed union.
+ui.source({ state: 'trustworthy' });
+
+const lifecycle: string = ui.state({ state: 'saving', busy: true });
+void lifecycle;
+// @ts-expect-error — lifecycle state is a closed union.
+ui.state({ state: 'thinking' });
+
+const origin: string = ui.originLabel({ ai: true });
+void origin;
 
 // Connectors geometry: object-shaped options, string/coordinate returns.
 const connOut: ConnectRectsResult = connectRects({
@@ -147,6 +163,18 @@ const labelPositions: number[] = declutterLabels(
   { gap: 2, min: 0, max: 100 },
 );
 void labelPositions;
+
+const directLabeled = directLabels(
+  [
+    { anchor: { x: 10, y: 50 }, size: 20, key: 'a' },
+    { anchor: { x: 30, y: 55 }, size: 20 },
+  ],
+  { axis: 'y', cross: 100, gap: 4, shape: 'curve' },
+);
+const leaderPath: string = directLabeled[0].d;
+const placedY: number = directLabeled[0].y;
+void leaderPath;
+void placedY;
 
 const parts: ClassValue = ['a', false, ['b'], null];
 const joined: string = cx(parts, 'extra', undefined);

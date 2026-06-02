@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — command palette specimen</title>
+    <meta
+      name="description"
+      content="Command-palette shell + initCommand specimen for @ponchia/ui (filter, keyboard nav, select event)."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/command.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .cmd-demo {
+        margin: 0 auto;
+        max-width: 40rem;
+        padding: 2rem 1rem 4rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="cmd-demo">
+      <h1 class="ui-display">Command palette</h1>
+      <p>
+        Filter, arrow-navigate, and select a command. Bronto filters + navigates; the host runs the
+        command (it listens for <code>bronto:command:select</code>). Opt-in; not in the core bundle.
+      </p>
+
+      <div class="ui-command" data-bronto-command style="margin-block-start: 1.5rem">
+        <input class="ui-command__input" aria-label="Command" placeholder="Type a command…" />
+        <ul class="ui-command__list">
+          <li class="ui-command__group">Navigation</li>
+          <li class="ui-command__item" data-value="dashboard">
+            <span>Go to dashboard</span>
+            <span class="ui-command__shortcut"
+              ><kbd class="ui-kbd">G</kbd> <kbd class="ui-kbd">D</kbd></span
+            >
+          </li>
+          <li class="ui-command__item" data-value="settings">
+            <span>Open settings</span>
+            <span class="ui-command__shortcut"
+              ><kbd class="ui-kbd">G</kbd> <kbd class="ui-kbd">S</kbd></span
+            >
+          </li>
+          <li class="ui-command__group">Actions</li>
+          <li class="ui-command__item" data-value="invoice">
+            <span>New invoice</span>
+            <span class="ui-command__meta">Create</span>
+          </li>
+          <li class="ui-command__item" data-value="export">
+            <span>Export data</span>
+            <span class="ui-command__meta">CSV</span>
+          </li>
+          <li class="ui-command__item" data-value="delete">
+            <span>Delete project</span>
+            <span class="ui-command__meta">Danger</span>
+          </li>
+        </ul>
+        <p class="ui-command__empty" hidden>No commands</p>
+      </div>
+
+      <p
+        class="ui-mono"
+        id="picked"
+        role="status"
+        aria-live="polite"
+        style="margin-block-start: 1rem"
+      >
+        Ran: —
+      </p>
+    </main>
+
+    <script type="module">
+      import { initCommand } from '../behaviors/index.js';
+      initCommand();
+      const picked = document.getElementById('picked');
+      document
+        .querySelector('[data-bronto-command]')
+        .addEventListener('bronto:command:select', (e) => {
+          // Host-owned: run the command. Here we just echo it.
+          picked.textContent = `Ran: ${e.detail.label} (${e.detail.value})`;
+        });
+    </script>
+  </body>
+</html>

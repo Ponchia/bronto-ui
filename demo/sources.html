@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — sources & provenance specimen</title>
+    <meta
+      name="description"
+      content="Source, citation and provenance trust-layer specimen for @ponchia/ui."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/sources.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .src-demo {
+        margin: 0 auto;
+        max-width: 60ch;
+        padding: 2rem 1rem 4rem;
+      }
+
+      .src-demo__refs {
+        margin-block-start: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="src-demo ui-prose">
+      <h1 class="ui-display">Sources &amp; provenance</h1>
+      <p>
+        The trust layer for generated reports and AI output: where did this come from? Opt-in; not
+        in the core bundle.
+      </p>
+
+      <p class="ui-provenance">
+        <span class="ui-provenance__item ui-src--generated">Generated</span>
+        <span class="ui-provenance__item ui-src--verified">3 sources</span>
+        <span class="ui-provenance__item ui-src--reviewed">Human-reviewed</span>
+      </p>
+
+      <p>
+        The migration cut p95 latency by 38%<a class="ui-citation" href="#s1" aria-label="Source 1"
+          >[1]</a
+        >, but error rate doubled in the first hour<a
+          class="ui-citation"
+          href="#s2"
+          aria-label="Source 2"
+          >[2]</a
+        >. A later review attributed it to the old retry path
+        <a class="ui-citation ui-citation--chip ui-src--reviewed" href="#s1">Q3 incident review</a>.
+      </p>
+
+      <section class="src-demo__refs" aria-labelledby="refs-h">
+        <h2 id="refs-h" class="ui-eyebrow">Sources</h2>
+        <ol class="ui-source-list">
+          <li class="ui-source-list__item">
+            <article class="ui-source-card ui-src--verified" id="s1">
+              <h3 class="ui-source-card__title">Q3 incident review, §4</h3>
+              <p class="ui-source-card__origin">ops.internal · postmortem</p>
+              <p class="ui-source-card__time">2026-06-01 09:42</p>
+              <p class="ui-source-card__excerpt">
+                The regression was sustained for 47 minutes before rollback; root cause was the
+                deprecated retry path.
+              </p>
+              <div class="ui-source-card__actions">
+                <button class="ui-button ui-button--subtle ui-button--sm" type="button">
+                  Open
+                </button>
+                <span class="ui-badge ui-badge--success ui-badge--dot">Verified</span>
+              </div>
+            </article>
+          </li>
+          <li class="ui-source-list__item">
+            <article class="ui-source-card ui-src--generated" id="s2">
+              <h3 class="ui-source-card__title">Model output — latency summary</h3>
+              <p class="ui-source-card__origin">gpt-x · internal tool</p>
+              <p class="ui-source-card__time">2026-06-01 09:55</p>
+              <p class="ui-source-card__excerpt">
+                Error rate doubled for the first hour after deploy, then recovered.
+              </p>
+              <div class="ui-source-card__actions">
+                <span class="ui-badge ui-badge--info">Generated</span>
+              </div>
+            </article>
+          </li>
+          <li class="ui-source-list__item">
+            <article class="ui-source-card ui-src--stale">
+              <h3 class="ui-source-card__title">Capacity plan (Q1)</h3>
+              <p class="ui-source-card__origin">wiki · planning</p>
+              <p class="ui-source-card__time">2026-01-14</p>
+              <p class="ui-source-card__excerpt">
+                Superseded by the Q2 revision — kept for context.
+              </p>
+              <div class="ui-source-card__actions">
+                <span class="ui-badge ui-badge--warning">Stale</span>
+              </div>
+            </article>
+          </li>
+        </ol>
+      </section>
+    </main>
+  </body>
+</html>

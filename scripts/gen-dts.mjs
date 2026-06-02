@@ -175,13 +175,13 @@ export interface AnnotationOpts {
 export interface MarkOpts {
   /** How the mark is drawn. Omit for the highlight fill. */
   style?: 'underline' | 'box' | 'strike';
-  /** \`evidence\` is the rationed accent; status tones for status-bearing emphasis; \`muted\` for de-emphasis. */
-  tone?: 'evidence' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
+  /** \`accent\` is the rationed accent; status tones for status-bearing emphasis; \`muted\` for de-emphasis. */
+  tone?: 'accent' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
   /** Draw-on highlight sweep (respects \`prefers-reduced-motion\`). */
   motion?: 'draw';
 }
 export interface BracketNoteOpts {
-  tone?: 'evidence' | 'warning' | 'danger' | 'info';
+  tone?: 'accent' | 'warning' | 'danger' | 'info';
 }
 export interface ConnectorOpts {
   tone?: 'accent' | 'muted' | 'success' | 'warning' | 'danger' | 'info';
@@ -200,6 +200,42 @@ export interface CrosshairOpts {
 export interface SelOpts {
   /** Selection emphasis: \`on\` (selected), \`off\` (excluded), \`maybe\` (live-brush candidate). */
   state?: 'on' | 'off' | 'maybe';
+}
+/** Trust state for the source/citation/provenance layer. Pair with an author-written label — never colour alone. */
+export type SrcState = 'verified' | 'unverified' | 'generated' | 'reviewed' | 'stale' | 'conflict';
+export interface CitationOpts {
+  /** Render as a named-source pill (leading tone dot) instead of an inline \`[n]\` reference. */
+  chip?: boolean;
+  state?: SrcState;
+}
+export interface SourceOpts {
+  /** Sets the source card's tone border. */
+  state?: SrcState;
+}
+export interface ProvenanceOpts {
+  /** Sets the provenance item's tone dot. */
+  state?: SrcState;
+}
+/** Canonical lifecycle state — sets the tone; pair with the canonical label (see docs/state.md). */
+export type LifecycleState =
+  | 'saving'
+  | 'saved'
+  | 'queued'
+  | 'offline'
+  | 'stale'
+  | 'conflict'
+  | 'error'
+  | 'locked'
+  | 'reviewed'
+  | 'needs-review';
+export interface StateOpts {
+  state?: LifecycleState;
+  /** Pulse the indicator for an in-progress state (saving / syncing / retrying). Reduced-motion-safe. */
+  busy?: boolean;
+}
+export interface OriginLabelOpts {
+  /** Accent-tint the label for AI/model-generated origin (vs a neutral tag). */
+  ai?: boolean;
 }
 
 export interface Ui {
@@ -239,6 +275,11 @@ export interface Ui {
   spotlight(opts?: SpotlightOpts): string;
   crosshair(opts?: CrosshairOpts): string;
   sel(opts?: SelOpts): string;
+  citation(opts?: CitationOpts): string;
+  source(opts?: SourceOpts): string;
+  provenance(opts?: ProvenanceOpts): string;
+  state(opts?: StateOpts): string;
+  originLabel(opts?: OriginLabelOpts): string;
 }
 
 export declare const ui: Ui;
