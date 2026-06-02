@@ -2,7 +2,7 @@
  * Gate the display-glyph set on two axes:
  *
  *  1. Drift — glyphs/glyphs.d.ts must byte-match what gen-glyphs.mjs would
- *     produce from the runtime data (same model as check-dts.mjs).
+ *     produce from the runtime data (same freshness model as check-fresh).
  *  2. Shape — every bitmap must be exactly GLYPH_SIZE×GLYPH_SIZE, use only
  *     the `.#*` alphabet, and the name registry must be unique + sorted so
  *     the generated `GlyphName` union is stable.

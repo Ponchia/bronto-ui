@@ -3,7 +3,7 @@
  *
  *  - Rebuilds the bundles in memory and byte-compares them to the
  *    committed files (so dist can't drift from source — same contract
- *    as check-tokens for tokens.json).
+ *    as check-fresh for the pure generated mirrors).
  *  - Asserts each bundle is within the raw + gzip size budget.
  *
  * Run: node scripts/check-dist.mjs
