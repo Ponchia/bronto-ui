@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>app-shell responsive fixture</title>
+    <!--
+      No served demo/docs page mounts the admin shell (`.ui-app-shell`), yet the
+      shipped CSS carries its responsive collapse (css/app.css ~239: a two-column
+      rail+content grid that flattens to one column and a horizontal rail at
+      max-width: 880px). This minimal fixture mounts the REAL shell markup against
+      the REAL bundled stylesheet (dist/bronto.css) so responsive.spec can assert
+      the breakpoint with computed layout. It lives under test/e2e/ and is served
+      by scripts/serve.mjs like any other file under the package root.
+    -->
+    <link rel="stylesheet" href="../../dist/bronto.css" />
+  </head>
+  <body>
+    <div class="ui-app-shell" data-app-shell>
+      <aside class="ui-app-rail" data-app-rail>
+        <span class="ui-app-rail__brand">Bronto</span>
+        <nav class="ui-app-nav" aria-label="Primary">
+          <span class="ui-app-nav__section">Main</span>
+          <a href="#" class="is-active">Overview</a>
+          <a href="#">Reports</a>
+          <a href="#">Settings</a>
+        </nav>
+      </aside>
+      <main class="ui-app-main" data-app-content>
+        <header class="ui-app-topbar">
+          <h1 class="ui-app-topbar__title">Overview</h1>
+        </header>
+        <div class="ui-app-content">
+          <div class="ui-app-panel">
+            <div class="ui-app-panel__head">
+              <h2 class="ui-app-panel__title">Panel</h2>
+            </div>
+            <p>Shell content.</p>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
