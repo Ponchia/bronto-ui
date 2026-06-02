@@ -200,6 +200,15 @@ initCrosshair(); // pointer-tracking crosshair in the analytical tier
 initLegend(); // interactive legend toggle in the analytical tier
 initCommand(); // command-palette filtering in the frontier tier
 
+// Command palette: host-owned, like the legend/crosshair below. Bronto filters
+// + navigates and emits the event; the host (this demo) owns what a selection
+// DOES — here we just echo it so the specimen isn't a dead end.
+const commandStatus = document.getElementById('command-status');
+document.addEventListener('bronto:command:select', (e) => {
+  const { value, label } = e.detail;
+  if (commandStatus) commandStatus.textContent = `Selected: ${label} (${value})`;
+});
+
 // Legend: host-owned. Bronto flips the control + announces; we hide the bar.
 const legendStatus = document.getElementById('legend-status');
 document.addEventListener('bronto:legend:toggle', (e) => {
