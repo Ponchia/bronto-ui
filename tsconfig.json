@@ -21,6 +21,7 @@
     "tokens/skins.d.ts",
     "tokens/charts.d.ts",
     "tokens/mermaid.d.ts",
+    "tokens/d2.d.ts",
     "react/index.d.ts",
     "solid/index.d.ts",
     "qwik/index.d.ts"
