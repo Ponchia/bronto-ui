@@ -397,7 +397,10 @@ use `ui-delta` (`--up`/`--down`/`--flat`, `--invert` when up is bad) for a
 trend figure and `ui-compare` (`--2up`) for an A/B / before-after section; use
 `ui-report__section--unnumbered` for appendices in numbered reports; never
 use raw chromatic inline colors. Format numbers/dates yourself (the framework
-aligns figures, it does not format them) — see the reporting cookbook. Full
+aligns figures, it does not format them) — see the reporting cookbook. To make
+a PDF, render with `chrome-headless-shell` (or any Chromium) using
+`printBackground: true` so chart fills survive — reports are static/zero-JS, so
+it is just load → print; see "Print and PDF" in `docs/reporting.md`. Full
 cookbook: `docs/reporting.md`.
 
 ## Authoritative offline references (shipped in this package)

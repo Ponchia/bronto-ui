@@ -380,8 +380,9 @@ style itself.
 
 ## Print and PDF
 
-The supported export target is modern Chromium print/PDF. Two ways to produce
-the file:
+The supported export target is modern Chromium print/PDF. A bronto report is
+static and zero-JS, so producing the PDF is just _load → print_ — you do not
+need a full automatable browser, only a Chromium-class layout+print pass.
 
 - **By hand:** open the report in Chrome/Edge → Print (Cmd/Ctrl+P) → "Save as
   PDF". In **More settings**, enable **Background graphics** (the dialog's
@@ -389,13 +390,45 @@ the file:
   out), and pick the paper size there. Paper size is a browser print setting,
   not a token; the layer only themes the page _margin_ via
   `--report-page-margin`.
-- **Headless (agents/CI):** `await page.pdf({ format: 'A4', printBackground: true })`
-  with Playwright or Puppeteer.
+- **Headless, lightweight:** use **`chrome-headless-shell`** — the minimal
+  headless-Chromium binary built for exactly this, a fraction of a full
+  browser's weight. Drive it through Playwright/Puppeteer (or raw CDP) and
+  always pass `printBackground: true`, or chart fills and legend swatches drop
+  out:
 
-The report prints ink-on-white regardless of the on-screen theme. Older
+  ```js
+  import { chromium } from 'playwright'; // or puppeteer
+  const browser = await chromium.launch({ channel: 'chromium-headless-shell' });
+  const page = await browser.newPage();
+  await page.goto('file:///abs/path/report.html', { waitUntil: 'networkidle' });
+  await page.pdf({ path: 'report.pdf', format: 'A4', printBackground: true });
+  await browser.close();
+  ```
+
+  Install the binary with `npx playwright install chromium-headless-shell`
+  (Puppeteer ships its own). The repo's `scripts/render-pdf.mjs` is a working
+  copy of this (`npm run report:pdf -- report.html`); it is a dev/example
+  helper, not part of the published API — bronto does not own rendering.
+- **As a service / from another language:** run Chromium-as-a-service
+  (e.g. **Gotenberg**'s `POST /forms/chromium/convert/html`, or a hosted CDP
+  endpoint) and POST the HTML + the `dist/css/*` assets. A Python/Go/any host
+  then needs no local browser. This is the natural fit for reports generated
+  by an LLM or service in another system.
+
+The report prints ink-on-white regardless of the on-screen theme. The chart
+fills and swatches carry `print-color-adjust: exact`, but the engine still
+needs background printing enabled (`printBackground: true` headless, or
+"Background graphics" by hand). The bare `chrome --headless --print-to-pdf`
+CLI flag does **not** print backgrounds — use the scripted CDP/`page.pdf()`
+path above for any report with charts.
+
+A browserless engine (WeasyPrint, Prince, …) can work for text-and-table
+reports if you feed it the **unlayered** CSS (`@ponchia/ui/css/unlayered/*` —
+no `@layer`) and resolve colours from `tokens/resolved.json`; but `:has()` and
+modern paged-media are not universally supported, so charts and edge cases may
+degrade. For faithful output, stay on a Chromium-class engine. Older
 HTML-to-PDF engines are not part of the browser floor and may not support
-cascade layers, `oklch()`, `color-mix()`, `:has()`, or modern paged-media
-behavior.
+cascade layers, `oklch()`, `color-mix()`, `:has()`, or modern paged-media.
 
 - Use `ui-print-only` for content that should appear only in print.
 - Use `ui-screen-only` for navigation or helper content that should not print.
