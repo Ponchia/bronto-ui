@@ -10,11 +10,14 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { cls, ui } from '../classes/index.js';
+import { buildClassesJson } from './gen-classes-json.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const cssDir = resolve(root, 'css');
 
 const inCss = new Set();
+const isHooksInCss = new Set();
+const customPropsInCss = new Set();
 for (const f of readdirSync(cssDir)) {
   if (!f.endsWith('.css')) continue;
   // Strip /* */ comments first: this is the one check that scrapes CSS
@@ -25,10 +28,31 @@ for (const f of readdirSync(cssDir)) {
   // points at dead CSS.
   const src = readFileSync(resolve(cssDir, f), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
   for (const m of src.matchAll(/\.(ui-[\w-]+)/g)) inCss.add(m[1]);
+  for (const m of src.matchAll(/\.(is-[\w-]+)/g)) isHooksInCss.add(m[1]);
+  for (const m of src.matchAll(/(--[\w-]+)/g)) customPropsInCss.add(m[1]);
 }
 
 const inManifest = new Set(Object.values(cls));
 const errors = [];
+
+// The classes.json manifest carries two hand-curated sections that `cls`
+// cannot generate — `states` (the `is-*` hooks) and `customProperties` (the
+// author-set inline knobs). They are the manifest's most rot-prone data, so
+// assert each one still names a real selector / custom property in the CSS;
+// otherwise the "trust this as a contract" promise silently decays.
+const manifest = buildClassesJson();
+for (const s of manifest.states) {
+  if (!isHooksInCss.has(s.class)) {
+    errors.push(`classes.json states has "${s.class}" but no .${s.class} selector exists in css/`);
+  }
+}
+for (const p of manifest.customProperties) {
+  if (!customPropsInCss.has(p.name)) {
+    errors.push(
+      `classes.json customProperties has "${p.name}" but no ${p.name} custom property exists in css/`,
+    );
+  }
+}
 
 for (const name of inManifest) {
   if (!inCss.has(name)) errors.push(`cls has "${name}" but no .${name} selector exists in css/`);
@@ -55,4 +79,7 @@ if (errors.length) {
   for (const e of errors) console.error(`  - ${e}`);
   process.exit(1);
 }
-console.log(`✓ class contract: ${inManifest.size} classes match the stylesheet`);
+console.log(
+  `✓ class contract: ${inManifest.size} classes match the stylesheet ` +
+    `(+ ${manifest.states.length} is-* states, ${manifest.customProperties.length} custom props verified in classes.json)`,
+);

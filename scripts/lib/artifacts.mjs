@@ -22,6 +22,7 @@ import { fileURLToPath } from 'node:url';
 import { generated as dtsGenerated } from '../gen-dts.mjs';
 import { generated as referenceGenerated } from '../gen-reference.mjs';
 import { generated as vscodeGenerated } from '../gen-vscode-data.mjs';
+import { classesJson } from '../gen-classes-json.mjs';
 import { dtcgJson } from '../gen-dtcg.mjs';
 import { resolvedJson } from '../gen-resolved.mjs';
 import { tokensCss } from '../gen-tokens-css.mjs';
@@ -34,6 +35,7 @@ export const artifacts = {
   ...dtsGenerated, // classes/index.d.ts, tokens/index.d.ts
   ...referenceGenerated, // docs/reference.md
   ...vscodeGenerated, // classes/vscode.css-custom-data.json
+  'classes/classes.json': classesJson(),
   'tokens/tokens.dtcg.json': dtcgJson(),
   'tokens/resolved.json': resolvedJson(),
   'css/tokens.css': tokensCss(),

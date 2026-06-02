@@ -238,6 +238,58 @@
   color: var(--text-dim);
 }
 
+/* --- Trend delta ---
+   A standalone change indicator: a direction arrow (the non-colour channel,
+   WCAG 1.4.1) plus the figure, tabular so a column of deltas aligns.
+   Direction sets the glyph AND the conventional tone (up = positive,
+   down = negative). When "up" is the bad direction (latency, error rate,
+   cost, churn), add `ui-delta--invert` to swap only the tone — the arrow
+   still reports real direction. Pair with words; the arrow is visual, not a
+   substitute for stating the change. */
+.ui-delta {
+  align-items: baseline;
+  color: var(--text-soft);
+  display: inline-flex;
+  font-variant-numeric: tabular-nums;
+  gap: 0.2em;
+}
+
+.ui-delta::before {
+  font-size: 0.85em;
+}
+
+.ui-delta--up {
+  color: var(--success);
+}
+
+.ui-delta--up::before {
+  content: '▲';
+}
+
+.ui-delta--down {
+  color: var(--danger);
+}
+
+.ui-delta--down::before {
+  content: '▼';
+}
+
+.ui-delta--flat {
+  color: var(--text-dim);
+}
+
+.ui-delta--flat::before {
+  content: '—';
+}
+
+.ui-delta--invert.ui-delta--up {
+  color: var(--danger);
+}
+
+.ui-delta--invert.ui-delta--down {
+  color: var(--success);
+}
+
 /* --- Eyebrow / section label — dot-matrix face --- */
 
 .ui-eyebrow {

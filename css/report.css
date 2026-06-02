@@ -216,6 +216,43 @@
   padding-block-start: var(--space-md);
 }
 
+/* --- Comparison layout ---
+   The report layer's "A vs B" / before-after grid — the side-by-side layout
+   reports lean on that the grammar was missing. Fluid-first: columns wrap to
+   a single stack on a narrow screen via auto-fit, so two panels never
+   overflow. `ui-compare__col` is one side, `ui-compare__head` labels it.
+   `ui-compare--2up` pins exactly two equal columns for a hard before/after
+   pairing (still collapsing to one column on a phone). */
+.ui-compare {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+}
+
+.ui-compare--2up {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 33rem) {
+  .ui-compare--2up {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ui-compare__col {
+  align-content: start;
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.ui-compare__head {
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
 .ui-chart {
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
