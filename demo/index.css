@@ -1,0 +1,367 @@
+/* No local @font-face: Doto ships in css/fonts.css (bundled by
+         core.css) with URLs relative to the package, so it resolves here
+         with zero demo-side setup — that is the portability fix in action. */
+
+/* =========================================================================
+   Motion preview (demo-only, opt-in). The library correctly freezes motion
+   under prefers-reduced-motion; the "Preview motion" button toggles
+   `.demo-motion` on <html> so a reviewer can opt back in and SEE it. These
+   rules sit in the `bronto-preview` cascade layer — declared before
+   bronto.css, so (because !important layer order is reversed) they beat the
+   library's layered-!important reduced-motion reset. Nothing here applies
+   unless a human flips the toggle; the shipped default is never changed.
+   Values mirror the library's own keyframe / transition declarations.
+   ========================================================================= */
+@layer bronto-preview {
+  @media (prefers-reduced-motion: reduce) {
+    /* Looping / decorative loaders. */
+    html.demo-motion .ui-spinner {
+      animation: uiSpin 0.7s linear infinite !important;
+    }
+    html.demo-motion .ui-dotspinner {
+      animation: uiSpin 1s steps(8) infinite !important;
+    }
+    html.demo-motion .ui-dotloader span,
+    html.demo-motion .ui-dotbar--indeterminate i {
+      animation-name: pulseDot !important;
+      animation-timing-function: var(--ease-standard) !important;
+      animation-iteration-count: infinite !important;
+    }
+    html.demo-motion .ui-dotloader span {
+      animation-duration: 1s !important;
+    }
+    html.demo-motion .ui-dotbar--indeterminate i {
+      animation-duration: 1.1s !important;
+    }
+    html.demo-motion .ui-caret::after {
+      animation: uiBlink 1.1s steps(1) infinite !important;
+    }
+    html.demo-motion .ui-skeleton {
+      animation: uiShimmer 1.4s linear infinite !important;
+    }
+    html.demo-motion .ui-progress--indeterminate .ui-progress__bar {
+      /* inset-inline-start is left to the keyframe; restore only the timing
+         and the swept segment width from the static reduced-motion fallback. */
+      animation: uiTrack 1.1s var(--ease-standard) infinite !important;
+      inline-size: 45% !important;
+    }
+
+    /* The dot-matrix "plays": pulse loops; reveal scans once. Reveal also keys
+       off a local `.demo-reveal-on` flag so "Replay reveal" can fire it on a
+       deliberate click even when the global toggle is off. */
+    html.demo-motion .ui-dotmatrix--pulse {
+      animation: dotmatrixPulse 1.8s var(--ease-standard) infinite !important;
+    }
+    :is(html.demo-motion, .demo-reveal-on) .ui-dotmatrix--reveal .ui-dotmatrix__cell {
+      animation: dotmatrixCellOn var(--duration-base) var(--ease-out) both !important;
+      animation-delay: calc(var(--i, 0) * 3ms) !important;
+    }
+
+    /* Enter/exit + hover/focus transitions: the global reset only zeroes
+       transition-duration (the property list and @starting-style wiring
+       survive), so restoring a duration revives popover, reveal, and the rest. */
+    html.demo-motion *,
+    html.demo-motion *::before,
+    html.demo-motion *::after,
+    html.demo-motion ::backdrop {
+      transition-duration: var(--duration-base) !important;
+    }
+
+    /* Modal + toast enter via an animation that reduced-motion nulls outright. */
+    html.demo-motion .ui-modal.is-open,
+    html.demo-motion .ui-toast {
+      animation: uiToastIn var(--duration-base) var(--ease-spring) both !important;
+    }
+  }
+}
+
+body {
+  margin: 0;
+}
+.wrap {
+  margin: 0 auto;
+  max-width: 1100px;
+  padding: 2rem 1.25rem 5rem;
+}
+section {
+  margin-top: 2.5rem;
+}
+
+/* Hero / thesis */
+.lede {
+  color: var(--text-soft);
+  font-size: 1.15rem;
+  line-height: 1.5;
+  max-width: 62ch;
+}
+.boundary {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  margin-block-start: 1.25rem;
+}
+.boundary > div {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.9rem 1rem;
+}
+.boundary dt {
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+.boundary dd {
+  margin: 0.35rem 0 0;
+}
+.toc {
+  display: flex;
+  flex-wrap: wrap;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  gap: 0.4rem 0.5rem;
+  margin-block: 1.75rem 0;
+  padding: 0;
+  list-style: none;
+}
+.toc a {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--text-soft);
+  display: inline-block;
+  padding: 0.2rem 0.7rem;
+  text-decoration: none;
+}
+
+/* Tiers — the IA spine. */
+.tier {
+  margin-block-start: 4rem;
+}
+.tier__head {
+  border-block-start: 2px solid var(--line-strong);
+  padding-block-start: 1rem;
+}
+.tier--star .tier__head {
+  border-block-start-color: var(--accent);
+}
+.tier__n {
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+.tier__title {
+  margin: 0.25rem 0 0.4rem;
+}
+.tier__blurb {
+  color: var(--text-soft);
+  margin: 0;
+  max-width: 64ch;
+}
+
+/* Specimen card — live example + grammar + recipe + boundary + docs. */
+.spec {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 1.5rem;
+  padding: 1.25rem;
+}
+.spec__name {
+  margin: 0;
+}
+.spec__one {
+  color: var(--text-soft);
+  margin: 0.3rem 0 0;
+  max-width: 64ch;
+}
+.spec__demo {
+  /* Render specimens on --bg (not --panel-soft): the accent-text tones in
+           the analytical primitives are contrast-gated against --bg, and on the
+           lighter panel they dip just under 4.5:1. */
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+}
+.spec__code summary {
+  color: var(--text-dim);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+.spec__code pre {
+  background: var(--panel-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  margin: 0.6rem 0 0;
+  overflow-x: auto;
+  padding: 0.8rem;
+}
+.spec__meta {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: var(--text-sm);
+  gap: 0.5rem 1rem;
+}
+.spec__boundary {
+  color: var(--text-dim);
+  flex: 1 1 18rem;
+}
+
+/* Palette swatches. */
+.swatches {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+}
+.sw {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  overflow: hidden;
+}
+.sw i {
+  display: block;
+  height: 3rem;
+}
+.sw span {
+  display: block;
+  padding: 0.4rem 0.5rem;
+}
+
+/* Analytical specimen stages (ported from the per-primitive demos). */
+.legend-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+.conn-stage {
+  block-size: 15rem;
+  position: relative;
+}
+.conn-node {
+  max-inline-size: 10rem;
+  position: absolute;
+  z-index: 1;
+}
+#node-a {
+  inset-block-start: 1rem;
+  inset-inline-start: 1rem;
+}
+#node-b {
+  inset-block-end: 1rem;
+  inset-inline-end: 1rem;
+}
+#node-c {
+  inset-block-start: 1.25rem;
+  inset-inline-end: 1.25rem;
+}
+.xh-plot {
+  block-size: 13rem;
+  position: relative;
+}
+.sel-row {
+  align-items: end;
+  block-size: 9rem;
+  display: flex;
+  gap: var(--space-sm);
+}
+.sel-bar {
+  background: var(--accent);
+  border-radius: var(--radius-sm);
+  flex: 1;
+}
+.anno-svg {
+  block-size: auto;
+  inline-size: 100%;
+  max-block-size: 12rem;
+}
+/* A scoped, non-overlay illustration of the spotlight look (the real
+         ui-spotlight is a fixed full-viewport overlay; see its demo link). */
+.spot-mock {
+  background: color-mix(in srgb, #000 55%, transparent);
+  border-radius: var(--radius-md);
+  min-block-size: 9rem;
+  padding: 1rem;
+  position: relative;
+}
+.spot-mock__hole {
+  background: var(--bg);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-md);
+  inset-block-start: 1rem;
+  inset-inline-start: 1rem;
+  padding: 0.6rem 0.9rem;
+  position: absolute;
+  z-index: 1;
+}
+
+/* Frontier — what's next, not yet built. */
+.frontier {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  margin-block-start: 1.5rem;
+}
+.frontier__card {
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+.frontier__card h3 {
+  margin: 0 0 0.3rem;
+}
+.frontier__card p {
+  color: var(--text-soft);
+  margin: 0;
+}
+
+/* Demo backdrop: dial the signature dot-field down to a faint texture.
+         Demo-only — the shipped .ui-dotfield primitive is unchanged; this just
+         sparsens the grid, lowers its opacity, and fades it out sooner so it
+         reads as quiet texture rather than a grid behind the content. */
+.ui-dotfield {
+  --dot-gap: 26px;
+  opacity: 0.4;
+  mask-image: radial-gradient(ellipse at 50% -4%, #000 3%, transparent 46%);
+}
+
+/* Annotated-figure scaffold — lets the kitchen sink show the annotation
+         grammar (subject / connector / note) on a real chart, not just the
+         directLabels helper. The .ui-annotation* classes themselves ship in
+         analytical.css; these are only the chart bars/grid/axis behind them. */
+.annotation-applied {
+  display: block;
+  height: auto;
+  inline-size: 100%;
+}
+.annotation-specimen__panel {
+  fill: var(--panel-soft);
+  stroke: var(--line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.annotation-specimen__grid {
+  stroke: var(--line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.annotation-specimen__axis {
+  stroke: var(--text-dim);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+.annotation-specimen__data {
+  fill: var(--chart-color);
+  opacity: 0.88;
+}
