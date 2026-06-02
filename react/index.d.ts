@@ -1,62 +1,40 @@
-/** @ponchia/ui/react — thin React bindings over the SSR-safe behaviors.
- *  Optional peer dep `react`. Hooks run a delegated behavior for the
- *  component's lifetime; they take the same options as the behavior and
- *  return void (the cleanup is wired to unmount). See behaviors/index.d.ts. */
-import type {
-  Cleanup,
-  DelegateOpts,
-  ThemeStorageOpts,
-  ToastOpts,
-} from '../behaviors/index.js';
-
-export type BrontoBindingRoot =
-  | Document
-  | Element
-  | { current: Document | Element | null | undefined }
-  | (() => Document | Element | null | undefined)
-  | null
-  | undefined;
-
-export type BrontoBindingOpts<T extends DelegateOpts = DelegateOpts> = Omit<T, 'root'> & {
-  root?: BrontoBindingRoot;
+/** Run a delegated behavior for the component's lifetime (init on mount, its
+ *  returned cleanup on unmount). The behavior is run once; `opts` resolves
+ *  on mount so refs are usable for scoped roots.
+ *  @param {(opts?: DelegateOpts) => Cleanup | void} init
+ *  @param {BrontoBindingOptsResolver} [opts]
+ *  @returns {void} */
+export function useBrontoBehavior(init: (opts?: DelegateOpts) => Cleanup | void, opts?: BrontoBindingOptsResolver): void;
+export function useThemeToggle(opts?: BrontoBindingOptsResolver<ThemeStorageOpts & DelegateOpts>): void;
+export function useDismissible(opts?: BrontoBindingOptsResolver): void;
+export function useDisclosure(opts?: BrontoBindingOptsResolver): void;
+export function useMenu(opts?: BrontoBindingOptsResolver): void;
+export function useFormValidation(opts?: BrontoBindingOptsResolver): void;
+export function useCombobox(opts?: BrontoBindingOptsResolver): void;
+export function usePopover(opts?: BrontoBindingOptsResolver): void;
+export function useTableSort(opts?: BrontoBindingOptsResolver): void;
+export function useTabs(opts?: BrontoBindingOptsResolver): void;
+export function useDialog(opts?: BrontoBindingOptsResolver): void;
+export function useCarousel(opts?: BrontoBindingOptsResolver): void;
+export function useDotGlyph(opts?: BrontoBindingOptsResolver): void;
+export function useLegend(opts?: BrontoBindingOptsResolver): void;
+export function useConnectors(opts?: BrontoBindingOptsResolver): void;
+export function useSpotlight(opts?: BrontoBindingOptsResolver): void;
+export function useCrosshair(opts?: BrontoBindingOptsResolver): void;
+export function useCommand(opts?: BrontoBindingOptsResolver): void;
+export function useToast(): (message: string, opts?: ToastOpts) => Cleanup;
+export { applyStoredTheme };
+export type Cleanup = import("../behaviors/index.js").Cleanup;
+export type DelegateOpts = import("../behaviors/index.js").DelegateOpts;
+export type ThemeStorageOpts = import("../behaviors/index.js").ThemeStorageOpts;
+export type ToastOpts = import("../behaviors/index.js").ToastOpts;
+export type BrontoBindingRoot = Document | Element | {
+    current: Document | Element | null | undefined;
+} | (() => Document | Element | null | undefined) | null | undefined;
+export type BrontoBindingOpts<T extends DelegateOpts = import("../behaviors/index.js").DelegateOpts> = Omit<T, "root"> & {
+    root?: BrontoBindingRoot;
 };
-
-export type BrontoBindingOptsResolver<T extends DelegateOpts = DelegateOpts> =
-  | BrontoBindingOpts<T>
-  | (() => BrontoBindingOpts<T> | null | undefined)
-  | null
-  | undefined;
-
-/** Run any delegated behavior for the component's lifetime (init on mount,
- *  its returned cleanup on unmount). The behavior is run once. Options resolve
- *  on mount, so scoped roots may be React refs or resolver callbacks. */
-export declare function useBrontoBehavior(
-  init: (opts?: DelegateOpts) => Cleanup | void,
-  opts?: BrontoBindingOptsResolver,
-): void;
-
-export declare function useThemeToggle(
-  opts?: BrontoBindingOptsResolver<ThemeStorageOpts & DelegateOpts>,
-): void;
-export declare function useDismissible(opts?: BrontoBindingOptsResolver): void;
-export declare function useDisclosure(opts?: BrontoBindingOptsResolver): void;
-export declare function useMenu(opts?: BrontoBindingOptsResolver): void;
-export declare function useFormValidation(opts?: BrontoBindingOptsResolver): void;
-export declare function useCombobox(opts?: BrontoBindingOptsResolver): void;
-export declare function usePopover(opts?: BrontoBindingOptsResolver): void;
-export declare function useTableSort(opts?: BrontoBindingOptsResolver): void;
-export declare function useTabs(opts?: BrontoBindingOptsResolver): void;
-export declare function useDialog(opts?: BrontoBindingOptsResolver): void;
-export declare function useCarousel(opts?: BrontoBindingOptsResolver): void;
-export declare function useDotGlyph(opts?: BrontoBindingOptsResolver): void;
-export declare function useLegend(opts?: BrontoBindingOptsResolver): void;
-export declare function useConnectors(opts?: BrontoBindingOptsResolver): void;
-export declare function useSpotlight(opts?: BrontoBindingOptsResolver): void;
-export declare function useCrosshair(opts?: BrontoBindingOptsResolver): void;
-export declare function useCommand(opts?: BrontoBindingOptsResolver): void;
-
-/** The `toast()` imperative (no lifecycle of its own). */
-export declare function useToast(): (message: string, opts?: ToastOpts) => Cleanup;
-
-export { applyStoredTheme } from '../behaviors/index.js';
-export { cls, ui, cx } from '../classes/index.js';
+export type BrontoBindingOptsResolver<T extends DelegateOpts = import("../behaviors/index.js").DelegateOpts> = BrontoBindingOpts<T> | (() => BrontoBindingOpts<T> | null | undefined) | null | undefined;
+import { applyStoredTheme } from '../behaviors/index.js';
+export { cls, ui, cx } from "../classes/index.js";
+//# sourceMappingURL=index.d.ts.map

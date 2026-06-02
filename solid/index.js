@@ -16,6 +16,36 @@
  *     const toast = useToast();
  *     return <button onClick={() => toast('Saved', { tone: 'success' })}>Save</button>;
  *   }
+ *
+ * The public types below are JSDoc `@typedef`s; the shipped `index.d.ts` is
+ * generated from them (and these signatures) by `tsc --emitDeclarationOnly`.
+ *
+ * @typedef {import('../behaviors/index.js').Cleanup} Cleanup
+ * @typedef {import('../behaviors/index.js').DelegateOpts} DelegateOpts
+ * @typedef {import('../behaviors/index.js').ThemeStorageOpts} ThemeStorageOpts
+ * @typedef {import('../behaviors/index.js').ToastOpts} ToastOpts
+ *
+ * @typedef {Document
+ *   | Element
+ *   | { current: Document | Element | null | undefined }
+ *   | (() => Document | Element | null | undefined)
+ *   | null
+ *   | undefined} BrontoBindingRoot
+ */
+
+/**
+ * Behavior options with the `root` widened to accept Solid refs/resolvers.
+ * @template {DelegateOpts} [T=DelegateOpts]
+ * @typedef {Omit<T, 'root'> & { root?: BrontoBindingRoot }} BrontoBindingOpts
+ */
+
+/**
+ * `BrontoBindingOpts<T>`, or a callback that returns it on mount (after refs).
+ * @template {DelegateOpts} [T=DelegateOpts]
+ * @typedef {BrontoBindingOpts<T>
+ *   | (() => BrontoBindingOpts<T> | null | undefined)
+ *   | null
+ *   | undefined} BrontoBindingOptsResolver
  */
 import { onMount, onCleanup } from 'solid-js';
 import {
@@ -58,7 +88,11 @@ function resolveOpts(opts) {
 }
 
 /** Run a delegated behavior for the component's lifetime (init on mount, its
- *  returned cleanup on dispose). Options resolve on mount, after refs exist. */
+ *  returned cleanup on dispose). Options resolve on mount, after refs exist.
+ * @param {(opts?: DelegateOpts) => Cleanup | void} init
+ * @param {BrontoBindingOptsResolver} [opts]
+ * @returns {void}
+ */
 export function useBrontoBehavior(init, opts) {
   onMount(() => {
     const cleanup = init(resolveOpts(opts));
@@ -66,25 +100,43 @@ export function useBrontoBehavior(init, opts) {
   });
 }
 
+/** @type {(opts?: BrontoBindingOptsResolver<ThemeStorageOpts & DelegateOpts>) => void} */
 export const useThemeToggle = (opts) => useBrontoBehavior(initThemeToggle, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useDismissible = (opts) => useBrontoBehavior(dismissible, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useDisclosure = (opts) => useBrontoBehavior(initDisclosure, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useMenu = (opts) => useBrontoBehavior(initMenu, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useFormValidation = (opts) => useBrontoBehavior(initFormValidation, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useCombobox = (opts) => useBrontoBehavior(initCombobox, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const usePopover = (opts) => useBrontoBehavior(initPopover, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useTableSort = (opts) => useBrontoBehavior(initTableSort, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useTabs = (opts) => useBrontoBehavior(initTabs, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useDialog = (opts) => useBrontoBehavior(initDialog, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useCarousel = (opts) => useBrontoBehavior(initCarousel, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useDotGlyph = (opts) => useBrontoBehavior(initDotGlyph, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useLegend = (opts) => useBrontoBehavior(initLegend, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useConnectors = (opts) => useBrontoBehavior(initConnectors, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useSpotlight = (opts) => useBrontoBehavior(initSpotlight, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useCrosshair = (opts) => useBrontoBehavior(initCrosshair, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useCommand = (opts) => useBrontoBehavior(initCommand, opts);
 
-/** The `toast()` imperative (no lifecycle of its own). */
+/** The `toast()` imperative (no lifecycle of its own).
+ * @type {() => (message: string, opts?: ToastOpts) => Cleanup} */
 export const useToast = () => toast;
 
 // No-flash theme application must run before paint — do it in an inline head

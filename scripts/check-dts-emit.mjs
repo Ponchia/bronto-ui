@@ -6,8 +6,10 @@
  * instead of importing a pure builder.
  *
  * Because each `.d.ts` is derived from its source, names/signatures cannot drift
- * — this gate replaces the hand-`.d.ts` name-parity gates (check-behaviors /
- * check-helpers-dts / check-bindings).
+ * — this gate replaces the name-parity gates for the migrated leaves
+ * (check-helpers-dts for annotations/connectors, check-bindings for
+ * react/solid/qwik). `behaviors/` is the one leaf still hand-`.d.ts`'d, so
+ * check-behaviors stays.
  *
  * Run: node scripts/check-dts-emit.mjs
  */
