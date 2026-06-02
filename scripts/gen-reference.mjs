@@ -70,6 +70,9 @@ contract: [docs/theming.md](theming.md).
 
 - ${totalClasses} classes across ${groups.size} component groups
 - Import the typed registry: \`import { cls, ui, cx } from '@ponchia/ui/classes'\`
+- Validate markup as data (no JS/TS): \`@ponchia/ui/classes.json\` — the same
+  vocabulary as language-neutral JSON (\`groups\`, \`classes\`, \`states\`,
+  \`customProperties\`), for an external linter or non-JS host
 - Tokens as data: \`import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'\`
 
 ## Classes
@@ -90,11 +93,17 @@ registry consumer should reach for these instead of re-implementing
 | Class | Where | Effect |
 | --- | --- | --- |
 | \`.ui-table .is-num\` | numeric \`<td>\`/\`<th>\` | tabular figures + end-aligned (the canonical numeric cell) |
-| \`.ui-table .is-pos\` | numeric \`<td>\` | positive-delta tone |
-| \`.ui-table .is-neg\` | numeric \`<td>\` | negative-delta tone |
+| \`.ui-table .is-pos\` | numeric \`<td>\`, \`.ui-stat__delta\` | positive-delta tone |
+| \`.ui-table .is-neg\` | numeric \`<td>\`, \`.ui-stat__delta\` | negative-delta tone |
+| \`.ui-table .is-key\` | \`<td>\`/\`<th>\` | emphasised key column |
 
 For numeric text *outside* a table, use the \`ui-num\` primitive
-(\`ui.num({ tone })\`), which carries the same tabular/aligned/tone intent.
+(\`ui.num({ tone })\`), which carries the same tabular/aligned/tone intent; for
+a trend figure use \`ui-delta\` (\`ui.delta({ dir, invert })\`). The full,
+machine-readable list of these \`is-*\` state hooks — and the author-set inline
+custom properties (\`--chart-value\`, \`--chart-color\`, \`--chart-pattern\`,
+\`--value\`) — is in [\`@ponchia/ui/classes.json\`](../classes/classes.json)
+(\`states\` / \`customProperties\`).
 
 ## Composition & state (read before re-implementing glue)
 

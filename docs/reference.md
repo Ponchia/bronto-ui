@@ -9,8 +9,11 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 474 classes across 148 component groups
+- 483 classes across 150 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
+- Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
+  vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
+  `customProperties`), for an external linter or non-JS host
 - Tokens as data: `import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens'`
 
 ## Classes
@@ -352,6 +355,15 @@ each one matches a real selector in the stylesheet.
 | `cls.commandMeta` | `ui-command__meta` | part |
 | `cls.commandShortcut` | `ui-command__shortcut` | part |
 
+### `.ui-compare`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.compare` | `ui-compare` | base |
+| `cls.compareCol` | `ui-compare__col` | part |
+| `cls.compareHead` | `ui-compare__head` | part |
+| `cls.compare2up` | `ui-compare--2up` | modifier |
+
 ### `.ui-connector`
 
 | Registry key | Class | Kind |
@@ -392,6 +404,16 @@ each one matches a real selector in the stylesheet.
 | `cls.crosshairLineX` | `ui-crosshair__line--x` | modifier |
 | `cls.crosshairLineY` | `ui-crosshair__line--y` | modifier |
 | `cls.crosshairMuted` | `ui-crosshair--muted` | modifier |
+
+### `.ui-delta`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.delta` | `ui-delta` | base |
+| `cls.deltaDown` | `ui-delta--down` | modifier |
+| `cls.deltaFlat` | `ui-delta--flat` | modifier |
+| `cls.deltaInvert` | `ui-delta--invert` | modifier |
+| `cls.deltaUp` | `ui-delta--up` | modifier |
 
 ### `.ui-display`
 
@@ -1244,11 +1266,17 @@ registry consumer should reach for these instead of re-implementing
 | Class | Where | Effect |
 | --- | --- | --- |
 | `.ui-table .is-num` | numeric `<td>`/`<th>` | tabular figures + end-aligned (the canonical numeric cell) |
-| `.ui-table .is-pos` | numeric `<td>` | positive-delta tone |
-| `.ui-table .is-neg` | numeric `<td>` | negative-delta tone |
+| `.ui-table .is-pos` | numeric `<td>`, `.ui-stat__delta` | positive-delta tone |
+| `.ui-table .is-neg` | numeric `<td>`, `.ui-stat__delta` | negative-delta tone |
+| `.ui-table .is-key` | `<td>`/`<th>` | emphasised key column |
 
 For numeric text *outside* a table, use the `ui-num` primitive
-(`ui.num({ tone })`), which carries the same tabular/aligned/tone intent.
+(`ui.num({ tone })`), which carries the same tabular/aligned/tone intent; for
+a trend figure use `ui-delta` (`ui.delta({ dir, invert })`). The full,
+machine-readable list of these `is-*` state hooks — and the author-set inline
+custom properties (`--chart-value`, `--chart-color`, `--chart-pattern`,
+`--value`) — is in [`@ponchia/ui/classes.json`](../classes/classes.json)
+(`states` / `customProperties`).
 
 ## Composition & state (read before re-implementing glue)
 

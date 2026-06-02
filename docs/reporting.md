@@ -15,10 +15,17 @@ rewrites them:
 @import '@ponchia/ui/css/legend.css';
 ```
 
+**`dist/bronto.css` is the standard component set only — it does NOT contain
+the report, chart, annotation, or legend layers.** Those are opt-in leaves
+under `dist/css/`; a report links the default bundle *and* each leaf it uses.
+Forgetting them is the most common way an LLM-emitted report renders unstyled.
+
 For standalone browser HTML, use real stylesheet URLs. Package specifiers like
-`@ponchia/ui/css/report.css` do not resolve in a saved `.html` file:
+`@ponchia/ui/css/report.css` do not resolve in a saved `.html` file — and note
+the path is `dist/css/`, the built leaf, not the source `css/`:
 
 ```html
+<!-- installed locally -->
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/bronto.css" />
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/report.css" />
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/dataviz.css" />
@@ -26,10 +33,21 @@ For standalone browser HTML, use real stylesheet URLs. Package specifiers like
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/legend.css" />
 ```
 
-If you copy the built CSS next to the report, keep the same relationship between
-`dist/bronto.css`, `dist/css/report.css`, `dist/css/dataviz.css`,
-`dist/css/annotations.css`, `dist/css/legend.css`, and `fonts/` so font URLs
-continue to resolve.
+No install? Link the same files from a CDN. Pin the version — pre-1.0, breaking
+changes ship in the minor (see [stability.md](./stability.md)):
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.5.0/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.5.0/dist/css/report.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.5.0/dist/css/dataviz.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.5.0/dist/css/annotations.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.5.0/dist/css/legend.css" />
+```
+
+The CDN serves the package's own `fonts/` next to the CSS, so font URLs resolve
+with no extra setup. If instead you copy the built CSS next to the report, keep
+the same relationship between `dist/bronto.css`, the `dist/css/*` leaves, and
+`fonts/` so the relative font URLs continue to resolve.
 
 The report layer is static and PDF-first. It does not initialize behaviors and
 does not sanitize content. If a report includes arbitrary LLM, CMS, or user HTML,
@@ -154,6 +172,85 @@ they are all safe in the static, PDF-first report path.
   report figure); the two are interchangeable in style.
 - Do not use raw color values. Theme with `--accent`; use status tones for
   status; use chart tokens only in chart figures.
+
+## Numbers and dates
+
+The framework **aligns** figures; it does not **format** them. `.is-num` (table
+cells) and `ui-num` (standalone) give tabular figures and end-alignment so a
+column lines up — but a raw `1240` or `2026-6-1` still reads as machine output.
+Format the values yourself, before they reach the markup:
+
+- **Numbers** — group thousands and fix the precision. In JS,
+  `new Intl.NumberFormat('en-US').format(1240)` → `1,240`;
+  `{ style: 'currency', currency: 'USD' }` → `$1,240.00`;
+  `{ style: 'percent', maximumFractionDigits: 1 }` for rates;
+  `{ notation: 'compact' }` → `1.2M` for headline KPIs. Pick one locale and
+  precision per report and apply it consistently.
+- **Dates** — render a human label but keep the machine value in a
+  `<time datetime="…">` (ISO-8601), as the report skeleton and `ui-timeline`
+  already do. `new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' })`
+  → `Jun 1, 2026`.
+- **Signs and units** — write the sign and unit into the text (`+1`, `−3.2%`,
+  `18 h`); never rely on a tone or arrow alone to say "down" (WCAG 1.4.1).
+- Keep a column's precision uniform so the tabular alignment actually reads.
+
+A non-JS host formats with its own locale library (Python `babel`, Go
+`golang.org/x/text/message`, etc.) and emits the finished strings — bronto only
+styles them.
+
+## Trend deltas
+
+For a standalone change indicator (a KPI's movement, a row's quarter-over-quarter
+shift), use `ui-delta`. A direction modifier sets both the arrow glyph — the
+non-colour channel — and the conventional tone:
+
+```html
+<span class="ui-delta ui-delta--up">+12.4%</span>
+<span class="ui-delta ui-delta--down">−3</span>
+<span class="ui-delta ui-delta--flat">0</span>
+```
+
+Direction tone follows the common case (up = good, green; down = bad, red). When
+**up is the bad direction** — latency, error rate, cost, churn — add
+`ui-delta--invert` to swap only the tone; the arrow still reports real direction:
+
+```html
+<span class="ui-delta ui-delta--up ui-delta--invert">+48 ms p95</span>
+```
+
+The arrow is visual; always include the number and unit in the text. Pairs well
+inside a `ui-stat` (alongside `ui-stat__delta`) or a table cell.
+
+## Comparison layout
+
+For an "A vs B" or before/after section, use `ui-compare` — a fluid grid that
+wraps to a single stack on a narrow screen, so two panels never overflow.
+`ui-compare__col` is one side; label it with `ui-compare__head`. Add
+`ui-compare--2up` to pin exactly two equal columns for a hard pairing.
+
+```html
+<div class="ui-compare ui-compare--2up">
+  <div class="ui-compare__col">
+    <p class="ui-compare__head">Before</p>
+    <div class="ui-statgrid">
+      <div class="ui-stat">
+        <span class="ui-stat__label">p95 latency</span>
+        <span class="ui-stat__value">220 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="ui-compare__col">
+    <p class="ui-compare__head">After</p>
+    <div class="ui-statgrid">
+      <div class="ui-stat">
+        <span class="ui-stat__label">p95 latency</span>
+        <span class="ui-stat__value">172 ms</span>
+        <span class="ui-stat__delta is-pos">−48 ms</span>
+      </div>
+    </div>
+  </div>
+</div>
+```
 
 ## Chart figure recipe
 
@@ -320,7 +417,10 @@ fake page numbers with inert markup.
 
 Before returning a report, an LLM should verify:
 
-- All `ui-*` classes exist in `@ponchia/ui/classes`.
+- All `ui-*` classes exist in `@ponchia/ui/classes` (or `classes/classes.json`).
+  The `is-*` state hooks (`is-num`/`is-pos`/`is-neg`/`is-key` in `.ui-table`
+  cells and `.ui-stat` deltas, `is-open`/`is-active`) are valid but live
+  outside `cls` by design — keep them.
 - The document has one `h1`, ordered headings, and a single main report region.
 - Tables have captions and header cells.
 - Charts have captions, direct labels or legends, and fallback data.

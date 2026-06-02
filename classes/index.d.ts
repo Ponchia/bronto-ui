@@ -34,6 +34,11 @@ export declare const cls: {
   readonly numPos: 'ui-num--pos';
   readonly numNeg: 'ui-num--neg';
   readonly numMuted: 'ui-num--muted';
+  readonly delta: 'ui-delta';
+  readonly deltaUp: 'ui-delta--up';
+  readonly deltaDown: 'ui-delta--down';
+  readonly deltaFlat: 'ui-delta--flat';
+  readonly deltaInvert: 'ui-delta--invert';
   readonly badge: 'ui-badge';
   readonly badgeAccent: 'ui-badge--accent';
   readonly badgeSuccess: 'ui-badge--success';
@@ -253,6 +258,10 @@ export declare const cls: {
   readonly reportSources: 'ui-report__sources';
   readonly reportAppendix: 'ui-report__appendix';
   readonly reportFootnotes: 'ui-report__footnotes';
+  readonly compare: 'ui-compare';
+  readonly compare2up: 'ui-compare--2up';
+  readonly compareCol: 'ui-compare__col';
+  readonly compareHead: 'ui-compare__head';
   readonly chart: 'ui-chart';
   readonly chartCaption: 'ui-chart__caption';
   readonly chartPlot: 'ui-chart__plot';
@@ -509,6 +518,16 @@ export interface BadgeOpts {
 export interface NumOpts {
   tone?: 'pos' | 'neg' | 'muted';
 }
+export interface DeltaOpts {
+  /** Trend direction — sets the arrow glyph and the conventional tone. */
+  dir?: 'up' | 'down' | 'flat';
+  /** Swap only the tone when `up` is the bad direction (latency, error rate, cost). */
+  invert?: boolean;
+}
+export interface CompareOpts {
+  /** Pin exactly two equal columns (hard before/after) instead of the auto-fitting set. */
+  cols?: 2;
+}
 export interface ChipOpts {
   accent?: boolean;
 }
@@ -683,6 +702,8 @@ export interface Ui {
   card(opts?: CardOpts): string;
   badge(opts?: BadgeOpts): string;
   num(opts?: NumOpts): string;
+  delta(opts?: DeltaOpts): string;
+  compare(opts?: CompareOpts): string;
   chip(opts?: ChipOpts): string;
   link(opts?: LinkOpts): string;
   dot(opts?: DotOpts): string;

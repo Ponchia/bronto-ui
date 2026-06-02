@@ -36,7 +36,7 @@ Or drop it in with no build step, straight from a CDN:
 
 ## Quick start
 
-**1. Load the CSS.** One flattened, minified bundle — the whole framework, one request (~76 kB raw / ~13 kB gzip):
+**1. Load the CSS.** One flattened, minified bundle — the whole standard component set, one request (~76 kB raw / ~13 kB gzip):
 
 ```css
 @import '@ponchia/ui';            /* via a bundler */
@@ -48,6 +48,8 @@ Or drop it in with no build step, straight from a CDN:
 ```
 
 > Prefer source leaves through a bundler? Use `@import '@ponchia/ui/css'` (a thin `@import` fan-out) instead. Both resolve the Doto `@font-face` with relative URLs, so there's no `/fonts` path assumption.
+
+> The bundle is the standard component set. The opt-in analytical & report layers — `report.css`, `dataviz.css`, `annotations.css`, `legend.css`, and the rest — are **not** in `bronto.css`; link each one you need from `dist/css/`. For LLM-authored static reports see [docs/reporting.md](docs/reporting.md).
 
 **2. Write markup with `ui-*` classes** (primary is the default button; modifiers are opt-in):
 

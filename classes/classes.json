@@ -1,0 +1,1752 @@
+{
+  "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
+  "counts": {
+    "classes": 483,
+    "groups": 150
+  },
+  "groups": {
+    "ui-accordion": {
+      "base": "ui-accordion",
+      "modifiers": [],
+      "parts": [
+        "ui-accordion__body",
+        "ui-accordion__item",
+        "ui-accordion__summary"
+      ]
+    },
+    "ui-alert": {
+      "base": "ui-alert",
+      "modifiers": [
+        "ui-alert--accent",
+        "ui-alert--danger",
+        "ui-alert--info",
+        "ui-alert--success",
+        "ui-alert--warning"
+      ],
+      "parts": [
+        "ui-alert__body",
+        "ui-alert__dismiss",
+        "ui-alert__title"
+      ]
+    },
+    "ui-animate-dot": {
+      "base": "ui-animate-dot",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-animate-fade": {
+      "base": "ui-animate-fade",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-animate-in": {
+      "base": "ui-animate-in",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-animate-matrix": {
+      "base": "ui-animate-matrix",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-annotation": {
+      "base": "ui-annotation",
+      "modifiers": [
+        "ui-annotation--accent",
+        "ui-annotation--axis",
+        "ui-annotation--badge",
+        "ui-annotation--band",
+        "ui-annotation--bracket",
+        "ui-annotation--callout",
+        "ui-annotation--circle",
+        "ui-annotation--cluster",
+        "ui-annotation--compare",
+        "ui-annotation--curve",
+        "ui-annotation--danger",
+        "ui-annotation--draw",
+        "ui-annotation--elbow",
+        "ui-annotation--evidence",
+        "ui-annotation--focus",
+        "ui-annotation--info",
+        "ui-annotation--label",
+        "ui-annotation--muted",
+        "ui-annotation--pulse",
+        "ui-annotation--rect",
+        "ui-annotation--reveal",
+        "ui-annotation--slope",
+        "ui-annotation--success",
+        "ui-annotation--threshold",
+        "ui-annotation--timeline",
+        "ui-annotation--warning"
+      ],
+      "parts": [
+        "ui-annotation__badge",
+        "ui-annotation__connector",
+        "ui-annotation__connector-end",
+        "ui-annotation__label",
+        "ui-annotation__note",
+        "ui-annotation__note-line",
+        "ui-annotation__subject",
+        "ui-annotation__title"
+      ]
+    },
+    "ui-app-content": {
+      "base": "ui-app-content",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-app-empty-state": {
+      "base": "ui-app-empty-state",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-app-main": {
+      "base": "ui-app-main",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-app-metric": {
+      "base": "ui-app-metric",
+      "modifiers": [],
+      "parts": [
+        "ui-app-metric__delta",
+        "ui-app-metric__label",
+        "ui-app-metric__value"
+      ]
+    },
+    "ui-app-metrics": {
+      "base": "ui-app-metrics",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-app-nav": {
+      "base": "ui-app-nav",
+      "modifiers": [],
+      "parts": [
+        "ui-app-nav__section"
+      ]
+    },
+    "ui-app-panel": {
+      "base": "ui-app-panel",
+      "modifiers": [],
+      "parts": [
+        "ui-app-panel__head",
+        "ui-app-panel__title"
+      ]
+    },
+    "ui-app-rail": {
+      "base": "ui-app-rail",
+      "modifiers": [],
+      "parts": [
+        "ui-app-rail__account",
+        "ui-app-rail__brand",
+        "ui-app-rail__foot",
+        "ui-app-rail__toggle"
+      ]
+    },
+    "ui-app-shell": {
+      "base": "ui-app-shell",
+      "modifiers": [
+        "ui-app-shell--full"
+      ],
+      "parts": []
+    },
+    "ui-app-toolbar": {
+      "base": "ui-app-toolbar",
+      "modifiers": [],
+      "parts": [
+        "ui-app-toolbar__group"
+      ]
+    },
+    "ui-app-topbar": {
+      "base": "ui-app-topbar",
+      "modifiers": [],
+      "parts": [
+        "ui-app-topbar__title"
+      ]
+    },
+    "ui-avatar": {
+      "base": "ui-avatar",
+      "modifiers": [
+        "ui-avatar--lg",
+        "ui-avatar--sm"
+      ],
+      "parts": []
+    },
+    "ui-avatar-group": {
+      "base": "ui-avatar-group",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-badge": {
+      "base": "ui-badge",
+      "modifiers": [
+        "ui-badge--accent",
+        "ui-badge--danger",
+        "ui-badge--dot",
+        "ui-badge--info",
+        "ui-badge--muted",
+        "ui-badge--success",
+        "ui-badge--warning"
+      ],
+      "parts": []
+    },
+    "ui-bracket-note": {
+      "base": "ui-bracket-note",
+      "modifiers": [
+        "ui-bracket-note--accent",
+        "ui-bracket-note--danger",
+        "ui-bracket-note--info",
+        "ui-bracket-note--warning"
+      ],
+      "parts": [
+        "ui-bracket-note__label"
+      ]
+    },
+    "ui-breadcrumb": {
+      "base": "ui-breadcrumb",
+      "modifiers": [],
+      "parts": [
+        "ui-breadcrumb__item"
+      ]
+    },
+    "ui-break-after": {
+      "base": "ui-break-after",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-break-before": {
+      "base": "ui-break-before",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-button": {
+      "base": "ui-button",
+      "modifiers": [
+        "ui-button--danger",
+        "ui-button--ghost",
+        "ui-button--icon",
+        "ui-button--lg",
+        "ui-button--sm",
+        "ui-button--subtle"
+      ],
+      "parts": []
+    },
+    "ui-card": {
+      "base": "ui-card",
+      "modifiers": [
+        "ui-card--accent",
+        "ui-card--interactive"
+      ],
+      "parts": [
+        "ui-card__head"
+      ]
+    },
+    "ui-caret": {
+      "base": "ui-caret",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-carousel": {
+      "base": "ui-carousel",
+      "modifiers": [],
+      "parts": [
+        "ui-carousel__next",
+        "ui-carousel__prev",
+        "ui-carousel__slide",
+        "ui-carousel__stage",
+        "ui-carousel__status",
+        "ui-carousel__thumb",
+        "ui-carousel__thumbs",
+        "ui-carousel__viewport"
+      ]
+    },
+    "ui-center": {
+      "base": "ui-center",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-chart": {
+      "base": "ui-chart",
+      "modifiers": [],
+      "parts": [
+        "ui-chart__bar",
+        "ui-chart__caption",
+        "ui-chart__fallback",
+        "ui-chart__fill",
+        "ui-chart__label",
+        "ui-chart__plot",
+        "ui-chart__track"
+      ]
+    },
+    "ui-check": {
+      "base": "ui-check",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-chip": {
+      "base": "ui-chip",
+      "modifiers": [
+        "ui-chip--accent"
+      ],
+      "parts": []
+    },
+    "ui-citation": {
+      "base": "ui-citation",
+      "modifiers": [
+        "ui-citation--chip"
+      ],
+      "parts": []
+    },
+    "ui-cluster": {
+      "base": "ui-cluster",
+      "modifiers": [
+        "ui-cluster--between"
+      ],
+      "parts": []
+    },
+    "ui-combobox": {
+      "base": "ui-combobox",
+      "modifiers": [],
+      "parts": [
+        "ui-combobox__empty",
+        "ui-combobox__input",
+        "ui-combobox__list",
+        "ui-combobox__option"
+      ]
+    },
+    "ui-command": {
+      "base": "ui-command",
+      "modifiers": [],
+      "parts": [
+        "ui-command__empty",
+        "ui-command__group",
+        "ui-command__input",
+        "ui-command__item",
+        "ui-command__list",
+        "ui-command__meta",
+        "ui-command__shortcut"
+      ]
+    },
+    "ui-compare": {
+      "base": "ui-compare",
+      "modifiers": [
+        "ui-compare--2up"
+      ],
+      "parts": [
+        "ui-compare__col",
+        "ui-compare__head"
+      ]
+    },
+    "ui-connector": {
+      "base": "ui-connector",
+      "modifiers": [
+        "ui-connector--accent",
+        "ui-connector--danger",
+        "ui-connector--dashed",
+        "ui-connector--draw",
+        "ui-connector--info",
+        "ui-connector--muted",
+        "ui-connector--success",
+        "ui-connector--warning"
+      ],
+      "parts": [
+        "ui-connector__end",
+        "ui-connector__path"
+      ]
+    },
+    "ui-container": {
+      "base": "ui-container",
+      "modifiers": [
+        "ui-container--narrow",
+        "ui-container--wide"
+      ],
+      "parts": []
+    },
+    "ui-cq": {
+      "base": "ui-cq",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-crosshair": {
+      "base": "ui-crosshair",
+      "modifiers": [
+        "ui-crosshair--muted",
+        "ui-crosshair__line--x",
+        "ui-crosshair__line--y"
+      ],
+      "parts": [
+        "ui-crosshair__badge",
+        "ui-crosshair__line"
+      ]
+    },
+    "ui-delta": {
+      "base": "ui-delta",
+      "modifiers": [
+        "ui-delta--down",
+        "ui-delta--flat",
+        "ui-delta--invert",
+        "ui-delta--up"
+      ],
+      "parts": []
+    },
+    "ui-display": {
+      "base": "ui-display",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-divider": {
+      "base": "ui-divider",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-dot": {
+      "base": "ui-dot",
+      "modifiers": [
+        "ui-dot--accent",
+        "ui-dot--danger",
+        "ui-dot--info",
+        "ui-dot--live",
+        "ui-dot--success",
+        "ui-dot--warning"
+      ],
+      "parts": []
+    },
+    "ui-dotbar": {
+      "base": "ui-dotbar",
+      "modifiers": [
+        "ui-dotbar--indeterminate"
+      ],
+      "parts": []
+    },
+    "ui-dotfield": {
+      "base": "ui-dotfield",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-dotgrid": {
+      "base": "ui-dotgrid",
+      "modifiers": [
+        "ui-dotgrid--accent",
+        "ui-dotgrid--dense"
+      ],
+      "parts": []
+    },
+    "ui-dotloader": {
+      "base": "ui-dotloader",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-dotmatrix": {
+      "base": "ui-dotmatrix",
+      "modifiers": [
+        "ui-dotmatrix--pulse",
+        "ui-dotmatrix--reveal",
+        "ui-dotmatrix__cell--accent",
+        "ui-dotmatrix__cell--hot"
+      ],
+      "parts": [
+        "ui-dotmatrix__cell"
+      ]
+    },
+    "ui-dotrule": {
+      "base": "ui-dotrule",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-dotspinner": {
+      "base": "ui-dotspinner",
+      "modifiers": [
+        "ui-dotspinner--lg",
+        "ui-dotspinner--sm"
+      ],
+      "parts": []
+    },
+    "ui-empty-state": {
+      "base": "ui-empty-state",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-error-summary": {
+      "base": "ui-error-summary",
+      "modifiers": [],
+      "parts": [
+        "ui-error-summary__list",
+        "ui-error-summary__title"
+      ]
+    },
+    "ui-eyebrow": {
+      "base": "ui-eyebrow",
+      "modifiers": [
+        "ui-eyebrow--muted",
+        "ui-eyebrow--sm"
+      ],
+      "parts": []
+    },
+    "ui-field": {
+      "base": "ui-field",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-file": {
+      "base": "ui-file",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-generated": {
+      "base": "ui-generated",
+      "modifiers": [],
+      "parts": [
+        "ui-generated__label"
+      ]
+    },
+    "ui-grid": {
+      "base": "ui-grid",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-hint": {
+      "base": "ui-hint",
+      "modifiers": [
+        "ui-hint--error"
+      ],
+      "parts": []
+    },
+    "ui-icon": {
+      "base": "ui-icon",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-input": {
+      "base": "ui-input",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-input-group": {
+      "base": "ui-input-group",
+      "modifiers": [],
+      "parts": [
+        "ui-input-group__addon"
+      ]
+    },
+    "ui-input-icon": {
+      "base": "ui-input-icon",
+      "modifiers": [
+        "ui-input-icon--end"
+      ],
+      "parts": [
+        "ui-input-icon__icon"
+      ]
+    },
+    "ui-inspector": {
+      "base": "ui-inspector",
+      "modifiers": [],
+      "parts": [
+        "ui-inspector__body",
+        "ui-inspector__header"
+      ]
+    },
+    "ui-kbd": {
+      "base": "ui-kbd",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-keep": {
+      "base": "ui-keep",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-key-value": {
+      "base": "ui-key-value",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-label": {
+      "base": "ui-label",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-legend": {
+      "base": "ui-legend",
+      "modifiers": [
+        "ui-legend--compact",
+        "ui-legend--diverging",
+        "ui-legend--gradient",
+        "ui-legend--interactive",
+        "ui-legend--threshold",
+        "ui-legend--vertical",
+        "ui-legend--with-values",
+        "ui-legend__swatch--1",
+        "ui-legend__swatch--2",
+        "ui-legend__swatch--3",
+        "ui-legend__swatch--4",
+        "ui-legend__swatch--5",
+        "ui-legend__swatch--6",
+        "ui-legend__swatch--7",
+        "ui-legend__swatch--8",
+        "ui-legend__swatch--circle",
+        "ui-legend__swatch--line"
+      ],
+      "parts": [
+        "ui-legend__caption",
+        "ui-legend__item",
+        "ui-legend__label",
+        "ui-legend__swatch",
+        "ui-legend__symbol",
+        "ui-legend__tick",
+        "ui-legend__ticks",
+        "ui-legend__title",
+        "ui-legend__track",
+        "ui-legend__value"
+      ]
+    },
+    "ui-lightbox": {
+      "base": "ui-lightbox",
+      "modifiers": [],
+      "parts": [
+        "ui-lightbox__close"
+      ]
+    },
+    "ui-link": {
+      "base": "ui-link",
+      "modifiers": [
+        "ui-link--arrow",
+        "ui-link--cta"
+      ],
+      "parts": []
+    },
+    "ui-mark": {
+      "base": "ui-mark",
+      "modifiers": [
+        "ui-mark--accent",
+        "ui-mark--box",
+        "ui-mark--danger",
+        "ui-mark--draw",
+        "ui-mark--info",
+        "ui-mark--muted",
+        "ui-mark--strike",
+        "ui-mark--success",
+        "ui-mark--underline",
+        "ui-mark--warning"
+      ],
+      "parts": []
+    },
+    "ui-matrix": {
+      "base": "ui-matrix",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-menu": {
+      "base": "ui-menu",
+      "modifiers": [],
+      "parts": [
+        "ui-menu__item",
+        "ui-menu__label",
+        "ui-menu__sep"
+      ]
+    },
+    "ui-menu-host": {
+      "base": "ui-menu-host",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-meta": {
+      "base": "ui-meta",
+      "modifiers": [],
+      "parts": [
+        "ui-meta__item"
+      ]
+    },
+    "ui-meter": {
+      "base": "ui-meter",
+      "modifiers": [
+        "ui-meter--accent",
+        "ui-meter--danger",
+        "ui-meter--success",
+        "ui-meter--warning"
+      ],
+      "parts": [
+        "ui-meter__fill"
+      ]
+    },
+    "ui-modal": {
+      "base": "ui-modal",
+      "modifiers": [
+        "ui-modal--drawer"
+      ],
+      "parts": [
+        "ui-modal__body",
+        "ui-modal__close",
+        "ui-modal__foot",
+        "ui-modal__head",
+        "ui-modal__title"
+      ]
+    },
+    "ui-mono": {
+      "base": "ui-mono",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-muted": {
+      "base": "ui-muted",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-num": {
+      "base": "ui-num",
+      "modifiers": [
+        "ui-num--muted",
+        "ui-num--neg",
+        "ui-num--pos"
+      ],
+      "parts": []
+    },
+    "ui-origin-label": {
+      "base": "ui-origin-label",
+      "modifiers": [
+        "ui-origin-label--ai"
+      ],
+      "parts": []
+    },
+    "ui-pagehead": {
+      "base": "ui-pagehead",
+      "modifiers": [],
+      "parts": [
+        "ui-pagehead__actions",
+        "ui-pagehead__title"
+      ]
+    },
+    "ui-pagination": {
+      "base": "ui-pagination",
+      "modifiers": [],
+      "parts": [
+        "ui-pagination__item"
+      ]
+    },
+    "ui-panel": {
+      "base": "ui-panel",
+      "modifiers": [],
+      "parts": [
+        "ui-panel__head"
+      ]
+    },
+    "ui-popover": {
+      "base": "ui-popover",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-print-exact": {
+      "base": "ui-print-exact",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-print-only": {
+      "base": "ui-print-only",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-progress": {
+      "base": "ui-progress",
+      "modifiers": [
+        "ui-progress--indeterminate"
+      ],
+      "parts": [
+        "ui-progress__bar"
+      ]
+    },
+    "ui-property": {
+      "base": "ui-property",
+      "modifiers": [],
+      "parts": [
+        "ui-property__label",
+        "ui-property__value"
+      ]
+    },
+    "ui-prose": {
+      "base": "ui-prose",
+      "modifiers": [
+        "ui-prose--compact"
+      ],
+      "parts": []
+    },
+    "ui-provenance": {
+      "base": "ui-provenance",
+      "modifiers": [],
+      "parts": [
+        "ui-provenance__item"
+      ]
+    },
+    "ui-quote": {
+      "base": "ui-quote",
+      "modifiers": [],
+      "parts": [
+        "ui-quote__cite"
+      ]
+    },
+    "ui-range": {
+      "base": "ui-range",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-ratio": {
+      "base": "ui-ratio",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-readout": {
+      "base": "ui-readout",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-reasoning": {
+      "base": "ui-reasoning",
+      "modifiers": [],
+      "parts": [
+        "ui-reasoning__body"
+      ]
+    },
+    "ui-report": {
+      "base": "ui-report",
+      "modifiers": [
+        "ui-report--compact",
+        "ui-report--numbered",
+        "ui-report__cover--compact",
+        "ui-report__section--unnumbered"
+      ],
+      "parts": [
+        "ui-report__appendix",
+        "ui-report__caption",
+        "ui-report__cover",
+        "ui-report__evidence",
+        "ui-report__figure",
+        "ui-report__finding",
+        "ui-report__footnotes",
+        "ui-report__header",
+        "ui-report__meta",
+        "ui-report__section",
+        "ui-report__section-head",
+        "ui-report__sources",
+        "ui-report__subtitle",
+        "ui-report__summary",
+        "ui-report__title",
+        "ui-report__toc"
+      ]
+    },
+    "ui-reveal": {
+      "base": "ui-reveal",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-screen-only": {
+      "base": "ui-screen-only",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-scroll-progress": {
+      "base": "ui-scroll-progress",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-scroll-reveal": {
+      "base": "ui-scroll-reveal",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-search": {
+      "base": "ui-search",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-segmented": {
+      "base": "ui-segmented",
+      "modifiers": [],
+      "parts": [
+        "ui-segmented__option"
+      ]
+    },
+    "ui-sel": {
+      "base": "ui-sel",
+      "modifiers": [
+        "ui-sel--maybe",
+        "ui-sel--off",
+        "ui-sel--on"
+      ],
+      "parts": []
+    },
+    "ui-select": {
+      "base": "ui-select",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-selectionbar": {
+      "base": "ui-selectionbar",
+      "modifiers": [],
+      "parts": [
+        "ui-selectionbar__actions",
+        "ui-selectionbar__count"
+      ]
+    },
+    "ui-shortcut": {
+      "base": "ui-shortcut",
+      "modifiers": [],
+      "parts": [
+        "ui-shortcut__sep"
+      ]
+    },
+    "ui-sidebar": {
+      "base": "ui-sidebar",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-sitefooter": {
+      "base": "ui-sitefooter",
+      "modifiers": [],
+      "parts": [
+        "ui-sitefooter__links"
+      ]
+    },
+    "ui-siteheader": {
+      "base": "ui-siteheader",
+      "modifiers": [
+        "ui-siteheader--sticky"
+      ],
+      "parts": [
+        "ui-siteheader__actions",
+        "ui-siteheader__brand"
+      ]
+    },
+    "ui-sitemenu": {
+      "base": "ui-sitemenu",
+      "modifiers": [],
+      "parts": [
+        "ui-sitemenu__panel"
+      ]
+    },
+    "ui-sitenav": {
+      "base": "ui-sitenav",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-skeleton": {
+      "base": "ui-skeleton",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-skiplink": {
+      "base": "ui-skiplink",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-source-card": {
+      "base": "ui-source-card",
+      "modifiers": [],
+      "parts": [
+        "ui-source-card__actions",
+        "ui-source-card__excerpt",
+        "ui-source-card__origin",
+        "ui-source-card__time",
+        "ui-source-card__title"
+      ]
+    },
+    "ui-source-list": {
+      "base": "ui-source-list",
+      "modifiers": [],
+      "parts": [
+        "ui-source-list__item"
+      ]
+    },
+    "ui-spinner": {
+      "base": "ui-spinner",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-spotlight": {
+      "base": "ui-spotlight",
+      "modifiers": [
+        "ui-spotlight--ring"
+      ],
+      "parts": [
+        "ui-spotlight__hole"
+      ]
+    },
+    "ui-src": {
+      "base": "ui-src",
+      "modifiers": [
+        "ui-src--conflict",
+        "ui-src--generated",
+        "ui-src--reviewed",
+        "ui-src--stale",
+        "ui-src--unverified",
+        "ui-src--verified"
+      ],
+      "parts": []
+    },
+    "ui-stack": {
+      "base": "ui-stack",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-stagger": {
+      "base": "ui-stagger",
+      "modifiers": [
+        "ui-stagger--auto"
+      ],
+      "parts": []
+    },
+    "ui-stat": {
+      "base": "ui-stat",
+      "modifiers": [],
+      "parts": [
+        "ui-stat__delta",
+        "ui-stat__label",
+        "ui-stat__value"
+      ]
+    },
+    "ui-state": {
+      "base": "ui-state",
+      "modifiers": [
+        "ui-state--busy",
+        "ui-state--conflict",
+        "ui-state--error",
+        "ui-state--locked",
+        "ui-state--needs-review",
+        "ui-state--offline",
+        "ui-state--queued",
+        "ui-state--reviewed",
+        "ui-state--saved",
+        "ui-state--saving",
+        "ui-state--stale"
+      ],
+      "parts": [
+        "ui-state__detail",
+        "ui-state__label"
+      ]
+    },
+    "ui-statgrid": {
+      "base": "ui-statgrid",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-status": {
+      "base": "ui-status",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-steps": {
+      "base": "ui-steps",
+      "modifiers": [
+        "ui-steps__item--done"
+      ],
+      "parts": [
+        "ui-steps__item"
+      ]
+    },
+    "ui-surface": {
+      "base": "ui-surface",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-switch": {
+      "base": "ui-switch",
+      "modifiers": [],
+      "parts": [
+        "ui-switch__thumb",
+        "ui-switch__track"
+      ]
+    },
+    "ui-switcher": {
+      "base": "ui-switcher",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-syncbar": {
+      "base": "ui-syncbar",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-tab": {
+      "base": "ui-tab",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-table": {
+      "base": "ui-table",
+      "modifiers": [
+        "ui-table--comfortable",
+        "ui-table--dense",
+        "ui-table--lined",
+        "ui-table--loading",
+        "ui-table--selectable"
+      ],
+      "parts": [
+        "ui-table__empty",
+        "ui-table__select",
+        "ui-table__sort",
+        "ui-table__toolbar"
+      ]
+    },
+    "ui-table-wrap": {
+      "base": "ui-table-wrap",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-tabs": {
+      "base": "ui-tabs",
+      "modifiers": [],
+      "parts": [
+        "ui-tabs__list",
+        "ui-tabs__panel"
+      ]
+    },
+    "ui-tag": {
+      "base": "ui-tag",
+      "modifiers": [
+        "ui-tag--accent"
+      ],
+      "parts": []
+    },
+    "ui-tags": {
+      "base": "ui-tags",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-textarea": {
+      "base": "ui-textarea",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-themetoggle": {
+      "base": "ui-themetoggle",
+      "modifiers": [],
+      "parts": [
+        "ui-themetoggle__button",
+        "ui-themetoggle__label",
+        "ui-themetoggle__prefix",
+        "ui-themetoggle__thumb",
+        "ui-themetoggle__track"
+      ]
+    },
+    "ui-timeline": {
+      "base": "ui-timeline",
+      "modifiers": [],
+      "parts": [
+        "ui-timeline__item",
+        "ui-timeline__time"
+      ]
+    },
+    "ui-toast": {
+      "base": "ui-toast",
+      "modifiers": [
+        "ui-toast--accent",
+        "ui-toast--danger",
+        "ui-toast--info",
+        "ui-toast--success",
+        "ui-toast--warning"
+      ],
+      "parts": [
+        "ui-toast__close",
+        "ui-toast__title"
+      ]
+    },
+    "ui-toast-stack": {
+      "base": "ui-toast-stack",
+      "modifiers": [
+        "ui-toast-stack--assertive"
+      ],
+      "parts": []
+    },
+    "ui-tool-call": {
+      "base": "ui-tool-call",
+      "modifiers": [],
+      "parts": [
+        "ui-tool-call__body",
+        "ui-tool-call__name",
+        "ui-tool-call__status"
+      ]
+    },
+    "ui-tool-log": {
+      "base": "ui-tool-log",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-tooltip": {
+      "base": "ui-tooltip",
+      "modifiers": [],
+      "parts": [
+        "ui-tooltip__bubble"
+      ]
+    },
+    "ui-tour-note": {
+      "base": "ui-tour-note",
+      "modifiers": [],
+      "parts": [
+        "ui-tour-note__actions",
+        "ui-tour-note__body",
+        "ui-tour-note__step",
+        "ui-tour-note__title"
+      ]
+    },
+    "ui-visually-hidden": {
+      "base": "ui-visually-hidden",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-vt": {
+      "base": "ui-vt",
+      "modifiers": [],
+      "parts": []
+    }
+  },
+  "classes": [
+    "ui-accordion",
+    "ui-accordion__body",
+    "ui-accordion__item",
+    "ui-accordion__summary",
+    "ui-alert",
+    "ui-alert--accent",
+    "ui-alert--danger",
+    "ui-alert--info",
+    "ui-alert--success",
+    "ui-alert--warning",
+    "ui-alert__body",
+    "ui-alert__dismiss",
+    "ui-alert__title",
+    "ui-animate-dot",
+    "ui-animate-fade",
+    "ui-animate-in",
+    "ui-animate-matrix",
+    "ui-annotation",
+    "ui-annotation--accent",
+    "ui-annotation--axis",
+    "ui-annotation--badge",
+    "ui-annotation--band",
+    "ui-annotation--bracket",
+    "ui-annotation--callout",
+    "ui-annotation--circle",
+    "ui-annotation--cluster",
+    "ui-annotation--compare",
+    "ui-annotation--curve",
+    "ui-annotation--danger",
+    "ui-annotation--draw",
+    "ui-annotation--elbow",
+    "ui-annotation--evidence",
+    "ui-annotation--focus",
+    "ui-annotation--info",
+    "ui-annotation--label",
+    "ui-annotation--muted",
+    "ui-annotation--pulse",
+    "ui-annotation--rect",
+    "ui-annotation--reveal",
+    "ui-annotation--slope",
+    "ui-annotation--success",
+    "ui-annotation--threshold",
+    "ui-annotation--timeline",
+    "ui-annotation--warning",
+    "ui-annotation__badge",
+    "ui-annotation__connector",
+    "ui-annotation__connector-end",
+    "ui-annotation__label",
+    "ui-annotation__note",
+    "ui-annotation__note-line",
+    "ui-annotation__subject",
+    "ui-annotation__title",
+    "ui-app-content",
+    "ui-app-empty-state",
+    "ui-app-main",
+    "ui-app-metric",
+    "ui-app-metric__delta",
+    "ui-app-metric__label",
+    "ui-app-metric__value",
+    "ui-app-metrics",
+    "ui-app-nav",
+    "ui-app-nav__section",
+    "ui-app-panel",
+    "ui-app-panel__head",
+    "ui-app-panel__title",
+    "ui-app-rail",
+    "ui-app-rail__account",
+    "ui-app-rail__brand",
+    "ui-app-rail__foot",
+    "ui-app-rail__toggle",
+    "ui-app-shell",
+    "ui-app-shell--full",
+    "ui-app-toolbar",
+    "ui-app-toolbar__group",
+    "ui-app-topbar",
+    "ui-app-topbar__title",
+    "ui-avatar",
+    "ui-avatar--lg",
+    "ui-avatar--sm",
+    "ui-avatar-group",
+    "ui-badge",
+    "ui-badge--accent",
+    "ui-badge--danger",
+    "ui-badge--dot",
+    "ui-badge--info",
+    "ui-badge--muted",
+    "ui-badge--success",
+    "ui-badge--warning",
+    "ui-bracket-note",
+    "ui-bracket-note--accent",
+    "ui-bracket-note--danger",
+    "ui-bracket-note--info",
+    "ui-bracket-note--warning",
+    "ui-bracket-note__label",
+    "ui-breadcrumb",
+    "ui-breadcrumb__item",
+    "ui-break-after",
+    "ui-break-before",
+    "ui-button",
+    "ui-button--danger",
+    "ui-button--ghost",
+    "ui-button--icon",
+    "ui-button--lg",
+    "ui-button--sm",
+    "ui-button--subtle",
+    "ui-card",
+    "ui-card--accent",
+    "ui-card--interactive",
+    "ui-card__head",
+    "ui-caret",
+    "ui-carousel",
+    "ui-carousel__next",
+    "ui-carousel__prev",
+    "ui-carousel__slide",
+    "ui-carousel__stage",
+    "ui-carousel__status",
+    "ui-carousel__thumb",
+    "ui-carousel__thumbs",
+    "ui-carousel__viewport",
+    "ui-center",
+    "ui-chart",
+    "ui-chart__bar",
+    "ui-chart__caption",
+    "ui-chart__fallback",
+    "ui-chart__fill",
+    "ui-chart__label",
+    "ui-chart__plot",
+    "ui-chart__track",
+    "ui-check",
+    "ui-chip",
+    "ui-chip--accent",
+    "ui-citation",
+    "ui-citation--chip",
+    "ui-cluster",
+    "ui-cluster--between",
+    "ui-combobox",
+    "ui-combobox__empty",
+    "ui-combobox__input",
+    "ui-combobox__list",
+    "ui-combobox__option",
+    "ui-command",
+    "ui-command__empty",
+    "ui-command__group",
+    "ui-command__input",
+    "ui-command__item",
+    "ui-command__list",
+    "ui-command__meta",
+    "ui-command__shortcut",
+    "ui-compare",
+    "ui-compare--2up",
+    "ui-compare__col",
+    "ui-compare__head",
+    "ui-connector",
+    "ui-connector--accent",
+    "ui-connector--danger",
+    "ui-connector--dashed",
+    "ui-connector--draw",
+    "ui-connector--info",
+    "ui-connector--muted",
+    "ui-connector--success",
+    "ui-connector--warning",
+    "ui-connector__end",
+    "ui-connector__path",
+    "ui-container",
+    "ui-container--narrow",
+    "ui-container--wide",
+    "ui-cq",
+    "ui-crosshair",
+    "ui-crosshair--muted",
+    "ui-crosshair__badge",
+    "ui-crosshair__line",
+    "ui-crosshair__line--x",
+    "ui-crosshair__line--y",
+    "ui-delta",
+    "ui-delta--down",
+    "ui-delta--flat",
+    "ui-delta--invert",
+    "ui-delta--up",
+    "ui-display",
+    "ui-divider",
+    "ui-dot",
+    "ui-dot--accent",
+    "ui-dot--danger",
+    "ui-dot--info",
+    "ui-dot--live",
+    "ui-dot--success",
+    "ui-dot--warning",
+    "ui-dotbar",
+    "ui-dotbar--indeterminate",
+    "ui-dotfield",
+    "ui-dotgrid",
+    "ui-dotgrid--accent",
+    "ui-dotgrid--dense",
+    "ui-dotloader",
+    "ui-dotmatrix",
+    "ui-dotmatrix--pulse",
+    "ui-dotmatrix--reveal",
+    "ui-dotmatrix__cell",
+    "ui-dotmatrix__cell--accent",
+    "ui-dotmatrix__cell--hot",
+    "ui-dotrule",
+    "ui-dotspinner",
+    "ui-dotspinner--lg",
+    "ui-dotspinner--sm",
+    "ui-empty-state",
+    "ui-error-summary",
+    "ui-error-summary__list",
+    "ui-error-summary__title",
+    "ui-eyebrow",
+    "ui-eyebrow--muted",
+    "ui-eyebrow--sm",
+    "ui-field",
+    "ui-file",
+    "ui-generated",
+    "ui-generated__label",
+    "ui-grid",
+    "ui-hint",
+    "ui-hint--error",
+    "ui-icon",
+    "ui-input",
+    "ui-input-group",
+    "ui-input-group__addon",
+    "ui-input-icon",
+    "ui-input-icon--end",
+    "ui-input-icon__icon",
+    "ui-inspector",
+    "ui-inspector__body",
+    "ui-inspector__header",
+    "ui-kbd",
+    "ui-keep",
+    "ui-key-value",
+    "ui-label",
+    "ui-legend",
+    "ui-legend--compact",
+    "ui-legend--diverging",
+    "ui-legend--gradient",
+    "ui-legend--interactive",
+    "ui-legend--threshold",
+    "ui-legend--vertical",
+    "ui-legend--with-values",
+    "ui-legend__caption",
+    "ui-legend__item",
+    "ui-legend__label",
+    "ui-legend__swatch",
+    "ui-legend__swatch--1",
+    "ui-legend__swatch--2",
+    "ui-legend__swatch--3",
+    "ui-legend__swatch--4",
+    "ui-legend__swatch--5",
+    "ui-legend__swatch--6",
+    "ui-legend__swatch--7",
+    "ui-legend__swatch--8",
+    "ui-legend__swatch--circle",
+    "ui-legend__swatch--line",
+    "ui-legend__symbol",
+    "ui-legend__tick",
+    "ui-legend__ticks",
+    "ui-legend__title",
+    "ui-legend__track",
+    "ui-legend__value",
+    "ui-lightbox",
+    "ui-lightbox__close",
+    "ui-link",
+    "ui-link--arrow",
+    "ui-link--cta",
+    "ui-mark",
+    "ui-mark--accent",
+    "ui-mark--box",
+    "ui-mark--danger",
+    "ui-mark--draw",
+    "ui-mark--info",
+    "ui-mark--muted",
+    "ui-mark--strike",
+    "ui-mark--success",
+    "ui-mark--underline",
+    "ui-mark--warning",
+    "ui-matrix",
+    "ui-menu",
+    "ui-menu-host",
+    "ui-menu__item",
+    "ui-menu__label",
+    "ui-menu__sep",
+    "ui-meta",
+    "ui-meta__item",
+    "ui-meter",
+    "ui-meter--accent",
+    "ui-meter--danger",
+    "ui-meter--success",
+    "ui-meter--warning",
+    "ui-meter__fill",
+    "ui-modal",
+    "ui-modal--drawer",
+    "ui-modal__body",
+    "ui-modal__close",
+    "ui-modal__foot",
+    "ui-modal__head",
+    "ui-modal__title",
+    "ui-mono",
+    "ui-muted",
+    "ui-num",
+    "ui-num--muted",
+    "ui-num--neg",
+    "ui-num--pos",
+    "ui-origin-label",
+    "ui-origin-label--ai",
+    "ui-pagehead",
+    "ui-pagehead__actions",
+    "ui-pagehead__title",
+    "ui-pagination",
+    "ui-pagination__item",
+    "ui-panel",
+    "ui-panel__head",
+    "ui-popover",
+    "ui-print-exact",
+    "ui-print-only",
+    "ui-progress",
+    "ui-progress--indeterminate",
+    "ui-progress__bar",
+    "ui-property",
+    "ui-property__label",
+    "ui-property__value",
+    "ui-prose",
+    "ui-prose--compact",
+    "ui-provenance",
+    "ui-provenance__item",
+    "ui-quote",
+    "ui-quote__cite",
+    "ui-range",
+    "ui-ratio",
+    "ui-readout",
+    "ui-reasoning",
+    "ui-reasoning__body",
+    "ui-report",
+    "ui-report--compact",
+    "ui-report--numbered",
+    "ui-report__appendix",
+    "ui-report__caption",
+    "ui-report__cover",
+    "ui-report__cover--compact",
+    "ui-report__evidence",
+    "ui-report__figure",
+    "ui-report__finding",
+    "ui-report__footnotes",
+    "ui-report__header",
+    "ui-report__meta",
+    "ui-report__section",
+    "ui-report__section--unnumbered",
+    "ui-report__section-head",
+    "ui-report__sources",
+    "ui-report__subtitle",
+    "ui-report__summary",
+    "ui-report__title",
+    "ui-report__toc",
+    "ui-reveal",
+    "ui-screen-only",
+    "ui-scroll-progress",
+    "ui-scroll-reveal",
+    "ui-search",
+    "ui-segmented",
+    "ui-segmented__option",
+    "ui-sel",
+    "ui-sel--maybe",
+    "ui-sel--off",
+    "ui-sel--on",
+    "ui-select",
+    "ui-selectionbar",
+    "ui-selectionbar__actions",
+    "ui-selectionbar__count",
+    "ui-shortcut",
+    "ui-shortcut__sep",
+    "ui-sidebar",
+    "ui-sitefooter",
+    "ui-sitefooter__links",
+    "ui-siteheader",
+    "ui-siteheader--sticky",
+    "ui-siteheader__actions",
+    "ui-siteheader__brand",
+    "ui-sitemenu",
+    "ui-sitemenu__panel",
+    "ui-sitenav",
+    "ui-skeleton",
+    "ui-skiplink",
+    "ui-source-card",
+    "ui-source-card__actions",
+    "ui-source-card__excerpt",
+    "ui-source-card__origin",
+    "ui-source-card__time",
+    "ui-source-card__title",
+    "ui-source-list",
+    "ui-source-list__item",
+    "ui-spinner",
+    "ui-spotlight",
+    "ui-spotlight--ring",
+    "ui-spotlight__hole",
+    "ui-src--conflict",
+    "ui-src--generated",
+    "ui-src--reviewed",
+    "ui-src--stale",
+    "ui-src--unverified",
+    "ui-src--verified",
+    "ui-stack",
+    "ui-stagger",
+    "ui-stagger--auto",
+    "ui-stat",
+    "ui-stat__delta",
+    "ui-stat__label",
+    "ui-stat__value",
+    "ui-state",
+    "ui-state--busy",
+    "ui-state--conflict",
+    "ui-state--error",
+    "ui-state--locked",
+    "ui-state--needs-review",
+    "ui-state--offline",
+    "ui-state--queued",
+    "ui-state--reviewed",
+    "ui-state--saved",
+    "ui-state--saving",
+    "ui-state--stale",
+    "ui-state__detail",
+    "ui-state__label",
+    "ui-statgrid",
+    "ui-status",
+    "ui-steps",
+    "ui-steps__item",
+    "ui-steps__item--done",
+    "ui-surface",
+    "ui-switch",
+    "ui-switch__thumb",
+    "ui-switch__track",
+    "ui-switcher",
+    "ui-syncbar",
+    "ui-tab",
+    "ui-table",
+    "ui-table--comfortable",
+    "ui-table--dense",
+    "ui-table--lined",
+    "ui-table--loading",
+    "ui-table--selectable",
+    "ui-table-wrap",
+    "ui-table__empty",
+    "ui-table__select",
+    "ui-table__sort",
+    "ui-table__toolbar",
+    "ui-tabs",
+    "ui-tabs__list",
+    "ui-tabs__panel",
+    "ui-tag",
+    "ui-tag--accent",
+    "ui-tags",
+    "ui-textarea",
+    "ui-themetoggle__button",
+    "ui-themetoggle__label",
+    "ui-themetoggle__prefix",
+    "ui-themetoggle__thumb",
+    "ui-themetoggle__track",
+    "ui-timeline",
+    "ui-timeline__item",
+    "ui-timeline__time",
+    "ui-toast",
+    "ui-toast--accent",
+    "ui-toast--danger",
+    "ui-toast--info",
+    "ui-toast--success",
+    "ui-toast--warning",
+    "ui-toast-stack",
+    "ui-toast-stack--assertive",
+    "ui-toast__close",
+    "ui-toast__title",
+    "ui-tool-call",
+    "ui-tool-call__body",
+    "ui-tool-call__name",
+    "ui-tool-call__status",
+    "ui-tool-log",
+    "ui-tooltip",
+    "ui-tooltip__bubble",
+    "ui-tour-note",
+    "ui-tour-note__actions",
+    "ui-tour-note__body",
+    "ui-tour-note__step",
+    "ui-tour-note__title",
+    "ui-visually-hidden",
+    "ui-vt"
+  ],
+  "states": [
+    {
+      "class": "is-num",
+      "scope": ".ui-table cell",
+      "effect": "tabular figures, end-aligned (the canonical numeric cell)"
+    },
+    {
+      "class": "is-pos",
+      "scope": ".ui-table cell, .ui-stat__delta, .ui-app-metric__delta",
+      "effect": "positive-delta tone"
+    },
+    {
+      "class": "is-neg",
+      "scope": ".ui-table cell, .ui-stat__delta, .ui-app-metric__delta",
+      "effect": "negative-delta tone"
+    },
+    {
+      "class": "is-key",
+      "scope": ".ui-table cell",
+      "effect": "emphasised key column"
+    },
+    {
+      "class": "is-open",
+      "scope": "controlled .ui-modal / .ui-popover",
+      "effect": "open state (focus-trap is the host's)"
+    },
+    {
+      "class": "is-active",
+      "scope": ".ui-tab and other selectable items",
+      "effect": "active/selected state"
+    },
+    {
+      "class": "is-inactive",
+      "scope": "interactive .ui-legend__item",
+      "effect": "host-set toggled-off state"
+    }
+  ],
+  "customProperties": [
+    {
+      "name": "--chart-value",
+      "on": ".ui-chart__bar",
+      "type": "percentage",
+      "example": "72%",
+      "note": "bar fill length"
+    },
+    {
+      "name": "--chart-color",
+      "on": ".ui-chart__fill, .ui-legend__swatch",
+      "type": "color",
+      "example": "var(--chart-1)",
+      "note": "series colour — use a --chart-* token, never a raw hex"
+    },
+    {
+      "name": "--chart-pattern",
+      "on": ".ui-chart__fill, .ui-legend__swatch",
+      "type": "image",
+      "example": "var(--chart-pattern-1)",
+      "note": "redundant non-colour channel — pair pattern N with colour N (WCAG 1.4.1)"
+    },
+    {
+      "name": "--value",
+      "on": ".ui-meter, .ui-progress",
+      "type": "number 0..100",
+      "example": "92",
+      "note": "measured value as a percentage"
+    }
+  ]
+}

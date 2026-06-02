@@ -147,12 +147,39 @@ function paletteFor(themeKey) {
   return out;
 }
 
+/** Recursively expand `var(--x[, fallback])` against a scope into a flat
+ *  string — for the non-colour scale tokens, so a non-CSS consumer gets a
+ *  usable value (`'Doto', 'JetBrains Mono', …`) instead of a `var()` chain
+ *  it would have to resolve itself. */
+function flattenVar(v, scope, seen = new Set()) {
+  return String(v).replace(/var\(\s*(--[\w-]+)\s*(?:,\s*([^()]*))?\)/g, (m, name, fallback) => {
+    if (seen.has(name) || !(name in scope)) return fallback != null ? fallback.trim() : m;
+    return flattenVar(scope[name], scope, new Set(seen).add(name));
+  });
+}
+
+/** The non-colour design scales (spacing, radius, type, z-index, motion),
+ *  theme-independent (they live only in the global block) and flattened to
+ *  plain strings. The colour tokens are in `light`/`dark`; this block completes
+ *  the contract so a non-CSS host gets EVERY token, not only colours. A token
+ *  that resolves to a colour is excluded (it belongs in the palettes). */
+function scaleMap() {
+  const colorScope = { ...cssVars.global, ...cssVars.light };
+  const out = {};
+  for (const [name, value] of Object.entries(cssVars.global)) {
+    if (resolve_(value, colorScope)) continue; // resolves to a colour
+    out[name] = flattenVar(value, cssVars.global);
+  }
+  return out;
+}
+
 export function buildResolved() {
   return {
     $comment:
-      '@ponchia/ui colour tokens resolved to static values per theme (var() + sRGB/OKLCH color-mix() evaluated at build). For non-CSS render targets: MapLibre/canvas/WebGL/SVG. Generated from tokens/index.js — do not edit by hand; run `npm run resolved:build`. Drift-checked in CI.',
+      '@ponchia/ui tokens resolved to static values for non-CSS render targets (MapLibre/canvas/WebGL/SVG/server image gen). `light`/`dark` hold every colour token with var() + sRGB/OKLCH color-mix() evaluated to #rrggbb/rgba(). `scale` holds the theme-independent non-colour scales (spacing/radius/type/z/motion), var() chains flattened. Generated from tokens/index.js — do not edit by hand; run `npm run resolved:build`. Drift-checked in CI.',
     light: paletteFor('light'),
     dark: paletteFor('dark'),
+    scale: scaleMap(),
   };
 }
 

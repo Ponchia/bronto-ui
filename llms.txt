@@ -31,6 +31,23 @@ later layer) always win over framework styles regardless of selector
 specificity — this is the intended override mechanism; do not fight it
 with `!important`.
 
+Loading a stylesheet — read before copying a `<link>` below. The opt-in
+leaves are written as `@ponchia/ui/css/<leaf>.css` for brevity. That
+package-specifier form resolves ONLY inside a CSS-aware bundler
+(Vite/webpack); in a standalone `.html` file it does not resolve. For plain
+HTML (the usual case when an LLM emits a report) use a real URL — and note
+the path changes from source `css/` to built `dist/css/`:
+
+```html
+<!-- installed locally -->
+<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/<leaf>.css" />
+<!-- or from a CDN; pin the version (pre-1.0, breaking changes ship in the minor) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.5.0/dist/css/<leaf>.css" />
+```
+
+The flattened default bundle is `dist/bronto.css` (bundler shorthand
+`@ponchia/ui`). A complete, copy-pasteable CDN report is in `docs/reporting.md`.
+
 Typed class vocabulary (returns plain strings — works in any framework):
 
 ```js
@@ -376,8 +393,12 @@ over untrusted generated content; sanitize arbitrary LLM/CMS/user HTML before
 rendering; use semantic headings; give tables captions and header cells; give
 charts captions, legends/direct labels, and fallback data; use
 `ui-chart__plot`/`ui-chart__bar`/`ui-chart__fill` for simple static bar charts;
-use `ui-report__section--unnumbered` for appendices in numbered reports; never
-use raw chromatic inline colors. Full cookbook: `docs/reporting.md`.
+use `ui-delta` (`--up`/`--down`/`--flat`, `--invert` when up is bad) for a
+trend figure and `ui-compare` (`--2up`) for an A/B / before-after section; use
+`ui-report__section--unnumbered` for appendices in numbered reports; never
+use raw chromatic inline colors. Format numbers/dates yourself (the framework
+aligns figures, it does not format them) — see the reporting cookbook. Full
+cookbook: `docs/reporting.md`.
 
 ## Authoritative offline references (shipped in this package)
 
@@ -386,6 +407,11 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
 - `classes/index.d.ts` — literal-typed `cls` map (exact class strings),
   every `ui.*()` recipe signature, every `*Opts` interface. The complete
   class surface; an agent should read this to know valid class names.
+- `classes/classes.json` — the same vocabulary as language-neutral data, to
+  VALIDATE markup without executing ESM/parsing TS: `groups` (base →
+  modifiers/parts, the BEM structure), `classes` (flat list), `states` (the
+  `is-*` hooks that live outside `cls` by design, with their scope), and
+  `customProperties` (the author-set inline-style knobs like `--chart-value`).
 - `docs/reference.md` — the full class catalog as prose tables (every
   class grouped by component, with registry key + kind). Generated from
   the same source as the types and CI-drift-checked.
@@ -412,8 +438,11 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
 - `tokens/index.json` — tokens as plain data (global / light / dark).
 - `tokens/tokens.dtcg.json` — same tokens in W3C DTCG format.
 - `tokens/resolved.json` — every colour token resolved to a static
-  `#rrggbb` / `rgba(...)` per theme (var() + color-mix() evaluated).
-  Use this for non-CSS render targets: MapLibre/canvas/WebGL/SVG.
+  `#rrggbb` / `rgba(...)` per theme (var() + color-mix() evaluated) in
+  `light`/`dark`, plus a `scale` block of the non-colour scales
+  (spacing/radius/type/z/motion, var() chains flattened). The complete token
+  contract for non-CSS render targets: MapLibre/canvas/WebGL/SVG, or a
+  non-JS host (Python/Go) building a themed report.
 - `behaviors/index.d.ts` — typed signatures for the optional behaviors.
 - `glyphs/glyphs.d.ts` — the `GlyphName` literal union plus `renderGlyph` /
   `glyphCells` signatures for the display glyphs. (The DOM form,
@@ -431,13 +460,24 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
 
 ## Rules an agent should respect
 
-- Never invent `ui-*` class names. Every valid class is a member of
-  `cls` in `classes/index.d.ts`; if it is not there, it does not exist.
+- Never invent `ui-*` class names. Every valid `ui-*` class is a member of
+  `cls` in `classes/index.d.ts` (and `classes/classes.json`); if a `ui-*`
+  name is not there, it does not exist. The `is-*` state hooks
+  (`is-num`/`is-pos`/`is-neg`/`is-key` on `.ui-table` cells and `.ui-stat`
+  deltas, `is-open`/`is-active`/`is-inactive` on stateful components) are the
+  one exception — they are real, documented in `docs/reference.md`
+  (§"Table-local state classes" / §"Composition & state") and emitted by the
+  `ui.*()` recipes, but deliberately NOT in `cls`. Do not strip them.
 - Prefer the `ui.*()` recipes over hand-concatenating modifier strings.
   Report/layout classes added in 0.4.1 are the exception: use `cls.report*`,
   `cls.chart*`, `cls.printOnly`, or literal documented class names because
   there are no `ui.report()` / `ui.chart()` recipes yet. Annotations do have a
   `ui.annotation()` recipe for variant/tone selection.
+- For a standalone HTML report, never `<link>` a `@ponchia/ui/css/*.css`
+  package specifier (it does not resolve in a browser) and never assume
+  `dist/bronto.css` carries the report/chart/legend/annotation layers — it
+  does not. Link each opt-in leaf from `dist/css/` via a real URL
+  (`./node_modules/…` or a pinned CDN). See the loading note above.
 - Override framework styles by writing your own rules outside
   `@layer bronto` — not with higher specificity or `!important`.
 - Color is tiered (ADR-0001): neutral canvas · one rationed accent · locked
