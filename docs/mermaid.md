@@ -66,6 +66,31 @@ Pie wedge labels (`pieSectionTextColor`) sit on arbitrary palette colours; if a
 label is hard to read on a given wedge, prefer a legend or direct labels over
 recolouring.
 
+### Fit to small screens
+
+The theme map sets colours, not size — sizing stays Mermaid's. Keep `useMaxWidth`
+on (the default for most diagram types) so each SVG scales to its container
+instead of forcing page-wide horizontal scroll:
+
+```js
+mermaid.initialize({
+  ...brontoMermaidTheme(theme),
+  flowchart: { useMaxWidth: true },
+  sequence: { useMaxWidth: true },
+});
+```
+
+A genuinely wide diagram (a long flowchart, a big ER) can still be unreadable
+once squeezed onto a phone. Rather than let it overflow the page, wrap the render
+in a scroll container so the *diagram* scrolls, not the document — the same
+pattern the report layer uses for wide figures and tables:
+
+```css
+.diagram-scroll {
+  overflow-x: auto;
+}
+```
+
 ## Annotate a diagram
 
 Mermaid output is SVG, and the [annotation layer](./annotations.md) is

@@ -363,6 +363,14 @@ dialog.ui-modal[open]::backdrop {
     inset-inline: 0;
     min-inline-size: 0;
   }
+
+  /* Let the combobox shed its 14rem floor and span the viewport so the input
+     (and its full-width listbox) can't overflow a narrow screen. */
+  .ui-combobox {
+    display: block;
+    inline-size: 100%;
+    min-inline-size: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

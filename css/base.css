@@ -12,7 +12,10 @@ html {
   background: var(--bg);
   color: var(--text);
   font-family: var(--sans);
-  font-size: 15px;
+
+  /* = 15px at the 16px default, but rem honours a user's browser font-size
+     preference (which a px root would ignore). */
+  font-size: 0.9375rem;
   line-height: 1.55;
   scroll-behavior: smooth;
   text-rendering: optimizeLegibility;

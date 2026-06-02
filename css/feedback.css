@@ -212,8 +212,27 @@
   line-height: 1;
 }
 
-.ui-toast__close:hover {
-  color: var(--text);
+/* Touch: enlarge the dismiss/close hit areas to the project's coarse-pointer
+   tap-target floor (2.9rem, as in primitives.css / forms.css) without changing
+   the desktop glyph size. The box is centred so the glyph stays put. */
+@media (pointer: coarse) {
+  .ui-alert__dismiss,
+  .ui-toast__close {
+    display: inline-grid;
+    place-items: center;
+    min-block-size: 2.9rem;
+    min-inline-size: 2.9rem;
+  }
+
+  .ui-alert__dismiss {
+    padding: 0;
+  }
+}
+
+@media (hover: hover) {
+  .ui-toast__close:hover {
+    color: var(--text);
+  }
 }
 
 .ui-toast--accent::before {

@@ -87,9 +87,11 @@
   inline-size: 0.34rem;
 }
 
-.ui-app-nav a:hover {
-  background: var(--bg-accent);
-  color: var(--text);
+@media (hover: hover) {
+  .ui-app-nav a:hover {
+    background: var(--bg-accent);
+    color: var(--text);
+  }
 }
 
 .ui-app-nav a.is-active {
