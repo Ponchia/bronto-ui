@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { awaitDemoReady } from './_demo.mjs';
 
 const resolved = JSON.parse(
   readFileSync(new URL('../../tokens/resolved.json', import.meta.url), 'utf8'),
@@ -21,6 +22,7 @@ async function open(page, theme = 'dark') {
     }
   }, theme);
   await page.goto('/demo/', { waitUntil: 'networkidle' });
+  await awaitDemoReady(page); // behaviors (table sort, …) are wired by index.js
   await page.evaluate(() => document.fonts.ready);
 }
 

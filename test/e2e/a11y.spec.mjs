@@ -1,5 +1,11 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { awaitDemoReady } from './_demo.mjs';
+
+// axe-core scans the whole kitchen-sink demo (×themes ×RTL ×interaction
+// states); on a loaded CI runner that legitimately approaches the default 30s
+// timeout. Give these scans headroom so a slow runner doesn't read as a flake.
+test.beforeEach(() => test.setTimeout(60_000));
 
 /**
  * Deterministic accessibility gate (environment-independent, unlike
@@ -46,6 +52,7 @@ function blocking(results) {
  * region too. color-contrast itself stays fully enforced on real content.
  */
 async function settle(page) {
+  await awaitDemoReady(page); // don't let axe scan a half-built (JS-wired) demo
   await page.evaluate(async () => {
     await document.fonts.ready;
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
