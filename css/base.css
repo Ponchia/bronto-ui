@@ -179,6 +179,7 @@ textarea:focus-visible,
 
 .ui-display {
   font-family: var(--display);
+  font-weight: var(--display-weight);
   text-transform: uppercase;
 }
 

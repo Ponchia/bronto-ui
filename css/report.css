@@ -56,6 +56,7 @@
   color: var(--text);
   font-family: var(--display);
   font-size: calc(var(--text-xl) * 1.35);
+  font-weight: var(--display-weight-strong);
   letter-spacing: 0;
   line-height: 1.05;
   margin: 0;
@@ -171,6 +172,7 @@
   color: var(--text);
   font-family: var(--display);
   font-size: var(--text-xl);
+  font-weight: var(--display-weight);
   letter-spacing: 0;
   line-height: 1.1;
   margin: 0;
