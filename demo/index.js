@@ -356,3 +356,11 @@ console.assert(
   'classes recipe mismatch',
 );
 console.log('showcase wired via @ponchia/ui modules', cx('ok'));
+
+// Deterministic readiness signal for the e2e suite. This module is loaded as an
+// external <script type="module"> (an extra fetch + import graph), and it builds
+// content synchronously above (the glyph gallery, command list, etc.). Flag the
+// document once that synchronous wiring is done so tests can wait on a real
+// signal instead of `networkidle` + a fixed timeout — which raced the JS-built
+// sections (glyph-gallery screenshot instability, sortable-table init).
+document.documentElement.dataset.demoReady = '1';

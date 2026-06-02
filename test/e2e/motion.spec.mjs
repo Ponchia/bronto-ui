@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { awaitDemoReady } from './_demo.mjs';
 
 /**
  * Proves the CSS-native enter/exit motion (ADR-0002) is actually wired —
@@ -13,6 +14,7 @@ test.use({ reducedMotion: 'no-preference' });
 
 async function open(page) {
   await page.goto('/demo/', { waitUntil: 'networkidle' });
+  await awaitDemoReady(page);
   await page.evaluate(() => document.fonts.ready);
 }
 

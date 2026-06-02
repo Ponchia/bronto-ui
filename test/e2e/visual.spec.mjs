@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { awaitDemoReady } from './_demo.mjs';
 
 /**
  * Component-scoped visual regression. Each demo `<section>` carries a
@@ -35,9 +36,11 @@ async function open(page, theme) {
     }
   }, theme);
   await page.goto('/demo/');
+  // Wait for the JS-built sections (glyph gallery, …) to finish wiring and for
+  // the bundled Doto webfont to load — deterministic, vs the old fixed 150ms
+  // that raced the glyphs shot to "element not stable".
+  await awaitDemoReady(page);
   await page.evaluate(() => document.fonts.ready);
-  // Doto is a bundled webfont; settle a frame so glyphs are painted.
-  await page.waitForTimeout(150);
 }
 
 for (const theme of ['dark', 'light']) {
