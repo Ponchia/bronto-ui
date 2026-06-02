@@ -218,8 +218,25 @@ Direction tone follows the common case (up = good, green; down = bad, red). When
 <span class="ui-delta ui-delta--up ui-delta--invert">+48 ms p95</span>
 ```
 
-The arrow is visual; always include the number and unit in the text. Pairs well
-inside a `ui-stat` (alongside `ui-stat__delta`) or a table cell.
+The arrow is visual; always include the number and unit in the text.
+
+A stat card's own `ui-stat__delta is-pos` / `is-neg` carries **tone only** (good
+vs bad, as colour). That is fine on screen, but tone is a single channel: in a
+greyscale PDF or for a colour-blind reader a positive and a negative delta look
+identical, and the tone is deliberately decoupled from direction (a *dropped*
+latency is `is-pos`). When the change must read without colour — most printed
+reports — prefer `ui-delta` for the card's delta line, because its `--up`/`--down`
+arrow is a real non-colour channel:
+
+```html
+<span class="ui-stat__label">p95 latency</span>
+<span class="ui-stat__value">172 ms</span>
+<span class="ui-delta ui-delta--down ui-delta--invert">−48 ms</span>
+```
+
+Here the arrow points **down** (latency fell) while `--invert` keeps the tone
+green (down is good) — both channels stay honest. Reach for `ui-stat__delta` only
+when a bare tonal accent is enough.
 
 ## Comparison layout
 

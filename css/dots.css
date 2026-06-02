@@ -370,3 +370,16 @@
     clip-path: none;
   }
 }
+
+/* Print: the dot surfaces carry data (heatmap cells, the segmented meter, the
+   status dot, the masked glyph), so their painted fills must survive the print
+   "economy" default that drops backgrounds. */
+@media print {
+  .ui-dotmatrix__cell,
+  .ui-dotbar i,
+  .ui-dot,
+  .ui-icon {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

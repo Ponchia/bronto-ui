@@ -1326,6 +1326,8 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--sans` | `'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif` |
 | `--dot-font` | `'Doto', var(--mono)` |
 | `--display` | `var(--dot-font)` |
+| `--display-weight` | `700` |
+| `--display-weight-strong` | `800` |
 | `--text-2xs` | `0.68rem` |
 | `--text-xs` | `0.76rem` |
 | `--text-sm` | `0.86rem` |

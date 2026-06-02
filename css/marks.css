@@ -142,3 +142,18 @@
     text-decoration-line: underline;
   }
 }
+
+/* Print: the highlight is a painted background, so force it through the print
+   "economy" default that would otherwise drop it. Settle the draw sweep to its
+   resting full highlight in case it is mid-animation when the page is printed. */
+@media print {
+  .ui-mark {
+    -webkit-print-color-adjust: exact;
+    background-size: 100% 100%;
+    print-color-adjust: exact;
+  }
+
+  .ui-mark--draw {
+    animation: none;
+  }
+}
