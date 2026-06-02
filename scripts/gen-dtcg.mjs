@@ -4,7 +4,7 @@
  * Figma plugins, etc. can consume the design tokens directly.
  *
  * Derived from the canonical tokens/index.js (single source of truth).
- * `buildDtcg()` is pure so check-dtcg can diff it without writing.
+ * `buildDtcg()` is pure so check-fresh (via the registry) can diff it without writing.
  *
  * Note: tokens whose value is a CSS runtime expression (`var()`,
  * `color-mix()` — the `--accent`-derived family and aliases) cannot be

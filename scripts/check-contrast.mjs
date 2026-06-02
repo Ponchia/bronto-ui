@@ -1,7 +1,8 @@
 /**
  * Two-in-one gate:
  *   1. docs/contrast.md is the freshly generated artifact (drift), same
- *      contract as check-reference.
+ *      freshness contract as check-fresh (kept here because it is paired
+ *      with the semantic WCAG-floor assertion below).
  *   2. Every *gated* token pairing meets its declared WCAG floor — this
  *      is what turns the published table into a guarantee. A palette
  *      tweak that regresses contrast fails `npm run check`, so it can

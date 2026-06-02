@@ -11,11 +11,12 @@ machine-checked.
 ```bash
 npm ci
 npm run check   # the full integrity suite: lint, format, exports; the
-                #   token / class / dts / dtcg / resolved / reference /
-                #   vscode generated-artifact drift gates; types, shiki,
-                #   dist budget, pack allowlist, release stamp, contrast;
-                #   behaviors / bindings / glyphs parity; color-policy,
-                #   skins, charts, report
+                #   consolidated generated-artifact freshness gate (check:fresh
+                #   — tokens.css/json, dtcg, resolved, .d.ts, reference, vscode
+                #   data); class contract; types, shiki, dist budget, pack
+                #   allowlist, publint + arethetypeswrong, release stamp,
+                #   contrast; behaviors / bindings / glyphs parity;
+                #   color-policy, skins, charts, report
 npm test        # node:test unit + type-d + contract tests
 ```
 

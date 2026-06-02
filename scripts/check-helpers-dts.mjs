@@ -4,7 +4,8 @@
  * matching `export declare function|const` in the sibling index.d.ts, and vice
  * versa. These .d.ts are curated (not generated), so without this gate a new
  * helper could ship untyped, or a declaration could outlive its runtime — the
- * same drift `check-bindings`/`check-dts` close for the other layers.
+ * same drift `check-bindings` (and `check-fresh`, for the generated `.d.ts`)
+ * close for the other layers.
  *
  * Source-parsed (no import) so it needs no build step. Type-only exports
  * (`export interface`/`export type`) are intentionally ignored. This checks

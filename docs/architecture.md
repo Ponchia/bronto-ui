@@ -61,7 +61,7 @@ on top of the CSS, none of which require a framework commitment**:
   not in three places (the two CSS dark blocks are now identical by
   construction), resolving the duplication ADR-0003 flagged. The CSS-only
   presets (density / contrast / OLED) stay hand-authored below a marker and are
-  preserved across regeneration. `scripts/check-tokens.mjs` fails CI if
+  preserved across regeneration. `scripts/check-fresh.mjs` fails CI if
   `css/tokens.css` drifts from the model.
 - **classes/** — `cls` is the flat registry; recipes only emit from it;
   `scripts/check-classes.mjs` enforces a bidirectional match with the
@@ -119,12 +119,10 @@ gating" below), so a version that fails any invariant never reaches npm.
 | Invariant                                       | Enforced by         |
 | ----------------------------------------------- | ------------------- |
 | exports / import graph / `files` consistent     | `check-exports.mjs` |
-| `tokens.css` ⇄ `tokens/index.js` ⇄ `.json`      | `check-tokens.mjs`  |
+| pure generated mirrors fresh — `tokens.css`/`index.json`, `dtcg.json`, `resolved.json`, `classes`/`tokens` `.d.ts`, `reference.md`, vscode data — each byte-equal to its generator (registry: `scripts/lib/artifacts.mjs`) | `check-fresh.mjs` |
 | `classes` `cls` ⇄ `.ui-*` selectors             | `check-classes.mjs` |
-| `classes`/`tokens` `.d.ts` ⇄ JS runtime (exact) | `check-dts.mjs`     |
 | `annotations`/`connectors` hand-written `.d.ts` ⇄ exports | `check-helpers-dts.mjs` |
 | legend swatch colours ⊆ `charts.js` · opt-in   | `check-legend.mjs`  |
-| `tokens.dtcg.json` ⇄ token model                | `check-dtcg.mjs`    |
 | color tokens tiered · no raw chromatic color in components | `check-color-policy.mjs` |
 | `css/skins.css` ⇄ `tokens/skins.js` · colorways opt-in | `check-skins.mjs` |
 | every shipped colorway accent meets its WCAG floor | `check-contrast.mjs` |
@@ -146,7 +144,7 @@ payload contract, raised only intentionally with a CHANGELOG note.
 `test/types.test-d.ts`, whose `@ts-expect-error`s would fail to compile
 if the generated literal `cls`/token types stopped rejecting typos —
 so the *value* of the generated `.d.ts` is itself gated, not just their
-freshness (`check-dts`).
+freshness (`check-fresh`).
 
 ## Release gating
 
