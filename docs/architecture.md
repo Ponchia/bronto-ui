@@ -93,7 +93,7 @@ generator overwrites them and a drift gate fails CI).
 | --- | --- | --- | --- |
 | `css/` | source | yes | The framework. Hand-authored `@layer bronto` CSS. (`css/tokens.css` palette blocks and `css/generated.css` are generated — see below.) |
 | `tokens/index.js` | source | yes | The single source of truth for token **values** (`cssVars`). |
-| `classes/index.js`, `behaviors/`, `annotations/`, `connectors/`, `react/`, `solid/`, `qwik/`, `glyphs/`, `shiki/` | source · published-subpath (path-frozen) | yes — but **do not move** | Authored ESM shipped as-is; the dir name is the public import path. The `.d.ts` beside them are generated/drift-checked (see below). |
+| `classes/index.js`, `behaviors/`, `annotations/`, `connectors/`, `react/`, `solid/`, `qwik/`, `glyphs/`, `shiki/` | source · published-subpath (path-frozen) | yes — but **do not move** | Authored ESM shipped as-is; the dir name is the public import path. The `.d.ts` beside them are generated/drift-checked: `connectors`/`annotations`/`react`/`solid`/`qwik` are emitted from JSDoc by `tsc` (`npm run dts:emit`), `classes`/`tokens`/`glyphs` from the runtime; only `behaviors/index.d.ts` is still hand-maintained (its barrel + destructured-param shape emit poorly), guarded by `check-behaviors`. |
 | `dist/` | generated | no | Build of `css/` (`npm run dist:build`); byte-checked by `check:dist`. |
 | `tokens/index.json`, `tokens/resolved.json`, `tokens/tokens.dtcg.json`, `tokens/charts.json`, `classes/index.d.ts`, `tokens/index.d.ts`, `tokens/{skins,charts}.d.ts`, `glyphs/glyphs.d.ts`, `classes/vscode.css-custom-data.json`, `docs/reference.md` | generated | no | Committed build artifacts; regenerate with `npm run prepack`, never hand-edit. Drift-checked in `npm run check`. |
 | `fonts/` | vendored | — | The Doto webfont (woff2) + its OFL license. |
@@ -121,7 +121,8 @@ gating" below), so a version that fails any invariant never reaches npm.
 | exports / import graph / `files` consistent     | `check-exports.mjs` |
 | pure generated mirrors fresh — `tokens.css`/`index.json`, `dtcg.json`, `resolved.json`, `classes`/`tokens` `.d.ts`, `reference.md`, vscode data — each byte-equal to its generator (registry: `scripts/lib/artifacts.mjs`) | `check-fresh.mjs` |
 | `classes` `cls` ⇄ `.ui-*` selectors             | `check-classes.mjs` |
-| `annotations`/`connectors` hand-written `.d.ts` ⇄ exports | `check-helpers-dts.mjs` |
+| `connectors`/`annotations`/`react`/`solid`/`qwik` `.d.ts` (+ maps) == fresh `tsc` emit of their JSDoc | `check-dts-emit.mjs` |
+| `behaviors/index.d.ts` ⇄ `behaviors/*` exports (the one hand-maintained leaf `.d.ts`) | `check-behaviors.mjs` |
 | legend swatch colours ⊆ `charts.js` · opt-in   | `check-legend.mjs`  |
 | color tokens tiered · no raw chromatic color in components | `check-color-policy.mjs` |
 | `css/skins.css` ⇄ `tokens/skins.js` · colorways opt-in | `check-skins.mjs` |

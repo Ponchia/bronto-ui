@@ -1,5 +1,201 @@
 // Shared SVG geometry primitives live in the connectors kernel; annotations
 // (figure callouts) build on them so a line/curve/arrow/dot is drawn one way.
+
+/**
+ * @ponchia/ui — SVG annotation geometry helpers.
+ *
+ * The public types below are JSDoc `@typedef`s; the shipped `index.d.ts` is
+ * generated from them (and these signatures) by `tsc --emitDeclarationOnly`.
+ *
+ * @typedef {{ x: number, y: number }} AnnotationPoint
+ * @typedef {{ dx: number, dy: number }} AnnotationOffset
+ * @typedef {'callout' | 'elbow' | 'curve'} AnnotationConnectorType
+ * @typedef {'start' | 'middle' | 'end'} AnnotationAlign
+ * @typedef {'top' | 'middle' | 'bottom'} AnnotationValign
+ * @typedef {'horizontal' | 'vertical'} AxisOrientation
+ * @typedef {'up' | 'down' | 'left' | 'right'} TimelineDirection
+ *
+ * @typedef {object} CircleSubject
+ * @property {'circle'} type
+ * @property {number} radius
+ * @property {number} [radiusPadding]
+ *
+ * @typedef {object} RectSubject
+ * @property {'rect'} type
+ * @property {number} width
+ * @property {number} height
+ * @property {number} [x]
+ * @property {number} [y]
+ * @property {number} [padding]
+ *
+ * @typedef {CircleSubject | RectSubject} ConnectorSubject
+ *
+ * @typedef {AnnotationOffset & { subject?: ConnectorSubject }} ConnectorOptions
+ *
+ * @typedef {object} CircleSubjectOptions
+ * @property {number} radius
+ *
+ * @typedef {object} RectSubjectOptions
+ * @property {number} width
+ * @property {number} height
+ * @property {number} [x]
+ * @property {number} [y]
+ * @property {number} [padding]
+ *
+ * @typedef {object} ThresholdOptions
+ * @property {number} [x1]
+ * @property {number} [y1]
+ * @property {number} x2
+ * @property {number} y2
+ *
+ * @typedef {object} AxisThresholdOptions
+ * @property {AxisOrientation} [orientation]
+ * @property {number} [value]
+ * @property {number} [start]
+ * @property {number} end
+ *
+ * @typedef {object} BracketSubjectOptions
+ * @property {number} x1
+ * @property {number} y1
+ * @property {number} x2
+ * @property {number} y2
+ * @property {number} [depth]
+ *
+ * @typedef {object} BandSubjectOptions
+ * @property {number} [x]
+ * @property {number} [y]
+ * @property {number} width
+ * @property {number} height
+ * @property {number} [padding]
+ *
+ * @typedef {object} SlopeSubjectOptions
+ * @property {number} x1
+ * @property {number} y1
+ * @property {number} x2
+ * @property {number} y2
+ *
+ * @typedef {object} ComparisonBraceOptions
+ * @property {number} x1
+ * @property {number} y1
+ * @property {number} x2
+ * @property {number} y2
+ * @property {number} [depth]
+ *
+ * @typedef {object} OutlierClusterOptions
+ * @property {AnnotationPoint[]} points
+ * @property {number} [radius]
+ *
+ * @typedef {object} TimelineEventOptions
+ * @property {number} [size]
+ * @property {TimelineDirection} [direction]
+ *
+ * @typedef {object} EvidenceMarkerOptions
+ * @property {number} [x]
+ * @property {number} [y]
+ * @property {number} [width]
+ * @property {number} [height]
+ * @property {number} [padding]
+ *
+ * @typedef {AnnotationPoint & { radius?: number }} ConnectorEndDotOptions
+ *
+ * @typedef {object} ConnectorEndArrowOptions
+ * @property {number} [x1]
+ * @property {number} [y1]
+ * @property {number} x2
+ * @property {number} y2
+ * @property {number} [size]
+ *
+ * @typedef {object} NoteTransformOptions
+ * @property {number} [dx]
+ * @property {number} [dy]
+ * @property {number} [x]
+ * @property {number} [y]
+ * @property {AnnotationAlign} [align]
+ * @property {AnnotationValign} [valign]
+ * @property {number} [width]
+ * @property {number} [height]
+ *
+ * @typedef {object} AnnotationBounds
+ * @property {number} [x]
+ * @property {number} [y]
+ * @property {number} width
+ * @property {number} height
+ *
+ * @typedef {object} NotePlacementOptions
+ * @property {number} [x]
+ * @property {number} [y]
+ * @property {number} width
+ * @property {number} height
+ * @property {AnnotationBounds} bounds
+ * @property {number} [padding]
+ * @property {number} [gap]
+ * @property {'right' | 'left' | 'top' | 'bottom'} [preferred]
+ *
+ * @typedef {object} NotePlacement
+ * @property {number} dx
+ * @property {number} dy
+ * @property {AnnotationAlign} align
+ * @property {AnnotationValign} valign
+ * @property {string} transform
+ *
+ * @typedef {(
+ *   | CircleSubject
+ *   | RectSubject
+ *   | ({ type: 'threshold' } & ThresholdOptions)
+ *   | ({ type: 'bracket' } & BracketSubjectOptions)
+ *   | ({ type: 'band' } & BandSubjectOptions)
+ *   | ({ type: 'slope' } & SlopeSubjectOptions)
+ *   | ({ type: 'compare' } & ComparisonBraceOptions)
+ *   | ({ type: 'cluster' } & OutlierClusterOptions)
+ *   | ({ type: 'axis' } & AxisThresholdOptions)
+ *   | ({ type: 'timeline' } & TimelineEventOptions)
+ *   | ({ type: 'evidence' } & EvidenceMarkerOptions)
+ * )} AnnotationPartsSubject
+ *
+ * @typedef {object} AnnotationPartsOptions
+ * @property {AnnotationConnectorType} [type]
+ * @property {number} [x]
+ * @property {number} [y]
+ * @property {number} [dx]
+ * @property {number} [dy]
+ * @property {AnnotationPartsSubject} [subject]
+ *
+ * @typedef {object} AnnotationParts
+ * @property {string} transform
+ * @property {string} subject
+ * @property {string} connector
+ * @property {string} note
+ *
+ * @typedef {object} DeclutterLabelItem
+ * @property {number} pos Desired centre coordinate along the axis.
+ * @property {number} size The label's extent along the axis.
+ *
+ * @typedef {object} DeclutterLabelsOptions
+ * @property {number} [gap] Minimum gap kept between adjacent labels. Default 0.
+ * @property {number} [min] Lower bound of the axis. Default -Infinity.
+ * @property {number} [max] Upper bound of the axis. Default Infinity.
+ *
+ * @typedef {object} DirectLabelItem
+ * @property {AnnotationPoint} anchor The true data point the label refers to (figure coordinates).
+ * @property {number} size The label's extent along the layout axis.
+ * @property {string | number} [key] Optional identifier, echoed back on the matching output (input order).
+ *
+ * @typedef {object} DirectLabelsOptions
+ * @property {'x' | 'y'} [axis] Axis the labels declutter along. 'y' = a vertical column. Default 'y'.
+ * @property {number} [cross] Fixed coordinate on the other axis where the label column/row sits. Default 0.
+ * @property {number} [gap] Minimum gap kept between adjacent labels. Default 0.
+ * @property {number} [min] Lower bound of the layout axis. Default -Infinity.
+ * @property {number} [max] Upper bound of the layout axis. Default Infinity.
+ * @property {'straight' | 'elbow' | 'curve'} [shape] Leader-line shape. Default 'straight'.
+ *
+ * @typedef {object} DirectLabel
+ * @property {number} x Placed label point — the leader's label-side end.
+ * @property {number} y
+ * @property {AnnotationPoint} anchor The echoed input anchor.
+ * @property {string | number} [key] The echoed input key, if any.
+ * @property {string} d SVG path for the leader (anchor → label point); '' if they coincide.
+ */
+
 import {
   straightPath,
   curvePath,
@@ -106,10 +302,18 @@ function linePath(start, end) {
   return `M${point(start.x, start.y)}L${point(end.x, end.y)}`;
 }
 
+/**
+ * @param {Partial<AnnotationPoint>} [point]
+ * @returns {string}
+ */
 export function annotationTransform({ x = 0, y = 0 } = {}) {
   return `translate(${fmt(finite('x', x))}, ${fmt(finite('y', y))})`;
 }
 
+/**
+ * @param {NoteTransformOptions} [options]
+ * @returns {string}
+ */
 export function noteTransform({
   dx,
   dy,
@@ -172,6 +376,10 @@ function noteRect(x, y, width, height, placement) {
   };
 }
 
+/**
+ * @param {NotePlacementOptions} options
+ * @returns {NotePlacement}
+ */
 export function notePlacement({
   x = 0,
   y = 0,
@@ -226,10 +434,18 @@ export function notePlacement({
   };
 }
 
+/**
+ * @param {CircleSubjectOptions} options
+ * @returns {string}
+ */
 export function circleSubjectPath({ radius } = {}) {
   return circlePathAt(0, 0, radius);
 }
 
+/**
+ * @param {RectSubjectOptions} options
+ * @returns {string}
+ */
 export function rectSubjectPath({ width, height, x, y, padding = 0 } = {}) {
   const w = dimension('width', width);
   const h = dimension('height', height);
@@ -242,12 +458,20 @@ export function rectSubjectPath({ width, height, x, y, padding = 0 } = {}) {
   return `M${point(left, top)}H${fmt(right)}V${fmt(bottom)}H${fmt(left)}Z`;
 }
 
+/**
+ * @param {ThresholdOptions} options
+ * @returns {string}
+ */
 export function thresholdPath({ x1 = 0, y1 = 0, x2, y2 } = {}) {
   const start = { x: finite('x1', x1), y: finite('y1', y1) };
   const end = { x: finite('x2', x2), y: finite('y2', y2) };
   return linePath(start, end);
 }
 
+/**
+ * @param {AxisThresholdOptions} options
+ * @returns {string}
+ */
 export function axisThresholdPath({ orientation = 'horizontal', value = 0, start = 0, end } = {}) {
   const v = finite('value', value);
   const s = finite('start', start);
@@ -257,6 +481,10 @@ export function axisThresholdPath({ orientation = 'horizontal', value = 0, start
   throw new TypeError('orientation must be "horizontal" or "vertical"');
 }
 
+/**
+ * @param {BracketSubjectOptions} options
+ * @returns {string}
+ */
 export function bracketSubjectPath({ x1, y1, x2, y2, depth = 12 } = {}) {
   const start = { x: finite('x1', x1), y: finite('y1', y1) };
   const end = { x: finite('x2', x2), y: finite('y2', y2) };
@@ -268,14 +496,26 @@ export function bracketSubjectPath({ x1, y1, x2, y2, depth = 12 } = {}) {
   return `M${point(start.x, start.y)}H${fmt(start.x + d)}V${fmt(end.y)}H${fmt(end.x)}`;
 }
 
+/**
+ * @param {BandSubjectOptions} options
+ * @returns {string}
+ */
 export function bandSubjectPath({ x = 0, y = 0, width, height, padding = 0 } = {}) {
   return rectSubjectPath({ x, y, width, height, padding });
 }
 
+/**
+ * @param {SlopeSubjectOptions} options
+ * @returns {string}
+ */
 export function slopeSubjectPath({ x1, y1, x2, y2 } = {}) {
   return thresholdPath({ x1, y1, x2, y2 });
 }
 
+/**
+ * @param {ComparisonBraceOptions} options
+ * @returns {string}
+ */
 export function comparisonBracePath({ x1, y1, x2, y2, depth = 14 } = {}) {
   const start = { x: finite('x1', x1), y: finite('y1', y1) };
   const end = { x: finite('x2', x2), y: finite('y2', y2) };
@@ -313,6 +553,10 @@ export function comparisonBracePath({ x1, y1, x2, y2, depth = 14 } = {}) {
   )} ${point(x, end.y)}`;
 }
 
+/**
+ * @param {OutlierClusterOptions} options
+ * @returns {string}
+ */
 export function outlierClusterPath({ points, radius = 6 } = {}) {
   if (!Array.isArray(points)) throw new TypeError('points must be an array');
   return points
@@ -323,6 +567,10 @@ export function outlierClusterPath({ points, radius = 6 } = {}) {
     .join('');
 }
 
+/**
+ * @param {TimelineEventOptions} [options]
+ * @returns {string}
+ */
 export function timelineEventPath({ size = 10, direction = 'down' } = {}) {
   const s = dimension('size', size);
   if (s === 0) return '';
@@ -333,6 +581,10 @@ export function timelineEventPath({ size = 10, direction = 'down' } = {}) {
   throw new TypeError('direction must be "up", "down", "left" or "right"');
 }
 
+/**
+ * @param {EvidenceMarkerOptions} [options]
+ * @returns {string}
+ */
 export function evidenceMarkerPath({ x = 0, y = 0, width = 36, height = 36, padding = 0 } = {}) {
   const w = dimension('width', width);
   const h = dimension('height', height);
@@ -347,10 +599,18 @@ export function evidenceMarkerPath({ x = 0, y = 0, width = 36, height = 36, padd
   return `M${point(left, top)}H${fmt(right)}V${fmt(bottom)}H${fmt(left)}Z`;
 }
 
+/**
+ * @param {ConnectorEndDotOptions} options
+ * @returns {string}
+ */
 export function connectorEndDot({ x, y, radius = 3 } = {}) {
   return dotMark({ x: finite('x', x), y: finite('y', y) }, radius);
 }
 
+/**
+ * @param {ConnectorEndArrowOptions} options
+ * @returns {string}
+ */
 export function connectorEndArrow({ x1 = 0, y1 = 0, x2, y2, size = 7 } = {}) {
   const start = { x: finite('x1', x1), y: finite('y1', y1) };
   const end = { x: finite('x2', x2), y: finite('y2', y2) };
@@ -359,6 +619,10 @@ export function connectorEndArrow({ x1 = 0, y1 = 0, x2, y2, size = 7 } = {}) {
   return arrowHead(end, angleBetween(start, end), s);
 }
 
+/**
+ * @param {ConnectorOptions} opts
+ * @returns {string}
+ */
 export function connectorLine(opts = {}) {
   const { dx, dy } = validateOffset(opts);
   if (dx === 0 && dy === 0) return '';
@@ -370,6 +634,10 @@ export function connectorLine(opts = {}) {
   return straightPath(start, end);
 }
 
+/**
+ * @param {ConnectorOptions} opts
+ * @returns {string}
+ */
 export function connectorElbow(opts = {}) {
   const { dx, dy } = validateOffset(opts);
   if (dx === 0 && dy === 0) return '';
@@ -389,6 +657,10 @@ export function connectorElbow(opts = {}) {
   return `M${point(start.x, start.y)}L${point(elbow.x, elbow.y)}L${point(end.x, end.y)}`;
 }
 
+/**
+ * @param {ConnectorOptions} opts
+ * @returns {string}
+ */
 export function connectorCurve(opts = {}) {
   const { dx, dy } = validateOffset(opts);
   if (dx === 0 && dy === 0) return '';
@@ -400,6 +672,10 @@ export function connectorCurve(opts = {}) {
   return curvePath(start, end, { curvature: 0.35 });
 }
 
+/**
+ * @param {AnnotationPartsOptions} [opts]
+ * @returns {AnnotationParts}
+ */
 export function annotationParts(opts = {}) {
   const type = opts.type ?? 'callout';
   const transform = annotationTransform({ x: opts.x ?? 0, y: opts.y ?? 0 });
@@ -442,6 +718,10 @@ export function annotationParts(opts = {}) {
  * `items`: `[{ pos, size }]` — `pos` is the desired centre coordinate along the
  * axis, `size` the label's extent along it. Returns the adjusted centre per
  * input item, in the original order.
+ *
+ * @param {DeclutterLabelItem[]} items
+ * @param {DeclutterLabelsOptions} [opts]
+ * @returns {number[]}
  */
 export function declutterLabels(items, opts = {}) {
   if (!Array.isArray(items)) throw new TypeError('items must be an array');
@@ -488,6 +768,10 @@ export function declutterLabels(items, opts = {}) {
  * in input order, the placed label point `{x, y}`, the echoed `anchor` and
  * `key`, and the leader path `d` (anchor → label; `''` if they coincide) ready
  * for a `<path class="ui-annotation__connector">`.
+ *
+ * @param {DirectLabelItem[]} items
+ * @param {DirectLabelsOptions} [opts]
+ * @returns {DirectLabel[]}
  */
 export function directLabels(items, opts = {}) {
   if (!Array.isArray(items)) throw new TypeError('items must be an array');

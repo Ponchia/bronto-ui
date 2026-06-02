@@ -10,6 +10,36 @@
  *
  *   import { connectRects } from '@ponchia/ui/connectors';
  *   const { d } = connectRects({ fromRect: a, toRect: b, shape: 'elbow' });
+ *
+ * The public types below are JSDoc `@typedef`s; the shipped `index.d.ts` is
+ * generated from them (and these signatures) by `tsc --emitDeclarationOnly`.
+ *
+ * @typedef {{ x: number, y: number }} Point
+ * @typedef {{ x: number, y: number, width: number, height: number }} Rect
+ * @typedef {'top' | 'right' | 'bottom' | 'left' | 'center'} Side
+ * @typedef {'straight' | 'elbow' | 'curve'} ConnectorShape
+ *
+ * @typedef {object} ConnectorPathOptions
+ * @property {Point} from
+ * @property {Point} to
+ * @property {ConnectorShape} [shape]
+ * @property {number} [curvature] Curve control-point reach along the dominant axis (curve shape). Default 0.5.
+ * @property {number} [mid] Turn position 0..1 along the span (elbow shape). Default 0.5.
+ *
+ * @typedef {object} ConnectRectsOptions
+ * @property {Rect} fromRect
+ * @property {Rect} toRect
+ * @property {Side} [fromSide] Anchor edges. Omit both to auto-pick facing edges from the rects.
+ * @property {Side} [toSide]
+ * @property {ConnectorShape} [shape]
+ * @property {number} [curvature]
+ * @property {number} [mid]
+ *
+ * @typedef {object} ConnectRectsResult
+ * @property {string} d SVG path data.
+ * @property {Point} from
+ * @property {Point} to
+ * @property {number} angle The path's end-tangent at `to` in radians — the direction the path arrives, so rotating an arrowhead at `to` by this points it along the path. Equals the straight `from`→`to` angle for `shape: 'straight'`; axis-aligned for `elbow`/`curve`.
  */
 
 const PRECISION = 1000;
@@ -39,7 +69,12 @@ function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
 
-/** A point on a rect's edge (or centre). `rect` is `{ x, y, width, height }`. */
+/**
+ * A point on a rect's edge (or centre). `rect` is `{ x, y, width, height }`.
+ * @param {Rect} rect
+ * @param {Side} [side]
+ * @returns {Point}
+ */
 export function anchorPoint(rect, side = 'center') {
   const x = finite('rect.x', rect?.x, 0);
   const y = finite('rect.y', rect?.y, 0);
@@ -60,7 +95,12 @@ export function anchorPoint(rect, side = 'center') {
   }
 }
 
-/** Angle (radians) from `from` to `to`. */
+/**
+ * Angle (radians) from `from` to `to`.
+ * @param {Point} from
+ * @param {Point} to
+ * @returns {number}
+ */
 export function angleBetween(from, to) {
   return Math.atan2(
     finite('to.y', to?.y) - finite('from.y', from?.y),
@@ -68,6 +108,12 @@ export function angleBetween(from, to) {
   );
 }
 
+/**
+ * Straight line from `from` to `to`.
+ * @param {Point} from
+ * @param {Point} to
+ * @returns {string}
+ */
 export function straightPath(from, to) {
   return `M${point(finite('from.x', from?.x), finite('from.y', from?.y))}L${point(
     finite('to.x', to?.x),
@@ -75,7 +121,13 @@ export function straightPath(from, to) {
   )}`;
 }
 
-/** Right-angle dogleg. Turns on the dominant axis at `mid` (0..1) of the span. */
+/**
+ * Right-angle dogleg. Turns on the dominant axis at `mid` (0..1) of the span.
+ * @param {Point} from
+ * @param {Point} to
+ * @param {{ mid?: number }} [opts]
+ * @returns {string}
+ */
 export function elbowPath(from, to, opts = {}) {
   const fx = finite('from.x', from?.x);
   const fy = finite('from.y', from?.y);
@@ -92,7 +144,13 @@ export function elbowPath(from, to, opts = {}) {
   return `M${point(fx, fy)}V${fmt(my)}H${fmt(tx)}V${fmt(ty)}`;
 }
 
-/** Cubic curve; control points extend along the dominant axis by `curvature`. */
+/**
+ * Cubic curve; control points extend along the dominant axis by `curvature`.
+ * @param {Point} from
+ * @param {Point} to
+ * @param {{ curvature?: number }} [opts]
+ * @returns {string}
+ */
 export function curvePath(from, to, opts = {}) {
   const fx = finite('from.x', from?.x);
   const fy = finite('from.y', from?.y);
@@ -107,7 +165,11 @@ export function curvePath(from, to, opts = {}) {
   return `M${point(fx, fy)}C${point(c1.x, c1.y)} ${point(c2.x, c2.y)} ${point(tx, ty)}`;
 }
 
-/** Build a path between two points by `shape` (`straight` | `elbow` | `curve`). */
+/**
+ * Build a path between two points by `shape` (`straight` | `elbow` | `curve`).
+ * @param {ConnectorPathOptions} [opts]
+ * @returns {string}
+ */
 export function connectorPath(opts = {}) {
   const { from, to, shape = 'straight' } = opts;
   if (shape === 'elbow') return elbowPath(from, to, opts);
@@ -115,7 +177,13 @@ export function connectorPath(opts = {}) {
   return straightPath(from, to);
 }
 
-/** A filled triangle arrowhead at `p`, pointing along `angle` (radians). */
+/**
+ * A filled triangle arrowhead at `p`, pointing along `angle` (radians).
+ * @param {Point} p
+ * @param {number} angle
+ * @param {number} [size]
+ * @returns {string}
+ */
 export function arrowHead(p, angle, size = 8) {
   const px = finite('p.x', p?.x);
   const py = finite('p.y', p?.y);
@@ -128,7 +196,12 @@ export function arrowHead(p, angle, size = 8) {
   return `M${point(px, py)}L${point(p1.x, p1.y)}L${point(p2.x, p2.y)}Z`;
 }
 
-/** A filled dot at `p`. */
+/**
+ * A filled dot at `p`.
+ * @param {Point} p
+ * @param {number} [radius]
+ * @returns {string}
+ */
 export function dotMark(p, radius = 3) {
   const px = finite('p.x', p?.x);
   const py = finite('p.y', p?.y);
@@ -139,7 +212,12 @@ export function dotMark(p, radius = 3) {
   )} 0 1 1 ${point(px, py - r)}Z`;
 }
 
-/** Pick facing edges from the rects' relative centres. */
+/**
+ * Pick facing edges from the rects' relative centres.
+ * @param {Rect} fromRect
+ * @param {Rect} toRect
+ * @returns {{ from: Side, to: Side }}
+ */
 export function autoSides(fromRect, toRect) {
   const fc = anchorPoint(fromRect, 'center');
   const tc = anchorPoint(toRect, 'center');
@@ -152,13 +230,14 @@ export function autoSides(fromRect, toRect) {
 }
 
 /**
- * Connect two rects. Resolves anchor points (explicit `fromSide`/`toSide`, else
- * auto), builds the path, and returns `{ d, from, to, angle }` so the caller can
- * place an arrowhead/dot at `to` rotated by `angle`.
+ * Angle (radians) at which a `shape` path *arrives* at `to` — straight is the
+ * chord; elbow/curve arrive axis-aligned along the dominant axis. Rotate an
+ * end marker by this so it points along the path, not the chord.
+ * @param {Point} from
+ * @param {Point} to
+ * @param {ConnectorShape} [shape]
+ * @returns {number}
  */
-/** Angle (radians) at which a `shape` path *arrives* at `to` — straight is the
- *  chord; elbow/curve arrive axis-aligned along the dominant axis. Rotate an
- *  end marker by this so it points along the path, not the chord. */
 export function endTangentAngle(from, to, shape = 'straight') {
   if (shape === 'straight') return angleBetween(from, to);
   const dx = finite('to.x', to?.x) - finite('from.x', from?.x);
@@ -167,6 +246,13 @@ export function endTangentAngle(from, to, shape = 'straight') {
   return dy >= 0 ? Math.PI / 2 : -Math.PI / 2;
 }
 
+/**
+ * Connect two rects. Resolves anchor points (explicit `fromSide`/`toSide`, else
+ * auto), builds the path, and returns `{ d, from, to, angle }` so the caller can
+ * place an arrowhead/dot at `to` rotated by `angle`.
+ * @param {ConnectRectsOptions} [opts]
+ * @returns {ConnectRectsResult}
+ */
 export function connectRects(opts = {}) {
   const { fromRect, toRect, shape = 'straight', curvature, mid } = opts;
   // Honor each side override independently; auto-pick whichever is unset.
