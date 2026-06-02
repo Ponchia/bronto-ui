@@ -92,6 +92,18 @@ import charts from '@ponchia/ui/charts.json' with { type: 'json' };
 // charts.dark.categorical → ['#ff3b41', …] (series 0 = the resolved accent)
 ```
 
+On-brand Mermaid diagrams use the same tokens-as-data path — Mermaid is the
+consumer's renderer, bronto just hands it a resolved `base` theme (Mermaid can't
+read `var(--x)`):
+
+```js
+import { brontoMermaidTheme } from '@ponchia/ui/mermaid';
+mermaid.initialize(brontoMermaidTheme('dark')); // { theme: 'base', themeVariables }
+```
+
+Annotate a rendered diagram with the SVG annotation layer as a build-time
+recipe. Details: `docs/mermaid.md`.
+
 `--chart-1..8` (categorical; series 1 = accent; colourblind-safe, gated under
 simulated protan/deutan/tritan), `--chart-seq-*` (sequential), `--chart-div-*`
 (diverging), and `--chart-pattern-1..8` (dot-matrix fills — pair colour N with
@@ -378,6 +390,8 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   boundaries.
 - `docs/annotations.md` — SVG annotation recipes and helper guidance for
   analytical figures.
+- `docs/mermaid.md` — theme Mermaid diagrams from bronto tokens (resolved
+  `base` themeVariables, gated) and annotate the rendered SVG.
 - `docs/contrast.md` — the published, CI-gated WCAG 2.1 contrast matrix
   for every contractual token pairing, per theme. Generated from the
   resolved palette; the build fails below the declared floor.

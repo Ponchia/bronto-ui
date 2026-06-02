@@ -60,6 +60,7 @@ const shippedDocs = new Set([
   'docs/stability.md',
   'docs/usage.md',
   'docs/reporting.md',
+  'docs/mermaid.md',
   'docs/annotations.md',
   'docs/legends.md',
   'docs/marks.md',
