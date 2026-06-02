@@ -1,0 +1,25 @@
+# Generated artifacts. These are committed (the package ships them and a drift
+# gate keeps them fresh — see docs/architecture.md#repository-layout), but they
+# are NOT hand-authored: regenerate via `npm run prepack` and the relevant
+# `gen-*` script, never edit by hand. Marking them `linguist-generated` collapses
+# them in PR diffs and keeps GitHub's language stats honest.
+
+# CSS bundle (build of css/ via scripts/build-dist.mjs)
+dist/** linguist-generated
+
+# Token mirrors (generated from tokens/index.js)
+tokens/index.json        linguist-generated
+tokens/resolved.json     linguist-generated
+tokens/tokens.dtcg.json  linguist-generated
+tokens/charts.json       linguist-generated
+
+# Generated TypeScript declarations
+classes/index.d.ts   linguist-generated
+tokens/index.d.ts    linguist-generated
+tokens/charts.d.ts   linguist-generated
+tokens/skins.d.ts    linguist-generated
+glyphs/glyphs.d.ts   linguist-generated
+
+# Editor + reference data generated from the token / class model
+classes/vscode.css-custom-data.json  linguist-generated
+docs/reference.md                    linguist-generated

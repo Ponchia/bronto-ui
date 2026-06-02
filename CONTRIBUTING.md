@@ -23,6 +23,12 @@ npm test        # node:test unit + type-d + contract tests
 and `e2e` green and the branch up to date. Branches auto-delete on
 merge.
 
+New to the repo? **[docs/architecture.md → Repository layout](docs/architecture.md#repository-layout)**
+classifies every top-level directory — which are hand-authored source, which
+are **generated** (don't edit; a gate will revert you), and which are
+**path-frozen published subpaths** (don't move; the path is the public import
+specifier).
+
 ## Conventions
 
 - **Conventional commits** for PR titles: `feat` / `fix` / `docs` /
