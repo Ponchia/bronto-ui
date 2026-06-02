@@ -132,7 +132,7 @@ selections, DOM nodes, or frameworks.
 | --- | --- |
 | `annotationTransform({ x, y })` | Group transform for the subject anchor. |
 | `noteTransform({ dx, dy, align, valign, width, height })` | Note transform from the subject anchor, with optional alignment. |
-| `notePlacement({ x, y, width, height, bounds, preferred })` | Bounded note offset, alignment and transform for one annotation. |
+| `notePlacement({ x, y, width, height, bounds, preferred, inset })` | Bounded note offset, alignment and transform for one annotation. `inset` reserves an extra margin (e.g. the title stroke-halo, ~3) so a placement that "fits" doesn't clip. |
 | `declutterLabels(items, { gap, min, max })` | Adjusted centres for `items` (`[{ pos, size }]`) so labels don't overlap along one axis (order-preserving). |
 | `directLabels(items, { axis, cross, gap, min, max, shape })` | Decluttered label points **and** a leader path per item: `[{ x, y, anchor, key, d }]`. |
 | `circleSubjectPath({ radius })` | Circle subject path. |
@@ -147,10 +147,10 @@ selections, DOM nodes, or frameworks.
 | `timelineEventPath({ size, direction })` | Event pin marker path. |
 | `evidenceMarkerPath({ x, y, width, height, padding })` | Centered square/rect evidence marker path. |
 | `connectorLine({ dx, dy, subject })` | Straight connector, trimmed against circle/rect subjects. |
-| `connectorElbow({ dx, dy, subject })` | D3-like dogleg connector. |
+| `connectorElbow({ dx, dy, subject, mid })` | Right-angle dogleg connector (H/V/H); `mid` (0..1, default 0.5) sets the turn position along the dominant axis. |
 | `connectorCurve({ dx, dy, subject })` | Deterministic cubic connector. |
 | `connectorEndDot({ x, y, radius })` | Dot marker path. |
-| `connectorEndArrow({ x1, y1, x2, y2, size })` | Arrow marker path. |
+| `connectorEndArrow({ x1, y1, x2, y2, size, spread })` | Arrow marker path. `x1,y1`→`x2,y2` sets the direction (the head sits at `x2,y2`); `spread` is the half-angle (default 0.32 ≈ a crisp 37° head). |
 | `annotationParts(options)` | Convenience object with `transform`, `subject`, `connector`, and `note`. |
 
 `declutterLabels` is a deliberately small, deterministic **1-D** declutter for

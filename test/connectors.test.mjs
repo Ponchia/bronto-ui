@@ -51,6 +51,16 @@ test('angleBetween + arrowHead + dotMark', () => {
   assert.equal(dotMark({ x: 0, y: 0 }, 0), '');
 });
 
+test('arrowHead spread controls sharpness and is range-checked', () => {
+  // A smaller spread keeps the barbs closer to the shaft → a crisper head.
+  assert.equal(arrowHead({ x: 0, y: 0 }, 0, 10, 0.2), 'M0,0L-9.801,1.987L-9.801,-1.987Z');
+  assert.notEqual(arrowHead({ x: 0, y: 0 }, 0, 10, 0.2), arrowHead({ x: 0, y: 0 }, 0, 10, 0.6));
+  // The default is unchanged, so existing connector arrowheads don't move.
+  assert.equal(arrowHead({ x: 0, y: 0 }, 0, 10), arrowHead({ x: 0, y: 0 }, 0, 10, 0.45));
+  assert.throws(() => arrowHead({ x: 0, y: 0 }, 0, 10, 0), RangeError);
+  assert.throws(() => arrowHead({ x: 0, y: 0 }, 0, 10, Math.PI), RangeError);
+});
+
 test('autoSides picks facing edges from relative position', () => {
   assert.deepEqual(
     autoSides({ x: 0, y: 0, width: 10, height: 10 }, { x: 100, y: 0, width: 10, height: 10 }),

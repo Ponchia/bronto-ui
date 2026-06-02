@@ -50,9 +50,11 @@ export function connectorPath(opts?: ConnectorPathOptions): string;
  * @param {Point} p
  * @param {number} angle
  * @param {number} [size]
+ * @param {number} [spread] Half-angle of the head in radians (default 0.45).
+ *   Smaller is crisper/sharper; must be in (0, π/2).
  * @returns {string}
  */
-export function arrowHead(p: Point, angle: number, size?: number): string;
+export function arrowHead(p: Point, angle: number, size?: number, spread?: number): string;
 /**
  * A filled dot at `p`.
  * @param {Point} p
