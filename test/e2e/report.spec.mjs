@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { applyTheme } from './_theme.mjs';
 
 const ignored = (url) => url.endsWith('/favicon.ico');
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'];
@@ -25,11 +26,10 @@ function blocking(results) {
 
 async function openReport(page, theme = 'dark') {
   await page.goto('/demo/report.html', { waitUntil: 'networkidle' });
-  await page.evaluate(async (t) => {
-    document.documentElement.dataset.theme = t;
-    await document.fonts.ready;
-    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-  }, theme);
+  // Shared opener: flips the theme and settles fonts + finite animations before
+  // axe samples colours, the same flake-resistant path the analytical leaf
+  // specs use (avoids the mid-fade color-contrast race on the theme flip).
+  await applyTheme(page, theme);
 }
 
 for (const theme of ['dark', 'light']) {
