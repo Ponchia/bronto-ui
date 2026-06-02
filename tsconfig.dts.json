@@ -1,0 +1,23 @@
+{
+  "comment": "Generate index.d.ts (+ .d.ts.map) for the hand-authored JS leaves from their JSDoc. emitDeclarationOnly writes only declarations — the .js stays the authored, shipped source. Because each .d.ts is now derived from its source, it cannot drift; check-dts-emit.mjs re-emits and byte-compares. Run via `npm run dts:emit`. (checkJs is intentionally off for now: the internal pure helpers are untyped and the opt-object defaults trip noImplicitAny; signature-checking is a future enhancement, tracked separately.)",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationMap": true,
+    "rootDir": ".",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "es2022",
+    "skipLibCheck": true,
+    "noEmitOnError": false
+  },
+  "include": [
+    "connectors/index.js",
+    "annotations/index.js",
+    "react/index.js",
+    "solid/index.js",
+    "qwik/index.js"
+  ]
+}
