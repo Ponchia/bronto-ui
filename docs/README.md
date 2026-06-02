@@ -27,6 +27,7 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 - [reporting.md](./reporting.md) — the static, PDF-first report grammar **and the analytical toolbox available to a report**.
 - [annotations.md](./annotations.md) — SVG annotations (subject / connector / note), off-chart use, and the geometry helpers.
 - [legends.md](./legends.md) — standalone data keys / legends.
+- [mermaid.md](./mermaid.md) — theme Mermaid diagrams from bronto tokens, and annotate the rendered SVG.
 - [marks.md](./marks.md) — text/evidence emphasis for running prose (`ui-mark`, `ui-bracket-note`).
 - [sources.md](./sources.md) — the citations / provenance trust layer.
 - [connectors.md](./connectors.md) — leader lines between DOM elements.
