@@ -10,7 +10,7 @@
  * `color-mix()` at build time into static `#rrggbb` / `rgba(...)`,
  * separately for the light and dark palettes.
  *
- * Pure (`buildResolved()` returns the object) so check-resolved can diff
+ * Pure (`buildResolved()` returns the object) so check-fresh can diff
  * it without writing. Same generate-commit-drift-check contract as
  * tokens.dtcg.json. No new colours are introduced — this is a faithful
  * projection of the existing tokens, so check:shiki stays green.

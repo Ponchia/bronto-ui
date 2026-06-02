@@ -6,8 +6,8 @@
  *
  *   docs/reference.md ← classes/index.js + tokens/index.js
  *
- * Drift-checked by scripts/check-reference.mjs (wired into `npm run
- * check`), so the reference can never silently rot from the contract.
+ * Drift-checked by scripts/check-fresh.mjs via the registry (wired into
+ * `npm run check`), so the reference can never silently rot from the contract.
  *
  * Run: node scripts/gen-reference.mjs
  */
@@ -121,7 +121,7 @@ works in any framework without a binding layer:
 ## Tokens
 
 Exact mirror of the \`:root\` blocks in \`css/tokens.css\`
-(\`check-tokens\` enforces parity). DTCG export:
+(\`check-fresh\` enforces parity). DTCG export:
 [\`@ponchia/ui/tokens.dtcg.json\`](../tokens/tokens.dtcg.json).
 
 ### Global (scales — shared by both themes)

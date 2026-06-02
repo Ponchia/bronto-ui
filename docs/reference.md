@@ -1275,7 +1275,7 @@ works in any framework without a binding layer:
 ## Tokens
 
 Exact mirror of the `:root` blocks in `css/tokens.css`
-(`check-tokens` enforces parity). DTCG export:
+(`check-fresh` enforces parity). DTCG export:
 [`@ponchia/ui/tokens.dtcg.json`](../tokens/tokens.dtcg.json).
 
 ### Global (scales — shared by both themes)

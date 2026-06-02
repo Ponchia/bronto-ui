@@ -14,7 +14,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 // A self-describing banner so the file can't be mistaken for hand-authored
 // source. The $comment key is data (ignored by JSON consumers) and is part of
-// the byte-exact drift contract enforced by check-tokens.mjs.
+// the byte-exact drift contract enforced by check-fresh.mjs (via the registry).
 const $comment =
   'GENERATED from tokens/index.js — do not edit by hand. Run `npm run tokens:build`; drift-checked by check:tokens. A build artifact for non-JS tooling (Style Dictionary, Figma, other languages).';
 

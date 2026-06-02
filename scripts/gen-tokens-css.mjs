@@ -12,7 +12,7 @@
  * intentionally NOT part of the JS token model — is preserved verbatim from
  * the committed file, so this generator never clobbers them.
  *
- * check-tokens.mjs asserts css/tokens.css === this output (drift gate);
+ * check-fresh.mjs asserts css/tokens.css === this output (drift gate);
  * prepack runs it before the dist build. Because build-dist strips comments
  * and collapses whitespace, only the declarations/selectors/values reach
  * dist — so reformatting the source here cannot move the bundle.

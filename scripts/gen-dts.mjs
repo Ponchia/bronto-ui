@@ -7,7 +7,8 @@
  *   tokens/index.d.ts  ← tokens/index.js   (token-name unions)
  *
  * Same model as tokens/index.json and dist/: generated, committed, and
- * drift-checked by scripts/check-dts.mjs (wired into `npm run check`).
+ * drift-checked by scripts/check-fresh.mjs via the registry (wired into
+ * `npm run check`). The literal *values* are additionally gated by check:types.
  *
  * Run: node scripts/gen-dts.mjs
  */
@@ -326,7 +327,7 @@ export const generated = {
   'tokens/index.d.ts': tokensDts,
 };
 
-// Run as a script → write; imported by check-dts → just expose `generated`.
+// Run as a script → write; imported by the registry (check-fresh) → just expose `generated`.
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   for (const [rel, content] of Object.entries(generated)) {
     writeFileSync(resolve(root, rel), content);

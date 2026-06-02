@@ -8,7 +8,7 @@
  *   classes/vscode.css-custom-data.json ← tokens/index.js (cssVars)
  *
  * Same generate-commit-drift-check model as the .d.ts; checked by
- * scripts/check-vscode-data.mjs (wired into `npm run check`).
+ * scripts/check-fresh.mjs via the registry (wired into `npm run check`).
  *
  * Wiring (consumer .vscode/settings.json):
  *   { "css.customData": ["node_modules/@ponchia/ui/classes/vscode.css-custom-data.json"] }
