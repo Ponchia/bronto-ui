@@ -94,3 +94,30 @@ test('quality — opt-in showcase leaves are loaded and applied', async ({ page 
   await expect(page.locator('.ui-command').first()).toHaveCSS('display', 'grid');
   await expect(page.locator('.ui-inspector').first()).toHaveCSS('display', 'grid');
 });
+
+// The kitchen-sink annotation figure is a hand-placed SVG (subject/connector/
+// note grammar on a real chart). The outer <svg> is `overflow: hidden`, so a
+// note positioned past the viewBox is silently clipped — invisible to the
+// console/structure gates and not covered by the standalone annotations.html
+// spec. Assert every note box sits inside the SVG viewport so a future edit to
+// the figure (or its viewBox) can't reintroduce a clipped callout.
+test('quality — showcase annotation figure is not clipped by its SVG viewport', async ({
+  page,
+}) => {
+  await page.goto('/demo/', { waitUntil: 'networkidle' });
+  const result = await page.evaluate(() => {
+    const svg = document.querySelector('#spec-annotations .annotation-applied');
+    if (!svg) return { missing: true };
+    const s = svg.getBoundingClientRect();
+    const overshoot = [...svg.querySelectorAll('.ui-annotation__note')].map((n) => {
+      const b = n.getBoundingClientRect();
+      // px any edge spills past the SVG box (overflow:hidden clips it); 0 = inside
+      return Math.max(0, b.right - s.right, s.left - b.left, b.bottom - s.bottom, s.top - b.top);
+    });
+    return { missing: false, count: overshoot.length, maxOvershoot: Math.max(0, ...overshoot) };
+  });
+  expect(result.missing, 'expected #spec-annotations .annotation-applied to exist').toBe(false);
+  expect(result.count).toBeGreaterThan(0);
+  // 1px tolerance for sub-pixel anti-aliasing across engines.
+  expect(result.maxOvershoot).toBeLessThanOrEqual(1);
+});
