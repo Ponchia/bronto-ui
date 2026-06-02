@@ -44,7 +44,12 @@ export interface ConnectRectsResult {
   d: string;
   from: Point;
   to: Point;
-  /** Radians from `from` to `to` — rotate an arrowhead at `to` by this. */
+  /**
+   * The path's **end-tangent** at `to` in radians (`endTangentAngle(from, to,
+   * shape)`) — the direction the path arrives, so rotating an arrowhead at `to`
+   * by this points it along the path. Equals the straight `from`→`to` angle for
+   * `shape: 'straight'`; axis-aligned for `elbow`/`curve`.
+   */
   angle: number;
 }
 
