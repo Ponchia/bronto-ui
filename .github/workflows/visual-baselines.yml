@@ -31,6 +31,7 @@ permissions:
 jobs:
   regen:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     container:
       image: mcr.microsoft.com/playwright:v1.60.0-jammy
     env:
@@ -59,6 +60,7 @@ jobs:
   open-pr:
     needs: regen
     runs-on: ubuntu-latest # gh CLI is preinstalled here, not in the Playwright image
+    timeout-minutes: 10
     permissions:
       contents: write # push the chore/visual-baselines-* branch
       pull-requests: write # open the baseline PR

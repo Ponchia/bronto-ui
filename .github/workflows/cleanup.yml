@@ -22,6 +22,7 @@ concurrency:
 jobs:
   prune:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: write # delete orphan branches
       pull-requests: write # close stale bot PRs

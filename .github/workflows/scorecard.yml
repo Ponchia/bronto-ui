@@ -16,6 +16,7 @@ jobs:
   scorecard:
     name: OpenSSF Scorecard
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     if: github.repository_owner == 'Ponchia'
     permissions:
       contents: read
