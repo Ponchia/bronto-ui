@@ -1,4 +1,4 @@
-import { hasDom, resolveHost, noop } from './internal.js';
+import { hasDom, resolveHost, noop, collectHosts } from './internal.js';
 import { GLYPH_SIZE, glyphCells } from '../glyphs/glyphs.js';
 
 function restoreAttr(el, name, prev) {
@@ -19,9 +19,7 @@ export function initDotGlyph({ root } = {}) {
   if (!hasDom()) return noop;
   const host = resolveHost(root);
   if (!host) return noop;
-  const els = [];
-  if (host !== document && host.matches?.('[data-bronto-glyph]')) els.push(host);
-  els.push(...(host.querySelectorAll?.('[data-bronto-glyph]') ?? []));
+  const els = collectHosts(host, '[data-bronto-glyph]');
   const cleanups = [];
 
   for (const el of els) {

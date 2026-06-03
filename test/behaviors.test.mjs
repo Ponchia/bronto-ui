@@ -858,6 +858,34 @@ test('initCombobox: a filtered-out active option cannot be Enter-selected (APG)'
   stop();
 });
 
+test('initCombobox: ArrowUp wraps to last, Home/End jump to edges, Tab closes', () => {
+  const d = mount(CB);
+  const stop = initCombobox();
+  const input = d.querySelector('.ui-combobox__input');
+  const list = d.querySelector('.ui-combobox__list');
+  const opts = [...list.querySelectorAll('.ui-combobox__option')]; // Apple, Banana, Cherry
+
+  // Open with all options shown; nothing active yet.
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  assert.equal(list.hidden, false, 'open');
+  assert.equal(input.hasAttribute('aria-activedescendant'), false, 'no active option seeded');
+
+  // ArrowUp with no active option wraps to the LAST (the roving wrapIndex edge).
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
+  assert.equal(input.getAttribute('aria-activedescendant'), opts[2].id, 'ArrowUp wraps to last');
+
+  // Home jumps to the first, End to the last.
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Home', bubbles: true }));
+  assert.equal(input.getAttribute('aria-activedescendant'), opts[0].id, 'Home → first');
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'End', bubbles: true }));
+  assert.equal(input.getAttribute('aria-activedescendant'), opts[2].id, 'End → last');
+
+  // Tab closes the listbox.
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+  assert.equal(list.hidden, true, 'Tab closes');
+  stop();
+});
+
 test('initCombobox: SSR-safe', () => {
   for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
   assert.doesNotThrow(() => {
@@ -1377,6 +1405,29 @@ test('initCommand: ARIA, filter (with group hide), roving nav, select + close ev
   picked = undefined;
   items[2].dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   assert.equal(picked.value, 'new');
+
+  stop();
+});
+
+test('initCommand: ArrowUp wraps to last, Home/End jump to edges', () => {
+  const d = mount(CMD);
+  const stop = initCommand();
+  const input = d.querySelector('.ui-command__input');
+  const items = [...d.querySelectorAll('.ui-command__item')]; // home, settings, new
+
+  // Seeded active = first item.
+  assert.ok(items[0].classList.contains('is-active'), 'first item seeded active');
+
+  // ArrowUp from the first item wraps to the last.
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
+  assert.ok(items[2].classList.contains('is-active'), 'ArrowUp wraps to last');
+  assert.equal(input.getAttribute('aria-activedescendant'), items[2].id);
+
+  // Home → first, End → last.
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Home', bubbles: true }));
+  assert.ok(items[0].classList.contains('is-active'), 'Home → first');
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'End', bubbles: true }));
+  assert.ok(items[2].classList.contains('is-active'), 'End → last');
 
   stop();
 });

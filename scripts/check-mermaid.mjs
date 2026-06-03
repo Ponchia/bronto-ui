@@ -14,12 +14,13 @@
  * Structural only — it does NOT render with Mermaid, so the repo takes on no
  * mermaid dependency. Run: node scripts/check-mermaid.mjs
  */
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildGenerated, REQUIRED_KEYS, NON_COLOR_KEYS } from './gen-mermaid.mjs';
 import { CSS_COLOR as COLOR } from './lib/patterns.mjs';
 import { freshnessErrors } from './lib/assert-fresh.mjs';
+import { reportAndExit } from './lib/gate-report.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
@@ -53,11 +54,7 @@ for (const theme of ['light', 'dark']) {
   }
 }
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} Mermaid theme-map problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log(
-  `✓ mermaid: ${REQUIRED_KEYS.length} base themeVariables, both themes, every value resolved to a colour, no var() leaks`,
-);
+reportAndExit(errors, {
+  label: 'Mermaid theme-map',
+  ok: `mermaid: ${REQUIRED_KEYS.length} base themeVariables, both themes, every value resolved to a colour, no var() leaks`,
+});

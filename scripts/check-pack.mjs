@@ -13,6 +13,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { reportAndExit } from './lib/gate-report.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
@@ -97,9 +98,7 @@ for (const must of [
   if (!files.includes(must)) errors.push(`expected entrypoint missing from package: ${must}`);
 }
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} pack-contents problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log(`✓ package ships ${files.length} intended files; no dev-only paths leaked`);
+reportAndExit(errors, {
+  label: 'pack-contents',
+  ok: `package ships ${files.length} intended files; no dev-only paths leaked`,
+});

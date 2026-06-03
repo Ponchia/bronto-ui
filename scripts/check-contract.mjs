@@ -22,6 +22,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildClassesJson } from './gen-classes-json.mjs';
+import { stripCssComments } from './lib/patterns.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
@@ -34,7 +35,7 @@ const cssDir = resolve(root, 'css');
 const definedProps = new Set();
 for (const f of readdirSync(cssDir)) {
   if (!f.endsWith('.css')) continue;
-  const src = readFileSync(resolve(cssDir, f), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+  const src = stripCssComments(readFileSync(resolve(cssDir, f), 'utf8'));
   for (const m of src.matchAll(/(--[\w-]+)\s*:/g)) definedProps.add(m[1]);
 }
 

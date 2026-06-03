@@ -1,6 +1,9 @@
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
 
 let dom;
@@ -261,4 +264,46 @@ test('Qwik lifecycle hooks are real useVisibleTask$ wirings (throw outside a com
   // calling the hook bare must throw Qwik's context error — proof the hook
   // delegates to Qwik's lifecycle rather than no-op'ing.
   assert.throws(() => useDialog(), /./);
+});
+
+// Extract a top-level `function NAME(...) {...}` body as source text by brace
+// matching. The resolver helpers contain no braces inside strings/comments, so
+// a plain depth count is exact here.
+function fnSource(src, name) {
+  const start = src.indexOf(`function ${name}(`);
+  if (start === -1) return null;
+  let depth = 0;
+  for (let i = src.indexOf('{', start); i < src.length; i++) {
+    if (src[i] === '{') depth++;
+    else if (src[i] === '}' && --depth === 0) return src.slice(start, i + 1);
+  }
+  return null;
+}
+
+test('binding resolver helpers do not drift (resolveMaybe/resolveOpts identical; resolveRoot react=solid)', () => {
+  // The hook-surface test above proves the three bindings expose the same hooks;
+  // it does NOT prove the resolver helper *bodies* agree. resolveMaybe/resolveOpts
+  // are byte-identical across all three, so drift in one is a real bug — assert it.
+  const dir = dirname(fileURLToPath(import.meta.url));
+  const read = (b) => readFileSync(resolve(dir, '..', b, 'index.js'), 'utf8');
+  const [react, solid, qwik] = [read('react'), read('solid'), read('qwik')];
+
+  for (const fn of ['resolveMaybe', 'resolveOpts']) {
+    const ref = fnSource(react, fn);
+    assert.ok(ref, `react ${fn} found`);
+    assert.equal(fnSource(solid, fn), ref, `solid ${fn} matches react`);
+    assert.equal(fnSource(qwik, fn), ref, `qwik ${fn} matches react`);
+  }
+
+  // resolveRoot is identical react↔solid; qwik DELIBERATELY also unwraps a Qwik
+  // signal (`value`), so it must differ. Assert both halves so a react/solid
+  // drift is caught without flagging the intentional qwik delta.
+  const rootRef = fnSource(react, 'resolveRoot');
+  assert.ok(rootRef, 'react resolveRoot found');
+  assert.equal(fnSource(solid, 'resolveRoot'), rootRef, 'solid resolveRoot matches react');
+  assert.notEqual(
+    fnSource(qwik, 'resolveRoot'),
+    rootRef,
+    'qwik resolveRoot intentionally differs (signal unwrap)',
+  );
 });

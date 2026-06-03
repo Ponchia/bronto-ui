@@ -23,6 +23,7 @@ import { charts, ACCENT, CHART_CATEGORICAL } from '../tokens/charts.js';
 import { deltaOklab } from './lib/oklch.mjs';
 import { buildResolved } from './gen-resolved.mjs';
 import { freshnessErrors } from './lib/assert-fresh.mjs';
+import { reportAndExit } from './lib/gate-report.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
@@ -120,14 +121,10 @@ if (/dataviz\.css/.test(readFileSync(resolve(root, 'css/core.css'), 'utf8')))
     'css/core.css imports dataviz.css — the data-viz palette must stay opt-in, out of the default bundle',
   );
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} data-viz palette problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log(
-  `✓ data-viz: ${CHART_CATEGORICAL} categorical series distinguishable under normal + protan/deutan/tritan, ramps monotonic, opt-in`,
-);
+reportAndExit(errors, {
+  label: 'data-viz palette',
+  ok: `data-viz: ${CHART_CATEGORICAL} categorical series distinguishable under normal + protan/deutan/tritan, ramps monotonic, opt-in`,
+});
 
 function oklchLightness(s) {
   const m = /oklch\(\s*([\d.]+)%/.exec(s);

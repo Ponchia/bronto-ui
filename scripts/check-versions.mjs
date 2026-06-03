@@ -8,6 +8,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { shippedDocs } from './lib/shipped-docs.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
@@ -15,7 +16,7 @@ const version = pkg.version;
 
 // The shipped surfaces that may carry version literals: llms.txt plus every
 // `.md` listed in package.json `files` (docs ship in the tarball).
-const shipped = ['llms.txt', ...pkg.files.filter((f) => f.endsWith('.md'))];
+const shipped = shippedDocs(pkg);
 
 const EXACT = /@ponchia\/ui@(\d+\.\d+\.\d+)/g;
 const problems = [];

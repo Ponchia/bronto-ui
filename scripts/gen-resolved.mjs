@@ -21,7 +21,7 @@ import { writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { cssVars } from '../tokens/index.js';
-import { mixOklch } from './lib/oklch.mjs';
+import { mixOklch, parseCssColor } from './lib/oklch.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -43,33 +43,6 @@ function splitTop(s) {
   }
   if (buf.trim()) out.push(buf.trim());
   return out;
-}
-
-/** Parse a literal colour → [r, g, b, a] (0-255, 0-1), or null. */
-function parseLiteral(v) {
-  const s = v.trim();
-  if (s === 'transparent') return [0, 0, 0, 0];
-  let m = s.match(/^#([0-9a-f]{3,8})$/i);
-  if (m) {
-    const h = m[1];
-    // Expand 3/4-digit shorthand to 6/8 ("abc" → "aabbcc").
-    const hex = h.length <= 4 ? [...h].map((c) => c + c).join('') : h;
-    if (hex.length !== 6 && hex.length !== 8) return null;
-    const byte = (i) => parseInt(hex.substr(i * 2, 2), 16);
-    return [byte(0), byte(1), byte(2), hex.length === 8 ? byte(3) / 255 : 1];
-  }
-  m = s.match(/^rgba?\(([^)]+)\)$/i);
-  if (m) {
-    const p = m[1]
-      .split(/[\s,/]+/)
-      .filter(Boolean)
-      .map((x) => x.trim());
-    if (p.length < 3) return null;
-    const ch = (x) => (x.endsWith('%') ? (parseFloat(x) / 100) * 255 : parseFloat(x));
-    const a = p[3] != null ? (p[3].endsWith('%') ? parseFloat(p[3]) / 100 : parseFloat(p[3])) : 1;
-    return [ch(p[0]), ch(p[1]), ch(p[2]), a];
-  }
-  return null;
 }
 
 /**
@@ -123,7 +96,7 @@ function resolve_(v, scope, seen = new Set()) {
   }
   m = s.match(/^color-mix\((.*)\)$/is);
   if (m) return mix(m[1], scope, seen);
-  return parseLiteral(s);
+  return parseCssColor(s);
 }
 
 const fmt = ([r, g, b, a]) => {

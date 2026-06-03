@@ -18,6 +18,7 @@ import { fileURLToPath } from 'node:url';
 import { generated } from './gen-skins.mjs';
 import { skins, SKIN_NAMES } from '../tokens/skins.js';
 import { freshnessErrors } from './lib/assert-fresh.mjs';
+import { reportAndExit } from './lib/gate-report.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
@@ -52,11 +53,7 @@ if (/skins\.css/.test(core)) {
   );
 }
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} skins problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log(
-  `✓ ${SKIN_NAMES.length} colorways in sync with tokens/skins.js, accent-defining, and opt-in`,
-);
+reportAndExit(errors, {
+  label: 'skins',
+  ok: `${SKIN_NAMES.length} colorways in sync with tokens/skins.js, accent-defining, and opt-in`,
+});
