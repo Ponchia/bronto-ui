@@ -14,6 +14,9 @@ const SVGNS = 'http://www.w3.org/2000/svg';
  * sets the path; it owns no layout. Redraws on resize/scroll via a
  * ResizeObserver + listeners. SSR-safe, idempotent per host; returns a cleanup
  * that disconnects everything. Re-run after adding/removing connectors.
+ *
+ * @param {import('./internal.js').DelegateOpts} [opts]
+ * @returns {import('./internal.js').Cleanup}
  */
 export function initConnectors({ root } = {}) {
   if (!hasDom()) return noop;

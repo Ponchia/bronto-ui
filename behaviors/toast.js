@@ -111,6 +111,15 @@ function addToastClose(el, dismiss) {
 }
 
 /**
+ * @typedef {object} ToastOpts
+ * @property {'accent' | 'success' | 'warning' | 'danger' | 'info'} [tone] Status tone — maps to `ui-toast--<tone>`.
+ * @property {string} [title] Optional uppercase label rendered above the message.
+ * @property {number} [duration] Auto-dismiss delay in ms. `0` keeps it until dismissed. Default: `4000`.
+ * @property {boolean} [assertive] Route to the assertive live region so AT interrupts immediately. Defaults to `true` when `tone === 'danger'`.
+ * @property {boolean} [closable] Render a dismiss button on the toast.
+ */
+
+/**
  * Push a transient toast into a shared, screen-anchored stack. The stack
  * is the `aria-live="polite"` region: it is created once, appended to
  * <body>, and **kept resident even when empty** so the live region is
@@ -122,6 +131,10 @@ function addToastClose(el, dismiss) {
  * optional uppercase label; `duration` ms before auto-dismiss (0 keeps
  * it until dismissed). Returns a function that dismisses the toast
  * early. SSR-safe (no-op).
+ *
+ * @param {string} message
+ * @param {ToastOpts} [opts]
+ * @returns {import('./internal.js').Cleanup}
  */
 export function toast(message, { tone, title, duration = 4000, assertive, closable } = {}) {
   if (!hasDom()) return noop;

@@ -34,10 +34,10 @@ export type BrontoBindingRoot = Document | Element | {
 } | {
     current: Document | Element | null | undefined;
 } | (() => Document | Element | null | undefined) | null | undefined;
-export type BrontoBindingOpts<T extends DelegateOpts = import("../behaviors/index.js").DelegateOpts> = Omit<T, "root"> & {
+export type BrontoBindingOpts<T extends DelegateOpts = import("../behaviors/internal.js").DelegateOpts> = Omit<T, "root"> & {
     root?: BrontoBindingRoot;
 };
-export type BrontoBindingOptsResolver<T extends DelegateOpts = import("../behaviors/index.js").DelegateOpts> = BrontoBindingOpts<T> | (() => BrontoBindingOpts<T> | null | undefined) | null | undefined;
+export type BrontoBindingOptsResolver<T extends DelegateOpts = import("../behaviors/internal.js").DelegateOpts> = BrontoBindingOpts<T> | (() => BrontoBindingOpts<T> | null | undefined) | null | undefined;
 import { applyStoredTheme } from '../behaviors/index.js';
 export { cls, ui, cx } from "../classes/index.js";
 //# sourceMappingURL=index.d.ts.map

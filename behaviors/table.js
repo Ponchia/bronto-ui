@@ -22,6 +22,9 @@ import { hasDom, resolveHost, noop, bindOnce, collectHosts } from './internal.js
  * The numeric sort parses each cell as display text (strips non-[0-9.-] chars),
  * so it is locale-naive — group/decimal separators beyond `.`/`-` are not
  * interpreted. It is a client-side convenience sorter, not a data grid.
+ *
+ * @param {import('./internal.js').DelegateOpts} [opts]
+ * @returns {import('./internal.js').Cleanup}
  */
 export function initTableSort({ root } = {}) {
   if (!hasDom()) return noop;

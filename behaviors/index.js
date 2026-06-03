@@ -12,6 +12,20 @@
  *   import { applyStoredTheme, initThemeToggle } from '@ponchia/ui/behaviors';
  *   applyStoredTheme();                 // before paint, avoids theme flash
  *   const stop = initThemeToggle();     // wire [data-bronto-theme-toggle]
+ *
+ * The public option/detail types are JSDoc `@typedef`s on the modules below,
+ * re-exported here by name; the shipped `index.d.ts` is generated from this
+ * source by `tsc --emitDeclarationOnly` (so the declarations cannot drift).
+ *
+ * @typedef {import('./internal.js').Cleanup} Cleanup
+ * @typedef {import('./internal.js').DelegateOpts} DelegateOpts
+ * @typedef {import('./theme.js').ThemeStorageOpts} ThemeStorageOpts
+ * @typedef {import('./theme.js').ApplyThemeOpts} ApplyThemeOpts
+ * @typedef {import('./theme.js').ThemeChangeDetail} ThemeChangeDetail
+ * @typedef {import('./toast.js').ToastOpts} ToastOpts
+ * @typedef {import('./legend.js').LegendToggleDetail} LegendToggleDetail
+ * @typedef {import('./crosshair.js').CrosshairMoveDetail} CrosshairMoveDetail
+ * @typedef {import('./command.js').CommandSelectDetail} CommandSelectDetail
  */
 export { applyStoredTheme, initThemeToggle } from './theme.js';
 export { dismissible } from './dismissible.js';

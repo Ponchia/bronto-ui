@@ -21,6 +21,9 @@ import { hasDom, resolveHost, noop, bindOnce, nextFieldUid, collectHosts } from 
  *
  * Pure enhancement: with JS off the form still submits and the browser
  * validates natively. SSR-safe, idempotent; returns a cleanup function.
+ *
+ * @param {import('./internal.js').DelegateOpts} [opts]
+ * @returns {import('./internal.js').Cleanup}
  */
 export function initFormValidation({ root } = {}) {
   if (!hasDom()) return noop;

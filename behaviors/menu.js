@@ -10,6 +10,9 @@ import { hasDom, resolveHost, noop, bindOnce } from './internal.js';
  * are real buttons, Tab-reachable; this is a disclosure of actions, and
  * over-claiming `role="menu"` semantics would be worse. SSR-safe,
  * idempotent; returns a cleanup function.
+ *
+ * @param {import('./internal.js').DelegateOpts} [opts]
+ * @returns {import('./internal.js').Cleanup}
  */
 export function initMenu({ root } = {}) {
   if (!hasDom()) return noop;

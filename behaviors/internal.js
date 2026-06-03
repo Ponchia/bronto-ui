@@ -1,6 +1,17 @@
 // Shared, dependency-free DOM helpers for the behavior modules.
 // Not part of the public @ponchia/ui/behaviors surface (the barrel
-// re-exports only the documented behaviors).
+// re-exports only the documented behaviors' values — these shared option
+// types are re-exported by name from index.js).
+
+/**
+ * @typedef {() => void} Cleanup
+ *   Cleanup function returned by every initializer; calling it tears down the
+ *   behavior's listeners/observers.
+ *
+ * @typedef {object} DelegateOpts
+ * @property {Document | Element} [root]
+ *   Event-delegation root; also scopes which controls are queried. Default: `document`.
+ */
 
 export const noop = () => {};
 

@@ -3,9 +3,23 @@ import { hasDom, resolveHost, noop, bindOnce } from './internal.js';
 const THEMES = ['light', 'dark'];
 
 /**
+ * @typedef {object} ThemeStorageOpts
+ * @property {string} [storageKey] localStorage key for the persisted theme. Default: `"bronto-theme"`.
+ *
+ * @typedef {ThemeStorageOpts & { root?: Element }} ApplyThemeOpts
+ *   `root` is the element to set `data-theme` on. Default: `<html>`.
+ *
+ * @typedef {object} ThemeChangeDetail
+ * @property {'light' | 'dark'} theme `bronto:themechange` CustomEvent detail.
+ */
+
+/**
  * Apply the persisted theme to <html data-theme>. Call as early as
  * possible (an inline module in <head>) to avoid a flash before the
  * toggle wires up. No stored value → leaves prefers-color-scheme to act.
+ *
+ * @param {ApplyThemeOpts} [opts]
+ * @returns {void}
  */
 export function applyStoredTheme({ storageKey = 'bronto-theme', root } = {}) {
   if (!hasDom()) return;
@@ -31,6 +45,9 @@ export function applyStoredTheme({ storageKey = 'bronto-theme', root } = {}) {
  *
  * `root` scopes event delegation and which controls are queried/reflected
  * (default `document`); it does not change where the theme is applied.
+ *
+ * @param {ThemeStorageOpts & import('./internal.js').DelegateOpts} [opts]
+ * @returns {import('./internal.js').Cleanup}
  */
 export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
   if (!hasDom()) return noop;

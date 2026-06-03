@@ -8,8 +8,8 @@
  * Because each `.d.ts` is derived from its source, names/signatures cannot drift
  * — this gate replaces the name-parity gates for the migrated leaves
  * (check-helpers-dts for annotations/connectors, check-bindings for
- * react/solid/qwik). `behaviors/` is the one leaf still hand-`.d.ts`'d, so
- * check-behaviors stays.
+ * react/solid/qwik, and check-behaviors for the behaviors barrel — all now
+ * emitted from JSDoc, so every leaf `.d.ts` is generated, none hand-written).
  *
  * Run: node scripts/check-dts-emit.mjs
  */

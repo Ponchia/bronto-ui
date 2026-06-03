@@ -1,6 +1,14 @@
 import { hasDom, resolveHost, noop, bindOnce, collectHosts } from './internal.js';
 
 /**
+ * @typedef {object} CrosshairMoveDetail
+ * @property {number} x Pointer x within the plot, in pixels.
+ * @property {number} y Pointer y within the plot, in pixels.
+ * @property {number} fx Pointer x as a 0..1 fraction of the plot width.
+ * @property {number} fy Pointer y as a 0..1 fraction of the plot height.
+ */
+
+/**
  * Track the pointer over a plot and drive a crosshair. Each
  * `[data-bronto-crosshair]` is the plot; it contains a `.ui-crosshair` overlay.
  * On pointer move the behavior sets `--crosshair-x/y` (pixels within the plot)
@@ -11,6 +19,9 @@ import { hasDom, resolveHost, noop, bindOnce, collectHosts } from './internal.js
  * Bronto reports WHERE the pointer is — it does not find the nearest datum or
  * map pixels to data values (that needs the host's scales). SSR-safe,
  * idempotent per plot; returns a cleanup function.
+ *
+ * @param {import('./internal.js').DelegateOpts} [opts]
+ * @returns {import('./internal.js').Cleanup}
  */
 export function initCrosshair({ root } = {}) {
   if (!hasDom()) return noop;

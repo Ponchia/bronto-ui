@@ -1,5 +1,5 @@
 {
-  "comment": "Generate index.d.ts (+ .d.ts.map) for the hand-authored JS leaves from their JSDoc. emitDeclarationOnly writes only declarations — the .js stays the authored, shipped source. Because each .d.ts is now derived from its source, it cannot drift; check-dts-emit.mjs re-emits and byte-compares. Run via `npm run dts:emit`. (checkJs is intentionally off for now: the internal pure helpers are untyped and the opt-object defaults trip noImplicitAny; signature-checking is a future enhancement, tracked separately.)",
+  "comment": "Generate index.d.ts (+ .d.ts.map) for the hand-authored JS leaves from their JSDoc. emitDeclarationOnly writes only declarations — the .js stays the authored, shipped source. Because each .d.ts is now derived from its source, it cannot drift; check-dts-emit.mjs re-emits and byte-compares. Run via `npm run dts:emit`. The behaviors barrel re-exports many modules, so every behaviors/*.js it pulls in is listed here too — the in-place emit deletes each include's .d.ts first (TS5055 guard). (checkJs is intentionally off: the internal pure helpers are untyped and the opt-object defaults trip noImplicitAny; signature-checking the implementations is a separate future enhancement.)",
   "compilerOptions": {
     "allowJs": true,
     "checkJs": false,
@@ -18,6 +18,26 @@
     "annotations/index.js",
     "react/index.js",
     "solid/index.js",
-    "qwik/index.js"
+    "qwik/index.js",
+    "behaviors/index.js",
+    "behaviors/internal.js",
+    "behaviors/theme.js",
+    "behaviors/dismissible.js",
+    "behaviors/tabs.js",
+    "behaviors/dialog.js",
+    "behaviors/toast.js",
+    "behaviors/disclosure.js",
+    "behaviors/menu.js",
+    "behaviors/forms.js",
+    "behaviors/combobox.js",
+    "behaviors/popover.js",
+    "behaviors/table.js",
+    "behaviors/carousel.js",
+    "behaviors/glyph.js",
+    "behaviors/legend.js",
+    "behaviors/connectors.js",
+    "behaviors/spotlight.js",
+    "behaviors/crosshair.js",
+    "behaviors/command.js"
   ]
 }

@@ -14,6 +14,9 @@ import { hasDom, resolveHost, noop, bindOnce, byIdInHost } from './internal.js';
  * `root` scopes delegated triggers (default `document`). Controlled targets are
  * resolved root-first, then document-wide, so scoped islands win duplicate-id
  * conflicts without breaking body/portal-mounted overlays.
+ *
+ * @param {import('./internal.js').DelegateOpts} [opts]
+ * @returns {import('./internal.js').Cleanup}
  */
 export function initDialog({ root } = {}) {
   if (!hasDom()) return noop;
