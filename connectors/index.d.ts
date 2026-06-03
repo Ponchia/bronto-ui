@@ -1,3 +1,8 @@
+export function finite(name: any, value: any, fallback: any): any;
+export function dimension(name: any, value: any, fallback: any): any;
+export function fmt(value: any): string;
+export function point(x: any, y: any): string;
+export function clamp(value: any, min: any, max: any): any;
 /**
  * A point on a rect's edge (or centre). `rect` is `{ x, y, width, height }`.
  * @param {Rect} rect
@@ -90,6 +95,50 @@ export function endTangentAngle(from: Point, to: Point, shape?: ConnectorShape):
  * @returns {ConnectRectsResult}
  */
 export function connectRects(opts?: ConnectRectsOptions): ConnectRectsResult;
+/**
+ * @ponchia/ui/connectors — dependency-free SVG geometry for connecting two
+ * elements (or two points) with a leader line.
+ *
+ * Pure functions only: they take points/rects and return SVG path strings (or
+ * resolved coordinates). They own no DOM, no scales, and no live tracking —
+ * that optional glue lives in `@ponchia/ui/behaviors` (`initConnectors`). This
+ * is the page-coordinate, element-to-element cousin of the figure-coordinate
+ * `@ponchia/ui/annotations` helpers.
+ *
+ *   import { connectRects } from '@ponchia/ui/connectors';
+ *   const { d } = connectRects({ fromRect: a, toRect: b, shape: 'elbow' });
+ *
+ * The public types below are JSDoc `@typedef`s; the shipped `index.d.ts` is
+ * generated from them (and these signatures) by `tsc --emitDeclarationOnly`.
+ *
+ * @typedef {{ x: number, y: number }} Point
+ * @typedef {{ x: number, y: number, width: number, height: number }} Rect
+ * @typedef {'top' | 'right' | 'bottom' | 'left' | 'center'} Side
+ * @typedef {'straight' | 'elbow' | 'curve'} ConnectorShape
+ *
+ * @typedef {object} ConnectorPathOptions
+ * @property {Point} from
+ * @property {Point} to
+ * @property {ConnectorShape} [shape]
+ * @property {number} [curvature] Curve control-point reach along the dominant axis (curve shape). Default 0.5.
+ * @property {number} [mid] Turn position 0..1 along the span (elbow shape). Default 0.5.
+ *
+ * @typedef {object} ConnectRectsOptions
+ * @property {Rect} fromRect
+ * @property {Rect} toRect
+ * @property {Side} [fromSide] Anchor edges. Omit both to auto-pick facing edges from the rects.
+ * @property {Side} [toSide]
+ * @property {ConnectorShape} [shape]
+ * @property {number} [curvature]
+ * @property {number} [mid]
+ *
+ * @typedef {object} ConnectRectsResult
+ * @property {string} d SVG path data.
+ * @property {Point} from
+ * @property {Point} to
+ * @property {number} angle The path's end-tangent at `to` in radians — the direction the path arrives, so rotating an arrowhead at `to` by this points it along the path. Equals the straight `from`→`to` angle for `shape: 'straight'`; axis-aligned for `elbow`/`curve`.
+ */
+export const PRECISION: 1000;
 export type Point = {
     x: number;
     y: number;

@@ -209,39 +209,19 @@ import {
   arrowHead,
   dotMark,
   angleBetween,
+  // Shared scalar/geometry kernel — single source of truth (was copy-pasted,
+  // and the local clamp had silently diverged from the connectors one).
+  PRECISION,
+  finite,
+  dimension,
+  fmt,
+  point,
+  clamp,
 } from '../connectors/index.js';
-
-const PRECISION = 1000;
-
-function finite(name, value, fallback) {
-  const v = value ?? fallback;
-  if (!Number.isFinite(v)) throw new TypeError(`${name} must be a finite number`);
-  return v;
-}
-
-function dimension(name, value, fallback) {
-  const v = finite(name, value, fallback);
-  if (v < 0) throw new RangeError(`${name} must be greater than or equal to 0`);
-  return v;
-}
-
-function fmt(value) {
-  const rounded = Math.round((Object.is(value, -0) ? 0 : value) * PRECISION) / PRECISION;
-  return String(Object.is(rounded, -0) ? 0 : rounded);
-}
 
 function roundedNumber(value) {
   const rounded = Math.round((Object.is(value, -0) ? 0 : value) * PRECISION) / PRECISION;
   return Object.is(rounded, -0) ? 0 : rounded;
-}
-
-function point(x, y) {
-  return `${fmt(x)},${fmt(y)}`;
-}
-
-function clamp(value, min, max) {
-  if (max < min) return min;
-  return Math.min(max, Math.max(min, value));
 }
 
 function circlePathAt(x, y, radius) {

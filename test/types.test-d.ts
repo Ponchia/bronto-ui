@@ -106,8 +106,10 @@ const bn: string = ui.bracketNote({ tone: 'warning' });
 ui.mark({ style: 'wavy' });
 // @ts-expect-error — the old 'evidence' tone was renamed to 'accent' (0.5.0).
 ui.mark({ tone: 'evidence' });
-// @ts-expect-error — bracket-note tone is a closed union (no 'success').
-ui.bracketNote({ tone: 'success' });
+// 'success' IS a valid bracket-note tone — the factory emits ui-bracket-note--success
+// (added 0.6.0; the union now matches, gated by check:recipe-types).
+const bnSuccess: string = ui.bracketNote({ tone: 'success' });
+const mtInfo: string = ui.meter({ tone: 'info' });
 
 const conn: string = ui.connector({ tone: 'accent', dashed: true, motion: 'draw' });
 const spot: string = ui.spotlight({ ring: true });

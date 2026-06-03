@@ -216,6 +216,31 @@ test('binding hook surface is identical across react/solid/qwik (derived, cannot
   assert.deepEqual(surface(solid), reactHooks, 'solid hook surface matches react');
   assert.deepEqual(surface(qwik), reactHooks, 'qwik hook surface matches react');
 
+  // COVERAGE, not just agreement: the three agreeing with each other can't catch
+  // a NEW behavior that none of them wrapped. Derive the expected hooks from the
+  // behaviors barrel itself — every `initX` export must have a `useX` in all
+  // three bindings — so a 19th behavior with no binding hook fails here. (The
+  // imperative `toast` / one-shot `applyStoredTheme` are not `init*` and so are
+  // intentionally not required as lifecycle hooks; `useToast` is asserted above.)
+  const barrel = await import('../behaviors/index.js');
+  const expectedHooks = Object.keys(barrel)
+    .filter((k) => /^init[A-Z]/.test(k))
+    .map((k) => `use${k.slice(4)}`)
+    .sort();
+  for (const [name, m] of [
+    ['react', react],
+    ['solid', solid],
+    ['qwik', qwik],
+  ]) {
+    const have = new Set(surface(m));
+    const missing = expectedHooks.filter((h) => !have.has(h));
+    assert.deepEqual(
+      missing,
+      [],
+      `${name} bindings missing hooks for barrel behaviors: ${missing.join(', ')}`,
+    );
+  }
+
   // Every hook is a real function and the convenience exports are present in all three.
   for (const m of [react, solid, qwik]) {
     for (const name of reactHooks) assert.equal(typeof m[name], 'function', `${name} exported`);

@@ -9,22 +9,17 @@
  *
  * Wired into `npm run check`. Exit 1 on any problem.
  */
-import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generated } from './gen-glyphs.mjs';
 import { GLYPHS, GLYPH_NAMES, GLYPH_SIZE } from '../glyphs/glyphs.js';
+import { freshnessErrors } from './lib/assert-fresh.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
 
 // --- 1. drift ---
-for (const [rel, expected] of Object.entries(generated)) {
-  const abs = resolve(root, rel);
-  if (!existsSync(abs)) errors.push(`${rel} missing — run: npm run glyphs:build`);
-  else if (readFileSync(abs, 'utf8') !== expected)
-    errors.push(`${rel} is stale — run: npm run glyphs:build`);
-}
+errors.push(...freshnessErrors(generated, 'npm run glyphs:build'));
 
 // --- 2. shape ---
 const keys = Object.keys(GLYPHS);

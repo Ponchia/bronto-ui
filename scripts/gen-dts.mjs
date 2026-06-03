@@ -123,7 +123,7 @@ export interface ProgressOpts {
   indeterminate?: boolean;
 }
 export interface MeterOpts {
-  tone?: 'accent' | 'success' | 'warning' | 'danger';
+  tone?: 'accent' | 'success' | 'warning' | 'danger' | 'info';
 }
 export interface DotspinnerOpts {
   size?: 'sm' | 'lg';
@@ -192,7 +192,7 @@ export interface MarkOpts {
   motion?: 'draw';
 }
 export interface BracketNoteOpts {
-  tone?: 'accent' | 'warning' | 'danger' | 'info';
+  tone?: 'accent' | 'success' | 'warning' | 'danger' | 'info';
 }
 export interface ConnectorOpts {
   tone?: 'accent' | 'muted' | 'success' | 'warning' | 'danger' | 'info';

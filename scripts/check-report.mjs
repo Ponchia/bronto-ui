@@ -60,44 +60,28 @@ for (const rel of classSources) {
 }
 
 const core = read('css/core.css');
-if (/report\.css/.test(core)) {
-  errors.push('css/core.css imports report.css — report CSS must stay opt-in');
-}
-if (/annotations\.css/.test(core)) {
-  errors.push('css/core.css imports annotations.css — annotation CSS must stay opt-in');
-}
-if (/legend\.css/.test(core)) {
-  errors.push('css/core.css imports legend.css — legend CSS must stay opt-in');
-}
-if (/marks\.css/.test(core)) {
-  errors.push('css/core.css imports marks.css — marks CSS must stay opt-in');
-}
-if (/connectors\.css/.test(core)) {
-  errors.push('css/core.css imports connectors.css — connector CSS must stay opt-in');
-}
-if (/spotlight\.css/.test(core)) {
-  errors.push('css/core.css imports spotlight.css — spotlight CSS must stay opt-in');
-}
-if (/crosshair\.css/.test(core)) {
-  errors.push('css/core.css imports crosshair.css — crosshair CSS must stay opt-in');
-}
-if (/selection\.css/.test(core)) {
-  errors.push('css/core.css imports selection.css — selection CSS must stay opt-in');
-}
-if (/sources\.css/.test(core)) {
-  errors.push('css/core.css imports sources.css — sources CSS must stay opt-in');
-}
-if (/\bstate\.css/.test(core)) {
-  errors.push('css/core.css imports state.css — state CSS must stay opt-in');
-}
-if (/generated\.css/.test(core)) {
-  errors.push('css/core.css imports generated.css — generated CSS must stay opt-in');
-}
-if (/workbench\.css/.test(core)) {
-  errors.push('css/core.css imports workbench.css — workbench CSS must stay opt-in');
-}
-if (/command\.css/.test(core)) {
-  errors.push('css/core.css imports command.css — command CSS must stay opt-in');
+// Opt-in leaves that core.css must NEVER @import — [file, human-noun]. A loop,
+// not 13 hand-rolled `if`s, so adding a 14th opt-in layer is one array entry and
+// the three places this list used to be spelled out can't drift. (audit Q11.)
+const OPTIN_LAYERS = [
+  ['report', 'report'],
+  ['annotations', 'annotation'],
+  ['legend', 'legend'],
+  ['marks', 'marks'],
+  ['connectors', 'connector'],
+  ['spotlight', 'spotlight'],
+  ['crosshair', 'crosshair'],
+  ['selection', 'selection'],
+  ['sources', 'sources'],
+  ['state', 'state'],
+  ['generated', 'generated'],
+  ['workbench', 'workbench'],
+  ['command', 'command'],
+];
+for (const [file, noun] of OPTIN_LAYERS) {
+  if (new RegExp(`\\b${file}\\.css`).test(core)) {
+    errors.push(`css/core.css imports ${file}.css — ${noun} CSS must stay opt-in`);
+  }
 }
 
 const htmlSources = [

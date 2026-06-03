@@ -22,21 +22,15 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildGenerated, REQUIRED_PATHS, isFontPath } from './gen-vega.mjs';
+import { CSS_COLOR as COLOR } from './lib/patterns.mjs';
+import { freshnessErrors } from './lib/assert-fresh.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
 const generated = await buildGenerated();
 
-// A resolved colour: #rgb/#rgba/#rrggbb/#rrggbbaa, or rgb()/rgba().
-const COLOR = /^(#[0-9a-f]{3,8}|rgba?\([^)]+\))$/i;
-
 // --- 1. Drift ---------------------------------------------------------------
-for (const [rel, expected] of Object.entries(generated)) {
-  const abs = resolve(root, rel);
-  if (!existsSync(abs)) errors.push(`${rel} missing — run: npm run vega:build`);
-  else if (readFileSync(abs, 'utf8') !== expected)
-    errors.push(`${rel} is stale — run: npm run vega:build`);
-}
+errors.push(...freshnessErrors(generated, 'npm run vega:build'));
 
 // Flatten a config object to [dottedPath, value] leaves. Arrays (the `range.*`
 // ramps) are leaves, not recursed — a ramp is one slot's value.

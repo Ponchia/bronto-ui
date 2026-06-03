@@ -64,3 +64,34 @@ export function closestSafe(el, selector) {
     return null;
   }
 }
+
+// Collect the hosts an initializer should wire: the descendants matching
+// `selector` PLUS `host` itself when it matches (querySelectorAll only sees
+// descendants, so a `root` that *is* a target would otherwise be skipped).
+// Self-first, null-safe — the shape ~9 delegated behaviors hand-rolled.
+export function collectHosts(host, selector) {
+  const out = host !== document && host.matches?.(selector) ? [host] : [];
+  out.push(...(host.querySelectorAll?.(selector) ?? []));
+  return out;
+}
+
+// scrollIntoView is a pure affordance and throws in jsdom/layout-less envs;
+// never let that break a keyboard/roving handler. (combobox/command/carousel.)
+export function scrollIntoViewSafe(el, opts = { block: 'nearest' }) {
+  try {
+    el?.scrollIntoView(opts);
+  } catch {
+    /* headless / no layout — the scroll is cosmetic */
+  }
+}
+
+// Wrap an index by `delta` within [0, len), the roving keyboard math shared by
+// the combobox and command listboxes (a -1 `cur` lands on the first/last as
+// before). Only this core is shared — the surrounding setActive/filter/group
+// logic diverges between the two for real reasons. (code-quality audit Q12.)
+export function wrapIndex(cur, delta, len) {
+  let next = cur + delta;
+  if (next < 0) next = len - 1;
+  if (next >= len) next = 0;
+  return next;
+}

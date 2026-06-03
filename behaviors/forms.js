@@ -1,4 +1,4 @@
-import { hasDom, resolveHost, noop, bindOnce, nextFieldUid } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, nextFieldUid, collectHosts } from './internal.js';
 
 /**
  * Accessible form validation glue for `<form data-bronto-validate>`.
@@ -137,12 +137,7 @@ export function initFormValidation({ root } = {}) {
     // otherwise show the native UA bubble instead of the Bronto
     // summary — contradicting the documented contract. (Forms added
     // after init are still covered by the in-handler set.)
-    // Feature-detect rather than `instanceof Element` — `Element` is not
-    // a guaranteed global (SSR / the no-DOM test env), and `host` is
-    // either `document` (no `.matches`) or a root Element.
-    const selfForm =
-      typeof host.matches === 'function' && host.matches('[data-bronto-validate]') ? [host] : [];
-    const forms = [...selfForm, ...(host.querySelectorAll?.('[data-bronto-validate]') ?? [])];
+    const forms = collectHosts(host, '[data-bronto-validate]');
     const priorNoValidate = new Map();
     for (const f of forms) {
       priorNoValidate.set(f, f.noValidate);

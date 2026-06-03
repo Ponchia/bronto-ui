@@ -22,6 +22,7 @@ import { generated, resolveColor } from './gen-charts.mjs';
 import { charts, ACCENT, CHART_CATEGORICAL } from '../tokens/charts.js';
 import { deltaOklab } from './lib/oklch.mjs';
 import { buildResolved } from './gen-resolved.mjs';
+import { freshnessErrors } from './lib/assert-fresh.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
@@ -33,12 +34,7 @@ const PAIR_THRESHOLD = 0.05;
 const BG_THRESHOLD = 0.06;
 
 // --- 1. Drift -----------------------------------------------------------------
-for (const [rel, expected] of Object.entries(generated)) {
-  const abs = resolve(root, rel);
-  if (!existsSync(abs)) errors.push(`${rel} missing — run: npm run charts:build`);
-  else if (readFileSync(abs, 'utf8') !== expected)
-    errors.push(`${rel} is stale — run: npm run charts:build`);
-}
+errors.push(...freshnessErrors(generated, 'npm run charts:build'));
 
 // --- 2. Shape -----------------------------------------------------------------
 for (const theme of ['light', 'dark']) {

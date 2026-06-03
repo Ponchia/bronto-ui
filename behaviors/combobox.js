@@ -1,4 +1,12 @@
-import { hasDom, resolveHost, noop, bindOnce, nextFieldUid } from './internal.js';
+import {
+  hasDom,
+  resolveHost,
+  noop,
+  bindOnce,
+  nextFieldUid,
+  scrollIntoViewSafe,
+  wrapIndex,
+} from './internal.js';
 
 /**
  * Editable combobox with a filtered listbox popup, implementing the
@@ -67,13 +75,7 @@ export function initCombobox({ root } = {}) {
       if (opt) {
         opt.classList.add('is-active');
         input.setAttribute('aria-activedescendant', opt.id);
-        // jsdom's scrollIntoView throws "Not implemented"; it is a
-        // pure affordance, so never let it break keyboard nav.
-        try {
-          opt.scrollIntoView({ block: 'nearest' });
-        } catch {
-          /* non-DOM/headless environment — ignore */
-        }
+        scrollIntoViewSafe(opt);
       } else {
         input.removeAttribute('aria-activedescendant');
       }
@@ -126,10 +128,7 @@ export function initCombobox({ root } = {}) {
       const vis = visible();
       if (!vis.length) return;
       open();
-      const curIdx = vis.indexOf(options[active]);
-      let next = curIdx + delta;
-      if (next < 0) next = vis.length - 1;
-      if (next >= vis.length) next = 0;
+      const next = wrapIndex(vis.indexOf(options[active]), delta, vis.length);
       active = options.indexOf(vis[next]);
       setActive(options[active]);
     };

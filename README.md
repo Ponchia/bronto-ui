@@ -8,7 +8,19 @@
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Ponchia/bronto-ui/badge)](https://scorecard.dev/viewer/?uri=github.com/Ponchia/bronto-ui)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE)
 
-**A CSS-first design system for interfaces that explain themselves.** Works in plain HTML, every modern framework, and print/PDF — there's no component runtime to adopt. The look is a deliberate stance: a neutral monochrome canvas with **one _rationed_ accent** (colour _signals_, it never decorates), dot-matrix display type and hairline borders, re-skinnable from a single `--accent` knob (opt-in amber-CRT · phosphor-green · e-ink colorways). And beyond the standard component set it ships an opt-in **analytical & report layer** — SVG annotations, legends, leader-line connectors, a guided-focus spotlight, text marks, a colourblind-safe data-viz palette and a static/PDF report grammar — for dashboards and LLM-authored reports. Zero runtime dependencies; re-brand the whole thing with one CSS variable.
+**A CSS-first design system for interfaces that explain themselves.** It works in
+plain HTML, every modern framework, and print/PDF, with no component runtime to
+adopt and zero runtime dependencies.
+
+The look is a deliberate stance: a neutral monochrome canvas with one rationed
+accent (colour signals, it never decorates), dot-matrix display type, and
+hairline borders — all re-skinnable from a single `--accent` knob (opt-in
+amber-CRT, phosphor-green, and e-ink colorways).
+
+Beyond the standard component set it ships an opt-in analytical & report layer —
+SVG annotations, legends, leader-line connectors, a guided-focus spotlight, text
+marks, a colourblind-safe data-viz palette, and a static/PDF report grammar — for
+dashboards and LLM-authored reports.
 
 ### [Live demo →](https://ponchia.github.io/bronto-ui/) &nbsp;·&nbsp; [Theme playground →](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)
 
@@ -18,7 +30,16 @@ The demo is the kitchen sink — every component, light/dark, RTL, live theming.
 
 ## What it is
 
-`@ponchia/ui` ships its design as **CSS**, not components. You drop in one stylesheet and style with semantic `ui-*` classes; an optional thin layer of typed class-name recipes and SSR-safe vanilla behaviors sits on top for the few things that genuinely need JS (theme persistence, dialogs, toasts, disclosure). The guiding principle is **color is rationed, structure carries meaning** — layout, type weight and the hairline do the work before a hue does, and the accent is a spotlight, not a paint bucket. Because everything lives in a single `@layer bronto`, your own un-layered CSS overrides the framework with no specificity fight and no `!important`.
+`@ponchia/ui` ships its design as CSS, not components. You drop in one stylesheet
+and style with semantic `ui-*` classes; an optional thin layer of typed
+class-name recipes and SSR-safe vanilla behaviors sits on top for the few things
+that genuinely need JS (theme persistence, dialogs, toasts, disclosure).
+
+The guiding principle is that **colour is rationed and structure carries
+meaning** — layout, type weight, and the hairline do the work before a hue does,
+and the accent is a spotlight, not a paint bucket. Because everything lives in a
+single `@layer bronto`, your own un-layered CSS overrides the framework with no
+specificity fight and no `!important`.
 
 It ships a complete, accessible **standard component set** — but that's not where it competes. Its differentiator is an opt-in **analytical & communication layer** for interfaces that make complex work legible: annotations, legends, connectors, marks, a guided-focus spotlight, lifecycle/system-state and source-provenance vocabularies, and a static/PDF report grammar. Each owns only its visual grammar and pure geometry — no chart engine, no state, no hit-testing. See **[docs/frontier-primitives.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/frontier-primitives.md)** for the thesis.
 

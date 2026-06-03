@@ -1,4 +1,4 @@
-import { hasDom, resolveHost, noop, bindOnce } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, scrollIntoViewSafe } from './internal.js';
 
 /**
  * Image carousel / gallery, built on CSS scroll-snap so touch + trackpad
@@ -104,16 +104,7 @@ export function initCarousel({ root } = {}) {
     const emit = () =>
       box.dispatchEvent(new CustomEvent('bronto:change', { detail: { index }, bubbles: true }));
 
-    // jsdom (and any layout-less env) has no scrollIntoView; it's a pure
-    // affordance, so never let it break index/aria sync — same guard as
-    // initCombobox.
-    const reveal = (el) => {
-      try {
-        el?.scrollIntoView({ block: 'nearest', inline: 'center' });
-      } catch {
-        /* no layout — ignore */
-      }
-    };
+    const reveal = (el) => scrollIntoViewSafe(el, { block: 'nearest', inline: 'center' });
 
     const goTo = (i, { emitChange = true } = {}) => {
       const next = loop ? (i + n) % n : Math.max(0, Math.min(n - 1, i));

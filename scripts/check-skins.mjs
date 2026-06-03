@@ -17,17 +17,13 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generated } from './gen-skins.mjs';
 import { skins, SKIN_NAMES } from '../tokens/skins.js';
+import { freshnessErrors } from './lib/assert-fresh.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
 
 // 1. Drift.
-for (const [rel, expected] of Object.entries(generated)) {
-  const abs = resolve(root, rel);
-  if (!existsSync(abs)) errors.push(`${rel} missing — run: npm run skins:build`);
-  else if (readFileSync(abs, 'utf8') !== expected)
-    errors.push(`${rel} is stale — run: npm run skins:build`);
-}
+errors.push(...freshnessErrors(generated, 'npm run skins:build'));
 
 // 2. Shape.
 for (const name of SKIN_NAMES) {

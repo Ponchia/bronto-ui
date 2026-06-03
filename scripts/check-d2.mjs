@@ -16,20 +16,15 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildGenerated, REQUIRED_KEYS } from './gen-d2.mjs';
+import { CSS_COLOR as COLOR } from './lib/patterns.mjs';
+import { freshnessErrors } from './lib/assert-fresh.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
 const generated = await buildGenerated();
 
-const COLOR = /^(#[0-9a-f]{3,8}|rgba?\([^)]+\))$/i;
-
 // --- 1. Drift ---------------------------------------------------------------
-for (const [rel, expected] of Object.entries(generated)) {
-  const abs = resolve(root, rel);
-  if (!existsSync(abs)) errors.push(`${rel} missing — run: npm run d2:build`);
-  else if (readFileSync(abs, 'utf8') !== expected)
-    errors.push(`${rel} is stale — run: npm run d2:build`);
-}
+errors.push(...freshnessErrors(generated, 'npm run d2:build'));
 
 // --- 2/3/4. Coverage, parity, resolvability ---------------------------------
 const themes = JSON.parse(readFileSync(resolve(root, 'tokens/d2.json'), 'utf8'));

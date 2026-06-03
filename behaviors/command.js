@@ -1,4 +1,13 @@
-import { hasDom, resolveHost, noop, bindOnce, nextFieldUid } from './internal.js';
+import {
+  hasDom,
+  resolveHost,
+  noop,
+  bindOnce,
+  nextFieldUid,
+  collectHosts,
+  scrollIntoViewSafe,
+  wrapIndex,
+} from './internal.js';
 
 /**
  * Command palette — filter + keyboard-navigate a DOM-authored command list.
@@ -25,9 +34,7 @@ export function initCommand({ root } = {}) {
   if (!hasDom()) return noop;
   const host = resolveHost(root);
   if (!host) return noop;
-  const palettes = [];
-  if (host !== document && host.matches?.('[data-bronto-command]')) palettes.push(host);
-  palettes.push(...(host.querySelectorAll?.('[data-bronto-command]') ?? []));
+  const palettes = collectHosts(host, '[data-bronto-command]');
   const cleanups = [];
 
   for (const box of palettes) {
@@ -62,11 +69,7 @@ export function initCommand({ root } = {}) {
       if (item) {
         active = items.indexOf(item);
         input.setAttribute('aria-activedescendant', item.id);
-        try {
-          item.scrollIntoView({ block: 'nearest' });
-        } catch {
-          /* headless — scrollIntoView is a pure affordance */
-        }
+        scrollIntoViewSafe(item);
       } else {
         active = -1;
         input.removeAttribute('aria-activedescendant');
@@ -105,11 +108,7 @@ export function initCommand({ root } = {}) {
     const move = (delta) => {
       const vis = visible();
       if (!vis.length) return;
-      const cur = vis.indexOf(items[active]);
-      let next = cur + delta;
-      if (next < 0) next = vis.length - 1;
-      if (next >= vis.length) next = 0;
-      setActive(vis[next]);
+      setActive(vis[wrapIndex(vis.indexOf(items[active]), delta, vis.length)]);
     };
 
     const choose = (item) => {

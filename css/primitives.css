@@ -524,6 +524,10 @@
    (the soft tint can't carry 4.5:1 small-bold tone-on-tone — WCAG). */
 .ui-badge--accent {
   background: var(--accent-soft);
+
+  /* Accent mixes 45% (vs 40% for the status tones below) on purpose: the brand
+     hue is lower-chroma here than the status hues, so it needs a touch more to
+     read at the same border weight. Intentional, not a copy-paste slip. (Q15.) */
   border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
 }
 
