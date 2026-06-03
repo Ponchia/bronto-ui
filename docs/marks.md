@@ -63,8 +63,8 @@ Brackets a whole block and optionally labels it — the prose analogue of
 </blockquote>
 ```
 
-Tones: `--accent` (the rationed accent), `--warning`, `--danger`, `--info`. The
-default is a neutral bracket.
+Tones: `--accent` (the rationed accent), `--success`, `--warning`, `--danger`,
+`--info`. The default is a neutral bracket.
 
 ## Recipes
 

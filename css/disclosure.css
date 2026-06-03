@@ -44,6 +44,14 @@
     border-color var(--duration-fast) var(--ease-standard);
 }
 
+/* Coarse-pointer tap-target floor (~2.9rem ≈ 44px), matching inputs/sitenav —
+   tabs are easy to mis-tap on touch (WCAG 2.5.8 — C24). */
+@media (pointer: coarse) {
+  .ui-tab {
+    min-block-size: 2.9rem;
+  }
+}
+
 .ui-tab.is-active {
   border-block-end-color: var(--accent);
   color: var(--accent-text);
@@ -300,15 +308,29 @@
   color: var(--accent-text);
 }
 
-.ui-pagination__item[aria-disabled='true'] {
+/* Disabled covers BOTH the native `<button disabled>` the demo ships and the
+   `aria-disabled="true"` ARIA path; `pointer-events: none` makes the
+   aria-disabled item genuinely inert (it was clickable before — C5). */
+.ui-pagination__item[aria-disabled='true'],
+.ui-pagination__item:disabled {
   cursor: not-allowed;
   opacity: 0.4;
+  pointer-events: none;
 }
 
 @media (hover: hover) {
-  .ui-pagination__item:not(.is-active, [aria-disabled='true']):hover {
+  .ui-pagination__item:not(.is-active, [aria-disabled='true'], :disabled):hover {
     border-color: var(--line-strong);
     color: var(--text);
+  }
+}
+
+/* Coarse-pointer tap-target floor, matching inputs/sitenav (~2.9rem ≈ 44px) —
+   pagination controls are easy to mis-tap on touch (WCAG 2.5.8 — C24). */
+@media (pointer: coarse) {
+  .ui-pagination__item {
+    min-block-size: 2.9rem;
+    min-inline-size: 2.9rem;
   }
 }
 

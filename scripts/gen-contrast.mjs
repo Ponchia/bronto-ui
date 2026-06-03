@@ -173,6 +173,14 @@ const PAIRS = [
   // AA-safe one, so it is gated at full text level deliberately.
   ['--accent-text', '--bg', 'Accent text on page background', 'text'],
   ['--accent-text', '--surface', 'Accent text on a card', 'text'],
+  // Accent text on an accent TINT — the obligation the tokens.css comments
+  // assert (accent-text must read on --accent-soft / --bg-accent). Reported,
+  // not gated (component-audit C34): both tints are translucent, and the
+  // ratio model flattens a translucent bg over white, which misreads the dark
+  // theme (the tint actually sits over the dark canvas). Surfaced here so the
+  // obligation is visible in the table rather than living only in CSS comments.
+  ['--accent-text', '--accent-soft', 'Accent text on an accent tint', 'advisory'],
+  ['--accent-text', '--bg-accent', 'Accent text on an accent-tinted surface', 'advisory'],
   // Label on the primary (filled accent) button.
   ['--button-text', '--accent', 'Label on the primary button', 'text'],
   // On-accent ink — a label on ANY accent fill (button, badge, chart bar, a
@@ -197,11 +205,12 @@ const PAIRS = [
   ['--line-strong', '--surface', 'Strong hairline vs a card', 'decorative'],
 ];
 
-const FLOOR = { text: 4.5, ui: 3, decorative: 0 };
+const FLOOR = { text: 4.5, ui: 3, decorative: 0, advisory: 0 };
 const LABEL = {
   text: 'AA text (4.5:1)',
   ui: 'UI / large (3:1)',
   decorative: 'Decorative (1.4.11-exempt)',
+  advisory: 'Advisory (translucent tint — not gated)',
 };
 
 /** Audit one theme → rows + worst-case failure list. */
@@ -213,8 +222,9 @@ export function auditTheme(palette, pairs = PAIRS) {
     const r = fv != null && bv != null ? ratio(fv, bv) : null;
     const apca = fv != null && bv != null ? apcaLc(fv, bv) : null;
     const floor = FLOOR[level];
-    // Decorative rows are reported, never gated (WCAG 1.4.11 exempt).
-    const gated = level !== 'decorative';
+    // Decorative (1.4.11-exempt) and advisory (translucent-tint, model can't
+    // fairly flatten per-theme) rows are reported, never gated.
+    const gated = level !== 'decorative' && level !== 'advisory';
     const pass = !gated || (r != null && r >= floor);
     rows.push({ fg, bg, role, level, fv, bv, ratio: r, apca, floor, gated, pass });
   }

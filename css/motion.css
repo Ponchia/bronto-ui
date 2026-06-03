@@ -336,6 +336,12 @@
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+
+    /* Zero the delay too: `.ui-stagger` children animate `uiRise` with
+       `fill-mode: both`, so a non-zero `animation-delay` holds them at the
+       `opacity: 0` from-state for the full delay and then pops them in — the
+       exact late flash a reduced-motion user asked to avoid (C4). */
+    animation-delay: 0s !important;
     transition-duration: 0.01ms !important;
   }
 

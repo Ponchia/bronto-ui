@@ -19,7 +19,7 @@
   padding: var(--space-md);
 }
 
-.ui-inspector__header {
+.ui-inspector__head {
   align-items: baseline;
   border-block-end: 1px solid var(--line);
   display: flex;

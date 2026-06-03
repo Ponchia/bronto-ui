@@ -95,7 +95,12 @@
   }
 }
 
-.ui-app-nav a.is-active {
+/* Current page honours BOTH the `.is-active` class and `aria-current` — the
+   sibling `.ui-sitenav` signals current-page with `aria-current="page"`, so the
+   app-shell nav now accepts the same programmatic cue (author it for AT, not
+   just the visual class — C19). */
+.ui-app-nav a.is-active,
+.ui-app-nav a[aria-current]:not([aria-current='false']) {
   background: var(--accent-soft);
   border-inline-start-color: var(--accent);
   color: var(--accent-text);
@@ -108,7 +113,8 @@
   }
 }
 
-.ui-app-nav a.is-active::before {
+.ui-app-nav a.is-active::before,
+.ui-app-nav a[aria-current]:not([aria-current='false'])::before {
   opacity: 1;
 }
 
@@ -242,11 +248,7 @@
    permanent admin-shell alias (grouped on the canonical rules there —
    identical output). Nothing app-specific left to define here. */
 
-/* --- Mobile rail collapse --- */
-
-.ui-app-rail__toggle {
-  display: none;
-}
+/* --- Mobile rail: collapses to a horizontal scrolling strip --- */
 
 @media (max-width: 880px) {
   .ui-app-shell {
@@ -290,7 +292,8 @@
     white-space: nowrap;
   }
 
-  .ui-app-nav a.is-active {
+  .ui-app-nav a.is-active,
+  .ui-app-nav a[aria-current]:not([aria-current='false']) {
     border-inline-start: 0;
     border-block-end-color: var(--accent);
   }

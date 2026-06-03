@@ -136,7 +136,7 @@ they are all safe in the static, PDF-first report path.
   below, which only shrinks the cover.
 - Use `ui-report__cover` for title, subtitle, author/date, and generation
   metadata. Add `ui-report__cover--compact` for short screen-first reports.
-  Use `ui-report__header` for a compact in-page header instead of a full cover
+  Use `ui-report__head` for a compact in-page header instead of a full cover
   (same role, no tall hero block). Author `ui-report__meta` as a `<ul>` — the
   facts it lists are unordered.
 - Use `ui-report__section` and `ui-report__section-head` for report chapters.

@@ -418,6 +418,13 @@
     min-block-size: 2.9rem;
   }
 
+  /* The whole label is the toggle target — float it to the ~44px floor so the
+     small track/box isn't a sub-target on touch (WCAG 2.5.8 — C24). */
+  .ui-switch,
+  .ui-check {
+    min-block-size: 2.9rem;
+  }
+
   .ui-check input {
     block-size: 1.15rem;
     inline-size: 1.15rem;

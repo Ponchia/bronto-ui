@@ -281,6 +281,13 @@
   transform: rotate(315deg) translateY(calc(var(--ds-box) / -2 + var(--ds-dot) / 2));
 }
 
+/* The comet expects exactly 8 `<i>`; a 9th+ child has no rotation rule and
+   would pile up dead-centre. Hide the overflow so extra children fail safe
+   rather than rendering a stray static dot (C26). */
+.ui-dotspinner i:nth-child(n + 9) {
+  display: none;
+}
+
 .ui-dotspinner--sm {
   --ds-box: 1.05rem;
   --ds-dot: 0.18rem;

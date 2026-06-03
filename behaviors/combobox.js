@@ -14,6 +14,11 @@ import {
  * and consumers most often build badly). Dependency-free, no
  * positioning library — the list is CSS-anchored under the input.
  *
+ * The input MUST have an accessible name — a `<label>`, `aria-label`, or
+ * `aria-labelledby` (a placeholder does not count). A nameless `role="combobox"`
+ * is a silent screen-reader failure, so the behavior warns at dev time when it
+ * finds one, and mirrors the input's name onto the listbox.
+ *
  * Markup: `[data-bronto-combobox]` wrapping an `<input role="combobox">`
  * (`.ui-combobox__input`) and a `<ul role="listbox">`
  * (`.ui-combobox__list`) of `<li role="option">` (`.ui-combobox__option`,
@@ -59,6 +64,20 @@ export function initCombobox({ root } = {}) {
         input.labels?.[0]?.textContent?.trim() ||
         input.getAttribute('placeholder');
       if (name) list.setAttribute('aria-label', name);
+    }
+    // A `role="combobox"` with no accessible name is a silent AT failure. A
+    // placeholder is not a robust name (it can vanish and is ignored by some
+    // AT), so warn unless there is a real label/aria-label/aria-labelledby/title
+    // (C7). We can't invent a good name, hence a dev-time warning, not a guess.
+    const inputNamed =
+      input.hasAttribute('aria-label') ||
+      input.hasAttribute('aria-labelledby') ||
+      !!input.labels?.length ||
+      input.hasAttribute('title');
+    if (!inputNamed && typeof console !== 'undefined') {
+      console.warn(
+        '[bronto] initCombobox(): the combobox input has no accessible name — add a <label>, aria-label, or aria-labelledby (a placeholder is not enough).',
+      );
     }
     input.setAttribute('role', 'combobox');
     input.setAttribute('aria-controls', listId);

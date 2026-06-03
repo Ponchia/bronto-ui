@@ -243,7 +243,7 @@ export declare const cls: {
   readonly reportNumbered: 'ui-report--numbered';
   readonly reportCover: 'ui-report__cover';
   readonly reportCoverCompact: 'ui-report__cover--compact';
-  readonly reportHeader: 'ui-report__header';
+  readonly reportHead: 'ui-report__head';
   readonly reportTitle: 'ui-report__title';
   readonly reportSubtitle: 'ui-report__subtitle';
   readonly reportMeta: 'ui-report__meta';
@@ -420,7 +420,7 @@ export declare const cls: {
   readonly toolCallStatus: 'ui-tool-call__status';
   readonly toolCallBody: 'ui-tool-call__body';
   readonly inspector: 'ui-inspector';
-  readonly inspectorHeader: 'ui-inspector__header';
+  readonly inspectorHead: 'ui-inspector__head';
   readonly inspectorBody: 'ui-inspector__body';
   readonly property: 'ui-property';
   readonly propertyLabel: 'ui-property__label';
@@ -467,7 +467,6 @@ export declare const cls: {
   readonly appShellFull: 'ui-app-shell--full';
   readonly appRail: 'ui-app-rail';
   readonly appRailBrand: 'ui-app-rail__brand';
-  readonly appRailToggle: 'ui-app-rail__toggle';
   readonly appRailFoot: 'ui-app-rail__foot';
   readonly appRailAccount: 'ui-app-rail__account';
   readonly appTopbar: 'ui-app-topbar';

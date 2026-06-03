@@ -1,7 +1,7 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 478,
+    "classes": 477,
     "groups": 149
   },
   "groups": {
@@ -140,8 +140,7 @@
       "parts": [
         "ui-app-rail__account",
         "ui-app-rail__brand",
-        "ui-app-rail__foot",
-        "ui-app-rail__toggle"
+        "ui-app-rail__foot"
       ]
     },
     "ui-app-shell": {
@@ -531,7 +530,7 @@
       "modifiers": [],
       "parts": [
         "ui-inspector__body",
-        "ui-inspector__header"
+        "ui-inspector__head"
       ]
     },
     "ui-kbd": {
@@ -810,7 +809,7 @@
         "ui-report__figure",
         "ui-report__finding",
         "ui-report__footnotes",
-        "ui-report__header",
+        "ui-report__head",
         "ui-report__meta",
         "ui-report__section",
         "ui-report__section-head",
@@ -1256,7 +1255,6 @@
     "ui-app-rail__account",
     "ui-app-rail__brand",
     "ui-app-rail__foot",
-    "ui-app-rail__toggle",
     "ui-app-shell",
     "ui-app-shell--full",
     "ui-app-toolbar",
@@ -1407,7 +1405,7 @@
     "ui-input-icon__icon",
     "ui-inspector",
     "ui-inspector__body",
-    "ui-inspector__header",
+    "ui-inspector__head",
     "ui-kbd",
     "ui-keep",
     "ui-key-value",
@@ -1524,7 +1522,7 @@
     "ui-report__figure",
     "ui-report__finding",
     "ui-report__footnotes",
-    "ui-report__header",
+    "ui-report__head",
     "ui-report__meta",
     "ui-report__section",
     "ui-report__section--unnumbered",
@@ -1701,6 +1699,29 @@
       "class": "is-inactive",
       "scope": "interactive .ui-legend__item",
       "effect": "host-set toggled-off state"
+    },
+    {
+      "class": "is-on",
+      "scope": ".ui-dotbar segment (<i>)",
+      "effect": "lit segment — author-writable for a static bar, or set by a data binding"
+    },
+    {
+      "class": "is-visible",
+      "scope": ".ui-reveal",
+      "effect": "revealed state",
+      "managed": "runtime"
+    },
+    {
+      "class": "is-in",
+      "scope": ".ui-matrix",
+      "effect": "reveal-complete state",
+      "managed": "runtime"
+    },
+    {
+      "class": "is-leaving",
+      "scope": ".ui-toast",
+      "effect": "exit-animation state",
+      "managed": "runtime"
     }
   ],
   "customProperties": [
@@ -1729,9 +1750,9 @@
       "name": "--icon-mask",
       "on": ".ui-icon",
       "type": "image",
-      "example": "var(--glyph-check)",
+      "example": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='4'/%3E%3C/svg%3E\")",
       "required": true,
-      "note": "REQUIRED — the bitmap masked into the icon; a bare .ui-icon with no --icon-mask paints a solid currentColor square, not a glyph"
+      "note": "REQUIRED — the bitmap masked into the icon; a bare .ui-icon with no --icon-mask paints a solid currentColor square, not a glyph. The value is an image (a mask url(); there is no --glyph-* token). Use renderGlyph(name, { render: 'mask' }) to build it from a named glyph."
     },
     {
       "name": "--icon-size",
@@ -1741,12 +1762,96 @@
       "note": "icon box size (default 1em)"
     },
     {
+      "name": "--i",
+      "on": ".ui-stagger > *",
+      "type": "integer",
+      "example": "2",
+      "note": "per-child stagger index — sets each child's animation-delay (× 60ms). Omit and use `.ui-stagger--auto` to derive it from :nth-child instead."
+    },
+    {
       "name": "--ui-vt-name",
       "on": ".ui-vt",
       "type": "custom-ident",
       "example": "hero-image",
       "required": true,
       "note": "REQUIRED — the view-transition-name; .ui-vt is inert (no transition) without it"
+    },
+    {
+      "name": "--stack-gap",
+      "on": ".ui-stack",
+      "type": "length",
+      "example": "1.5rem",
+      "note": "vertical rhythm between stacked children (default var(--space-md))"
+    },
+    {
+      "name": "--cluster-gap",
+      "on": ".ui-cluster",
+      "type": "length",
+      "example": "0.75rem",
+      "note": "gap between clustered inline items (default var(--space-xs))"
+    },
+    {
+      "name": "--grid-min",
+      "on": ".ui-grid",
+      "type": "length",
+      "example": "12rem",
+      "note": "minimum column width before the auto-fit grid wraps (default 16rem)"
+    },
+    {
+      "name": "--grid-gap",
+      "on": ".ui-grid",
+      "type": "length",
+      "example": "1rem",
+      "note": "gap between grid cells (default var(--space-md))"
+    },
+    {
+      "name": "--sidebar-width",
+      "on": ".ui-sidebar",
+      "type": "length",
+      "example": "18rem",
+      "note": "natural width of the sidebar child (default 16rem)"
+    },
+    {
+      "name": "--sidebar-min",
+      "on": ".ui-sidebar",
+      "type": "percentage | length",
+      "example": "50%",
+      "note": "min width of the main child before the two stack (default 60%)"
+    },
+    {
+      "name": "--switcher-min",
+      "on": ".ui-switcher",
+      "type": "length",
+      "example": "20rem",
+      "note": "threshold below which all children switch from row to column together (default 24rem)"
+    },
+    {
+      "name": "--center-max",
+      "on": ".ui-center",
+      "type": "length",
+      "example": "70ch",
+      "note": "max measure of the centred column — the INNER width; gutters add to the total (content-box) (default 64rem)"
+    },
+    {
+      "name": "--center-gutter",
+      "on": ".ui-center",
+      "type": "length",
+      "example": "2rem",
+      "note": "inline padding either side of the centred column (default var(--space-md))"
+    },
+    {
+      "name": "--ratio",
+      "on": ".ui-ratio",
+      "type": "ratio",
+      "example": "4 / 3",
+      "note": "intrinsic aspect ratio of the box (default 16 / 9)"
+    },
+    {
+      "name": "--app-rail",
+      "on": ".ui-app-shell",
+      "type": "length",
+      "example": "16rem",
+      "note": "width of the app-shell sidebar rail column (default 14rem)"
     }
   ]
 }

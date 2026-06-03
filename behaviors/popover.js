@@ -13,6 +13,13 @@ import { hasDom, resolveHost, noop, bindOnce, byIdInHost } from './internal.js';
  * click, and re-positions on scroll/resize while open. SSR-safe,
  * idempotent; returns a cleanup function.
  *
+ * The trigger advertises `aria-haspopup="dialog"`, so on open the panel is
+ * given `role="dialog"` (unless the author set a role) and focus is moved into
+ * it — the first focusable descendant, or the panel itself. It is a *non-modal*
+ * dialog: the rest of the page stays interactive and there is no focus trap.
+ * Author an accessible name on the panel (`aria-label` / `aria-labelledby`); a
+ * dev-time `console.warn` fires when it is missing.
+ *
  * Escape returns focus to the trigger; closing via outside-click leaves focus
  * where the click landed (treated as deliberate intent to move on).
  */
@@ -24,6 +31,23 @@ export function initPopover({ root } = {}) {
   const GAP = 8;
   let openPanel = null;
   let openTrigger = null;
+
+  const FOCUSABLE =
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+  // The trigger advertises `aria-haspopup="dialog"`, so the open panel must BE a
+  // dialog: a role, an accessible name, and focus moved into it (C6). Focus the
+  // first focusable descendant, else the panel itself (made programmatically
+  // focusable) so a content-only panel still receives focus.
+  const focusInto = (panel) => {
+    const first = panel.querySelector(FOCUSABLE);
+    if (first) {
+      first.focus?.();
+      return;
+    }
+    if (!panel.hasAttribute('tabindex')) panel.setAttribute('tabindex', '-1');
+    panel.focus?.();
+  };
 
   const place = (trigger, panel) => {
     const r = trigger.getBoundingClientRect();
@@ -43,6 +67,10 @@ export function initPopover({ root } = {}) {
     if (!openPanel) return;
     const panel = openPanel;
     const trigger = openTrigger;
+    // Only steal focus back to the trigger when focus is still inside the panel
+    // (Escape / programmatic re-toggle). An outside-click leaves focus where the
+    // click landed — deliberate intent to move on, per the doc contract.
+    const focusWasInside = panel.contains(document.activeElement);
     openPanel = openTrigger = null;
     if (panel.hasAttribute('popover') && typeof panel.hidePopover === 'function') {
       try {
@@ -54,10 +82,15 @@ export function initPopover({ root } = {}) {
       panel.classList.remove('is-open');
     }
     if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    if (focusWasInside && trigger?.isConnected) trigger.focus?.();
   };
 
   const open = (trigger, panel) => {
     close();
+    // Live up to the advertised `aria-haspopup="dialog"`: give the panel a
+    // dialog role (unless the author set one) so AT announces it as the promised
+    // dialog rather than a generic group (C6).
+    if (!panel.hasAttribute('role')) panel.setAttribute('role', 'dialog');
     trigger.setAttribute('aria-controls', panel.id);
     trigger.setAttribute('aria-expanded', 'true');
     if (panel.hasAttribute('popover') && typeof panel.showPopover === 'function') {
@@ -72,6 +105,7 @@ export function initPopover({ root } = {}) {
     openPanel = panel;
     openTrigger = trigger;
     place(trigger, panel);
+    focusInto(panel);
   };
 
   const onClick = (e) => {
@@ -87,11 +121,8 @@ export function initPopover({ root } = {}) {
     if (openPanel && !openPanel.contains(e.target)) close();
   };
   const onKey = (e) => {
-    if (e.key === 'Escape' && openPanel) {
-      const t = openTrigger;
-      close();
-      t?.focus?.();
-    }
+    // close() returns focus to the trigger because focus is inside the panel.
+    if (e.key === 'Escape' && openPanel) close();
   };
   const onReflow = () => {
     if (openPanel && openTrigger) place(openTrigger, openPanel);
@@ -108,6 +139,17 @@ export function initPopover({ root } = {}) {
       if (!trigger.hasAttribute('aria-haspopup')) trigger.setAttribute('aria-haspopup', 'dialog');
       trigger.setAttribute('aria-controls', panel.id);
       if (!trigger.hasAttribute('aria-expanded')) trigger.setAttribute('aria-expanded', 'false');
+      // A dialog with no accessible name is announced as just "dialog". We can't
+      // invent a good name, so warn the author at dev time (C6).
+      const named =
+        panel.hasAttribute('aria-label') ||
+        panel.hasAttribute('aria-labelledby') ||
+        panel.hasAttribute('title');
+      if (!named && typeof console !== 'undefined') {
+        console.warn(
+          `[bronto] initPopover(): panel #${panel.id} has no accessible name — add aria-label or aria-labelledby so it is announced as a named dialog.`,
+        );
+      }
       if (panel.hasAttribute('popover')) {
         const onToggle = (e) => {
           const isOpen = e.newState === 'open';

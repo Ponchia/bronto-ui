@@ -134,8 +134,13 @@ export function buildBundles() {
  *  pass (coarse-pointer 2.9 kB tap-target floors on nav, forced-colors status
  *  dots, menu/segmented focus-visible affordances, flat reduced-motion
  *  skeleton); the deleted dead keyframes clawed some back. Gzip held (~14.0 kB)
- *  — the additions are repetitive media-query blocks that compress well. */
-export const BUDGET = { raw: 82_000, gzip: 14_500 };
+ *  — the additions are repetitive media-query blocks that compress well. At
+ *  0.6.0 the raw ceiling was nudged 82→83 kB for the component-audit a11y/contract
+ *  pass (forced-colors meter + modal backdrop scrim, coarse-pointer floors on
+ *  tabs/pagination/switch/check, stat-delta direction glyph, app-nav aria-current
+ *  parity, dotspinner overflow fail-safe); gzip held (more repetitive media-query
+ *  + forced-colors blocks). */
+export const BUDGET = { raw: 83_000, gzip: 14_500 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };

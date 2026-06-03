@@ -88,8 +88,9 @@
    are unaffected. */
 .ui-cq {
   /* The container-name is fixed: the `@container bronto (…)` collapse queries
-     below hardcode `bronto`, so a `--cq-name` override would keep containment
-     but silently kill the collapse it advertises. Name is not author-tunable. */
+     below hardcode `bronto`. There is no `--cq-name` knob — the name is not
+     author-tunable, and an author-set `--cq-name` is simply ignored (nothing
+     reads it). Name a different container yourself if you need a custom scope. */
   container: bronto / inline-size;
 }
 
@@ -218,6 +219,22 @@
 .ui-stat__delta.is-neg,
 .ui-app-metric__delta.is-neg {
   color: var(--danger);
+}
+
+/* A direction arrow is the non-colour channel — colour alone (success/danger)
+   fails WCAG 1.4.1, so the tile carries the same ▲/▼ glyph as `.ui-delta`
+   (C13). Marked aria-hidden-equivalent by being generated content; the sign is
+   still in the author's text ("+12%"). */
+.ui-stat__delta.is-pos::before,
+.ui-app-metric__delta.is-pos::before {
+  content: '▲ ';
+  font-size: 0.85em;
+}
+
+.ui-stat__delta.is-neg::before,
+.ui-app-metric__delta.is-neg::before {
+  content: '▼ ';
+  font-size: 0.85em;
 }
 
 /* --- Numeric value vocabulary ---

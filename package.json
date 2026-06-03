@@ -131,10 +131,11 @@
     "check:release": "node scripts/check-release.mjs",
     "check:versions": "node scripts/check-versions.mjs",
     "check:doc-recipes": "node scripts/check-doc-recipes.mjs",
+    "check:contract": "node scripts/check-contract.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:publint": "publint --strict",
     "check:attw": "attw --pack --ignore-rules no-resolution cjs-resolves-to-esm",
-    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:fresh && npm run check:classes && npm run check:recipe-types && npm run check:types && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:publint && npm run check:attw && npm run check:release && npm run check:versions && npm run check:doc-recipes && npm run check:contrast && npm run check:behaviors && npm run check:dts-emit && npm run check:glyphs && npm run check:color-policy && npm run check:skins && npm run check:charts && npm run check:mermaid && npm run check:d2 && npm run check:vega && npm run check:report && npm run check:legend && npm run check:chain",
+    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:fresh && npm run check:classes && npm run check:recipe-types && npm run check:types && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:publint && npm run check:attw && npm run check:release && npm run check:versions && npm run check:doc-recipes && npm run check:contract && npm run check:contrast && npm run check:behaviors && npm run check:dts-emit && npm run check:glyphs && npm run check:color-policy && npm run check:skins && npm run check:charts && npm run check:mermaid && npm run check:d2 && npm run check:vega && npm run check:report && npm run check:legend && npm run check:chain",
     "test": "node --test \"test/*.test.mjs\"",
     "prepack": "npm run tokens:css:build && npm run tokens:build && npm run dtcg:build && npm run resolved:build && npm run dts:build && npm run dts:emit && npm run reference:build && npm run classes:json:build && npm run contrast:build && npm run vscode:build && npm run skins:build && npm run charts:build && npm run mermaid:build && npm run d2:build && npm run vega:build && npm run dist:build && npm run glyphs:build",
     "prepublishOnly": "npm run check && npm test"

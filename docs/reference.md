@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 478 classes across 149 component groups
+- 477 classes across 149 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -165,7 +165,6 @@ each one matches a real selector in the stylesheet.
 | `cls.appRailAccount` | `ui-app-rail__account` | part |
 | `cls.appRailBrand` | `ui-app-rail__brand` | part |
 | `cls.appRailFoot` | `ui-app-rail__foot` | part |
-| `cls.appRailToggle` | `ui-app-rail__toggle` | part |
 
 ### `.ui-app-shell`
 
@@ -566,7 +565,7 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.inspector` | `ui-inspector` | base |
 | `cls.inspectorBody` | `ui-inspector__body` | part |
-| `cls.inspectorHeader` | `ui-inspector__header` | part |
+| `cls.inspectorHead` | `ui-inspector__head` | part |
 
 ### `.ui-kbd`
 
@@ -851,7 +850,7 @@ each one matches a real selector in the stylesheet.
 | `cls.reportFigure` | `ui-report__figure` | part |
 | `cls.reportFinding` | `ui-report__finding` | part |
 | `cls.reportFootnotes` | `ui-report__footnotes` | part |
-| `cls.reportHeader` | `ui-report__header` | part |
+| `cls.reportHead` | `ui-report__head` | part |
 | `cls.reportMeta` | `ui-report__meta` | part |
 | `cls.reportSection` | `ui-report__section` | part |
 | `cls.reportSectionUnnumbered` | `ui-report__section--unnumbered` | modifier |
@@ -1290,7 +1289,40 @@ works in any framework without a binding layer:
 - **Modal** — native `<dialog>` gets backdrop + top-layer + focus-trap
   free. For a controlled/portal modal, add `is-open`
   (`ui.modal({ open: true })`) for the same skin/layout; the
-  backdrop and focus-trap are then yours.
+  backdrop, top-layer stacking AND focus-trap are then yours (`.is-open`
+  is a bare grid — it does not float or stack on its own).
+- **Current page** — mark the active link with `aria-current="page"`; it is
+  the programmatic cue the navs honour (`ui-sitenav`, `ui-app-nav`). The
+  `.is-active` class is the visual-only equivalent on `ui-app-nav`/`ui-tab`;
+  prefer `aria-current` so assistive tech announces the current page.
+- **Form validation wiring** — `initFormValidation` (`@ponchia/ui/behaviors`)
+  reads these attributes; they ARE the contract, not styling. Markup that omits
+  them renders but the behavior silently no-ops: `data-bronto-validate` on the
+  `<form>`; an optional empty `[data-bronto-error]` node per field (it falls
+  back to the field's `.ui-hint`, restoring the help text when valid again); a
+  `[data-bronto-error-summary]` (`.ui-error-summary`) block. The combobox
+  reads `[data-bronto-combobox]` + per-option `data-value` and emits
+  `bronto:change` (`{ detail: { value } }`) on selection; the interactive
+  legend emits `bronto:legend:toggle` (`{ detail: { series, active } }`).
+- **Status indicator** — `ui-status` carries no dot of its own: compose it with
+  a `.ui-dot` child + a text label, e.g.
+  `<span class="ui-status"><span class="ui-dot ui-dot--success"></span> Live</span>`.
+  (`ui-state` instead bakes in its own dot + the full tone vocabulary — pick
+  one.) A semantic `ui-dot--success|warning|danger|info` is colour-only outside
+  forced-colors, so it ALWAYS needs an adjacent text/aria label — never ship a
+  bare coloured dot as the sole signal.
+- **Opt-in component CSS** — a few classes are not in the core bundle and need
+  their leaf imported, or they render unstyled: `ui-property`/`ui-readout` →
+  `@ponchia/ui/css/workbench.css`; `ui-mark`/`ui-bracket-note` →
+  `@ponchia/ui/css/marks.css`; the analytical leaves (`ui-annotations`,
+  `ui-crosshair`, `ui-spotlight`, …) → their matching leaf.
+- **Loaders need their children** — `ui-dotspinner` requires exactly eight
+  `<i>` children, `ui-dotloader` three `<span>`, and a static `ui-dotbar`
+  lights a segment with `<i class="is-on">`. A childless
+  `<span class="ui-dotspinner">` renders nothing.
+- **`ui-caret` is a typing cursor**, not a dropdown chevron — a blinking block
+  caret (driven by `initDotGlyph`/`uiBlink`). For a disclosure/affordance
+  arrow use `ui-link--arrow` (`ui.link({ arrow: true })`).
 
 ## Tokens
 

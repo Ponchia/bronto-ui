@@ -162,7 +162,8 @@
               >
             </span>
             <label class="ui-switch"
-              ><input type="checkbox" id="contrastChk" /><span class="ui-switch__track"
+              ><input type="checkbox" id="contrastChk" role="switch" /><span
+                class="ui-switch__track"
                 ><span class="ui-switch__thumb"></span></span
               ><span class="ui-label" style="text-transform: none">High contrast</span></label
             >
@@ -417,7 +418,8 @@
           </div>
           <div class="ui-cluster" style="align-items: center">
             <label class="ui-switch"
-              ><input type="checkbox" checked /><span class="ui-switch__track"
+              ><input type="checkbox" checked role="switch" /><span
+                class="ui-switch__track"
                 ><span class="ui-switch__thumb"></span></span
               ><span class="ui-label" style="text-transform: none">Auto-execute</span></label
             >
@@ -646,24 +648,37 @@
               <button class="ui-button ui-button--sm" type="button">New invoice</button>
             </div>
           </div>
-          <ol class="ui-breadcrumb">
-            <li class="ui-breadcrumb__item"><a href="#standard">Home</a></li>
-            <li class="ui-breadcrumb__item"><a href="#standard">Projects</a></li>
-            <li class="ui-breadcrumb__item" aria-current="page">Detail</li>
-          </ol>
-          <ul class="ui-pagination">
-            <li>
-              <button class="ui-pagination__item" type="button" disabled aria-label="Previous page">
-                ‹
-              </button>
-            </li>
-            <li>
-              <button class="ui-pagination__item is-active" type="button" aria-current="page">1</button>
-            </li>
-            <li><button class="ui-pagination__item" type="button">2</button></li>
-            <li><button class="ui-pagination__item" type="button">3</button></li>
-            <li><button class="ui-pagination__item" type="button" aria-label="Next page">›</button></li>
-          </ul>
+          <nav aria-label="Breadcrumb">
+            <ol class="ui-breadcrumb">
+              <li class="ui-breadcrumb__item"><a href="#standard">Home</a></li>
+              <li class="ui-breadcrumb__item"><a href="#standard">Projects</a></li>
+              <li class="ui-breadcrumb__item" aria-current="page">Detail</li>
+            </ol>
+          </nav>
+          <nav aria-label="Pagination">
+            <ul class="ui-pagination">
+              <li>
+                <button
+                  class="ui-pagination__item"
+                  type="button"
+                  disabled
+                  aria-label="Previous page"
+                >
+                  ‹
+                </button>
+              </li>
+              <li>
+                <button class="ui-pagination__item is-active" type="button" aria-current="page">
+                  1
+                </button>
+              </li>
+              <li><button class="ui-pagination__item" type="button">2</button></li>
+              <li><button class="ui-pagination__item" type="button">3</button></li>
+              <li>
+                <button class="ui-pagination__item" type="button" aria-label="Next page">›</button>
+              </li>
+            </ul>
+          </nav>
           <ol class="ui-steps" style="max-inline-size: 32rem">
             <li class="ui-steps__item ui-steps__item--done">Account</li>
             <li class="ui-steps__item" aria-current="step">Profile</li>
@@ -734,9 +749,14 @@
               Open gallery
             </button>
           </div>
-          <dialog class="ui-modal" id="demoModal" data-bronto-dialog-light>
+          <dialog
+            class="ui-modal"
+            id="demoModal"
+            data-bronto-dialog-light
+            aria-labelledby="demoModalTitle"
+          >
             <div class="ui-modal__head">
-              <h4 class="ui-modal__title">Confirm</h4>
+              <h4 class="ui-modal__title" id="demoModalTitle">Confirm</h4>
               <button class="ui-modal__close" type="button" data-bronto-close aria-label="close">✕</button>
             </div>
             <div class="ui-modal__body">
@@ -747,9 +767,14 @@
               <button class="ui-button" type="button" data-bronto-close>Confirm</button>
             </div>
           </dialog>
-          <dialog class="ui-modal ui-modal--drawer" id="demoDrawer" data-bronto-dialog-light>
+          <dialog
+            class="ui-modal ui-modal--drawer"
+            id="demoDrawer"
+            data-bronto-dialog-light
+            aria-labelledby="demoDrawerTitle"
+          >
             <div class="ui-modal__head">
-              <h4 class="ui-modal__title">Filters</h4>
+              <h4 class="ui-modal__title" id="demoDrawerTitle">Filters</h4>
               <button class="ui-modal__close" type="button" data-bronto-close aria-label="close">✕</button>
             </div>
             <div class="ui-modal__body"><p>Slide-in drawer; bottom sheet on mobile.</p></div>

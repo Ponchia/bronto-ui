@@ -51,6 +51,8 @@ Overall: **all contractual pairings meet their floor ✅**.
 | `--text-dim` | `--surface-muted` | Dim/meta text on a muted panel | AA text (4.5:1) | 4.74:1 | Lc 66.7 | ✅ pass |
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 6.32:1 | Lc 75.4 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 6.96:1 | Lc 82.1 | ✅ pass |
+| `--accent-text` | `--accent-soft` | Accent text on an accent tint | Advisory (translucent tint — not gated) | 5.91:1 | Lc 71.0 | ℹ️ not gated |
+| `--accent-text` | `--bg-accent` | Accent text on an accent-tinted surface | Advisory (translucent tint — not gated) | 6.31:1 | Lc 75.3 | ℹ️ not gated |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 5.18:1 | Lc 78.9 | ✅ pass |
 | `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 5.18:1 | Lc 78.9 | ✅ pass |
 | `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 4.71:1 | Lc 66.8 | ✅ pass |
@@ -77,6 +79,8 @@ Overall: **all contractual pairings meet their floor ✅**.
 | `--text-dim` | `--surface-muted` | Dim/meta text on a muted panel | AA text (4.5:1) | 5.94:1 | Lc 48.1 | ✅ pass |
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 6.14:1 | Lc 44.9 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 5.58:1 | Lc 43.9 | ✅ pass |
+| `--accent-text` | `--accent-soft` | Accent text on an accent tint | Advisory (translucent tint — not gated) | 2.53:1 | Lc 43.8 | ℹ️ not gated |
+| `--accent-text` | `--bg-accent` | Accent text on an accent-tinted surface | Advisory (translucent tint — not gated) | 2.75:1 | Lc 49.1 | ℹ️ not gated |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 5.95:1 | Lc 42.9 | ✅ pass |
 | `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 5.95:1 | Lc 42.9 | ✅ pass |
 | `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 5.31:1 | Lc 40.0 | ✅ pass |
@@ -105,6 +109,8 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | --- | --- | --- | --- | --- | --- | --- |
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 6.75:1 | Lc 78.9 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 7.44:1 | Lc 85.6 | ✅ pass |
+| `--accent-text` | `--accent-soft` | Accent text on an accent tint | Advisory (translucent tint — not gated) | 6.31:1 | Lc 74.5 | ℹ️ not gated |
+| `--accent-text` | `--bg-accent` | Accent text on an accent-tinted surface | Advisory (translucent tint — not gated) | 6.74:1 | Lc 78.8 | ℹ️ not gated |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 5.66:1 | Lc 83.3 | ✅ pass |
 | `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 5.66:1 | Lc 83.3 | ✅ pass |
 | `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 5.14:1 | Lc 71.4 | ✅ pass |
@@ -117,6 +123,8 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | --- | --- | --- | --- | --- | --- | --- |
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 11.57:1 | Lc 74.8 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 10.52:1 | Lc 73.8 | ✅ pass |
+| `--accent-text` | `--accent-soft` | Accent text on an accent tint | Advisory (translucent tint — not gated) | 1.34:1 | Lc 15.1 | ℹ️ not gated |
+| `--accent-text` | `--bg-accent` | Accent text on an accent-tinted surface | Advisory (translucent tint — not gated) | 1.46:1 | Lc 20.3 | ℹ️ not gated |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 11.88:1 | Lc 71.6 | ✅ pass |
 | `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 11.88:1 | Lc 71.6 | ✅ pass |
 | `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 10.60:1 | Lc 69.9 | ✅ pass |
@@ -129,6 +137,8 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | --- | --- | --- | --- | --- | --- | --- |
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 12.23:1 | Lc 93.3 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 13.47:1 | Lc 99.9 | ✅ pass |
+| `--accent-text` | `--accent-soft` | Accent text on an accent tint | Advisory (translucent tint — not gated) | 11.43:1 | Lc 88.8 | ℹ️ not gated |
+| `--accent-text` | `--bg-accent` | Accent text on an accent-tinted surface | Advisory (translucent tint — not gated) | 12.22:1 | Lc 93.2 | ℹ️ not gated |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 11.74:1 | Lc 100.6 | ✅ pass |
 | `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 11.74:1 | Lc 100.6 | ✅ pass |
 | `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 10.66:1 | Lc 90.4 | ✅ pass |
@@ -141,6 +151,8 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | --- | --- | --- | --- | --- | --- | --- |
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 12.47:1 | Lc 79.1 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 11.35:1 | Lc 78.1 | ✅ pass |
+| `--accent-text` | `--accent-soft` | Accent text on an accent tint | Advisory (translucent tint — not gated) | 1.25:1 | Lc 11.0 | ℹ️ not gated |
+| `--accent-text` | `--bg-accent` | Accent text on an accent-tinted surface | Advisory (translucent tint — not gated) | 1.35:1 | Lc 16.3 | ℹ️ not gated |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 12.86:1 | Lc 75.6 | ✅ pass |
 | `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 12.86:1 | Lc 75.6 | ✅ pass |
 | `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 11.48:1 | Lc 74.1 | ✅ pass |
@@ -153,6 +165,8 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | --- | --- | --- | --- | --- | --- | --- |
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 6.22:1 | Lc 76.6 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 6.85:1 | Lc 83.3 | ✅ pass |
+| `--accent-text` | `--accent-soft` | Accent text on an accent tint | Advisory (translucent tint — not gated) | 5.81:1 | Lc 72.2 | ℹ️ not gated |
+| `--accent-text` | `--bg-accent` | Accent text on an accent-tinted surface | Advisory (translucent tint — not gated) | 6.21:1 | Lc 76.5 | ℹ️ not gated |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 5.19:1 | Lc 80.7 | ✅ pass |
 | `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 5.19:1 | Lc 80.7 | ✅ pass |
 | `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 4.71:1 | Lc 68.6 | ✅ pass |
@@ -165,6 +179,8 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | --- | --- | --- | --- | --- | --- | --- |
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 12.97:1 | Lc 81.8 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 11.80:1 | Lc 80.8 | ✅ pass |
+| `--accent-text` | `--accent-soft` | Accent text on an accent tint | Advisory (translucent tint — not gated) | 1.20:1 | Lc 8.4 | ℹ️ not gated |
+| `--accent-text` | `--bg-accent` | Accent text on an accent-tinted surface | Advisory (translucent tint — not gated) | 1.30:1 | Lc 13.7 | ℹ️ not gated |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 13.75:1 | Lc 79.7 | ✅ pass |
 | `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 13.75:1 | Lc 79.7 | ✅ pass |
 | `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 12.27:1 | Lc 78.5 | ✅ pass |
