@@ -19,6 +19,37 @@
   --src-tone: var(--text-dim);
 }
 
+/* Standalone trust pill — wears a `.ui-src--*` tone on its own, for a bare
+   "verified" / "stale" label outside a citation or source card (the tone setters
+   below only paint a `--src-tone` custom property, so without this host a lone
+   `.ui-src--verified` validates against classes.json yet renders nothing). Tone
+   is a leading dot + a tinted border AND the author's written label, never colour
+   alone (WCAG 1.4.1). Declared before the `--*` setters so their tone wins. */
+.ui-src {
+  --src-tone: var(--text-dim);
+
+  align-items: center;
+  background: var(--panel-soft);
+  border: 1px solid color-mix(in srgb, var(--src-tone) 45%, var(--line));
+  border-radius: var(--radius-pill);
+  color: var(--text-soft);
+  display: inline-flex;
+  font-size: var(--text-2xs);
+  gap: 0.35rem;
+  padding: 0.08rem 0.55rem;
+  vertical-align: baseline;
+}
+
+.ui-src::before {
+  background: var(--src-tone);
+  border-radius: 50%;
+  block-size: 0.45rem;
+  content: '';
+  flex: none;
+  inline-size: 0.45rem;
+  print-color-adjust: exact;
+}
+
 .ui-src--verified {
   --src-tone: var(--success);
 }
@@ -169,7 +200,8 @@
    1.4.1). Keep the marks visible as CanvasText rather than letting them vanish. */
 @media (forced-colors: active) {
   .ui-citation--chip::before,
-  .ui-provenance__item::before {
+  .ui-provenance__item::before,
+  .ui-src::before {
     background: CanvasText;
   }
 

@@ -52,6 +52,7 @@ Overall: **all contractual pairings meet their floor ✅**.
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 6.32:1 | Lc 75 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 6.96:1 | Lc 82 | ✅ pass |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 5.18:1 | Lc 79 | ✅ pass |
+| `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 5.18:1 | Lc 79 | ✅ pass |
 | `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 4.71:1 | Lc 67 | ✅ pass |
 | `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 5.18:1 | Lc 73 | ✅ pass |
 | `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 4.71:1 | Lc 67 | ✅ pass |
@@ -77,6 +78,7 @@ Overall: **all contractual pairings meet their floor ✅**.
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 6.14:1 | Lc 45 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 5.58:1 | Lc 44 | ✅ pass |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 5.95:1 | Lc 43 | ✅ pass |
+| `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 5.95:1 | Lc 43 | ✅ pass |
 | `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 5.31:1 | Lc 40 | ✅ pass |
 | `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 4.83:1 | Lc 39 | ✅ pass |
 | `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 5.31:1 | Lc 40 | ✅ pass |
@@ -104,6 +106,7 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 6.75:1 | Lc 79 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 7.44:1 | Lc 86 | ✅ pass |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 5.66:1 | Lc 83 | ✅ pass |
+| `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 5.66:1 | Lc 83 | ✅ pass |
 | `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 5.14:1 | Lc 71 | ✅ pass |
 | `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 5.66:1 | Lc 78 | ✅ pass |
 | `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 5.14:1 | Lc 71 | ✅ pass |
@@ -115,6 +118,7 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 11.57:1 | Lc 75 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 10.52:1 | Lc 74 | ✅ pass |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 11.88:1 | Lc 72 | ✅ pass |
+| `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 11.88:1 | Lc 72 | ✅ pass |
 | `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 10.60:1 | Lc 70 | ✅ pass |
 | `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 9.64:1 | Lc 69 | ✅ pass |
 | `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 10.60:1 | Lc 70 | ✅ pass |
@@ -126,6 +130,7 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 12.23:1 | Lc 93 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 13.47:1 | Lc 100 | ✅ pass |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 11.74:1 | Lc 101 | ✅ pass |
+| `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 11.74:1 | Lc 101 | ✅ pass |
 | `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 10.66:1 | Lc 90 | ✅ pass |
 | `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 11.74:1 | Lc 97 | ✅ pass |
 | `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 10.66:1 | Lc 90 | ✅ pass |
@@ -137,6 +142,7 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 12.47:1 | Lc 79 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 11.35:1 | Lc 78 | ✅ pass |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 12.86:1 | Lc 76 | ✅ pass |
+| `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 12.86:1 | Lc 76 | ✅ pass |
 | `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 11.48:1 | Lc 74 | ✅ pass |
 | `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 10.44:1 | Lc 73 | ✅ pass |
 | `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 11.48:1 | Lc 74 | ✅ pass |
@@ -148,6 +154,7 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 6.22:1 | Lc 77 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 6.85:1 | Lc 83 | ✅ pass |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 5.19:1 | Lc 81 | ✅ pass |
+| `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 5.19:1 | Lc 81 | ✅ pass |
 | `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 4.71:1 | Lc 69 | ✅ pass |
 | `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 5.19:1 | Lc 75 | ✅ pass |
 | `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 4.71:1 | Lc 69 | ✅ pass |
@@ -159,6 +166,7 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 12.97:1 | Lc 82 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 11.80:1 | Lc 81 | ✅ pass |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 13.75:1 | Lc 80 | ✅ pass |
+| `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 13.75:1 | Lc 80 | ✅ pass |
 | `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 12.27:1 | Lc 79 | ✅ pass |
 | `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 11.16:1 | Lc 78 | ✅ pass |
 | `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 12.27:1 | Lc 79 | ✅ pass |

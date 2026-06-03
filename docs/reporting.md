@@ -290,14 +290,19 @@ caption it with `ui-report__caption`, give it the standalone, portable
 pattern, **and** a fallback `ui-table` so the figure survives mono print and
 colour-vision deficiency.
 
-A Vega-Lite figure:
+A Vega-Lite figure. The live mount is **`ui-screen-only`** and the fallback
+`ui-table` carries the data into print — a live chart bakes the on-screen theme
+into its SVG/canvas at render time, so printing it would emit a dark-baked chart
+on white paper. Print the table; keep the chart for screen:
 
 ```html
-<figure class="ui-report__figure ui-print-exact" role="group" aria-labelledby="chart-title">
+<figure class="ui-report__figure" role="group" aria-labelledby="chart-title">
   <figcaption id="chart-title" class="ui-report__caption">
     Fig 1 - Weekly focus split
   </figcaption>
-  <div id="focus-chart"></div>
+  <div id="focus-chart" class="ui-screen-only" style="min-block-size: 240px">
+    <noscript>Chart needs JavaScript — the data is in the table below.</noscript>
+  </div>
   <div class="ui-table-wrap">
     <table class="ui-table ui-table--dense">
       <caption>Chart source data</caption>
@@ -325,16 +330,23 @@ A Vega-Lite figure:
       x: { field: 'series', type: 'nominal' },
       y: { field: 'hours', type: 'quantitative' },
     },
-  }, { config: brontoVegaConfig(theme), actions: false });
+  }, { config: brontoVegaConfig(theme), renderer: 'svg', actions: false });
 </script>
 ```
 
-> The bare-specifier `import`s above assume a **build step** (or an import map).
-> A static report opened from disk has no module resolver — use the CDN
-> `<script src>` form (Vega + Vega-Lite + vega-embed, then `brontoVegaConfig`
-> inlined or fetched from `@ponchia/ui/vega.json`) shown in [vega.md](./vega.md).
-> For a report you intend to **print/PDF**, prefer the frozen inline `<svg>`
-> below — it has no runtime and survives the print pipeline.
+Give the mount a `min-block-size` so the figure is not a collapsed blank band
+before the chart paints (or while JS is blocked), and pass **`renderer: 'svg'`**
+(vega-embed defaults to `canvas`, which doesn't theme-inspect and prints as a
+raster).
+
+> The bare-specifier `import`s above assume a **build step** (or an import map),
+> and even then `import`/`fetch` of the config only works over an `http(s)`
+> origin. A static report **opened from disk (`file://`) cannot import the module
+> nor fetch `vega.json`** (CORS) — load Vega + Vega-Lite + vega-embed from pinned
+> `/build/*.min.js` CDN tags and **inline the resolved `config` object**, the
+> file://-safe recipe in [vega.md](./vega.md#from-a-cdn-no-bundler). For a report
+> you intend to **print/PDF**, prefer the frozen inline `<svg>` below — it has no
+> runtime, prints exactly, and sidesteps all of this.
 
 A frozen, token-themed inline `<svg>` for the same data — no runtime, prints
 exactly, with a `.ui-legend` key and the fallback table:
@@ -387,6 +399,19 @@ For a frozen figure, drive the SVG fills from the `--chart-N` palette tokens
 directly; for a Vega chart, the same colours arrive through
 `brontoVegaConfig`'s `range.*` ramps, projected from `@ponchia/ui/charts.json`.
 
+For a **sequential** figure (a heatmap, a choropleth, a magnitude ramp) fill the
+cells from the single-hue ramp tokens `--chart-seq-1` … `--chart-seq-6`
+(low → high); for a **diverging** figure (−…0…+) use `--chart-div-1` …
+`--chart-div-7` (the middle band is the neutral midpoint). Both ramps live in
+`css/dataviz.css`, and their resolved per-theme hexes are in
+`@ponchia/ui/charts.json` (`sequential` / `diverging`) for a non-JS or `file://`
+host that needs literal values. The same ramps back Vega's
+`range.heatmap`/`ramp`/`diverging`, so a frozen sequential figure and a live Vega
+heatmap read identically — but note the ramp **runs pale→deep in light theme and
+deep→pale in dark** (it flips to stay legible against the background), so don't
+print a colour key that assumes one direction, and don't bake a fixed ink colour
+onto the cells. Pair the figure with a stepped legend and the fallback table.
+
 ## Annotation recipe
 
 When a report chart needs an explicit callout, import
@@ -433,6 +458,79 @@ style itself.
   </li>
 </ol>
 ```
+
+## Meters and quotes
+
+Two more report-native primitives. A **meter** shows a measured value as a
+proportion — set the percentage on the `--value` custom property of
+`ui-meter__fill` (a number 0–100, see `classes.json` `customProperties`); a tone
+modifier picks the fill colour, and the readable label is yours to write beside
+it (never rely on the bar alone — WCAG 1.4.1):
+
+```html
+<div class="ui-meter ui-meter--accent">
+  <span class="ui-meter__fill" style="--value: 72"></span>
+</div>
+<span class="ui-num">72% of quota</span>
+```
+
+A **pull-quote** lifts a source sentence out of the prose — `ui-quote` is the
+block, `ui-quote__cite` attributes it:
+
+```html
+<blockquote class="ui-quote">
+  <p>The migration paid for itself within the first billing cycle.</p>
+  <cite class="ui-quote__cite">Q2 finance review</cite>
+</blockquote>
+```
+
+## Theming a live report
+
+The report layer is static, but a screen report often offers a light/dark
+**toggle**. The chart palette is the one piece that does not re-skin from CSS
+alone: Vega and Mermaid/D2 bake resolved colours into their SVG at render time
+(they can't read `var()`), so on a theme flip you must **re-render** the foreign
+figures. Set the theme on the root and re-embed:
+
+```html
+<button type="button" class="ui-button ui-button--ghost ui-button--sm" id="theme-toggle">
+  Toggle theme
+</button>
+<script type="module">
+  import { brontoVegaConfig } from '@ponchia/ui/vega'; // http(s) origin only
+  const root = document.documentElement;
+  const renderChart = () => {
+    const theme = root.dataset.theme === 'dark' ? 'dark' : 'light';
+    const host = document.querySelector('#focus-chart');
+    host.replaceChildren(); // 1. clear the host — re-embedding into a non-empty node stacks SVGs
+    vegaEmbed(host, spec, { config: brontoVegaConfig(theme), renderer: 'svg', actions: false });
+  };
+  document.querySelector('#theme-toggle').addEventListener('click', () => {
+    root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    renderChart(); // 2. re-render on every flip — the baked SVG does not follow CSS
+  });
+  renderChart();
+</script>
+```
+
+Three foot-guns, each verified while dogfooding:
+
+- **Clear the host before re-embedding.** vega-embed appends; embedding twice
+  into the same node stacks a second chart under the first. `replaceChildren()`
+  (or `host.innerHTML = ''`) first.
+- **Avoid `width: 'container'` if the chart can be re-rendered while hidden.** A
+  container-sized Vega chart measures its parent at embed time; if that parent is
+  `display: none` (a collapsed section, an inactive tab) it measures `0` and
+  renders empty. Give the spec an explicit `width`, or re-embed when the section
+  becomes visible.
+- **Mermaid: don't `innerHTML = svg` over the source.** `mermaid.render()`
+  returns the SVG string — write it to a *separate* mount, not back into the
+  `<pre class="mermaid">` that still holds the diagram source, or a re-theme has
+  nothing to re-render from. Keep the source and the rendered output in different
+  nodes.
+
+For a report you will only ever **print/PDF**, skip all of this: render once in
+the target theme, or use the frozen inline `<svg>` route, which has no runtime.
 
 ## Common templates
 

@@ -222,6 +222,10 @@
       "description": "Global scale token. Value: `'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', ui-monospace, monospace`"
     },
     {
+      "name": "--on-accent",
+      "description": "Theme token. Light: `var(--button-text)` · Dark: `var(--button-text)`"
+    },
+    {
       "name": "--panel",
       "description": "Theme token. Light: `#ffffff` · Dark: `#1c1c1c`"
     },

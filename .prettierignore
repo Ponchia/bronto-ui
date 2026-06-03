@@ -19,6 +19,9 @@ shiki
 demo/index.html
 demo/theme-playground.html
 
+# Dogfood scratch reports (untracked, not shipped) — evidence, not source.
+reports-lab
+
 # Data / binaries / lockfile.
 fonts
 package-lock.json

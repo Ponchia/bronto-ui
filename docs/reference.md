@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 475 classes across 149 component groups
+- 476 classes across 149 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -1012,6 +1012,7 @@ each one matches a real selector in the stylesheet.
 
 | Registry key | Class | Kind |
 | --- | --- | --- |
+| `cls.src` | `ui-src` | base |
 | `cls.srcConflict` | `ui-src--conflict` | modifier |
 | `cls.srcGenerated` | `ui-src--generated` | modifier |
 | `cls.srcReviewed` | `ui-src--reviewed` | modifier |
@@ -1388,6 +1389,7 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--accent-ramp-end` | `#ffffff` |
 | `--accent-strong` | `color-mix(in srgb, var(--accent) 83%, #000)` |
 | `--accent-text` | `var(--accent-strong)` |
+| `--on-accent` | `var(--button-text)` |
 | `--accent-soft` | `color-mix(in srgb, var(--accent) 10%, transparent)` |
 | `--success` | `#2f7d4f` |
 | `--success-soft` | `rgb(47, 125, 79, 0.12)` |
@@ -1425,6 +1427,7 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--accent-ramp-end` | `#000000` |
 | `--accent-strong` | `color-mix(in srgb, var(--accent) 84%, #fff)` |
 | `--accent-text` | `var(--accent-strong)` |
+| `--on-accent` | `var(--button-text)` |
 | `--accent-soft` | `color-mix(in srgb, var(--accent) 14%, transparent)` |
 | `--success` | `#4ec27e` |
 | `--success-soft` | `rgb(78, 194, 126, 0.14)` |

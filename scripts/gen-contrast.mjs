@@ -175,6 +175,12 @@ const PAIRS = [
   ['--accent-text', '--surface', 'Accent text on a card', 'text'],
   // Label on the primary (filled accent) button.
   ['--button-text', '--accent', 'Label on the primary button', 'text'],
+  // On-accent ink — a label on ANY accent fill (button, badge, chart bar, a
+  // themed D2/Vega node). Same resolved value as --button-text, gated under the
+  // semantic name so an author can reach for "ink on accent" and get a
+  // guaranteed-readable token instead of --accent-text (which is the inverse:
+  // accent-coloured text for a neutral background).
+  ['--on-accent', '--accent', 'Ink on an accent fill', 'text'],
   // Non-text UI: focus ring, accent fill, status colour, strong hairline.
   ['--focus-ring', '--bg', 'Focus ring vs page background', 'ui'],
   ['--focus-ring', '--surface', 'Focus ring vs a card', 'ui'],
