@@ -46,6 +46,57 @@ of this strategy:
 These are intentionally not a chart framework. They are communication
 primitives.
 
+## 2026 scout batch — report & evidence grammar
+
+A multi-source scout pass (2026-06-03) surfaced the next concrete batch. All
+four are novel, Baseline-clean on the 2026 floor, and squarely on the
+"explains itself" north star — the report / review / evidence lane. They ship
+as opt-in surfaces (never default `dist/bronto.css`), CSS-and-markup first,
+each with the same host-owns-state boundary that kept the chart renderer out in
+0.6.0. `ui-diff` is the first build; the rest are queued behind it.
+
+### `ui-diff` — line/row change grammar  🚧 in flight
+
+A CSS-grid gutter grammar (`ui-diff`, `__row --add/--remove/--context`,
+`__hunk`, `--unified/--split`). The host supplies pre-classified rows; Bronto
+only paints — redundant `::before` +/- sign glyphs (never colour-only), tone
+tints, and optional subgrid alignment that degrades to plain grid. Composes
+with the shipped `ui-compare--2up`. Boundary: all tokenizing, row alignment,
+and hunk computation stay in the host — the moment Bronto parses or aligns rows
+it crosses the line that deleted the bar renderer in 0.6.0. Diff is the most
+explanation-dense surface Bronto does not yet own.
+
+### `ui-code` — fenced-code evidence chrome
+
+A static code surface that paints already-tokenized markup (head bar,
+line-number gutter via CSS counters, `.is-add` / `.is-del` / `.is-hl` line
+states) and **never parses**. The host — or Shiki, via the shipped
+`shiki/nothing.json` token-colour theme — supplies the token spans; Bronto owns
+chrome only. Code-as-evidence for changelogs, version history, and generated
+reports; pairs with the `.ui-src` provenance pill and marks. Degrades to a
+plain scrollable `<pre>`.
+
+### `ui-spark` — inline datawords
+
+Word-sized inline microcharts (line / bar / tristate / win-loss) for
+trend-in-a-sentence inside reports and dense tables — the inline-series gap the
+scalar `ui-delta` / `ui-num` / `ui-stat` leave open, and one block-level Vega
+will not fill. The host normalises each point to `0..1` (`--v`); Bronto paints
+geometry via inline SVG + custom properties + `currentColor`. No JS,
+SSR-static, print-survivable. Boundary: Bronto refuses raw values and
+min/max/scale computation, and every spark carries a host-supplied text / aria
+equivalent (a bare sparkline is opaque to AT).
+
+### `ui-sidenote` / `ui-marginnote` — marginal explanation
+
+Numbered margin sidenotes plus unnumbered marginnotes with CSS-counter
+numbering and zero-JS responsive collapse (the Tufte `:checked` pattern);
+degrades to an inline aside on narrow viewports and a footnote under
+`@media print`. The channel for evidence, caveats, and provenance asides that
+do not belong in the main column. Scope it as typographic margin notes,
+reconciled with the existing `report.css` `__footnotes` numbering — not a
+second backref engine.
+
 ## Next strong candidates
 
 ### 1. Source, citation, and provenance UI — ✅ shipped in 0.5.0
@@ -105,32 +156,7 @@ window-splitter behavior (focusable separator, `aria-valuemin/max/now`,
 arrow-key resize) and drag/drop affordances — both deferred, and Bronto should
 style drag handles, not become a drag-and-drop framework.
 
-### 5. Relationship UI beyond connectors
-
-Why it matters: users often need to understand cause, dependency, ownership,
-focus, and "this controls that" relationships. Connectors and spotlight cover
-part of this, but the system should also cover lighter-weight relationships.
-
-Recommended surface:
-
-- `ui-target-ring`: highlight an element without a full spotlight overlay.
-- `ui-hotspot`: compact numbered/pulsed target marker.
-- `ui-linkage`: relationship label between two regions, backed by connectors.
-- `ui-dependency`: compact dependency/blocked-by relation chip.
-
-Implementation boundary:
-
-- Keep DOM measurement in `connectors` and `spotlight`; do not add another
-  measurement behavior unless it has a distinct job.
-- Relationship meaning must be present in text or DOM order; lines and rings are
-  visual support.
-
-Good first build:
-
-- CSS-only `ui-target-ring` and `ui-hotspot`.
-- Reuse connector geometry for any measured line.
-
-### 6. Generated-content and AI trust primitives — 🟡 shipped in 0.5.0
+### 5. Generated-content and AI trust primitives — 🟡 shipped in 0.5.0
 
 Shipped as `@ponchia/ui/css/generated.css` (`ui-generated`, `ui-origin-label`,
 `ui-reasoning`, `ui-tool-log` / `ui-tool-call`) — the origin/provenance labels,
@@ -146,16 +172,16 @@ precision signal the product does not have).
 
 ## Priority
 
-The CSS cores of candidates 1–4 and 6 shipped in 0.5.0. What remains, in order,
-is the deferred behavior + the unbuilt candidate:
+The CSS cores of candidates 1–5 shipped in 0.5.0. The active work, in order:
 
-1. `initSources()` backref-focus / preview disclosure (candidate 1).
-2. `ui-job` / `ui-conflict` lifecycle surfaces (candidate 2).
-3. The `ui-splitter` ARIA window-splitter behavior + drag affordances (candidate 4).
-4. Relationship UI — `ui-target-ring` / `ui-hotspot` CSS first (candidate 5).
+1. The 2026 scout batch — `ui-diff` (in flight), then `ui-code`, `ui-spark`,
+   and `ui-sidenote` / `ui-marginnote`.
+2. `initSources()` backref-focus / preview disclosure (candidate 1).
+3. `ui-job` / `ui-conflict` lifecycle surfaces (candidate 2).
+4. The `ui-splitter` ARIA window-splitter behavior + drag affordances (candidate 4).
 
-Each stays gated on a real consumer needing it. This order keeps Bronto
-differentiated while staying inside its core philosophy: small,
+Deferred items stay gated on a real consumer needing them. This order keeps
+Bronto differentiated while staying inside its core philosophy: small,
 framework-agnostic primitives that make complex interfaces clearer.
 
 ## Inspiration watchlist
@@ -180,4 +206,4 @@ the primitive, not the implementation stack.
 | jQuery Steps / old wizard plugins | Multi-step flows with progress, validation, and branching. | If Bronto adds stepper/wizard UI, it should be state vocabulary first. |
 | `progressbar.js` | Lightweight progress shapes and determinate/indeterminate motion. | Lifecycle/job UI should make long-running work persistent and legible. |
 | `react-json-view` / old JSON viewers | Inspectable structured data with collapse/copy/path affordances. | Generated/tool output needs compact inspector primitives without a React lock-in. |
-| old diff viewers / `jsdifflib` | Side-by-side and inline change explanation. | Review/report UI may need diff primitives, but parsing belongs outside Bronto. |
+| old diff viewers / `jsdifflib` | Side-by-side and inline change explanation. | Becoming `ui-diff` (2026 batch): Bronto paints the row/gutter grammar, the host pre-classifies rows — parsing and alignment stay outside Bronto. |

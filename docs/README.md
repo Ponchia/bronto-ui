@@ -32,6 +32,7 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 - [vega.md](./vega.md) — theme Vega-Lite charts from bronto tokens (resolved `config`) — the recommended path when a report needs a chart, since bronto ships no chart component.
 - [marks.md](./marks.md) — text/evidence emphasis for running prose (`ui-mark`, `ui-bracket-note`).
 - [sources.md](./sources.md) — the citations / provenance trust layer.
+- [diff.md](./diff.md) — line/row change-review grammar (`ui-diff`, add/remove/context rows).
 - [connectors.md](./connectors.md) — leader lines between DOM elements.
 - [spotlight.md](./spotlight.md) — guided-focus overlay.
 - [crosshair.md](./crosshair.md) — plot ruler + pinned readout.

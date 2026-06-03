@@ -21,6 +21,7 @@ const SHOWCASE = [
   'crosshair',
   'selection',
   'sources',
+  'diff',
   'state',
   'generated',
   'workbench',
