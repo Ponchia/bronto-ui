@@ -34,6 +34,9 @@ import {
  * Options are read from the DOM at init; if you replace the listbox contents
  * (e.g. async/remote results) without re-initialising, filtering and keyboard
  * nav act on the stale nodes — re-run initCombobox after mutating the options.
+ *
+ * @param {import('./internal.js').DelegateOpts} [opts]
+ * @returns {import('./internal.js').Cleanup}
  */
 export function initCombobox({ root } = {}) {
   if (!hasDom()) return noop;

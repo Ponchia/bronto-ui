@@ -10,6 +10,12 @@ import {
 } from './internal.js';
 
 /**
+ * @typedef {object} CommandSelectDetail
+ * @property {string} value The chosen command's value.
+ * @property {string} label The chosen command's visible label.
+ */
+
+/**
  * Command palette — filter + keyboard-navigate a DOM-authored command list.
  * The CSS shell (`.ui-command`) is opt-in; this wires the listbox behavior the
  * shell needs. Bronto filters and navigates; the HOST owns the action registry,
@@ -29,6 +35,9 @@ import {
  *
  * Items are read from the DOM at init; re-run initCommand after replacing the
  * command list so filtering/navigation see the current nodes.
+ *
+ * @param {import('./internal.js').DelegateOpts} [opts]
+ * @returns {import('./internal.js').Cleanup}
  */
 export function initCommand({ root } = {}) {
   if (!hasDom()) return noop;
