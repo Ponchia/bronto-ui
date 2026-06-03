@@ -16,7 +16,7 @@
  *   - `states`  the sanctioned `is-*` state hooks that live OUTSIDE `cls` by
  *               design (so a validator linting only `classes` doesn't false-flag
  *               them) — with the scope each one is valid in.
- *   - `customProperties` the author-set CSS custom properties (chart/meter
+ *   - `customProperties` the author-set CSS custom properties (legend/meter
  *               knobs) — the inline-style contract that is otherwise prose-only.
  *
  * Pure function of committed source (no Date/now/random) → drift-checked by
@@ -92,25 +92,18 @@ const states = [
 ];
 
 /** Author-set CSS custom properties — the inline-style knobs that drive the
- *  static chart/meter primitives. Otherwise documented only in prose. */
+ *  legend swatch / meter primitives. Otherwise documented only in prose. */
 const customProperties = [
   {
-    name: '--chart-value',
-    on: '.ui-chart__bar',
-    type: 'percentage',
-    example: '72%',
-    note: 'bar fill length',
-  },
-  {
     name: '--chart-color',
-    on: '.ui-chart__fill, .ui-legend__swatch',
+    on: '.ui-legend__swatch',
     type: 'color',
     example: 'var(--chart-1)',
-    note: 'series colour — use a --chart-* token, never a raw hex',
+    note: 'legend-key series colour — use a --chart-* token, never a raw hex',
   },
   {
     name: '--chart-pattern',
-    on: '.ui-chart__fill, .ui-legend__swatch',
+    on: '.ui-legend__swatch',
     type: 'image',
     example: 'var(--chart-pattern-1)',
     note: 'redundant non-colour channel — pair pattern N with colour N (WCAG 1.4.1)',

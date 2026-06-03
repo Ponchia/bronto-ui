@@ -68,9 +68,16 @@ for (const theme of ['dark', 'light']) {
     await expect(page.locator('table caption')).toHaveCount(2);
     await expect(page.locator('figure.ui-report__figure figcaption')).toHaveCount(1);
     await expect(page.locator('.ui-legend')).toHaveCount(1);
-    await expect(page.locator('.ui-chart__plot')).toHaveCount(1);
-    await expect(page.locator('.ui-chart__bar')).toHaveCount(3);
-    await expect(page.locator('.ui-chart__fallback table')).toHaveCount(1);
+    // The CSS-bar renderer is gone; the figure now carries hand-authored inline
+    // SVGs. Assert the figure renders and the focus-split bar chart still draws
+    // one <rect> per series (Research / Delivery / Maintenance).
+    const figureSvgs = page.locator('figure.ui-report__figure svg');
+    await expect(figureSvgs.first()).toBeVisible();
+    const barChart = page.locator('figure.ui-report__figure svg[aria-label^="Weekly focus split"]');
+    await expect(barChart).toHaveCount(1);
+    await expect(barChart.locator('rect')).toHaveCount(3);
+    // The figure keeps its source-data fallback table.
+    await expect(page.locator('figure.ui-report__figure .ui-table-wrap table')).toHaveCount(1);
     await expect(page.locator('.ui-annotation')).toHaveCount(9);
     await expect(page.locator('.ui-annotation--label')).toHaveCount(1);
     await expect(page.locator('.ui-annotation--threshold')).toHaveCount(1);
@@ -104,8 +111,17 @@ test('report print utilities and overflow rules apply', async ({ page }) => {
         document.querySelector('.ui-report__section--unnumbered .ui-report__section-head'),
         '::before',
       ).content,
-      firstFillWidth: document.querySelector('.ui-chart__fill').getBoundingClientRect().width,
-      firstTrackWidth: document.querySelector('.ui-chart__track').getBoundingClientRect().width,
+      // The bar chart is now an inline SVG: bar widths are proportional to the
+      // series value, so the longest series (Research, 18 h) must render wider
+      // than the shortest (Maintenance, 7 h).
+      barRectWidths: (() => {
+        const bars = document.querySelector('svg[aria-label^="Weekly focus split"]');
+        const rects = [...bars.querySelectorAll('rect')];
+        return {
+          first: rects[0].getBoundingClientRect().width,
+          last: rects[rects.length - 1].getBoundingClientRect().width,
+        };
+      })(),
       annotationStroke: css('.ui-annotation__connector').vectorEffect,
       exact:
         css('.ui-print-exact').webkitPrintColorAdjust || css('.ui-print-exact').printColorAdjust,
@@ -124,8 +140,8 @@ test('report print utilities and overflow rules apply', async ({ page }) => {
   expect(result.keepInside).toBe('avoid');
   expect(result.evidencePadding).toBe('0px');
   expect(['none', 'normal', '']).toContain(result.unnumberedBefore);
-  expect(result.firstFillWidth).toBeGreaterThan(0);
-  expect(result.firstFillWidth).toBeLessThan(result.firstTrackWidth);
+  expect(result.barRectWidths.first).toBeGreaterThan(0);
+  expect(result.barRectWidths.first).toBeGreaterThan(result.barRectWidths.last);
   expect(result.annotationStroke).toBe('non-scaling-stroke');
   expect(result.exact).toBe('exact');
   // Chromium/WebKit resolve attr(href) in the computed ::after content;

@@ -368,8 +368,8 @@ stable references, threshold annotations for limits, circle/rect subjects for
 specific data, and badge markers for compact index points.
 
 ```html
-<figure class="ui-report__figure ui-chart ui-print-exact" role="group" aria-labelledby="annotated-chart">
-  <figcaption id="annotated-chart" class="ui-chart__caption">
+<figure class="ui-report__figure ui-print-exact" role="group" aria-labelledby="annotated-chart">
+  <figcaption id="annotated-chart" class="ui-report__caption">
     Fig 2 - Weekly throughput, annotated at the peak
   </figcaption>
   <svg viewBox="0 0 360 160" role="img" aria-labelledby="throughput-title throughput-desc">
@@ -402,14 +402,12 @@ specific data, and badge markers for compact index points.
       </g>
     </g>
   </svg>
-  <div class="ui-chart__fallback">
-    <div class="ui-table-wrap">
-      <table class="ui-table ui-table--dense">
-        <caption>Annotated chart source data</caption>
-        <thead><tr><th>Week</th><th class="is-num">Hours</th></tr></thead>
-        <tbody><tr><td>Week 4</td><td class="is-num">18</td></tr></tbody>
-      </table>
-    </div>
+  <div class="ui-table-wrap">
+    <table class="ui-table ui-table--dense">
+      <caption>Annotated chart source data</caption>
+      <thead><tr><th>Week</th><th class="is-num">Hours</th></tr></thead>
+      <tbody><tr><td>Week 4</td><td class="is-num">18</td></tr></tbody>
+    </table>
   </div>
 </figure>
 ```

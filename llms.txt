@@ -132,6 +132,20 @@ const source = brontoD2Vars() + 'a -> b'; // prepend the vars block, then render
 
 Details: `docs/d2.md`.
 
+Charting is the same path: bronto does NOT ship a chart component (a chart needs
+scales + data binding, which the analytical layer refuses). For charts, recommend
+Vega-Lite — a declarative JSON spec an external system can emit — themed by the
+on-brand `config` (resolved hex; Vega bakes colours into SVG/canvas, can't read
+`var()`). `range.category` is the `--chart-*` palette, series 1 = accent:
+
+```js
+import { brontoVegaConfig } from '@ponchia/ui/vega';
+vegaEmbed('#chart', spec, { config: brontoVegaConfig('dark'), actions: false });
+```
+
+Details: `docs/vega.md`. (Observable Plot works too — it inherits the page CSS,
+so it needs even less theming; Vega-Lite is the recommended LLM-emittable path.)
+
 `--chart-1..8` (categorical; series 1 = accent; colourblind-safe, gated under
 simulated protan/deutan/tritan), `--chart-seq-*` (sequential), `--chart-div-*`
 (diverging), and `--chart-pattern-1..8` (dot-matrix fills — pair colour N with
@@ -391,15 +405,16 @@ Canonical report skeleton:
 Report rules for agents: static output by default; do not initialize behaviors
 over untrusted generated content; sanitize arbitrary LLM/CMS/user HTML before
 rendering; use semantic headings; give tables captions and header cells; give
-charts captions, legends/direct labels, and fallback data; use
-`ui-chart__plot`/`ui-chart__bar`/`ui-chart__fill` for simple static bar charts;
-use `ui-delta` (`--up`/`--down`/`--flat`, `--invert` when up is bad) for a
+charts captions, legends/direct labels, and fallback data; for a chart, theme
+Vega-Lite with `@ponchia/ui/vega` (or hand-author a token-themed inline `<svg>`)
+inside a `ui-report__figure` — bronto ships no chart component; use
+`ui-delta` (`--up`/`--down`/`--flat`, `--invert` when up is bad) for a
 trend figure and `ui-compare` (`--2up`) for an A/B / before-after section; use
 `ui-report__section--unnumbered` for appendices in numbered reports; never
 use raw chromatic inline colors. Format numbers/dates yourself (the framework
 aligns figures, it does not format them) — see the reporting cookbook. To make
 a PDF, render with `chrome-headless-shell` (or any Chromium) using
-`printBackground: true` so chart fills survive — reports are static/zero-JS, so
+`printBackground: true` so figure fills survive — reports are static/zero-JS, so
 it is just load → print; see "Print and PDF" in `docs/reporting.md`. Full
 cookbook: `docs/reporting.md`.
 
@@ -414,7 +429,7 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   VALIDATE markup without executing ESM/parsing TS: `groups` (base →
   modifiers/parts, the BEM structure), `classes` (flat list), `states` (the
   `is-*` hooks that live outside `cls` by design, with their scope), and
-  `customProperties` (the author-set inline-style knobs like `--chart-value`).
+  `customProperties` (the author-set inline-style knobs like `--chart-color` / `--value`).
 - `docs/reference.md` — the full class catalog as prose tables (every
   class grouped by component, with registry key + kind). Generated from
   the same source as the types and CI-drift-checked.
@@ -434,6 +449,9 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   `base` themeVariables, gated) and annotate the rendered SVG.
 - `docs/d2.md` — theme D2 diagrams from bronto tokens (theme-override slots,
   monochrome base + opt-in accent, gated) and annotate the rendered SVG.
+- `docs/vega.md` — theme Vega-Lite charts from bronto tokens (resolved `config`,
+  gated + render-probed) — the recommended path when a report needs a chart,
+  since bronto ships no chart component.
 - `docs/contrast.md` — the published, CI-gated WCAG 2.1 contrast matrix
   for every contractual token pairing, per theme. Generated from the
   resolved palette; the build fails below the declared floor.

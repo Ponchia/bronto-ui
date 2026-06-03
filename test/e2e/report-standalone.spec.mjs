@@ -102,8 +102,13 @@ for (const theme of ['dark', 'light']) {
     await expect(page.locator('.ui-compare')).toHaveCount(1);
     await expect(page.locator('.ui-compare__col')).toHaveCount(2);
     await expect(page.locator('.ui-compare__head')).toHaveCount(2);
-    await expect(page.locator('.ui-chart__bar')).toHaveCount(2);
-    await expect(page.locator('.ui-chart__fallback table')).toHaveCount(1);
+    // The CSS-bar renderer is gone; the request-mix figure is now an inline
+    // SVG (one <rect> per series) with its data table kept as the fallback.
+    const figure = page.locator('figure.ui-report__figure');
+    const barChart = figure.locator('svg[aria-label^="Weekly request mix"]');
+    await expect(barChart).toBeVisible();
+    await expect(barChart.locator('rect')).toHaveCount(2);
+    await expect(figure.locator('.ui-table-wrap table')).toHaveCount(1);
     await expect(page.locator('.ui-legend')).toHaveCount(1);
   });
 }

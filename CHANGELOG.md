@@ -5,16 +5,28 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
-## Unreleased — 0.5.1
+## Unreleased — 0.6.0
 
-Additive maintenance on top of 0.5.0 — no breaking changes. Accumulates the
-post-0.5.0 work plus a multi-agent audit pass: accessibility hardening, a
-behavior/binding scope-safety fix, and codegen/gate tightening. The default
-`dist/bronto.css` grows ~0.4 kB raw (the a11y blocks below; gzip held); pin
-`~0.5`.
+Accumulates the post-0.5.0 work: a multi-agent audit pass (accessibility
+hardening, a behavior/binding scope-safety fix, codegen/gate tightening) plus a
+**breaking** charting realignment. The local static-bar renderer
+(`.ui-chart*`) is **removed** — a chart needs scales + data binding, which the
+analytical layer refuses to own. In its place, bronto becomes a themeable target
+for **Vega-Lite** (`@ponchia/ui/vega`), the same tokens-as-data path as Mermaid
+and D2. The data-viz **palette** (`--chart-*`, `tokens/charts.json`) and the
+**legend** layer are unchanged. Pin `~0.5` → re-pin `~0.6`; see
+[`MIGRATIONS.json`](./MIGRATIONS.json) (`0.5`→`0.6`).
 
 ### Added
 
+- **`@ponchia/ui/vega`** (+ `vega.json`) — an on-brand Vega-Lite / Vega
+  [`config`](https://vega.github.io/vega-lite/docs/config.html) resolved per
+  theme (the idiomatic `vega-themes` shape): monochrome chrome + one rationed
+  accent, `range.category/ordinal/ramp/heatmap/diverging` from the CVD-safe
+  data-viz palette. `brontoVegaConfig(theme)`. Resolved hex (Vega bakes colours
+  into SVG/canvas, can't read `var()`); gated structurally **and** by a headless
+  render-probe that asserts the colours land on a rendered chart. Vega is the
+  consumer's renderer — config only, not a dependency. See `docs/vega.md`.
 - **`ui-delta`** — a standalone trend/change indicator (core primitive): an
   arrow glyph (the non-colour channel) plus the figure, with
   `--up`/`--down`/`--flat`, and `--invert` to swap only the tone when "up" is
@@ -41,6 +53,17 @@ behavior/binding scope-safety fix, and codegen/gate tightening. The default
   dominant axis), `notePlacement({ inset })` (reserve the title stroke-halo so a
   placement that "fits" doesn't clip), and a `spread` half-angle on both
   `connectorEndArrow` and the shared `arrowHead` kernel.
+
+### Removed
+
+- **BREAKING: the local static bar-chart renderer (`.ui-chart`, `.ui-chart__plot`,
+  `__bar`, `__label`, `__track`, `__fill`, `__fallback`, `__caption`).** A chart
+  needs scales and data binding — out of scope for a CSS-first analytical layer
+  (ADR-0002). Replace with a Vega-Lite chart themed via `@ponchia/ui/vega`, or a
+  hand-authored token-themed inline `<svg>`, inside a `.ui-report__figure` with a
+  `.ui-report__caption` and a `.ui-legend` key. The `--chart-value` inline knob
+  is gone; the `--chart-color`/`--chart-pattern` swatch knobs remain (legend).
+  See `MIGRATIONS.json` (`0.5`→`0.6`) and `docs/vega.md`.
 
 ### Changed
 

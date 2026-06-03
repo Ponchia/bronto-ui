@@ -25,6 +25,7 @@ import {
 } from '../glyphs/glyphs.js';
 import { skins, SKIN_NAMES, type SkinName } from '../tokens/skins.js';
 import { charts, type ChartTokenName } from '../tokens/charts.js';
+import { brontoVegaConfig, type VegaConfig } from '../tokens/vega.js';
 import {
   connectRects,
   connectorPath,
@@ -67,9 +68,9 @@ const tt: 'ui-themetoggle__button' = cls.themetoggleButton;
 const report: 'ui-report' = cls.report;
 const reportSection: 'ui-report__section' = cls.reportSection;
 const reportSectionUnnumbered: 'ui-report__section--unnumbered' = cls.reportSectionUnnumbered;
-const chart: 'ui-chart' = cls.chart;
-const chartPlot: 'ui-chart__plot' = cls.chartPlot;
-const chartFill: 'ui-chart__fill' = cls.chartFill;
+const compare: 'ui-compare' = cls.compare;
+const legend: 'ui-legend' = cls.legend;
+const legendSwatch: 'ui-legend__swatch' = cls.legendSwatch;
 const annotation: 'ui-annotation' = cls.annotation;
 const annotationConnector: 'ui-annotation__connector' = cls.annotationConnector;
 const printOnly: 'ui-print-only' = cls.printOnly;
@@ -244,6 +245,15 @@ const series1: string = charts.light.categorical[0];
 const badChart: ChartTokenName = '--chart-99';
 void [chartTok, series1, badChart];
 
+// Vega: the ./vega subpath types are sound — VegaConfig has the range ramps,
+// brontoVegaConfig takes the theme literal, and an unknown theme is rejected.
+const vegaCfg: VegaConfig = brontoVegaConfig('dark');
+const vegaCat: string[] = vegaCfg.range.category;
+const vegaBg: string = vegaCfg.background;
+// @ts-expect-error — theme is 'light' | 'dark', not arbitrary.
+brontoVegaConfig('midnight');
+void [vegaCfg, vegaCat, vegaBg];
+
 // Annotations: helper subpath types are object-shaped and finite geometry stays
 // a runtime concern.
 const annTransform: string = annotationTransform({ x: 10, y: 20 });
@@ -361,9 +371,9 @@ void [
   report,
   reportSection,
   reportSectionUnnumbered,
-  chart,
-  chartPlot,
-  chartFill,
+  compare,
+  legend,
+  legendSwatch,
   annotation,
   annotationConnector,
   printOnly,
