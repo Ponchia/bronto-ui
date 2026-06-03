@@ -87,6 +87,20 @@
         }
       ],
       "codemod": "rg -l 'ui-chart__legend|ui-chart__swatch' then s/ui-chart__swatch/ui-legend__swatch/g and rework the ul.ui-chart__legend wrapper into ul.ui-legend with li.ui-legend__item rows. See docs/legends.md."
+    },
+    {
+      "from": "0.5",
+      "to": "0.6",
+      "summary": "Charting realignment. The local static bar-chart renderer (.ui-chart*) is removed — a chart needs scales + data binding, out of scope for the analytical layer. bronto is now a themeable target for Vega-Lite (@ponchia/ui/vega), the same tokens-as-data path as Mermaid/D2. The --chart-* data-viz palette, tokens/charts.json, and the .ui-legend layer are unchanged.",
+      "safe": [],
+      "manual": [
+        {
+          "old": "ui-chart / ui-chart__plot / ui-chart__bar / ui-chart__label / ui-chart__track / ui-chart__fill / ui-chart__fallback / ui-chart__caption",
+          "new": "a Vega-Lite chart themed with @ponchia/ui/vega, or a token-themed inline <svg>",
+          "note": "No 1:1 class mapping — the renderer is removed. For a real chart: import '@ponchia/ui/vega', pass brontoVegaConfig(theme) to vega-embed, and place the result in a <figure class=\"ui-report__figure\"> with a <figcaption class=\"ui-report__caption\"> and a <ul class=\"ui-legend\"> key (see docs/vega.md). For a frozen/print chart: hand-author an inline <svg> using the --chart-N palette tokens for fills. The --chart-value inline knob is gone; --chart-color/--chart-pattern remain on .ui-legend__swatch."
+        }
+      ],
+      "codemod": "No codemod — the .ui-chart* renderer has no replacement class. rg -l 'ui-chart\\\\b|ui-chart__' to find call sites, then rebuild each as a Vega-Lite chart (@ponchia/ui/vega) or a token-themed inline <svg>. See docs/vega.md."
     }
   ]
 }

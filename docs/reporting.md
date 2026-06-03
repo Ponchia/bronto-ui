@@ -167,9 +167,7 @@ they are all safe in the static, PDF-first report path.
   inside `ui-prose`; use `.ui-table` for curated evidence tables. If a
   `ui-report__evidence` block contains only a `ui-table-wrap`, the report layer
   removes the inner frame so evidence tables do not look double-boxed.
-- Every `<figure>` should include a `figcaption` using
-  `ui-chart__caption` (chart figures) or `ui-report__caption` (any other
-  report figure); the two are interchangeable in style.
+- Every `<figure>` should include a `figcaption` using `ui-report__caption`.
 - Do not use raw color values. Theme with `--accent`; use status tones for
   status; use chart tokens only in chart figures.
 
@@ -271,15 +269,72 @@ wraps to a single stack on a narrow screen, so two panels never overflow.
 
 ## Chart figure recipe
 
-The report layer supplies chart containers and a small static bar pattern, not a
-chart engine. The data key is the standalone, portable `.ui-legend`
-(`@ponchia/ui/css/legend.css`) — see [legends.md](./legends.md). For
-CSS/HTML/SVG charts, pair each chart color with a direct label, a pattern, or a
-fallback table.
+bronto ships **no chart component** — a chart needs scales and data binding, the
+two things the analytical layer [refuses to own](./architecture.md). It supplies
+the figure frame, the data key, and the colour palette; the chart itself comes
+from one of two routes:
+
+- **Live, interactive, or many-series** — theme [Vega-Lite](./vega.md):
+  `brontoVegaConfig(theme)` (from `@ponchia/ui/vega`) returns an on-brand
+  Vega-Lite `config` you spread into a spec and hand to vega-embed. Vega renders
+  the SVG/canvas; bronto only paints it. See [vega.md](./vega.md) for the full
+  recipe and the resolved `@ponchia/ui/vega.json` for non-JS hosts.
+- **Frozen, print, or zero-JS** — hand-author a token-themed inline `<svg>`,
+  painting marks from the `--chart-N` palette so the figure prints exactly and
+  carries no runtime.
+
+Whichever route, the figure frame is the same: wrap it in `ui-report__figure`,
+caption it with `ui-report__caption`, give it the standalone, portable
+`.ui-legend` data key (`@ponchia/ui/css/legend.css` — see
+[legends.md](./legends.md)), and pair every colour with a direct label, a
+pattern, **and** a fallback `ui-table` so the figure survives mono print and
+colour-vision deficiency.
+
+A Vega-Lite figure:
 
 ```html
-<figure class="ui-report__figure ui-chart ui-print-exact" role="group" aria-labelledby="chart-title">
-  <figcaption id="chart-title" class="ui-chart__caption">
+<figure class="ui-report__figure ui-print-exact" role="group" aria-labelledby="chart-title">
+  <figcaption id="chart-title" class="ui-report__caption">
+    Fig 1 - Weekly focus split
+  </figcaption>
+  <div id="focus-chart"></div>
+  <div class="ui-table-wrap">
+    <table class="ui-table ui-table--dense">
+      <caption>Chart source data</caption>
+      <thead>
+        <tr><th>Series</th><th class="is-num">Hours</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Research</td><td class="is-num">18</td></tr>
+        <tr><td>Delivery</td><td class="is-num">11</td></tr>
+      </tbody>
+    </table>
+  </div>
+</figure>
+<script type="module">
+  import vegaEmbed from 'vega-embed';
+  import { brontoVegaConfig } from '@ponchia/ui/vega';
+  const theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+  vegaEmbed('#focus-chart', {
+    data: { values: [
+      { series: 'Research', hours: 18 },
+      { series: 'Delivery', hours: 11 },
+    ] },
+    mark: 'bar',
+    encoding: {
+      x: { field: 'series', type: 'nominal' },
+      y: { field: 'hours', type: 'quantitative' },
+    },
+  }, { config: brontoVegaConfig(theme), actions: false });
+</script>
+```
+
+A frozen, token-themed inline `<svg>` for the same data — no runtime, prints
+exactly, with a `.ui-legend` key and the fallback table:
+
+```html
+<figure class="ui-report__figure ui-print-exact" role="group" aria-labelledby="chart-title">
+  <figcaption id="chart-title" class="ui-report__caption">
     Fig 1 - Weekly focus split
   </figcaption>
   <ul class="ui-legend" aria-label="Series">
@@ -300,42 +355,30 @@ fallback table.
       <span class="ui-legend__label">Delivery</span>
     </li>
   </ul>
-  <div class="ui-chart__plot" aria-hidden="true">
-    <div
-      class="ui-chart__bar"
-      style="--chart-value: 72%; --chart-color: var(--chart-1); --chart-pattern: var(--chart-pattern-1)"
-    >
-      <div class="ui-chart__label"><span>Research</span><span>18 h</span></div>
-      <div class="ui-chart__track"><div class="ui-chart__fill"></div></div>
-    </div>
-    <div
-      class="ui-chart__bar"
-      style="--chart-value: 44%; --chart-color: var(--chart-2); --chart-pattern: var(--chart-pattern-2)"
-    >
-      <div class="ui-chart__label"><span>Delivery</span><span>11 h</span></div>
-      <div class="ui-chart__track"><div class="ui-chart__fill"></div></div>
-    </div>
-  </div>
-  <div class="ui-chart__fallback">
-    <div class="ui-table-wrap">
-      <table class="ui-table ui-table--dense">
-        <caption>Chart source data</caption>
-        <thead>
-          <tr><th>Series</th><th class="is-num">Hours</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Research</td><td class="is-num">18</td></tr>
-          <tr><td>Delivery</td><td class="is-num">11</td></tr>
-        </tbody>
-      </table>
-    </div>
+  <svg viewBox="0 0 360 160" role="img" aria-labelledby="focus-svg-title">
+    <title id="focus-svg-title">Weekly focus split</title>
+    <line x1="36" y1="132" x2="324" y2="132" stroke="var(--line)" />
+    <rect x="72" y="42" width="96" height="90" fill="var(--chart-1)" />
+    <rect x="200" y="77" width="96" height="55" fill="var(--chart-2)" />
+  </svg>
+  <div class="ui-table-wrap">
+    <table class="ui-table ui-table--dense">
+      <caption>Chart source data</caption>
+      <thead>
+        <tr><th>Series</th><th class="is-num">Hours</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Research</td><td class="is-num">18</td></tr>
+        <tr><td>Delivery</td><td class="is-num">11</td></tr>
+      </tbody>
+    </table>
   </div>
 </figure>
 ```
 
-For canvas or SVG libraries, import resolved series colors from
-`@ponchia/ui/charts.json` and keep the same legend/caption/fallback structure in
-the surrounding HTML.
+For a frozen figure, drive the SVG fills from the `--chart-N` palette tokens
+directly; for a Vega chart, the same colours arrive through
+`brontoVegaConfig`'s `range.*` ramps, projected from `@ponchia/ui/charts.json`.
 
 ## Annotation recipe
 

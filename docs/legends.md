@@ -13,8 +13,9 @@ drifts from the series it describes.
 ```
 
 Bronto **paints and positions** the key; it owns no scales, no data→pixel
-mapping, and no series state. Pair it with Bronto's own `.ui-chart` bars, an
-SVG/canvas figure, or any external chart engine — the host owns the chart.
+mapping, and no series state. Pair it with any chart — a token-themed inline
+SVG, or an external engine like [Vega-Lite](./vega.md) — the host owns the
+chart.
 
 ## What it is not
 

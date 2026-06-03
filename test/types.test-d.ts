@@ -67,9 +67,9 @@ const tt: 'ui-themetoggle__button' = cls.themetoggleButton;
 const report: 'ui-report' = cls.report;
 const reportSection: 'ui-report__section' = cls.reportSection;
 const reportSectionUnnumbered: 'ui-report__section--unnumbered' = cls.reportSectionUnnumbered;
-const chart: 'ui-chart' = cls.chart;
-const chartPlot: 'ui-chart__plot' = cls.chartPlot;
-const chartFill: 'ui-chart__fill' = cls.chartFill;
+const compare: 'ui-compare' = cls.compare;
+const legend: 'ui-legend' = cls.legend;
+const legendSwatch: 'ui-legend__swatch' = cls.legendSwatch;
 const annotation: 'ui-annotation' = cls.annotation;
 const annotationConnector: 'ui-annotation__connector' = cls.annotationConnector;
 const printOnly: 'ui-print-only' = cls.printOnly;
@@ -361,9 +361,9 @@ void [
   report,
   reportSection,
   reportSectionUnnumbered,
-  chart,
-  chartPlot,
-  chartFill,
+  compare,
+  legend,
+  legendSwatch,
   annotation,
   annotationConnector,
   printOnly,

@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 483 classes across 150 component groups
+- 475 classes across 149 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -291,19 +291,6 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.center` | `ui-center` | base |
-
-### `.ui-chart`
-
-| Registry key | Class | Kind |
-| --- | --- | --- |
-| `cls.chart` | `ui-chart` | base |
-| `cls.chartBar` | `ui-chart__bar` | part |
-| `cls.chartCaption` | `ui-chart__caption` | part |
-| `cls.chartFallback` | `ui-chart__fallback` | part |
-| `cls.chartFill` | `ui-chart__fill` | part |
-| `cls.chartLabel` | `ui-chart__label` | part |
-| `cls.chartPlot` | `ui-chart__plot` | part |
-| `cls.chartTrack` | `ui-chart__track` | part |
 
 ### `.ui-check`
 
@@ -1274,8 +1261,8 @@ For numeric text *outside* a table, use the `ui-num` primitive
 (`ui.num({ tone })`), which carries the same tabular/aligned/tone intent; for
 a trend figure use `ui-delta` (`ui.delta({ dir, invert })`). The full,
 machine-readable list of these `is-*` state hooks — and the author-set inline
-custom properties (`--chart-value`, `--chart-color`, `--chart-pattern`,
-`--value`) — is in [`@ponchia/ui/classes.json`](../classes/classes.json)
+custom properties (`--chart-color`, `--chart-pattern`, `--value`) — is in
+[`@ponchia/ui/classes.json`](../classes/classes.json)
 (`states` / `customProperties`).
 
 ## Composition & state (read before re-implementing glue)
