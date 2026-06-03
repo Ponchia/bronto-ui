@@ -1,4 +1,4 @@
-import { hasDom, noop, bindOnce, byIdInHost } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, byIdInHost } from './internal.js';
 
 /**
  * Disclosure: a `[data-bronto-disclosure]` trigger toggles the element
@@ -7,7 +7,8 @@ import { hasDom, noop, bindOnce, byIdInHost } from './internal.js';
  */
 export function initDisclosure({ root } = {}) {
   if (!hasDom()) return noop;
-  const host = root || document;
+  const host = resolveHost(root);
+  if (!host) return noop;
   const onClick = (e) => {
     const trigger = e.target.closest('[data-bronto-disclosure]');
     if (!trigger || !host.contains(trigger)) return;

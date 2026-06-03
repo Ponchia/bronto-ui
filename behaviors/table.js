@@ -1,4 +1,4 @@
-import { hasDom, noop, bindOnce } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce } from './internal.js';
 
 /**
  * Client-side sortable + selectable data table. Wires
@@ -16,10 +16,15 @@ import { hasDom, noop, bindOnce } from './internal.js';
  *    ({ detail: { count } }) on the table.
  *
  * SSR-safe, idempotent per table; returns a cleanup function.
+ *
+ * The numeric sort parses each cell as display text (strips non-[0-9.-] chars),
+ * so it is locale-naive — group/decimal separators beyond `.`/`-` are not
+ * interpreted. It is a client-side convenience sorter, not a data grid.
  */
 export function initTableSort({ root } = {}) {
   if (!hasDom()) return noop;
-  const host = root || document;
+  const host = resolveHost(root);
+  if (!host) return noop;
   const tables = [];
   if (host !== document && host.matches?.('[data-bronto-sortable]')) tables.push(host);
   tables.push(...(host.querySelectorAll?.('[data-bronto-sortable]') ?? []));

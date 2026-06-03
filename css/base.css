@@ -27,12 +27,16 @@ body {
   background: var(--bg);
   color: var(--text);
   margin: 0;
-  min-block-size: 100vh;
+  min-block-size: 100dvh;
   position: relative;
 }
 
+:root {
+  --scroll-offset: 6rem;
+}
+
 main [id] {
-  scroll-margin-top: 6rem;
+  scroll-margin-block-start: var(--scroll-offset);
 }
 
 ::selection {

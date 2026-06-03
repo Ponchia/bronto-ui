@@ -1,4 +1,4 @@
-import { hasDom, noop, bindOnce } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce } from './internal.js';
 
 /**
  * Image carousel / gallery, built on CSS scroll-snap so touch + trackpad
@@ -25,7 +25,8 @@ import { hasDom, noop, bindOnce } from './internal.js';
  */
 export function initCarousel({ root } = {}) {
   if (!hasDom()) return noop;
-  const host = root || document;
+  const host = resolveHost(root);
+  if (!host) return noop;
   const boxes = [];
   if (host !== document && host.matches?.('[data-bronto-carousel]')) boxes.push(host);
   boxes.push(...(host.querySelectorAll?.('[data-bronto-carousel]') ?? []));
@@ -176,13 +177,17 @@ export function initCarousel({ root } = {}) {
         },
         { root: viewport, threshold: 0.6 },
       );
-      slides.forEach((s) => io.observe(s));
     }
 
     render();
     const bound = bindOnce(box, 'carousel', () => {
       viewport.addEventListener('keydown', onKey);
       box.addEventListener('click', onClick);
+      // Observe inside the add callback so observe/disconnect pair with the
+      // binding lifecycle: a re-init tears down the prior binding (which
+      // disconnects the old observer) before this starts, so two observers
+      // never watch the same slides — even for one tick.
+      slides.forEach((s) => io?.observe(s));
       return () => {
         viewport.removeEventListener('keydown', onKey);
         box.removeEventListener('click', onClick);

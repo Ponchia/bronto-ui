@@ -1,4 +1,4 @@
-import { hasDom, noop, bindOnce, byIdInHost } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, byIdInHost } from './internal.js';
 
 /**
  * Wire native <dialog> open/close glue (the one bit <dialog> can't do
@@ -17,7 +17,8 @@ import { hasDom, noop, bindOnce, byIdInHost } from './internal.js';
  */
 export function initDialog({ root } = {}) {
   if (!hasDom()) return noop;
-  const host = root || document;
+  const host = resolveHost(root);
+  if (!host) return noop;
   const managedDialogs = new WeakSet();
   const canManageDialog = (dlg, origin) => host.contains(origin) || managedDialogs.has(dlg);
 

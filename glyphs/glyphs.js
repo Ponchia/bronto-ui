@@ -23,7 +23,7 @@ export const GLYPH_SIZE = 16;
 
 // Raw bitmaps. Each is GLYPH_SIZE rows of GLYPH_SIZE chars over [.#*]:
 // `.` off · `#` hot · `*` accent. Only `spark` uses accent dots — it is the
-// canonical two-tone demo; the gate in check-glyphs.mjs enforces the shape.
+// canonical two-tone demo; test/glyphs.test.mjs asserts the spark-only-* rule.
 const RAW = {
   circle: [
     '................',
@@ -941,9 +941,9 @@ function esc(s) {
     .replace(/"/g, '&quot;');
 }
 
-// `dot`/`gap` land in an inline-CSS context (`style="--dotmatrix-dot:VALUE"`),
-// where HTML-escaping a `"` stops attribute breakout but a `;` would still open
-// a second CSS declaration (overlay/clickjacking, selector exfil). So restrict
+// `dot`, `gap`, and `size` land in an inline-CSS context (`style="…"`), where
+// HTML-escaping a `"` stops attribute breakout but a `;` would still open a
+// second CSS declaration (overlay/clickjacking, selector exfil). So restrict
 // them to length/calc syntax — digits, units, %, whitespace and `()+-*/.,` for
 // calc()/clamp()/var() — and drop anything else rather than emit it.
 function cssLen(v) {
@@ -1004,6 +1004,8 @@ function maskUrl(rows) {
  * bitmap (one DOM node, not GLYPH_SIZE²) — the icon-at-scale path: it sizes to
  * `size` (or `--icon-size` / `1em`) and inherits `currentColor`. The
  * cell-mode options (grid/solid/anim/dot/gap) don't apply; `label` does.
+ * Mask mode is single-tone: accent `*` cells (used by `spark`) render
+ * identically to hot `#` cells — both become opaque mask regions.
  * Needs `@ponchia/ui/css` (the `.ui-icon` rule).
  */
 export function renderGlyph(name, options = {}) {

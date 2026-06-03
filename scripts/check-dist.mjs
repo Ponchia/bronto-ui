@@ -11,12 +11,28 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { resolve, dirname, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildBundles, BUDGET, sizes } from './build-dist.mjs';
+import { buildBundles, BUDGET, sizes, leafFiles, EXTRA_LEAVES } from './build-dist.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
 
 const bundles = buildBundles();
+
+// Source-coverage: every hand-authored css/<leaf>.css must ship via SOME path —
+// bundled (core import graph), an opt-in layered leaf (EXTRA_LEAVES), or a
+// roll-up entrypoint. A new leaf that is none of these produces no dist copy
+// and no export: it ships *nothing* while reading as "covered". This is the
+// inverse of the stale-dist check below and closes the silent-orphan hole.
+const ROLLUPS = new Set(['core.css', 'analytical.css']);
+const coveredLeaves = new Set([...leafFiles(), ...EXTRA_LEAVES, ...ROLLUPS]);
+for (const e of readdirSync(resolve(root, 'css'), { withFileTypes: true })) {
+  if (!e.isFile() || !e.name.endsWith('.css')) continue;
+  if (!coveredLeaves.has(e.name)) {
+    errors.push(
+      `css/${e.name} is an orphan leaf — not bundled, not in build-dist EXTRA_LEAVES, not a roll-up; it would ship nothing. Add it to EXTRA_LEAVES (plus an exports entry) or import it from core.css.`,
+    );
+  }
+}
 
 // `package.json` ships the WHOLE `dist/` dir, but the loop below only
 // iterates the *expected* outputs — a stale extra .css (a renamed leaf,

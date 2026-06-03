@@ -7,6 +7,9 @@
    ========================================================================== */
 
 .ui-report {
+  /* Declare override-surface tokens first so authors can set them. */
+  --report-width: 72rem;
+  --report-padding-block: var(--space-2xl);
   --report-gap: var(--space-lg);
   --report-measure: 74ch;
   --report-page-margin: 18mm;
@@ -14,9 +17,9 @@
   color: var(--text-soft);
   display: grid;
   gap: var(--report-gap);
-  inline-size: min(100%, var(--report-width, 72rem));
+  inline-size: min(100%, var(--report-width));
   margin-inline: auto;
-  padding: var(--report-padding-block, var(--space-2xl)) var(--space-md);
+  padding: var(--report-padding-block) var(--space-md);
 }
 
 .ui-report--compact {

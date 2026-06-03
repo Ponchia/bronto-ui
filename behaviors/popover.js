@@ -1,4 +1,4 @@
-import { hasDom, noop, bindOnce, byIdInHost } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, byIdInHost } from './internal.js';
 
 /**
  * Collision-aware popover, dependency-free. A `[data-bronto-popover]`
@@ -12,10 +12,14 @@ import { hasDom, noop, bindOnce, byIdInHost } from './internal.js';
  * `aria-expanded` / `aria-controls`, closes on Escape and outside
  * click, and re-positions on scroll/resize while open. SSR-safe,
  * idempotent; returns a cleanup function.
+ *
+ * Escape returns focus to the trigger; closing via outside-click leaves focus
+ * where the click landed (treated as deliberate intent to move on).
  */
 export function initPopover({ root } = {}) {
   if (!hasDom()) return noop;
-  const host = root || document;
+  const host = resolveHost(root);
+  if (!host) return noop;
   const view = document.defaultView;
   const GAP = 8;
   let openPanel = null;

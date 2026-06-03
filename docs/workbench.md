@@ -50,6 +50,12 @@ A label/value pair, denser than `ui-key-value` and tuned for an inspector. The
 
 ## Selection bar — `.ui-selectionbar`
 
+> **Name note:** `.ui-selectionbar` is the workbench bulk-action bar (this
+> section). It is unrelated to the `.ui-sel--on` / `.ui-sel--off` /
+> `.ui-sel--maybe` selection-emphasis state classes in
+> [`css/selection.css`](./selection.md), which style host-managed selection
+> state on individual items.
+
 A raised bar of actions on the current selection: a `__count` on one side,
 `__actions` on the other. The host owns what is selected and what the actions do.
 

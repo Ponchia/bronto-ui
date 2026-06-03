@@ -81,8 +81,13 @@ function resolveRoot(root) {
 function resolveOpts(opts) {
   const value = resolveMaybe(opts);
   if (!value || typeof value !== 'object') return undefined;
+  // No `root` key → no scope requested; leave root out so the behavior
+  // delegates from `document`. A `root` key that resolves falsy means a scope
+  // WAS requested but the ref is not ready: emit `root: null` so the behavior
+  // no-ops instead of hijacking the whole document.
+  if (!('root' in value)) return { ...value };
   const root = resolveRoot(value.root);
-  return root ? { ...value, root } : { ...value, root: undefined };
+  return { ...value, root: root || null };
 }
 
 /** Run a delegated behavior for the component's lifetime (init on mount, its

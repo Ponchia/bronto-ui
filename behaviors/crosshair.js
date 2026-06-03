@@ -1,4 +1,4 @@
-import { hasDom, noop, bindOnce } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce } from './internal.js';
 
 /**
  * Track the pointer over a plot and drive a crosshair. Each
@@ -14,7 +14,8 @@ import { hasDom, noop, bindOnce } from './internal.js';
  */
 export function initCrosshair({ root } = {}) {
   if (!hasDom()) return noop;
-  const host = root || document;
+  const host = resolveHost(root);
+  if (!host) return noop;
   const plots = [];
   if (host !== document && host.matches?.('[data-bronto-crosshair]')) plots.push(host);
   plots.push(...host.querySelectorAll('[data-bronto-crosshair]'));

@@ -1,8 +1,6 @@
 /* ==========================================================================
    motion — keyframes + animation utilities
    Restrained, dot-flavoured. Everything collapses under reduced-motion.
-   Keyframes from the legacy responsive layer live here so consumers that
-   import only core.css keep their existing animations.
    ========================================================================== */
 
 @keyframes pulseDot {
@@ -15,45 +13,6 @@
   50% {
     opacity: 1;
     transform: scale(1);
-  }
-}
-
-@keyframes scan {
-  0% {
-    transform: translateY(-120%);
-  }
-
-  100% {
-    transform: translateY(320%);
-  }
-}
-
-@keyframes growBar {
-  to {
-    transform: scaleX(1);
-  }
-}
-
-@keyframes drawLine {
-  from {
-    opacity: 0;
-    stroke-dasharray: 0 999;
-  }
-
-  to {
-    opacity: 1;
-    stroke-dasharray: 999 0;
-  }
-}
-
-@keyframes pulseNode {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.08);
   }
 }
 
@@ -365,12 +324,23 @@
     scroll-behavior: auto;
   }
 
+  /* !important is required: inside @layer bronto, layered rules lose to
+     unlayered author rules at equal specificity — only a layered !important
+     stays authoritative over unlayered declarations (CSS cascade §6.2). */
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  /* Freeze the shimmer gradient mid-sweep would expose a diagonal band.
+     Flatten the skeleton to its base panel colour instead. */
+  .ui-skeleton {
+    animation: none;
+    background: var(--panel-soft);
+    background-size: auto;
   }
 
   .ui-reveal {

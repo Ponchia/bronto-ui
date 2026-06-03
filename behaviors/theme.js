@@ -1,4 +1,4 @@
-import { hasDom, noop, bindOnce } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce } from './internal.js';
 
 const THEMES = ['light', 'dark'];
 
@@ -9,7 +9,8 @@ const THEMES = ['light', 'dark'];
  */
 export function applyStoredTheme({ storageKey = 'bronto-theme', root } = {}) {
   if (!hasDom()) return;
-  const el = root || document.documentElement;
+  const el = resolveHost(root, document.documentElement);
+  if (!el) return;
   let stored = null;
   try {
     stored = localStorage.getItem(storageKey);
@@ -33,7 +34,8 @@ export function applyStoredTheme({ storageKey = 'bronto-theme', root } = {}) {
  */
 export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
   if (!hasDom()) return noop;
-  const host = root || document;
+  const host = resolveHost(root);
+  if (!host) return noop;
   const docEl = document.documentElement;
 
   const prefersDark = () =>
