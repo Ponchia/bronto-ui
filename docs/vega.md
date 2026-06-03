@@ -154,7 +154,35 @@ const spec = {
 `brontoVegaNeutral(theme)` is the last category (the quiet neutral); re-read both
 when the theme toggles. Prefer them over digging the hex out of
 `tokens/resolved.json` — they are guaranteed to match the palette the config
-already ships.
+already ships. In token terms the accent is `--chart-1` and the neutral is
+`--chart-8`, so a [legend](./legends.md#swatch-colour) for an accent-rationed
+chart keys those two series with `ui-legend__swatch--1` and
+`ui-legend__swatch--8` — the swatches mirror the marks exactly.
+
+### Selecting the themed ramp in a spec
+
+The config registers the ramps as **named ranges**, so a quantitative encoding
+opts in with `scale: { range: 'heatmap' }` (or `'ramp'` / `'diverging'`) — the
+range **name**, not a colour scheme:
+
+```js
+{
+  mark: 'rect',
+  encoding: {
+    x: { field: 'x', type: 'nominal' },
+    y: { field: 'y', type: 'nominal' },
+    color: { field: 'v', type: 'quantitative', scale: { range: 'heatmap' } },
+  },
+}
+```
+
+> Use `scale: { range: 'heatmap' }`, **not** `scale: { scheme: 'heatmap' }`.
+> `scheme:` looks up a registered Vega/d3 scheme by name and **throws** for
+> `'heatmap'` (no such scheme) — the ramp is a custom `range` the bronto config
+> defines, addressed by range name. A `quantitative` colour encoding already
+> defaults to `range.heatmap`; name it explicitly only when a chart has several
+> quantitative scales and you want a specific one (`'diverging'` for a signed
+> domain around a neutral centre).
 
 ### Sequential & diverging ramps invert by theme
 

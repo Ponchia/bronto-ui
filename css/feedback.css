@@ -439,6 +439,7 @@
 .ui-progress__bar {
   background: var(--accent);
   block-size: 100%;
+  display: block;
   transition: inline-size var(--duration-base) var(--ease-out);
   inline-size: calc(clamp(0, var(--value, 0), 100) * 1%);
 }
@@ -484,6 +485,7 @@
 .ui-meter__fill {
   background: var(--text-dim);
   block-size: 100%;
+  display: block;
   transition: inline-size var(--duration-base) var(--ease-out);
   inline-size: calc(clamp(0, var(--value, 0), 100) * 1%);
 }

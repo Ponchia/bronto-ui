@@ -31,6 +31,29 @@ the only one.
 | Stale | `ui-src--stale` | warning |
 | Conflict | `ui-src--conflict` | danger |
 
+A trust-state class **needs a host element** — on its own a tone class
+(`ui-src--verified` and the rest) only sets a `--src-tone`, it does not draw
+anything. The host is one of the elements below, or the standalone `.ui-src`
+pill.
+
+## Standalone trust pill — `.ui-src`
+
+When you just need a bare labelled chip (a row of provenance tags, an inline
+"verified" badge) with no surrounding card or citation, use `.ui-src` as the
+host and add a tone. It draws a small pill with a leading trust dot:
+
+```html
+<span class="ui-src ui-src--verified">Verified</span>
+<span class="ui-src ui-src--generated">AI-generated</span>
+<span class="ui-src ui-src--stale">Stale · 14d</span>
+```
+
+The base `.ui-src` is required — `<span class="ui-src--verified">` alone
+**validates against `classes.json` but renders nothing**, because the tone class
+only carries the colour for a host to consume. The word inside is the channel
+(WCAG 1.4.1); the dot and tint are reinforcement. Reach for `.ui-citation--chip`
+instead when the pill is a real link/button to the source.
+
 ## Inline citation — `.ui-citation`
 
 A reference marker on a real `<a>` or `<button>` (the visual index is never the
@@ -63,6 +86,10 @@ A single source preview: title, origin, time, excerpt, actions. The
   </div>
 </article>
 ```
+
+The parts are `__title`, `__origin`, `__time`, `__excerpt` (the body text — not
+`__detail`/`__body`), and `__actions`. A card nests inside a
+`ui-source-list__item` when it sits in a references section (below).
 
 ## Source list — `.ui-source-list`
 
