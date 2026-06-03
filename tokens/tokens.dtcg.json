@@ -542,6 +542,15 @@
           }
         }
       },
+      "on": {
+        "accent": {
+          "$type": "color",
+          "$value": null,
+          "$extensions": {
+            "com.ponchia.css": "var(--button-text)"
+          }
+        }
+      },
       "success": {
         "DEFAULT": {
           "$type": "color",
@@ -718,6 +727,15 @@
           "$value": null,
           "$extensions": {
             "com.ponchia.css": "color-mix(in srgb, var(--accent) 14%, transparent)"
+          }
+        }
+      },
+      "on": {
+        "accent": {
+          "$type": "color",
+          "$value": null,
+          "$extensions": {
+            "com.ponchia.css": "var(--button-text)"
           }
         }
       },
