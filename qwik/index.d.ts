@@ -16,6 +16,7 @@ export function usePopover(opts?: BrontoBindingOptsResolver): void;
 export function useTableSort(opts?: BrontoBindingOptsResolver): void;
 export function useTabs(opts?: BrontoBindingOptsResolver): void;
 export function useDialog(opts?: BrontoBindingOptsResolver): void;
+export function useModal(opts?: BrontoBindingOptsResolver): void;
 export function useCarousel(opts?: BrontoBindingOptsResolver): void;
 export function useDotGlyph(opts?: BrontoBindingOptsResolver): void;
 export function useLegend(opts?: BrontoBindingOptsResolver): void;

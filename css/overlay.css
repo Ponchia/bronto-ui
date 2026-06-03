@@ -78,8 +78,10 @@ dialog.ui-modal[open]::backdrop {
 
 /* Controlled (non-<dialog>) usage. A portal/React modal that can't be a
    native <dialog> wears the same skin + open layout via `.is-open`.
-   Backdrop, top-layer stacking and focus-trapping are then the
-   consumer's responsibility (the native <dialog> path gets them free). */
+   Backdrop and top-layer stacking are then the consumer's responsibility
+   (the native <dialog> path gets them free); focus-trapping no longer is —
+   mark the overlay `data-bronto-modal` and run `initModal` for an
+   inert-based trap + focus-return + Escape signal. */
 .ui-modal.is-open {
   animation: uiToastIn var(--duration-base) var(--ease-spring) both;
   display: grid;

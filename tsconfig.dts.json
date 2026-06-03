@@ -25,6 +25,7 @@
     "behaviors/dismissible.js",
     "behaviors/tabs.js",
     "behaviors/dialog.js",
+    "behaviors/modal.js",
     "behaviors/toast.js",
     "behaviors/disclosure.js",
     "behaviors/menu.js",

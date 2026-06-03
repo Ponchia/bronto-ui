@@ -185,9 +185,14 @@ convey identity to AT. Keep initials to ~2 characters — the box is
 ## Modal: native `<dialog>` vs `is-open`
 
 Prefer the **native `<dialog>`** path — you get top-layer, backdrop and
-focus-trap free. Only use `ui-modal.is-open` (`ui.modal({ open: true })`)
-when a portal/React modal genuinely can't be a `<dialog>`; then the
-backdrop and focus-trap are **yours** to provide. A drawer is a modal
+focus-trap free (wire it with `initDialog` for open-triggers + focus-return).
+Only use `ui-modal.is-open` (`ui.modal({ open: true })`) when a portal/React
+modal genuinely can't be a `<dialog>`. The **backdrop and top-layer stacking
+stay yours**, but you no longer have to hand-roll the focus trap: mark the
+overlay `data-bronto-modal` and call `initModal()`. While `is-open` it traps
+focus with `inert` (the rest of the page goes non-interactive), returns focus to
+the opener on close, and dispatches a cancelable `bronto:modal:close` on Escape —
+you still own the `is-open` class, so drop it in response. A drawer is a modal
 that enters from an edge — same rule.
 
 ## Carousel & lightbox: one primitive, two skins
@@ -382,13 +387,48 @@ without it, it falls back to an `is-open` class that a clipping ancestor can cut
 off. Add `popover` to the panel for the robust path — the `is-open` form is a
 fallback, not the default to copy.
 
+## Two tiers: CSS-native vs behavior-required
+
+Not every component works with JavaScript off — know which tier you are shipping
+before you rely on the no-JS path.
+
+**CSS-native — fully operable with JS off.** Safe in static or LLM-authored
+HTML, print/PDF, and before any hydration:
+
+| Component | How it works without JS |
+| --- | --- |
+| Tooltip (`ui-tooltip`) | `:hover` / `:focus-within` (+ anchor positioning where supported) |
+| Accordion | native `<details>` / `<summary>` |
+| Segmented control (`ui-segmented`) | `:has(input:checked)` over a radio group |
+| Scroll-reveal (`ui-scroll-reveal`) | scroll-driven animation, zero JS |
+| Modal via native `<dialog>` | the element brings focus-trap + Escape; `initDialog` only adds open-triggers + focus-return |
+
+**Behavior-required — a CSS skin that needs its `init*` to be interactive.**
+These are JS widgets wearing the Bronto look; without the behavior they are inert
+(and a couple are *worse* than inert — see the tabs row):
+
+| Component | Behavior | With the behavior absent |
+| --- | --- | --- |
+| Tabs (`ui-tabs`) | `initTabs` | **author panels visible** — ship `hidden` panels and if `initTabs` never runs the content is unreachable |
+| Combobox (`ui-combobox`) | `initCombobox` | a plain text input beside an unfiltered list |
+| Command palette (`ui-command`) | `initCommand` | a static, unfiltered list |
+| Table sort/select (`[data-bronto-sortable]`) | `initTableSort` | a static table (still readable) |
+| Popover (`ui-popover`) | `initPopover` | no placement/ARIA — prefer the native `popover` attribute |
+| Carousel (`ui-carousel`) | `initCarousel` | a native scroll-snap track (usable, no controls) |
+| Controlled modal (`ui-modal.is-open`) | `initModal` | no focus trap — provide one or use native `<dialog>` |
+| Toast | `toast()` | nothing — it is imperative-only |
+
+Rule of thumb: if a component needs ARIA-state sync, focus management, a keyboard
+model, or persisted/dynamic state, it is behavior-required — that is the exact
+boundary of what CSS alone cannot do.
+
 ## When to add a behavior
 
 The CSS is the framework; `@ponchia/ui/behaviors` is the *sanctioned*
 home for the little JS that genuinely needs scripting (theme persistence,
-disclosure, dialog glue, toast, combobox, form-validation, table-sort).
-Reach for it instead of reimplementing — every initializer is SSR-safe,
-idempotent, and returns a cleanup. If you find yourself writing focus
+disclosure, dialog glue, modal focus-trap, toast, combobox, form-validation,
+table-sort). Reach for it instead of reimplementing — every initializer is
+SSR-safe, idempotent, and returns a cleanup. If you find yourself writing focus
 management or `aria-expanded` toggling by hand, there is probably already
 a behavior for it.
 
