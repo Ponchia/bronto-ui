@@ -21,9 +21,17 @@ const SELF = new Set(['check', 'check:chain']);
 const gates = Object.keys(scripts).filter((k) => k.startsWith('check:') && !SELF.has(k));
 
 // A reference is `npm run <key>` not immediately followed by a name char, so
-// `check:dts` would not match inside `check:dts-emit`.
-const referenced = (key) =>
-  new RegExp(`npm run ${key.replace(/[:]/g, '\\:')}(?![\\w:-])`).test(chain);
+// `check:dts` would not match inside `check:dts-emit`. String scan (no regex
+// built from `key`) — avoids any escaping pitfalls around the `:` in the key.
+const BOUNDARY = /[\w:-]/;
+const referenced = (key) => {
+  const needle = `npm run ${key}`;
+  for (let i = chain.indexOf(needle); i !== -1; i = chain.indexOf(needle, i + 1)) {
+    const after = chain[i + needle.length];
+    if (after === undefined || !BOUNDARY.test(after)) return true;
+  }
+  return false;
+};
 
 const problems = [];
 for (const key of gates) {
