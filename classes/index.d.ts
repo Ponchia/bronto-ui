@@ -404,6 +404,22 @@ export declare const cls: {
   readonly diffRowContext: 'ui-diff__row--context';
   readonly diffLn: 'ui-diff__ln';
   readonly diffCode: 'ui-diff__code';
+  readonly code: 'ui-code';
+  readonly codeNumbered: 'ui-code--numbered';
+  readonly codeHead: 'ui-code__head';
+  readonly codeBody: 'ui-code__body';
+  readonly codeLine: 'ui-code__line';
+  readonly codeLineAdd: 'ui-code__line--add';
+  readonly codeLineDel: 'ui-code__line--del';
+  readonly codeLineHl: 'ui-code__line--hl';
+  readonly spark: 'ui-spark';
+  readonly sparkBar: 'ui-spark__bar';
+  readonly sparkBarAccent: 'ui-spark__bar--accent';
+  readonly sparkBarPos: 'ui-spark__bar--pos';
+  readonly sparkBarNeg: 'ui-spark__bar--neg';
+  readonly sidenote: 'ui-sidenote';
+  readonly marginnote: 'ui-marginnote';
+  readonly sidenoteRef: 'ui-sidenote__ref';
   readonly state: 'ui-state';
   readonly stateLabel: 'ui-state__label';
   readonly stateDetail: 'ui-state__detail';
@@ -709,6 +725,18 @@ export interface DiffRowOpts {
   /** The host-classified change kind — sets the tint and the +/− gutter glyph. */
   change?: 'add' | 'remove' | 'context';
 }
+export interface CodeOpts {
+  /** Show the line-number gutter (counts each `.ui-code__line`). */
+  numbered?: boolean;
+}
+export interface CodeLineOpts {
+  /** The host-classified line state — `hl` is a neutral highlight, not a change. */
+  change?: 'add' | 'del' | 'hl';
+}
+export interface SparkBarOpts {
+  /** Emphasise / tone a single bar. The meaning must still be in the spark's aria-label. */
+  tone?: 'accent' | 'pos' | 'neg';
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -754,6 +782,9 @@ export interface Ui {
   provenance(opts?: ProvenanceOpts): string;
   diff(opts?: DiffOpts): string;
   diffRow(opts?: DiffRowOpts): string;
+  code(opts?: CodeOpts): string;
+  codeLine(opts?: CodeLineOpts): string;
+  sparkBar(opts?: SparkBarOpts): string;
   state(opts?: StateOpts): string;
   originLabel(opts?: OriginLabelOpts): string;
 }
