@@ -150,8 +150,34 @@ test('notePlacement chooses a bounded note side and returns a matching transform
 
 test('connectors draw from the subject anchor to the note offset', () => {
   assert.equal(connectorLine({ dx: 10, dy: 20 }), 'M0,0L10,20');
-  assert.equal(connectorElbow({ dx: 100, dy: 40 }), 'M0,0L40,40L100,40');
+  assert.equal(connectorElbow({ dx: 100, dy: 40 }), 'M0,0H50V40H100');
   assert.equal(connectorCurve({ dx: 100, dy: 40 }), 'M0,0C35,0 65,40 100,40');
+});
+
+test('connectorElbow mid moves the turn; notePlacement inset reserves a margin', () => {
+  // The dogleg turns on the dominant axis at `mid` (default 0.5 → H50).
+  assert.equal(connectorElbow({ dx: 100, dy: 40, mid: 0.25 }), 'M0,0H25V40H100');
+  // A note that fits on the preferred side without inset...
+  const base = {
+    x: 125,
+    y: 60,
+    width: 80,
+    height: 30,
+    bounds: { x: 0, y: 0, width: 240, height: 140 },
+    preferred: 'right',
+    gap: 24,
+    padding: 8,
+  };
+  assert.equal(notePlacement(base).valign, 'middle'); // placed right
+  // ...is pushed to the next side once `inset` reserves the halo margin,
+  // rather than clipping it.
+  assert.deepEqual(notePlacement({ ...base, inset: 8 }), {
+    dx: 0,
+    dy: 24,
+    align: 'middle',
+    valign: 'top',
+    transform: 'translate(-40, 24)',
+  });
 });
 
 test('connectors trim line starts against circle and rect subjects', () => {
@@ -178,7 +204,7 @@ test('connector end helpers return deterministic SVG markers', () => {
     connectorEndDot({ x: 10, y: -5, radius: 2 }),
     'M10,-7A2,2 0 1 1 10,-3A2,2 0 1 1 10,-7Z',
   );
-  assert.equal(connectorEndArrow({ x2: 10, y2: 0, size: 4 }), 'M10,0L6.398,1.74L6.398,-1.74Z');
+  assert.equal(connectorEndArrow({ x2: 10, y2: 0, size: 4 }), 'M10,0L6.203,1.258L6.203,-1.258Z');
 });
 
 test('annotationParts assembles common subject, connector and note paths', () => {

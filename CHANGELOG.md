@@ -35,6 +35,17 @@ Additive maintenance on top of 0.5.0 — no breaking changes. The default
   (`@ponchia/ui/d2`, `d2.json`) theme maps — resolved per-theme palettes
   projected from the same tokens, gated. Diagrams stay the consumer's renderer;
   these are config only.
+- Annotation geometry options: `connectorElbow({ mid })` (turn position along the
+  dominant axis), `notePlacement({ inset })` (reserve the title stroke-halo so a
+  placement that "fits" doesn't clip), and a `spread` half-angle on both
+  `connectorEndArrow` and the shared `arrowHead` kernel.
+
+### Changed
+
+- **Annotation connectors are crisper.** `connectorEndArrow` now defaults to a
+  sharper head (half-angle 0.32 ≈ 37°, size 8 vs the former blunt 0.45 / 7).
+  Author-facing geometry only; the `arrowHead` kernel default is unchanged, so
+  node-connector arrowheads don't move.
 
 ### Fixed
 
@@ -58,6 +69,11 @@ Additive maintenance on top of 0.5.0 — no breaking changes. The default
 - Inline `ui-citation` no longer dumps its full URL mid-sentence when printed
   (the reference list carries the URL); `ui-legend--with-values` values are
   right-aligned for a clean tabular column.
+- **Annotation elbow connector was a 45° chamfer, not a dogleg.**
+  `connectorElbow` turned by `min(|dx|,|dy|)`, drawing a diagonal stub the
+  `stroke-linejoin` bevel never matched. It now delegates to the connectors
+  geometry kernel's right-angle `elbowPath` (H/V/H), so an annotation leader and
+  a node connector draw the same elbow.
 
 ### Documentation
 

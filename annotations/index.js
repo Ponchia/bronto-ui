@@ -30,7 +30,7 @@
  *
  * @typedef {CircleSubject | RectSubject} ConnectorSubject
  *
- * @typedef {AnnotationOffset & { subject?: ConnectorSubject }} ConnectorOptions
+ * @typedef {AnnotationOffset & { subject?: ConnectorSubject, mid?: number }} ConnectorOptions
  *
  * @typedef {object} CircleSubjectOptions
  * @property {number} radius
@@ -104,6 +104,8 @@
  * @property {number} x2
  * @property {number} y2
  * @property {number} [size]
+ * @property {number} [spread] Half-angle of the arrowhead in radians (default
+ *   0.32 ≈ a crisp 37° included angle). Larger = blunter.
  *
  * @typedef {object} NoteTransformOptions
  * @property {number} [dx]
@@ -130,6 +132,9 @@
  * @property {number} [padding]
  * @property {number} [gap]
  * @property {'right' | 'left' | 'top' | 'bottom'} [preferred]
+ * @property {number} [inset] Extra margin (user units) the note must keep from
+ *   the bounds edge, on top of `padding`. Reserve the note's title stroke-halo
+ *   (~3) or a leader stub so a placement that "fits" doesn't clip. Default 0.
  *
  * @typedef {object} NotePlacement
  * @property {number} dx
@@ -200,6 +205,7 @@ import {
   straightPath,
   curvePath,
   connectorPath,
+  elbowPath,
   arrowHead,
   dotMark,
   angleBetween,
@@ -389,6 +395,7 @@ export function notePlacement({
   padding = 8,
   gap = 32,
   preferred = 'right',
+  inset = 0,
 } = {}) {
   const anchorX = finite('x', x);
   const anchorY = finite('y', y);
@@ -396,14 +403,17 @@ export function notePlacement({
   const h = dimension('height', height);
   const p = dimension('padding', padding);
   const g = dimension('gap', gap);
+  const ins = dimension('inset', inset, 0);
   const bx = finite('bounds.x', bounds?.x, 0);
   const by = finite('bounds.y', bounds?.y, 0);
   const bw = dimension('bounds.width', bounds?.width);
   const bh = dimension('bounds.height', bounds?.height);
-  const minX = bx + p;
-  const minY = by + p;
-  const maxX = bx + bw - p;
-  const maxY = by + bh - p;
+  // `inset` reserves an extra margin (e.g. the title stroke-halo) inside the
+  // padded bounds, so a placement that "just fits" doesn't clip the halo/leader.
+  const minX = bx + p + ins;
+  const minY = by + p + ins;
+  const maxX = bx + bw - p - ins;
+  const maxY = by + bh - p - ins;
 
   for (const side of placementOrder(preferred)) {
     const placement = candidatePlacement(side, g);
@@ -611,12 +621,12 @@ export function connectorEndDot({ x, y, radius = 3 } = {}) {
  * @param {ConnectorEndArrowOptions} options
  * @returns {string}
  */
-export function connectorEndArrow({ x1 = 0, y1 = 0, x2, y2, size = 7 } = {}) {
+export function connectorEndArrow({ x1 = 0, y1 = 0, x2, y2, size = 8, spread = 0.32 } = {}) {
   const start = { x: finite('x1', x1), y: finite('y1', y1) };
   const end = { x: finite('x2', x2), y: finite('y2', y2) };
   const s = dimension('size', size);
   if (s === 0 || (end.x === start.x && end.y === start.y)) return '';
-  return arrowHead(end, angleBetween(start, end), s);
+  return arrowHead(end, angleBetween(start, end), s, spread);
 }
 
 /**
@@ -644,17 +654,13 @@ export function connectorElbow(opts = {}) {
   const start = connectorStart(dx, dy, opts.subject);
   if (!start) return '';
   const end = { x: dx, y: dy };
-  const vx = end.x - start.x;
-  const vy = end.y - start.y;
-  if (vx === 0 || vy === 0) return linePath(start, end);
-
-  const elbow =
-    Math.abs(vx) >= Math.abs(vy)
-      ? { x: start.x + Math.sign(vx) * Math.abs(vy), y: end.y }
-      : { x: end.x, y: start.y + Math.sign(vy) * Math.abs(vx) };
-
-  if (samePoint(start, elbow) || samePoint(elbow, end)) return linePath(start, end);
-  return `M${point(start.x, start.y)}L${point(elbow.x, elbow.y)}L${point(end.x, end.y)}`;
+  if (samePoint(start, end)) return '';
+  // A true right-angle dogleg (H/V/H), turning on the dominant axis at `mid`
+  // (0..1, default 0.5). Delegated to the connectors geometry kernel so an
+  // annotation leader and a node connector draw the same elbow. (The former
+  // inline form turned by min(|dx|,|dy|), i.e. a 45° chamfer that read as a
+  // diagonal stub, not an elbow — which the `stroke-linejoin` bevel assumes.)
+  return elbowPath(start, end, { mid: opts.mid });
 }
 
 /**
