@@ -51,15 +51,14 @@ const sortedGroups = Object.fromEntries(
     .map((k) => [k, groups[k]]),
 );
 
-/** Author-set state hooks that are valid but deliberately NOT in `cls` (see
- *  reference.md §"Table-local state classes" / §"Composition & state"). A
- *  validator should treat these as known, not as invented classes. This is the
- *  author-applied set only; purely RUNTIME/data-managed hooks are out of scope
- *  here because a contract consumer never hand-writes them — they are toggled by
- *  JS or a data binding. Those (intentionally excluded) are: `is-leaving`
- *  (toast exit), `is-visible` (the `.ui-reveal` IntersectionObserver toggle),
- *  `is-in` (`.ui-matrix` reveal), and `is-on` (`.ui-dotbar` segment, data-driven).
- *  Listed here so the omission is explicit, not a silent gap. (api review C19.) */
+/** State hooks that are valid but live OUTSIDE `cls` by design (see reference.md
+ *  §"Table-local state classes" / §"Composition & state"). A validator should
+ *  treat every entry here as known, not as an invented class. Entries flagged
+ *  `managed: 'runtime'` are toggled by JS or a data binding — discoverable so a
+ *  validator never false-flags them, but an author normally does NOT hand-write
+ *  them (component-audit C25, which found `is-on`/`is-visible` were only in this
+ *  comment, so valid markup validated as "unknown"). `is-on` is the exception:
+ *  it is author-writable to light a static `.ui-dotbar` segment. */
 const states = [
   {
     class: 'is-num',
@@ -92,6 +91,29 @@ const states = [
     scope: 'interactive .ui-legend__item',
     effect: 'host-set toggled-off state',
   },
+  {
+    class: 'is-on',
+    scope: '.ui-dotbar segment (<i>)',
+    effect: 'lit segment — author-writable for a static bar, or set by a data binding',
+  },
+  {
+    class: 'is-visible',
+    scope: '.ui-reveal',
+    effect: 'revealed state',
+    managed: 'runtime',
+  },
+  {
+    class: 'is-in',
+    scope: '.ui-matrix',
+    effect: 'reveal-complete state',
+    managed: 'runtime',
+  },
+  {
+    class: 'is-leaving',
+    scope: '.ui-toast',
+    effect: 'exit-animation state',
+    managed: 'runtime',
+  },
 ];
 
 /** Author-set CSS custom properties — the inline-style knobs that drive the
@@ -122,9 +144,14 @@ const customProperties = [
     name: '--icon-mask',
     on: '.ui-icon',
     type: 'image',
-    example: 'var(--glyph-check)',
+    // A real, resolvable mask `url()` — there is NO `--glyph-*` token, so the
+    // old `var(--glyph-check)` example silently no-opped to a solid square
+    // (component-audit C1). In JS, `renderGlyph(name, { render: 'mask' })` from
+    // @ponchia/ui/glyphs builds this value for any of the 43 named glyphs.
+    example:
+      "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='4'/%3E%3C/svg%3E\")",
     required: true,
-    note: 'REQUIRED — the bitmap masked into the icon; a bare .ui-icon with no --icon-mask paints a solid currentColor square, not a glyph',
+    note: "REQUIRED — the bitmap masked into the icon; a bare .ui-icon with no --icon-mask paints a solid currentColor square, not a glyph. The value is an image (a mask url(); there is no --glyph-* token). Use renderGlyph(name, { render: 'mask' }) to build it from a named glyph.",
   },
   {
     name: '--icon-size',
@@ -134,12 +161,101 @@ const customProperties = [
     note: 'icon box size (default 1em)',
   },
   {
+    name: '--i',
+    on: '.ui-stagger > *',
+    type: 'integer',
+    example: '2',
+    note: "per-child stagger index — sets each child's animation-delay (× 60ms). Omit and use `.ui-stagger--auto` to derive it from :nth-child instead.",
+  },
+  {
     name: '--ui-vt-name',
     on: '.ui-vt',
     type: 'custom-ident',
     example: 'hero-image',
     required: true,
     note: 'REQUIRED — the view-transition-name; .ui-vt is inert (no transition) without it',
+  },
+
+  // Layout-primitive tuning knobs — the Every-Layout intrinsics + app-shell.
+  // Undiscoverable before (prose-only / not even prose) so an author couldn't
+  // set a column min, sidebar width, ratio, or rail width from the contract
+  // (component-audit C18). Each falls back to the listed default when unset.
+  {
+    name: '--stack-gap',
+    on: '.ui-stack',
+    type: 'length',
+    example: '1.5rem',
+    note: 'vertical rhythm between stacked children (default var(--space-md))',
+  },
+  {
+    name: '--cluster-gap',
+    on: '.ui-cluster',
+    type: 'length',
+    example: '0.75rem',
+    note: 'gap between clustered inline items (default var(--space-xs))',
+  },
+  {
+    name: '--grid-min',
+    on: '.ui-grid',
+    type: 'length',
+    example: '12rem',
+    note: 'minimum column width before the auto-fit grid wraps (default 16rem)',
+  },
+  {
+    name: '--grid-gap',
+    on: '.ui-grid',
+    type: 'length',
+    example: '1rem',
+    note: 'gap between grid cells (default var(--space-md))',
+  },
+  {
+    name: '--sidebar-width',
+    on: '.ui-sidebar',
+    type: 'length',
+    example: '18rem',
+    note: 'natural width of the sidebar child (default 16rem)',
+  },
+  {
+    name: '--sidebar-min',
+    on: '.ui-sidebar',
+    type: 'percentage | length',
+    example: '50%',
+    note: 'min width of the main child before the two stack (default 60%)',
+  },
+  {
+    name: '--switcher-min',
+    on: '.ui-switcher',
+    type: 'length',
+    example: '20rem',
+    note: 'threshold below which all children switch from row to column together (default 24rem)',
+  },
+  {
+    name: '--center-max',
+    on: '.ui-center',
+    type: 'length',
+    example: '70ch',
+    note: 'max measure of the centred column — the INNER width; gutters add to the total (content-box) (default 64rem)',
+  },
+  {
+    name: '--center-gutter',
+    on: '.ui-center',
+    type: 'length',
+    example: '2rem',
+    note: 'inline padding either side of the centred column (default var(--space-md))',
+  },
+  {
+    name: '--ratio',
+    on: '.ui-ratio',
+    type: 'ratio',
+    example: '4 / 3',
+    note: 'intrinsic aspect ratio of the box (default 16 / 9)',
+  },
+  {
+    name: '--app-rail',
+    on: '.ui-app-shell',
+    type: 'length',
+    example: '16rem',
+    note: 'width of the app-shell sidebar rail column (default 14rem)',
   },
 ];
 

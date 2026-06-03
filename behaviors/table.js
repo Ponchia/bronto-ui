@@ -4,11 +4,13 @@ import { hasDom, resolveHost, noop, bindOnce, collectHosts } from './internal.js
  * Client-side sortable + selectable data table. Wires
  * `[data-bronto-sortable]`:
  *
- *  - clicking a header's `.ui-table__sort` (or a `th[data-sort]`)
- *    sorts the tbody by that column, cycling `aria-sort`
- *    none → ascending → descending and clearing the other headers.
+ *  - clicking a header's `.ui-table__sort` button sorts the tbody by
+ *    that column. Sortable headers are seeded `aria-sort="none"`; a
+ *    click toggles that header ascending ⇄ descending (first click =
+ *    ascending) and resets the other sortable headers to `none`.
  *    Numeric columns (`data-sort="num"` or `.is-num` cells) sort
- *    numerically; everything else, locale string compare.
+ *    numerically; everything else, locale string compare. Any
+ *    `.ui-table__empty` sentinel row is kept last after a sort.
  *  - a `[data-bronto-select-all]` checkbox toggles every
  *    `[data-bronto-select]` row checkbox and the rows'
  *    `aria-selected`; toggling a row keeps the header checkbox's
@@ -32,16 +34,31 @@ export function initTableSort({ root } = {}) {
     const tbody = table.tBodies[0];
     if (!tbody) continue;
 
+    // Seed the resting `aria-sort="none"` on every sortable header so AT
+    // announces the column as sortable from the start (it was unset until the
+    // first click — C10).
+    for (const sort of table.querySelectorAll('.ui-table__sort')) {
+      const th = sort.closest('th');
+      if (th && !th.hasAttribute('aria-sort')) th.setAttribute('aria-sort', 'none');
+    }
+
     const colIndex = (th) => [...th.parentElement.children].indexOf(th);
     const cellText = (row, i) => row.children[i]?.textContent.trim() ?? '';
 
     const sortBy = (th, numeric) => {
       const headers = th.closest('tr').querySelectorAll('th');
       const dir = th.getAttribute('aria-sort') === 'ascending' ? 'descending' : 'ascending';
-      headers.forEach((h) => h.removeAttribute('aria-sort'));
+      // Reset the OTHER sortable headers to `none` (not removed) so they keep
+      // announcing sortability; only previously-sortable headers carry aria-sort.
+      headers.forEach((h) => {
+        if (h !== th && h.hasAttribute('aria-sort')) h.setAttribute('aria-sort', 'none');
+      });
       th.setAttribute('aria-sort', dir);
       const i = colIndex(th);
       const sign = dir === 'ascending' ? 1 : -1;
+      // Empty/sentinel rows sort out of the data set AND must re-append LAST,
+      // or after a sort they float above the real rows (C29).
+      const emptyRows = [...tbody.rows].filter((r) => r.classList.contains('ui-table__empty'));
       const rows = [...tbody.rows].filter((r) => !r.classList.contains('ui-table__empty'));
       rows.sort((a, b) => {
         const x = cellText(a, i);
@@ -53,6 +70,7 @@ export function initTableSort({ root } = {}) {
         return cmp * sign;
       });
       rows.forEach((r) => tbody.appendChild(r));
+      emptyRows.forEach((r) => tbody.appendChild(r));
     };
 
     const allBox = table.querySelector('[data-bronto-select-all]');
@@ -74,7 +92,11 @@ export function initTableSort({ root } = {}) {
     };
 
     const onClick = (e) => {
-      const sorter = e.target.closest('.ui-table__sort, th[data-sort]');
+      // Only the focusable `.ui-table__sort` button is a sort trigger — it is
+      // keyboard-operable and carries the `::after` sort glyph. The bare
+      // `th[data-sort]` path was mouse-only with no affordance, so it is gone
+      // (C10); `data-sort="num"` is still read from the button or its th.
+      const sorter = e.target.closest('.ui-table__sort');
       if (sorter && table.contains(sorter)) {
         const th = sorter.closest('th');
         const numeric =

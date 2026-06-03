@@ -86,6 +86,29 @@ import { renderGlyph, GLYPH_NAMES } from '@ponchia/ui/glyphs';
 el.innerHTML = renderGlyph('check', { label: 'Done' });
 ```
 
+Layout primitives (core bundle, no media queries — intrinsic Every-Layout
+composition that responds to content + available space): `ui-stack` (vertical
+rhythm), `ui-cluster` (wrapping inline row), `ui-grid` (auto-fit columns),
+`ui-sidebar` (sidebar + main that stacks when cramped), `ui-switcher` (row →
+column together), `ui-center` (measure-bounded column), `ui-ratio` (aspect-ratio
+box), and the `ui-app-shell`/`ui-app-rail`/`ui-app-nav` admin shell. Each is
+tuned with an inline custom property rather than a modifier — set
+`style="--grid-min: 12rem"`, `--sidebar-width`, `--switcher-min`, `--center-max`
+(the INNER measure; gutters add to the total), `--ratio`, `--stack-gap`,
+`--cluster-gap`, `--app-rail`, etc. The full list with defaults is in
+`classes.json` `customProperties`. App-shell/sitenav current page is
+`aria-current="page"`.
+
+Motion utilities (core bundle, all reduced-motion-safe — they collapse to the
+static end state, not just a zeroed duration): `ui-animate-in`,
+`ui-animate-fade`, `ui-animate-dot`, `ui-animate-matrix` (enter animations),
+`ui-stagger` (+ `--i` per child, or `ui-stagger--auto` to
+derive the delay from `:nth-child`), `ui-reveal` (JS/IntersectionObserver — adds
+`is-visible`), `ui-scroll-reveal` and `ui-scroll-progress` (zero-JS,
+scroll-driven; the recommended reveal for static reports), and `ui-vt` (View
+Transitions — needs the required `--ui-vt-name`). Prefer `ui-scroll-reveal` over
+`ui-reveal` when no JS will run. Details: `docs/usage.md`.
+
 Optional display colorways — opt-in, never in the default bundle. Root-level,
 like `data-theme` (the derived accent family only recomputes at `:root`):
 
@@ -148,9 +171,12 @@ Pass `renderer: 'svg'` (canvas is the wrong default for print/inspection).
 the accent on one mark. From a CDN, pin the `/build/*.min.js` UMD bundles (a bare
 `vega@6` tag has no `window.vega`; keep Vega-Lite 6 / Vega 6 / vega-embed 7
 aligned) and INLINE the config from `vega.json` — a
-`file://` report can't `import`/`fetch` it (CORS). A label on an accent fill (a
-themed node/bar/badge) uses the `--on-accent` token, never `--accent-text` (that
-is accent-coloured text for a neutral bg). Details: `docs/vega.md`. (Observable
+`file://` report can't `import`/`fetch` it (CORS). A label on an accent fill in a
+foreign renderer (a themed Vega/D2/Mermaid node or bar) reads the `--on-accent`
+token, never `--accent-text` (that is accent-coloured text for a neutral bg).
+`--on-accent` is a READ-ONLY export for those renderers — no in-DOM `.ui-*` rule
+consumes it, so setting it does not re-ink a component; to colour text on an
+accent-filled DOM control, set `--button-text`. Details: `docs/vega.md`. (Observable
 Plot works too — it inherits the page CSS, so it needs even less theming;
 Vega-Lite is the recommended LLM-emittable path.)
 

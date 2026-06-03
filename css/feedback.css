@@ -593,10 +593,21 @@
 /* Forced-colors flattens the fill's tone to the system palette and can erase it
    against the track, dropping the only visual cue of the measured proportion.
    Re-assert a system colour so the bar stays visible; the tone's *semantic* is
-   carried by the author-written label beside it, not the colour. (a11y C10.) */
+   carried by the author-written label beside it, not the colour. (a11y C10.)
+   The toned `.ui-meter--TONE .ui-meter__fill` rules are (0,2,0); the bare
+   `.ui-meter__fill` reset is only (0,1,0), so it lost — a toned fill stayed
+   `var(--TONE)` and was forced to black-on-black (component-audit C3). Match the
+   tone specificity here (and set `forced-color-adjust: none`) so every meter,
+   toned or not, paints `Highlight`, mirroring the `.ui-dot` precedent. */
 @media (forced-colors: active) {
   .ui-progress__bar,
-  .ui-meter__fill {
+  .ui-meter__fill,
+  .ui-meter--accent .ui-meter__fill,
+  .ui-meter--success .ui-meter__fill,
+  .ui-meter--warning .ui-meter__fill,
+  .ui-meter--danger .ui-meter__fill,
+  .ui-meter--info .ui-meter__fill {
     background: Highlight;
+    forced-color-adjust: none;
   }
 }

@@ -393,3 +393,16 @@ dialog.ui-modal[open]::backdrop {
     transition: none;
   }
 }
+
+/* Forced-colors drops both `backdrop-filter: blur()` and the `color-mix()`
+   scrim, so the dialog/lightbox would float over an undimmed page with no
+   separation. Re-assert a translucent scrim with `forced-color-adjust: none`
+   so the layering reads in High Contrast, matching the meter/dot precedent
+   (C28). */
+@media (forced-colors: active) {
+  .ui-modal::backdrop,
+  .ui-lightbox::backdrop {
+    background: color-mix(in srgb, #000 50%, transparent);
+    forced-color-adjust: none;
+  }
+}

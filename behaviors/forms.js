@@ -11,7 +11,10 @@ import { hasDom, resolveHost, noop, bindOnce, nextFieldUid, collectHosts } from 
  *  - on blur and on submit sets `aria-invalid` and writes the browser's
  *    `validationMessage` into the field's error slot
  *    (`[data-bronto-error]` inside the `.ui-field`, falling back to a
- *    `.ui-hint`), linked via `aria-describedby`,
+ *    `.ui-hint`), linked via `aria-describedby`. When it falls back to a
+ *    `.ui-hint` the original help text is snapshotted and restored once the
+ *    field is valid again (so the error does not eat the help permanently); a
+ *    dedicated empty `[data-bronto-error]` node is still the recommended slot,
  *  - on an invalid submit, fills the form's
  *    `[data-bronto-error-summary]` (a `.ui-error-summary`) with
  *    in-page links to each bad field, focuses it, and blocks submit.
@@ -29,10 +32,18 @@ export function initFormValidation({ root } = {}) {
     return el.id;
   };
 
+  // When the field has no dedicated `[data-bronto-error]` node we fall back to
+  // the shared `.ui-hint` help slot. Snapshot its original help text the first
+  // time we overwrite it with an error, so the valid branch can RESTORE the help
+  // rather than blanking it permanently (component-audit C8).
+  const hintHelp = new WeakMap();
+
   const slotFor = (control) => {
     const field = control.closest('.ui-field');
     if (!field) return null;
-    return field.querySelector('[data-bronto-error]') || field.querySelector('.ui-hint');
+    const dedicated = field.querySelector('[data-bronto-error]');
+    if (dedicated) return dedicated;
+    return field.querySelector('.ui-hint');
   };
 
   const link = (control, slot) => {
@@ -44,21 +55,42 @@ export function initFormValidation({ root } = {}) {
     }
   };
 
+  const unlink = (control, slot) => {
+    if (!slot.id) return;
+    const ids = (control.getAttribute('aria-describedby') || '')
+      .split(/\s+/)
+      .filter((id) => id && id !== slot.id);
+    if (ids.length) control.setAttribute('aria-describedby', ids.join(' '));
+    else control.removeAttribute('aria-describedby');
+  };
+
   const validateField = (control) => {
     if (!control.willValidate) return true;
     const ok = control.validity.valid;
     const slot = slotFor(control);
+    const isHint = slot?.classList.contains('ui-hint');
     if (ok) {
       control.removeAttribute('aria-invalid');
       if (slot) {
-        slot.textContent = '';
-        if (slot.classList.contains('ui-hint')) slot.classList.remove('ui-hint--error');
+        if (isHint) {
+          // Restore the snapshotted help text (or clear if there was none); a
+          // help-bearing hint stays linked via aria-describedby (it describes
+          // the field in the valid state too).
+          slot.textContent = hintHelp.get(slot) ?? '';
+          slot.classList.remove('ui-hint--error');
+        } else {
+          // Dedicated error node: clear it and drop the now-stale describedby
+          // so AT doesn't announce an empty error association.
+          slot.textContent = '';
+          unlink(control, slot);
+        }
       }
     } else {
       control.setAttribute('aria-invalid', 'true');
       if (slot) {
+        if (isHint && !hintHelp.has(slot)) hintHelp.set(slot, slot.textContent);
         slot.textContent = control.validationMessage;
-        if (slot.classList.contains('ui-hint')) slot.classList.add('ui-hint--error');
+        if (isHint) slot.classList.add('ui-hint--error');
         link(control, slot);
       }
     }
