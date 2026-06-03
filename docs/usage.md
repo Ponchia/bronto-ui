@@ -70,10 +70,11 @@ for narrative body content you do not fully control.
 
 Do not turn every report block into a card. Use `ui-report__summary`,
 `ui-report__finding`, and `ui-report__evidence` for document structure; use
-`ui-card` only when the block is genuinely a repeated card item. Charts use
-the report `ui-chart*` wrappers plus the opt-in data-viz tokens; simple static
-bar charts can use `ui-chart__plot`, `ui-chart__bar`, and `ui-chart__fill`.
-Always include a caption and fallback data. Full LLM/static report cookbook:
+`ui-card` only when the block is genuinely a repeated card item. bronto ships
+**no chart component**: for a chart, theme Vega-Lite (`@ponchia/ui/vega`, see
+[vega.md](vega.md)) or hand-author a token-themed inline SVG painted from the
+data-viz palette tokens. Always wrap it in a `ui-report__figure` with a caption,
+a `.ui-legend` key, and fallback data. Full LLM/static report cookbook:
 [reporting.md](reporting.md).
 
 ## Buttons: variant and size

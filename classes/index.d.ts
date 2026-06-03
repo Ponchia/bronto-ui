@@ -262,14 +262,6 @@ export declare const cls: {
   readonly compare2up: 'ui-compare--2up';
   readonly compareCol: 'ui-compare__col';
   readonly compareHead: 'ui-compare__head';
-  readonly chart: 'ui-chart';
-  readonly chartCaption: 'ui-chart__caption';
-  readonly chartPlot: 'ui-chart__plot';
-  readonly chartBar: 'ui-chart__bar';
-  readonly chartLabel: 'ui-chart__label';
-  readonly chartTrack: 'ui-chart__track';
-  readonly chartFill: 'ui-chart__fill';
-  readonly chartFallback: 'ui-chart__fallback';
   readonly legend: 'ui-legend';
   readonly legendVertical: 'ui-legend--vertical';
   readonly legendCompact: 'ui-legend--compact';

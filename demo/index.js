@@ -214,7 +214,9 @@ const legendStatus = document.getElementById('legend-status');
 document.addEventListener('bronto:legend:toggle', (e) => {
   const { series, active } = e.detail;
   const bar = document.querySelector(`[data-series-bar="${CSS.escape(series)}"]`);
-  if (bar) bar.hidden = !active;
+  // style.display (not .hidden): the series marks are SVG <g> nodes, and
+  // `hidden` is an HTMLElement property that does not reflect onto SVG.
+  if (bar) bar.style.display = active ? '' : 'none';
   if (legendStatus) legendStatus.textContent = `${series} ${active ? 'shown' : 'hidden'}`;
 });
 

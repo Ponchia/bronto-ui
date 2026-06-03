@@ -191,11 +191,11 @@
           </p>
         </div>
         <figure
-          class="ui-report__figure ui-chart ui-print-exact"
+          class="ui-report__figure ui-print-exact"
           role="group"
           aria-labelledby="growth-chart"
         >
-          <figcaption id="growth-chart" class="ui-chart__caption">
+          <figcaption id="growth-chart" class="ui-report__caption">
             Fig 1 — Default bundle raw size (kB) across selected releases
           </figcaption>
           <ul class="ui-legend" aria-label="Bundle metric">
@@ -209,7 +209,6 @@
             </li>
           </ul>
           <svg
-            class="ui-chart__svg"
             viewBox="0 0 380 200"
             role="img"
             aria-labelledby="growth-svg-title growth-svg-desc"
@@ -265,7 +264,7 @@
               </g>
             </g>
           </svg>
-          <div class="ui-chart__fallback">
+          <div style="margin-block-start: var(--space-sm)">
             <div class="ui-table-wrap">
               <table class="ui-table ui-table--dense">
                 <caption>
@@ -700,8 +699,8 @@
             </p>
             <ol>
               <li>
-                The chart data key moved out of the report kit into the standalone legend layer
-                (<code>.ui-chart__legend</code> → <code>.ui-legend</code>).
+                The chart data key moved out of the report kit into the standalone
+                <code>.ui-legend</code> layer.
               </li>
               <li>
                 Annotation arrowheads now render via the shared connectors geometry kernel — a small

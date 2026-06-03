@@ -128,11 +128,11 @@
       <section id="chart" class="ui-report__section ui-break-before ui-break-after">
         <h2 class="ui-report__section-head">Focus split</h2>
         <figure
-          class="ui-report__figure ui-chart ui-print-exact ui-keep"
+          class="ui-report__figure ui-print-exact ui-keep"
           role="group"
           aria-labelledby="focus-chart-title"
         >
-          <figcaption id="focus-chart-title" class="ui-chart__caption">
+          <figcaption id="focus-chart-title" class="ui-report__caption">
             Fig 1 - Weekly focus split, with fallback data
           </figcaption>
           <ul class="ui-legend" aria-label="Focus series">
@@ -161,47 +161,28 @@
               <span class="ui-legend__label">Maintenance</span>
             </li>
           </ul>
-          <div class="ui-chart__plot" aria-hidden="true">
-            <div
-              class="ui-chart__bar"
-              style="
-                --chart-value: 82%;
-                --chart-color: var(--chart-1);
-                --chart-pattern: var(--chart-pattern-1);
-              "
-            >
-              <div class="ui-chart__label"><span>Research</span><span>18 h</span></div>
-              <div class="ui-chart__track">
-                <div class="ui-chart__fill"></div>
-              </div>
-            </div>
-            <div
-              class="ui-chart__bar"
-              style="
-                --chart-value: 50%;
-                --chart-color: var(--chart-2);
-                --chart-pattern: var(--chart-pattern-2);
-              "
-            >
-              <div class="ui-chart__label"><span>Delivery</span><span>11 h</span></div>
-              <div class="ui-chart__track">
-                <div class="ui-chart__fill"></div>
-              </div>
-            </div>
-            <div
-              class="ui-chart__bar"
-              style="
-                --chart-value: 32%;
-                --chart-color: var(--chart-3);
-                --chart-pattern: var(--chart-pattern-3);
-              "
-            >
-              <div class="ui-chart__label"><span>Maintenance</span><span>7 h</span></div>
-              <div class="ui-chart__track">
-                <div class="ui-chart__fill"></div>
-              </div>
-            </div>
-          </div>
+          <svg
+            viewBox="0 0 320 132"
+            width="100%"
+            role="img"
+            aria-label="Weekly focus split: Research 18 hours, Delivery 11 hours, Maintenance 7 hours."
+            style="display: block; max-inline-size: 480px; margin-inline: auto"
+          >
+            <line x1="96" y1="12" x2="96" y2="120" stroke="var(--line)" />
+            <g font-size="11" text-anchor="end" fill="var(--text-soft)">
+              <text x="90" y="28">Research</text>
+              <text x="90" y="68">Delivery</text>
+              <text x="90" y="108">Maintenance</text>
+            </g>
+            <rect x="96" y="14" height="20" width="205" fill="var(--chart-1)" />
+            <rect x="96" y="54" height="20" width="125" fill="var(--chart-2)" />
+            <rect x="96" y="94" height="20" width="80" fill="var(--chart-3)" />
+            <g font-size="11" fill="var(--text)">
+              <text x="305" y="28">18 h</text>
+              <text x="225" y="68">11 h</text>
+              <text x="180" y="108">7 h</text>
+            </g>
+          </svg>
           <svg
             viewBox="0 0 640 360"
             width="100%"
@@ -337,7 +318,7 @@
               </g>
             </g>
           </svg>
-          <div class="ui-chart__fallback">
+          <div style="margin-block-start: var(--space-sm)">
             <div class="ui-table-wrap">
               <table class="ui-table ui-table--dense">
                 <caption>

@@ -67,7 +67,15 @@ for (const theme of ['light', 'dark']) {
     await expect(specimen.locator('.ui-annotation--pulse')).toHaveCount(1);
     await expect(specimen.locator('.ui-annotation--focus')).toHaveCount(1);
     await expect(specimen.locator('.ui-annotation__title')).toHaveCount(VARIANTS.length);
-    await expect(page.locator('.ui-chart__fallback table tbody tr')).toHaveCount(VARIANTS.length);
+    // The renderer container class is gone; the specimen's fallback data table
+    // now lives in a plain spacing wrapper. Target it by its caption so the
+    // row-count assertion still tracks one row per annotation variant.
+    const specimenFallback = page
+      .locator('.ui-table-wrap table', {
+        has: page.locator('caption', { hasText: 'Annotation specimen fallback' }),
+      })
+      .locator('tbody tr');
+    await expect(specimenFallback).toHaveCount(VARIANTS.length);
 
     const geometry = await page.evaluate(() => {
       const specimen = document.querySelector('[data-annotation-specimen]');

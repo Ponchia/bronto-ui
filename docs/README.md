@@ -29,6 +29,7 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 - [legends.md](./legends.md) — standalone data keys / legends.
 - [mermaid.md](./mermaid.md) — theme Mermaid diagrams from bronto tokens, and annotate the rendered SVG.
 - [d2.md](./d2.md) — theme D2 diagrams from bronto tokens (theme-override slots), and annotate the rendered SVG.
+- [vega.md](./vega.md) — theme Vega-Lite charts from bronto tokens (resolved `config`) — the recommended path when a report needs a chart, since bronto ships no chart component.
 - [marks.md](./marks.md) — text/evidence emphasis for running prose (`ui-mark`, `ui-bracket-note`).
 - [sources.md](./sources.md) — the citations / provenance trust layer.
 - [connectors.md](./connectors.md) — leader lines between DOM elements.

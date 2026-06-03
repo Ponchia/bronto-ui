@@ -101,8 +101,8 @@ For numeric text *outside* a table, use the \`ui-num\` primitive
 (\`ui.num({ tone })\`), which carries the same tabular/aligned/tone intent; for
 a trend figure use \`ui-delta\` (\`ui.delta({ dir, invert })\`). The full,
 machine-readable list of these \`is-*\` state hooks — and the author-set inline
-custom properties (\`--chart-value\`, \`--chart-color\`, \`--chart-pattern\`,
-\`--value\`) — is in [\`@ponchia/ui/classes.json\`](../classes/classes.json)
+custom properties (\`--chart-color\`, \`--chart-pattern\`, \`--value\`) — is in
+[\`@ponchia/ui/classes.json\`](../classes/classes.json)
 (\`states\` / \`customProperties\`).
 
 ## Composition & state (read before re-implementing glue)

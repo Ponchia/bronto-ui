@@ -1,10 +1,10 @@
 /* ==========================================================================
    legend — opt-in data keys for charts, reports, and analytical figures.
 
-   A standalone, portable successor to the report kit's inline chart legend:
-   `.ui-legend` reads the Tier-4 `--chart-*` tokens and pairs with any chart
-   (Bronto's own `.ui-chart` bars, an SVG/canvas figure, or an external chart
-   engine). Not imported by core.css — import it beside css/dataviz.css.
+   A standalone, portable data key: `.ui-legend` reads the Tier-4 `--chart-*`
+   tokens and pairs with any chart (a token-themed inline SVG/canvas figure, or
+   an external engine like Vega-Lite — see docs/vega.md). Not imported by
+   core.css — import it beside css/dataviz.css.
 
    Bronto paints and positions; it owns no scales, data mapping, or series
    state. Colour is never the sole channel: a swatch mirrors its chart mark

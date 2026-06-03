@@ -6,6 +6,7 @@ dist
 tokens/index.json
 tokens/tokens.dtcg.json
 tokens/charts.json
+tokens/vega.json
 classes/classes.json
 classes/vscode.css-custom-data.json
 *.d.ts

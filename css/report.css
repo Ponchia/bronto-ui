@@ -200,8 +200,7 @@
   margin: 0;
 }
 
-.ui-report__caption,
-.ui-chart__caption {
+.ui-report__caption {
   color: var(--text-dim);
   font-family: var(--mono);
   font-size: var(--text-2xs);
@@ -258,64 +257,10 @@
   text-transform: uppercase;
 }
 
-.ui-chart {
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  display: grid;
-  gap: var(--space-sm);
-  padding: var(--space-md);
-}
-
-/* The chart's data key lives in the standalone, portable `.ui-legend`
-   (css/legend.css), not here — import it beside this kit when a chart needs
-   a legend. The chart owns only its plot + bars + fallback below. */
-.ui-chart__plot {
-  display: grid;
-  gap: var(--space-xs);
-}
-
-.ui-chart__bar {
-  --chart-value: 0%;
-
-  display: grid;
-  gap: 0.35rem;
-}
-
-/* An author `display` outranks the UA `[hidden]` rule, so re-assert it: a host
-   toggling a series (e.g. from a `bronto:legend:toggle` event) expects
-   `bar.hidden = true` to actually hide the bar. */
-.ui-chart__bar[hidden] {
-  display: none;
-}
-
-.ui-chart__label {
-  align-items: center;
-  color: var(--text-soft);
-  display: flex;
-  font-family: var(--mono);
-  font-size: var(--text-xs);
-  gap: var(--space-sm);
-  justify-content: space-between;
-}
-
-.ui-chart__track {
-  background: var(--panel-soft);
-  border: 1px solid var(--line);
-  block-size: 0.8rem;
-  min-inline-size: 0;
-}
-
-.ui-chart__fill {
-  background: var(--chart-color, var(--chart-1, var(--accent)));
-  background-image: var(--chart-pattern, var(--chart-pattern-1, none));
-  background-size: var(--chart-pattern-size, 8px);
-  block-size: 100%;
-  inline-size: clamp(0%, var(--chart-value), 100%);
-}
-
-.ui-chart__fallback {
-  margin-block-start: var(--space-sm);
-}
+/* A chart is NOT a bronto component — it needs scales + data binding, which the
+   analytical layer refuses to own. Theme Vega-Lite with `@ponchia/ui/vega`
+   (docs/vega.md), or hand-author a token-themed inline `<svg>`, and drop it in a
+   `.ui-report__figure` with a `.ui-report__caption` + a `.ui-legend` key. */
 
 .ui-print-only {
   display: none !important;
@@ -355,15 +300,6 @@
     padding: 0;
   }
 
-  /* Meaning-carrying chart fills must survive the print "economy" default
-     (which drops backgrounds) without relying on a `.ui-print-exact`
-     ancestor. The accent on `.ui-report__summary` is a border, so it already
-     prints. (Legend swatches print-protect themselves in css/legend.css.) */
-  .ui-chart__fill {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
   .ui-report__cover {
     min-block-size: auto;
   }
@@ -374,8 +310,7 @@
   .ui-report__summary,
   .ui-report__finding,
   .ui-report__evidence,
-  .ui-report__figure,
-  .ui-chart {
+  .ui-report__figure {
     break-inside: avoid;
   }
 

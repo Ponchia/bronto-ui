@@ -64,6 +64,7 @@
     "docs/reporting.md",
     "docs/mermaid.md",
     "docs/d2.md",
+    "docs/vega.md",
     "docs/annotations.md",
     "docs/legends.md",
     "docs/marks.md",
@@ -101,6 +102,7 @@
     "charts:build": "node scripts/gen-charts.mjs",
     "mermaid:build": "node scripts/gen-mermaid.mjs",
     "d2:build": "node scripts/gen-d2.mjs",
+    "vega:build": "node scripts/gen-vega.mjs",
     "reference:build": "node scripts/gen-reference.mjs",
     "classes:json:build": "node scripts/gen-classes-json.mjs",
     "contrast:build": "node scripts/gen-contrast.mjs",
@@ -117,6 +119,7 @@
     "check:charts": "node scripts/check-charts.mjs",
     "check:mermaid": "node scripts/check-mermaid.mjs",
     "check:d2": "node scripts/check-d2.mjs",
+    "check:vega": "node scripts/check-vega.mjs",
     "check:report": "node scripts/check-report.mjs",
     "check:legend": "node scripts/check-legend.mjs",
     "check:types": "tsc -p tsconfig.json",
@@ -128,9 +131,9 @@
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:publint": "publint --strict",
     "check:attw": "attw --pack --ignore-rules no-resolution cjs-resolves-to-esm",
-    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:fresh && npm run check:classes && npm run check:types && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:publint && npm run check:attw && npm run check:release && npm run check:versions && npm run check:contrast && npm run check:behaviors && npm run check:dts-emit && npm run check:glyphs && npm run check:color-policy && npm run check:skins && npm run check:charts && npm run check:mermaid && npm run check:d2 && npm run check:report && npm run check:legend",
+    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:fresh && npm run check:classes && npm run check:types && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:publint && npm run check:attw && npm run check:release && npm run check:versions && npm run check:contrast && npm run check:behaviors && npm run check:dts-emit && npm run check:glyphs && npm run check:color-policy && npm run check:skins && npm run check:charts && npm run check:mermaid && npm run check:d2 && npm run check:vega && npm run check:report && npm run check:legend",
     "test": "node --test \"test/*.test.mjs\"",
-    "prepack": "npm run tokens:css:build && npm run tokens:build && npm run dtcg:build && npm run resolved:build && npm run dts:build && npm run dts:emit && npm run reference:build && npm run classes:json:build && npm run contrast:build && npm run vscode:build && npm run skins:build && npm run charts:build && npm run mermaid:build && npm run d2:build && npm run dist:build && npm run glyphs:build",
+    "prepack": "npm run tokens:css:build && npm run tokens:build && npm run dtcg:build && npm run resolved:build && npm run dts:build && npm run dts:emit && npm run reference:build && npm run classes:json:build && npm run contrast:build && npm run vscode:build && npm run skins:build && npm run charts:build && npm run mermaid:build && npm run d2:build && npm run vega:build && npm run dist:build && npm run glyphs:build",
     "prepublishOnly": "npm run check && npm test"
   },
   "devDependencies": {
@@ -147,7 +150,9 @@
     "stylelint": "^17.11.1",
     "stylelint-config-standard": "^40.0.0",
     "stylelint-use-logical": "^2.1.3",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vega": "^5.30.0",
+    "vega-lite": "^5.21.0"
   },
   "peerDependencies": {
     "@builder.io/qwik": ">=1.5",
@@ -253,6 +258,7 @@
     "./docs/reporting.md": "./docs/reporting.md",
     "./docs/mermaid.md": "./docs/mermaid.md",
     "./docs/d2.md": "./docs/d2.md",
+    "./docs/vega.md": "./docs/vega.md",
     "./docs/annotations.md": "./docs/annotations.md",
     "./docs/legends.md": "./docs/legends.md",
     "./docs/marks.md": "./docs/marks.md",
@@ -320,6 +326,11 @@
       "default": "./tokens/d2.js"
     },
     "./d2.json": "./tokens/d2.json",
+    "./vega": {
+      "types": "./tokens/vega.d.ts",
+      "default": "./tokens/vega.js"
+    },
+    "./vega.json": "./tokens/vega.json",
     "./fonts/*": "./fonts/*"
   }
 }

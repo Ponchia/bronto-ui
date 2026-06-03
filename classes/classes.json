@@ -1,8 +1,8 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 483,
-    "groups": 150
+    "classes": 475,
+    "groups": 149
   },
   "groups": {
     "ui-accordion": {
@@ -265,19 +265,6 @@
       "base": "ui-center",
       "modifiers": [],
       "parts": []
-    },
-    "ui-chart": {
-      "base": "ui-chart",
-      "modifiers": [],
-      "parts": [
-        "ui-chart__bar",
-        "ui-chart__caption",
-        "ui-chart__fallback",
-        "ui-chart__fill",
-        "ui-chart__label",
-        "ui-chart__plot",
-        "ui-chart__track"
-      ]
     },
     "ui-check": {
       "base": "ui-check",
@@ -1318,14 +1305,6 @@
     "ui-carousel__thumbs",
     "ui-carousel__viewport",
     "ui-center",
-    "ui-chart",
-    "ui-chart__bar",
-    "ui-chart__caption",
-    "ui-chart__fallback",
-    "ui-chart__fill",
-    "ui-chart__label",
-    "ui-chart__plot",
-    "ui-chart__track",
     "ui-check",
     "ui-chip",
     "ui-chip--accent",
@@ -1721,22 +1700,15 @@
   ],
   "customProperties": [
     {
-      "name": "--chart-value",
-      "on": ".ui-chart__bar",
-      "type": "percentage",
-      "example": "72%",
-      "note": "bar fill length"
-    },
-    {
       "name": "--chart-color",
-      "on": ".ui-chart__fill, .ui-legend__swatch",
+      "on": ".ui-legend__swatch",
       "type": "color",
       "example": "var(--chart-1)",
-      "note": "series colour — use a --chart-* token, never a raw hex"
+      "note": "legend-key series colour — use a --chart-* token, never a raw hex"
     },
     {
       "name": "--chart-pattern",
-      "on": ".ui-chart__fill, .ui-legend__swatch",
+      "on": ".ui-legend__swatch",
       "type": "image",
       "example": "var(--chart-pattern-1)",
       "note": "redundant non-colour channel — pair pattern N with colour N (WCAG 1.4.1)"
