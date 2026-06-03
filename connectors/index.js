@@ -182,17 +182,20 @@ export function connectorPath(opts = {}) {
  * @param {Point} p
  * @param {number} angle
  * @param {number} [size]
+ * @param {number} [spread] Half-angle of the head in radians (default 0.45).
+ *   Smaller is crisper/sharper; must be in (0, π/2).
  * @returns {string}
  */
-export function arrowHead(p, angle, size = 8) {
+export function arrowHead(p, angle, size = 8, spread = 0.45) {
   const px = finite('p.x', p?.x);
   const py = finite('p.y', p?.y);
   const a = finite('angle', angle, 0);
   const s = dimension('size', size, 8);
+  const sp = finite('spread', spread, 0.45);
+  if (sp <= 0 || sp >= Math.PI / 2) throw new RangeError('spread must be in (0, π/2)');
   const back = a + Math.PI;
-  const spread = 0.45;
-  const p1 = { x: px + Math.cos(back - spread) * s, y: py + Math.sin(back - spread) * s };
-  const p2 = { x: px + Math.cos(back + spread) * s, y: py + Math.sin(back + spread) * s };
+  const p1 = { x: px + Math.cos(back - sp) * s, y: py + Math.sin(back - sp) * s };
+  const p2 = { x: px + Math.cos(back + sp) * s, y: py + Math.sin(back + sp) * s };
   return `M${point(px, py)}L${point(p1.x, p1.y)}L${point(p2.x, p2.y)}Z`;
 }
 

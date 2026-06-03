@@ -12,7 +12,7 @@ export function noteTransform({ dx, dy, x, y, align, valign, width, height, }?: 
  * @param {NotePlacementOptions} options
  * @returns {NotePlacement}
  */
-export function notePlacement({ x, y, width, height, bounds, padding, gap, preferred, }?: NotePlacementOptions): NotePlacement;
+export function notePlacement({ x, y, width, height, bounds, padding, gap, preferred, inset, }?: NotePlacementOptions): NotePlacement;
 /**
  * @param {CircleSubjectOptions} options
  * @returns {string}
@@ -77,7 +77,7 @@ export function connectorEndDot({ x, y, radius }?: ConnectorEndDotOptions): stri
  * @param {ConnectorEndArrowOptions} options
  * @returns {string}
  */
-export function connectorEndArrow({ x1, y1, x2, y2, size }?: ConnectorEndArrowOptions): string;
+export function connectorEndArrow({ x1, y1, x2, y2, size, spread }?: ConnectorEndArrowOptions): string;
 /**
  * @param {ConnectorOptions} opts
  * @returns {string}
@@ -163,6 +163,7 @@ export type RectSubject = {
 export type ConnectorSubject = CircleSubject | RectSubject;
 export type ConnectorOptions = AnnotationOffset & {
     subject?: ConnectorSubject;
+    mid?: number;
 };
 export type CircleSubjectOptions = {
     radius: number;
@@ -237,6 +238,11 @@ export type ConnectorEndArrowOptions = {
     x2: number;
     y2: number;
     size?: number | undefined;
+    /**
+     * Half-angle of the arrowhead in radians (default
+     * 0.32 ≈ a crisp 37° included angle). Larger = blunter.
+     */
+    spread?: number | undefined;
 };
 export type NoteTransformOptions = {
     dx?: number | undefined;
@@ -263,6 +269,12 @@ export type NotePlacementOptions = {
     padding?: number | undefined;
     gap?: number | undefined;
     preferred?: "top" | "right" | "bottom" | "left" | undefined;
+    /**
+     * Extra margin (user units) the note must keep from
+     * the bounds edge, on top of `padding`. Reserve the note's title stroke-halo
+     * (~3) or a leader stub so a placement that "fits" doesn't clip. Default 0.
+     */
+    inset?: number | undefined;
 };
 export type NotePlacement = {
     dx: number;
