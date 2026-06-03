@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — spark specimen</title>
+    <meta
+      name="description"
+      content="Inline-dataword (sparkline) specimen for @ponchia/ui spark CSS."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/spark.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .spark-demo {
+        margin: 0 auto;
+        max-width: 64ch;
+        padding: 2rem 1rem 4rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="spark-demo ui-prose">
+      <h1 class="ui-display">Spark specimen</h1>
+
+      <p>
+        Weekly signups
+        <span class="ui-spark" role="img" aria-label="weekly signups, trending up over six weeks">
+          <span class="ui-spark__bar" style="--v: 0.2"></span>
+          <span class="ui-spark__bar" style="--v: 0.45"></span>
+          <span class="ui-spark__bar" style="--v: 0.35"></span>
+          <span class="ui-spark__bar" style="--v: 0.6"></span>
+          <span class="ui-spark__bar" style="--v: 0.8"></span>
+          <span class="ui-spark__bar ui-spark__bar--accent" style="--v: 1"></span>
+        </span>
+        ended the quarter at an all-time high.
+      </p>
+
+      <p>
+        Last five deploys
+        <span class="ui-spark" role="img" aria-label="last five deploys: four passed, one failed">
+          <span class="ui-spark__bar ui-spark__bar--pos" style="--v: 1"></span>
+          <span class="ui-spark__bar ui-spark__bar--pos" style="--v: 1"></span>
+          <span class="ui-spark__bar ui-spark__bar--neg" style="--v: 1"></span>
+          <span class="ui-spark__bar ui-spark__bar--pos" style="--v: 1"></span>
+          <span class="ui-spark__bar ui-spark__bar--pos" style="--v: 1"></span>
+        </span>
+        — one rollback on Tuesday.
+      </p>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,62 @@
+/* ==========================================================================
+   spark — opt-in inline datawords (word-sized microcharts).
+
+   A trend-in-a-sentence for generated reports and dense tables — the inline
+   counterpart to the scalar `ui-delta` / `ui-num` / `ui-stat`. Pure CSS, no
+   measurement, SSR-static, print-survivable. Not imported by core.css.
+
+   Boundary: the HOST normalises each point to 0..1 and sets it as `--v` on a
+   `.ui-spark__bar`; Bronto only paints the geometry. It refuses raw values and
+   min/max/scale computation. A bare spark is opaque to assistive tech, so the
+   container MUST carry a host-written `role="img"` + `aria-label` text
+   equivalent (e.g. "weekly signups, trending up"). Colour is never the only
+   channel — pair it with that label.
+   ========================================================================== */
+
+.ui-spark {
+  align-items: flex-end;
+  block-size: 1em;
+  display: inline-flex;
+  gap: 1px;
+  inline-size: max-content;
+  vertical-align: -0.15em;
+}
+
+.ui-spark__bar {
+  background: currentColor;
+  block-size: max(1px, calc(var(--v, 0) * 100%));
+  border-radius: 0.5px;
+  flex: 0 0 0.25em;
+  min-inline-size: 2px;
+}
+
+/* Emphasise / tone a single bar — the rationed accent or a status tone. The
+   meaning still has to be in the aria-label (WCAG 1.4.1). */
+.ui-spark__bar--accent {
+  background: var(--accent);
+}
+
+.ui-spark__bar--pos {
+  background: var(--success);
+}
+
+.ui-spark__bar--neg {
+  background: var(--danger);
+}
+
+/* Forced colours would force the bar backgrounds to the system surface and the
+   chart would vanish — repaint the bars in the system text colour so the shape
+   survives (the tone distinction is carried by the required aria-label). */
+@media (forced-colors: active) {
+  .ui-spark__bar {
+    background: CanvasText;
+  }
+}
+
+/* Print: the bars are currentColor fills the print economy would drop. */
+@media print {
+  .ui-spark__bar {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
