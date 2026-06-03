@@ -1,4 +1,4 @@
-import { hasDom, resolveHost, noop, bindOnce, byIdInHost } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, byIdInHost, collectHosts } from './internal.js';
 
 /**
  * Position a spotlight cutout over a target element. Each
@@ -16,9 +16,7 @@ export function initSpotlight({ root } = {}) {
   if (!hasDom()) return noop;
   const host = resolveHost(root);
   if (!host) return noop;
-  const spots = [];
-  if (host !== document && host.matches?.('[data-bronto-spotlight]')) spots.push(host);
-  spots.push(...host.querySelectorAll('[data-bronto-spotlight]'));
+  const spots = collectHosts(host, '[data-bronto-spotlight]');
   if (!spots.length) return noop;
 
   const place = () => {

@@ -23,7 +23,16 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
  *   `label` is printed on success and in the failure header; `buildHint` is the
  *   command suggested for each stale/missing file (e.g. `npm run dts:build`).
  */
-export function assertFresh(artifacts, { label, buildHint }) {
+/**
+ * The freshness compare, returning an error array instead of exiting — so a gate
+ * that ALSO collects semantic errors (a parser, CVD/contrast math) can fold the
+ * drift check into its own `errors` and exit once. (code-quality audit Q6.)
+ *
+ * @param {Record<string, string>} artifacts repo-relative path → expected string
+ * @param {string} buildHint command suggested for each stale/missing file
+ * @returns {string[]} error messages (empty when all fresh)
+ */
+export function freshnessErrors(artifacts, buildHint) {
   const errors = [];
   for (const [rel, expected] of Object.entries(artifacts)) {
     const abs = resolve(root, rel);
@@ -31,6 +40,11 @@ export function assertFresh(artifacts, { label, buildHint }) {
     else if (readFileSync(abs, 'utf8') !== expected)
       errors.push(`${rel} is stale — run: ${buildHint}`);
   }
+  return errors;
+}
+
+export function assertFresh(artifacts, { label, buildHint }) {
+  const errors = freshnessErrors(artifacts, buildHint);
 
   if (errors.length) {
     console.error(`✖ ${errors.length} ${label} problem(s):`);

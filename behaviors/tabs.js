@@ -1,9 +1,4 @@
-import { hasDom, resolveHost, noop, bindOnce } from './internal.js';
-
-// Module-global so tab ids stay unique across *every* initTabs() call.
-// A per-call counter makes separate islands/roots all mint `bronto-tab-1`,
-// which collides aria-controls/aria-labelledby across the document.
-let tabUid = 0;
+import { hasDom, resolveHost, noop, bindOnce, nextFieldUid, collectHosts } from './internal.js';
 
 /**
  * Wire `[data-bronto-tabs]` groups for full keyboard a11y. The framework
@@ -25,11 +20,7 @@ export function initTabs({ root } = {}) {
   const host = resolveHost(root);
   if (!host) return noop;
   const cleanups = [];
-  // querySelectorAll only matches descendants, so a `root` that *is* a
-  // tab group would be skipped — include it explicitly.
-  const groups = [];
-  if (host !== document && host.matches?.('[data-bronto-tabs]')) groups.push(host);
-  groups.push(...host.querySelectorAll('[data-bronto-tabs]'));
+  const groups = collectHosts(host, '[data-bronto-tabs]');
   for (const group of groups) {
     // Own group only — a tab/panel inside a nested [data-bronto-tabs]
     // belongs to that inner group, not this one.
@@ -45,7 +36,7 @@ export function initTabs({ root } = {}) {
     for (const t of tabs) {
       const p = panels.find((x) => x.dataset.panel === t.dataset.tab);
       if (!p) continue;
-      const n = ++tabUid;
+      const n = nextFieldUid();
       if (!t.id) t.id = `bronto-tab-${n}`;
       if (!p.id) p.id = `bronto-tabpanel-${n}`;
       t.setAttribute('aria-controls', p.id);

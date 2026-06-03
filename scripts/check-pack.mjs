@@ -47,43 +47,12 @@ for (const p of files) {
   }
 }
 
-// Curated docs that intentionally ship for offline LLM/agent consumers
-// (a deliberate, documented relaxation of the runtime-only stance — see
-// llms.txt). `reference.md` is generated + drift-checked (check:reference)
-// so it cannot rot; `theming.md` is the stable token contract. Everything
-// else under docs/ stays dev-only. Keep this in lockstep with `files`.
-const shippedDocs = new Set([
-  'docs/architecture.md',
-  'docs/reference.md',
-  'docs/theming.md',
-  'docs/contrast.md',
-  'docs/stability.md',
-  'docs/usage.md',
-  'docs/reporting.md',
-  'docs/mermaid.md',
-  'docs/d2.md',
-  'docs/vega.md',
-  'docs/annotations.md',
-  'docs/legends.md',
-  'docs/marks.md',
-  'docs/connectors.md',
-  'docs/spotlight.md',
-  'docs/crosshair.md',
-  'docs/selection.md',
-  'docs/sources.md',
-  'docs/state.md',
-  'docs/generated.md',
-  'docs/workbench.md',
-  'docs/command.md',
-  'docs/adr/0001-color-system.md',
-  'docs/adr/0002-scope-and-2026-baseline.md',
-  'docs/adr/0003-theme-model.md',
-]);
-for (const d of shippedDocs) {
-  if (!underAllowlist(d)) {
-    errors.push(`shipped doc "${d}" missing from "files" — pack gate and files have drifted`);
-  }
-}
+// Curated docs that intentionally ship for offline LLM/agent consumers (a
+// deliberate, documented relaxation of the runtime-only stance — see llms.txt).
+// DERIVED from `files` (every `.md` entry) rather than a hand-list, so the two
+// can never drift; the lockstep loop this replaced existed only to catch that
+// drift. (code-quality audit Q4.)
+const shippedDocs = new Set((pkg.files ?? []).filter((f) => f.endsWith('.md')));
 
 // Belt-and-braces: these must never ship (except the curated docs above).
 const forbidden = ['scripts/', 'docs/', 'demo/', 'test/', '.github/', 'node_modules/'];
