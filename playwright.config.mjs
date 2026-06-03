@@ -24,7 +24,13 @@ export default defineConfig({
   testDir: './test/e2e',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: 0,
+  // Local authoring stays strict (0) so a flake is caught at the source. On CI,
+  // the pinned-container Firefox engine intermittently loses a `:has()` style
+  // recalc or fires a click a tick before a behavior wires up (readiness races,
+  // not product bugs — different specs flake run-to-run, chromium+webkit pass).
+  // Two retries absorb that environmental jitter; a genuine regression still
+  // fails all three attempts.
+  retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
   snapshotPathTemplate: '{testDir}/__screenshots__/{arg}{ext}',
   expect: {
