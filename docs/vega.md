@@ -43,22 +43,45 @@ vegaEmbed('#chart', {
     x: { field: 'quarter', type: 'nominal' },
     y: { field: 'value', type: 'quantitative' },
   },
-}, { config: brontoVegaConfig(theme), actions: false });
+}, { config: brontoVegaConfig(theme), renderer: 'svg', actions: false });
 ```
 
-From a CDN (no bundler), load Vega + Vega-Lite + vega-embed and pass the same
-config — fetch it from `@ponchia/ui/vega.json` or inline the object:
+Pass **`renderer: 'svg'`** (not vega-embed's `canvas` default): an SVG chart is
+inspectable, themeable, survives the print/PDF pipeline, and is what the
+[annotation layer](#annotate-a-chart) composes onto — a canvas chart prints as a
+raster and carries no text alternative.
+
+### From a CDN, no bundler
+
+Load Vega + Vega-Lite + vega-embed from **pinned `/build/*.min.js` UMD files**,
+then pass the config. Pin exact versions and use the `/build/` path — a bare
+`cdn.jsdelivr.net/npm/vega@5` redirect resolves to a module bundle that does
+**not** register the global `window.vega`, so vega-embed throws and nothing
+renders:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
-<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
-<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
-<script type="module">
-  const { light } = await fetch('https://cdn.jsdelivr.net/npm/@ponchia/ui/tokens/vega.json')
-    .then((r) => r.json());
-  vegaEmbed('#chart', spec, { config: light, actions: false });
+<script src="https://cdn.jsdelivr.net/npm/vega@5.30.0/build/vega.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5.21.0/build/vega-lite.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6.26.0/build/vega-embed.min.js"></script>
+<script>
+  // INLINE the config (copy the object for your theme from @ponchia/ui/vega.json).
+  // This is the only path that also works from a file:// report — see below.
+  const brontoLight = {
+    /* …paste tokens/vega.json → light here… */
+  };
+  vegaEmbed('#chart', spec, { config: brontoLight, renderer: 'svg', actions: false });
 </script>
 ```
+
+> **file:// portability.** A report opened straight from disk (`file://`) cannot
+> `import` the `@ponchia/ui/vega` module **nor** `fetch('…/vega.json')` — the
+> browser blocks both across the `null`/file origin (CORS). So for a
+> double-clickable or PDF-bound report, **inline the resolved config object**
+> (as above) rather than fetching it. Over an `http(s)` origin (a dev server, a
+> static host, a bundler), the `import { brontoVegaConfig }` form and a
+> `fetch('https://cdn.jsdelivr.net/npm/@ponchia/ui@VERSION/tokens/vega.json')`
+> both work — pin the package version in the URL, since the unversioned latest
+> may predate this target.
 
 For a build step or non-JS host, read `@ponchia/ui/vega.json` directly
 (`{ light, dark }`, each a ready Vega-Lite `config`).
@@ -86,6 +109,7 @@ one chromatic default (series 1 / the lone mark), never the chrome:
 | `axis.domainColor` · `tickColor` | Axis line · ticks | `--line-strong` |
 | `axis.gridColor` | Gridlines | `--line` |
 | `axis.labelColor` · `titleColor` | Tick labels · axis title | `--text-soft` · `--text` |
+| `text.color` | Free `text`/`label` marks | `--text` |
 | `legend.*` · `header.*` · `title.*` | Legend, facet headers, title | `--text-soft` / `--text` / `--text-dim` |
 | `*.font` / `*Font` | All text | `--sans` |
 | `range.category` | 8-series categorical palette | `charts.json` categorical (series 1 = accent) |
@@ -101,11 +125,55 @@ series needs the redundant second channel, drive the mark's fill from the
 
 Series 1 of `range.category` **is** the live accent, so a single-series chart and
 the first category re-skin for free with `--accent`. To emphasise one mark in a
-multi-series chart, set its colour with a Vega-Lite
-[conditional](https://vega.github.io/vega-lite/docs/condition.html) to the
-resolved `--accent` hex (from [`tokens/resolved.json`](./architecture.md)) and
-leave the rest neutral — the same "reserve the accent for the one thing a reader
-must not miss" rule the rest of the system follows.
+multi-series chart, paint just that mark with the accent and leave the rest
+neutral — the same "reserve the accent for the one thing a reader must not miss"
+rule the rest of the system follows. Two small helpers hand you the exact
+per-theme hexes so you never hard-code a palette array index:
+
+```js
+import { brontoVegaAccent, brontoVegaNeutral } from '@ponchia/ui/vega';
+
+// e.g. a bar chart where only the 'Alert' category is loud:
+const spec = {
+  /* …data… */
+  mark: 'bar',
+  encoding: {
+    x: { field: 'name', type: 'nominal' },
+    y: { field: 'value', type: 'quantitative' },
+    color: {
+      condition: { test: "datum.name === 'Alert'", value: brontoVegaAccent(theme) },
+      value: brontoVegaNeutral(theme),
+    },
+    legend: null,
+  },
+};
+```
+
+`brontoVegaAccent(theme)` is `range.category[0]` (the live accent) and
+`brontoVegaNeutral(theme)` is the last category (the quiet neutral); re-read both
+when the theme toggles. Prefer them over digging the hex out of
+`tokens/resolved.json` — they are guaranteed to match the palette the config
+already ships.
+
+### Sequential & diverging ramps invert by theme
+
+`range.heatmap` / `ramp` / `ordinal` is a single-hue ramp that runs **pale → deep
+as the value rises in light theme, and deep → pale in dark theme** (the bg flips,
+so the ramp flips to stay legible against it). Two consequences:
+
+- **Don't hard-code ink on a heatmap cell.** A fixed black (or white) label is
+  readable at one end of the ramp and invisible at the other — and the readable
+  end swaps between themes. Either omit per-cell labels and rely on the fallback
+  `ui-table`, or compute the label colour from the cell's luminance at render
+  time. bronto themes the ramp; it can't know your data domain, so it does not
+  ship a cell-ink helper.
+- **A CSS gradient key won't pixel-match the Vega ramp.** A native
+  [`ui-legend--gradient`](./legends.md) track is interpolated in OKLCH; Vega
+  interpolates its `range.*` ramp in d3's RGB space. They share endpoints but
+  drift in the mid-tones, so a continuous gradient key placed beside a Vega
+  heatmap will not match its mid cells exactly. Use a **stepped** legend (one
+  swatch per band, each from the same `charts.json` ramp stop) when the key sits
+  next to the chart.
 
 ## Annotate a chart
 

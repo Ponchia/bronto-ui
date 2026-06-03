@@ -405,6 +405,7 @@ export const cls = Object.freeze({
   sourceCardActions: 'ui-source-card__actions',
   provenance: 'ui-provenance',
   provenanceItem: 'ui-provenance__item',
+  src: 'ui-src',
   srcVerified: 'ui-src--verified',
   srcUnverified: 'ui-src--unverified',
   srcGenerated: 'ui-src--generated',

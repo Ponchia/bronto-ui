@@ -53,6 +53,21 @@ and D2. The data-viz **palette** (`--chart-*`, `tokens/charts.json`) and the
   dominant axis), `notePlacement({ inset })` (reserve the title stroke-halo so a
   placement that "fits" doesn't clip), and a `spread` half-angle on both
   `connectorEndArrow` and the shared `arrowHead` kernel.
+- **`brontoVegaAccent(theme)` / `brontoVegaNeutral(theme)`** (`@ponchia/ui/vega`)
+  — the exact per-theme hexes for `range.category`'s accent (series 1) and
+  neutral (last series), so spending the accent on one emphasised mark needs no
+  palette-index reverse-engineering.
+- **`--on-accent`** token — the readable ink for a label on **any accent fill**
+  (button, badge, themed chart bar, a Vega/D2 node). Resolves to `--button-text`
+  (white on the light accent, black on the dark) and is gated ≥ 4.5:1 in
+  `docs/contrast.md`. Use it instead of `--accent-text`, which is the inverse
+  (accent-coloured text for a *neutral* background, ~1.3:1 on an accent fill).
+- **`.ui-src`** standalone trust pill (`cls.src`, `css/sources.css`) — wears a
+  `.ui-src--*` tone (verified / reviewed / generated / unverified / stale /
+  conflict) on its own, for a bare trust label outside a citation or source card.
+  Previously the `.ui-src--*` modifiers only painted a `--src-tone` with no
+  standalone host, so a lone pill validated against `classes.json` yet rendered
+  nothing.
 
 ### Removed
 
@@ -157,12 +172,33 @@ and D2. The data-viz **palette** (`--chart-*`, `tokens/charts.json`) and the
   (re-run after replacing them); popover restores focus on Escape but not on
   outside-click; the table sorter is locale-naive display-text; mask-mode glyphs
   are single-tone.
+- **Foreign-renderer recipes hardened after a multi-agent dogfooding pass**
+  (build five real reports across the whole stack, review from every POV). The
+  Vega CDN recipe now pins the `/build/*.min.js` UMD bundles and `renderer:'svg'`
+  (a bare `cdn.jsdelivr.net/npm/vega@5` tag has no `window.vega`, so the previous
+  recipe rendered nothing); the file://-portable path (inline the config — an
+  imported/fetched config is CORS-blocked from disk) is now explicit. New
+  `docs/reporting.md` recipes: "Theming a live report" (the theme-toggle/re-embed
+  foot-guns — clear the host, container-width-while-hidden, Mermaid source vs
+  output), live charts are `ui-screen-only` while the table prints (a kept live
+  chart bakes the on-screen theme), `ui-meter`/`ui-quote` markup, and the
+  sequential/diverging frozen-figure ramp. `docs/d2.md` gains a frozen
+  inline-`<svg>`-from-slots recipe and on-accent-ink guidance; `docs/vega.md`
+  documents the theme-inverting ramp and the OKLCH-vs-d3 gradient-key drift.
+- `docs/annotations.md` states the rule in both directions: a data annotation
+  must stay readable (not `aria-hidden`), a decorative one must be hidden.
 
 ### Internal
 
 - **New `check:versions` gate** — every `@ponchia/ui@X.Y.Z` literal in a shipped
   doc (`llms.txt`, `docs/reporting.md`, …) must equal `package.json`, so a stale
   CDN pin can't ship to LLM/copy-paste consumers on the next bump.
+- **New `check:doc-recipes` gate** — a `<script src>` CDN recipe in a shipped doc
+  must pin a jsDelivr `/build/*.min.js` UMD bundle, never a bare
+  `cdn.jsdelivr.net/npm/<pkg>@N` redirect (which serves a module bundle with no
+  global and renders nothing). Docs are otherwise an untested surface; this is
+  the structural guard that closes the broken-recipe class the dogfood pass
+  found. `<link href>` CSS and prose mentions are exempt.
 - **`check:dist` now asserts source-coverage** — every `css/*.css` leaf must be
   bundled, an opt-in `EXTRA_LEAVES` entry, or a roll-up; an orphaned leaf that
   would ship nothing now fails loudly (the inverse of the existing stale-dist

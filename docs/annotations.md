@@ -77,7 +77,15 @@ offset, matching d3-annotation's mental model.
 
 The visible note text should also be represented in the figure caption,
 `<desc>`, fallback table, or surrounding prose when the figure is complex.
-Use `aria-hidden="true"` only for decorative annotations.
+
+Match the accessibility treatment to the annotation's job, in both directions:
+a **data** annotation (a peak, a threshold, a watched region — it says something
+the reader needs) must stay readable, so represent its text as above and do
+**not** `aria-hidden` it; a purely **decorative** mark (a cover flourish, a
+margin doodle that carries no data) should be `aria-hidden="true"` and
+`focusable="false"` on the whole SVG so a screen reader skips the decoration.
+The one thing to avoid is the middle: a meaningful callout hidden from assistive
+tech, or decoration announced as if it were data.
 
 ## Variants and motion
 

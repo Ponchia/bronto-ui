@@ -137,4 +137,19 @@ export function brontoVegaConfig(theme = 'light') {
   return vega[theme === 'dark' ? 'dark' : 'light'];
 }
 
+/** The live accent hex for a theme — series 1 of `range.category`, the one
+ *  chromatic mark. Use it to spend the accent on a single emphasised mark in
+ *  a multi-series chart (a Vega-Lite conditional to this colour) without
+ *  reverse-engineering the palette array index. Re-skins with `--accent`. */
+export function brontoVegaAccent(theme = 'light') {
+  return vega[theme === 'dark' ? 'dark' : 'light'].range.category[0];
+}
+
+/** The neutral series hex for a theme — the last of `range.category` — for the
+ *  "every other mark stays quiet" half of accent-spending. */
+export function brontoVegaNeutral(theme = 'light') {
+  const cat = vega[theme === 'dark' ? 'dark' : 'light'].range.category;
+  return cat[cat.length - 1];
+}
+
 export default brontoVegaConfig;

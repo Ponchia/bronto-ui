@@ -186,6 +186,19 @@ export async function buildVegaJs() {
     `export function brontoVegaConfig(theme = 'light') {\n` +
     `  return vega[theme === 'dark' ? 'dark' : 'light'];\n` +
     `}\n\n` +
+    `/** The live accent hex for a theme — series 1 of \`range.category\`, the one\n` +
+    ` *  chromatic mark. Use it to spend the accent on a single emphasised mark in\n` +
+    ` *  a multi-series chart (a Vega-Lite conditional to this colour) without\n` +
+    ` *  reverse-engineering the palette array index. Re-skins with \`--accent\`. */\n` +
+    `export function brontoVegaAccent(theme = 'light') {\n` +
+    `  return vega[theme === 'dark' ? 'dark' : 'light'].range.category[0];\n` +
+    `}\n\n` +
+    `/** The neutral series hex for a theme — the last of \`range.category\` — for the\n` +
+    ` *  "every other mark stays quiet" half of accent-spending. */\n` +
+    `export function brontoVegaNeutral(theme = 'light') {\n` +
+    `  const cat = vega[theme === 'dark' ? 'dark' : 'light'].range.category;\n` +
+    `  return cat[cat.length - 1];\n` +
+    `}\n\n` +
     `export default brontoVegaConfig;\n`;
   // Format through Prettier so the committed file is byte-stable AND passes
   // check:format — the data object is machine-emitted, not hand-laid-out.
@@ -218,6 +231,13 @@ export declare const vega: { light: VegaConfig; dark: VegaConfig };
 /** The on-brand Vega-Lite \`config\` for a bronto theme. Unknown/omitted falls
  *  back to light. Spread into a spec's \`config\`, or pass to vega-embed. */
 export declare function brontoVegaConfig(theme?: 'light' | 'dark'): VegaConfig;
+
+/** The live accent hex (series 1 of \`range.category\`) for a theme — to spend the
+ *  accent on one emphasised mark without hard-coding the palette index. */
+export declare function brontoVegaAccent(theme?: 'light' | 'dark'): string;
+
+/** The neutral series hex (last of \`range.category\`) for a theme. */
+export declare function brontoVegaNeutral(theme?: 'light' | 'dark'): string;
 
 declare const _default: typeof brontoVegaConfig;
 export default _default;

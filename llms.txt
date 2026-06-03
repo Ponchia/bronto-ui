@@ -139,12 +139,19 @@ on-brand `config` (resolved hex; Vega bakes colours into SVG/canvas, can't read
 `var()`). `range.category` is the `--chart-*` palette, series 1 = accent:
 
 ```js
-import { brontoVegaConfig } from '@ponchia/ui/vega';
-vegaEmbed('#chart', spec, { config: brontoVegaConfig('dark'), actions: false });
+import { brontoVegaConfig, brontoVegaAccent, brontoVegaNeutral } from '@ponchia/ui/vega';
+vegaEmbed('#chart', spec, { config: brontoVegaConfig('dark'), renderer: 'svg', actions: false });
 ```
 
-Details: `docs/vega.md`. (Observable Plot works too — it inherits the page CSS,
-so it needs even less theming; Vega-Lite is the recommended LLM-emittable path.)
+Pass `renderer: 'svg'` (canvas is the wrong default for print/inspection).
+`brontoVegaAccent(theme)`/`brontoVegaNeutral(theme)` give the exact hexes to spend
+the accent on one mark. From a CDN, pin the `/build/*.min.js` UMD bundles (a bare
+`vega@5` tag has no `window.vega`) and INLINE the config from `vega.json` — a
+`file://` report can't `import`/`fetch` it (CORS). A label on an accent fill (a
+themed node/bar/badge) uses the `--on-accent` token, never `--accent-text` (that
+is accent-coloured text for a neutral bg). Details: `docs/vega.md`. (Observable
+Plot works too — it inherits the page CSS, so it needs even less theming;
+Vega-Lite is the recommended LLM-emittable path.)
 
 `--chart-1..8` (categorical; series 1 = accent; colourblind-safe, gated under
 simulated protan/deutan/tritan), `--chart-seq-*` (sequential), `--chart-div-*`

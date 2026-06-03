@@ -384,6 +384,7 @@ export declare const cls: {
   readonly sourceCardActions: 'ui-source-card__actions';
   readonly provenance: 'ui-provenance';
   readonly provenanceItem: 'ui-provenance__item';
+  readonly src: 'ui-src';
   readonly srcVerified: 'ui-src--verified';
   readonly srcUnverified: 'ui-src--unverified';
   readonly srcGenerated: 'ui-src--generated';
