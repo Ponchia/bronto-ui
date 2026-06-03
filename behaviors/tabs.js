@@ -14,6 +14,9 @@ import { hasDom, resolveHost, noop, bindOnce, nextFieldUid, collectHosts } from 
  * `initTabs` is guaranteed to run client-side — without it the panels
  * stay hidden with no keyboard/pointer way to reveal them. Prefer
  * authoring all panels visible and letting `initTabs` add `hidden`.
+ *
+ * @param {import('./internal.js').DelegateOpts} [opts]
+ * @returns {import('./internal.js').Cleanup}
  */
 export function initTabs({ root } = {}) {
   if (!hasDom()) return noop;

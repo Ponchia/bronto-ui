@@ -11,6 +11,9 @@ import { hasDom, resolveHost, noop, bindOnce, byIdInHost, collectHosts } from '.
  * the host decides which target is current, when to advance, and whether to
  * show/hide the overlay — just update `data-target` (or toggle `hidden`) and
  * the cutout follows. SSR-safe, idempotent per host; returns a cleanup.
+ *
+ * @param {import('./internal.js').DelegateOpts} [opts]
+ * @returns {import('./internal.js').Cleanup}
  */
 export function initSpotlight({ root } = {}) {
   if (!hasDom()) return noop;

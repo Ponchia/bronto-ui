@@ -29,6 +29,9 @@ import {
  * Emits `bronto:change` ({ detail: { index } }) on every index change
  * (button, key, thumbnail, or swipe). SSR-safe, idempotent per carousel;
  * returns a cleanup function.
+ *
+ * @param {import('./internal.js').DelegateOpts} [opts]
+ * @returns {import('./internal.js').Cleanup}
  */
 export function initCarousel({ root } = {}) {
   if (!hasDom()) return noop;

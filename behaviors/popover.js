@@ -22,6 +22,9 @@ import { hasDom, resolveHost, noop, bindOnce, byIdInHost } from './internal.js';
  *
  * Escape returns focus to the trigger; closing via outside-click leaves focus
  * where the click landed (treated as deliberate intent to move on).
+ *
+ * @param {import('./internal.js').DelegateOpts} [opts]
+ * @returns {import('./internal.js').Cleanup}
  */
 export function initPopover({ root } = {}) {
   if (!hasDom()) return noop;

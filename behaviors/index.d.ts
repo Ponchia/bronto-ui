@@ -1,237 +1,28 @@
-/** @ponchia/ui — optional, framework-agnostic behaviors. */
-
-/** Cleanup function returned by every initializer. */
-export type Cleanup = () => void;
-
-export interface ThemeStorageOpts {
-  /** localStorage key for the persisted theme. Default: "bronto-theme". */
-  storageKey?: string;
-}
-
-export interface ApplyThemeOpts extends ThemeStorageOpts {
-  /** Element to set `data-theme` on. Default: <html>. */
-  root?: Element;
-}
-
-export interface DelegateOpts {
-  /** Event-delegation root; also scopes which controls are queried. Default: document. */
-  root?: Document | Element;
-}
-
-/** `bronto:themechange` CustomEvent detail. */
-export interface ThemeChangeDetail {
-  theme: 'light' | 'dark';
-}
-
-/** Apply the persisted theme to <html data-theme>. Call before paint. */
-export declare function applyStoredTheme(opts?: ApplyThemeOpts): void;
-
-/**
- * Wire `[data-bronto-theme-toggle]` controls. Theme is always applied to
- * <html>; `root` only scopes delegation/queried controls. Dispatches
- * `bronto:themechange` on <html>. Returns a cleanup function.
- */
-export declare function initThemeToggle(opts?: ThemeStorageOpts & DelegateOpts): Cleanup;
-
-/** Wire `[data-bronto-dismiss]` controls. Returns a cleanup function. */
-export declare function dismissible(opts?: DelegateOpts): Cleanup;
-
-/** Wire `[data-bronto-disclosure]` triggers. Returns a cleanup function. */
-export declare function initDisclosure(opts?: DelegateOpts): Cleanup;
-
-/**
- * Close affordances (Escape, outside-click, close-on-activate) for a
- * native `<details data-bronto-menu>` dropdown holding a `.ui-menu`.
- * Not a full ARIA menu by design. Returns a cleanup function.
- */
-export declare function initMenu(opts?: DelegateOpts): Cleanup;
-
-/**
- * Accessible validation glue for `<form data-bronto-validate>`:
- * progressive enhancement over the Constraint Validation API. Sets
- * `aria-invalid`, writes `validationMessage` into the field's
- * `[data-bronto-error]` / `.ui-hint` slot (linked via
- * `aria-describedby`), and on invalid submit fills the form's
- * `[data-bronto-error-summary]` with focusable links and blocks submit.
- * Works without JS (native validation). Returns a cleanup function.
- */
-export declare function initFormValidation(opts?: DelegateOpts): Cleanup;
-
-/**
- * Editable combobox with a filtered listbox popup (WAI-ARIA APG
- * pattern), dependency-free and CSS-anchored. Wires
- * `[data-bronto-combobox]` (input `role=combobox` +
- * `.ui-combobox__list` of `role=option`): ids, `aria-expanded` /
- * `aria-controls` / `aria-activedescendant`, type-to-filter, full
- * keyboard, pointer select, outside-click close. Emits `bronto:change`
- * ({ detail: { value } }) on selection. SSR-safe, idempotent per
- * instance. Returns a cleanup function.
- */
-export declare function initCombobox(opts?: DelegateOpts): Cleanup;
-
-/**
- * Collision-aware popover, dependency-free. A `[data-bronto-popover]`
- * trigger toggles the `.ui-popover` panel it names; the panel flips
- * above when it would overflow the viewport and its inline edge is
- * clamped on-screen. Uses the native top layer when the panel has
- * `popover` and the Popover API exists, else an `.is-open` class.
- * Manages `aria-expanded`/`aria-controls`, Escape + outside-click
- * close, scroll/resize reposition. Returns a cleanup function.
- */
-export declare function initPopover(opts?: DelegateOpts): Cleanup;
-
-/**
- * Client-side sortable + selectable data table for
- * `[data-bronto-sortable]`. Header `.ui-table__sort` / `th[data-sort]`
- * cycles `aria-sort` and reorders the tbody (numeric- or
- * locale-string-aware); `[data-bronto-select-all]` toggles
- * `[data-bronto-select]` rows + `aria-selected` with synced
- * checked/indeterminate state. Emits `bronto:selectionchange`
- * ({ detail: { count } }). SSR-safe, idempotent per table. Returns a
- * cleanup function.
- */
-export declare function initTableSort(opts?: DelegateOpts): Cleanup;
-
-/**
- * Wire `[data-bronto-tabs]` groups with the WAI-ARIA Tabs keyboard
- * pattern (roving tabindex, Arrow/Home/End, aria-selected, panel sync).
- * Returns a cleanup function.
- */
-export declare function initTabs(opts?: DelegateOpts): Cleanup;
-
-/**
- * Wire native <dialog> open/close glue: `[data-bronto-open="id"]`,
- * `[data-bronto-close]`, and backdrop light-dismiss for dialogs marked
- * `[data-bronto-dialog-light]`. `root` scopes delegated controls; dialog ids
- * resolve root-first, then document-wide for body/portal-mounted overlays.
- * Returns a cleanup function.
- */
-export declare function initDialog(opts?: DelegateOpts): Cleanup;
-
-/**
- * Image carousel / gallery built on CSS scroll-snap (touch/trackpad swipe
- * is the browser's). Wires `[data-bronto-carousel]`: prev/next
- * (`[data-bronto-carousel-prev|next]`), keyboard (Arrow/Home/End on the
- * focused `.ui-carousel__viewport`), a `.ui-carousel__thumb` strip with
- * `aria-current` sync, the `.ui-carousel__status` counter, and ARIA. Keeps
- * a JS index in sync with the scroll position both ways (via
- * IntersectionObserver where available). `data-bronto-carousel-loop` wraps
- * at the ends; `data-bronto-carousel-label` names the region. A
- * full-screen lightbox is the same markup inside a native
- * `<dialog class="ui-lightbox">` opened by `initDialog` (focus-trap/Escape
- * come from the dialog). Emits `bronto:change` ({ detail: { index } }).
- * SSR-safe, idempotent per carousel. Returns a cleanup function.
- */
-export declare function initCarousel(opts?: DelegateOpts): Cleanup;
-
-export interface ToastOpts {
-  /** Status tone — maps to `ui-toast--<tone>`. */
-  tone?: 'accent' | 'success' | 'warning' | 'danger' | 'info';
-  /** Optional uppercase label rendered above the message. */
-  title?: string;
-  /** Auto-dismiss delay in ms. 0 keeps it until dismissed. Default: 4000. */
-  duration?: number;
-  /**
-   * Route to the assertive live region so AT interrupts immediately.
-   * Defaults to `true` when `tone === 'danger'`.
-   */
-  assertive?: boolean;
-  /** Render a dismiss button on the toast. */
-  closable?: boolean;
-}
-
-/**
- * Push a transient toast into a shared, body-anchored stack. Returns a
- * function that dismisses it early. No-op (returns noop) without a DOM.
- */
-export declare function toast(message: string, opts?: ToastOpts): Cleanup;
-
-/**
- * Expand `[data-bronto-glyph="name"]` placeholders into a `.ui-dotmatrix`
- * grid of cells — the DOM counterpart to `renderGlyph` from
- * `@ponchia/ui/glyphs`. Decorative by default (`aria-hidden`); add
- * `data-bronto-glyph-label` to expose it as `role="img"`. Unknown glyph names
- * are left untouched. SSR-safe, idempotent (skips an already-expanded host).
- * Returns a cleanup that removes the cells and restores the original
- * attributes.
- */
-export declare function initDotGlyph(opts?: DelegateOpts): Cleanup;
-
-/** `bronto:legend:toggle` CustomEvent detail. `series` is the entry's
- *  `data-series`, or its 0-based index when unset. `active` is the new state
- *  (`true` ⇒ series shown). */
-export interface LegendToggleDetail {
-  series: string | number;
-  active: boolean;
-}
-
-/**
- * Wire `[data-bronto-legend]` interactive legends. Each `.ui-legend__item` is a
- * `<button aria-pressed>`; activating it flips `aria-pressed`, toggles
- * `.is-inactive`, and dispatches `bronto:legend:toggle`
- * ({@link LegendToggleDetail}) on the legend. Bronto owns the control + its
- * state only — the host hides its own series and owns any `aria-live`
- * announcement (`aria-pressed="true"` ⇒ series shown). SSR-safe, idempotent per
- * host. Returns a cleanup function.
- */
-export declare function initLegend(opts?: DelegateOpts): Cleanup;
-
-/**
- * Draw + keep leader lines in sync. Each `[data-bronto-connector]` is a
- * `.ui-connector` SVG overlaying a positioned container; `data-from`/`data-to`
- * are the ids of the elements to connect (with optional `data-shape`,
- * `data-from-side`/`data-to-side`, `data-end`). Computes geometry via the
- * `@ponchia/ui/connectors` helpers and redraws on resize/scroll. Bronto owns no
- * layout. SSR-safe, idempotent per host; returns a cleanup that disconnects
- * observers/listeners. Re-run after adding/removing connectors.
- */
-export declare function initConnectors(opts?: DelegateOpts): Cleanup;
-
-/**
- * Position a spotlight cutout over a target. Each `[data-bronto-spotlight]` is a
- * `.ui-spotlight` overlay; `data-target` is the id of the element to highlight.
- * Sets `--spot-x/y/w/h` and re-places on resize/scroll and when `data-target`
- * changes. NOT a tour engine — the host owns step order/advancing/visibility.
- * SSR-safe, idempotent per host; returns a cleanup function.
- */
-export declare function initSpotlight(opts?: DelegateOpts): Cleanup;
-
-/** `bronto:crosshair:move` CustomEvent detail — pointer position over the plot
- *  in pixels and as 0..1 fractions. Bronto reports where; mapping to data is
- *  the host's. */
-export interface CrosshairMoveDetail {
-  x: number;
-  y: number;
-  fx: number;
-  fy: number;
-}
-
-/**
- * Track the pointer over `[data-bronto-crosshair]` plots and drive a contained
- * `.ui-crosshair` overlay: sets `--crosshair-x/y` (px), marks `.is-active`, and
- * dispatches `bronto:crosshair:move` ({@link CrosshairMoveDetail}) /
- * `bronto:crosshair:leave`. Reports the pointer position only — it does not find
- * the nearest datum or map pixels to data. SSR-safe, idempotent per plot;
- * returns a cleanup function.
- */
-export declare function initCrosshair(opts?: DelegateOpts): Cleanup;
-
-/** `bronto:command:select` CustomEvent detail — the chosen command's value and
- *  visible label. The host executes it; Bronto only filters and navigates. */
-export interface CommandSelectDetail {
-  value: string;
-  label: string;
-}
-
-/**
- * Filter + keyboard-navigate a DOM-authored command list inside
- * `[data-bronto-command]` (the `.ui-command` shell). Owns ids,
- * `role=combobox/listbox/option`, `aria-activedescendant`, a roving active item,
- * substring filtering (hiding empty groups), full keyboard
- * (Down/Up/Home/End/Enter/Escape), and pointer select. Emits
- * `bronto:command:select` ({@link CommandSelectDetail}) on choose and
- * `bronto:command:close` on Escape; the host owns the action registry, routing,
- * and execution. No global Cmd/Ctrl+K. SSR-safe, idempotent per instance;
- * returns a cleanup function.
- */
-export declare function initCommand(opts?: DelegateOpts): Cleanup;
+export { dismissible } from "./dismissible.js";
+export { initTabs } from "./tabs.js";
+export { initDialog } from "./dialog.js";
+export { toast } from "./toast.js";
+export { initDisclosure } from "./disclosure.js";
+export { initMenu } from "./menu.js";
+export { initFormValidation } from "./forms.js";
+export { initCombobox } from "./combobox.js";
+export { initPopover } from "./popover.js";
+export { initTableSort } from "./table.js";
+export { initCarousel } from "./carousel.js";
+export { initDotGlyph } from "./glyph.js";
+export { initLegend } from "./legend.js";
+export { initConnectors } from "./connectors.js";
+export { initSpotlight } from "./spotlight.js";
+export { initCrosshair } from "./crosshair.js";
+export { initCommand } from "./command.js";
+export type Cleanup = import("./internal.js").Cleanup;
+export type DelegateOpts = import("./internal.js").DelegateOpts;
+export type ThemeStorageOpts = import("./theme.js").ThemeStorageOpts;
+export type ApplyThemeOpts = import("./theme.js").ApplyThemeOpts;
+export type ThemeChangeDetail = import("./theme.js").ThemeChangeDetail;
+export type ToastOpts = import("./toast.js").ToastOpts;
+export type LegendToggleDetail = import("./legend.js").LegendToggleDetail;
+export type CrosshairMoveDetail = import("./crosshair.js").CrosshairMoveDetail;
+export type CommandSelectDetail = import("./command.js").CommandSelectDetail;
+export { applyStoredTheme, initThemeToggle } from "./theme.js";
+//# sourceMappingURL=index.d.ts.map
