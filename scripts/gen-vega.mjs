@@ -120,9 +120,17 @@ export function resolveRef(ref, theme) {
   return v;
 }
 
-/** Set a dotted path on a nested object (creating intermediate objects). */
+/** Keys that would mutate the prototype chain rather than the config object. */
+const UNSAFE_KEY = new Set(['__proto__', 'constructor', 'prototype']);
+
+/** Set a dotted path on a nested object (creating intermediate objects). The
+ *  paths here are authored literals (CHROME/FONTS/RANGES), never user input, but
+ *  guard against prototype-polluting segments so the writer is safe by
+ *  construction (and not a latent sink if the map is ever data-driven). */
 function setPath(obj, path, value) {
   const keys = path.split('.');
+  if (keys.some((k) => UNSAFE_KEY.has(k)))
+    throw new Error(`gen-vega: refusing prototype-polluting path "${path}"`);
   let node = obj;
   for (let i = 0; i < keys.length - 1; i++) node = node[keys[i]] ??= {};
   node[keys[keys.length - 1]] = value;
