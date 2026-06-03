@@ -90,6 +90,15 @@ chart mark uses, or with a `--N` index helper for the categorical palette.
 `ui-legend__swatch--circle` and `ui-legend__swatch--line` change the chip shape
 (dot series, line series).
 
+**Keying the de-emphasised series.** In an accent-rationed chart — one mark
+painted with [`brontoVegaAccent`](./vega.md#spending-the-accent), the rest left
+quiet with `brontoVegaNeutral` — the quiet neutral **is** the last categorical
+series, `--chart-8` (`#4d5358`). So a legend that honestly mirrors that chart
+uses `ui-legend__swatch--1` for the highlighted entry and
+`ui-legend__swatch--8` for the "everything else" entry — both are real palette
+tokens, so the key never drifts from the marks and `check:legend` stays happy.
+Don't hand-roll a grey: `--chart-8` is the neutral by construction.
+
 ## Variants
 
 | Modifier | Effect |

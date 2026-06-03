@@ -38,6 +38,15 @@ or read the raw maps (`import { mermaid } from '@ponchia/ui/mermaid'` →
 `{ light, dark }`). For a build step or non-JS host, read
 `@ponchia/ui/mermaid.json` directly.
 
+> **file:// portability.** A report opened straight from disk (`file://`) cannot
+> `import` the `@ponchia/ui/mermaid` module **nor** `fetch('…/mermaid.json')` —
+> the browser blocks both across the `null`/file origin (CORS), exactly as with
+> [Vega](./vega.md#from-a-cdn-no-bundler). So for a double-clickable or PDF-bound
+> report either **inline the theme variables** (paste the object for your theme
+> from `mermaid.json` into the init directive) or, better, **pre-render to a
+> frozen SVG** with the Mermaid CLI (`mmdc`, below) so there is no runtime at
+> all. Over an `http(s)` origin the `import`/`fetch` forms both work.
+
 The result is monochrome surfaces and lines with the rationed accent reserved
 for notes — a diagram that looks like the rest of a bronto surface and
 **re-skins for free** when you change `--accent`, exactly like the chart palette.
@@ -61,6 +70,14 @@ switch, re-`initialize` with the other palette and re-render.
   [charts palette](./legends.md) (series 1 = the live accent).
 - **Structural** diagrams — flowchart, sequence, class, ER, state — use the
   monochrome node/edge/cluster grammar and spend the accent only on notes.
+- **Not themed: `gantt` and `timeline`.** Their colours come from
+  diagram-specific slots (`taskBkgColor`, `sectionBkgColor*`, `gridColor`,
+  `todayLineColor`, …) that the base `themeVariables` map does **not** set, so a
+  gantt/timeline renders with Mermaid's own off-brand defaults (red/grey bars),
+  not the bronto palette. For a **report timeline**, prefer the native,
+  fully-themed [`ui-timeline`](./reporting.md) primitive (it also prints and
+  needs no renderer); reach for a Mermaid gantt only when you specifically need
+  its scheduling layout, and accept its default colours.
 
 Pie wedge labels (`pieSectionTextColor`) sit on arbitrary palette colours; if a
 label is hard to read on a given wedge, prefer a legend or direct labels over

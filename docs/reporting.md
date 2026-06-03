@@ -474,6 +474,10 @@ it (never rely on the bar alone — WCAG 1.4.1):
 <span class="ui-num">72% of quota</span>
 ```
 
+`--value` is a percentage and the fill **clamps at 100**, so an over-target
+reading (e.g. 112 % of plan) shows a full bar — put the true figure in the
+written label beside it (`ui-num`), which is the data of record anyway.
+
 A **pull-quote** lifts a source sentence out of the prose — `ui-quote` is the
 block, `ui-quote__cite` attributes it:
 
@@ -499,11 +503,18 @@ figures. Set the theme on the root and re-embed:
 <script type="module">
   import { brontoVegaConfig } from '@ponchia/ui/vega'; // http(s) origin only
   const root = document.documentElement;
-  const renderChart = () => {
+  let view; // the previous Vega view, so we can tear it down before re-embedding
+  const renderChart = async () => {
     const theme = root.dataset.theme === 'dark' ? 'dark' : 'light';
     const host = document.querySelector('#focus-chart');
-    host.replaceChildren(); // 1. clear the host — re-embedding into a non-empty node stacks SVGs
-    vegaEmbed(host, spec, { config: brontoVegaConfig(theme), renderer: 'svg', actions: false });
+    view?.finalize(); // 1. finalize the old view first — frees its listeners/RAF (see below)
+    host.replaceChildren(); // 2. clear the host — re-embedding into a non-empty node stacks SVGs
+    const res = await vegaEmbed(host, spec, {
+      config: brontoVegaConfig(theme),
+      renderer: 'svg',
+      actions: false,
+    });
+    view = res.view;
   };
   document.querySelector('#theme-toggle').addEventListener('click', () => {
     root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
@@ -513,8 +524,13 @@ figures. Set the theme on the root and re-embed:
 </script>
 ```
 
-Three foot-guns, each verified while dogfooding:
+Four foot-guns, each verified while dogfooding:
 
+- **Finalize the previous view before re-embedding.** `vegaEmbed` resolves to
+  `{ view }`; a Vega view registers event listeners and an animation frame loop
+  that `replaceChildren()` does **not** unwind. Call `view.finalize()` on the
+  prior view before each re-render (as above), or a report that toggles theme
+  repeatedly leaks a view per toggle.
 - **Clear the host before re-embedding.** vega-embed appends; embedding twice
   into the same node stacks a second chart under the first. `replaceChildren()`
   (or `host.innerHTML = ''`) first.

@@ -44,6 +44,13 @@ Put `.ui-mark` on a `<mark>` so the emphasis is semantic, not just visual.
 `prefers-reduced-motion` (reduced motion shows the resting full highlight). It
 applies to the highlight fill, so pair it with the default (no style modifier).
 
+> **A mark is a behind-text highlight, not a filled chip.** The fill is a
+> low-alpha gradient *behind* the running text, so the text keeps its normal ink
+> and the contrast stays text-on-background — even `ui-mark--accent` is
+> contrast-safe by construction. Don't reach for `--on-accent` here (that ink is
+> for a *solid* accent fill, like a button or a D2 node); a `<mark>` never needs
+> it.
+
 ## Passage bracket — `.ui-bracket-note`
 
 Brackets a whole block and optionally labels it — the prose analogue of

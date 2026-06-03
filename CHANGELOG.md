@@ -148,6 +148,12 @@ and D2. The data-viz **palette** (`--chart-*`, `tokens/charts.json`) and the
 - Carousel's IntersectionObserver is now set up and torn down in lockstep with
   its event binding, removing a one-tick window where a re-init left two
   observers on the same slides.
+- **`ui-meter` / `ui-progress` fill painted a 0×0 box.** `.ui-meter__fill` and
+  `.ui-progress__bar` set `block-size`/`inline-size` but no `display`, so on the
+  documented `<span>` fill (an inline box ignores width/height) the bar rendered
+  empty — a "validates-but-renders-nothing" trap the registry and docs both
+  hid. They are now `display: block`. Found by a second multi-agent dogfood
+  pass; guarded going forward by a render-geometry e2e (below).
 
 ### Documentation
 
@@ -187,6 +193,22 @@ and D2. The data-viz **palette** (`--chart-*`, `tokens/charts.json`) and the
   documents the theme-inverting ramp and the OKLCH-vs-d3 gradient-key drift.
 - `docs/annotations.md` states the rule in both directions: a data annotation
   must stay readable (not `aria-hidden`), a decorative one must be hidden.
+- **A second dogfood pass closed the foreign-renderer/contract gaps it found.**
+  `docs/sources.md` + `llms.txt` now document the standalone `.ui-src` trust
+  pill and state that a `ui-src--*` tone class **needs a host** (a bare
+  `<span class="ui-src--verified">` validates but renders nothing), and name the
+  source-card body part as `__excerpt` (not `__detail`). `docs/mermaid.md`:
+  `gantt`/`timeline` are **not** covered by the base `themeVariables` (they
+  render with Mermaid's own defaults — prefer the native `ui-timeline` for a
+  report). `docs/mermaid.md` + `docs/d2.md` gain the same `file://` CORS caveat
+  Vega carries (inline the map or pre-render). `docs/vega.md`: select the themed
+  ramp with `scale: { range: 'heatmap' }` — **not** `scheme:`, which throws — and
+  the accent/neutral series map to `--chart-1` / `--chart-8`, so a legend keys
+  them with `ui-legend__swatch--1`/`--8` (`docs/legends.md`). `docs/reporting.md`:
+  the live-theme recipe now `finalize()`s the prior Vega view before re-embed
+  (was leaking a view per toggle), and notes `ui-meter --value` clamps at 100
+  (put an over-target figure in the written label). `docs/marks.md`: `ui-mark`
+  is a behind-text highlight (contrast-safe; never needs `--on-accent`).
 
 ### Internal
 
@@ -222,6 +244,17 @@ and D2. The data-viz **palette** (`--chart-*`, `tokens/charts.json`) and the
 - Removed four dead keyframes (`scan`/`growBar`/`drawLine`/`pulseNode`) from
   `motion.css`. Raw bundle budget 80 → 81 kB for the accessibility blocks (gzip
   held ~14.0 kB).
+- **`classes.json` `--value` retargeted** to `.ui-meter__fill, .ui-progress__bar`
+  (was the `.ui-meter, .ui-progress` track parent) — the custom property is read
+  on the fill child, so the machine-readable manifest now matches where an author
+  actually sets it.
+- **New render-geometry e2e** (`test/e2e/render-geometry.spec.mjs`) — launches a
+  browser at the demo's real report primitives and asserts the `.ui-meter__fill`
+  / `.ui-progress__bar` fills and the standalone `.ui-src` pill paint a non-zero
+  box (via `getBoundingClientRect`, not the inline-box-lying
+  `getComputedStyle().inlineSize`). Closes the validates-but-renders-nothing
+  category that hid the meter regression. The demo gains a standalone `.ui-src`
+  pill row to exercise it.
 
 ## 0.5.0 — 2026-06-02
 

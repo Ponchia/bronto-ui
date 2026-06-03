@@ -110,10 +110,10 @@ const customProperties = [
   },
   {
     name: '--value',
-    on: '.ui-meter, .ui-progress',
+    on: '.ui-meter__fill, .ui-progress__bar',
     type: 'number 0..100',
     example: '92',
-    note: 'measured value as a percentage',
+    note: 'measured value as a percentage — set on the fill element, not its track parent',
   },
 ];
 
