@@ -286,6 +286,49 @@ authoring engine.
 - Annotation text must be visible or represented in the figure caption, SVG
   `<desc>`, or fallback table. Full detail in [annotations.md](annotations.md).
 
+## Forms: the contracts the markup alone won't tell you
+
+- **Disabled — pick one mechanism.** Use the native `disabled` attribute for a
+  genuinely inert control (`ui-input`, `ui-select`, `ui-textarea`, `ui-switch`
+  /`ui-check`/`ui-segmented` wrapping a native input, `ui-range`, `ui-file`,
+  `ui-button`): the browser greys it, blocks activation, and skips it in tab
+  order, and bronto styles the disabled cue. Use `aria-disabled="true"` **only**
+  when the control must stay focusable/announced — bronto then adds
+  `pointer-events: none` to `ui-button`/`ui-link` so it can't be activated, but
+  you still own removing it from the submit logic.
+- **Combobox** (`data-bronto-combobox`) reads its options from the DOM at
+  `initCombobox()` time — re-run it after you replace the option list. The
+  `<input>` owns the value; the listbox is a view.
+- **Validation** is opt-in via `data-bronto-validate` on the form plus
+  `initForms()`; it surfaces messages into a `ui-error-summary` you provide. The
+  summary's title is the legible sans, not the display face — it's meant to be
+  read.
+
+## Reveal: `ui-reveal` needs JS, `ui-scroll-reveal` doesn't
+
+`ui-scroll-reveal` is scroll-driven and **zero-JS** — reach for it in a static
+or LLM-authored report. `ui-reveal` is the JS variant: it starts hidden and you
+toggle `is-visible` (e.g. from an `IntersectionObserver` you own) to play it in.
+With scripting disabled it degrades to fully visible, but if scripting is *on*
+and nothing toggles `is-visible`, the content stays hidden — so only use
+`ui-reveal` when you are wiring that toggle.
+
+## Loading affordances need a role you supply
+
+`ui-spinner`, `ui-dotspinner`, `ui-skeleton`, and an indeterminate `ui-progress`
+are decorative animations — bronto can't know their semantics. Give the busy
+region `aria-busy="true"` (or `role="status"` with an `aria-live` text label like
+"Loading…"), and mark a purely decorative spinner `aria-hidden="true"`. Without
+one of these a screen reader announces nothing while the user waits.
+
+## Popover: prefer the native top layer
+
+`initPopover()` shows a `.ui-popover` in the browser **top layer** when the panel
+carries the native `popover` attribute (never clipped by `overflow`/stacking);
+without it, it falls back to an `is-open` class that a clipping ancestor can cut
+off. Add `popover` to the panel for the robust path — the `is-open` form is a
+fallback, not the default to copy.
+
 ## When to add a behavior
 
 The CSS is the framework; `@ponchia/ui/behaviors` is the *sanctioned*

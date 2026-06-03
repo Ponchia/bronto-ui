@@ -260,7 +260,10 @@ function verdict(x) {
   return x.pass ? '✅ pass' : '❌ **FAIL**';
 }
 
-const apcaCell = (n) => (n == null ? 'n/a' : `Lc ${Math.round(n)}`);
+// One decimal, not rounded-to-integer: the advisory APCA shortfall the gate
+// itself sees (e.g. Lc 44.9) must not round up to a passing-looking `Lc 45` in
+// the doc. (tokens review C20.)
+const apcaCell = (n) => (n == null ? 'n/a' : `Lc ${n.toFixed(1)}`);
 
 function themeTable(rows) {
   const head =

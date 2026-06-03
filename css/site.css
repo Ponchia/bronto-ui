@@ -162,11 +162,11 @@
     transform var(--duration-fast) var(--ease-spring);
 }
 
-.ui-sitenav a[aria-current] {
+.ui-sitenav a[aria-current]:not([aria-current='false']) {
   color: var(--accent-text);
 }
 
-.ui-sitenav a[aria-current]::before {
+.ui-sitenav a[aria-current]:not([aria-current='false'])::before {
   opacity: 1;
   transform: scale(1);
 }

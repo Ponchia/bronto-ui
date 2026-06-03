@@ -192,9 +192,13 @@
   animation-delay: 360ms;
 }
 
-/* Reveal-on-scroll: add .ui-reveal, toggle .is-visible via IntersectionObserver.
-   Degrades to visible with no JS. */
-@media (prefers-reduced-motion: no-preference) {
+/* Reveal-on-scroll: add .ui-reveal, then toggle .is-visible (e.g. from an
+   IntersectionObserver you own) to play it in. For a ZERO-JS reveal, use
+   `.ui-scroll-reveal` (scroll-driven, CSS-only) instead — that is the path for
+   an LLM-authored or no-build report. The hidden initial state below is gated
+   on `scripting: enabled`, so with scripting OFF the content is fully visible
+   and never silently hidden behind a script that will never run. */
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
   .ui-reveal {
     opacity: 0;
     transform: translateY(14px);

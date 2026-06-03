@@ -111,6 +111,11 @@ export const cssVars = {
     '--accent-ramp-end': '#ffffff',
     '--accent-strong': 'color-mix(in srgb, var(--accent) 83%, #000)',
     '--accent-text': 'var(--accent-strong)',
+    // Read-only export: the resolved on-accent ink for FOREIGN renderers
+    // (D2/Mermaid/Vega labels on an accent fill — see tokens/*.json). In-DOM
+    // components paint their own on-accent ink from `--button-text`; overriding
+    // `--on-accent` in CSS does NOT change a button/chip. To re-ink in-DOM
+    // accent fills, set `--button-text`. (tokens review C7.)
     '--on-accent': 'var(--button-text)',
     '--accent-soft': 'color-mix(in srgb, var(--accent) 10%, transparent)',
     '--success': '#2f7d4f',
@@ -147,6 +152,11 @@ export const cssVars = {
     '--accent-ramp-end': '#000000',
     '--accent-strong': 'color-mix(in srgb, var(--accent) 84%, #fff)',
     '--accent-text': 'var(--accent-strong)',
+    // Read-only export: the resolved on-accent ink for FOREIGN renderers
+    // (D2/Mermaid/Vega labels on an accent fill — see tokens/*.json). In-DOM
+    // components paint their own on-accent ink from `--button-text`; overriding
+    // `--on-accent` in CSS does NOT change a button/chip. To re-ink in-DOM
+    // accent fills, set `--button-text`. (tokens review C7.)
     '--on-accent': 'var(--button-text)',
     '--accent-soft': 'color-mix(in srgb, var(--accent) 14%, transparent)',
     '--success': '#4ec27e',

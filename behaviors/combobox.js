@@ -43,6 +43,15 @@ export function initCombobox({ root } = {}) {
       o.setAttribute('role', 'option');
     });
     list.setAttribute('role', 'listbox');
+    // Give the listbox its own accessible name (a bare role=listbox is unnamed
+    // to a screen reader) by mirroring the input's name. (a11y review C30.)
+    if (!list.hasAttribute('aria-label') && !list.hasAttribute('aria-labelledby')) {
+      const name =
+        input.getAttribute('aria-label') ||
+        input.labels?.[0]?.textContent?.trim() ||
+        input.getAttribute('placeholder');
+      if (name) list.setAttribute('aria-label', name);
+    }
     input.setAttribute('role', 'combobox');
     input.setAttribute('aria-controls', listId);
     input.setAttribute('aria-autocomplete', 'list');

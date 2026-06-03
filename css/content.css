@@ -13,6 +13,11 @@
   font-size: var(--text-base);
   line-height: 1.7;
 
+  /* Machine-generated Markdown carries long unbreakable tokens (URLs, hashes,
+     code) that otherwise force horizontal page scroll on the prose surface
+     itself. Break them. (css-robustness review C9; the table cell already does.) */
+  overflow-wrap: break-word;
+
   /* Readable measure; the container can still be wider for tables/media. */
   --prose-measure: 72ch;
 }

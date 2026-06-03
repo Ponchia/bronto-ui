@@ -135,7 +135,7 @@ export function buildBundles() {
  *  dots, menu/segmented focus-visible affordances, flat reduced-motion
  *  skeleton); the deleted dead keyframes clawed some back. Gzip held (~14.0 kB)
  *  — the additions are repetitive media-query blocks that compress well. */
-export const BUDGET = { raw: 81_000, gzip: 14_500 };
+export const BUDGET = { raw: 82_000, gzip: 14_500 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };

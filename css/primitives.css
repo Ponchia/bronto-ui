@@ -87,7 +87,10 @@
    (island-safe). Inert until applied, so existing layouts/baselines
    are unaffected. */
 .ui-cq {
-  container: var(--cq-name, bronto) / inline-size;
+  /* The container-name is fixed: the `@container bronto (…)` collapse queries
+     below hardcode `bronto`, so a `--cq-name` override would keep containment
+     but silently kill the collapse it advertises. Name is not author-tunable. */
+  container: bronto / inline-size;
 }
 
 @container bronto (max-width: 34rem) {
@@ -389,6 +392,15 @@
 .ui-button[aria-disabled='true'] {
   cursor: not-allowed;
   opacity: 0.45;
+}
+
+/* aria-disabled keeps the element in the a11y tree but the browser does NOT
+   block activation (a real <a class="ui-button" aria-disabled> still navigates,
+   a <button> still fires). Looking dead while staying live is the defect — kill
+   pointer activation. (a11y review C3; native :disabled already inert.) */
+.ui-button[aria-disabled='true'],
+.ui-link[aria-disabled='true'] {
+  pointer-events: none;
 }
 
 .ui-button:active {

@@ -49,6 +49,16 @@
   color: var(--accent-text);
 }
 
+/* Forced-colors re-assert MUST sit after the default above (same specificity,
+   @media adds none) or the accent default wins and the selected tab loses its
+   only cue. Moved here from base.css, an earlier bundle leaf. (a11y review C10.) */
+@media (forced-colors: active) {
+  .ui-tab.is-active {
+    border-block-end-color: Highlight;
+    color: Highlight;
+  }
+}
+
 .ui-tab:focus-visible {
   /* An inset box, deliberately distinct from the .is-active bottom-border
      so focus ≠ selection for low-vision keyboard users: the global
@@ -240,7 +250,7 @@
   inline-size: 0.22rem;
 }
 
-.ui-breadcrumb__item[aria-current] {
+.ui-breadcrumb__item[aria-current]:not([aria-current='false']) {
   color: var(--text);
 }
 

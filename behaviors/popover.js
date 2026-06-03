@@ -97,12 +97,37 @@ export function initPopover({ root } = {}) {
     if (openPanel && openTrigger) place(openTrigger, openPanel);
   };
 
+  // Seed resting ARIA on every trigger and keep it in sync when the UA itself
+  // toggles a native popover (light-dismiss / Escape on the `popover` attribute
+  // never routes through close(), so aria-expanded would otherwise go stale).
+  const seedTeardowns = [];
+  const seed = () => {
+    for (const trigger of host.querySelectorAll('[data-bronto-popover]')) {
+      const panel = byIdInHost(host, trigger.getAttribute('data-bronto-popover'));
+      if (!panel) continue;
+      if (!trigger.hasAttribute('aria-haspopup')) trigger.setAttribute('aria-haspopup', 'dialog');
+      trigger.setAttribute('aria-controls', panel.id);
+      if (!trigger.hasAttribute('aria-expanded')) trigger.setAttribute('aria-expanded', 'false');
+      if (panel.hasAttribute('popover')) {
+        const onToggle = (e) => {
+          const isOpen = e.newState === 'open';
+          trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+          if (!isOpen && openPanel === panel) openPanel = openTrigger = null;
+        };
+        panel.addEventListener('toggle', onToggle);
+        seedTeardowns.push(() => panel.removeEventListener('toggle', onToggle));
+      }
+    }
+  };
+
   return bindOnce(host, 'popover', () => {
+    seed();
     document.addEventListener('click', onClick);
     document.addEventListener('keydown', onKey);
     view?.addEventListener('scroll', onReflow, true);
     view?.addEventListener('resize', onReflow);
     return () => {
+      for (const t of seedTeardowns.splice(0)) t();
       document.removeEventListener('click', onClick);
       document.removeEventListener('keydown', onKey);
       view?.removeEventListener('scroll', onReflow, true);

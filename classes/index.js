@@ -139,6 +139,7 @@ export const cls = Object.freeze({
   meterSuccess: 'ui-meter--success',
   meterWarning: 'ui-meter--warning',
   meterDanger: 'ui-meter--danger',
+  meterInfo: 'ui-meter--info',
   steps: 'ui-steps',
   stepsItem: 'ui-steps__item',
   stepsItemDone: 'ui-steps__item--done',
@@ -355,6 +356,7 @@ export const cls = Object.freeze({
   bracketNote: 'ui-bracket-note',
   bracketNoteLabel: 'ui-bracket-note__label',
   bracketNoteAccent: 'ui-bracket-note--accent',
+  bracketNoteSuccess: 'ui-bracket-note--success',
   bracketNoteWarning: 'ui-bracket-note--warning',
   bracketNoteDanger: 'ui-bracket-note--danger',
   bracketNoteInfo: 'ui-bracket-note--info',
@@ -645,6 +647,7 @@ export const ui = {
       tone === 'success' && cls.meterSuccess,
       tone === 'warning' && cls.meterWarning,
       tone === 'danger' && cls.meterDanger,
+      tone === 'info' && cls.meterInfo,
     ),
   dotspinner: ({ size } = {}) =>
     j(cls.dotspinner, size === 'sm' && cls.dotspinnerSm, size === 'lg' && cls.dotspinnerLg),
@@ -732,6 +735,7 @@ export const ui = {
     j(
       cls.bracketNote,
       tone === 'accent' && cls.bracketNoteAccent,
+      tone === 'success' && cls.bracketNoteSuccess,
       tone === 'warning' && cls.bracketNoteWarning,
       tone === 'danger' && cls.bracketNoteDanger,
       tone === 'info' && cls.bracketNoteInfo,

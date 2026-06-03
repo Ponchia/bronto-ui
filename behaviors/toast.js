@@ -1,5 +1,11 @@
 import { hasDom, noop } from './internal.js';
 
+// The tones that have a `.ui-toast--*` rule. The TS type already unions these,
+// but a plain-JS / LLM caller can pass any string — and an unknown tone built a
+// `.ui-toast--error` class that matches no CSS, yielding a silent neutral toast.
+// Validate so an unknown tone degrades to neutral *and warns*, never lies. (C16)
+const TOAST_TONES = new Set(['accent', 'success', 'warning', 'danger', 'info']);
+
 // First-toast deferral queue. The very first toast on a brand-new stack
 // is appended next frame so AT observes the empty aria-live region
 // before its first child. Any further toasts created *before* that frame
@@ -43,7 +49,13 @@ function enqueueToast(place, freshStack) {
 
 function toastElement(message, { tone, title }) {
   const el = document.createElement('div');
-  el.className = tone ? `ui-toast ui-toast--${tone}` : 'ui-toast';
+  const validTone = tone && TOAST_TONES.has(tone) ? tone : null;
+  if (tone && !validTone && typeof console !== 'undefined') {
+    console.warn(
+      `[bronto] toast(): unknown tone "${tone}" — expected ${[...TOAST_TONES].join('/')}. Rendering neutral.`,
+    );
+  }
+  el.className = validTone ? `ui-toast ui-toast--${validTone}` : 'ui-toast';
   // No per-item role: the stack itself is the live region; a nested
   // live region risks double announcement in some SRs.
   if (title) {

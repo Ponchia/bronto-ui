@@ -54,9 +54,12 @@ const sortedGroups = Object.fromEntries(
 /** Author-set state hooks that are valid but deliberately NOT in `cls` (see
  *  reference.md §"Table-local state classes" / §"Composition & state"). A
  *  validator should treat these as known, not as invented classes. This is the
- *  author-applied set only; purely behavior-managed hooks (e.g. `is-leaving`,
- *  `is-visible`) are set at runtime by the optional behaviors, not hand-written,
- *  so they are out of scope here. */
+ *  author-applied set only; purely RUNTIME/data-managed hooks are out of scope
+ *  here because a contract consumer never hand-writes them — they are toggled by
+ *  JS or a data binding. Those (intentionally excluded) are: `is-leaving`
+ *  (toast exit), `is-visible` (the `.ui-reveal` IntersectionObserver toggle),
+ *  `is-in` (`.ui-matrix` reveal), and `is-on` (`.ui-dotbar` segment, data-driven).
+ *  Listed here so the omission is explicit, not a silent gap. (api review C19.) */
 const states = [
   {
     class: 'is-num',
@@ -114,6 +117,29 @@ const customProperties = [
     type: 'number 0..100',
     example: '92',
     note: 'measured value as a percentage — set on the fill element, not its track parent',
+  },
+  {
+    name: '--icon-mask',
+    on: '.ui-icon',
+    type: 'image',
+    example: 'var(--glyph-check)',
+    required: true,
+    note: 'REQUIRED — the bitmap masked into the icon; a bare .ui-icon with no --icon-mask paints a solid currentColor square, not a glyph',
+  },
+  {
+    name: '--icon-size',
+    on: '.ui-icon',
+    type: 'length',
+    example: '1.25rem',
+    note: 'icon box size (default 1em)',
+  },
+  {
+    name: '--ui-vt-name',
+    on: '.ui-vt',
+    type: 'custom-ident',
+    example: 'hero-image',
+    required: true,
+    note: 'REQUIRED — the view-transition-name; .ui-vt is inert (no transition) without it',
   },
 ];
 

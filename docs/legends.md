@@ -90,6 +90,12 @@ chart mark uses, or with a `--N` index helper for the categorical palette.
 `ui-legend__swatch--circle` and `ui-legend__swatch--line` change the chip shape
 (dot series, line series).
 
+A `ui-legend__symbol` chip is an `.ui-icon` mask — it needs a `--icon-mask`
+(e.g. `style="--icon-mask: var(--glyph-dot)"`) or it paints a solid square, like
+any [icon](./reference.md). And an **interactive** legend entry must be a real
+`<button>` (as in the example below) — a non-button `ui-legend__item` carrying
+`data-series` is not keyboard-reachable.
+
 **Keying the de-emphasised series.** In an accent-rationed chart — one mark
 painted with [`brontoVegaAccent`](./vega.md#spending-the-accent), the rest left
 quiet with `brontoVegaNeutral` — the quiet neutral **is** the last categorical
