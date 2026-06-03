@@ -1,7 +1,7 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 476,
+    "classes": 478,
     "groups": 149
   },
   "groups": {
@@ -197,6 +197,7 @@
         "ui-bracket-note--accent",
         "ui-bracket-note--danger",
         "ui-bracket-note--info",
+        "ui-bracket-note--success",
         "ui-bracket-note--warning"
       ],
       "parts": [
@@ -649,6 +650,7 @@
       "modifiers": [
         "ui-meter--accent",
         "ui-meter--danger",
+        "ui-meter--info",
         "ui-meter--success",
         "ui-meter--warning"
       ],
@@ -1277,6 +1279,7 @@
     "ui-bracket-note--accent",
     "ui-bracket-note--danger",
     "ui-bracket-note--info",
+    "ui-bracket-note--success",
     "ui-bracket-note--warning",
     "ui-bracket-note__label",
     "ui-breadcrumb",
@@ -1464,6 +1467,7 @@
     "ui-meter",
     "ui-meter--accent",
     "ui-meter--danger",
+    "ui-meter--info",
     "ui-meter--success",
     "ui-meter--warning",
     "ui-meter__fill",
@@ -1720,6 +1724,29 @@
       "type": "number 0..100",
       "example": "92",
       "note": "measured value as a percentage — set on the fill element, not its track parent"
+    },
+    {
+      "name": "--icon-mask",
+      "on": ".ui-icon",
+      "type": "image",
+      "example": "var(--glyph-check)",
+      "required": true,
+      "note": "REQUIRED — the bitmap masked into the icon; a bare .ui-icon with no --icon-mask paints a solid currentColor square, not a glyph"
+    },
+    {
+      "name": "--icon-size",
+      "on": ".ui-icon",
+      "type": "length",
+      "example": "1.25rem",
+      "note": "icon box size (default 1em)"
+    },
+    {
+      "name": "--ui-vt-name",
+      "on": ".ui-vt",
+      "type": "custom-ident",
+      "example": "hero-image",
+      "required": true,
+      "note": "REQUIRED — the view-transition-name; .ui-vt is inert (no transition) without it"
     }
   ]
 }

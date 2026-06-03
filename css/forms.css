@@ -77,6 +77,29 @@
   opacity: 0.5;
 }
 
+/* Disabled affordance parity. The text inputs above style :disabled directly;
+   the controls that WRAP a native input (switch/check/segmented) showed no
+   disabled cue and their label kept cursor:pointer — a lie. Mirror the cue via
+   :has(input:disabled); the native-element controls (range/file) take :disabled
+   directly. (a11y/forms review C4.) */
+.ui-range:disabled,
+.ui-file:disabled,
+.ui-switch:has(input:disabled),
+.ui-check:has(input:disabled),
+.ui-segmented__option:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Keep autofilled fields on-theme — the UA's yellow fill otherwise paints over
+   the monochrome surface and breaks the contrast story. (forms review C24.) */
+.ui-input:autofill,
+.ui-search input:autofill {
+  -webkit-text-fill-color: var(--text);
+  box-shadow: inset 0 0 0 100rem var(--bg-elevated);
+  caret-color: var(--text);
+}
+
 .ui-input[aria-invalid='true'],
 .ui-select[aria-invalid='true'],
 .ui-textarea[aria-invalid='true'] {
@@ -221,7 +244,10 @@
 
 .ui-error-summary__title {
   color: var(--danger);
-  font-family: var(--display);
+
+  /* The must-be-read failure heading uses the legible sans, not the low-legibility
+     Doto display face — reserve --display for decorative numerals. (forms C27.) */
+  font-family: var(--sans);
   font-size: var(--text-sm);
   font-weight: 700;
   letter-spacing: var(--tracking-wide);
@@ -260,6 +286,14 @@
 
 .ui-search:focus-within {
   border-color: var(--accent);
+}
+
+/* Keyboard focus ring to match every sibling input (which use a 2px ring); the
+   border-colour shift alone read markedly fainter on this one control. Keyed to
+   :focus-visible on the inner input so it stays keyboard-only. (a11y review C12.) */
+.ui-search:has(input:focus-visible) {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
 }
 
 .ui-search:focus-within::before {

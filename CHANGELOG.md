@@ -109,6 +109,42 @@ and D2. The data-viz **palette** (`--chart-*`, `tokens/charts.json`) and the
 
 ### Fixed
 
+- **Component-library audit (16-agent dogfood pass) — the validates-but-no-ops
+  cluster.** A whole-surface audit found the meter-style trap (a class/token that
+  validates and paints but silently does nothing without an undocumented
+  precondition) recurring across components. Fixed:
+  - `aria-disabled="true"` on `.ui-button` / `.ui-link` now sets
+    `pointer-events: none` — it looked dead but a real `<a>` still navigated.
+  - Disabled affordance reaches the controls that wrap a native input
+    (`.ui-switch` / `.ui-check` / `.ui-segmented__option` via `:has(input:disabled)`,
+    plus `.ui-range` / `.ui-file`) — they previously looked operable and their
+    label kept `cursor: pointer`.
+  - Bare `[aria-current]` selectors (`.ui-sitenav`, `.ui-breadcrumb__item`) now
+    scope `:not([aria-current='false'])`, so a correctly-authored
+    `aria-current="false"` link is no longer styled as current.
+  - The active-tab forced-colors re-assert moved from `base.css` to
+    `disclosure.css` (after the default rule) — an earlier bundle leaf let the
+    accent default override it, so the selected tab lost its only HC cue.
+  - `.ui-meter__fill` / `.ui-progress__bar` get a system colour under
+    `forced-colors`, so the measured proportion stays visible.
+  - `.ui-search` gains a 2px keyboard focus ring to match every sibling input
+    (it had only a 1px border-colour shift).
+  - `.ui-prose` gets `overflow-wrap: break-word` — long tokens in
+    machine-generated Markdown forced horizontal page scroll.
+  - `.ui-mark--draw` is scoped to fill styles (`:not(--underline, --box, --strike)`)
+    so it no longer looks applied while doing nothing.
+  - `.ui-cq` hardcodes its container-name (the `@container bronto` collapse
+    queries hardcode it, so a `--cq-name` override silently killed the collapse).
+  - `initPopover()` seeds resting ARIA (`aria-haspopup`, `aria-controls`,
+    `aria-expanded`) and syncs `aria-expanded` when the UA closes a native
+    popover; `toast()` validates `tone` (an unknown string rendered an unstyled
+    neutral toast) and warns; the combobox listbox gets an accessible name.
+  - `.ui-error-summary__title` uses the legible sans, not the low-legibility Doto
+    display face. `.ui-input` / `.ui-search` autofill stays on-theme.
+  - `.ui-reveal` hidden state is gated on `scripting: enabled` (genuinely degrades
+    visible with no JS; the prior comment lied) — and `ui-scroll-reveal` is the
+    documented zero-JS path.
+  - Parity modifiers added: `.ui-meter--info`, `.ui-bracket-note--success`.
 - Responsive/mobile hardening across the framework: `rem`-rooted type for WCAG
   1.4.4, coarse-pointer tap-target floors, combobox/tour-note viewport clamps,
   and `@media (hover)` gating — with a new responsive e2e sweep.
@@ -228,6 +264,19 @@ and D2. The data-viz **palette** (`--chart-*`, `tokens/charts.json`) and the
   global and renders nothing). Docs are otherwise an untested surface; this is
   the structural guard that closes the broken-recipe class the dogfood pass
   found. `<link href>` CSS and prose mentions are exempt.
+- **`classes.json` `customProperties` expanded** to cover the load-bearing,
+  no-op-without-it knobs the audit found undocumented: the **required**
+  `--icon-mask` (a bare `.ui-icon` paints a solid square without it) and
+  `--ui-vt-name` (`.ui-vt` is inert without it), plus `--icon-size`. The
+  `states` manifest comment now explicitly names the runtime-managed hooks it
+  deliberately excludes (`is-leaving`/`is-visible`/`is-in`/`is-on`) so the
+  omission reads as intentional, not a gap. `--on-accent` is annotated at its
+  token source as a read-only export for foreign renderers (in-DOM ink is
+  `--button-text`). `contrast.md` now prints APCA `Lc` to one decimal so an
+  advisory shortfall (e.g. `Lc 44.9`) no longer rounds to a passing-looking `45`.
+- Raw bundle budget 81 → 82 kB for the component-audit accessibility/state
+  blocks (gzip held ~14.1 kB — the additions are repetitive media-query and
+  `:has()`/`:not()` rules that compress well).
 - **`check:dist` now asserts source-coverage** — every `css/*.css` leaf must be
   bundled, an opt-in `EXTRA_LEAVES` entry, or a roll-up; an orphaned leaf that
   would ship nothing now fails loudly (the inverse of the existing stale-dist

@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 476 classes across 149 component groups
+- 478 classes across 149 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -224,6 +224,7 @@ each one matches a real selector in the stylesheet.
 | `cls.bracketNoteAccent` | `ui-bracket-note--accent` | modifier |
 | `cls.bracketNoteDanger` | `ui-bracket-note--danger` | modifier |
 | `cls.bracketNoteInfo` | `ui-bracket-note--info` | modifier |
+| `cls.bracketNoteSuccess` | `ui-bracket-note--success` | modifier |
 | `cls.bracketNoteWarning` | `ui-bracket-note--warning` | modifier |
 
 ### `.ui-breadcrumb`
@@ -691,6 +692,7 @@ each one matches a real selector in the stylesheet.
 | `cls.meterFill` | `ui-meter__fill` | part |
 | `cls.meterAccent` | `ui-meter--accent` | modifier |
 | `cls.meterDanger` | `ui-meter--danger` | modifier |
+| `cls.meterInfo` | `ui-meter--info` | modifier |
 | `cls.meterSuccess` | `ui-meter--success` | modifier |
 | `cls.meterWarning` | `ui-meter--warning` | modifier |
 
@@ -1262,7 +1264,9 @@ For numeric text *outside* a table, use the `ui-num` primitive
 (`ui.num({ tone })`), which carries the same tabular/aligned/tone intent; for
 a trend figure use `ui-delta` (`ui.delta({ dir, invert })`). The full,
 machine-readable list of these `is-*` state hooks — and the author-set inline
-custom properties (`--chart-color`, `--chart-pattern`, `--value`) — is in
+custom properties (`--chart-color`, `--chart-pattern`, `--value`, and the
+**required** `--icon-mask` on `.ui-icon` and `--ui-vt-name` on `.ui-vt` —
+without which those classes render a solid square / do nothing) — is in
 [`@ponchia/ui/classes.json`](../classes/classes.json)
 (`states` / `customProperties`).
 

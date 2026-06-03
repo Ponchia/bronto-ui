@@ -428,7 +428,7 @@
             </label>
             <button class="ui-button" aria-busy="true">Saving</button>
             <button class="ui-button ui-button--subtle" data-bronto-popover="pop1">Open popover</button>
-            <div class="ui-popover" id="pop1">Collision-aware, dependency-free.</div>
+            <div class="ui-popover" id="pop1" popover>Collision-aware, dependency-free.</div>
           </div>
           <form data-bronto-validate class="ui-stack" novalidate>
             <div class="ui-field">
@@ -595,9 +595,9 @@
           <h3 class="ui-eyebrow ui-eyebrow--muted">Tabs · Accordion · Segmented · Disclosure</h3>
           <div class="ui-tabs" data-bronto-tabs>
             <div class="ui-tabs__list" role="tablist">
-              <button class="ui-tab is-active" role="tab" data-tab="a">Overview</button>
-              <button class="ui-tab" role="tab" data-tab="b">Activity</button>
-              <button class="ui-tab" role="tab" data-tab="c">Settings</button>
+              <button type="button" class="ui-tab is-active" role="tab" data-tab="a">Overview</button>
+              <button type="button" class="ui-tab" role="tab" data-tab="b">Activity</button>
+              <button type="button" class="ui-tab" role="tab" data-tab="c">Settings</button>
             </div>
             <div class="ui-tabs__panel" data-panel="a">First panel — CSS-only look, ARIA contract.</div>
             <div class="ui-tabs__panel" data-panel="b" hidden>Second panel.</div>
