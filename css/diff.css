@@ -1,0 +1,149 @@
+/* ==========================================================================
+   diff — opt-in line/row change-review grammar.
+
+   The review counterpart to the report layer: marks call out a sentence, diff
+   calls out what CHANGED. A CSS-grid gutter grammar for added / removed /
+   context rows with a redundant +/− sign glyph (so the meaning survives forced
+   colours and print, where the tint is dropped), tone tints, and tabular
+   line-number gutters. Not imported by core.css.
+
+   Boundary: the HOST supplies pre-classified rows — it owns tokenizing, hunk
+   computation, and row alignment; Bronto only paints. The moment this parsed or
+   aligned source it would cross the line that deleted the bar renderer in
+   0.6.0. Pairs with `.ui-compare--2up` and the `.ui-src` provenance pill.
+
+   Unified (default): rows are direct children of `.ui-diff` (or a
+   `.ui-diff__hunk` rowgroup); columns are [old-ln] [new-ln] [code].
+   Split: `.ui-diff--split` holds two `.ui-diff__pane` columns, each [ln] [code];
+   the host emits the matching rows per side.
+
+   Long lines wrap (no horizontal scroll) so the surface prints cleanly; line
+   numbers pin to the top of a wrapped line. Line numbers are `user-select:none`
+   and should be `aria-hidden` in markup — the `__code` carries the content.
+   ========================================================================== */
+
+.ui-diff {
+  --diff-add-bg: color-mix(in srgb, var(--success) 14%, transparent);
+  --diff-remove-bg: color-mix(in srgb, var(--danger) 14%, transparent);
+  --diff-add-ink: var(--success);
+  --diff-remove-ink: var(--danger);
+
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  display: grid;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  grid-template-columns: auto auto minmax(0, 1fr);
+  line-height: 1.6;
+  overflow: hidden;
+}
+
+/* Split view: two independent panes side by side. Each pane is its own
+   [ln] [code] grid; the host aligns rows across panes (its job). */
+.ui-diff--split {
+  grid-template-columns: 1fr 1fr;
+}
+
+.ui-diff__pane {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  min-inline-size: 0;
+}
+
+.ui-diff--split > .ui-diff__pane + .ui-diff__pane {
+  border-inline-start: 1px solid var(--line);
+}
+
+/* A hunk groups rows under an optional header without breaking the grid:
+   display:contents keeps its rows as the grid's own items. */
+.ui-diff__hunk {
+  display: contents;
+}
+
+/* Rows are layout-transparent — their cells are the real grid items, so the
+   tone tint paints on the cells (a display:contents row generates no box, and
+   the custom properties still inherit down the DOM to the cells). */
+.ui-diff__row {
+  display: contents;
+}
+
+/* The hunk / file header spans every column. */
+.ui-diff__header {
+  background: var(--surface-2);
+  color: var(--text-dim);
+  grid-column: 1 / -1;
+  padding: var(--space-2xs) var(--space-sm);
+}
+
+.ui-diff__ln {
+  align-self: start;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+  padding: 0 var(--space-sm);
+  text-align: end;
+  user-select: none;
+}
+
+.ui-diff__code {
+  overflow-wrap: anywhere;
+  padding: 0 var(--space-sm);
+  white-space: pre-wrap;
+}
+
+/* The redundant sign glyph in the code gutter — a non-colour channel, so add /
+   remove still read once the tint is dropped (forced colours, print economy).
+   Context defaults to a non-breaking space so the code column stays aligned. */
+.ui-diff__code::before {
+  color: var(--diff-tint, var(--text-dim));
+  content: var(--diff-sign, '\00a0');
+  display: inline-block;
+  inline-size: 1ch;
+  margin-inline-end: var(--space-2xs);
+  user-select: none;
+}
+
+.ui-diff__row--add {
+  --diff-sign: '+';
+  --diff-tint: var(--diff-add-ink);
+}
+
+.ui-diff__row--remove {
+  --diff-sign: '\2212'; /* − U+2212 minus sign (decorative; not copied) */
+  --diff-tint: var(--diff-remove-ink);
+}
+
+.ui-diff__row--context {
+  --diff-sign: '\00a0';
+}
+
+.ui-diff__row--add > .ui-diff__ln,
+.ui-diff__row--add > .ui-diff__code {
+  background: var(--diff-add-bg);
+}
+
+.ui-diff__row--remove > .ui-diff__ln,
+.ui-diff__row--remove > .ui-diff__code {
+  background: var(--diff-remove-bg);
+}
+
+/* Forced colours drop the tint — the +/− glyph already carries the channel; add
+   an inline-start border on the changed code cell as a second, colour-free cue. */
+@media (forced-colors: active) {
+  .ui-diff__row--add > .ui-diff__code,
+  .ui-diff__row--remove > .ui-diff__code {
+    border-inline-start: 2px solid currentColor;
+  }
+}
+
+/* Print: the tints are meaning-carrying backgrounds, so force them through the
+   print "economy" default that would otherwise drop them. */
+@media print {
+  .ui-diff__header,
+  .ui-diff__row--add > .ui-diff__ln,
+  .ui-diff__row--add > .ui-diff__code,
+  .ui-diff__row--remove > .ui-diff__ln,
+  .ui-diff__row--remove > .ui-diff__code {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

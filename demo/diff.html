@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — diff specimen</title>
+    <meta name="description" content="Line/row change-review specimen for @ponchia/ui diff CSS." />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/diff.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .diff-demo {
+        margin: 0 auto;
+        max-width: 80ch;
+        padding: 2rem 1rem 4rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="diff-demo ui-prose">
+      <h1 class="ui-display">Diff specimen</h1>
+
+      <p>
+        Unified view — the host has already classified each row; Bronto paints the gutter, the
+        <code>+</code>/<code>−</code> glyph, and the tone tint. Line numbers are
+        <code>aria-hidden</code>, so a screen reader reads the code lines in order.
+      </p>
+
+      <div class="ui-diff">
+        <div class="ui-diff__hunk">
+          <div class="ui-diff__header">@@ -1,5 +1,5 @@ .ui-diff</div>
+
+          <div class="ui-diff__row ui-diff__row--context">
+            <span class="ui-diff__ln" aria-hidden="true">1</span>
+            <span class="ui-diff__ln" aria-hidden="true">1</span>
+            <code class="ui-diff__code">.ui-diff {</code>
+          </div>
+          <div class="ui-diff__row ui-diff__row--context">
+            <span class="ui-diff__ln" aria-hidden="true">2</span>
+            <span class="ui-diff__ln" aria-hidden="true">2</span>
+            <code class="ui-diff__code"> border: 1px solid var(--line);</code>
+          </div>
+          <div class="ui-diff__row ui-diff__row--remove">
+            <span class="ui-diff__ln" aria-hidden="true">3</span>
+            <span class="ui-diff__ln" aria-hidden="true"></span>
+            <code class="ui-diff__code"> font-size: var(--text-sm);</code>
+          </div>
+          <div class="ui-diff__row ui-diff__row--add">
+            <span class="ui-diff__ln" aria-hidden="true"></span>
+            <span class="ui-diff__ln" aria-hidden="true">3</span>
+            <code class="ui-diff__code"> font-size: var(--text-xs);</code>
+          </div>
+          <div class="ui-diff__row ui-diff__row--add">
+            <span class="ui-diff__ln" aria-hidden="true"></span>
+            <span class="ui-diff__ln" aria-hidden="true">4</span>
+            <code class="ui-diff__code"> line-height: 1.6;</code>
+          </div>
+          <div class="ui-diff__row ui-diff__row--context">
+            <span class="ui-diff__ln" aria-hidden="true">4</span>
+            <span class="ui-diff__ln" aria-hidden="true">5</span>
+            <code class="ui-diff__code">}</code>
+          </div>
+        </div>
+      </div>
+
+      <p>Split view — two panes, aligned by the host (<code>--split</code>).</p>
+
+      <div class="ui-diff ui-diff--split">
+        <div class="ui-diff__pane">
+          <div class="ui-diff__row ui-diff__row--context">
+            <span class="ui-diff__ln" aria-hidden="true">1</span>
+            <code class="ui-diff__code">retries: 3</code>
+          </div>
+          <div class="ui-diff__row ui-diff__row--remove">
+            <span class="ui-diff__ln" aria-hidden="true">2</span>
+            <code class="ui-diff__code">timeout: 30</code>
+          </div>
+          <div class="ui-diff__row ui-diff__row--context">
+            <span class="ui-diff__ln" aria-hidden="true">3</span>
+            <code class="ui-diff__code">backoff: linear</code>
+          </div>
+        </div>
+        <div class="ui-diff__pane">
+          <div class="ui-diff__row ui-diff__row--context">
+            <span class="ui-diff__ln" aria-hidden="true">1</span>
+            <code class="ui-diff__code">retries: 3</code>
+          </div>
+          <div class="ui-diff__row ui-diff__row--add">
+            <span class="ui-diff__ln" aria-hidden="true">2</span>
+            <code class="ui-diff__code">timeout: 10</code>
+          </div>
+          <div class="ui-diff__row ui-diff__row--context">
+            <span class="ui-diff__ln" aria-hidden="true">3</span>
+            <code class="ui-diff__code">backoff: linear</code>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

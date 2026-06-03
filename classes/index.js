@@ -414,6 +414,18 @@ export const cls = Object.freeze({
   srcReviewed: 'ui-src--reviewed',
   srcStale: 'ui-src--stale',
   srcConflict: 'ui-src--conflict',
+  // diff — line/row change-review grammar (css/diff.css)
+  diff: 'ui-diff',
+  diffSplit: 'ui-diff--split',
+  diffPane: 'ui-diff__pane',
+  diffHunk: 'ui-diff__hunk',
+  diffHeader: 'ui-diff__header',
+  diffRow: 'ui-diff__row',
+  diffRowAdd: 'ui-diff__row--add',
+  diffRowRemove: 'ui-diff__row--remove',
+  diffRowContext: 'ui-diff__row--context',
+  diffLn: 'ui-diff__ln',
+  diffCode: 'ui-diff__code',
   // lifecycle / system state (css/state.css)
   state: 'ui-state',
   stateLabel: 'ui-state__label',
@@ -765,6 +777,14 @@ export const ui = {
   citation: ({ chip, state } = {}) => j(cls.citation, chip && cls.citationChip, srcTone(state)),
   source: ({ state } = {}) => j(cls.sourceCard, srcTone(state)),
   provenance: ({ state } = {}) => j(cls.provenance, srcTone(state)),
+  diff: ({ split } = {}) => j(cls.diff, split && cls.diffSplit),
+  diffRow: ({ change } = {}) =>
+    j(
+      cls.diffRow,
+      change === 'add' && cls.diffRowAdd,
+      change === 'remove' && cls.diffRowRemove,
+      change === 'context' && cls.diffRowContext,
+    ),
   state: ({ state, busy } = {}) => j(cls.state, stateTone(state), busy && cls.stateBusy),
   originLabel: ({ ai } = {}) => j(cls.originLabel, ai && cls.originLabelAi),
 };

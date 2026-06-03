@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 477 classes across 149 component groups
+- 488 classes across 150 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -401,6 +401,22 @@ each one matches a real selector in the stylesheet.
 | `cls.deltaFlat` | `ui-delta--flat` | modifier |
 | `cls.deltaInvert` | `ui-delta--invert` | modifier |
 | `cls.deltaUp` | `ui-delta--up` | modifier |
+
+### `.ui-diff`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.diff` | `ui-diff` | base |
+| `cls.diffCode` | `ui-diff__code` | part |
+| `cls.diffHeader` | `ui-diff__header` | part |
+| `cls.diffHunk` | `ui-diff__hunk` | part |
+| `cls.diffLn` | `ui-diff__ln` | part |
+| `cls.diffPane` | `ui-diff__pane` | part |
+| `cls.diffRow` | `ui-diff__row` | part |
+| `cls.diffRowAdd` | `ui-diff__row--add` | modifier |
+| `cls.diffRowContext` | `ui-diff__row--context` | modifier |
+| `cls.diffRowRemove` | `ui-diff__row--remove` | modifier |
+| `cls.diffSplit` | `ui-diff--split` | modifier |
 
 ### `.ui-display`
 
