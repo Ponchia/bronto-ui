@@ -65,7 +65,11 @@ for (const name of inCss) {
 // classes/index.d.ts — so the published TypeScript surface can't silently
 // drift behind the JS (a real consumer-facing break otherwise).
 const dts = readFileSync(resolve(root, 'classes/index.d.ts'), 'utf8');
-const declared = new Set([...dts.matchAll(/^\s*(\w+)\s*\(opts\?:/gm)].map((m) => m[1]));
+// Match any method signature `name(` — not only `name(opts?:`. The tighter form
+// passed only because all 43 recipes happen to share that exact shape today; a
+// future no-arg / required-arg / renamed recipe would silently fall out of
+// `declared` and the gate could only ever false-pass. (code-quality audit Q5.)
+const declared = new Set([...dts.matchAll(/^\s*(\w+)\s*\(/gm)].map((m) => m[1]));
 for (const name of Object.keys(ui)) {
   if (!declared.has(name)) {
     errors.push(

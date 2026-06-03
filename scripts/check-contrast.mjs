@@ -13,21 +13,16 @@
  *
  * Run: node scripts/check-contrast.mjs
  */
-import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generated, audit } from './gen-contrast.mjs';
+import { freshnessErrors } from './lib/assert-fresh.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
 
 // 1. Drift.
-for (const [rel, expected] of Object.entries(generated)) {
-  const abs = resolve(root, rel);
-  if (!existsSync(abs)) errors.push(`${rel} missing — run: npm run contrast:build`);
-  else if (readFileSync(abs, 'utf8') !== expected)
-    errors.push(`${rel} is stale — run: npm run contrast:build`);
-}
+errors.push(...freshnessErrors(generated, 'npm run contrast:build'));
 
 // 2. Floor enforcement — core palette AND every shipped colorway. A skin is
 // part of the framework, so its accent is held to the same floors (this gate,

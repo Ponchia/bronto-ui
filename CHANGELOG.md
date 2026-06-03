@@ -109,6 +109,13 @@ and D2. The data-viz **palette** (`--chart-*`, `tokens/charts.json`) and the
 
 ### Fixed
 
+- **Published-type drift (code-quality audit).** `ui.meter({ tone: 'info' })` and
+  `ui.bracketNote({ tone: 'success' })` emit real classes at runtime, but the
+  generated `.d.ts` tone unions (hand-mirrored in `gen-dts.mjs`) omitted them, so
+  a TS consumer got a spurious type error for a value that renders. The unions
+  now match the factory; a new `check:recipe-types` gate cross-checks every
+  factory's string-literal options against its `*Opts` union so this whole class
+  of drift fails CI.
 - **Component-library audit (16-agent dogfood pass) — the validates-but-no-ops
   cluster.** A whole-surface audit found the meter-style trap (a class/token that
   validates and paints but silently does nothing without an undocumented
@@ -277,6 +284,21 @@ and D2. The data-viz **palette** (`--chart-*`, `tokens/charts.json`) and the
 - Raw bundle budget 81 → 82 kB for the component-audit accessibility/state
   blocks (gzip held ~14.1 kB — the additions are repetitive media-query and
   `:has()`/`:not()` rules that compress well).
+- **Code-quality audit (16-agent) — two new gates + targeted dedup, no churn.**
+  A code-health pass (complexity / duplication / AI-slop / missing-best-practice)
+  that deliberately left working, gate-protected code alone. Added:
+  `check:recipe-types` (factory↔`.d.ts` option parity, above) and `check:chain`
+  (every `check:*` script is wired into the aggregate `check` chain — closes the
+  silent-coverage-drop class; it would have caught a forgotten gate). Reconciled
+  a latent bug — `clamp()` had silently diverged between `connectors` and
+  `annotations`; the two now share one scalar/geometry kernel (the guarded form).
+  Dedup that removed real duplication: a shared `collectHosts()` /
+  `scrollIntoViewSafe()` / `wrapIndex()` in `behaviors/internal.js` (~9 behaviors),
+  a `freshnessErrors()` helper reused by 7 drift gates, the shared `CSS_COLOR`
+  regex across the 3 foreign-renderer gates, `check-report`'s opt-in list as a
+  loop, `check-pack`'s shipped-docs derived from `pkg.files`, and a looser
+  `check-classes` recipe-scrape. README hero de-densified; `srcTone` matched to
+  `stateTone`'s idiom; the intentional badge accent-mix (45% vs 40%) documented.
 - **`check:dist` now asserts source-coverage** — every `css/*.css` leaf must be
   bundled, an opt-in `EXTRA_LEAVES` entry, or a roll-up; an orphaned leaf that
   would ship nothing now fails loudly (the inverse of the existing stale-dist

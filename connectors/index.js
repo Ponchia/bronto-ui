@@ -42,30 +42,37 @@
  * @property {number} angle The path's end-tangent at `to` in radians — the direction the path arrives, so rotating an arrowhead at `to` by this points it along the path. Equals the straight `from`→`to` angle for `shape: 'straight'`; axis-aligned for `elbow`/`curve`.
  */
 
-const PRECISION = 1000;
+// Shared scalar/geometry primitives. Exported so the annotations layer composes
+// on the SAME kernel instead of copy-pasting it (the copies had silently
+// diverged — see `clamp`). Low-level helpers; the documented API is the path
+// builders below.
+export const PRECISION = 1000;
 
-function finite(name, value, fallback) {
+export function finite(name, value, fallback) {
   const v = value ?? fallback;
   if (!Number.isFinite(v)) throw new TypeError(`${name} must be a finite number`);
   return v;
 }
 
-function dimension(name, value, fallback) {
+export function dimension(name, value, fallback) {
   const v = finite(name, value, fallback);
   if (v < 0) throw new RangeError(`${name} must be greater than or equal to 0`);
   return v;
 }
 
-function fmt(value) {
+export function fmt(value) {
   const rounded = Math.round((Object.is(value, -0) ? 0 : value) * PRECISION) / PRECISION;
   return String(Object.is(rounded, -0) ? 0 : rounded);
 }
 
-function point(x, y) {
+export function point(x, y) {
   return `${fmt(x)},${fmt(y)}`;
 }
 
-function clamp(value, min, max) {
+// Guarded form (returns min when the range is inverted) — the reconciled body;
+// connectors only ever calls clamp(v, 0, 1) so this is output-identical here.
+export function clamp(value, min, max) {
+  if (max < min) return min;
   return Math.min(max, Math.max(min, value));
 }
 

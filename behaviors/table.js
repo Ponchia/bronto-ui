@@ -1,4 +1,4 @@
-import { hasDom, resolveHost, noop, bindOnce } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, collectHosts } from './internal.js';
 
 /**
  * Client-side sortable + selectable data table. Wires
@@ -25,9 +25,7 @@ export function initTableSort({ root } = {}) {
   if (!hasDom()) return noop;
   const host = resolveHost(root);
   if (!host) return noop;
-  const tables = [];
-  if (host !== document && host.matches?.('[data-bronto-sortable]')) tables.push(host);
-  tables.push(...(host.querySelectorAll?.('[data-bronto-sortable]') ?? []));
+  const tables = collectHosts(host, '[data-bronto-sortable]');
   const cleanups = [];
 
   for (const table of tables) {

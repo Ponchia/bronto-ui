@@ -547,14 +547,16 @@ const stateTone = (state) =>
   })[state] || '';
 
 // Trust-state → tone class, shared by the source/citation/provenance recipes.
+// Object-literal lookup to match stateTone above (shorter, greppable, one idiom).
 const srcTone = (state) =>
-  (state === 'verified' && cls.srcVerified) ||
-  (state === 'unverified' && cls.srcUnverified) ||
-  (state === 'generated' && cls.srcGenerated) ||
-  (state === 'reviewed' && cls.srcReviewed) ||
-  (state === 'stale' && cls.srcStale) ||
-  (state === 'conflict' && cls.srcConflict) ||
-  '';
+  ({
+    verified: cls.srcVerified,
+    unverified: cls.srcUnverified,
+    generated: cls.srcGenerated,
+    reviewed: cls.srcReviewed,
+    stale: cls.srcStale,
+    conflict: cls.srcConflict,
+  })[state] || '';
 
 export const ui = {
   button: ({ variant, icon, size } = {}) =>
