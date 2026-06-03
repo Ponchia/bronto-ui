@@ -191,7 +191,7 @@ Recent-evergreen, by design. The framework targets the modern web platform — c
 
 ## Versioning
 
-Pre-1.0 and deliberately so. **Until `1.0.0`, breaking changes ship in the _minor_** (`0.x.0`); patches (`0.x.y`) are always non-breaking. Pin with the patch range — at `0.x`, `~0.5.0` (and equivalently `^0.5.0`) resolves to `>=0.5.0 <0.6.0`, giving you safe patches while holding back the next breaking minor. Every breaking change is called out under a **BREAKING** heading in the **[CHANGELOG](https://github.com/Ponchia/bronto-ui/blob/main/CHANGELOG.md)** with a migration note.
+Pre-1.0 and deliberately so. **Until `1.0.0`, breaking changes ship in the _minor_** (`0.x.0`); patches (`0.x.y`) are always non-breaking. Pin with the patch range — at `0.x`, `~0.6.0` (and equivalently `^0.6.0`) resolves to `>=0.6.0 <0.7.0`, giving you safe patches while holding back the next breaking minor. Every breaking change is called out under a **BREAKING** heading in the **[CHANGELOG](https://github.com/Ponchia/bronto-ui/blob/main/CHANGELOG.md)** with a migration note.
 
 Contractual (changes are breaking): token **names** and documented token roles, `.ui-*` class and recipe names, `data-bronto-*` attributes, exported behavior/glyph/binding function names and each behavior's cleanup contract. Not contractual (may change any release): exact token **values** and generated colour math outputs (visual tuning) unless a doc explicitly says the value is stable, plus internal leaf-file / `@layer` boundaries. See **[docs/stability.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/stability.md)** for the full public-surface matrix.
 
