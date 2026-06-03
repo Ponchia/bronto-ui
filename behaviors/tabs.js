@@ -1,4 +1,4 @@
-import { hasDom, noop, bindOnce } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce } from './internal.js';
 
 // Module-global so tab ids stay unique across *every* initTabs() call.
 // A per-call counter makes separate islands/roots all mint `bronto-tab-1`,
@@ -22,7 +22,8 @@ let tabUid = 0;
  */
 export function initTabs({ root } = {}) {
   if (!hasDom()) return noop;
-  const host = root || document;
+  const host = resolveHost(root);
+  if (!host) return noop;
   const cleanups = [];
   // querySelectorAll only matches descendants, so a `root` that *is* a
   // tab group would be skipped — include it explicitly.

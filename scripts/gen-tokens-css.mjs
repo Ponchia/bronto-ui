@@ -75,7 +75,7 @@ function paletteRegion() {
    Single source of truth: tokens/index.js (\`cssVars\`). Edit token VALUES
    there, then run \`npm run tokens:css:build\`. The four :root blocks below are
    emitted from cssVars — the dark palette is authored ONCE (not the former two
-   CSS blocks + the JS mirror). check-tokens.mjs gates this file against cssVars.
+   CSS blocks + the JS mirror). Drift-checked by \`npm run check:fresh\` (scripts/check-fresh.mjs).
    The Doto @font-face lives in fonts.css; override --display / --dot-font to
    self-host. CSS-only presets (density / contrast / OLED) are hand-authored
    below the marker — they are intentionally not part of the JS token model.

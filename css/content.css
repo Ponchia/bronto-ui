@@ -75,7 +75,7 @@
 
 /* Anchored headings clear a sticky chrome and expose a dot on hover. */
 .ui-prose :is(h1, h2, h3, h4, h5, h6)[id] {
-  scroll-margin-block-start: 6rem;
+  scroll-margin-block-start: var(--scroll-offset);
 }
 
 /* --- Text-level --- */

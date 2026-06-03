@@ -16,7 +16,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 // source. The $comment key is data (ignored by JSON consumers) and is part of
 // the byte-exact drift contract enforced by check-fresh.mjs (via the registry).
 const $comment =
-  'GENERATED from tokens/index.js — do not edit by hand. Run `npm run tokens:build`; drift-checked by check:tokens. A build artifact for non-JS tooling (Style Dictionary, Figma, other languages).';
+  'GENERATED from tokens/index.js — do not edit by hand. Run `npm run tokens:build`; drift-checked by check:fresh. A build artifact for non-JS tooling (Style Dictionary, Figma, other languages).';
 
 export const TOKENS_JSON_PATH = resolve(root, 'tokens/index.json');
 export const tokensJson = JSON.stringify({ $comment, cssVars, tokens }, null, 2) + '\n';

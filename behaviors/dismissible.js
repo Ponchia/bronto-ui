@@ -1,4 +1,4 @@
-import { hasDom, noop, bindOnce, closestSafe } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, closestSafe } from './internal.js';
 
 /**
  * Click on `[data-bronto-dismiss]` removes the nearest ancestor matching
@@ -7,7 +7,8 @@ import { hasDom, noop, bindOnce, closestSafe } from './internal.js';
  */
 export function dismissible({ root } = {}) {
   if (!hasDom()) return noop;
-  const host = root || document;
+  const host = resolveHost(root);
+  if (!host) return noop;
   const onClick = (e) => {
     const btn = e.target.closest('[data-bronto-dismiss]');
     if (!btn || !host.contains(btn)) return;

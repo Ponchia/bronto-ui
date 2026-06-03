@@ -185,6 +185,30 @@ test('initDisclosure scoped root resolves duplicate ids inside the root first', 
   assert.equal(inside.hidden, false, 'inside duplicate toggled');
 });
 
+test('explicit root:null no-ops instead of widening to document (scope-not-ready guard)', () => {
+  const d = mount(
+    '<button data-bronto-disclosure aria-controls="p" aria-expanded="false">m</button>' +
+      '<div id="p" hidden>panel</div>',
+  );
+  // A scope WAS requested (root key present) but the ref is null/not-ready —
+  // the behavior must NOT silently hijack the whole document.
+  const stop = initDisclosure({ root: null });
+  assert.equal(typeof stop, 'function', 'returns a cleanup (noop)');
+  const btn = d.querySelector('[data-bronto-disclosure]');
+  btn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(
+    btn.getAttribute('aria-expanded'),
+    'false',
+    'document control NOT wired by null root',
+  );
+  assert.equal(d.getElementById('p').hidden, true, 'panel untouched');
+
+  // Sanity: with no root key at all, the same control IS wired (document scope).
+  initDisclosure();
+  btn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(btn.getAttribute('aria-expanded'), 'true', 'absent root still wires document');
+});
+
 test('initMenu closes the <details> on Escape, outside-click, and item activation', () => {
   const d = mount(
     '<details data-bronto-menu open><summary>Menu</summary>' +

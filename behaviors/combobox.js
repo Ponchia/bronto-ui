@@ -1,4 +1,4 @@
-import { hasDom, noop, bindOnce, nextFieldUid } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, nextFieldUid } from './internal.js';
 
 /**
  * Editable combobox with a filtered listbox popup, implementing the
@@ -16,10 +16,15 @@ import { hasDom, noop, bindOnce, nextFieldUid } from './internal.js';
  * pointer select, and outside-click close; it emits a `bronto:change`
  * CustomEvent ({ detail: { value } }) on selection. SSR-safe,
  * idempotent per instance; returns a cleanup function.
+ *
+ * Options are read from the DOM at init; if you replace the listbox contents
+ * (e.g. async/remote results) without re-initialising, filtering and keyboard
+ * nav act on the stale nodes — re-run initCombobox after mutating the options.
  */
 export function initCombobox({ root } = {}) {
   if (!hasDom()) return noop;
-  const host = root || document;
+  const host = resolveHost(root);
+  if (!host) return noop;
   const boxes = [];
   if (host !== document && host.matches?.('[data-bronto-combobox]')) boxes.push(host);
   boxes.push(...(host.querySelectorAll?.('[data-bronto-combobox]') ?? []));

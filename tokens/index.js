@@ -9,7 +9,7 @@
  * :root palette blocks of css/tokens.css are GENERATED from it
  * (scripts/gen-tokens-css.mjs), so the dark palette is authored once here
  * rather than in three places (the two CSS dark blocks + a JS mirror).
- * scripts/check-tokens.mjs fails CI if css/tokens.css drifts from this model.
+ * Drift-checked by `npm run check:fresh` (scripts/check-fresh.mjs).
  *
  * `tokens` is an ergonomic view derived programmatically from `cssVars`
  * (no second hand-maintained copy, so nothing to keep in sync).

@@ -199,7 +199,7 @@
 
 .ui-segmented__option:has(input:focus-visible) {
   outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
+  outline-offset: -2px;
 }
 
 @media (hover: hover) {
@@ -429,8 +429,8 @@
 .ui-carousel__prev::before,
 .ui-carousel__next::before {
   block-size: 0.5rem;
-  border-block-start: 1.5px solid currentColor;
-  border-inline-end: 1.5px solid currentColor;
+  border-block-start: 1.5px solid currentcolor;
+  border-inline-end: 1.5px solid currentcolor;
   content: '';
   inline-size: 0.5rem;
 }

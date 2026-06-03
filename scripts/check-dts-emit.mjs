@@ -40,11 +40,26 @@ const walk = (dir) => {
   for (const e of readdirSync(dir, { withFileTypes: true })) {
     const abs = join(dir, e.name);
     if (e.isDirectory()) walk(abs);
-    else if (e.name.endsWith('.d.ts')) {
-      // Compare the declarations only. The sibling `.d.ts.map` is emitted by the
-      // same run, but its `sources` path is relative to the emit dir, so the
-      // temp copy never byte-matches the in-place one — comparing the .d.ts is
-      // the real freshness signal.
+    else if (e.name.endsWith('.d.ts.map')) {
+      // Compare the declaration MAP too, normalizing the one volatile field:
+      // `sources` is relative to the emit dir, so the temp copy never byte-
+      // matches in place. Normalizing both to source basenames lets us still
+      // gate the mapping data (`version`/`file`/`names`/`mappings`) against
+      // drift — closing the hole where shipped map content could rot unchecked.
+      const rel = relative(out, abs).split(sep).join('/');
+      const committed = resolve(root, rel);
+      if (!existsSync(committed)) errors.push(`${rel} missing — run: npm run dts:emit`);
+      else {
+        const norm = (json) => {
+          const o = JSON.parse(json);
+          o.sources = (o.sources || []).map((s) => s.split('/').pop());
+          return JSON.stringify(o);
+        };
+        if (norm(readFileSync(committed, 'utf8')) !== norm(readFileSync(abs, 'utf8')))
+          errors.push(`${rel} mappings are stale — run: npm run dts:emit`);
+      }
+    } else if (e.name.endsWith('.d.ts')) {
+      // The declaration surface byte-matches in place (no volatile paths).
       const rel = relative(out, abs).split(sep).join('/');
       const committed = resolve(root, rel);
       if (!existsSync(committed)) errors.push(`${rel} missing — run: npm run dts:emit`);

@@ -454,8 +454,8 @@
 
 .ui-link--arrow::after,
 .ui-link--cta::after {
-  border-inline-end: 1px solid currentColor;
-  border-block-start: 1px solid currentColor;
+  border-inline-end: 1px solid currentcolor;
+  border-block-start: 1px solid currentcolor;
   content: '';
   block-size: 0.42rem;
   transform: rotate(45deg);
