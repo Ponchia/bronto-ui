@@ -329,6 +329,13 @@ A Vega-Lite figure:
 </script>
 ```
 
+> The bare-specifier `import`s above assume a **build step** (or an import map).
+> A static report opened from disk has no module resolver — use the CDN
+> `<script src>` form (Vega + Vega-Lite + vega-embed, then `brontoVegaConfig`
+> inlined or fetched from `@ponchia/ui/vega.json`) shown in [vega.md](./vega.md).
+> For a report you intend to **print/PDF**, prefer the frozen inline `<svg>`
+> below — it has no runtime and survives the print pipeline.
+
 A frozen, token-themed inline `<svg>` for the same data — no runtime, prints
 exactly, with a `.ui-legend` key and the fallback table:
 

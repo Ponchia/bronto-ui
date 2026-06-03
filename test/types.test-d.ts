@@ -25,6 +25,7 @@ import {
 } from '../glyphs/glyphs.js';
 import { skins, SKIN_NAMES, type SkinName } from '../tokens/skins.js';
 import { charts, type ChartTokenName } from '../tokens/charts.js';
+import { brontoVegaConfig, type VegaConfig } from '../tokens/vega.js';
 import {
   connectRects,
   connectorPath,
@@ -243,6 +244,15 @@ const series1: string = charts.light.categorical[0];
 // @ts-expect-error — not a categorical chart token.
 const badChart: ChartTokenName = '--chart-99';
 void [chartTok, series1, badChart];
+
+// Vega: the ./vega subpath types are sound — VegaConfig has the range ramps,
+// brontoVegaConfig takes the theme literal, and an unknown theme is rejected.
+const vegaCfg: VegaConfig = brontoVegaConfig('dark');
+const vegaCat: string[] = vegaCfg.range.category;
+const vegaBg: string = vegaCfg.background;
+// @ts-expect-error — theme is 'light' | 'dark', not arbitrary.
+brontoVegaConfig('midnight');
+void [vegaCfg, vegaCat, vegaBg];
 
 // Annotations: helper subpath types are object-shaped and finite geometry stays
 // a runtime concern.

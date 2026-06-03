@@ -429,7 +429,7 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   VALIDATE markup without executing ESM/parsing TS: `groups` (base →
   modifiers/parts, the BEM structure), `classes` (flat list), `states` (the
   `is-*` hooks that live outside `cls` by design, with their scope), and
-  `customProperties` (the author-set inline-style knobs like `--chart-value`).
+  `customProperties` (the author-set inline-style knobs like `--chart-color` / `--value`).
 - `docs/reference.md` — the full class catalog as prose tables (every
   class grouped by component, with registry key + kind). Generated from
   the same source as the types and CI-drift-checked.

@@ -119,9 +119,10 @@ contract**, so pin your Vega version and key off the data, not generated ids.
 
 ## Scope
 
-bronto owns the theme config (gated: every colour slot resolves, both themes, no
-`var()` leaks, every `range.*` ramp populated — and a dev-only render-probe
-asserts the colours actually land on a rendered chart) and the annotation
-geometry. It does not own Vega's grammar, its rendering, or its internal SVG —
+bronto owns the theme config — gated structurally by `check:vega` (every colour
+slot resolves, both themes, no `var()` leaks, every `range.*` ramp populated),
+and separately a dev-only render-probe (`npm test`, via the `vega`/`vega-lite`
+dev deps) asserts the colours actually land on a rendered chart — and the
+annotation geometry. It does not own Vega's grammar, its rendering, or its internal SVG —
 those stay Vega's, and the chart is a documented composition, not a shipped
 runtime binding.
