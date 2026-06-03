@@ -69,8 +69,10 @@ export function initTableSort({ root } = {}) {
           : x.localeCompare(y);
         return cmp * sign;
       });
-      rows.forEach((r) => tbody.appendChild(r));
-      emptyRows.forEach((r) => tbody.appendChild(r));
+      // Re-parent in document order: sorted data rows, then any empty/sentinel
+      // row last. A single appendChild pass over the existing <tr> nodes (no
+      // markup is created — these are trusted DOM elements being moved).
+      for (const r of [...rows, ...emptyRows]) tbody.appendChild(r);
     };
 
     const allBox = table.querySelector('[data-bronto-select-all]');
