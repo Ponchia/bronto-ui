@@ -48,7 +48,7 @@ for (const rel of shipped) {
       if (!/\/build\//.test(url)) {
         problems.push(
           `${rel}:${i + 1}  <script src="${url}">  — bare jsDelivr bundle; ` +
-            `pin the UMD build path, e.g. …@5.30.0/build/vega.min.js`,
+            `pin the UMD build path, e.g. …@6.2.0/build/vega.min.js`,
         );
       }
     }
