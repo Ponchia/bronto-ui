@@ -6,13 +6,35 @@ without turning the project into a per-framework component suite.
 
 > **Source of truth is [`CHANGELOG.md`](CHANGELOG.md).** This file describes
 > direction; the changelog records what actually shipped. If they disagree, the
-> changelog wins. Last reconciled against `0.5.0`.
+> changelog wins. Last reconciled against `0.6.0`.
 >
 > **Strategic north star:** Bronto should not out-catalog generic UI kits. It
 > should own framework-agnostic primitives for interfaces that explain
 > themselves: explanation, provenance, relationships, command access, workbench
 > ergonomics, generated reports, and durable system state. See
 > [`docs/frontier-primitives.md`](docs/frontier-primitives.md).
+
+## Shipped in 0.6.0
+
+- **Vega-Lite theme target.** `@ponchia/ui/vega` (`brontoVegaConfig(theme)`,
+  `vega.json`) — an on-brand Vega-Lite / Vega `config` resolved per theme, the
+  same tokens-as-data path as Mermaid and D2, gated by a headless render-probe.
+  **Breaking:** the local static-bar renderer (`.ui-chart*`) is **removed** — a
+  chart needs scales + data binding, which the analytical layer refuses to own.
+  The `--chart-*` palette (`tokens/charts.json`) and the legend layer are
+  unchanged. Pin `~0.5` → re-pin `~0.6`; see `MIGRATIONS.json` (`0.5`→`0.6`).
+- **On-brand foreign-renderer themes.** Token-driven **Mermaid**
+  (`@ponchia/ui/mermaid`) and **D2** (`@ponchia/ui/d2`) theme maps, resolved hex
+  baked from the token source and drift-gated.
+- **Reporting kit for LLM-from-other-systems.** Core `ui-delta` trend indicator
+  and report-layer `ui-compare` before/after layout; `@ponchia/ui/classes.json`
+  language-neutral class manifest; `tokens/resolved.json` `scale` block;
+  `--display-weight` token; load-path/CDN docs; print/PDF fidelity +
+  `scripts/render-pdf.mjs`.
+- **Hardening.** Multi-agent audit passes closed a backlog of accessibility,
+  contract, scoped-root and code-quality gaps; new drift/quality gates
+  (`check:fresh`, `check:doc-recipes`, `check:versions`, dist-coverage,
+  dts-map); responsive/all-size pass with a dedicated spec.
 
 ## Shipped in 0.5.0
 

@@ -42,7 +42,7 @@ the path changes from source `css/` to built `dist/css/`:
 <!-- installed locally -->
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/<leaf>.css" />
 <!-- or from a CDN; pin the version (pre-1.0, breaking changes ship in the minor) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.5.0/dist/css/<leaf>.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.0/dist/css/<leaf>.css" />
 ```
 
 The flattened default bundle is `dist/bronto.css` (bundler shorthand

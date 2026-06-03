@@ -5,7 +5,7 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
-## Unreleased — 0.6.0
+## 0.6.0 — 2026-06-03
 
 Accumulates the post-0.5.0 work: a multi-agent audit pass (accessibility
 hardening, a behavior/binding scope-safety fix, codegen/gate tightening) plus a

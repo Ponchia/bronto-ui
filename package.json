@@ -1,6 +1,6 @@
 {
   "name": "@ponchia/ui",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "type": "module",
   "description": "CSS-first design system for interfaces that explain themselves — works in HTML, every framework, and PDF, no component runtime. A standard component set plus an opt-in analytical & report layer (annotations, legends, connectors, data-viz, report grammar). Monochrome with one rationed accent, re-skinnable from one --accent knob. Zero runtime dependencies.",
   "keywords": [
