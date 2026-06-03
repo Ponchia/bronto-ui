@@ -33,6 +33,9 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 - [marks.md](./marks.md) — text/evidence emphasis for running prose (`ui-mark`, `ui-bracket-note`).
 - [sources.md](./sources.md) — the citations / provenance trust layer.
 - [diff.md](./diff.md) — line/row change-review grammar (`ui-diff`, add/remove/context rows).
+- [code.md](./code.md) — fenced-code evidence chrome (`ui-code`, line numbers + add/del/hl states; never parses).
+- [spark.md](./spark.md) — inline datawords / word-sized microcharts (`ui-spark`, host-normalised `--v`).
+- [sidenote.md](./sidenote.md) — Tufte margin notes (`ui-sidenote` numbered, `ui-marginnote` plain).
 - [connectors.md](./connectors.md) — leader lines between DOM elements.
 - [spotlight.md](./spotlight.md) — guided-focus overlay.
 - [crosshair.md](./crosshair.md) — plot ruler + pinned readout.

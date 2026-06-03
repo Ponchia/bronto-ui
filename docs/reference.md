@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 488 classes across 150 component groups
+- 504 classes across 154 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -318,6 +318,19 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.cluster` | `ui-cluster` | base |
 | `cls.clusterBetween` | `ui-cluster--between` | modifier |
+
+### `.ui-code`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.code` | `ui-code` | base |
+| `cls.codeBody` | `ui-code__body` | part |
+| `cls.codeHead` | `ui-code__head` | part |
+| `cls.codeLine` | `ui-code__line` | part |
+| `cls.codeLineAdd` | `ui-code__line--add` | modifier |
+| `cls.codeLineDel` | `ui-code__line--del` | modifier |
+| `cls.codeLineHl` | `ui-code__line--hl` | modifier |
+| `cls.codeNumbered` | `ui-code--numbered` | modifier |
 
 ### `.ui-combobox`
 
@@ -655,6 +668,12 @@ each one matches a real selector in the stylesheet.
 | `cls.linkArrow` | `ui-link--arrow` | modifier |
 | `cls.linkCta` | `ui-link--cta` | modifier |
 
+### `.ui-marginnote`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.marginnote` | `ui-marginnote` | base |
+
 ### `.ui-mark`
 
 | Registry key | Class | Kind |
@@ -952,6 +971,13 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.sidebar` | `ui-sidebar` | base |
 
+### `.ui-sidenote`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.sidenote` | `ui-sidenote` | base |
+| `cls.sidenoteRef` | `ui-sidenote__ref` | part |
+
 ### `.ui-sitefooter`
 
 | Registry key | Class | Kind |
@@ -1010,6 +1036,16 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.sourceList` | `ui-source-list` | base |
 | `cls.sourceListItem` | `ui-source-list__item` | part |
+
+### `.ui-spark`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.spark` | `ui-spark` | base |
+| `cls.sparkBar` | `ui-spark__bar` | part |
+| `cls.sparkBarAccent` | `ui-spark__bar--accent` | modifier |
+| `cls.sparkBarNeg` | `ui-spark__bar--neg` | modifier |
+| `cls.sparkBarPos` | `ui-spark__bar--pos` | modifier |
 
 ### `.ui-spinner`
 

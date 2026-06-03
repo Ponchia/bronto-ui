@@ -426,6 +426,25 @@ export const cls = Object.freeze({
   diffRowContext: 'ui-diff__row--context',
   diffLn: 'ui-diff__ln',
   diffCode: 'ui-diff__code',
+  // code — fenced-code evidence chrome (css/code.css)
+  code: 'ui-code',
+  codeNumbered: 'ui-code--numbered',
+  codeHead: 'ui-code__head',
+  codeBody: 'ui-code__body',
+  codeLine: 'ui-code__line',
+  codeLineAdd: 'ui-code__line--add',
+  codeLineDel: 'ui-code__line--del',
+  codeLineHl: 'ui-code__line--hl',
+  // spark — inline datawords / microcharts (css/spark.css)
+  spark: 'ui-spark',
+  sparkBar: 'ui-spark__bar',
+  sparkBarAccent: 'ui-spark__bar--accent',
+  sparkBarPos: 'ui-spark__bar--pos',
+  sparkBarNeg: 'ui-spark__bar--neg',
+  // sidenote — Tufte margin notes (css/sidenote.css)
+  sidenote: 'ui-sidenote',
+  marginnote: 'ui-marginnote',
+  sidenoteRef: 'ui-sidenote__ref',
   // lifecycle / system state (css/state.css)
   state: 'ui-state',
   stateLabel: 'ui-state__label',
@@ -784,6 +803,21 @@ export const ui = {
       change === 'add' && cls.diffRowAdd,
       change === 'remove' && cls.diffRowRemove,
       change === 'context' && cls.diffRowContext,
+    ),
+  code: ({ numbered } = {}) => j(cls.code, numbered && cls.codeNumbered),
+  codeLine: ({ change } = {}) =>
+    j(
+      cls.codeLine,
+      change === 'add' && cls.codeLineAdd,
+      change === 'del' && cls.codeLineDel,
+      change === 'hl' && cls.codeLineHl,
+    ),
+  sparkBar: ({ tone } = {}) =>
+    j(
+      cls.sparkBar,
+      tone === 'accent' && cls.sparkBarAccent,
+      tone === 'pos' && cls.sparkBarPos,
+      tone === 'neg' && cls.sparkBarNeg,
     ),
   state: ({ state, busy } = {}) => j(cls.state, stateTone(state), busy && cls.stateBusy),
   originLabel: ({ ai } = {}) => j(cls.originLabel, ai && cls.originLabelAi),

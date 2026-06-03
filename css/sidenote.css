@@ -1,0 +1,63 @@
+/* ==========================================================================
+   sidenote — opt-in Tufte-style margin notes.
+
+   A numbered `ui-sidenote` and an unnumbered `ui-marginnote` for evidence,
+   caveats, and provenance asides that belong beside the text, not in it. Wide
+   viewports float the note into the inline-end margin; narrow viewports collapse
+   it to an indented inline block. CSS counters number the sidenotes. Not
+   imported by core.css.
+
+   Boundary / wiring: the HOST owns where numbering restarts — set
+   `counter-reset: ui-sidenote` on the article (or a section) — and reserves the
+   margin gutter by giving that container
+   `padding-inline-end: calc(var(--sidenote-width) + var(--sidenote-gap))` at the
+   same breakpoint. Place each note in the DOM right after its `.ui-sidenote__ref`.
+   ========================================================================== */
+
+.ui-sidenote,
+.ui-marginnote {
+  --sidenote-width: 12rem;
+  --sidenote-gap: 2rem;
+
+  border-inline-start: 2px solid var(--line);
+  color: var(--text-dim);
+  display: block;
+  font-size: var(--text-2xs);
+  line-height: 1.5;
+  margin-block: var(--space-2xs);
+  padding-inline-start: var(--space-md);
+}
+
+/* The inline superscript that anchors a numbered sidenote. */
+.ui-sidenote__ref {
+  color: var(--accent);
+  counter-increment: ui-sidenote;
+  font-size: 0.75em;
+  vertical-align: super;
+}
+
+.ui-sidenote__ref::after {
+  content: counter(ui-sidenote);
+}
+
+/* The note repeats its number (display only — the ref already incremented). */
+.ui-sidenote::before {
+  color: var(--accent);
+  content: counter(ui-sidenote) '. ';
+}
+
+/* Wide viewports: float the note into the inline-end margin. The container must
+   reserve the gutter (see header). */
+@media (min-width: 60rem) {
+  .ui-sidenote,
+  .ui-marginnote {
+    border-inline-start: 0;
+    clear: inline-end;
+    float: inline-end;
+    inline-size: var(--sidenote-width);
+    margin-block: 0;
+    margin-inline-end: calc(-1 * (var(--sidenote-width) + var(--sidenote-gap)));
+    padding-inline-start: 0;
+    text-align: start;
+  }
+}

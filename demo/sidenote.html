@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — sidenote specimen</title>
+    <meta name="description" content="Tufte margin-note specimen for @ponchia/ui sidenote CSS." />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/sidenote.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      /* The article owns the counter scope and reserves the margin gutter at
+         the same breakpoint the note floats. */
+      .sidenote-demo {
+        counter-reset: ui-sidenote;
+        margin: 0 auto;
+        max-width: 50ch;
+        padding: 2rem 1rem 4rem;
+      }
+
+      @media (min-width: 60rem) {
+        .sidenote-demo {
+          margin-inline: auto 16rem;
+          padding-inline-end: 14rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="sidenote-demo ui-prose">
+      <h1 class="ui-display">Sidenote specimen</h1>
+
+      <p>
+        The migration cut p95 latency by 38%<label class="ui-sidenote__ref"></label>.
+        <span class="ui-sidenote">
+          Measured over the first 24h after rollout; see the incident review §4 for the method.
+        </span>
+        The error budget held through the change<span class="ui-marginnote"
+          >No paging events fired during the window.</span
+        >, and the rollback path stayed warm the whole time<label class="ui-sidenote__ref"></label>.
+        <span class="ui-sidenote"> A canary at 5% ran for an hour before the full cut-over. </span>
+      </p>
+    </main>
+  </body>
+</html>

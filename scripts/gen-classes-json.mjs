@@ -175,6 +175,21 @@ const customProperties = [
     required: true,
     note: 'REQUIRED — the view-transition-name; .ui-vt is inert (no transition) without it',
   },
+  {
+    name: '--v',
+    on: '.ui-spark__bar',
+    type: 'number 0..1',
+    example: '0.7',
+    required: true,
+    note: 'REQUIRED — the normalised bar height (0..1). The host normalises; Bronto only paints. A bar with no --v collapses to the 1px floor. Pair every spark with a host-written role="img" + aria-label.',
+  },
+  {
+    name: '--sidenote-width',
+    on: '.ui-sidenote, .ui-marginnote',
+    type: 'length',
+    example: '12rem',
+    note: 'width of the floated margin note on wide viewports (default 12rem). The container must reserve a matching inline-end gutter — see docs/sidenote.md.',
+  },
 
   // Layout-primitive tuning knobs — the Every-Layout intrinsics + app-shell.
   // Undiscoverable before (prose-only / not even prose) so an author couldn't

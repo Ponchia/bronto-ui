@@ -256,6 +256,18 @@ export interface DiffRowOpts {
   /** The host-classified change kind — sets the tint and the +/− gutter glyph. */
   change?: 'add' | 'remove' | 'context';
 }
+export interface CodeOpts {
+  /** Show the line-number gutter (counts each \`.ui-code__line\`). */
+  numbered?: boolean;
+}
+export interface CodeLineOpts {
+  /** The host-classified line state — \`hl\` is a neutral highlight, not a change. */
+  change?: 'add' | 'del' | 'hl';
+}
+export interface SparkBarOpts {
+  /** Emphasise / tone a single bar. The meaning must still be in the spark's aria-label. */
+  tone?: 'accent' | 'pos' | 'neg';
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -301,6 +313,9 @@ export interface Ui {
   provenance(opts?: ProvenanceOpts): string;
   diff(opts?: DiffOpts): string;
   diffRow(opts?: DiffRowOpts): string;
+  code(opts?: CodeOpts): string;
+  codeLine(opts?: CodeLineOpts): string;
+  sparkBar(opts?: SparkBarOpts): string;
   state(opts?: StateOpts): string;
   originLabel(opts?: OriginLabelOpts): string;
 }

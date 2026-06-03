@@ -1,8 +1,8 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 488,
-    "groups": 150
+    "classes": 504,
+    "groups": 154
   },
   "groups": {
     "ui-accordion": {
@@ -291,6 +291,20 @@
         "ui-cluster--between"
       ],
       "parts": []
+    },
+    "ui-code": {
+      "base": "ui-code",
+      "modifiers": [
+        "ui-code--numbered",
+        "ui-code__line--add",
+        "ui-code__line--del",
+        "ui-code__line--hl"
+      ],
+      "parts": [
+        "ui-code__body",
+        "ui-code__head",
+        "ui-code__line"
+      ]
     },
     "ui-combobox": {
       "base": "ui-combobox",
@@ -619,6 +633,11 @@
       ],
       "parts": []
     },
+    "ui-marginnote": {
+      "base": "ui-marginnote",
+      "modifiers": [],
+      "parts": []
+    },
     "ui-mark": {
       "base": "ui-mark",
       "modifiers": [
@@ -903,6 +922,13 @@
       "modifiers": [],
       "parts": []
     },
+    "ui-sidenote": {
+      "base": "ui-sidenote",
+      "modifiers": [],
+      "parts": [
+        "ui-sidenote__ref"
+      ]
+    },
     "ui-sitefooter": {
       "base": "ui-sitefooter",
       "modifiers": [],
@@ -958,6 +984,17 @@
       "modifiers": [],
       "parts": [
         "ui-source-list__item"
+      ]
+    },
+    "ui-spark": {
+      "base": "ui-spark",
+      "modifiers": [
+        "ui-spark__bar--accent",
+        "ui-spark__bar--neg",
+        "ui-spark__bar--pos"
+      ],
+      "parts": [
+        "ui-spark__bar"
       ]
     },
     "ui-spinner": {
@@ -1330,6 +1367,14 @@
     "ui-citation--chip",
     "ui-cluster",
     "ui-cluster--between",
+    "ui-code",
+    "ui-code--numbered",
+    "ui-code__body",
+    "ui-code__head",
+    "ui-code__line",
+    "ui-code__line--add",
+    "ui-code__line--del",
+    "ui-code__line--hl",
     "ui-combobox",
     "ui-combobox__empty",
     "ui-combobox__input",
@@ -1471,6 +1516,7 @@
     "ui-link",
     "ui-link--arrow",
     "ui-link--cta",
+    "ui-marginnote",
     "ui-mark",
     "ui-mark--accent",
     "ui-mark--box",
@@ -1578,6 +1624,8 @@
     "ui-shortcut",
     "ui-shortcut__sep",
     "ui-sidebar",
+    "ui-sidenote",
+    "ui-sidenote__ref",
     "ui-sitefooter",
     "ui-sitefooter__links",
     "ui-siteheader",
@@ -1597,6 +1645,11 @@
     "ui-source-card__title",
     "ui-source-list",
     "ui-source-list__item",
+    "ui-spark",
+    "ui-spark__bar",
+    "ui-spark__bar--accent",
+    "ui-spark__bar--neg",
+    "ui-spark__bar--pos",
     "ui-spinner",
     "ui-spotlight",
     "ui-spotlight--ring",
@@ -1803,6 +1856,21 @@
       "example": "hero-image",
       "required": true,
       "note": "REQUIRED — the view-transition-name; .ui-vt is inert (no transition) without it"
+    },
+    {
+      "name": "--v",
+      "on": ".ui-spark__bar",
+      "type": "number 0..1",
+      "example": "0.7",
+      "required": true,
+      "note": "REQUIRED — the normalised bar height (0..1). The host normalises; Bronto only paints. A bar with no --v collapses to the 1px floor. Pair every spark with a host-written role=\"img\" + aria-label."
+    },
+    {
+      "name": "--sidenote-width",
+      "on": ".ui-sidenote, .ui-marginnote",
+      "type": "length",
+      "example": "12rem",
+      "note": "width of the floated margin note on wide viewports (default 12rem). The container must reserve a matching inline-end gutter — see docs/sidenote.md."
     },
     {
       "name": "--stack-gap",

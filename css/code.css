@@ -1,0 +1,96 @@
+/* ==========================================================================
+   code — opt-in fenced-code evidence chrome.
+
+   Paints already-tokenized code: a head bar, an optional line-number gutter
+   (CSS counters), and add / del / highlight line states. It NEVER parses or
+   tokenizes — the host (or Shiki, via the shipped `shiki/nothing.json` token
+   theme) supplies the coloured spans; Bronto owns only the chrome. Code-as-
+   evidence for changelogs, version history, and generated reports; pairs with
+   the `.ui-src` provenance pill and marks. Not imported by core.css.
+
+   Long lines wrap (no horizontal scroll) so the surface prints cleanly. Put a
+   `.ui-code__line` around each line to opt into numbering / line states; plain
+   text inside `.ui-code__body` works too (no numbers).
+   ========================================================================== */
+
+.ui-code {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  overflow: hidden;
+}
+
+.ui-code__head {
+  background: var(--surface-2);
+  border-block-end: 1px solid var(--line);
+  color: var(--text-dim);
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: space-between;
+  padding: var(--space-2xs) var(--space-sm);
+}
+
+.ui-code__body {
+  counter-reset: ui-code-ln;
+  margin: 0;
+  overflow-wrap: anywhere;
+  padding: var(--space-sm) 0;
+  white-space: pre-wrap;
+}
+
+.ui-code__line {
+  display: block;
+  padding-inline: var(--space-sm);
+}
+
+/* Opt-in line-number gutter — counts each `.ui-code__line`. */
+.ui-code--numbered .ui-code__line {
+  padding-inline-start: 0;
+}
+
+.ui-code--numbered .ui-code__line::before {
+  color: var(--text-dim);
+  content: counter(ui-code-ln);
+  counter-increment: ui-code-ln;
+  display: inline-block;
+  inline-size: 3ch;
+  margin-inline-end: var(--space-sm);
+  text-align: end;
+  user-select: none;
+}
+
+/* Line states — the host classifies; Bronto tints. Kept as a faint wash so the
+   token colours stay legible on top. */
+.ui-code__line--add {
+  background: color-mix(in srgb, var(--success) 14%, transparent);
+}
+
+.ui-code__line--del {
+  background: color-mix(in srgb, var(--danger) 14%, transparent);
+}
+
+.ui-code__line--hl {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+/* Forced colours drop the tint — add an inline-start border so the line state
+   still reads without colour. */
+@media (forced-colors: active) {
+  .ui-code__line--add,
+  .ui-code__line--del,
+  .ui-code__line--hl {
+    border-inline-start: 3px solid currentColor;
+  }
+}
+
+/* Print: the line-state tints are meaning-carrying backgrounds. */
+@media print {
+  .ui-code__head,
+  .ui-code__line--add,
+  .ui-code__line--del,
+  .ui-code__line--hl {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

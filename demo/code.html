@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — code specimen</title>
+    <meta
+      name="description"
+      content="Fenced-code evidence-chrome specimen for @ponchia/ui code CSS."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/code.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .code-demo {
+        margin: 0 auto;
+        max-width: 72ch;
+        padding: 2rem 1rem 4rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="code-demo ui-prose">
+      <h1 class="ui-display">Code specimen</h1>
+
+      <p>
+        Numbered, with add / del / highlight line states. Bronto paints the chrome; the host (or
+        Shiki) owns the token colours.
+      </p>
+
+      <figure class="ui-code ui-code--numbered">
+        <figcaption class="ui-code__head"><span>css/diff.css</span><span>CSS</span></figcaption>
+        <pre class="ui-code__body"><code><span class="ui-code__line">.ui-diff {</span>
+<span class="ui-code__line">  border: 1px solid var(--line);</span>
+<span class="ui-code__line ui-code__line--del">  font-size: var(--text-sm);</span>
+<span class="ui-code__line ui-code__line--add">  font-size: var(--text-xs);</span>
+<span class="ui-code__line ui-code__line--hl">  line-height: 1.6;</span>
+<span class="ui-code__line">}</span></code></pre>
+      </figure>
+
+      <p>Unnumbered, no line wrappers — a plain fenced block.</p>
+
+      <figure class="ui-code">
+        <figcaption class="ui-code__head">install</figcaption>
+        <pre class="ui-code__body"><code>npm i @ponchia/ui</code></pre>
+      </figure>
+    </main>
+  </body>
+</html>
