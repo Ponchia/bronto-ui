@@ -32,10 +32,10 @@ import { format, resolveConfig } from 'prettier';
 import { cssVars } from '../tokens/index.js';
 import { charts } from '../tokens/charts.js';
 import { resolveColor } from './gen-charts.mjs';
-import { buildResolved } from './gen-resolved.mjs';
+import { makeResolveRef } from './lib/resolve-ref.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const resolved = buildResolved();
+const resolveRef = makeResolveRef('gen-vega');
 const JS_PATH = resolve(root, 'tokens/vega.js');
 const prettierCfg = await resolveConfig(JS_PATH);
 
@@ -109,16 +109,6 @@ export const RANGES = {
 
 /** A leaf path is a font slot (non-colour) iff its last segment is font-ish. */
 export const isFontPath = (path) => /(?:^|\.)font$|Font$/.test(path);
-
-/** Resolve a token reference to a concrete per-theme value.
- *  `var(--x)` → tokens/resolved.json value; anything else passes through. */
-export function resolveRef(ref, theme) {
-  const m = /^var\(\s*(--[\w-]+)\s*\)$/.exec(ref);
-  if (!m) return ref; // literal: font stack, or an already-resolved colour
-  const v = resolved[theme]?.[m[1]];
-  if (!v) throw new Error(`gen-vega: ${m[1]} has no resolved value in ${theme}`);
-  return v;
-}
 
 /** Keys that would mutate the prototype chain rather than the config object. */
 const UNSAFE_KEY = new Set(['__proto__', 'constructor', 'prototype']);

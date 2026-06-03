@@ -12,6 +12,7 @@ import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { resolve, dirname, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildBundles, BUDGET, sizes, leafFiles, EXTRA_LEAVES } from './build-dist.mjs';
+import { reportAndExit } from './lib/gate-report.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
@@ -83,9 +84,4 @@ for (const [rel, expected] of Object.entries(bundles)) {
   }
 }
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} dist problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log('✓ dist/ is the fresh, in-budget build of css/');
+reportAndExit(errors, { label: 'dist', ok: 'dist/ is the fresh, in-budget build of css/' });

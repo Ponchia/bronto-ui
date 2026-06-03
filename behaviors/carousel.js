@@ -1,4 +1,11 @@
-import { hasDom, resolveHost, noop, bindOnce, scrollIntoViewSafe } from './internal.js';
+import {
+  hasDom,
+  resolveHost,
+  noop,
+  bindOnce,
+  scrollIntoViewSafe,
+  collectHosts,
+} from './internal.js';
 
 /**
  * Image carousel / gallery, built on CSS scroll-snap so touch + trackpad
@@ -27,9 +34,7 @@ export function initCarousel({ root } = {}) {
   if (!hasDom()) return noop;
   const host = resolveHost(root);
   if (!host) return noop;
-  const boxes = [];
-  if (host !== document && host.matches?.('[data-bronto-carousel]')) boxes.push(host);
-  boxes.push(...(host.querySelectorAll?.('[data-bronto-carousel]') ?? []));
+  const boxes = collectHosts(host, '[data-bronto-carousel]');
   const cleanups = [];
 
   for (const box of boxes) {

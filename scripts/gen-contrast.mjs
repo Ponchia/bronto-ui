@@ -25,49 +25,17 @@ import { buildResolved } from './gen-resolved.mjs';
 import { skins, SKIN_NAMES } from '../tokens/skins.js';
 import { charts } from '../tokens/charts.js';
 import { resolveColor } from './gen-charts.mjs';
-import { parseOklch } from './lib/oklch.mjs';
+import { parseCssColor } from './lib/oklch.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-
-const HEX = /^#([0-9a-f]{3,8})$/i;
-const RGBA_FN = /^rgba?\(([^)]+)\)$/i;
-
-/** Parse a resolved literal (#rrggbb, rgba(…), or oklch(…)) → [r,g,b,a]. */
-function rgba(v) {
-  const s = String(v).trim();
-  const hexM = HEX.exec(s);
-  if (hexM) {
-    // Expand 3/4-digit shorthand to 6/8 ("abc" → "aabbcc").
-    const h = hexM[1].length <= 4 ? [...hexM[1]].map((c) => c + c).join('') : hexM[1];
-    if (h.length !== 6 && h.length !== 8) return null;
-    return [
-      Number.parseInt(h.slice(0, 2), 16),
-      Number.parseInt(h.slice(2, 4), 16),
-      Number.parseInt(h.slice(4, 6), 16),
-      h.length === 8 ? Number.parseInt(h.slice(6, 8), 16) / 255 : 1,
-    ];
-  }
-  const fn = RGBA_FN.exec(s);
-  if (fn) {
-    const p = fn[1].split(/[\s,/]+/).filter(Boolean);
-    const num = (x, pctScale) =>
-      x?.endsWith('%') ? (Number.parseFloat(x) / 100) * pctScale : Number.parseFloat(x);
-    const out = [num(p[0], 255), num(p[1], 255), num(p[2], 255), p[3] != null ? num(p[3], 1) : 1];
-    // Reject anything that didn't parse to a finite number (e.g. a
-    // percent alpha the old `+x` coercion silently turned into NaN —
-    // which would then slip the gate as a non-comparable ratio).
-    return out.every((n) => Number.isFinite(n)) ? out : null;
-  }
-  return parseOklch(s); // #rrggbb / rgba() above; oklch() here (shared lib)
-}
 
 /** color-mix(in srgb, A p%, B) for two OPAQUE colours, per CSS Color 5 (gamma
  *  sRGB) — the only form the accent ramp uses. Returns an `rgb(r,g,b)` string.
  *  Used to derive a skin's --accent-strong/-text from its (oklch) --accent the
  *  same way css/tokens.css does, so the skin audit measures real values. */
 function mixSrgbOpaque(aRaw, bRaw, aPct) {
-  const a = rgba(aRaw);
-  const b = rgba(bRaw);
+  const a = parseCssColor(aRaw);
+  const b = parseCssColor(bRaw);
   if (!a || !b) return null;
   const w = aPct / 100;
   const ch = (i) => Math.round(a[i] * w + b[i] * (1 - w));
@@ -91,8 +59,8 @@ function luminance([r, g, b]) {
 
 /** Contrast ratio of fg (over bg) against bg. bg is treated as opaque. */
 export function ratio(fgRaw, bgRaw) {
-  const fg = rgba(fgRaw);
-  const bg = rgba(bgRaw);
+  const fg = parseCssColor(fgRaw);
+  const bg = parseCssColor(bgRaw);
   if (!fg || !bg) return null;
   const bgOpaque = bg[3] >= 1 ? bg.slice(0, 3) : flatten(bg, [255, 255, 255]);
   const fgOpaque = fg[3] >= 1 ? fg.slice(0, 3) : flatten(fg, bgOpaque);
@@ -107,8 +75,8 @@ export function ratio(fgRaw, bgRaw) {
  *  dark-on-light), which WCAG 2.1's symmetric ratio cannot. NOT gated:
  *  WCAG 3 is a Working Draft, so WCAG 2.1 AA stays the hard floor. */
 export function apcaLc(fgRaw, bgRaw) {
-  const fg = rgba(fgRaw);
-  const bg = rgba(bgRaw);
+  const fg = parseCssColor(fgRaw);
+  const bg = parseCssColor(bgRaw);
   if (!fg || !bg) return null;
   const bgO = bg[3] >= 1 ? bg.slice(0, 3) : flatten(bg, [255, 255, 255]);
   const fgO = fg[3] >= 1 ? fg.slice(0, 3) : flatten(fg, bgO);
