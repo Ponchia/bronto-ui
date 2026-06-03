@@ -58,6 +58,7 @@ import {
   initTableSort,
   initTabs,
   initDialog,
+  initModal,
   initCarousel,
   initDotGlyph,
   initLegend,
@@ -120,6 +121,8 @@ export const useTableSort = (opts) => useBrontoBehavior(initTableSort, opts);
 export const useTabs = (opts) => useBrontoBehavior(initTabs, opts);
 /** @param {BrontoBindingOptsResolver} [opts] @returns {void} */
 export const useDialog = (opts) => useBrontoBehavior(initDialog, opts);
+/** @param {BrontoBindingOptsResolver} [opts] @returns {void} */
+export const useModal = (opts) => useBrontoBehavior(initModal, opts);
 /** @param {BrontoBindingOptsResolver} [opts] @returns {void} */
 export const useCarousel = (opts) => useBrontoBehavior(initCarousel, opts);
 /** @param {BrontoBindingOptsResolver} [opts] @returns {void} */

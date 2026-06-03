@@ -21,8 +21,10 @@
  * idempotent per instance; returns a cleanup function.
  *
  * Options are read from the DOM at init; if you replace the listbox contents
- * (e.g. async/remote results) without re-initialising, filtering and keyboard
- * nav act on the stale nodes — re-run initCombobox after mutating the options.
+ * (e.g. async/remote results), either re-run initCombobox, or add
+ * `data-bronto-combobox-live` to the `[data-bronto-combobox]` host so a
+ * MutationObserver re-reads the options in place (opt-in — off by default so
+ * the common static case stays observer-free).
  *
  * @param {import('./internal.js').DelegateOpts} [opts]
  * @returns {import('./internal.js').Cleanup}

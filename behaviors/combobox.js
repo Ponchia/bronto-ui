@@ -32,8 +32,10 @@ import {
  * idempotent per instance; returns a cleanup function.
  *
  * Options are read from the DOM at init; if you replace the listbox contents
- * (e.g. async/remote results) without re-initialising, filtering and keyboard
- * nav act on the stale nodes — re-run initCombobox after mutating the options.
+ * (e.g. async/remote results), either re-run initCombobox, or add
+ * `data-bronto-combobox-live` to the `[data-bronto-combobox]` host so a
+ * MutationObserver re-reads the options in place (opt-in — off by default so
+ * the common static case stays observer-free).
  *
  * @param {import('./internal.js').DelegateOpts} [opts]
  * @returns {import('./internal.js').Cleanup}
@@ -50,13 +52,19 @@ export function initCombobox({ root } = {}) {
     const list = box.querySelector('[role="listbox"], .ui-combobox__list');
     if (!input || !list) continue;
     const empty = box.querySelector('.ui-combobox__empty');
-    const options = [...list.querySelectorAll('[role="option"], .ui-combobox__option')];
-
     const listId = list.id || (list.id = `bronto-cb-list-${nextFieldUid()}`);
-    options.forEach((o, i) => {
-      if (!o.id) o.id = `${listId}-opt-${i}`;
-      o.setAttribute('role', 'option');
-    });
+    // Re-readable so the opt-in MutationObserver (`data-bronto-combobox-live`)
+    // can pick up async/replaced option nodes without a full re-init. `visible`,
+    // `filter`, `move`, etc. close over this binding, so reassigning it is enough.
+    let options = [];
+    const syncOptions = () => {
+      options = [...list.querySelectorAll('[role="option"], .ui-combobox__option')];
+      options.forEach((o, i) => {
+        if (!o.id) o.id = `${listId}-opt-${i}`;
+        o.setAttribute('role', 'option');
+      });
+    };
+    syncOptions();
     list.setAttribute('role', 'listbox');
     // Give the listbox its own accessible name (a bare role=listbox is unnamed
     // to a screen reader) by mirroring the input's name. (a11y review C30.)
@@ -172,6 +180,15 @@ export function initCombobox({ root } = {}) {
       return true;
     };
 
+    // Live re-sync after the option nodes change under us. The active option may
+    // be gone, so drop it; re-filter against the current input only while open.
+    const relist = () => {
+      syncOptions();
+      active = -1;
+      setActive(null);
+      if (!list.hidden) filter();
+    };
+
     const onInput = () => filter();
     const onKey = (e) => {
       switch (e.key) {
@@ -215,7 +232,15 @@ export function initCombobox({ root } = {}) {
       input.addEventListener('keydown', onKey);
       list.addEventListener('click', onOptionClick);
       document.addEventListener('click', onDocClick);
+      // Opt-in: keep options in sync with a list mutated after init (async /
+      // remote results). Off by default so the common static case stays free.
+      const observer =
+        box.hasAttribute('data-bronto-combobox-live') && typeof MutationObserver === 'function'
+          ? new MutationObserver(relist)
+          : null;
+      observer?.observe(list, { childList: true, subtree: true });
       return () => {
+        observer?.disconnect();
         input.removeEventListener('input', onInput);
         input.removeEventListener('keydown', onKey);
         list.removeEventListener('click', onOptionClick);
