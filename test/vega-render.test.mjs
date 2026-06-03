@@ -39,7 +39,7 @@ const countAttr = (svg, attr, value) =>
   (svg.match(new RegExp(`${attr}="${value}"`, 'gi')) || []).length;
 
 const barSpec = (config, color) => ({
-  $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+  $schema: 'https://vega.github.io/schema/vega-lite/v6.json',
   width: 200,
   height: 120,
   data: {
@@ -59,7 +59,7 @@ const barSpec = (config, color) => ({
 });
 
 const heatSpec = (config) => ({
-  $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+  $schema: 'https://vega.github.io/schema/vega-lite/v6.json',
   width: 120,
   height: 60,
   data: {
