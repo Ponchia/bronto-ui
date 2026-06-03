@@ -1,8 +1,8 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 477,
-    "groups": 149
+    "classes": 488,
+    "groups": 150
   },
   "groups": {
     "ui-accordion": {
@@ -376,6 +376,23 @@
         "ui-delta--up"
       ],
       "parts": []
+    },
+    "ui-diff": {
+      "base": "ui-diff",
+      "modifiers": [
+        "ui-diff--split",
+        "ui-diff__row--add",
+        "ui-diff__row--context",
+        "ui-diff__row--remove"
+      ],
+      "parts": [
+        "ui-diff__code",
+        "ui-diff__header",
+        "ui-diff__hunk",
+        "ui-diff__ln",
+        "ui-diff__pane",
+        "ui-diff__row"
+      ]
     },
     "ui-display": {
       "base": "ui-display",
@@ -1356,6 +1373,17 @@
     "ui-delta--flat",
     "ui-delta--invert",
     "ui-delta--up",
+    "ui-diff",
+    "ui-diff--split",
+    "ui-diff__code",
+    "ui-diff__header",
+    "ui-diff__hunk",
+    "ui-diff__ln",
+    "ui-diff__pane",
+    "ui-diff__row",
+    "ui-diff__row--add",
+    "ui-diff__row--context",
+    "ui-diff__row--remove",
     "ui-display",
     "ui-divider",
     "ui-dot",

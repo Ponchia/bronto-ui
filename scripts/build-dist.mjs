@@ -96,6 +96,7 @@ export const EXTRA_LEAVES = [
   'crosshair.css',
   'selection.css',
   'sources.css',
+  'diff.css',
   'state.css',
   'generated.css',
   'workbench.css',

@@ -393,6 +393,17 @@ export declare const cls: {
   readonly srcReviewed: 'ui-src--reviewed';
   readonly srcStale: 'ui-src--stale';
   readonly srcConflict: 'ui-src--conflict';
+  readonly diff: 'ui-diff';
+  readonly diffSplit: 'ui-diff--split';
+  readonly diffPane: 'ui-diff__pane';
+  readonly diffHunk: 'ui-diff__hunk';
+  readonly diffHeader: 'ui-diff__header';
+  readonly diffRow: 'ui-diff__row';
+  readonly diffRowAdd: 'ui-diff__row--add';
+  readonly diffRowRemove: 'ui-diff__row--remove';
+  readonly diffRowContext: 'ui-diff__row--context';
+  readonly diffLn: 'ui-diff__ln';
+  readonly diffCode: 'ui-diff__code';
   readonly state: 'ui-state';
   readonly stateLabel: 'ui-state__label';
   readonly stateDetail: 'ui-state__detail';
@@ -690,6 +701,14 @@ export interface OriginLabelOpts {
   /** Accent-tint the label for AI/model-generated origin (vs a neutral tag). */
   ai?: boolean;
 }
+export interface DiffOpts {
+  /** Two side-by-side `.ui-diff__pane` columns (old | new) instead of the unified view. */
+  split?: boolean;
+}
+export interface DiffRowOpts {
+  /** The host-classified change kind — sets the tint and the +/− gutter glyph. */
+  change?: 'add' | 'remove' | 'context';
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -733,6 +752,8 @@ export interface Ui {
   citation(opts?: CitationOpts): string;
   source(opts?: SourceOpts): string;
   provenance(opts?: ProvenanceOpts): string;
+  diff(opts?: DiffOpts): string;
+  diffRow(opts?: DiffRowOpts): string;
   state(opts?: StateOpts): string;
   originLabel(opts?: OriginLabelOpts): string;
 }

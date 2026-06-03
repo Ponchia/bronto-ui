@@ -248,6 +248,14 @@ export interface OriginLabelOpts {
   /** Accent-tint the label for AI/model-generated origin (vs a neutral tag). */
   ai?: boolean;
 }
+export interface DiffOpts {
+  /** Two side-by-side \`.ui-diff__pane\` columns (old | new) instead of the unified view. */
+  split?: boolean;
+}
+export interface DiffRowOpts {
+  /** The host-classified change kind — sets the tint and the +/− gutter glyph. */
+  change?: 'add' | 'remove' | 'context';
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -291,6 +299,8 @@ export interface Ui {
   citation(opts?: CitationOpts): string;
   source(opts?: SourceOpts): string;
   provenance(opts?: ProvenanceOpts): string;
+  diff(opts?: DiffOpts): string;
+  diffRow(opts?: DiffRowOpts): string;
   state(opts?: StateOpts): string;
   originLabel(opts?: OriginLabelOpts): string;
 }
