@@ -163,7 +163,12 @@ jobs:
       # tag — not GitHub's auto-generated PR list. One source of truth
       # (CHANGELOG.md), surfaced where users read it.
       - name: Extract the CHANGELOG section for this tag
-        run: node scripts/changelog-section.mjs "${{ github.ref_name }}" > "${RUNNER_TEMP}/release-body.md"
+        # Route github.ref_name through env, never inline into the shell, so a
+        # crafted tag name can't break out of the command (semgrep ERROR; the
+        # tag is maintainer-controlled, but env-routing is the safe idiom).
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: node scripts/changelog-section.mjs "$REF_NAME" > "${RUNNER_TEMP}/release-body.md"
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0

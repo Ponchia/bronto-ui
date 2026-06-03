@@ -17,6 +17,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generated, audit } from './gen-contrast.mjs';
 import { freshnessErrors } from './lib/assert-fresh.mjs';
+import { reportAndExit } from './lib/gate-report.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
@@ -85,11 +86,7 @@ if (apcaWarnings.length) {
   for (const w of apcaWarnings) console.warn(`  - ${w}`);
 }
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} contrast problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log(
-  '✓ docs/contrast.md is fresh and every gated token pairing — core palette and every colorway — meets its WCAG floor',
-);
+reportAndExit(errors, {
+  label: 'contrast',
+  ok: 'docs/contrast.md is fresh and every gated token pairing — core palette and every colorway — meets its WCAG floor',
+});

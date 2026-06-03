@@ -12,12 +12,13 @@
  * Structural only — it does NOT render with D2, so the repo takes on no D2
  * dependency. Run: node scripts/check-d2.mjs
  */
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildGenerated, REQUIRED_KEYS } from './gen-d2.mjs';
 import { CSS_COLOR as COLOR } from './lib/patterns.mjs';
 import { freshnessErrors } from './lib/assert-fresh.mjs';
+import { reportAndExit } from './lib/gate-report.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
@@ -47,11 +48,7 @@ for (const theme of ['light', 'dark']) {
   }
 }
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} D2 theme-map problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log(
-  `✓ d2: ${REQUIRED_KEYS.length} theme slots, both themes, every value resolved to a colour, no var() leaks`,
-);
+reportAndExit(errors, {
+  label: 'D2 theme-map',
+  ok: `d2: ${REQUIRED_KEYS.length} theme slots, both themes, every value resolved to a colour, no var() leaks`,
+});

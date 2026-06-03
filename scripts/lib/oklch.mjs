@@ -54,6 +54,41 @@ export function parseOklch(str) {
   return [...oklchToRgb(L, C, H), al];
 }
 
+/**
+ * Parse any RESOLVED CSS colour literal — `transparent`, `#rgb[a]`/`#rrggbb[aa]`,
+ * `rgb()`/`rgba()`, or `oklch()` — to `[r, g, b, a]` (0-255, 0-1), or null if it
+ * is not one of those (a `var()`/`color-mix()` must be resolved before calling).
+ * One parser feeding both the resolved-token build (gen-resolved) and the WCAG
+ * contrast gate (gen-contrast) so the two cannot drift on a security-relevant
+ * gate; the finite-number guard rejects malformed channels rather than letting a
+ * NaN slip through as a non-comparable ratio. (code-quality audit Q4.)
+ */
+export function parseCssColor(v) {
+  const s = String(v).trim();
+  if (s === 'transparent') return [0, 0, 0, 0];
+  const hexM = /^#([0-9a-f]{3,8})$/i.exec(s);
+  if (hexM) {
+    // Expand 3/4-digit shorthand to 6/8 ("abc" → "aabbcc").
+    const h = hexM[1].length <= 4 ? [...hexM[1]].map((c) => c + c).join('') : hexM[1];
+    if (h.length !== 6 && h.length !== 8) return null;
+    return [
+      Number.parseInt(h.slice(0, 2), 16),
+      Number.parseInt(h.slice(2, 4), 16),
+      Number.parseInt(h.slice(4, 6), 16),
+      h.length === 8 ? Number.parseInt(h.slice(6, 8), 16) / 255 : 1,
+    ];
+  }
+  const fn = /^rgba?\(([^)]+)\)$/i.exec(s);
+  if (fn) {
+    const p = fn[1].split(/[\s,/]+/).filter(Boolean);
+    const num = (x, pctScale) =>
+      x?.endsWith('%') ? (Number.parseFloat(x) / 100) * pctScale : Number.parseFloat(x);
+    const out = [num(p[0], 255), num(p[1], 255), num(p[2], 255), p[3] != null ? num(p[3], 1) : 1];
+    return out.every((n) => Number.isFinite(n)) ? out : null;
+  }
+  return parseOklch(s); // #rrggbb / rgba() above; oklch() here
+}
+
 /** [r,g,b] (0-255) → `#rrggbb`. */
 export function rgbToHex([r, g, b]) {
   const h = (n) =>

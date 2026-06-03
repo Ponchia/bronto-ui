@@ -11,6 +11,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { reportAndExit } from './lib/gate-report.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
@@ -54,13 +55,9 @@ if (owning.length === 0) {
   }
 }
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} release-hygiene problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log(
-  prerelease
-    ? `✓ release hygiene: prerelease v${version} maps to the "${target}" CHANGELOG section`
-    : `✓ release hygiene: v${version} maps to a dated CHANGELOG section`,
-);
+reportAndExit(errors, {
+  label: 'release-hygiene',
+  ok: prerelease
+    ? `release hygiene: prerelease v${version} maps to the "${target}" CHANGELOG section`
+    : `release hygiene: v${version} maps to a dated CHANGELOG section`,
+});

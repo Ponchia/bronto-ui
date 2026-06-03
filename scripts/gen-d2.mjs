@@ -31,10 +31,10 @@ import { writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { format, resolveConfig } from 'prettier';
-import { buildResolved } from './gen-resolved.mjs';
+import { makeResolveRef } from './lib/resolve-ref.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const resolved = buildResolved();
+const resolveRef = makeResolveRef('gen-d2');
 const JS_PATH = resolve(root, 'tokens/d2.js');
 const prettierCfg = await resolveConfig(JS_PATH);
 
@@ -74,16 +74,6 @@ export const MAP = {
 
 /** The slot set the map commits to (used by the coverage gate). */
 export const REQUIRED_KEYS = Object.keys(MAP);
-
-/** Resolve a token reference to a concrete per-theme colour.
- *  `var(--x)` → tokens/resolved.json value; anything else passes through. */
-export function resolveRef(ref, theme) {
-  const m = /^var\(\s*(--[\w-]+)\s*\)$/.exec(ref);
-  if (!m) return ref;
-  const v = resolved[theme]?.[m[1]];
-  if (!v) throw new Error(`gen-d2: ${m[1]} has no resolved value in ${theme}`);
-  return v;
-}
 
 /** The resolved slot → hex map for one theme. */
 export function themeOverrides(theme) {

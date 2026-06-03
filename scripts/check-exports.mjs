@@ -11,6 +11,7 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { dirname, resolve, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { reportAndExit } from './lib/gate-report.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
@@ -58,9 +59,7 @@ for (const [key, target] of exportTargets()) {
   }
 }
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} integrity problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log('✓ exports, import graph, and files allowlist are consistent');
+reportAndExit(errors, {
+  label: 'integrity',
+  ok: 'exports, import graph, and files allowlist are consistent',
+});

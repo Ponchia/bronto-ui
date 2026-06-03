@@ -13,6 +13,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { cls } from '../classes/index.js';
+import { reportAndExit } from './lib/gate-report.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
@@ -154,12 +155,10 @@ for (const rel of [
   }
 }
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} report-kit problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log(`✓ report kit: ${classSources.length} docs/fixtures use valid ui-* classes`);
+reportAndExit(errors, {
+  label: 'report-kit',
+  ok: `report kit: ${classSources.length} docs/fixtures use valid ui-* classes`,
+});
 
 function walk(rel) {
   const abs = resolve(root, rel);

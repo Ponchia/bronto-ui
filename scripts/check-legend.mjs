@@ -24,14 +24,16 @@ import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { charts, CHART_CATEGORICAL } from '../tokens/charts.js';
+import { reportAndExit } from './lib/gate-report.mjs';
+import { stripCssComments } from './lib/patterns.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
 
 const raw = readFileSync(resolve(root, 'css/legend.css'), 'utf8');
 // Strip comments first: a token named only in prose must not satisfy the gate
-// (same posture as check-classes/build-dist).
-const css = raw.replace(/\/\*[\s\S]*?\*\//g, '');
+// (shared helper with check-classes/build-dist).
+const css = stripCssComments(raw);
 
 const SEQ = charts.light.sequential.length;
 const DIV = charts.light.diverging.length;
@@ -83,11 +85,7 @@ for (const m of css.matchAll(/--chart-color:\s*([^;}]+)/g)) {
     );
 }
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} legend problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log(
-  `✓ legend: ${CHART_CATEGORICAL} swatch index helpers map to the palette, all --chart-* refs valid, token-only colour, opt-in`,
-);
+reportAndExit(errors, {
+  label: 'legend',
+  ok: `legend: ${CHART_CATEGORICAL} swatch index helpers map to the palette, all --chart-* refs valid, token-only colour, opt-in`,
+});

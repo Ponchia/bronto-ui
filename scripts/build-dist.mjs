@@ -21,6 +21,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
+import { stripCssComments } from './lib/patterns.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const cssDir = resolve(root, 'css');
@@ -43,8 +44,7 @@ function leaves(entry, acc = []) {
 }
 
 function minify(css) {
-  return css
-    .replace(/\/\*[\s\S]*?\*\//g, '') // comments
+  return stripCssComments(css)
     .replace(/\s+/g, ' ') // collapse whitespace (keeps combinator spaces)
     .replace(/\s*([{};,])\s*/g, '$1') // tidy only around structural chars
     .replace(/;}/g, '}') // drop redundant final semicolons

@@ -19,12 +19,13 @@
 import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { shippedDocs } from './lib/shipped-docs.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 
 // Same shipped surface as check:versions — llms.txt plus every `.md` in `files`.
-const shipped = ['llms.txt', ...pkg.files.filter((f) => f.endsWith('.md'))];
+const shipped = shippedDocs(pkg);
 
 // `<script … src="…">` — capture the src URL. `[^>]*?` stays within the one tag.
 const SCRIPT_SRC = /<script\b[^>]*?\ssrc=["']([^"']+)["']/gi;

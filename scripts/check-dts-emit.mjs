@@ -18,6 +18,7 @@ import { readFileSync, existsSync, mkdtempSync, readdirSync } from 'node:fs';
 import { resolve, dirname, relative, sep, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
+import { reportAndExit } from './lib/gate-report.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const out = mkdtempSync(join(tmpdir(), 'bronto-dts-'));
@@ -70,9 +71,7 @@ const walk = (dir) => {
 };
 walk(out);
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} generated-declaration problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log(`✓ generated leaf .d.ts (+ maps) are the fresh tsc emit of their JSDoc'd source`);
+reportAndExit(errors, {
+  label: 'generated-declaration',
+  ok: `generated leaf .d.ts (+ maps) are the fresh tsc emit of their JSDoc'd source`,
+});

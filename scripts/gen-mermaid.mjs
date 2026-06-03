@@ -25,10 +25,10 @@ import { fileURLToPath } from 'node:url';
 import { format, resolveConfig } from 'prettier';
 import { cssVars } from '../tokens/index.js';
 import { charts } from '../tokens/charts.js';
-import { buildResolved } from './gen-resolved.mjs';
+import { makeResolveRef } from './lib/resolve-ref.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const resolved = buildResolved();
+const resolveRef = makeResolveRef('gen-mermaid');
 const JS_PATH = resolve(root, 'tokens/mermaid.js');
 const prettierCfg = await resolveConfig(JS_PATH);
 
@@ -110,16 +110,6 @@ export const MAP = {
 
 /** Keys whose value is NOT a colour (skipped by the colour gate). */
 export const NON_COLOR_KEYS = new Set(['fontFamily', 'darkMode']);
-
-/** Resolve a token reference to a concrete per-theme value.
- *  `var(--x)` → tokens/resolved.json value; anything else passes through. */
-export function resolveRef(ref, theme) {
-  const m = /^var\(\s*(--[\w-]+)\s*\)$/.exec(ref);
-  if (!m) return ref; // literal: font stack, or an already-resolved colour
-  const v = resolved[theme]?.[m[1]];
-  if (!v) throw new Error(`gen-mermaid: ${m[1]} has no resolved value in ${theme}`);
-  return v;
-}
 
 /** Build the resolved `base` themeVariables for one theme. */
 export function themeVars(theme) {

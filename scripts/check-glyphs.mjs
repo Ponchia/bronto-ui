@@ -14,6 +14,7 @@ import { fileURLToPath } from 'node:url';
 import { generated } from './gen-glyphs.mjs';
 import { GLYPHS, GLYPH_NAMES, GLYPH_SIZE } from '../glyphs/glyphs.js';
 import { freshnessErrors } from './lib/assert-fresh.mjs';
+import { reportAndExit } from './lib/gate-report.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
@@ -49,11 +50,7 @@ for (const [name, rows] of Object.entries(GLYPHS)) {
   });
 }
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} glyph problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log(
-  `✓ ${keys.length} glyphs are ${GLYPH_SIZE}×${GLYPH_SIZE}, sorted, and glyphs/glyphs.d.ts is in sync`,
-);
+reportAndExit(errors, {
+  label: 'glyph',
+  ok: `${keys.length} glyphs are ${GLYPH_SIZE}×${GLYPH_SIZE}, sorted, and glyphs/glyphs.d.ts is in sync`,
+});

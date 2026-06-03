@@ -44,6 +44,8 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { cssVars } from '../tokens/index.js';
+import { reportAndExit } from './lib/gate-report.mjs';
+import { stripCssComments } from './lib/patterns.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
@@ -159,7 +161,7 @@ const isDefinitionFile = (f) => f === 'tokens.css' || f === 'dataviz.css' || f.s
 // from the charts-only leak check below, but stays under the raw-color scans —
 // so a stray raw hex is still caught (unlike a blanket definition-file exempt).
 const consumesChartTokens = (f) => f === 'legend.css';
-const stripComments = (s) => s.replace(/\/\*[\s\S]*?\*\//g, '');
+const stripComments = stripCssComments;
 const stripUrls = (s) => s.replace(/url\([^)]*\)/gi, 'url()');
 
 // A hex is neutral iff R==G==B (ignoring any alpha). Handles #rgb, #rgba,
@@ -351,12 +353,9 @@ for (const file of readdirSync(cssDir).filter((f) => f.endsWith('.css') && !isDe
   });
 }
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} color-policy problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log(
-  `✓ color policy: ${classified.size} color-defining tokens tiered (across global+light+dark), ` +
+reportAndExit(errors, {
+  label: 'color-policy',
+  ok:
+    `color policy: ${classified.size} color-defining tokens tiered (across global+light+dark), ` +
     `data-viz namespace reserved, no raw chromatic color in components`,
-);
+});

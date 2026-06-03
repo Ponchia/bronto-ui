@@ -9,6 +9,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { cssVars } from '../tokens/index.js';
+import { reportAndExit } from './lib/gate-report.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const path = resolve(root, 'shiki/nothing.json');
@@ -51,9 +52,7 @@ if (!existsSync(path)) {
   }
 }
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} shiki theme problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log('✓ shiki/nothing.json is valid and on-palette (rationed, brand accent)');
+reportAndExit(errors, {
+  label: 'shiki theme',
+  ok: 'shiki/nothing.json is valid and on-palette (rationed, brand accent)',
+});

@@ -11,6 +11,8 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { cls, ui } from '../classes/index.js';
 import { buildClassesJson } from './gen-classes-json.mjs';
+import { reportAndExit } from './lib/gate-report.mjs';
+import { stripCssComments } from './lib/patterns.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const cssDir = resolve(root, 'css');
@@ -22,11 +24,11 @@ for (const f of readdirSync(cssDir)) {
   if (!f.endsWith('.css')) continue;
   // Strip /* */ comments first: this is the one check that scrapes CSS
   // rather than diffing a generator, so a class named only inside a
-  // comment must not satisfy the cls⇄selector contract (same regex as
-  // build-dist.mjs). Otherwise a deleted rule whose name still appears
-  // in a comment elsewhere would keep this gate green while `cls`
-  // points at dead CSS.
-  const src = readFileSync(resolve(cssDir, f), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+  // comment must not satisfy the cls⇄selector contract (shared helper
+  // with build-dist.mjs). Otherwise a deleted rule whose name still
+  // appears in a comment elsewhere would keep this gate green while
+  // `cls` points at dead CSS.
+  const src = stripCssComments(readFileSync(resolve(cssDir, f), 'utf8'));
   for (const m of src.matchAll(/\.(ui-[\w-]+)/g)) inCss.add(m[1]);
   for (const m of src.matchAll(/\.(is-[\w-]+)/g)) isHooksInCss.add(m[1]);
   for (const m of src.matchAll(/(--[\w-]+)/g)) customPropsInCss.add(m[1]);
@@ -78,12 +80,9 @@ for (const name of Object.keys(ui)) {
   }
 }
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} class-contract problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log(
-  `✓ class contract: ${inManifest.size} classes match the stylesheet ` +
+reportAndExit(errors, {
+  label: 'class-contract',
+  ok:
+    `class contract: ${inManifest.size} classes match the stylesheet ` +
     `(+ ${manifest.states.length} is-* states, ${manifest.customProperties.length} custom props verified in classes.json)`,
-);
+});

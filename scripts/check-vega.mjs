@@ -18,12 +18,13 @@
  *
  * Run: node scripts/check-vega.mjs
  */
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildGenerated, REQUIRED_PATHS, isFontPath } from './gen-vega.mjs';
 import { CSS_COLOR as COLOR } from './lib/patterns.mjs';
 import { freshnessErrors } from './lib/assert-fresh.mjs';
+import { reportAndExit } from './lib/gate-report.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
@@ -82,11 +83,7 @@ for (const theme of ['light', 'dark']) {
   }
 }
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} Vega theme-config problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log(
-  `✓ vega: ${REQUIRED_PATHS.length} config slots, both themes, every colour resolved, range.* ramps populated, no var() leaks`,
-);
+reportAndExit(errors, {
+  label: 'Vega theme-config',
+  ok: `vega: ${REQUIRED_PATHS.length} config slots, both themes, every colour resolved, range.* ramps populated, no var() leaks`,
+});

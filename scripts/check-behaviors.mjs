@@ -14,6 +14,7 @@ import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as runtime from '../behaviors/index.js';
+import { reportAndExit } from './lib/gate-report.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const dts = readFileSync(resolve(root, 'behaviors/index.d.ts'), 'utf8');
@@ -50,11 +51,7 @@ for (const name of declared) {
     );
 }
 
-if (errors.length) {
-  console.error(`✖ ${errors.length} behaviors type-parity problem(s):`);
-  for (const e of errors) console.error(`  - ${e}`);
-  process.exit(1);
-}
-console.log(
-  `✓ behaviors: all ${runtimeNames.length} runtime exports are declared in behaviors/index.d.ts`,
-);
+reportAndExit(errors, {
+  label: 'behaviors type-parity',
+  ok: `behaviors: all ${runtimeNames.length} runtime exports are declared in behaviors/index.d.ts`,
+});

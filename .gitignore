@@ -34,6 +34,9 @@ sonar-project.properties
 # Local Claude Code harness state
 .claude/
 
+# Multi-agent audit scratch (dated review writeups) — local-only, never commit
+reports-lab/
+
 # Core dumps. The Linux/amd64 Playwright image crashes its x86 chromium
 # under QEMU on Apple Silicon and drops `qemu_<exe>_<ts>.core` files (GBs
 # each) into the bind-mounted working dir. Never commit them — and don't

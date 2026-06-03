@@ -6,6 +6,7 @@ import {
   nextFieldUid,
   scrollIntoViewSafe,
   wrapIndex,
+  collectHosts,
 } from './internal.js';
 
 /**
@@ -38,9 +39,7 @@ export function initCombobox({ root } = {}) {
   if (!hasDom()) return noop;
   const host = resolveHost(root);
   if (!host) return noop;
-  const boxes = [];
-  if (host !== document && host.matches?.('[data-bronto-combobox]')) boxes.push(host);
-  boxes.push(...(host.querySelectorAll?.('[data-bronto-combobox]') ?? []));
+  const boxes = collectHosts(host, '[data-bronto-combobox]');
   const cleanups = [];
 
   for (const box of boxes) {
