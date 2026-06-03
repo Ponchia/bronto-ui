@@ -55,14 +55,15 @@ raster and carries no text alternative.
 
 Load Vega + Vega-Lite + vega-embed from **pinned `/build/*.min.js` UMD files**,
 then pass the config. Pin exact versions and use the `/build/` path — a bare
-`cdn.jsdelivr.net/npm/vega@5` redirect resolves to a module bundle that does
+`cdn.jsdelivr.net/npm/vega@6` redirect resolves to a module bundle that does
 **not** register the global `window.vega`, so vega-embed throws and nothing
-renders:
+renders. Keep the three majors aligned: **Vega-Lite 6 targets Vega 6** (and
+vega-embed 7), so don't mix a Vega-Lite 6 with a Vega 5 runtime:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/vega@5.30.0/build/vega.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vega-lite@5.21.0/build/vega-lite.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vega-embed@6.26.0/build/vega-embed.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega@6.2.0/build/vega.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@6.4.3/build/vega-lite.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@7.1.0/build/vega-embed.min.js"></script>
 <script>
   // INLINE the config (copy the object for your theme from @ponchia/ui/vega.json).
   // This is the only path that also works from a file:// report — see below.

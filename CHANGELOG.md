@@ -175,7 +175,7 @@ and D2. The data-viz **palette** (`--chart-*`, `tokens/charts.json`) and the
 - **Foreign-renderer recipes hardened after a multi-agent dogfooding pass**
   (build five real reports across the whole stack, review from every POV). The
   Vega CDN recipe now pins the `/build/*.min.js` UMD bundles and `renderer:'svg'`
-  (a bare `cdn.jsdelivr.net/npm/vega@5` tag has no `window.vega`, so the previous
+  (a bare `cdn.jsdelivr.net/npm/vega@6` tag has no `window.vega`, so the previous
   recipe rendered nothing); the file://-portable path (inline the config — an
   imported/fetched config is CORS-blocked from disk) is now explicit. New
   `docs/reporting.md` recipes: "Theming a live report" (the theme-toggle/re-embed
@@ -193,6 +193,13 @@ and D2. The data-viz **palette** (`--chart-*`, `tokens/charts.json`) and the
 - **New `check:versions` gate** — every `@ponchia/ui@X.Y.Z` literal in a shipped
   doc (`llms.txt`, `docs/reporting.md`, …) must equal `package.json`, so a stale
   CDN pin can't ship to LLM/copy-paste consumers on the next bump.
+- **Dev-dependency Vega bumped to the v6 stack** — the render-probe now runs on
+  `vega@^6.2.0` + `vega-lite@^6.4.3` (Vega-Lite 6 peers Vega 6; a Vega-Lite-6 ÷
+  Vega-5 mix is incoherent). The theme `config` is version-independent resolved
+  hex, so the artifacts and the probe assertions are unchanged; the documented
+  CDN recipe is re-pinned to the matching majors (`vega@6.2.0` / `vega-lite@6.4.3`
+  / `vega-embed@7.1.0`, all still shipping a UMD `/build/*.min.js`). Vega remains
+  the consumer's renderer, not a runtime dependency.
 - **New `check:doc-recipes` gate** — a `<script src>` CDN recipe in a shipped doc
   must pin a jsDelivr `/build/*.min.js` UMD bundle, never a bare
   `cdn.jsdelivr.net/npm/<pkg>@N` redirect (which serves a module bundle with no

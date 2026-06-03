@@ -146,7 +146,8 @@ vegaEmbed('#chart', spec, { config: brontoVegaConfig('dark'), renderer: 'svg', a
 Pass `renderer: 'svg'` (canvas is the wrong default for print/inspection).
 `brontoVegaAccent(theme)`/`brontoVegaNeutral(theme)` give the exact hexes to spend
 the accent on one mark. From a CDN, pin the `/build/*.min.js` UMD bundles (a bare
-`vega@5` tag has no `window.vega`) and INLINE the config from `vega.json` — a
+`vega@6` tag has no `window.vega`; keep Vega-Lite 6 / Vega 6 / vega-embed 7
+aligned) and INLINE the config from `vega.json` — a
 `file://` report can't `import`/`fetch` it (CORS). A label on an accent fill (a
 themed node/bar/badge) uses the `--on-accent` token, never `--accent-text` (that
 is accent-coloured text for a neutral bg). Details: `docs/vega.md`. (Observable
