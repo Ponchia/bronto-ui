@@ -6,7 +6,7 @@
 .ui-app-shell {
   display: grid;
   grid-template-columns: var(--app-rail, 14rem) minmax(0, 1fr);
-  min-block-size: 100vh;
+  min-block-size: 100dvh;
 }
 
 .ui-app-shell--full {
@@ -24,7 +24,7 @@
   padding: var(--space-md);
   position: sticky;
   inset-block-start: 0;
-  block-size: 100vh;
+  block-size: 100svh;
   overflow-y: auto;
 }
 
@@ -99,6 +99,13 @@
   background: var(--accent-soft);
   border-inline-start-color: var(--accent);
   color: var(--accent-text);
+}
+
+@media (pointer: coarse) {
+  .ui-app-nav a {
+    min-block-size: 2.9rem;
+    padding-inline: 0.9rem;
+  }
 }
 
 .ui-app-nav a.is-active::before {
@@ -277,6 +284,12 @@
   .ui-app-nav a.is-active {
     border-inline-start: 0;
     border-block-end-color: var(--accent);
+  }
+
+  /* No --app-rail-height token exists, so drop the redundant second sticky;
+     only the horizontal rail stays pinned. */
+  .ui-app-topbar {
+    position: static;
   }
 
   .ui-app-content {

@@ -106,11 +106,11 @@
         }
       },
       "weight": {
-        "$type": "number",
+        "$type": "fontWeight",
         "$value": "700"
       },
       "weight-strong": {
-        "$type": "number",
+        "$type": "fontWeight",
         "$value": "800"
       }
     },

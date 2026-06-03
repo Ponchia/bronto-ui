@@ -1,7 +1,12 @@
 # Public API Stability
 
 `@ponchia/ui` is pre-1.0. Breaking changes ship in the minor (`0.x.0`), and
-patches are non-breaking. This matrix defines what counts as public API.
+patches are non-breaking. In practical terms: **PATCH releases (`0.5.x`) are
+non-breaking bug-fixes and additive changes — safe to upgrade without review;
+MINOR releases (`0.x.0`) may include breaking changes and consumers should
+review the CHANGELOG before upgrading.** Pin `~0.x` (tilde) to accept only
+patches, or `^0.x` only if you accept minor-level churn. This policy holds
+until `1.0.0` is tagged. This matrix defines what counts as public API.
 
 | Surface | Stability | Contract |
 | --- | --- | --- |

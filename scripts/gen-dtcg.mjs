@@ -41,6 +41,7 @@ const typeRules = [
   ['color', (_name, v) => isHex(v) || isRgb(v)],
   ['dimension', (name, v) => hasDimensionUnit(v) || startsWithAny(name, dimensionPrefixes)],
   ['color', (name) => hasColorName(name)],
+  ['fontWeight', (name) => /weight/.test(name)],
   ['number', (_name, v) => /^[0-9.]+$/.test(v)],
 ];
 

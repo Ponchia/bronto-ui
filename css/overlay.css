@@ -249,7 +249,7 @@ dialog.ui-modal[open]::backdrop {
 }
 
 .ui-menu__item::before {
-  background: currentColor;
+  background: currentcolor;
   border-radius: 50%;
   content: '';
   block-size: 0.3rem;
@@ -273,6 +273,15 @@ dialog.ui-modal[open]::backdrop {
   .ui-menu__item:hover::before {
     opacity: 1;
   }
+}
+
+.ui-menu__item:focus-visible {
+  background: var(--bg-accent);
+  color: var(--text);
+}
+
+.ui-menu__item:focus-visible::before {
+  opacity: 1;
 }
 
 /* --- Combobox: an input with a filtered listbox popup (APG pattern,

@@ -83,7 +83,7 @@ early-warning that the Lc 36 regression would have tripped.
   `:root` palette blocks of `css/tokens.css` are generated from it
   (`scripts/gen-tokens-css.mjs`); the two dark blocks are identical by
   construction, so a dark edit is a one-place edit, still guarded by
-  `check:tokens`.
+  `check:fresh`.
 - `data-surface` joins `data-theme`/`data-bronto-skin`/`data-density`/
   `data-contrast` as a documented root-level attribute (theming.md). The kitchen
   sink ships a unified picker (theme × colorway × surface) so the full axis set

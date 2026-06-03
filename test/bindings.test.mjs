@@ -198,27 +198,30 @@ test('Solid useDisclosure wires the real behavior end-to-end', () => {
 // examples/qwik-vite through the real optimizer (CI examples job); here we
 // assert the module surface and that the hooks are genuinely wired to Qwik's
 // client lifecycle (not silent no-ops) — deterministic, no optimizer needed.
-test('Qwik binding exposes the full hook surface over @builder.io/qwik', async () => {
-  const qwik = await import('../qwik/index.js');
-  const hooks = [
-    'useThemeToggle',
-    'useDismissible',
-    'useDisclosure',
-    'useMenu',
-    'useFormValidation',
-    'useCombobox',
-    'usePopover',
-    'useTableSort',
-    'useTabs',
-    'useDialog',
-    'useCarousel',
-    'useDotGlyph',
-    'useToast',
-    'useBrontoBehavior',
-  ];
-  for (const name of hooks) assert.equal(typeof qwik[name], 'function', `${name} is exported`);
-  for (const name of ['applyStoredTheme', 'cls', 'ui', 'cx'])
-    assert.ok(qwik[name], `convenience export ${name} present`);
+test('binding hook surface is identical across react/solid/qwik (derived, cannot go stale)', async () => {
+  const [react, solid, qwik] = await Promise.all([
+    import('../react/index.js'),
+    import('../solid/index.js'),
+    import('../qwik/index.js'),
+  ]);
+  // Derive the hook set from each module rather than hard-coding it — a new
+  // behavior gets a `use*` hook in all three or this fails (moa caught the old
+  // hard-coded list silently missing the five analytical hooks).
+  const surface = (m) =>
+    Object.keys(m)
+      .filter((k) => /^use[A-Z]/.test(k))
+      .sort();
+  const reactHooks = surface(react);
+  assert.ok(reactHooks.length >= 18, `expected the full hook surface, got ${reactHooks.length}`);
+  assert.deepEqual(surface(solid), reactHooks, 'solid hook surface matches react');
+  assert.deepEqual(surface(qwik), reactHooks, 'qwik hook surface matches react');
+
+  // Every hook is a real function and the convenience exports are present in all three.
+  for (const m of [react, solid, qwik]) {
+    for (const name of reactHooks) assert.equal(typeof m[name], 'function', `${name} exported`);
+    for (const name of ['applyStoredTheme', 'cls', 'ui', 'cx', 'useToast'])
+      assert.ok(m[name], `convenience export ${name} present`);
+  }
 
   // useToast() is the SSR-safe imperative: returns toast(), which no-ops to a
   // cleanup function when there is no DOM (no global document in this test).

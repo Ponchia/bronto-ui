@@ -6,6 +6,22 @@ export const noop = () => {};
 
 export const hasDom = () => typeof document !== 'undefined';
 
+// Resolve the delegation host from an init call's `root` option, distinguishing
+// three cases so an unattached/null root never silently widens to whole-document
+// delegation (the "scoped island hijacks every control" foot-gun):
+//   • root absent/undefined → no scope requested → delegate from `fallback`
+//     (default `document`). This is the intended global-wiring path.
+//   • root === null         → a scope WAS requested but isn't ready yet (e.g. a
+//     framework ref still null at mount). Return null so the caller no-ops
+//     instead of hijacking the whole document.
+//   • root is an element    → use it.
+// The bindings (@ponchia/ui/{react,solid,qwik}) emit `root: null` for the
+// not-ready case precisely so this distinction survives across the boundary.
+export function resolveHost(root, fallback = document) {
+  if (root === null) return null;
+  return root || fallback;
+}
+
 // Monotonic counter for auto-minted field / list ids, shared across
 // initFormValidation and initCombobox so separate calls (and separate
 // behaviors) never collide on an id.

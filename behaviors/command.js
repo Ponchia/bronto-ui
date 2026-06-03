@@ -1,4 +1,4 @@
-import { hasDom, noop, bindOnce, nextFieldUid } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, nextFieldUid } from './internal.js';
 
 /**
  * Command palette — filter + keyboard-navigate a DOM-authored command list.
@@ -17,10 +17,14 @@ import { hasDom, noop, bindOnce, nextFieldUid } from './internal.js';
  * select. It emits `bronto:command:select` ({ detail: { value, label } }) on
  * choose and `bronto:command:close` on Escape. SSR-safe, idempotent per
  * instance; returns a cleanup function.
+ *
+ * Items are read from the DOM at init; re-run initCommand after replacing the
+ * command list so filtering/navigation see the current nodes.
  */
 export function initCommand({ root } = {}) {
   if (!hasDom()) return noop;
-  const host = root || document;
+  const host = resolveHost(root);
+  if (!host) return noop;
   const palettes = [];
   if (host !== document && host.matches?.('[data-bronto-command]')) palettes.push(host);
   palettes.push(...(host.querySelectorAll?.('[data-bronto-command]') ?? []));

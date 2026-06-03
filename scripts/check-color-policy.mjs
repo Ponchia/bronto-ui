@@ -311,6 +311,9 @@ const NAMED_CHROMATIC = new RegExp(
   'i',
 );
 
+// Scan assumes one declaration per line (Prettier guarantees this in-repo).
+// Multi-line values (e.g. hand-formatted `color-mix()`) could evade the named-color
+// arm because the `:` split only sees the first line of such a value.
 for (const file of readdirSync(cssDir).filter((f) => f.endsWith('.css') && !isDefinitionFile(f))) {
   const lines = stripComments(readFileSync(resolve(cssDir, file), 'utf8')).split('\n');
   lines.forEach((raw, i) => {

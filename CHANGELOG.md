@@ -7,8 +7,10 @@
 
 ## Unreleased — 0.5.1
 
-Additive maintenance on top of 0.5.0 — no breaking changes. The default
-`dist/bronto.css` is unchanged save for the two new core primitives below. Pin
+Additive maintenance on top of 0.5.0 — no breaking changes. Accumulates the
+post-0.5.0 work plus a multi-agent audit pass: accessibility hardening, a
+behavior/binding scope-safety fix, and codegen/gate tightening. The default
+`dist/bronto.css` grows ~0.4 kB raw (the a11y blocks below; gzip held); pin
 `~0.5`.
 
 ### Added
@@ -47,6 +49,26 @@ Additive maintenance on top of 0.5.0 — no breaking changes. The default
   Author-facing geometry only; the `arrowHead` kernel default is unchanged, so
   node-connector arrowheads don't move.
 
+### Accessibility
+
+- **Coarse-pointer tap-target floors extended to navigation.** The 2.9 rem
+  touch floor (already on primitives/forms/feedback) now also covers
+  `.ui-sitenav a`, `.ui-app-nav a`, `.ui-sitemenu > summary`, and
+  `.ui-themetoggle__button` under `@media (pointer: coarse)` — the primary nav
+  affordances were below the 44 px target on touch.
+- **App shell uses dynamic viewport units.** `100vh` → `100dvh` (shell/body) and
+  the scrolling rail → `100svh`, so the rail and its pinned account/footer no
+  longer fall under the mobile URL bar.
+- **Forced-colors status dots stay distinct.** `.ui-dot--success/--warning/--danger/--info`
+  and `.ui-dotmatrix__cell--hot/--accent` now map to distinct system colors
+  under Windows High Contrast instead of collapsing to one — the only signal
+  these carry is colour.
+- **Keyboard affordance parity.** `.ui-menu__item:focus-visible` gets the same
+  row highlight as hover; the segmented control's focus ring is now inset so the
+  container's `overflow: hidden` no longer clips it.
+- **Reduced-motion skeleton.** `.ui-skeleton` flattens to a solid placeholder
+  under `prefers-reduced-motion` instead of freezing mid-shimmer.
+
 ### Fixed
 
 - Responsive/mobile hardening across the framework: `rem`-rooted type for WCAG
@@ -74,6 +96,20 @@ Additive maintenance on top of 0.5.0 — no breaking changes. The default
   `stroke-linejoin` bevel never matched. It now delegates to the connectors
   geometry kernel's right-angle `elbowPath` (H/V/H), so an annotation leader and
   a node connector draw the same elbow.
+- **Scoped behaviors no longer hijack the whole document on a null root.**
+  `init*({ root })` with an explicitly-provided-but-unready root (a framework
+  ref still `null` at mount, a conditional that hasn't rendered) now no-ops
+  instead of silently widening to document-wide delegation. The react/solid/qwik
+  bindings emit `root: null` for the not-ready case so the distinction survives
+  the boundary; passing no `root` still delegates from `document` exactly as
+  before. Affects every delegated behavior (dialog, menu, combobox, …).
+- **`--report-width` / `--report-padding-block` are now declared defaults** on
+  `.ui-report` — they were read with inline fallbacks but never declared, so the
+  override surface was undiscoverable and `--report-measure` looked like the
+  width knob when it isn't.
+- Carousel's IntersectionObserver is now set up and torn down in lockstep with
+  its event binding, removing a one-tick window where a re-init left two
+  observers on the same slides.
 
 ### Documentation
 
@@ -87,6 +123,39 @@ Additive maintenance on top of 0.5.0 — no breaking changes. The default
   `is-num`/`is-pos`/`is-neg`/`is-key`/`is-open` state hooks are valid even
   though they deliberately live outside `cls` (documented in
   `docs/reference.md` and `classes.json`).
+- Clarified two standing contracts in `docs/architecture.md`: `css/analytical.css`
+  is the roll-up of exactly the seven figure leaves (annotations, legend, marks,
+  connectors, spotlight, crosshair, selection) — `sources`/`state`/`generated`/
+  `workbench`/`command` are adjacent leaves imported individually — and the root
+  `.` export is CSS-only (no runtime JS at the root). Pre-1.0 stability/pinning
+  spelled out in `docs/stability.md`. `docs/workbench.md` notes that
+  `.ui-selectionbar` is unrelated to the `.ui-sel--*` selection-emphasis classes.
+- Honest JSDoc limits: combobox/command read options from the DOM at init
+  (re-run after replacing them); popover restores focus on Escape but not on
+  outside-click; the table sorter is locale-naive display-text; mask-mode glyphs
+  are single-tone.
+
+### Internal
+
+- **New `check:versions` gate** — every `@ponchia/ui@X.Y.Z` literal in a shipped
+  doc (`llms.txt`, `docs/reporting.md`, …) must equal `package.json`, so a stale
+  CDN pin can't ship to LLM/copy-paste consumers on the next bump.
+- **`check:dist` now asserts source-coverage** — every `css/*.css` leaf must be
+  bundled, an opt-in `EXTRA_LEAVES` entry, or a roll-up; an orphaned leaf that
+  would ship nothing now fails loudly (the inverse of the existing stale-dist
+  guard).
+- **`check:dts-emit` now compares `.d.ts.map`** mapping data (volatile `sources`
+  path normalized), closing a drift hole the code comment had acknowledged.
+- DTCG export types `--display-weight*` as the spec `fontWeight` type (was
+  `number`). Corrected stale `check-tokens.mjs` doc references (the real gate is
+  `check:fresh`).
+- Tests: binding hook-surface parity is now **derived** from the modules (the old
+  hard-coded list silently omitted the five analytical hooks); a new
+  `analytical-boundary` test makes the "no scales/state/fetch/global-hotkey"
+  contract executable; a new behavior test pins the null-root no-op.
+- Removed four dead keyframes (`scan`/`growBar`/`drawLine`/`pulseNode`) from
+  `motion.css`. Raw bundle budget 80 → 81 kB for the accessibility blocks (gzip
+  held ~14.0 kB).
 
 ## 0.5.0 — 2026-06-02
 

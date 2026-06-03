@@ -129,8 +129,13 @@ export function buildBundles() {
  *  ~77.3 kB raw / ~13.5 kB gzip — the analytical primitives are opt-in leaves
  *  that stay out of the default bundle, so this is residual prior growth);
  *  raised to 80 kB raw / 14.5 kB gzip to restore a real ~3% raw / ~7% gzip
- *  margin so an ordinary token addition no longer trips an unrelated PR. */
-export const BUDGET = { raw: 80_000, gzip: 14_500 };
+ *  margin so an ordinary token addition no longer trips an unrelated PR. At
+ *  0.5.1 the raw ceiling was nudged 80→81 kB for the accessibility hardening
+ *  pass (coarse-pointer 2.9 kB tap-target floors on nav, forced-colors status
+ *  dots, menu/segmented focus-visible affordances, flat reduced-motion
+ *  skeleton); the deleted dead keyframes clawed some back. Gzip held (~14.0 kB)
+ *  — the additions are repetitive media-query blocks that compress well. */
+export const BUDGET = { raw: 81_000, gzip: 14_500 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };

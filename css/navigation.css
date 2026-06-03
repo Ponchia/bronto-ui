@@ -80,3 +80,10 @@
     transform: translateY(1px);
   }
 }
+
+@media (pointer: coarse) {
+  .ui-themetoggle__button {
+    min-block-size: 2.9rem;
+    padding-inline: 0.9rem;
+  }
+}

@@ -1,4 +1,4 @@
-import { hasDom, noop, bindOnce } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce } from './internal.js';
 
 /**
  * Dropdown-menu close affordances for a native `<details data-bronto-menu>`
@@ -13,7 +13,8 @@ import { hasDom, noop, bindOnce } from './internal.js';
  */
 export function initMenu({ root } = {}) {
   if (!hasDom()) return noop;
-  const host = root || document;
+  const host = resolveHost(root);
+  if (!host) return noop;
   const openMenus = () => host.querySelectorAll?.('[data-bronto-menu][open]') ?? [];
   const shut = (menu) => {
     if (!menu || !menu.open) return;

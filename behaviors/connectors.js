@@ -1,4 +1,4 @@
-import { hasDom, noop, bindOnce, byIdInHost } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, byIdInHost } from './internal.js';
 import { connectRects, arrowHead, dotMark } from '../connectors/index.js';
 
 const SVGNS = 'http://www.w3.org/2000/svg';
@@ -17,7 +17,8 @@ const SVGNS = 'http://www.w3.org/2000/svg';
  */
 export function initConnectors({ root } = {}) {
   if (!hasDom()) return noop;
-  const host = root || document;
+  const host = resolveHost(root);
+  if (!host) return noop;
   const connectors = [];
   if (host !== document && host.matches?.('[data-bronto-connector]')) connectors.push(host);
   connectors.push(...host.querySelectorAll('[data-bronto-connector]'));

@@ -1,4 +1,4 @@
-import { hasDom, noop, bindOnce } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce } from './internal.js';
 
 /**
  * Wire `[data-bronto-legend]` interactive legends. Each entry is a
@@ -17,7 +17,8 @@ import { hasDom, noop, bindOnce } from './internal.js';
  */
 export function initLegend({ root } = {}) {
   if (!hasDom()) return noop;
-  const host = root || document;
+  const host = resolveHost(root);
+  if (!host) return noop;
   const onClick = (e) => {
     const item = e.target.closest('.ui-legend__item');
     if (!item || !host.contains(item)) return;

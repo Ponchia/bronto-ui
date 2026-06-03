@@ -371,6 +371,43 @@
   }
 }
 
+/* Forced-colors (Windows HCM): semantic status dots and hot/accent matrix
+   cells encode meaning purely via background-color, which collapses to one
+   system colour under HCM (WCAG 1.4.1). Opt out of forced-color remapping and
+   apply four visually-distinct system colours so the signals stay
+   differentiable. */
+@media (forced-colors: active) {
+  .ui-dot--success {
+    forced-color-adjust: none;
+    background: LinkText;
+  }
+
+  .ui-dot--warning {
+    forced-color-adjust: none;
+    background: Mark;
+  }
+
+  .ui-dot--danger {
+    forced-color-adjust: none;
+    background: Highlight;
+  }
+
+  .ui-dot--info {
+    forced-color-adjust: none;
+    background: ButtonText;
+  }
+
+  .ui-dotmatrix__cell--hot {
+    forced-color-adjust: none;
+    background: Highlight;
+  }
+
+  .ui-dotmatrix__cell--accent {
+    forced-color-adjust: none;
+    background: LinkText;
+  }
+}
+
 /* Print: the dot surfaces carry data (heatmap cells, the segmented meter, the
    status dot, the masked glyph), so their painted fills must survive the print
    "economy" default that drops backgrounds. */

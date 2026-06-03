@@ -1,4 +1,4 @@
-import { hasDom, noop, bindOnce, nextFieldUid } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, nextFieldUid } from './internal.js';
 
 /**
  * Accessible form validation glue for `<form data-bronto-validate>`.
@@ -21,7 +21,8 @@ import { hasDom, noop, bindOnce, nextFieldUid } from './internal.js';
  */
 export function initFormValidation({ root } = {}) {
   if (!hasDom()) return noop;
-  const host = root || document;
+  const host = resolveHost(root);
+  if (!host) return noop;
 
   const ensureId = (el, prefix) => {
     if (!el.id) el.id = `${prefix}-${nextFieldUid()}`;
