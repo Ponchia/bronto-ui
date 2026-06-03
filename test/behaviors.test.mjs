@@ -963,6 +963,10 @@ test('initTableSort: cycles aria-sort and reorders rows (string + numeric)', () 
   const nameBtn = table.querySelectorAll('.ui-table__sort')[0];
   const scoreBtn = table.querySelectorAll('.ui-table__sort')[1];
 
+  // Sortable headers are seeded aria-sort="none" on init (announced sortable).
+  assert.equal(nameBtn.closest('th').getAttribute('aria-sort'), 'none', 'seeded none');
+  assert.equal(scoreBtn.closest('th').getAttribute('aria-sort'), 'none', 'seeded none');
+
   nameBtn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   assert.deepEqual(names(), ['Ann', 'Bob', 'Cy'], 'ascending string sort');
   assert.equal(nameBtn.closest('th').getAttribute('aria-sort'), 'ascending');
@@ -972,7 +976,18 @@ test('initTableSort: cycles aria-sort and reorders rows (string + numeric)', () 
 
   scoreBtn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   assert.deepEqual(names(), ['Ann', 'Bob', 'Cy'], 'numeric sort (9,30,100) not lexical');
-  assert.equal(nameBtn.closest('th').hasAttribute('aria-sort'), false, 'other header sort cleared');
+  // The other sortable header resets to "none" (stays advertised as sortable),
+  // not removed — APG: a sortable column always carries aria-sort.
+  assert.equal(
+    nameBtn.closest('th').getAttribute('aria-sort'),
+    'none',
+    'other header reset to none',
+  );
+  assert.equal(
+    scoreBtn.closest('th').getAttribute('aria-sort'),
+    'ascending',
+    'active header sorted',
+  );
   stop();
 });
 

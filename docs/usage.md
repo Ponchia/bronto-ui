@@ -39,6 +39,14 @@ All three are small. They are **not** interchangeable:
 Rule of thumb: state → dot, classification → badge, user-controlled value
 → chip.
 
+**Tone vocabulary varies by family — by design.** Colour is rationed, so not
+every component carries every tone: `--info`/`--muted` exist on some families
+(badge, dot, state) and not others (alert/toast/meter lead with
+`--success`/`--warning`/`--danger`). The authoritative per-component tone list is
+each base's `modifiers` array in
+[`@ponchia/ui/classes.json`](../classes/classes.json) — read it rather than
+extrapolating a tone you saw on one component onto another.
+
 ## Numbers: `ui-num` vs the table state classes
 
 - Inside `.ui-table`, a numeric cell is `.is-num` (+ `.is-pos` /
@@ -103,6 +111,13 @@ destructive action).
 | toast    | transient, out-of-flow, system-initiated. Danger toasts route to an assertive live region; everything else polite. |
 | tooltip  | supplemental, hover/focus, never essential info (it's not announced reliably; don't hide required content in it). |
 
+The CSS `ui-tooltip` is hover/focus-only and CSS can't wire it to assistive
+tech for you — associate the bubble with its trigger yourself, or it conveys
+nothing to a screen reader: give `.ui-tooltip__bubble` an `id`, point the
+trigger's `aria-describedby` at it, and keep the bubble `role="tooltip"`. For a
+tooltip that must stay visible near a viewport edge or inside a scroll
+container, use `initPopover` (a real focus-managed panel) instead.
+
 ## Meter vs progress
 
 Both are a thin horizontal bar; they mean different things.
@@ -135,6 +150,37 @@ this much* → meter.
   *adjacent* to the control. Wrap the input; the icon is decorative
   (`aria-hidden`) and the input keeps its full width. Don't hand-roll an
   absolute overlay.
+
+## Navigation: the landmarks and names the classes don't carry
+
+The navigation classes are styling only — the ARIA scaffolding is yours, and
+without it these widgets are unlabelled or unannounced:
+
+- **`ui-breadcrumb`** — wrap it in `<nav aria-label="Breadcrumb">` and mark the
+  last (current) crumb with `aria-current="page"`.
+- **`ui-pagination`** — wrap it in `<nav aria-label="Pagination">`; give the
+  current page `aria-current="page"`; label icon-only prev/next controls
+  (`aria-label="Previous page"`). Disable a control with native `disabled`
+  (a `<button>`) **or** `aria-disabled="true"` — both now render disabled and
+  are non-interactive; don't ship an `aria-disabled` control that still acts.
+- **`ui-tabs`** — `initTabs` adds the full APG wiring (roles, roving tabindex,
+  `aria-selected`, panel `hidden`, focusable panel). If you wire tabs yourself,
+  name the `ui-tabs__list` (`role="tablist"` + an `aria-label`) and pair each
+  tab with its panel via `aria-controls`/`aria-labelledby`.
+- **`ui-sitenav` / `ui-app-nav`** — signal the current link with
+  `aria-current="page"` (both honour it; `ui-app-nav` also accepts the
+  visual-only `.is-active`, but prefer `aria-current`).
+- **`ui-skiplink`** — keep it the first focusable element and point its `href`
+  at the `id` of your main landmark.
+
+## Avatar: it's an unlabelled blob until you name it
+
+`ui-avatar` is a presentation box. Give it an accessible name yourself: an
+image avatar needs real `alt` text (`alt=""` only if it's purely decorative
+beside a visible name); an initials avatar needs an accessible name on the
+element (e.g. `aria-label="Ada Lovelace"`) because the initials alone don't
+convey identity to AT. Keep initials to ~2 characters — the box is
+`overflow: hidden` and silently clips a third.
 
 ## Modal: native `<dialog>` vs `is-open`
 
@@ -181,6 +227,13 @@ small/inline use pass **`solid: true`** (or `data-bronto-glyph-solid`):
 that fuses the cells into a square, gapless pixel glyph that stays crisp and
 legible down to **~16px** — so the same set doubles as real inline UI icons,
 not just decoration. (Below the dot fragments into dot-soup; solid does not.)
+
+One caveat on ink: `solid` cells inherit the dot palette (`--field-dot-hot`,
+~40% alpha), so at small sizes a solid glyph reads as a soft grey, not full
+ink. When you want a crisp, full-strength small icon (toolbar, button affordance),
+use the one-node mask renderer instead — `renderGlyph(name, { render: 'mask' })`
+paints the glyph in `currentColor` on a `.ui-icon`, so it tracks text colour at
+any size.
 
 `renderGlyph(name, { label })` returns an SSR-safe string: decorative
 (`aria-hidden`) by default, or `role="img"` + `aria-label` when you pass a
@@ -300,9 +353,9 @@ authoring engine.
   `initCombobox()` time — re-run it after you replace the option list. The
   `<input>` owns the value; the listbox is a view.
 - **Validation** is opt-in via `data-bronto-validate` on the form plus
-  `initForms()`; it surfaces messages into a `ui-error-summary` you provide. The
-  summary's title is the legible sans, not the display face — it's meant to be
-  read.
+  `initFormValidation()`; it surfaces messages into a `ui-error-summary` you
+  provide. The summary's title is the legible sans, not the display face — it's
+  meant to be read.
 
 ## Reveal: `ui-reveal` needs JS, `ui-scroll-reveal` doesn't
 

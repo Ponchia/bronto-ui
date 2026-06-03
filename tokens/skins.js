@@ -10,8 +10,9 @@
  *
  * Accents are authored in **OKLCH** (ADR-0001 step 5 — "OKLCH for new work
  * first"): perceptually-uniform lightness makes the light/dark pair easy to
- * reason about, and it is within the package browser floor (Chrome 111+,
- * Safari 16.4+, Firefox 121+ all support `oklch()` and `color-mix()`).
+ * reason about, and it is comfortably within the package browser floor
+ * (Chrome 125+ / Safari 18+ / Firefox 129+ per ADR-0002 — `oklch()` and
+ * `color-mix()` in fact landed even earlier, Chrome 111 / Safari 16.4 / FF 121).
  *
  * Each skin gives a per-theme accent because — exactly like the core red
  * (#d71921 light / #ff3b41 dark) — one hue cannot stay AA against both a white

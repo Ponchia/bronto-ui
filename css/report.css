@@ -45,7 +45,7 @@
   padding-block: var(--space-xl) var(--space-lg);
 }
 
-.ui-report__header {
+.ui-report__head {
   align-items: end;
   border-block-end: 1px solid var(--line);
   display: flex;
@@ -305,7 +305,7 @@
   }
 
   .ui-report__cover,
-  .ui-report__header,
+  .ui-report__head,
   .ui-report__section,
   .ui-report__summary,
   .ui-report__finding,

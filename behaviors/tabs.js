@@ -51,9 +51,17 @@ export function initTabs({ root } = {}) {
         t.setAttribute('aria-selected', String(on));
         t.tabIndex = on ? 0 : -1;
       }
+      // Only retarget panels when this tab actually controls one. A panel-less
+      // tab must NOT hide every panel — leave the prior panel visible (C30).
+      if (!panels.some((p) => p.dataset.panel === tab.dataset.tab)) return;
       for (const p of panels) {
         p.setAttribute('role', 'tabpanel');
-        p.hidden = p.dataset.panel !== tab.dataset.tab;
+        const shown = p.dataset.panel === tab.dataset.tab;
+        p.hidden = !shown;
+        // APG: a tabpanel is focusable so keyboard users can reach a text-only
+        // panel; hidden panels drop out of the tab order (C30).
+        if (shown) p.tabIndex = 0;
+        else p.removeAttribute('tabindex');
       }
     };
     const onClick = (e) => {

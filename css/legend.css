@@ -210,8 +210,11 @@
 
 /* Interactive entries are real <button aria-pressed> controls. Bronto styles
    the control + the inactive state; behaviors/legend.js (optional) flips
-   aria-pressed and emits an event. The host hides the series and announces it. */
-.ui-legend--interactive .ui-legend__item {
+   aria-pressed and emits an event. The host hides the series and announces it.
+   Scoped to button/role=button so a non-button entry never gets cursor:pointer
+   — a pointer-only affordance with no keyboard path is a lie (WCAG 2.1.1 — C11;
+   the behavior ignores and warns about non-button entries to match). */
+.ui-legend--interactive .ui-legend__item:is(button, [role='button']) {
   background: none;
   border: 0;
   border-radius: var(--radius-sm);
@@ -223,7 +226,7 @@
   text-align: start;
 }
 
-.ui-legend--interactive .ui-legend__item:focus-visible {
+.ui-legend--interactive .ui-legend__item:is(button, [role='button']):focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }

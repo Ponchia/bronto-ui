@@ -22,7 +22,7 @@ a `__body` of property rows.
 
 ```html
 <aside class="ui-inspector">
-  <div class="ui-inspector__header">
+  <div class="ui-inspector__head">
     <h2 class="ui-eyebrow">Rectangle</h2>
     <button class="ui-button ui-button--subtle ui-button--sm" type="button">Reset</button>
   </div>
