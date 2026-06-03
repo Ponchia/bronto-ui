@@ -81,7 +81,10 @@
 /* Draw-on highlight sweep. Only the highlight fill animates, and only when
    motion is welcome — reduced-motion keeps the resting full highlight. */
 @media (prefers-reduced-motion: no-preference) {
-  .ui-mark--draw {
+  /* The sweep animates `background-size`, i.e. the highlight FILL — so it is
+     inert on the no-fill styles (underline/box/strike). Scope it out rather
+     than let `--draw` look applied but do nothing. (content review C14.) */
+  .ui-mark--draw:not(.ui-mark--underline, .ui-mark--box, .ui-mark--strike) {
     animation: ui-mark-draw 0.6s var(--ease, ease) both;
   }
 }
@@ -118,6 +121,10 @@
 
 .ui-bracket-note--accent {
   --mark-color: var(--accent);
+}
+
+.ui-bracket-note--success {
+  --mark-color: var(--success);
 }
 
 .ui-bracket-note--warning {

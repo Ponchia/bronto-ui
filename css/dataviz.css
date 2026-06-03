@@ -30,7 +30,11 @@
   --chart-div-6: oklch(66% 0.13 55deg);
   --chart-div-7: oklch(56% 0.15 45deg);
 
-  /* Dot-matrix pattern fills — pair with the matching colour (WCAG 1.4.1). */
+  /* Dot-matrix pattern fills — pair with the matching colour (WCAG 1.4.1).
+     Series 1 (the accent) is intentionally `none`: absence-of-pattern IS its
+     redundant channel. The colour palette is CVD-safe on its own (gated by
+     check:charts), so a colour+pattern chart stays distinguishable; a
+     pattern-ONLY chart must still give series 1 a fill or a labelled legend. */
   --chart-pattern-size: 8px;
   --chart-pattern-ink: rgb(0 0 0 / 0.34);
   --chart-pattern-1: none;

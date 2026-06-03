@@ -266,6 +266,15 @@
     display: none;
   }
 
+  /* The rail is flex-row here, so the base `margin-block-start: auto` (which
+     pushed account to the bottom in the column layout) is inert and account can
+     scroll off. Push it to the inline end instead so sign-out stays reachable.
+     (layout review C21.) */
+  .ui-app-rail__account {
+    margin-block-start: 0;
+    margin-inline-start: auto;
+  }
+
   .ui-app-nav {
     grid-auto-flow: column;
     gap: 0.15rem;

@@ -132,6 +132,7 @@ export declare const cls: {
   readonly meterSuccess: 'ui-meter--success';
   readonly meterWarning: 'ui-meter--warning';
   readonly meterDanger: 'ui-meter--danger';
+  readonly meterInfo: 'ui-meter--info';
   readonly steps: 'ui-steps';
   readonly stepsItem: 'ui-steps__item';
   readonly stepsItemDone: 'ui-steps__item--done';
@@ -339,6 +340,7 @@ export declare const cls: {
   readonly bracketNote: 'ui-bracket-note';
   readonly bracketNoteLabel: 'ui-bracket-note__label';
   readonly bracketNoteAccent: 'ui-bracket-note--accent';
+  readonly bracketNoteSuccess: 'ui-bracket-note--success';
   readonly bracketNoteWarning: 'ui-bracket-note--warning';
   readonly bracketNoteDanger: 'ui-bracket-note--danger';
   readonly bracketNoteInfo: 'ui-bracket-note--info';

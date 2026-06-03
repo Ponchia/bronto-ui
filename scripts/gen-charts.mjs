@@ -82,7 +82,11 @@ export function buildDatavizCss() {
     ` *  background-size: var(--chart-pattern-size); --chart-pattern-ink: <contrast>. */\n`;
 
   const patterns =
-    `  /* Dot-matrix pattern fills — pair with the matching colour (WCAG 1.4.1). */\n` +
+    `  /* Dot-matrix pattern fills — pair with the matching colour (WCAG 1.4.1).\n` +
+    `     Series 1 (the accent) is intentionally \`none\`: absence-of-pattern IS its\n` +
+    `     redundant channel. The colour palette is CVD-safe on its own (gated by\n` +
+    `     check:charts), so a colour+pattern chart stays distinguishable; a\n` +
+    `     pattern-ONLY chart must still give series 1 a fill or a labelled legend. */\n` +
     `  --chart-pattern-size: 8px;\n` +
     `  --chart-pattern-ink: rgb(0 0 0 / 0.34);\n` +
     PATTERNS.map((p, i) => `  --chart-pattern-${i + 1}: ${p};`).join('\n');

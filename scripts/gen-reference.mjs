@@ -101,7 +101,9 @@ For numeric text *outside* a table, use the \`ui-num\` primitive
 (\`ui.num({ tone })\`), which carries the same tabular/aligned/tone intent; for
 a trend figure use \`ui-delta\` (\`ui.delta({ dir, invert })\`). The full,
 machine-readable list of these \`is-*\` state hooks — and the author-set inline
-custom properties (\`--chart-color\`, \`--chart-pattern\`, \`--value\`) — is in
+custom properties (\`--chart-color\`, \`--chart-pattern\`, \`--value\`, and the
+**required** \`--icon-mask\` on \`.ui-icon\` and \`--ui-vt-name\` on \`.ui-vt\` —
+without which those classes render a solid square / do nothing) — is in
 [\`@ponchia/ui/classes.json\`](../classes/classes.json)
 (\`states\` / \`customProperties\`).
 
