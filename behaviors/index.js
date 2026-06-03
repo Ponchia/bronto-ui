@@ -23,6 +23,7 @@
  * @typedef {import('./theme.js').ApplyThemeOpts} ApplyThemeOpts
  * @typedef {import('./theme.js').ThemeChangeDetail} ThemeChangeDetail
  * @typedef {import('./toast.js').ToastOpts} ToastOpts
+ * @typedef {import('./modal.js').ModalCloseDetail} ModalCloseDetail
  * @typedef {import('./legend.js').LegendToggleDetail} LegendToggleDetail
  * @typedef {import('./crosshair.js').CrosshairMoveDetail} CrosshairMoveDetail
  * @typedef {import('./command.js').CommandSelectDetail} CommandSelectDetail
@@ -31,6 +32,7 @@ export { applyStoredTheme, initThemeToggle } from './theme.js';
 export { dismissible } from './dismissible.js';
 export { initTabs } from './tabs.js';
 export { initDialog } from './dialog.js';
+export { initModal } from './modal.js';
 export { toast } from './toast.js';
 export { initDisclosure } from './disclosure.js';
 export { initMenu } from './menu.js';

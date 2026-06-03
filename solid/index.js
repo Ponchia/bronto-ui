@@ -60,6 +60,7 @@ import {
   initTableSort,
   initTabs,
   initDialog,
+  initModal,
   initCarousel,
   initDotGlyph,
   initLegend,
@@ -125,6 +126,8 @@ export const useTableSort = (opts) => useBrontoBehavior(initTableSort, opts);
 export const useTabs = (opts) => useBrontoBehavior(initTabs, opts);
 /** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useDialog = (opts) => useBrontoBehavior(initDialog, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
+export const useModal = (opts) => useBrontoBehavior(initModal, opts);
 /** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useCarousel = (opts) => useBrontoBehavior(initCarousel, opts);
 /** @type {(opts?: BrontoBindingOptsResolver) => void} */

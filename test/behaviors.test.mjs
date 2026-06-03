@@ -8,6 +8,7 @@ import {
   initDisclosure,
   initMenu,
   initDialog,
+  initModal,
   initTabs,
   initFormValidation,
   initCombobox,
@@ -41,9 +42,13 @@ function mount(html) {
 const childById = (root, id) =>
   Array.from(root.querySelectorAll('[id]')).find((el) => el.id === id);
 
+// Let a MutationObserver callback (microtask) flush before asserting.
+const tick = () => new Promise((r) => setTimeout(r, 0));
+
 beforeEach(() => dom?.window?.localStorage?.clear());
 afterEach(() => {
-  for (const k of ['document', 'localStorage', 'CustomEvent', 'matchMedia']) delete globalThis[k];
+  for (const k of ['document', 'localStorage', 'CustomEvent', 'matchMedia', 'MutationObserver'])
+    delete globalThis[k];
   dom = undefined;
 });
 
@@ -831,6 +836,56 @@ test('initCombobox: empty state, Escape closes, cleanup detaches', () => {
   assert.equal(list.hidden, true, 'no-op after cleanup');
 });
 
+test('initCombobox: data-bronto-combobox-live re-reads async-added options', async () => {
+  const d = mount(`
+    <div class="ui-combobox" data-bronto-combobox data-bronto-combobox-live>
+      <input class="ui-input ui-combobox__input" aria-label="Fruit" />
+      <ul class="ui-combobox__list"></ul>
+      <p class="ui-combobox__empty" hidden>No matches</p>
+    </div>`);
+  globalThis.MutationObserver = dom.window.MutationObserver;
+  const stop = initCombobox();
+  const input = d.querySelector('.ui-combobox__input');
+  const list = d.querySelector('.ui-combobox__list');
+
+  // Results arrive after init (the async/remote case).
+  const li = d.createElement('li');
+  li.className = 'ui-combobox__option';
+  li.dataset.value = 'mango';
+  li.textContent = 'Mango';
+  list.appendChild(li);
+  await tick();
+
+  assert.ok(li.id, 'observer ran syncOptions: new option got an id');
+  assert.equal(li.getAttribute('role'), 'option', 'new option got role=option');
+
+  input.value = 'man';
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  assert.equal(li.hidden, false, 'async option filters in');
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  assert.equal(input.value, 'mango', 'async option is keyboard-selectable');
+  stop();
+});
+
+test('initCombobox: without the live opt-in, async options stay stale', async () => {
+  const d = mount(`
+    <div class="ui-combobox" data-bronto-combobox>
+      <input class="ui-input ui-combobox__input" aria-label="Fruit" />
+      <ul class="ui-combobox__list"></ul>
+    </div>`);
+  globalThis.MutationObserver = dom.window.MutationObserver;
+  const stop = initCombobox();
+  const list = d.querySelector('.ui-combobox__list');
+  const li = d.createElement('li');
+  li.className = 'ui-combobox__option';
+  li.textContent = 'Mango';
+  list.appendChild(li);
+  await tick();
+  assert.equal(li.id, '', 'no observer without the opt-in: option left untouched');
+  stop();
+});
+
 test('initCombobox: a filtered-out active option cannot be Enter-selected (APG)', () => {
   const d = mount(CB);
   const stop = initCombobox();
@@ -1436,6 +1491,56 @@ test('initCommand: SSR-safe', () => {
   for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
   assert.doesNotThrow(() => {
     const stop = initCommand();
+    stop();
+  });
+});
+
+test('initModal: inert traps focus, returns it on close, Escape only signals', async () => {
+  const d = mount(`
+    <button id="opener">Open</button>
+    <aside id="bg"><a href="#">background link</a></aside>
+    <div class="ui-modal" data-bronto-modal>
+      <button id="ok">OK</button>
+    </div>`);
+  globalThis.MutationObserver = dom.window.MutationObserver;
+  const stop = initModal();
+  const opener = d.getElementById('opener');
+  opener.focus();
+  const modal = d.querySelector('.ui-modal');
+
+  // Consumer opens (owns the class); behavior traps focus.
+  modal.classList.add('is-open');
+  await tick();
+  assert.equal(d.activeElement.id, 'ok', 'focus moved into the modal');
+  assert.equal(d.getElementById('opener').inert, true, 'opener sibling inert');
+  assert.equal(d.getElementById('bg').inert, true, 'background sibling inert');
+
+  // Escape requests close (cancelable event) but never changes visibility.
+  let reason = null;
+  modal.addEventListener('bronto:modal:close', (e) => (reason = e.detail.reason));
+  d.getElementById('ok').dispatchEvent(
+    new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+  );
+  assert.equal(reason, 'escape', 'Escape emits bronto:modal:close');
+  assert.ok(modal.classList.contains('is-open'), 'open/close state stays the consumer’s');
+
+  // Consumer closes → inert released, focus returned to the opener.
+  modal.classList.remove('is-open');
+  await tick();
+  assert.equal(d.getElementById('bg').inert, false, 'inert released on close');
+  assert.equal(d.activeElement.id, 'opener', 'focus returned to opener');
+
+  // Cleanup releases any live trap and detaches.
+  modal.classList.add('is-open');
+  await tick();
+  stop();
+  assert.equal(d.getElementById('bg').inert, false, 'cleanup un-inerts');
+});
+
+test('initModal: SSR-safe', () => {
+  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
+  assert.doesNotThrow(() => {
+    const stop = initModal();
     stop();
   });
 });

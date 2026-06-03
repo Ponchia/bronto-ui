@@ -64,6 +64,7 @@ import {
   initTableSort,
   initTabs,
   initDialog,
+  initModal,
   initCarousel,
   initDotGlyph,
   initLegend,
@@ -160,6 +161,10 @@ export const useTabs = (opts) =>
 export const useDialog = (opts) =>
   // eslint-disable-next-line qwik/no-use-visible-task -- delegated DOM glue + cleanup
   useVisibleTask$((ctx) => start(initDialog, opts, ctx));
+/** @param {BrontoBindingOptsResolver} [opts] @returns {void} */
+export const useModal = (opts) =>
+  // eslint-disable-next-line qwik/no-use-visible-task -- delegated DOM glue + cleanup
+  useVisibleTask$((ctx) => start(initModal, opts, ctx));
 /** @param {BrontoBindingOptsResolver} [opts] @returns {void} */
 export const useCarousel = (opts) =>
   // eslint-disable-next-line qwik/no-use-visible-task -- delegated DOM glue + cleanup

@@ -1,6 +1,7 @@
 export { dismissible } from "./dismissible.js";
 export { initTabs } from "./tabs.js";
 export { initDialog } from "./dialog.js";
+export { initModal } from "./modal.js";
 export { toast } from "./toast.js";
 export { initDisclosure } from "./disclosure.js";
 export { initMenu } from "./menu.js";
@@ -21,6 +22,7 @@ export type ThemeStorageOpts = import("./theme.js").ThemeStorageOpts;
 export type ApplyThemeOpts = import("./theme.js").ApplyThemeOpts;
 export type ThemeChangeDetail = import("./theme.js").ThemeChangeDetail;
 export type ToastOpts = import("./toast.js").ToastOpts;
+export type ModalCloseDetail = import("./modal.js").ModalCloseDetail;
 export type LegendToggleDetail = import("./legend.js").LegendToggleDetail;
 export type CrosshairMoveDetail = import("./crosshair.js").CrosshairMoveDetail;
 export type CommandSelectDetail = import("./command.js").CommandSelectDetail;
