@@ -56,28 +56,31 @@ async function main(argv) {
   if (outDir && !existsSync(outDir)) mkdirSync(outDir, { recursive: true });
 
   const browser = await launch();
-  const page = await browser.newPage();
+  // try/finally so a throwing goto/pdf can't leak the Chromium process.
+  try {
+    const page = await browser.newPage();
 
-  for (const input of inputs) {
-    const abs = resolve(input);
-    if (!existsSync(abs)) {
-      console.error(`✗ not found: ${input}`);
-      continue;
+    for (const input of inputs) {
+      const abs = resolve(input);
+      if (!existsSync(abs)) {
+        console.error(`✗ not found: ${input}`);
+        continue;
+      }
+      const out = outDir
+        ? resolve(outDir, basename(abs).replace(/\.html?$/i, '.pdf'))
+        : abs.replace(/\.html?$/i, '.pdf');
+      await page.goto(pathToFileURL(abs).href, { waitUntil: 'networkidle' });
+      await page.pdf({
+        path: out,
+        format: 'A4',
+        printBackground: true, // required, or chart fills/swatches drop out
+        margin: { top: '14mm', bottom: '14mm', left: '14mm', right: '14mm' },
+      });
+      console.log(`✓ ${out}`);
     }
-    const out = outDir
-      ? resolve(outDir, basename(abs).replace(/\.html?$/i, '.pdf'))
-      : abs.replace(/\.html?$/i, '.pdf');
-    await page.goto(pathToFileURL(abs).href, { waitUntil: 'networkidle' });
-    await page.pdf({
-      path: out,
-      format: 'A4',
-      printBackground: true, // required, or chart fills/swatches drop out
-      margin: { top: '14mm', bottom: '14mm', left: '14mm', right: '14mm' },
-    });
-    console.log(`✓ ${out}`);
+  } finally {
+    await browser.close();
   }
-
-  await browser.close();
 }
 
 // Only render when run as a script — importing this module (e.g. from a test of
