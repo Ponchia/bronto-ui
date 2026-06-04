@@ -15,9 +15,7 @@
  * `docs/contrast.md` (WCAG floors), `dist/**` (size budget + url() resolution).
  * Those keep their own bespoke gates. This registry is only the freshness frame.
  */
-import { writeFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { repoRoot, writeGenerated } from './emit.mjs';
 
 import { generated as dtsGenerated } from '../gen-dts.mjs';
 import { generated as referenceGenerated } from '../gen-reference.mjs';
@@ -27,8 +25,6 @@ import { dtcgJson } from '../gen-dtcg.mjs';
 import { resolvedJson } from '../gen-resolved.mjs';
 import { tokensCss } from '../gen-tokens-css.mjs';
 import { tokensJson } from '../gen-tokens-json.mjs';
-
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
 /** Repo-relative path → freshly-generated expected content. */
 export const artifacts = {
@@ -44,8 +40,5 @@ export const artifacts = {
 
 /** Write every registry artifact to disk. */
 export function writeAll() {
-  for (const [rel, content] of Object.entries(artifacts)) {
-    writeFileSync(resolve(root, rel), content);
-    console.log(`✓ wrote ${rel}`);
-  }
+  writeGenerated(repoRoot, artifacts);
 }
