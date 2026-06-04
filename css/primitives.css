@@ -476,8 +476,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* The global reduced-motion reset freezes the spin on a single frame with an
+     !important `animation-duration`, so the old non-important `1.4s` slow-spin
+     here was dead code AND left a broken, transparent-topped ring looking like a
+     rendering bug. Drop the dead rule; show a STATIC complete ring instead — a
+     still busy cue with no implied motion. (component audit C15.) */
   .ui-button[aria-busy='true']::before {
-    animation-duration: 1.4s;
+    border-block-start-color: currentcolor;
   }
 }
 
@@ -530,6 +535,18 @@
 [dir='rtl'] .ui-link--arrow::after,
 [dir='rtl'] .ui-link--cta::after {
   transform: rotate(-45deg);
+}
+
+/* Standalone CTA links are tap targets, not inline prose links: on a coarse
+   pointer float them to the WCAG 2.5.8 AA 24px floor (the 2.5.8 inline-link
+   exception doesn't cover a block-level call-to-action, which is what these
+   are). Buttons already auto-grow to ~44px on coarse pointers. (component
+   audit C14.) */
+@media (pointer: coarse) {
+  .ui-link--arrow,
+  .ui-link--cta {
+    min-block-size: 1.5rem;
+  }
 }
 
 /* --- Chip / tag --- */

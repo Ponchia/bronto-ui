@@ -1207,7 +1207,6 @@ each one matches a real selector in the stylesheet.
 | `cls.tableComfortable` | `ui-table--comfortable` | modifier |
 | `cls.tableDense` | `ui-table--dense` | modifier |
 | `cls.tableLined` | `ui-table--lined` | modifier |
-| `cls.tableLoading` | `ui-table--loading` | modifier |
 | `cls.tableSelectable` | `ui-table--selectable` | modifier |
 
 ### `.ui-table-wrap`
@@ -1215,6 +1214,7 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.tableWrap` | `ui-table-wrap` | base |
+| `cls.tableLoading` | `ui-table-wrap--loading` | modifier |
 
 ### `.ui-tabs`
 
@@ -1395,8 +1395,11 @@ works in any framework without a binding layer:
 - **Button loading** — set `aria-busy="true"` (and `disabled`) on
   `ui-button`; the leading spinner is injected by CSS with no extra
   markup or class. `ui-button--sm`/`--lg` size it.
-- **Badge tone** — `ui.badge({ tone })` emits the framework tone
-  (`accent|success|warning|danger|info|muted`). Mapping an app's own variant
+- **Badge tone** — `ui.badge({ tone })` emits the badge tone
+  (`accent|success|warning|danger|info|muted`). The set is badge-specific, not a
+  universal vocabulary — `muted` is a badge/neutral tone, absent from the status
+  families (`ui-alert`/`ui-toast`/`ui-meter`/`ui-dot`); the builders warn on an
+  out-of-set tone (see usage.md). Mapping an app's own variant
   vocabulary onto a tone is application logic, not a framework class.
 - **Modal** — native `<dialog>` gets backdrop + top-layer + focus-trap
   free. For a controlled/portal modal, add `is-open`

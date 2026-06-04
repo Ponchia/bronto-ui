@@ -159,8 +159,10 @@
   padding: var(--space-sm) var(--space-md);
 }
 
-/* --- Loading state: set aria-busy + .ui-table--loading on the wrap --- */
-.ui-table--loading {
+/* --- Loading state: set aria-busy + .ui-table-wrap--loading on the wrap. The
+   modifier is named for the element it goes ON (the wrap), not `.ui-table`, so
+   the BEM host matches the documented placement. (component audit C19.) --- */
+.ui-table-wrap--loading {
   opacity: 0.6;
   pointer-events: none;
 }

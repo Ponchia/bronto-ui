@@ -58,8 +58,11 @@ The neutral `--muted` is **not** a status tone: it rides several *neutral*
 bases (`ui-badge`, `ui-num`, `ui-eyebrow`, `ui-mark`, `ui-annotation`,
 `ui-connector`, `ui-crosshair`) but is deliberately absent from the status
 families `ui-dot`/`ui-alert`/`ui-toast`/`ui-meter`. Because the CSS is a
-plain class list, an unknown modifier (e.g. `ui-dot--muted`, `ui-meter--muted`)
-**silently no-ops** — it can't warn the way the TS builders do. The authoritative
+plain class list, a hand-written unknown modifier (e.g. `ui-dot--muted`,
+`ui-meter--muted`) **silently no-ops** — CSS can't warn. The `ui.*` builders are
+safer on both ends: TypeScript rejects an out-of-set tone at author time, and at
+runtime they `console.warn` (then drop the tone) so a JS caller sees the mistake
+rather than shipping a bare, untoned element. The authoritative
 per-component tone list is each base's `modifiers` array in
 [`@ponchia/ui/classes.json`](../classes/classes.json) — read it rather than
 extrapolating a tone you saw on one component onto another.
@@ -133,11 +136,17 @@ viewport — so the same `ui-grid` / `ui-statgrid` / `ui-app-metrics` collapses 
 one column inside a slim panel even when the window is wide (island-safe; it
 nests). Two thresholds are built in: `ui-grid` drops to a single column at
 **34rem** and `ui-statgrid`/`ui-app-metrics` at **30rem**, measured on the `ui-cq`
-box. The container is named `bronto` (hardcoded — there is no `--cq-name` knob; an
-author-set one is ignored), so an outer query never accidentally matches an inner
-grid. `ui-cq` is inert until applied, so adding it never shifts an existing
-layout. Reach for it whenever a layout must respond to its container (a resizable
-pane, a sidebar widget, an embedded card) rather than the page.
+box. Note `rem` in a container query resolves against the **root** font size, not
+16px — at Bronto's 15px root that's ≈**510px** and ≈**450px**, ~6% tighter than a
+16px mental model. And be aware `ui-grid` already collapses on its own via an
+intrinsic `auto-fit` minmax, so `ui-cq` barely changes it — the primitive that
+genuinely *needs* `ui-cq` to collapse by container (not viewport) is
+`ui-statgrid`/`ui-app-metrics`. The container is named `bronto` (hardcoded — there
+is no `--cq-name` knob; an author-set one is ignored), so an outer query never
+accidentally matches an inner grid. `ui-cq` is inert until applied, so adding it
+never shifts an existing layout. Reach for it whenever a layout must respond to
+its container (a resizable pane, a sidebar widget, an embedded card) rather than
+the page.
 
 ## Static reports
 
@@ -541,9 +550,11 @@ and nothing toggles `is-visible`, the content stays hidden — so only use
 morphs across a `document.startViewTransition()` or a cross-document navigation.
 The name must be **unique per document** at the moment a transition runs: applying
 `ui-vt` with one shared `--ui-vt-name` across every card in a list (the obvious
-loop) makes the browser silently drop the transition — the promise still resolves,
-so there's no error to notice. Give each element its own name (`--ui-vt-name: card-7`)
-or only mark the single element that actually morphs.
+loop) makes the browser skip the transition — and it is **not** silent: it logs a
+console error and **rejects `vt.ready`** (with an `InvalidStateError`). If you
+don't `vt.ready.catch(…)`, that surfaces as an unhandled promise rejection. Give
+each element its own name (`--ui-vt-name: card-7`) or only mark the single element
+that actually morphs.
 
 ## Loading affordances need a role you supply
 

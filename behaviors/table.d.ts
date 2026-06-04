@@ -21,10 +21,13 @@
  * common report shapes: a Unicode minus (U+2212) and en/em dashes count as a
  * sign (so a "−5" loss sorts BELOW a "5" gain, not above it), accounting
  * parentheses `(1,234)` read as negative, and `,` thousands separators are
- * dropped. For anything ambiguous (e.g. a European decimal comma, mixed units)
- * put the canonical number in a `data-sort-value` attribute on the cell — it
- * wins over the parsed text. It is a client-side convenience sorter, not a data
- * grid. (component audit C3.)
+ * dropped. Note the consequence: a bare `,` in the *display text* is read as a
+ * thousands separator, so a European decimal "3,5" sorts as 35, not 3.5 — for a
+ * European decimal comma (or mixed units, or any ambiguous text) put the
+ * canonical number in a `data-sort-value` attribute on the cell. That escape
+ * hatch wins over the parsed text and accepts either a dot ("3.5") or a single
+ * decimal comma ("3,5"). It is a client-side convenience sorter, not a data
+ * grid. (component audit C3/C5.)
  *
  * @param {import('./internal.js').DelegateOpts} [opts]
  * @returns {import('./internal.js').Cleanup}

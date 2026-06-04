@@ -52,6 +52,28 @@
   }
 }
 
+/* Scroll-driven reveal (`.ui-scroll-reveal`). Unlike the time-based uiRise, a
+   scroll timeline can FREEZE part-way: an element near the document bottom can't
+   scroll far enough to finish its range, so a fade-to-opacity-1 would strand the
+   content permanently transparent. Reach full opacity early (35%) and hold it,
+   so even a partially-driven reveal is fully legible — only the last few px of
+   the rise are left unfinished. (component audit C9.) */
+@keyframes uiScrollReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  35% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes uiDotIn {
   0% {
     opacity: 0;
@@ -196,11 +218,17 @@
 }
 
 /* Reveal-on-scroll: add .ui-reveal, then toggle .is-visible (e.g. from an
-   IntersectionObserver you own) to play it in. For a ZERO-JS reveal, use
-   `.ui-scroll-reveal` (scroll-driven, CSS-only) instead — that is the path for
-   an LLM-authored or no-build report. The hidden initial state below is gated
-   on `scripting: enabled`, so with scripting OFF the content is fully visible
-   and never silently hidden behind a script that will never run. */
+   IntersectionObserver you own) to play it in.
+
+   ⚠ `.ui-reveal` requires you to wire that observer. The hidden initial state is
+   gated only on `scripting: enabled` — it can't detect whether an observer is
+   actually attached, so merely loading bronto.js (or any script) hides every
+   `.ui-reveal` until YOUR code adds `.is-visible`. If you add the class and never
+   wire the toggle, the content stays invisible. For an LLM-authored or no-build
+   report, DON'T use `.ui-reveal` — use `.ui-scroll-reveal` below (scroll-driven,
+   CSS-only, no observer, and it can never strand content invisible). With
+   scripting OFF, `.ui-reveal` content is fully visible and never silently hidden
+   behind a script that will never run. */
 @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
   .ui-reveal {
     opacity: 0;
@@ -313,13 +341,21 @@
 
 /* Reveal-on-scroll with no JS and no IntersectionObserver: the element
    rises + fades as it scrolls into view. Unsupported → fully visible
-   (the `uiRise` end state), same graceful default as `.ui-reveal`. */
+   (the keyframe end state), same graceful default as `.ui-reveal`.
+
+   The range is `entry 0% entry 100%`, NOT the old `cover 40%`: `cover` only
+   completes once the element has scrolled most of the way THROUGH the viewport,
+   which an element near the document bottom can never do — it froze part-way,
+   leaving a conclusion section permanently semi-transparent (C9). `entry`
+   completes the moment the element is fully in view, which any scroll-to-bottom
+   reaches. Paired with the early-opacity uiScrollReveal keyframe, an element
+   taller than the viewport is legible even if its range never fully completes. */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .ui-scroll-reveal {
-      animation: uiRise linear both;
+      animation: uiScrollReveal linear both;
       animation-timeline: view();
-      animation-range: entry 0% cover 40%;
+      animation-range: entry 0% entry 100%;
     }
   }
 }

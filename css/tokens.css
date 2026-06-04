@@ -327,15 +327,28 @@
    prints dark-on-white instead of light-grey text or a dark panel on white.
    Lives here, in the exempt tier-definition file, because it is a token-value
    override (ADR-0001), not component styling. CSS-only, like the presets above.
+
+   Selector is `:root:root:root` (specificity 0,3,0), not a bare `:root`: a media
+   query adds NO specificity, so a bare `:root` (0,1,0) loses the cascade to the
+   on-screen dark palette at `:root[data-theme='dark']` (0,2,0) and the OLED
+   surface at `:root[data-theme='dark'][data-surface='oled']` (0,3,0) — i.e. a
+   dark-mode user would print a near-black `.ui-card` on white paper, the exact
+   opposite of what this block promises. Tripling `:root` matches the OLED rule's
+   specificity and wins on source order (this block is last), so the remap also
+   beats the `prefers-color-scheme: dark` blocks. Neutralise the OLED-only dark
+   surfaces (--bg / --bg-elevated / --panel-strong) too, or they'd leak through.
    -------------------------------------------------------------------------- */
 @media print {
-  :root {
+  :root:root:root {
     color-scheme: light;
 
     --text: #111;
     --text-soft: #2a2a2a;
     --text-dim: #555;
+    --bg: #fff;
+    --bg-elevated: #fff;
     --panel: #fff;
+    --panel-strong: #fff;
     --panel-soft: #f7f7f7;
     --line: #d9d9d9;
     --line-strong: #b3b3b3;

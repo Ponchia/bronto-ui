@@ -724,6 +724,50 @@ test('initFormValidation: invalid submit marks fields, fills summary, blocks', (
   input.value = 'a@b.com';
   input.dispatchEvent(new dom.window.Event('focusout', { bubbles: true }));
   assert.equal(input.hasAttribute('aria-invalid'), false, 'cleared on valid blur');
+  // The canonical error node carries BOTH `ui-hint` and `data-bronto-error`.
+  // It must be treated as a dedicated error slot: cleared AND unlinked, so AT
+  // never announces a dangling empty error association (component audit C6).
+  const errNode = d.querySelector('[data-bronto-error]');
+  assert.equal(errNode.textContent, '', 'error node cleared when valid');
+  assert.equal(
+    input.hasAttribute('aria-describedby'),
+    false,
+    'dedicated error node unlinked when valid (no dangling describedby)',
+  );
+  stop();
+});
+
+test('initFormValidation: a borrowed plain .ui-hint keeps its help text and stays linked', () => {
+  // The OTHER slot type: a help hint with NO data-bronto-error node. It is
+  // borrowed for the error, then its original help text is restored and it
+  // stays linked (it describes the field in the valid state too) — proving the
+  // C6 fix did not collapse the two slot types into one.
+  const d = mount(`
+    <form data-bronto-validate>
+      <div class="ui-field">
+        <label class="ui-label" for="pw">Password</label>
+        <input class="ui-input" id="pw" name="pw" type="text" required />
+        <p class="ui-hint" id="pw-help">8+ characters</p>
+      </div>
+      <button type="submit">Go</button>
+    </form>`);
+  const stop = initFormValidation();
+  const input = d.querySelector('#pw');
+  const hint = d.querySelector('#pw-help');
+
+  d.querySelector('form').dispatchEvent(
+    new dom.window.Event('submit', { bubbles: true, cancelable: true }),
+  );
+  assert.notEqual(hint.textContent, '8+ characters', 'help overwritten by the error');
+  assert.ok((input.getAttribute('aria-describedby') || '').includes(hint.id), 'linked on error');
+
+  input.value = 'longenough';
+  input.dispatchEvent(new dom.window.Event('focusout', { bubbles: true }));
+  assert.equal(hint.textContent, '8+ characters', 'help text restored when valid');
+  assert.ok(
+    (input.getAttribute('aria-describedby') || '').includes(hint.id),
+    'help hint stays linked in the valid state',
+  );
   stop();
 });
 
@@ -1100,6 +1144,33 @@ test('initTableSort: numeric sort keeps the sign on U+2212, accounting parens, a
   btn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   // ascending: -999, -50, -5, 1200
   assert.deepEqual(order(), ['override', 'parens', 'uniminus', 'gain'], 'sign-aware ascending');
+  stop();
+});
+
+test('initTableSort: data-sort-value escape hatch accepts a European decimal comma (C5)', () => {
+  // A column where the display text is European decimal ("3,5" = 3.5). Without
+  // the escape hatch the parser drops the comma → 35, mis-ranking it. The
+  // data-sort-value attribute must sort the rows by the real magnitude, and it
+  // must accept a comma decimal in the attribute itself, not just a dot.
+  const d = mount(`
+    <table class="ui-table" data-bronto-sortable>
+      <thead><tr>
+        <th><button class="ui-table__sort" data-sort>Row</button></th>
+        <th class="is-num"><button class="ui-table__sort" data-sort="num">Val</button></th>
+      </tr></thead>
+      <tbody>
+        <tr><td>big</td><td class="is-num" data-sort-value="35">35,0</td></tr>
+        <tr><td>mid</td><td class="is-num" data-sort-value="3,5">3,5</td></tr>
+        <tr><td>small</td><td class="is-num" data-sort-value="0.5">0,5</td></tr>
+      </tbody>
+    </table>`);
+  const stop = initTableSort();
+  const table = d.querySelector('table');
+  const order = () => [...table.tBodies[0].rows].map((r) => r.children[0].textContent);
+  const btn = table.querySelector('.ui-table__sort[data-sort="num"]');
+  btn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  // ascending by true value: 0.5, 3.5, 35 — NOT 3.5→35 collapsed by comma-drop.
+  assert.deepEqual(order(), ['small', 'mid', 'big'], 'comma-decimal escape hatch sorts by value');
   stop();
 });
 
