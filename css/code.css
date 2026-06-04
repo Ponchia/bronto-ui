@@ -66,7 +66,7 @@
   background: color-mix(in srgb, var(--success) 14%, transparent);
 }
 
-.ui-code__line--del {
+.ui-code__line--remove {
   background: color-mix(in srgb, var(--danger) 14%, transparent);
 }
 
@@ -78,7 +78,7 @@
    still reads without colour. */
 @media (forced-colors: active) {
   .ui-code__line--add,
-  .ui-code__line--del,
+  .ui-code__line--remove,
   .ui-code__line--hl {
     border-inline-start: 3px solid currentColor;
   }
@@ -88,7 +88,7 @@
 @media print {
   .ui-code__head,
   .ui-code__line--add,
-  .ui-code__line--del,
+  .ui-code__line--remove,
   .ui-code__line--hl {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;

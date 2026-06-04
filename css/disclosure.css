@@ -303,7 +303,12 @@
     color var(--duration-fast) var(--ease-standard);
 }
 
-.ui-pagination__item.is-active {
+/* Active page keys on BOTH `.is-active` and `[aria-current]` — usage.md calls
+   aria-current "the framework rule", and every nav sibling (breadcrumb, sitenav,
+   app-nav) highlights on it, so a pagination author who sets only aria-current
+   must still get the highlight. (component audit C17.) */
+.ui-pagination__item.is-active,
+.ui-pagination__item[aria-current]:not([aria-current='false']) {
   border-color: var(--accent);
   color: var(--accent-text);
 }
@@ -319,7 +324,12 @@
 }
 
 @media (hover: hover) {
-  .ui-pagination__item:not(.is-active, [aria-disabled='true'], :disabled):hover {
+  .ui-pagination__item:not(
+      .is-active,
+      [aria-current]:not([aria-current='false']),
+      [aria-disabled='true'],
+      :disabled
+    ):hover {
     border-color: var(--line-strong);
     color: var(--text);
   }

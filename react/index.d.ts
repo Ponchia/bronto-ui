@@ -7,6 +7,7 @@
 export function useBrontoBehavior(init: (opts?: DelegateOpts) => Cleanup | void, opts?: BrontoBindingOptsResolver): void;
 export function useThemeToggle(opts?: BrontoBindingOptsResolver<ThemeStorageOpts & DelegateOpts>): void;
 export function useDismissible(opts?: BrontoBindingOptsResolver): void;
+export function useDisabledGuard(opts?: BrontoBindingOptsResolver): void;
 export function useDisclosure(opts?: BrontoBindingOptsResolver): void;
 export function useMenu(opts?: BrontoBindingOptsResolver): void;
 export function useFormValidation(opts?: BrontoBindingOptsResolver): void;

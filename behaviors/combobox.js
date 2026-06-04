@@ -23,13 +23,20 @@ import {
  * Markup: `[data-bronto-combobox]` wrapping an `<input role="combobox">`
  * (`.ui-combobox__input`) and a `<ul role="listbox">`
  * (`.ui-combobox__list`) of `<li role="option">` (`.ui-combobox__option`,
- * optional `data-value`). An optional `.ui-combobox__empty` shows when
- * nothing matches. The behavior owns ids, `aria-expanded`,
+ * optional `data-value`). An optional `.ui-combobox__empty` (hidden at rest)
+ * shows when nothing matches. The behavior owns ids, `aria-expanded`,
  * `aria-controls`, `aria-activedescendant`, roving active option,
  * type-to-filter, full keyboard (Down/Up/Home/End/Enter/Escape/Tab),
- * pointer select, and outside-click close; it emits a `bronto:change`
- * CustomEvent ({ detail: { value } }) on selection. SSR-safe,
- * idempotent per instance; returns a cleanup function.
+ * pointer select, and outside-click close. On select the **visible input shows
+ * the option's text label**, while the emitted `bronto:change` CustomEvent
+ * carries the option's `data-value` code: `{ detail: { value, label } }` (value
+ * falls back to the label when there is no `data-value`). SSR-safe, idempotent
+ * per instance; returns a cleanup function.
+ *
+ * Single-select APG deviations (intentional, for a filtering text combobox):
+ * ArrowDown on a CLOSED list opens + filters rather than pre-activating the
+ * first option, and Tab closes the list without committing the merely-highlighted
+ * option (only Enter/click commits). Both are safe for single-select.
  *
  * Options are read from the DOM at init; if you replace the listbox contents
  * (e.g. async/remote results), either re-run initCombobox, or add
@@ -95,6 +102,15 @@ export function initCombobox({ root } = {}) {
     input.setAttribute('aria-expanded', 'false');
     input.setAttribute('autocomplete', 'off');
     list.hidden = true;
+    // Hide the empty-state at rest: it must only appear once a filter yields no
+    // matches, never on an idle combobox. Without this an author who omits
+    // `hidden` on `.ui-combobox__empty` ships a box that reads "No matches"
+    // before the user has typed anything. (component audit C10.) Make it a
+    // status live region so its appearance is announced. (component audit C38.)
+    if (empty) {
+      empty.hidden = true;
+      if (!empty.hasAttribute('role')) empty.setAttribute('role', 'status');
+    }
 
     let active = -1;
     const visible = () => options.filter((o) => !o.hidden);
@@ -141,13 +157,19 @@ export function initCombobox({ root } = {}) {
     };
 
     const select = (opt) => {
-      input.value = opt.dataset.value ?? opt.textContent.trim();
+      // Show the human LABEL in the input; emit the `data-value` CODE in the
+      // event. The natural pattern is code in `data-value`, label in the text —
+      // putting the code in the visible input silently shows the user a raw code.
+      // (component audit C10.)
+      const label = opt.textContent.trim();
+      const value = opt.dataset.value ?? label;
+      input.value = label;
       options.forEach((o) => o.setAttribute('aria-selected', String(o === opt)));
       close();
       input.focus();
       box.dispatchEvent(
         new CustomEvent('bronto:change', {
-          detail: { value: input.value },
+          detail: { value, label },
           bubbles: true,
         }),
       );

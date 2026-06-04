@@ -19,16 +19,39 @@ theme-owned neutral ramp endpoint:
 | `--field-dot-accent`  | `--accent` at 78% / 82%                       | form dot indicators |
 | `--focus-ring`        | `var(--accent)` (solid)                       | **every focus outline** — override to tune the ring alone |
 
-So a full re-brand is one declaration — globally or on any subtree:
+So a full re-brand is one declaration **at `:root` (or a theme root)**:
 
 ```css
 :root      { --accent: #2f6df6; }   /* brand the whole app blue   */
-.promo     { --accent: #16a34a; }   /* …or just this section green */
 :root[data-theme='dark'] { --accent: #6ea8ff; } /* per-theme tuning */
 ```
 
 Everything — buttons, focus rings, dot motifs, accent borders, soft
 fills — follows automatically, in both light and dark.
+
+> **Re-branding a subtree (not `:root`) is only a *partial* re-brand.**
+> The derived family (`--accent-soft`, `--accent-strong`, `--accent-text`,
+> `--bg-accent`, the `--accent-1…6` ramp) is computed from `--accent` via
+> `color-mix()` **at `:root`**, where it resolves once. A custom property's
+> value is substituted where it's declared, so overriding only `--accent`
+> on a `.promo` subtree re-brands the surfaces that read raw `var(--accent)`
+> (focus rings, dot motifs, some borders) but leaves every *derived* surface
+> (soft fills, accent-as-text, the ramp) at the root hue — a visibly broken
+> half-rebrand. To re-brand a subtree fully, set the derived tokens you use
+> too, e.g.:
+>
+> ```css
+> .promo {
+>   --accent: #16a34a;
+>   --accent-strong: color-mix(in srgb, var(--accent) 83%, #000);
+>   --accent-text: var(--accent-strong);
+>   --accent-soft: color-mix(in srgb, var(--accent) 10%, transparent);
+>   --bg-accent: color-mix(in srgb, var(--accent) 6%, transparent);
+> }
+> ```
+>
+> When in doubt, re-brand at `:root`/`[data-theme]` — that path re-derives
+> the whole family for you.
 
 > **Two contrast obligations when you change `--accent`:**
 >
@@ -45,6 +68,13 @@ fills — follows automatically, in both light and dark.
 > The defaults are tuned for both; verify if you deviate hard. The focus
 > ring is solid `--accent` (≥ 3:1 non-text) — re-brand to a near-`--bg`
 > hue and you must also raise `--focus-ring` (it's an independent knob).
+
+> **Re-inking accent fills: use `--button-text`, not `--on-accent`.** In-DOM
+> components (buttons, chips, accent fills) paint their on-accent ink from
+> `--button-text`. `--on-accent` is a **read-only export** of that resolved ink
+> for *foreign renderers* (charts, canvas, a non-DOM target reading the token) —
+> overriding it in CSS validates but does **not** change any in-DOM component. To
+> change the ink on a re-brand, set `--button-text`.
 
 ## Other supported knobs
 
@@ -210,6 +240,12 @@ const series = charts.dark.categorical; // ['#ff3b41', '#e69f00', …] — serie
   `var(--accent)` (your brand leads), series 2–8 are the Okabe-Ito
   colourblind-safe set. The set is **gated for mutual distinguishability under
   normal + simulated protanopia/deuteranopia/tritanopia** (OKLab ΔE).
+  **Caveat — the CVD gate measures the SHIPPED default accent.** Series 1 is
+  `var(--accent)`, so if you re-skin `--accent` you change series 1 but not the
+  Okabe-Ito 2–8, and the gate never re-checks your custom hue: a brand close to
+  series 3's orange can collide for a deuteranope. If a re-brand drives data-viz,
+  re-verify your accent against the set, or pin `--chart-1` to a fixed Okabe-Ito
+  value (`--chart-1: #0072b2`) and let your brand lead the UI only.
 - **Sequential `--chart-seq-1..6`** — single-hue light→dark, for
   heatmaps/intensity. **Diverging `--chart-div-1..7`** — blue↔neutral↔orange,
   for ±/gains-losses.

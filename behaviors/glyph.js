@@ -62,6 +62,25 @@ export function initDotGlyph({ root } = {}) {
       el.style.setProperty('--dotmatrix-dot-radius', '0');
       el.style.setProperty('--dotmatrix-gap', '0');
     }
+    // Without a track size the grid cells default to `1fr`, so the 16×16 matrix
+    // balloons to fill its container (full-bleed) — asymmetric with the mask
+    // path's safe 1em. If the author set no `--dotmatrix-dot` (inline OR via the
+    // cascade), default it to an intrinsic icon scale so a forgotten size
+    // degrades to ~icon, not full-bleed. (component audit C9.)
+    const authoredDot =
+      el.style.getPropertyValue('--dotmatrix-dot') ||
+      (typeof getComputedStyle === 'function'
+        ? getComputedStyle(el).getPropertyValue('--dotmatrix-dot').trim()
+        : '');
+    const setDefaultDot = !authoredDot;
+    let setDefaultGap = false;
+    if (setDefaultDot) {
+      el.style.setProperty('--dotmatrix-dot', '0.08em');
+      if (!solid && !hadGap) {
+        el.style.setProperty('--dotmatrix-gap', '0.02em'); // tight, so it reads as one glyph
+        setDefaultGap = true;
+      }
+    }
     if (label) {
       el.setAttribute('role', 'img');
       el.setAttribute('aria-label', label);
@@ -96,6 +115,8 @@ export function initDotGlyph({ root } = {}) {
         if (hadGap) el.style.setProperty('--dotmatrix-gap', hadGap);
         else el.style.removeProperty('--dotmatrix-gap');
       }
+      if (setDefaultDot) el.style.removeProperty('--dotmatrix-dot');
+      if (setDefaultGap) el.style.removeProperty('--dotmatrix-gap');
       if (hadCols) el.style.setProperty('--dotmatrix-cols', hadCols);
       else el.style.removeProperty('--dotmatrix-cols');
       restoreAttr(el, 'aria-hidden', hadAriaHidden);

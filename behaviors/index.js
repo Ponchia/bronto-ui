@@ -30,6 +30,7 @@
  */
 export { applyStoredTheme, initThemeToggle } from './theme.js';
 export { dismissible } from './dismissible.js';
+export { initDisabledGuard } from './inert.js';
 export { initTabs } from './tabs.js';
 export { initDialog } from './dialog.js';
 export { initModal } from './modal.js';

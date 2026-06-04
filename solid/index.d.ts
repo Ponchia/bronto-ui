@@ -10,6 +10,8 @@ export const useThemeToggle: (opts?: BrontoBindingOptsResolver<ThemeStorageOpts 
 /** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useDismissible: (opts?: BrontoBindingOptsResolver) => void;
 /** @type {(opts?: BrontoBindingOptsResolver) => void} */
+export const useDisabledGuard: (opts?: BrontoBindingOptsResolver) => void;
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useDisclosure: (opts?: BrontoBindingOptsResolver) => void;
 /** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useMenu: (opts?: BrontoBindingOptsResolver) => void;

@@ -94,7 +94,11 @@
   container: bronto / inline-size;
 }
 
-@container bronto (max-width: 34rem) {
+/* Logical `max-inline-size`, not physical `max-width`: the container is typed
+   `inline-size`, so the inline axis is the one actually tracked — the logical
+   query matches it in any writing mode (a physical `width` query silently
+   misses in a vertical WM). (component audit C34.) */
+@container bronto (max-inline-size: 34rem) {
   .ui-grid {
     --grid-min: 100%;
   }
@@ -168,7 +172,7 @@
 /* Inside an opt-in .ui-cq container, collapse to one column when the
    container (not the viewport) is narrow — keeps tiles usable in a slim
    panel. Inert without .ui-cq, so baselines are unaffected. */
-@container bronto (max-width: 30rem) {
+@container bronto (max-inline-size: 30rem) {
   .ui-statgrid,
   .ui-app-metrics {
     grid-template-columns: 1fr;
@@ -420,6 +424,14 @@
   pointer-events: none;
 }
 
+/* The button family dims + shows not-allowed via its `:disabled` rule above, but
+   a disabled LINK got only pointer-events:none — it looked fully live. Give it
+   the same visual disabled cue. (component audit C30.) */
+.ui-link[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .ui-button:active {
   transform: translateY(1px);
 }
@@ -490,6 +502,15 @@
   transform: rotate(45deg);
   transition: transform var(--duration-fast) var(--ease-standard);
   inline-size: 0.42rem;
+}
+
+/* RTL: the logical borders flip sides, but a fixed `rotate(45deg)` then points
+   the chevron UP rather than toward the inline-end (the reading-forward way).
+   Mirror the rotation so the resting affordance points forward in RTL too.
+   (component audit C14.) */
+[dir='rtl'] .ui-link--arrow::after,
+[dir='rtl'] .ui-link--cta::after {
+  transform: rotate(-45deg);
 }
 
 /* --- Chip / tag --- */
@@ -679,7 +700,7 @@
 
   [dir='rtl'] .ui-link--arrow:hover::after,
   [dir='rtl'] .ui-link--cta:hover::after {
-    transform: translateX(-0.14rem) rotate(45deg);
+    transform: translateX(-0.14rem) rotate(-45deg);
   }
 
   .ui-chip--accent:hover {

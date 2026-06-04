@@ -29,7 +29,7 @@ test('forced-colors: a changed line keeps an inline-start border', async ({ page
   await page.emulateMedia({ forcedColors: 'active' });
   await open(page);
   const width = await page
-    .locator('.ui-code__line--del')
+    .locator('.ui-code__line--remove')
     .first()
     .evaluate((el) => getComputedStyle(el).borderInlineStartWidth);
   expect(parseFloat(width)).toBeGreaterThan(0);

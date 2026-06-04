@@ -56,6 +56,7 @@ import {
   applyStoredTheme,
   initThemeToggle,
   dismissible,
+  initDisabledGuard,
   initDisclosure,
   initMenu,
   initFormValidation,
@@ -129,6 +130,10 @@ export const useThemeToggle = (opts) =>
 export const useDismissible = (opts) =>
   // eslint-disable-next-line qwik/no-use-visible-task -- delegated DOM glue + cleanup
   useVisibleTask$((ctx) => start(dismissible, opts, ctx));
+/** @param {BrontoBindingOptsResolver} [opts] @returns {void} */
+export const useDisabledGuard = (opts) =>
+  // eslint-disable-next-line qwik/no-use-visible-task -- delegated DOM glue + cleanup
+  useVisibleTask$((ctx) => start(initDisabledGuard, opts, ctx));
 /** @param {BrontoBindingOptsResolver} [opts] @returns {void} */
 export const useDisclosure = (opts) =>
   // eslint-disable-next-line qwik/no-use-visible-task -- delegated DOM glue + cleanup

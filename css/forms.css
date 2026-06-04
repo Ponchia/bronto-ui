@@ -77,6 +77,16 @@
   opacity: 0.5;
 }
 
+/* Read-only is editable-looking but not editable; give it a distinct, quieter
+   cue (muted fill + default cursor) so it doesn't read as a live field. Not
+   disabled — value still submits and the field stays focusable/selectable.
+   (component audit C28.) */
+.ui-input:read-only:not(:disabled),
+.ui-textarea:read-only:not(:disabled) {
+  background: var(--panel-soft);
+  cursor: default;
+}
+
 /* Disabled affordance parity. The text inputs above style :disabled directly;
    the controls that WRAP a native input (switch/check/segmented) showed no
    disabled cue and their label kept cursor:pointer — a lie. Mirror the cue via
@@ -104,6 +114,27 @@
 .ui-select[aria-invalid='true'],
 .ui-textarea[aria-invalid='true'] {
   border-color: var(--danger);
+}
+
+/* Forced colours flatten `var(--danger)` to a system colour identical to the
+   resting border, so the invalid border becomes indistinguishable from a valid
+   one and sighted HCM users lose the only error cue (WCAG 1.4.1). The switch got
+   a forced-colors block; the error family did not. Re-assert the state on a
+   NON-colour channel — a thicker, doubled border — that survives HCM, and prefix
+   the error hint with a glyph so the message itself carries the error.
+   (component audit C5.) */
+@media (forced-colors: active) {
+  .ui-input[aria-invalid='true'],
+  .ui-select[aria-invalid='true'],
+  .ui-textarea[aria-invalid='true'] {
+    border-style: double;
+    border-width: 3px;
+  }
+
+  .ui-hint--error::before,
+  .ui-error-summary__title::before {
+    content: '⚠ ';
+  }
 }
 
 .ui-hint {
@@ -146,7 +177,10 @@
 .ui-input-group__addon {
   align-items: center;
   background: var(--panel-soft);
-  border: 1px solid var(--line);
+
+  /* Match the wrapped control's `--line-strong` border so the prefix/suffix seam
+     isn't a fainter cap than the field it abuts. (component audit C33.) */
+  border: 1px solid var(--line-strong);
   color: var(--text-dim);
   display: flex;
   font-size: var(--text-sm);

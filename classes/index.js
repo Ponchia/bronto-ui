@@ -111,7 +111,7 @@ export const cls = Object.freeze({
   alert: 'ui-alert',
   alertTitle: 'ui-alert__title',
   alertBody: 'ui-alert__body',
-  alertDismiss: 'ui-alert__dismiss',
+  alertClose: 'ui-alert__close',
   alertAccent: 'ui-alert--accent',
   alertSuccess: 'ui-alert--success',
   alertWarning: 'ui-alert--warning',
@@ -422,7 +422,7 @@ export const cls = Object.freeze({
   diffSplit: 'ui-diff--split',
   diffPane: 'ui-diff__pane',
   diffHunk: 'ui-diff__hunk',
-  diffHeader: 'ui-diff__header',
+  diffHead: 'ui-diff__head',
   diffRow: 'ui-diff__row',
   diffRowAdd: 'ui-diff__row--add',
   diffRowRemove: 'ui-diff__row--remove',
@@ -436,7 +436,7 @@ export const cls = Object.freeze({
   codeBody: 'ui-code__body',
   codeLine: 'ui-code__line',
   codeLineAdd: 'ui-code__line--add',
-  codeLineDel: 'ui-code__line--del',
+  codeLineRemove: 'ui-code__line--remove',
   codeLineHl: 'ui-code__line--hl',
   // spark — inline datawords / microcharts (css/spark.css)
   spark: 'ui-spark',
@@ -808,7 +808,7 @@ export const ui = {
     j(
       cls.codeLine,
       change === 'add' && cls.codeLineAdd,
-      change === 'del' && cls.codeLineDel,
+      change === 'remove' && cls.codeLineRemove,
       change === 'hl' && cls.codeLineHl,
     ),
   sparkBar: ({ tone } = {}) =>
@@ -821,5 +821,39 @@ export const ui = {
   state: ({ state, busy } = {}) => j(cls.state, stateTone(state), busy && cls.stateBusy),
   originLabel: ({ ai } = {}) => j(cls.originLabel, ai && cls.originLabelAi),
 };
+
+// Attribute + style bundle for the data-bearing fills (`ui-meter`/`ui-progress`).
+// The class string alone paints a 0-width, unannounced bar: the fill width is a
+// UNITLESS `--value` (0–100) and AT needs role + aria-valuenow/min/max. This sets
+// the painted value and its announced value together so they can't drift, and
+// normalizes an arbitrary {min,max} to the 0–100 `--value` the CSS expects while
+// keeping aria-valuenow in the caller's real units. (component audit C8.)
+const valueAttrs = (role, value, min, max) => {
+  const lo = Number(min);
+  const hi = Number(max);
+  const raw = Number(value);
+  const now = Number.isFinite(raw) ? Math.min(hi, Math.max(lo, raw)) : lo;
+  const pct = hi > lo ? ((now - lo) / (hi - lo)) * 100 : 0;
+  return {
+    role,
+    'aria-valuenow': now,
+    'aria-valuemin': lo,
+    'aria-valuemax': hi,
+    style: { '--value': Math.round(pct * 100) / 100 },
+  };
+};
+
+/**
+ * ARIA + style bundles for the value-bearing fills. Spread onto the host:
+ *   <div class={ui.meter({ tone: 'warning' })} {...attrs.meter(72)}>
+ *     <span class={cls.meterFill} />
+ *   </div>
+ * `value` is in your own units; pass `{ min, max }` (default 0–100) and the
+ * `--value` width is normalized for you.
+ */
+export const attrs = Object.freeze({
+  meter: (value, { min = 0, max = 100 } = {}) => valueAttrs('meter', value, min, max),
+  progress: (value, { min = 0, max = 100 } = {}) => valueAttrs('progressbar', value, min, max),
+});
 
 export default ui;

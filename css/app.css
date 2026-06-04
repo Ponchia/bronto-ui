@@ -253,6 +253,13 @@
 @media (max-width: 880px) {
   .ui-app-shell {
     grid-template-columns: minmax(0, 1fr);
+
+    /* The shell keeps `min-block-size: 100dvh`, so with two auto rows the default
+       `align-content: stretch` distributes the leftover viewport across BOTH
+       tracks — ballooning the horizontal rail to ~half the screen. Pin tracks to
+       their content and let the content row absorb the slack. (component audit C7.) */
+    align-content: start;
+    grid-template-rows: auto 1fr;
   }
 
   .ui-app-rail {
