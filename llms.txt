@@ -417,6 +417,75 @@ indented inline block. The HOST owns where numbering restarts
 (`counter-reset: ui-sidenote` on the article) and reserves the margin gutter
 (`padding-inline-end`). Details: `docs/sidenote.md`.
 
+Optional deep-link-to-cited-text — opt-in, CSS only, never in the default
+bundle. For a citation that jumps to the EXACT quoted sentence:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/textref.css" />
+```
+
+`ui-textref` is a link whose `href` is a URL Text Fragment (`#…:~:text=`); the
+browser scrolls to + highlights the quote and Bronto owns the on-brand
+`::target-text` paint (`--textref-highlight`). The HOST builds the fragment URL
+(a three-line pure encoder, see docs); no kernel ships. Text Fragment nav needs
+a real user activation; unsupported engines just navigate (the highlight is
+additive). Details: `docs/textref.md`.
+
+Optional bullet graph — opt-in, CSS only, never in the default bundle. The
+Stephen-Few measure-vs-target-vs-bands SLO figure `ui-meter` can't encode:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/bullet.css" />
+```
+
+`ui-bullet` is the track + grayscale qualitative bands (`--band-lo`/`--band-hi`);
+`ui-bullet__measure` is the value bar (REQUIRED `--v` 0..1, `--accent`/`--pos`/
+`--neg` tones); `ui-bullet__target` is the tick at `--t`; `ui-bullet__label` an
+optional caption. Same contract as spark: the HOST normalises, Bronto paints. A
+bare bullet is opaque to AT, so `ui-bullet` MUST carry a host-written
+`role="img"` + `aria-label`. `ui.bulletMeasure({ tone })`. Details:
+`docs/bullet.md`.
+
+Optional inline glossary — opt-in, CSS only, never in the default bundle. The
+accessible upgrade of the broken `abbr[title]`:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/term.css" />
+```
+
+`ui-term` is the term `<button popovertarget>` (keyboard/touch-reachable);
+`ui-def` is the definition body — a native `[popover]` styled as a raised card;
+`ui-glossary` is the end-of-document `<dl>` (`ui-glossary__term`/`__def`). The
+native popover pairing gives open/Esc/light-dismiss for free, no kernel. Popovers
+don't print — the printed doc leans on the glossary block. Details: `docs/term.md`.
+
+Optional scrollspy table-of-contents — opt-in, CSS only, never in the default
+bundle. A sticky contents rail that highlights the section in view:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/toc.css" />
+```
+
+`ui-toc` is the sticky rail (`--toc-top`); `ui-toc__title`/`ui-toc__list`/
+`ui-toc__link`. The active entry keys on `aria-current="true"`. CSS can't know
+the in-view section, so the HOST mirrors it — statically, or with a small
+copy-paste IntersectionObserver (no kernel ships). Without it the rail is a plain
+anchored list. Details: `docs/toc.md`.
+
+Optional hierarchy outline — opt-in, CSS only, never in the default bundle. A
+depth-indented tree on nested native `<details>`:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/tree.css" />
+```
+
+`ui-tree` is the outline; `ui-tree__branch` is a `<details>` node (twist
+chevron; add `name` for an exclusive-accordion group); `ui-tree__leaf` a childless
+row; `ui-tree__summary`/`ui-tree__label`. Open/close + keyboard are native
+`<details>`. A11y honesty: this is a disclosure group, NOT an ARIA `tree` — don't
+add `role="tree"`; the roving-focus kernel is deferred behind a real consumer.
+Details: `docs/tree.md`.
+
 Optional lifecycle/system-state vocabulary — opt-in, CSS only, never in the
 default bundle. The states apps live in (saving/saved/queued/offline/stale/
 conflict/error/locked/reviewed/needs-review):

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — tree specimen</title>
+    <meta name="description" content="Hierarchy-outline specimen for @ponchia/ui tree CSS." />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/tree.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .tree-demo {
+        margin: 0 auto;
+        max-width: 40ch;
+        padding: 2rem 1rem 4rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="tree-demo">
+      <h1 class="ui-display">Tree specimen</h1>
+
+      <div class="ui-tree">
+        <details class="ui-tree__branch" open>
+          <summary class="ui-tree__summary"><span class="ui-tree__label">src</span></summary>
+          <details class="ui-tree__branch" open>
+            <summary class="ui-tree__summary">
+              <span class="ui-tree__label">components</span>
+            </summary>
+            <div class="ui-tree__leaf"><span class="ui-tree__label">button.css</span></div>
+            <div class="ui-tree__leaf"><span class="ui-tree__label">card.css</span></div>
+            <details class="ui-tree__branch">
+              <summary class="ui-tree__summary"><span class="ui-tree__label">forms</span></summary>
+              <div class="ui-tree__leaf"><span class="ui-tree__label">input.css</span></div>
+              <div class="ui-tree__leaf"><span class="ui-tree__label">select.css</span></div>
+            </details>
+          </details>
+          <div class="ui-tree__leaf"><span class="ui-tree__label">index.js</span></div>
+        </details>
+        <details class="ui-tree__branch">
+          <summary class="ui-tree__summary"><span class="ui-tree__label">docs</span></summary>
+          <div class="ui-tree__leaf"><span class="ui-tree__label">tree.md</span></div>
+        </details>
+      </div>
+    </main>
+  </body>
+</html>

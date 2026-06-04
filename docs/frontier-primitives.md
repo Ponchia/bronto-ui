@@ -53,9 +53,10 @@ four are novel, Baseline-clean on the 2026 floor, and squarely on the
 "explains itself" north star — the report / review / evidence lane. They ship
 as opt-in surfaces (never default `dist/bronto.css`), CSS-and-markup first,
 each with the same host-owns-state boundary that kept the chart renderer out in
-0.6.0. `ui-diff` is the first build; the rest are queued behind it.
+0.6.0. **All four shipped** — `ui-diff` in PR #97, then `ui-code` / `ui-spark` /
+`ui-sidenote` in PR #100 — opt-in leaves, unreleased on the 0.6.0 package line.
 
-### `ui-diff` — line/row change grammar  🚧 in flight
+### `ui-diff` — line/row change grammar  ✅ shipped
 
 A CSS-grid gutter grammar (`ui-diff`, `__row --add/--remove/--context`,
 `__hunk`, `--unified/--split`). The host supplies pre-classified rows; Bronto
@@ -96,6 +97,56 @@ degrades to an inline aside on narrow viewports and a footnote under
 do not belong in the main column. Scope it as typographic margin notes,
 reconciled with the existing `report.css` `__footnotes` numbering — not a
 second backref engine.
+
+## 2026 scout batch #2 — explanation & provenance cluster  ✅ shipped
+
+A second scout pass (2026-06-04) ranked the next five and they all shipped as
+opt-in leaves (unreleased on the 0.6.0 line). All clear web-native + fit +
+leverage, and sit dead-centre on the explanation / provenance / orientation
+lanes — not component parity.
+
+### `ui-textref` — deep-link to the cited sentence  ✅ shipped
+
+`@ponchia/ui/css/textref.css`. A citation whose `href` is a URL Text Fragment
+(`#…:~:text=`): the browser scrolls to + highlights the exact quoted text, and
+Bronto owns the on-brand `::target-text` paint (`--textref-highlight`). The
+cheapest high-leverage item in the scout — extends the `sources.css` trust layer
+from "label a source" to "point inside it". The host builds the fragment URL (a
+three-line pure encoder, documented); no kernel. Degrades cleanly where Text
+Fragments are unsupported.
+
+### `ui-bullet` — Stephen-Few bullet graph  ✅ shipped
+
+`@ponchia/ui/css/bullet.css`. Measure bar + target tick + 2–3 grayscale
+qualitative bands — the canonical SLO / error-budget figure `ui-meter` cannot
+encode. Same host-normalises-to-0..1 contract as `ui-spark` (`--v` measure,
+`--t` target, `--band-lo`/`--band-hi` boundaries; `ui.bulletMeasure({ tone })`).
+Few designed it grayscale, which is exactly the Nothing palette. Requires a
+host-written `role="img"` + `aria-label`.
+
+### `ui-term` / `ui-glossary` — inline glossary  ✅ shipped
+
+`@ponchia/ui/css/term.css`. The accessible upgrade of the touch/keyboard-broken
+`abbr[title]`: a `ui-term` `<button popovertarget>` whose `ui-def` definition is
+a native `[popover]`, plus an end-of-document `ui-glossary` `<dl>`. The native
+popover pairing gives open/Esc/light-dismiss for free — no kernel. Popovers don't
+print, so the printed doc leans on the glossary block.
+
+### `ui-toc` — scrollspy table of contents  ✅ shipped
+
+`@ponchia/ui/css/toc.css`. A sticky contents rail (`--toc-top`) whose active
+entry keys on `aria-current="true"`. CSS can't know the in-view section, so the
+host mirrors it — statically, or with a small copy-paste IntersectionObserver
+(no kernel ships). Degrades to a plain anchored list.
+
+### `ui-tree` — hierarchy outline  ✅ shipped
+
+`@ponchia/ui/css/tree.css`. A depth-indented outline on nested native
+`<details>` (`ui-tree__branch`/`__leaf`/`__summary`/`__label`; add `name` for an
+exclusive-accordion group). Composes the disclosure grammar `ui-accordion` owns —
+it does not reinvent it. A11y honesty: a `<details>` group is a disclosure group,
+NOT an ARIA `tree`; the roving-focus kernel is deferred behind a real consumer
+(e.g. a workbench file pane).
 
 ## Next strong candidates
 
@@ -172,13 +223,15 @@ precision signal the product does not have).
 
 ## Priority
 
-The CSS cores of candidates 1–5 shipped in 0.5.0. The active work, in order:
+The CSS cores of candidates 1–5 shipped in 0.5.0, the 2026 scout batch shipped
+in PRs #97/#100, and scout batch #2 (textref / bullet / term / toc / tree)
+shipped 2026-06-04. The remaining active work, in order:
 
-1. The 2026 scout batch — `ui-diff` (in flight), then `ui-code`, `ui-spark`,
-   and `ui-sidenote` / `ui-marginnote`.
-2. `initSources()` backref-focus / preview disclosure (candidate 1).
-3. `ui-job` / `ui-conflict` lifecycle surfaces (candidate 2).
-4. The `ui-splitter` ARIA window-splitter behavior + drag affordances (candidate 4).
+1. `initSources()` backref-focus / preview disclosure (candidate 1).
+2. `ui-job` / `ui-conflict` lifecycle surfaces (candidate 2).
+3. The `ui-splitter` ARIA window-splitter behavior + drag affordances
+   (candidate 4) — also the gating consumer for `ui-tree`'s deferred roving-focus
+   tree kernel.
 
 Deferred items stay gated on a real consumer needing them. This order keeps
 Bronto differentiated while staying inside its core philosophy: small,

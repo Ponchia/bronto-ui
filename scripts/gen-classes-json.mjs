@@ -197,6 +197,49 @@ const customProperties = [
     example: '12rem',
     note: 'width of the floated margin note on wide viewports (default 12rem). The container must reserve a matching inline-end gutter — see docs/sidenote.md.',
   },
+  {
+    name: '--textref-highlight',
+    on: '.ui-textref',
+    type: 'color',
+    example: 'var(--accent-soft)',
+    note: 'the ::target-text highlight wash for the matched cited sentence (default var(--accent-soft)). The host builds the #:~:text= href; Bronto owns the paint — see docs/textref.md.',
+  },
+  {
+    name: '--v',
+    on: '.ui-bullet__measure',
+    type: 'number 0..1',
+    example: '0.62',
+    required: true,
+    note: 'REQUIRED — the normalised measure (0..1). The host normalises; Bronto only paints. A measure with no --v collapses to the 2px floor. Pair every bullet with a host-written role="img" + aria-label.',
+  },
+  {
+    name: '--t',
+    on: '.ui-bullet__target',
+    type: 'number 0..1',
+    example: '0.9',
+    note: 'the normalised target tick position (0..1). Omit to drop the target mark.',
+  },
+  {
+    name: '--band-lo',
+    on: '.ui-bullet',
+    type: 'number 0..1',
+    example: '0.5',
+    note: 'the lower qualitative-band boundary (0..1, default 0.5). Bands are grayscale by Few-design — meaning lives in the required aria-label.',
+  },
+  {
+    name: '--band-hi',
+    on: '.ui-bullet',
+    type: 'number 0..1',
+    example: '0.8',
+    note: 'the upper qualitative-band boundary (0..1, default 0.8). Must be ≥ --band-lo.',
+  },
+  {
+    name: '--toc-top',
+    on: '.ui-toc',
+    type: 'length',
+    example: '1rem',
+    note: 'the sticky inset from the top of the scroll container (default var(--space-md)).',
+  },
 
   // Layout-primitive tuning knobs — the Every-Layout intrinsics + app-shell.
   // Undiscoverable before (prose-only / not even prose) so an author couldn't

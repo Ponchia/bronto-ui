@@ -1,0 +1,110 @@
+/* ==========================================================================
+   term — opt-in inline glossary term + definition, and an end-of-report glossary.
+
+   The accessible upgrade of the famously touch/keyboard-broken `abbr[title]`: a
+   dotted-underline term whose definition lives in real, reachable DOM via the
+   native `[popover]` + `popovertarget` pairing, plus a `ui-glossary` `<dl>` block
+   that collects every term at the end of a document. Jargon that explains itself
+   inline and gathers into a reference — dead-centre on the explanation pillar.
+   Pure CSS over native popover, no kernel. Not imported by core.css.
+
+   Boundary: the HOST owns the wiring. The term is a `<button class="ui-term"
+   popovertarget="…">`; the definition is `<div class="ui-def" popover id="…">`.
+   That native pairing gives keyboard + touch + light-dismiss for free — no JS.
+   The glossary is a plain `<dl>`; the printed document leans on it because
+   popovers don't print (see docs/term.md). Anchor positioning is a gated
+   enhancement; without it the definition opens centred in the top layer.
+   ========================================================================== */
+
+/* The inline term marker — a real <button> so it is keyboard- and touch-
+   reachable (the abbr[title] failure). Reset to inline text, keep a dotted
+   underline as the "has a definition" cue. */
+.ui-term {
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: help;
+  font: inherit;
+  padding: 0;
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-decoration-style: dotted;
+  text-underline-offset: 0.2em;
+}
+
+@media (hover: hover) {
+  .ui-term:hover {
+    text-decoration-color: var(--accent);
+  }
+}
+
+.ui-term:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* The definition — a native popover. Reset the UA popover chrome to the Bronto
+   raised-surface card. */
+.ui-def {
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-raised);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  margin: 0;
+  max-inline-size: 22rem;
+  padding: var(--space-sm) var(--space-md);
+}
+
+/* Progressive enhancement: anchor the definition to its term where CSS anchor
+   positioning exists, so it opens beside the word and flips at the viewport
+   edge. The host sets the matching `anchor-name` on the term (see docs). Without
+   support the popover keeps its centred top-layer fallback. */
+@supports (anchor-name: --x) {
+  .ui-def {
+    inset: auto;
+    margin-block-start: 0.4rem;
+    position-area: block-end span-inline-end;
+    position-try-fallbacks: flip-block, flip-inline;
+  }
+}
+
+/* --- Glossary — the end-of-document <dl> the terms collect into. --- */
+
+.ui-glossary {
+  border-block-start: 1px solid var(--line);
+  display: grid;
+  gap: var(--space-2xs) var(--space-md);
+  grid-template-columns: minmax(6rem, max-content) 1fr;
+  margin: 0;
+  padding-block-start: var(--space-md);
+}
+
+.ui-glossary__term {
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+}
+
+.ui-glossary__def {
+  color: var(--text-dim);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+/* Narrow viewports: stack each term over its definition. */
+@media (max-width: 32rem) {
+  .ui-glossary {
+    grid-template-columns: 1fr;
+    gap: 0.15rem var(--space-md);
+  }
+
+  .ui-glossary__def {
+    margin-block-end: var(--space-xs);
+  }
+}
