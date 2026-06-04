@@ -84,6 +84,8 @@ jobs:
         # GITHUB_TOKEN (admin-merge-only) if BASELINE_PAT is unset.
         env:
           GH_TOKEN: ${{ secrets.BASELINE_PAT || github.token }}
+          BASELINE_PAT: ${{ secrets.BASELINE_PAT }}
+          BASE_REF: ${{ github.ref_name }}
         run: |
           set -euo pipefail
           # Stage first so the change-check sees brand-NEW baselines too:
@@ -127,12 +129,12 @@ jobs:
           # (enforce_admins=true) means it CANNOT merge — abandon it and
           # cleanup.yml/self-prune will reap it. The clean-e2e pattern
           # (keep demo/ untouched) avoids needing this workflow at all.
-          if [ -n "${{ secrets.BASELINE_PAT }}" ]; then
+          if [ -n "${BASELINE_PAT:-}" ]; then
             note="✅ Opened with BASELINE_PAT — \`check\`/\`e2e\` will run; enable auto-merge to land it."
           else
             note="⚠️ Opened with the default GITHUB_TOKEN, so \`check\`/\`e2e\` will NOT run and \`main\` protection makes this **unmergeable**. This is expected — close it (cleanup.yml reaps it automatically). To make baseline regen mergeable, add a \`BASELINE_PAT\` secret, or just use the clean-e2e pattern and never run this workflow."
           fi
-          gh pr create --base "${{ github.ref_name }}" --head "$BRANCH" \
+          gh pr create --base "$BASE_REF" --head "$BRANCH" \
             --title "test(e2e): regenerate visual baselines" \
             --body "Automated: pixel baselines re-rendered in \`mcr.microsoft.com/playwright:v1.60.0-jammy\` (run ${GITHUB_RUN_ID}).
 

@@ -68,8 +68,10 @@ jobs:
       # chromium runs every spec including the pixel baselines; firefox +
       # webkit (the per-config NON_PIXEL set) only join when cross_engine.
       - name: Run e2e (${{ inputs.cross_engine && 'chromium + firefox + webkit' || 'chromium only' }})
+        env:
+          CROSS_ENGINE: ${{ inputs.cross_engine }}
         run: |
-          if [ "${{ inputs.cross_engine }}" = "true" ]; then
+          if [ "$CROSS_ENGINE" = "true" ]; then
             npx playwright test
           else
             npx playwright test --project=chromium

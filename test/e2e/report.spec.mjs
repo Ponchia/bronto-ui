@@ -1,28 +1,6 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
 import { applyTheme } from './_theme.mjs';
-
-const ignored = (url) => url.endsWith('/favicon.ico');
-const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'];
-const STRUCTURAL = new Set([
-  'heading-order',
-  'landmark-one-main',
-  'landmark-unique',
-  'region',
-  'scrollable-region-focusable',
-  'duplicate-id',
-  'tabindex',
-]);
-
-function blocking(results) {
-  return results.violations
-    .filter((v) => v.impact === 'serious' || v.impact === 'critical' || STRUCTURAL.has(v.id))
-    .map((v) => ({
-      id: v.id,
-      impact: v.impact,
-      nodes: v.nodes.map((n) => ({ target: n.target, msg: n.failureSummary })),
-    }));
-}
+import { blocking, ignored, scan } from './_demo-guards.mjs';
 
 async function openReport(page, theme = 'dark') {
   await page.goto('/demo/report.html', { waitUntil: 'networkidle' });
@@ -60,7 +38,7 @@ for (const theme of ['dark', 'light']) {
 for (const theme of ['dark', 'light']) {
   test(`report fixture passes axe and carries report semantics (${theme})`, async ({ page }) => {
     await openReport(page, theme);
-    const results = await new AxeBuilder({ page }).withTags(TAGS).analyze();
+    const results = await scan(page).analyze();
     expect(blocking(results), JSON.stringify(blocking(results), null, 2)).toEqual([]);
 
     await expect(page.locator('main.ui-report')).toHaveCount(1);

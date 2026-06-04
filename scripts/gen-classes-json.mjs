@@ -24,11 +24,10 @@
  * .d.ts. Run: node scripts/gen-classes-json.mjs
  */
 import { writeFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { cls } from '../classes/index.js';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { repoRoot as root, isMain } from './lib/emit.mjs';
 
 // Base = the class up to the first BEM separator (`--` modifier / `__` part).
 const baseOf = (v) => v.split('--')[0].split('__')[0];
@@ -289,7 +288,7 @@ export function buildClassesJson() {
 export const CLASSES_JSON_PATH = resolve(root, 'classes/classes.json');
 export const classesJson = () => JSON.stringify(buildClassesJson(), null, 2) + '\n';
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMain(import.meta.url)) {
   writeFileSync(CLASSES_JSON_PATH, classesJson());
   console.log(
     `✓ wrote classes/classes.json (${all.length} classes, ${Object.keys(sortedGroups).length} groups)`,

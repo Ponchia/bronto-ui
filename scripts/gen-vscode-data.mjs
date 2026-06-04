@@ -16,11 +16,10 @@
  * Run: node scripts/gen-vscode-data.mjs
  */
 import { writeFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { cssVars } from '../tokens/index.js';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { repoRoot as root, isMain } from './lib/emit.mjs';
 
 // Token name → human description. Tokens defined per-theme show both
 // values so the hover explains the light/dark split.
@@ -63,7 +62,7 @@ const json = JSON.stringify(data, null, 2) + '\n';
 
 export const generated = { 'classes/vscode.css-custom-data.json': json };
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMain(import.meta.url)) {
   for (const [rel, content] of Object.entries(generated)) {
     writeFileSync(resolve(root, rel), content);
     console.log(`✓ wrote ${rel} (${properties.length} custom properties)`);

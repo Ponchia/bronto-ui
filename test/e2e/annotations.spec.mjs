@@ -1,8 +1,7 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
 import { applyTheme } from './_theme.mjs';
+import { blocking, scan } from './_demo-guards.mjs';
 
-const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'];
 const VARIANTS = [
   'label',
   'callout',
@@ -22,26 +21,6 @@ const VARIANTS = [
   'evidence',
 ];
 
-const STRUCTURAL = new Set([
-  'heading-order',
-  'landmark-one-main',
-  'landmark-unique',
-  'region',
-  'scrollable-region-focusable',
-  'duplicate-id',
-  'tabindex',
-]);
-
-function blocking(results) {
-  return results.violations
-    .filter((v) => v.impact === 'serious' || v.impact === 'critical' || STRUCTURAL.has(v.id))
-    .map((v) => ({
-      id: v.id,
-      impact: v.impact,
-      nodes: v.nodes.map((n) => ({ target: n.target, msg: n.failureSummary })),
-    }));
-}
-
 async function openSpecimen(page, theme = 'light') {
   await page.goto('/demo/annotations.html', { waitUntil: 'networkidle' });
   await applyTheme(page, theme);
@@ -51,7 +30,7 @@ for (const theme of ['light', 'dark']) {
   test(`annotation specimen is accessible and complete (${theme})`, async ({ page }) => {
     await openSpecimen(page, theme);
 
-    const results = await new AxeBuilder({ page }).withTags(TAGS).analyze();
+    const results = await scan(page).analyze();
     expect(blocking(results), JSON.stringify(blocking(results), null, 2)).toEqual([]);
 
     const specimen = page.locator('[data-annotation-specimen]');

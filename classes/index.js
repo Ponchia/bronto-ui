@@ -591,6 +591,56 @@ const srcTone = (state) =>
     conflict: cls.srcConflict,
   })[state] || '';
 
+// Component tone → modifier class. Same object-literal idiom as srcTone/stateTone
+// (still grep-by-class-name; the modifier set differs per component). (Q9.)
+const badgeTone = (tone) =>
+  ({
+    accent: cls.badgeAccent,
+    success: cls.badgeSuccess,
+    warning: cls.badgeWarning,
+    danger: cls.badgeDanger,
+    info: cls.badgeInfo,
+    muted: cls.badgeMuted,
+  })[tone] || '';
+
+const numTone = (tone) => ({ pos: cls.numPos, neg: cls.numNeg, muted: cls.numMuted })[tone] || '';
+
+const dotTone = (tone) =>
+  ({
+    accent: cls.dotAccent,
+    success: cls.dotSuccess,
+    warning: cls.dotWarning,
+    danger: cls.dotDanger,
+    info: cls.dotInfo,
+  })[tone] || '';
+
+const alertTone = (tone) =>
+  ({
+    accent: cls.alertAccent,
+    success: cls.alertSuccess,
+    warning: cls.alertWarning,
+    danger: cls.alertDanger,
+    info: cls.alertInfo,
+  })[tone] || '';
+
+const toastTone = (tone) =>
+  ({
+    accent: cls.toastAccent,
+    success: cls.toastSuccess,
+    warning: cls.toastWarning,
+    danger: cls.toastDanger,
+    info: cls.toastInfo,
+  })[tone] || '';
+
+const meterTone = (tone) =>
+  ({
+    accent: cls.meterAccent,
+    success: cls.meterSuccess,
+    warning: cls.meterWarning,
+    danger: cls.meterDanger,
+    info: cls.meterInfo,
+  })[tone] || '';
+
 export const ui = {
   button: ({ variant, icon, size } = {}) =>
     j(
@@ -604,24 +654,8 @@ export const ui = {
     ),
   card: ({ accent, interactive } = {}) =>
     j(cls.card, accent && cls.cardAccent, interactive && cls.cardInteractive),
-  badge: ({ tone, dot } = {}) =>
-    j(
-      cls.badge,
-      tone === 'accent' && cls.badgeAccent,
-      tone === 'success' && cls.badgeSuccess,
-      tone === 'warning' && cls.badgeWarning,
-      tone === 'danger' && cls.badgeDanger,
-      tone === 'info' && cls.badgeInfo,
-      tone === 'muted' && cls.badgeMuted,
-      dot && cls.badgeDot,
-    ),
-  num: ({ tone } = {}) =>
-    j(
-      cls.num,
-      tone === 'pos' && cls.numPos,
-      tone === 'neg' && cls.numNeg,
-      tone === 'muted' && cls.numMuted,
-    ),
+  badge: ({ tone, dot } = {}) => j(cls.badge, badgeTone(tone), dot && cls.badgeDot),
+  num: ({ tone } = {}) => j(cls.num, numTone(tone)),
   delta: ({ dir, invert } = {}) =>
     j(
       cls.delta,
@@ -633,16 +667,7 @@ export const ui = {
   compare: ({ cols } = {}) => j(cls.compare, cols === 2 && cls.compare2up),
   chip: ({ accent } = {}) => j(cls.chip, accent && cls.chipAccent),
   link: ({ arrow, cta } = {}) => j(cls.link, arrow && cls.linkArrow, cta && cls.linkCta),
-  dot: ({ tone, live } = {}) =>
-    j(
-      cls.dot,
-      tone === 'accent' && cls.dotAccent,
-      tone === 'success' && cls.dotSuccess,
-      tone === 'warning' && cls.dotWarning,
-      tone === 'danger' && cls.dotDanger,
-      tone === 'info' && cls.dotInfo,
-      live && cls.dotLive,
-    ),
+  dot: ({ tone, live } = {}) => j(cls.dot, dotTone(tone), live && cls.dotLive),
   dotgrid: ({ accent, dense } = {}) =>
     j(cls.dotgrid, accent && cls.dotgridAccent, dense && cls.dotgridDense),
   table: ({ density, lined } = {}) =>
@@ -656,34 +681,10 @@ export const ui = {
   hint: ({ error } = {}) => j(cls.hint, error && cls.hintError),
   cluster: ({ between } = {}) => j(cls.cluster, between && cls.clusterBetween),
   stagger: ({ auto } = {}) => j(cls.stagger, auto && cls.staggerAuto),
-  alert: ({ tone } = {}) =>
-    j(
-      cls.alert,
-      tone === 'accent' && cls.alertAccent,
-      tone === 'success' && cls.alertSuccess,
-      tone === 'warning' && cls.alertWarning,
-      tone === 'danger' && cls.alertDanger,
-      tone === 'info' && cls.alertInfo,
-    ),
-  toast: ({ tone } = {}) =>
-    j(
-      cls.toast,
-      tone === 'accent' && cls.toastAccent,
-      tone === 'success' && cls.toastSuccess,
-      tone === 'warning' && cls.toastWarning,
-      tone === 'danger' && cls.toastDanger,
-      tone === 'info' && cls.toastInfo,
-    ),
+  alert: ({ tone } = {}) => j(cls.alert, alertTone(tone)),
+  toast: ({ tone } = {}) => j(cls.toast, toastTone(tone)),
   progress: ({ indeterminate } = {}) => j(cls.progress, indeterminate && cls.progressIndeterminate),
-  meter: ({ tone } = {}) =>
-    j(
-      cls.meter,
-      tone === 'accent' && cls.meterAccent,
-      tone === 'success' && cls.meterSuccess,
-      tone === 'warning' && cls.meterWarning,
-      tone === 'danger' && cls.meterDanger,
-      tone === 'info' && cls.meterInfo,
-    ),
+  meter: ({ tone } = {}) => j(cls.meter, meterTone(tone)),
   dotspinner: ({ size } = {}) =>
     j(cls.dotspinner, size === 'sm' && cls.dotspinnerSm, size === 'lg' && cls.dotspinnerLg),
   dotbar: ({ indeterminate } = {}) => j(cls.dotbar, indeterminate && cls.dotbarIndeterminate),
@@ -711,14 +712,9 @@ export const ui = {
   legendSwatch: ({ series, shape } = {}) =>
     j(
       cls.legendSwatch,
-      series === 1 && cls.legendSwatch1,
-      series === 2 && cls.legendSwatch2,
-      series === 3 && cls.legendSwatch3,
-      series === 4 && cls.legendSwatch4,
-      series === 5 && cls.legendSwatch5,
-      series === 6 && cls.legendSwatch6,
-      series === 7 && cls.legendSwatch7,
-      series === 8 && cls.legendSwatch8,
+      // Series 1–8 map to ui-legend__swatch--N; the explicit bounds-check keeps a
+      // 0/9/non-integer from coining a class the stylesheet never defines. (Q9.)
+      Number.isInteger(series) && series >= 1 && series <= 8 && cls[`legendSwatch${series}`],
       shape === 'circle' && cls.legendSwatchCircle,
       shape === 'line' && cls.legendSwatchLine,
     ),
