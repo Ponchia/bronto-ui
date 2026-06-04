@@ -84,6 +84,17 @@ export const cls = Object.freeze({
   dotspinner: 'ui-dotspinner',
   dotspinnerSm: 'ui-dotspinner--sm',
   dotspinnerLg: 'ui-dotspinner--lg',
+  // data-bound dot surfaces (reporting/dashboard family)
+  waffle: 'ui-waffle',
+  activity: 'ui-activity',
+  level: 'ui-level',
+  levelWarn: 'ui-level--warn',
+  levelDanger: 'ui-level--danger',
+  dotgauge: 'ui-dotgauge',
+  readout: 'ui-readout',
+  readoutSpacer: 'ui-readout__spacer',
+  halftone: 'ui-halftone',
+  dotfit: 'ui-dotfit',
   // forms
   field: 'ui-field',
   label: 'ui-label',
@@ -441,6 +452,7 @@ export const cls = Object.freeze({
   codeLineHl: 'ui-code__line--hl',
   // spark — inline datawords / microcharts (css/spark.css)
   spark: 'ui-spark',
+  sparkDots: 'ui-spark--dots',
   sparkBar: 'ui-spark__bar',
   sparkBarAccent: 'ui-spark__bar--accent',
   sparkBarPos: 'ui-spark__bar--pos',

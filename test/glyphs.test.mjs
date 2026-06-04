@@ -5,9 +5,13 @@ import {
   GLYPHS,
   GLYPH_NAMES,
   GLYPH_SIZE,
+  GLYPH_TAGS,
   glyph,
   glyphCells,
+  glyphMask,
+  findGlyphs,
   renderGlyph,
+  renderReadout,
 } from '../glyphs/glyphs.js';
 import { cls } from '../classes/index.js';
 
@@ -139,10 +143,16 @@ test('renderGlyph() escapes label and sanitizes dot/gap (no CSS/HTML injection)'
   assert.match(ok, /--dotmatrix-gap:0\.25rem/);
 });
 
-test('spark is the accent demo; no other glyph uses accent dots', () => {
+// The accent (`*`) tone is a real, intentional capability — a curated set of
+// two-tone glyphs uses it to lift one feature (the check, the bang) onto the
+// `--field-dot-accent` colour. Pin the exact set so a stray `*` in a glyph that
+// should be monotone is still caught, but the capability is no longer a
+// one-glyph museum piece.
+test('only the curated two-tone glyphs use accent dots', () => {
+  const TWO_TONE = new Set(['spark', 'warning', 'info']);
   for (const [name, rows] of Object.entries(GLYPHS)) {
     const hasAccent = rows.join('').includes('*');
-    if (name === 'spark') assert.ok(hasAccent, 'spark should use accent dots');
+    if (TWO_TONE.has(name)) assert.ok(hasAccent, `${name} should use accent dots`);
     else assert.ok(!hasAccent, `${name} should not use accent dots`);
   }
 });
@@ -296,4 +306,85 @@ test("render: 'mask' size sets --icon-size; decorative when unlabelled; sanitize
   assert.match(renderGlyph('check', { render: 'mask' }), /aria-hidden="true"/);
   assert.ok(!renderGlyph('check', { render: 'mask', size: 'red;}' }).includes('red'));
   assert.equal(renderGlyph('nope', { render: 'mask' }), '');
+});
+
+test('findGlyphs resolves intent words via tags and name substrings', () => {
+  assert.deepEqual(findGlyphs('delete'), ['trash']); // alias → glyph
+  assert.deepEqual(findGlyphs('chart'), ['bar-chart']); // name substring
+  assert.ok(findGlyphs('arrow').length >= 4); // arrow-up/down/left/right
+  assert.equal(findGlyphs('').length, GLYPH_NAMES.length); // empty → all
+  assert.deepEqual(findGlyphs('definitely-not-a-glyph'), []);
+  // Every returned name is real, and the result is sorted.
+  const r = findGlyphs('e');
+  assert.ok(r.every((n) => GLYPH_NAMES.includes(n)));
+  assert.deepEqual(r, [...r].sort());
+});
+
+test('GLYPH_TAGS keys are all real glyph names', () => {
+  for (const name of Object.keys(GLYPH_TAGS)) assert.ok(GLYPHS[name], `${name} is a glyph`);
+});
+
+test('glyphMask returns a mask url() for a known glyph, empty for unknown', () => {
+  assert.ok(glyphMask('check').startsWith('url(data:image/svg+xml,'));
+  assert.equal(glyphMask('nope'), '');
+});
+
+test('the readout face exists: digit-0..9 + colon/comma/period/percent', () => {
+  for (let d = 0; d <= 9; d++) assert.ok(GLYPHS[`digit-${d}`], `digit-${d}`);
+  for (const p of ['colon', 'comma', 'period', 'percent']) assert.ok(GLYPHS[p], p);
+});
+
+test('renderReadout composes a labelled .ui-readout row of decorative glyphs', () => {
+  const html = renderReadout('12:48', { label: '12 hours 48' });
+  assert.match(html, /^<span class="ui-readout" role="img" aria-label="12 hours 48"/);
+  // 5 chars (1,2,:,4,8) → 5 glyph spans, none labelled (decorative).
+  assert.equal(html.match(/ui-dotmatrix(?![-_])/g).length, 5);
+  assert.ok(!html.includes('aria-label="1"'));
+  assert.equal(renderReadout(''), '');
+});
+
+test('renderReadout: space → spacer, unknown char dropped, label defaults to text', () => {
+  const html = renderReadout('1 %x', {});
+  assert.match(html, /aria-label="1 %x"/); // label defaults to raw text
+  assert.equal(html.match(/ui-readout__spacer/g).length, 1); // the space
+  // 1 and % are known (2 glyphs); the space is a spacer; x is dropped.
+  assert.equal(html.match(/ui-dotmatrix(?![-_])/g).length, 2);
+});
+
+test("renderReadout passes render:'mask' through to each character", () => {
+  const html = renderReadout('42', { render: 'mask', label: '42' });
+  assert.equal(html.match(/ui-icon/g).length, 2);
+  assert.ok(!html.includes('ui-dotmatrix__cell'));
+});
+
+test("initDotGlyph render='mask' makes one .ui-icon node, no cells, and cleans up", async () => {
+  const dom = new JSDOM('<!doctype html><body></body>');
+  const prevDocument = globalThis.document;
+  globalThis.document = dom.window.document;
+  try {
+    const { initDotGlyph } = await import('../behaviors/index.js');
+    const el = dom.window.document.createElement('span');
+    el.setAttribute('data-bronto-glyph', 'gear');
+    el.setAttribute('data-bronto-glyph-render', 'mask');
+    el.setAttribute('data-bronto-glyph-label', 'Settings');
+    el.setAttribute('data-bronto-glyph-size', '1.5rem');
+    dom.window.document.body.appendChild(el);
+
+    const stop = initDotGlyph({ root: dom.window.document });
+    assert.ok(el.classList.contains('ui-icon'));
+    assert.equal(el.querySelectorAll('.ui-dotmatrix__cell').length, 0); // not the 256-cell path
+    assert.ok(el.style.getPropertyValue('--icon-mask').startsWith('url('));
+    assert.equal(el.style.getPropertyValue('--icon-size'), '1.5rem');
+    assert.equal(el.getAttribute('role'), 'img');
+    assert.equal(el.getAttribute('aria-label'), 'Settings');
+
+    stop();
+    assert.ok(!el.classList.contains('ui-icon'));
+    assert.equal(el.getAttribute('class'), null);
+    assert.equal(el.getAttribute('style'), null);
+    assert.equal(el.getAttribute('role'), null);
+  } finally {
+    if (prevDocument === undefined) delete globalThis.document;
+    else globalThis.document = prevDocument;
+  }
 });

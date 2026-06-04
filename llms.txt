@@ -87,12 +87,20 @@ import { useDialog, useToast } from '@ponchia/ui/react'; // or '@ponchia/ui/soli
 ```
 
 Optional display glyphs — dot-matrix bitmaps on the `.ui-dotmatrix` primitive
-(decorative by default; `renderGlyph` is SSR-safe, `initDotGlyph` is the DOM form):
+(decorative by default; `renderGlyph` is SSR-safe, `initDotGlyph` is the DOM form).
+`findGlyphs('delete')` resolves an intent word to real names; `renderReadout`
+composes digits into a big Nothing-style numeric. Details: `docs/glyphs.md`.
 
 ```js
-import { renderGlyph, GLYPH_NAMES } from '@ponchia/ui/glyphs';
+import { renderGlyph, findGlyphs, renderReadout, GLYPH_NAMES } from '@ponchia/ui/glyphs';
 el.innerHTML = renderGlyph('check', { label: 'Done' });
+el.innerHTML = renderReadout('73%', { label: '73 percent of quota' });
 ```
+
+The dot family also has data-bound reporting surfaces — `.ui-waffle` (unit
+chart), `.ui-activity` (contribution grid), `.ui-level` (LED meter),
+`.ui-dotgauge` (radial gauge), `.ui-halftone`, `.ui-readout` — same host-sets-
+the-data / leaf-paints boundary as `ui-spark`/`ui-meter`. Details: `docs/dots.md`.
 
 Layout primitives (core bundle, no media queries — intrinsic Every-Layout
 composition that responds to content + available space): `ui-stack` (vertical
