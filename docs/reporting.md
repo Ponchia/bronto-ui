@@ -218,13 +218,17 @@ Direction tone follows the common case (up = good, green; down = bad, red). When
 
 The arrow is visual; always include the number and unit in the text.
 
-A stat card's own `ui-stat__delta is-pos` / `is-neg` carries **tone only** (good
-vs bad, as colour). That is fine on screen, but tone is a single channel: in a
-greyscale PDF or for a colour-blind reader a positive and a negative delta look
-identical, and the tone is deliberately decoupled from direction (a *dropped*
-latency is `is-pos`). When the change must read without colour — most printed
-reports — prefer `ui-delta` for the card's delta line, because its `--up`/`--down`
-arrow is a real non-colour channel:
+A stat card's own `ui-stat__delta is-pos` / `is-neg` carries **tone** (good vs
+bad, as colour) and auto-prepends a `▲`/`▼` glyph — but that glyph follows the
+**tone**, not the real direction: `is-pos` always renders `▲` and `is-neg`
+always `▼`, regardless of whether the number went up or down. The tone is
+deliberately decoupled from direction (a *dropped* latency is good, so `is-pos`),
+so the auto-arrow can contradict the words: write `is-pos` on a "−48 ms" and it
+prints `▲ −48 ms`. Do **not** add your own direction word/arrow on top, or you
+double it. When the change must read by direction — most printed reports —
+prefer `ui-delta` for the card's delta line, because its `--up`/`--down` arrow is
+a real (author-controlled) non-colour channel; reach for the arrow-free `ui-num`
+if you want neither tone nor glyph:
 
 ```html
 <span class="ui-stat__label">p95 latency</span>
@@ -343,8 +347,9 @@ raster).
 > and even then `import`/`fetch` of the config only works over an `http(s)`
 > origin. A static report **opened from disk (`file://`) cannot import the module
 > nor fetch `vega.json`** (CORS) — load Vega + Vega-Lite + vega-embed from pinned
-> `/build/*.min.js` CDN tags and **inline the resolved `config` object**, the
-> file://-safe recipe in [vega.md](./vega.md#from-a-cdn-no-bundler). For a report
+> `/build/*.min.js` CDN tags and **inline the resolved `config` object**
+> (generate it with `npm run emit:theme vega light`), the file://-safe recipe in
+> [vega.md](./vega.md#from-a-cdn-no-bundler). For a report
 > you intend to **print/PDF**, prefer the frozen inline `<svg>` below — it has no
 > runtime, prints exactly, and sidesteps all of this.
 
@@ -477,6 +482,22 @@ it (never rely on the bar alone — WCAG 1.4.1):
 `--value` is a percentage and the fill **clamps at 100**, so an over-target
 reading (e.g. 112 % of plan) shows a full bar — put the true figure in the
 written label beside it (`ui-num`), which is the data of record anyway.
+
+For a block of meters — SLO burn, error budgets, capacity — lay each out as
+**label | bar | value** with `ui-meter__row`; `ui-meter__label` names it and
+`ui-meter__value` carries the reading (the data of record — never the bar
+alone). The row collapses to a stack on a narrow screen, so you don't hand-roll
+the grid:
+
+```html
+<div class="ui-meter__row">
+  <span class="ui-meter__label">Write availability</span>
+  <div class="ui-meter ui-meter--danger" role="presentation">
+    <span class="ui-meter__fill" style="--value: 90"></span>
+  </div>
+  <span class="ui-meter__value ui-num">90% of budget burned</span>
+</div>
+```
 
 A **pull-quote** lifts a source sentence out of the prose — `ui-quote` is the
 block, `ui-quote__cite` attributes it:

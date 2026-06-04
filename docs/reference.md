@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 504 classes across 154 component groups
+- 507 classes across 154 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -724,6 +724,9 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.meter` | `ui-meter` | base |
 | `cls.meterFill` | `ui-meter__fill` | part |
+| `cls.meterLabel` | `ui-meter__label` | part |
+| `cls.meterRow` | `ui-meter__row` | part |
+| `cls.meterValue` | `ui-meter__value` | part |
 | `cls.meterAccent` | `ui-meter--accent` | modifier |
 | `cls.meterDanger` | `ui-meter--danger` | modifier |
 | `cls.meterInfo` | `ui-meter--info` | modifier |
