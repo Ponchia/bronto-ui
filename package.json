@@ -93,6 +93,8 @@
     "check:format": "prettier --check .",
     "size:report": "node scripts/size-report.mjs",
     "report:pdf": "node scripts/render-pdf.mjs",
+    "emit:theme": "node scripts/emit-theme.mjs",
+    "emit:theme:check": "node scripts/emit-theme.mjs --check",
     "gen": "npm run prepack",
     "fresh:build": "node scripts/gen-all.mjs",
     "tokens:build": "node scripts/gen-tokens-json.mjs",

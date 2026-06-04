@@ -257,6 +257,46 @@
   text-transform: uppercase;
 }
 
+/* --- Labelled meter row ---
+   A multi-meter block (SLO burn, error budgets, capacity) lays out as
+   label | bar | value. The bare `ui-meter` base lives in feedback.css; this is
+   the report-document grammar around it so authors stop hand-rolling the grid.
+   The bar NEVER carries the reading alone (WCAG 1.4.1) — `ui-meter__value` is
+   the data of record, and the bar clamps at 100 so an over-target figure still
+   reads correctly in the value text. Collapses to a stack on a narrow screen. */
+.ui-meter__row {
+  align-items: center;
+  display: grid;
+  gap: var(--space-2xs) var(--space-md);
+  grid-template-columns: minmax(9rem, 14rem) 1fr auto;
+  margin-block: var(--space-2xs);
+}
+
+.ui-meter__row .ui-meter {
+  min-inline-size: 8rem;
+}
+
+.ui-meter__label {
+  color: var(--text-soft);
+}
+
+.ui-meter__value {
+  color: var(--text);
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+@media (max-width: 32rem) {
+  .ui-meter__row {
+    grid-template-columns: 1fr;
+  }
+
+  .ui-meter__value {
+    text-align: start;
+  }
+}
+
 /* A chart is NOT a bronto component — it needs scales + data binding, which the
    analytical layer refuses to own. Theme Vega-Lite with `@ponchia/ui/vega`
    (docs/vega.md), or hand-author a token-themed inline `<svg>`, and drop it in a

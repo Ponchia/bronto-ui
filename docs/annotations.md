@@ -231,6 +231,12 @@ import:
 </g>
 ```
 
+The same author-time-copy idea covers foreign-renderer theme literals: a
+`file://` report can't `import` the Vega/Mermaid/D2 theme helpers either, so
+`npm run emit:theme <vega|mermaid|d2> <light|dark>` prints the resolved object to
+paste inline, and `npm run emit:theme:check <file>` re-checks a pasted block
+against current tokens. See [vega.md](./vega.md#from-a-cdn-no-bundler).
+
 ## Using annotations off-chart
 
 Annotations are not only for charts. Two report uses worth calling out:
@@ -250,6 +256,39 @@ Annotations are not only for charts. Two report uses worth calling out:
       <path class="ui-annotation__note-line" d="M0,0H188" />
       <text class="ui-annotation__title" y="-8">You are here</text>
       <text class="ui-annotation__label" y="12">a short, terse label</text>
+    </g>
+  </g>
+</svg>
+```
+
+- **A data note that sits off the plot area, statically (no JS).** When the
+  callout carries a *finding* — a threshold, a labelled event — rather than
+  decoration, it must **not** be `aria-hidden`; instead mirror its text in the
+  figure's `<desc>` and the fallback table so the data reaches every reader. The
+  JS `notePlacement()` helper computes this offset for you, but for a frozen
+  `file://`/print-bound report you place it by hand: reserve a band at the top of
+  the `viewBox` for the note (don't draw bars into it), keep the subject (the
+  rule/point) on the plot, and translate the `__note` group **up, above the
+  plot**, so the connector points off the plotting area. Author the `viewBox` near
+  the rendered pixel size to keep text near 1× (see the user-unit trap below):
+
+```html
+<svg viewBox="0 0 360 180" role="img" aria-labelledby="fig-t fig-d" style="max-inline-size: 540px; width: 100%">
+  <title id="fig-t">Write success rate over the incident day</title>
+  <!-- The note text is repeated here so it is not JS- or sight-only. -->
+  <desc id="fig-d">…dashed line marks the 99.9% SLO floor; the off-plot callout reads "SLO floor 99.9% — below floor 41 min".</desc>
+
+  <line x1="36" y1="150" x2="336" y2="150" stroke="var(--line)" /><!-- axis -->
+  <!-- bars drawn only below y≈40, leaving the top band free for the note -->
+
+  <!-- subject rule ON the plot; note translated UP, off the plotting area -->
+  <g class="ui-annotation ui-annotation--threshold ui-annotation--danger" transform="translate(0, 44)">
+    <path class="ui-annotation__subject" d="M36,0L336,0" stroke-dasharray="4 4" />
+    <path class="ui-annotation__connector" d="M180,0L150,-30" />
+    <g class="ui-annotation__note" transform="translate(40, -34)">
+      <path class="ui-annotation__note-line" d="M0,0H150" />
+      <text class="ui-annotation__title" y="-8">SLO floor 99.9%</text>
+      <text class="ui-annotation__label" y="12">Below floor 41 min</text>
     </g>
   </g>
 </svg>
