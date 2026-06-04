@@ -1,5 +1,5 @@
 {
-  "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
+  "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `groups[].base` is null for a parts-only namespace (no standalone base class — do NOT emit it). A modifier whose name contains `__` (e.g. `ui-spark__bar--pos`) attaches to THAT part, not the base host. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `behaviorAttributes` are the `data-bronto-*` wiring hooks the optional behaviors delegate on; `requiredAria` is the role/aria a generator must emit per component. `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
     "classes": 507,
     "groups": 154
@@ -1161,7 +1161,7 @@
       "parts": []
     },
     "ui-themetoggle": {
-      "base": "ui-themetoggle",
+      "base": null,
       "modifiers": [],
       "parts": [
         "ui-themetoggle__button",
@@ -1921,6 +1921,20 @@
       "note": "min width of the main child before the two stack (default 60%)"
     },
     {
+      "name": "--sidebar-gap",
+      "on": ".ui-sidebar",
+      "type": "length",
+      "example": "1.5rem",
+      "note": "gap between the sidebar and the main child (default var(--space-md))"
+    },
+    {
+      "name": "--switcher-gap",
+      "on": ".ui-switcher",
+      "type": "length",
+      "example": "1.5rem",
+      "note": "gap between switcher children in both row and column states (default var(--space-md))"
+    },
+    {
       "name": "--switcher-min",
       "on": ".ui-switcher",
       "type": "length",
@@ -2036,6 +2050,83 @@
         "<color>"
       ],
       "note": "the single brand knob; the accent family derives from it. Re-brand at :root/[data-theme] (a subtree override is only a partial re-brand). See docs/theming.md."
+    }
+  ],
+  "behaviorAttributes": [
+    {
+      "name": "data-bronto-open",
+      "on": "a trigger (button/link)",
+      "value": "id of the target <dialog>",
+      "behavior": "initDialog",
+      "note": "click calls showModal() on the named <dialog>; focus returns to the trigger on every close path"
+    },
+    {
+      "name": "data-bronto-close",
+      "on": "a button inside a <dialog>",
+      "behavior": "initDialog",
+      "note": "click closes the nearest enclosing <dialog>"
+    },
+    {
+      "name": "data-bronto-dialog-light",
+      "on": "a <dialog>",
+      "behavior": "initDialog",
+      "note": "opt into backdrop light-dismiss (click the backdrop to close)"
+    },
+    {
+      "name": "data-bronto-modal",
+      "on": "a controlled (non-<dialog>) .ui-modal overlay",
+      "behavior": "initModal",
+      "note": "inert focus-trap + .is-open toggling for a modal that is not a native <dialog>; needs an accessible name"
+    },
+    {
+      "name": "data-bronto-menu",
+      "on": "a native <details> dropdown",
+      "behavior": "initMenu",
+      "note": "adds outside-click / Escape close affordances to a <details>-based .ui-menu"
+    },
+    {
+      "name": "data-bronto-popover",
+      "on": "a trigger",
+      "value": "id of the .ui-popover panel",
+      "behavior": "initPopover",
+      "note": "collision-aware NON-modal popover (no focus trap); top-layer via the native popover attr when present, else an .is-open class. Author an accessible name on the panel."
+    },
+    {
+      "name": "data-bronto-command",
+      "on": "a .ui-command palette host wrapping its input",
+      "behavior": "initCommand",
+      "note": "wires the filter input + active-option keyboard model"
+    },
+    {
+      "name": "data-bronto-dismiss",
+      "on": "a button",
+      "value": "optional CSS selector of the ancestor to remove",
+      "behavior": "initDismissible",
+      "note": "click removes the nearest matching ancestor (or, with no value, the nearest [data-bronto-dismissible])"
+    },
+    {
+      "name": "data-bronto-disclosure",
+      "on": "a trigger",
+      "value": "id of the element it toggles",
+      "behavior": "initDisclosure",
+      "note": "toggles the named element + keeps aria-expanded in sync"
+    }
+  ],
+  "requiredAria": [
+    {
+      "on": ".ui-progress",
+      "require": "role=\"progressbar\" + aria-valuenow/min/max (determinate); role=\"progressbar\" + aria-busy=\"true\" and NO aria-valuenow (indeterminate)",
+      "helper": "attrs.progress(value) / attrs.progress()"
+    },
+    {
+      "on": ".ui-meter",
+      "require": "role=\"meter\" + aria-valuenow/min/max",
+      "helper": "attrs.meter(value)"
+    },
+    {
+      "on": ".ui-error-summary",
+      "require": "role=\"alert\" + tabindex=\"-1\" on the hand-authored summary so it is announced and focusable when validation fails",
+      "helper": "initForms wires this for the dynamic summary; a static summary needs it hand-set"
     }
   ]
 }

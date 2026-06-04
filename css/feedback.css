@@ -466,6 +466,18 @@
 @media (prefers-reduced-motion: reduce) {
   .ui-progress--indeterminate .ui-progress__bar {
     animation-duration: 0.01ms;
+
+    /* A still, solid, full-width bar reads as "100% complete" — the opposite of
+       indeterminate. Fall back to a static diagonal hatch that fills the track
+       (so it's clearly active) but doesn't read as done. AT is covered via
+       aria-busy. (audit C26.) */
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--accent) 0,
+      var(--accent) 0.3rem,
+      color-mix(in srgb, var(--accent) 35%, transparent) 0.3rem,
+      color-mix(in srgb, var(--accent) 35%, transparent) 0.6rem
+    );
     inset-inline-start: 0;
     inline-size: 100%;
   }

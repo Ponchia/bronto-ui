@@ -99,13 +99,15 @@ composition that responds to content + available space): `ui-stack` (vertical
 rhythm), `ui-cluster` (wrapping inline row), `ui-grid` (auto-fit columns),
 `ui-sidebar` (sidebar + main that stacks when cramped), `ui-switcher` (row →
 column together), `ui-center` (measure-bounded column), `ui-ratio` (aspect-ratio
-box), and the `ui-app-shell`/`ui-app-rail`/`ui-app-nav` admin shell. Each is
-tuned with an inline custom property rather than a modifier — set
-`style="--grid-min: 12rem"`, `--sidebar-width`, `--switcher-min`, `--center-max`
-(the INNER measure; gutters add to the total), `--ratio`, `--stack-gap`,
-`--cluster-gap`, `--app-rail`, etc. The full list with defaults is in
-`classes.json` `customProperties`. App-shell/sitenav current page is
-`aria-current="page"`.
+box — one child only), and the `ui-app-shell`/`ui-app-rail`/`ui-app-nav` admin
+shell. `ui-cq` makes descendant layouts respond to THAT box (container queries),
+not the viewport — wrap a `ui-grid`/`ui-statgrid` in it for an island-safe
+collapse in a slim pane. Each is tuned with an inline custom property rather than
+a modifier — set `style="--grid-min: 12rem"`, `--sidebar-width`, `--sidebar-gap`,
+`--switcher-min`, `--switcher-gap`, `--center-max` (the INNER measure; gutters add
+to the total), `--ratio`, `--stack-gap`, `--cluster-gap`, `--app-rail`, etc. The
+full list with defaults is in `classes.json` `customProperties`. App-shell/sitenav
+current page is `aria-current="page"`.
 
 Motion utilities (core bundle, all reduced-motion-safe — they collapse to the
 static end state, not just a zeroed duration): `ui-animate-in`,
@@ -114,8 +116,10 @@ static end state, not just a zeroed duration): `ui-animate-in`,
 derive the delay from `:nth-child`), `ui-reveal` (JS/IntersectionObserver — adds
 `is-visible`), `ui-scroll-reveal` and `ui-scroll-progress` (zero-JS,
 scroll-driven; the recommended reveal for static reports), and `ui-vt` (View
-Transitions — needs the required `--ui-vt-name`). Prefer `ui-scroll-reveal` over
-`ui-reveal` when no JS will run. Details: `docs/usage.md`.
+Transitions — needs the required `--ui-vt-name`, which must be **unique per
+document**: reusing one name across sibling items silently drops the transition).
+Prefer `ui-scroll-reveal` over `ui-reveal` when no JS will run. Details:
+`docs/usage.md`.
 
 Optional display colorways — opt-in, never in the default bundle. Root-level,
 like `data-theme` (the derived accent family only recomputes at `:root`):
@@ -533,9 +537,13 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   class surface; an agent should read this to know valid class names.
 - `classes/classes.json` — the same vocabulary as language-neutral data, to
   VALIDATE markup without executing ESM/parsing TS: `groups` (base →
-  modifiers/parts, the BEM structure), `classes` (flat list), `states` (the
-  `is-*` hooks that live outside `cls` by design, with their scope), and
-  `customProperties` (the author-set inline-style knobs like `--chart-color` / `--value`).
+  modifiers/parts, the BEM structure; `base` is null for a parts-only namespace —
+  do not emit it), `classes` (flat list), `states` (the `is-*` hooks that live
+  outside `cls` by design, with their scope), `customProperties` (the author-set
+  inline-style knobs like `--chart-color` / `--value`), `behaviorAttributes` (the
+  `data-bronto-*` open/close/dismiss hooks the optional behaviors delegate on), and
+  `requiredAria` (the role/aria a generator must emit per component — meter/progress/
+  error-summary paint but are invisible to AT without it).
 - `docs/reference.md` — the full class catalog as prose tables (every
   class grouped by component, with registry key + kind). Generated from
   the same source as the types and CI-drift-checked.

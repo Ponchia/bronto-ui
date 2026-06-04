@@ -147,8 +147,13 @@ export function buildBundles() {
  *  the forced-colors error-family + spinner/scroll-progress blocks, the `--value`
  *  @property, scripting-gated `.ui-matrix`, RTL link-arrow mirror, pagination
  *  aria-current, disabled-link + read-only cues, and logical container queries —
- *  all repetitive blocks, so gzip stayed well under ceiling. */
-export const BUDGET = { raw: 84_000, gzip: 14_500 };
+ *  all repetitive blocks, so gzip stayed well under ceiling. The third
+ *  component-audit pass nudged it 84→85 kB (raw) / 14.5→14.7 kB (gzip): the
+ *  forced-colors icon/skeleton/dot-accent/combobox-option blocks, the modal-close
+ *  tap-target + coarse bump, overflow-wrap on stat/key-value/property, the
+ *  reduced-motion indeterminate-progress hatch, the stagger cap, and the legend
+ *  symbol fallback — again repetitive media-query/FC blocks that gzip well. */
+export const BUDGET = { raw: 85_000, gzip: 14_700 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };

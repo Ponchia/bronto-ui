@@ -104,6 +104,8 @@
 /* Keep autofilled fields on-theme — the UA's yellow fill otherwise paints over
    the monochrome surface and breaks the contrast story. (forms review C24.) */
 .ui-input:autofill,
+.ui-select:autofill,
+.ui-textarea:autofill,
 .ui-search input:autofill {
   -webkit-text-fill-color: var(--text);
   box-shadow: inset 0 0 0 100rem var(--bg-elevated);
@@ -170,8 +172,9 @@
   border-end-end-radius: var(--radius-md);
 }
 
-.ui-input-group > .ui-input:focus-visible {
-  z-index: 1; /* keep the focus ring above the adjacent addon border */
+.ui-input-group > .ui-input:focus-visible,
+.ui-input-group > .ui-select:focus-visible {
+  z-index: 1; /* keep the focus ring above the adjacent addon border (select too — audit C29) */
 }
 
 .ui-input-group__addon {
