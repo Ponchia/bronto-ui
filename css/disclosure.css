@@ -314,8 +314,12 @@
 }
 
 /* Disabled covers BOTH the native `<button disabled>` the demo ships and the
-   `aria-disabled="true"` ARIA path; `pointer-events: none` makes the
-   aria-disabled item genuinely inert (it was clickable before — C5). */
+   `aria-disabled="true"` ARIA path. `pointer-events: none` blocks POINTER
+   activation only — a focused aria-disabled item still fires on Enter/Space
+   (CSS can't intercept keys). For a fully-inert control prefer native
+   `<button disabled>`, run `initDisabledGuard()` (intercepts Enter/Space), or
+   pair aria-disabled with `tabindex="-1"`. See docs/usage.md "Disabled vs
+   aria-disabled". (audit C4.) */
 .ui-pagination__item[aria-disabled='true'],
 .ui-pagination__item:disabled {
   cursor: not-allowed;

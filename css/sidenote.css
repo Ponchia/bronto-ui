@@ -28,9 +28,12 @@
   padding-inline-start: var(--space-md);
 }
 
-/* The inline superscript that anchors a numbered sidenote. */
+/* The inline superscript that anchors a numbered sidenote. Use --accent-text,
+   not raw --accent: this is readable text and must clear WCAG AA 4.5:1 even
+   after a one-knob re-brand to a paler --accent (raw --accent drops to ~1.5:1).
+   Same accent-as-text contract as .ui-eyebrow / .ui-link--cta. (audit C6.) */
 .ui-sidenote__ref {
-  color: var(--accent);
+  color: var(--accent-text);
   counter-increment: ui-sidenote;
   font-size: 0.75em;
   vertical-align: super;
@@ -40,9 +43,10 @@
   content: counter(ui-sidenote);
 }
 
-/* The note repeats its number (display only — the ref already incremented). */
+/* The note repeats its number (display only — the ref already incremented).
+   --accent-text for the same WCAG-AA reason as the ref above. (audit C6.) */
 .ui-sidenote::before {
-  color: var(--accent);
+  color: var(--accent-text);
   content: counter(ui-sidenote) '. ';
 }
 

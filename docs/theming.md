@@ -212,9 +212,12 @@ you have, so the one-accent discipline holds.
   skin on a subtree would leave that family stale, so the selectors are
   `:root`-anchored and a subtree skin simply no-ops.
 - **Phosphor bloom.** The `amber-crt` / `phosphor-green` skins set
-  `--dotmatrix-glow` (a Tier-3 display knob, default `0`) in dark, so the
-  dot-matrix gains a CRT-style glow. Set it yourself on any `.ui-dotmatrix`
-  to tune the bloom.
+  `--dotmatrix-glow` in dark, so the dot-matrix gains a CRT-style glow. It is a
+  Tier-3 *display knob* — a `--dotmatrix-*` CSS custom property with an inline
+  default of `0` (off), like `--dotmatrix-dot`/`--dotmatrix-gap`, **not** a token
+  in the palette export (Tier-3 display expression lives as `--dotmatrix-*` knobs
+  in `css/dots.css`, by ADR-0001). Set it yourself on any `.ui-dotmatrix` to tune
+  the bloom.
 - **Contrast-gated.** Every shipped skin accent meets the same WCAG AA / 3:1
   floors as the core palette — see [contrast.md](contrast.md) → "Display
   colorways". (Your _own_ `--accent` re-brand is still your obligation; the

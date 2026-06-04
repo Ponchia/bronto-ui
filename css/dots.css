@@ -410,6 +410,30 @@
     background: ButtonText;
   }
 
+  /* Brand/live dots aren't status tones, but they still encode meaning via
+     background-color alone, which HCM flattens. Keep them on a distinct,
+     opted-out system colour for completeness. (audit C31.) */
+  .ui-dot--accent,
+  .ui-dot--live {
+    forced-color-adjust: none;
+    background: LinkText;
+  }
+
+  .ui-dot--live::after {
+    border-color: LinkText;
+  }
+
+  /* The masked one-node icon paints `background: currentcolor` through an SVG
+     mask. Under HCM, forced-color-adjust:auto can drop the mask fill so the
+     glyph vanishes (white-on-white) — yet .ui-icon is the recommended
+     icon-at-scale path AND backs .ui-legend__symbol, and the print block
+     already special-cases it. Opt out and pin the fill to the system text
+     colour so the glyph stays visible. (audit C1.) */
+  .ui-icon {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+
   .ui-dotmatrix__cell--hot {
     forced-color-adjust: none;
     background: Highlight;
