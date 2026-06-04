@@ -1,0 +1,134 @@
+/* ==========================================================================
+   tree — opt-in hierarchy outline on nested native <details name> disclosures.
+
+   A depth-indented outline for hierarchies: file trees, report contents, nested
+   generated-content provenance, object graphs. Built on nested native
+   `<details>` (optionally `name` exclusive-accordion groups) so open/close,
+   keyboard toggling and animation come from the platform — this leaf is the
+   hierarchy LAYER (rails, indent, chevron), it does NOT reinvent the disclosure
+   grammar that `ui-accordion` already owns. Pure CSS, SSR-static. Not imported
+   by core.css.
+
+   Boundary: the HOST owns the nesting and the labels. A11y honesty — a native
+   `<details>` group is a disclosure group, NOT an ARIA `tree`; do not bolt on
+   `role="tree"`/`treeitem` without the roving-focus keyboard model it implies.
+   That kernel is intentionally NOT shipped here; it lands behind a real consumer
+   (see docs/tree.md). The visuals below work on the full browser floor with zero
+   JS.
+   ========================================================================== */
+
+.ui-tree {
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+/* A branch is a <details>; a leaf is a plain row with no disclosure. Both are
+   rows in the outline. */
+.ui-tree__branch,
+.ui-tree__leaf {
+  display: block;
+}
+
+/* Nested rows indent and carry a hairline guide rail back to their parent. */
+.ui-tree__branch .ui-tree__branch,
+.ui-tree__branch .ui-tree__leaf {
+  border-inline-start: 1px solid var(--line);
+  margin-inline-start: 0.5rem;
+  padding-inline-start: var(--space-sm);
+}
+
+/* The summary is the clickable branch row; reset the native marker, lay it out
+   as label + twist. */
+.ui-tree__summary {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  gap: var(--space-2xs);
+  list-style: none;
+  padding-block: var(--space-2xs);
+}
+
+.ui-tree__summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Twist chevron — a currentColor caret that rotates open. */
+.ui-tree__summary::before {
+  block-size: 0.4rem;
+  border-block-end: 1.5px solid var(--text-dim);
+  border-inline-end: 1.5px solid var(--text-dim);
+  content: '';
+  flex: 0 0 auto;
+  inline-size: 0.4rem;
+  transform: rotate(-45deg);
+  transition: transform var(--duration-fast) var(--ease-spring);
+}
+
+.ui-tree__branch[open] > .ui-tree__summary::before {
+  border-color: var(--accent);
+  transform: rotate(45deg);
+}
+
+.ui-tree__branch[open] > .ui-tree__summary {
+  color: var(--accent-text);
+}
+
+/* A leaf has no chevron; align its label with branch labels via a spacer the
+   width of the chevron + gap. */
+.ui-tree__leaf {
+  align-items: center;
+  display: flex;
+  gap: var(--space-2xs);
+  padding-block: var(--space-2xs);
+}
+
+.ui-tree__leaf::before {
+  content: '';
+  flex: 0 0 auto;
+  inline-size: 0.4rem;
+}
+
+.ui-tree__label {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Auto-height open/close, gated exactly like ui-accordion (Chrome 131+/Safari
+   18.4+; Firefox snaps). Strict progressive enhancement + reduced-motion. */
+@supports selector(::details-content) {
+  @media (prefers-reduced-motion: no-preference) {
+    .ui-tree {
+      interpolate-size: allow-keywords;
+    }
+
+    .ui-tree__branch::details-content {
+      block-size: 0;
+      overflow: hidden;
+      transition:
+        block-size var(--duration-base) var(--ease-out),
+        content-visibility var(--duration-base) allow-discrete;
+    }
+
+    .ui-tree__branch[open]::details-content {
+      block-size: auto;
+    }
+  }
+}
+
+/* Reduced motion: no chevron spin. */
+@media (prefers-reduced-motion: reduce) {
+  .ui-tree__summary::before {
+    transition: none;
+  }
+}
+
+/* Forced colours: keep the open branch distinguishable when accent flattens. */
+@media (forced-colors: active) {
+  .ui-tree__branch[open] > .ui-tree__summary::before {
+    border-color: Highlight;
+  }
+}

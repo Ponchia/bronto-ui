@@ -1,0 +1,108 @@
+/* ==========================================================================
+   bullet — opt-in Stephen-Few bullet graph (measure vs target vs bands).
+
+   The canonical "is this measure inside its qualitative budget, and how does it
+   compare to target?" figure: a thin measure bar over 2–3 grayscale qualitative
+   range bands, with a perpendicular target tick. The SLO / error-budget figure
+   `ui-meter` (report.css) structurally cannot encode — a meter is a single
+   label|bar|value reading, a bullet carries bands + target too. Few designed it
+   grayscale on purpose, which is exactly the Nothing palette. Pure CSS,
+   SSR-static, print-survivable. Not imported by core.css.
+
+   Boundary: the HOST normalises EVERY value to 0..1 and sets custom props —
+   `--v` (measure), `--t` (target), `--b1`/`--b2` (the band boundaries). Bronto
+   only paints geometry; it refuses raw values and min/max/scale computation —
+   the same contract as `ui-spark`. A bare bullet is opaque to assistive tech, so
+   `.ui-bullet` MUST carry a host-written `role="img"` + `aria-label` text
+   equivalent (e.g. "uptime 99.62%, inside target 99.9%, in the warning band").
+   Colour is never the only channel — the reading lives in that label.
+   ========================================================================== */
+
+.ui-bullet {
+  --band-lo: 0.5;
+  --band-hi: 0.8;
+
+  background: linear-gradient(
+    to right,
+    var(--surface-4) 0 calc(var(--band-lo) * 100%),
+    var(--surface-3) calc(var(--band-lo) * 100%) calc(var(--band-hi) * 100%),
+    var(--surface-2) calc(var(--band-hi) * 100%) 100%
+  );
+  block-size: 1.25rem;
+  border-radius: var(--radius-sm);
+  inline-size: 100%;
+  position: relative;
+}
+
+/* The measure bar — a thinner dark bar centred in the track, the primary value.
+   `--v` is the normalised reading; with none it collapses to a hairline. */
+.ui-bullet__measure {
+  background: var(--text);
+  border-radius: var(--radius-sm);
+  inline-size: max(2px, calc(var(--v, 0) * 100%));
+  inset-block: 30%;
+  inset-inline-start: 0;
+  position: absolute;
+}
+
+/* Tone a measure for emphasis or status — the meaning still has to be in the
+   aria-label (WCAG 1.4.1), tone is decoration. */
+.ui-bullet__measure--accent {
+  background: var(--accent);
+}
+
+.ui-bullet__measure--pos {
+  background: var(--success);
+}
+
+.ui-bullet__measure--neg {
+  background: var(--danger);
+}
+
+/* The target tick — a full-height perpendicular mark at `--t`. Shape, not
+   colour, distinguishes it from the measure bar (Few's grayscale rule). */
+.ui-bullet__target {
+  background: var(--text);
+  inline-size: 2px;
+  inset-block: 8%;
+  inset-inline-start: calc(var(--t, 0) * 100%);
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+/* Optional caption row beneath the track — label + reading in mono, matching
+   the report meter's value treatment. */
+.ui-bullet__label {
+  color: var(--text-dim);
+  display: flex;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  gap: var(--space-sm);
+  justify-content: space-between;
+  letter-spacing: var(--tracking-wide);
+  margin-block-start: 0.3rem;
+}
+
+/* Forced colours flatten the band gradient to one system surface — the bands
+   would merge. Re-assert a track border so the figure keeps a frame, and repaint
+   the marks in the system text colour so measure + target survive (the band
+   distinction is carried by the required aria-label). */
+@media (forced-colors: active) {
+  .ui-bullet {
+    border: 1px solid CanvasText;
+  }
+
+  .ui-bullet__measure,
+  .ui-bullet__target {
+    background: CanvasText;
+  }
+}
+
+/* Print: the bands + marks are background/currentColor fills the print economy
+   would drop. */
+@media print {
+  .ui-bullet {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

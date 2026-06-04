@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — bullet specimen</title>
+    <meta
+      name="description"
+      content="Stephen-Few bullet-graph specimen for @ponchia/ui bullet CSS."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/bullet.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .bullet-demo {
+        margin: 0 auto;
+        max-width: 44ch;
+        padding: 2rem 1rem 4rem;
+      }
+
+      .bullet-demo figure {
+        margin: 0 0 1.5rem;
+      }
+
+      .bullet-demo figcaption {
+        color: var(--text-dim);
+        font-family: var(--mono);
+        font-size: var(--text-2xs);
+        margin-block-end: 0.4rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="bullet-demo">
+      <h1 class="ui-display">Bullet specimen</h1>
+
+      <figure>
+        <figcaption>Uptime — 99.62% (target 99.9%)</figcaption>
+        <div
+          class="ui-bullet"
+          style="--band-lo: 0.6; --band-hi: 0.85"
+          role="img"
+          aria-label="Uptime 99.62 percent, below the 99.9 percent target, in the middle band"
+        >
+          <div class="ui-bullet__measure ui-bullet__measure--neg" style="--v: 0.62"></div>
+          <div class="ui-bullet__target" style="--t: 0.9"></div>
+        </div>
+      </figure>
+
+      <figure>
+        <figcaption>Throughput — 1.4k rps (target 1.2k rps)</figcaption>
+        <div
+          class="ui-bullet"
+          style="--band-lo: 0.4; --band-hi: 0.7"
+          role="img"
+          aria-label="Throughput 1.4 thousand requests per second, above the 1.2 thousand target, in the top band"
+        >
+          <div class="ui-bullet__measure ui-bullet__measure--pos" style="--v: 0.78"></div>
+          <div class="ui-bullet__target" style="--t: 0.66"></div>
+        </div>
+      </figure>
+
+      <figure>
+        <figcaption>Error budget spent — 48% (cap 100%)</figcaption>
+        <div
+          class="ui-bullet"
+          style="--band-lo: 0.5; --band-hi: 0.8"
+          role="img"
+          aria-label="Error budget 48 percent spent, target 80 percent, in the first band"
+        >
+          <div class="ui-bullet__measure" style="--v: 0.48"></div>
+          <div class="ui-bullet__target" style="--t: 0.8"></div>
+        </div>
+        <p class="ui-bullet__label" aria-hidden="true"><span>Budget</span><span>48%</span></p>
+      </figure>
+    </main>
+  </body>
+</html>

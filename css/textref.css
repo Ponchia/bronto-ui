@@ -1,0 +1,63 @@
+/* ==========================================================================
+   textref — opt-in deep-link-to-the-cited-sentence provenance primitive.
+
+   A citation that jumps to the EXACT quoted text. The link's href is a URL
+   Text Fragment (`#…:~:text=`); the browser scrolls to the match and highlights
+   it for free, and Bronto owns the on-brand `::target-text` paint. The inline
+   counterpart to the static `ui-src` / `ui-citation` trust layer (sources.css),
+   which can label a source but not point inside it. Pure CSS + a host-built URL,
+   no kernel, SSR-static. Not imported by core.css.
+
+   Boundary: the HOST builds the fragment URL and sets it as the link's href.
+   The encoder is a three-line pure function (see docs/textref.md) — Bronto does
+   not ship runtime here, it owns the affordance class + the highlight paint.
+   `::target-text` is global by design: any text-fragment landing on the page
+   gets the brand highlight once this leaf is imported. On engines without Text
+   Fragments the link still navigates to the section; the highlight is additive.
+   ========================================================================== */
+
+.ui-textref {
+  --textref-highlight: var(--accent-soft);
+
+  color: var(--accent-text);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 0.2em;
+}
+
+/* A small leading caret signals "this jumps to the quoted text", distinct from
+   a plain external link. currentColor only — no raw paint. */
+.ui-textref::before {
+  content: '\201F'; /* double high-reversed-9 quote — a quote-jump cue */
+  margin-inline-end: 0.15em;
+}
+
+@media (hover: hover) {
+  .ui-textref:hover {
+    text-decoration-style: solid;
+  }
+}
+
+.ui-textref:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* The browser-painted highlight on the matched fragment. Scoped to the page
+   the link lands on; the accent-soft wash is the same rationed-accent surface
+   the rest of the trust layer uses. `--textref-highlight` lets a host retune it
+   per-surface. */
+::target-text {
+  background-color: var(--textref-highlight, var(--accent-soft));
+  color: var(--text);
+}
+
+/* Forced colours: the accent wash collapses to the system surface and the match
+   would be invisible — repaint with the system selection colours so the jump
+   target still reads. */
+@media (forced-colors: active) {
+  ::target-text {
+    background-color: Highlight;
+    color: HighlightText;
+  }
+}

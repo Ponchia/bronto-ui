@@ -1,0 +1,91 @@
+/* ==========================================================================
+   toc — opt-in scrollspy table-of-contents rail for long reports.
+
+   A sticky contents list whose entry for the section currently in view is
+   highlighted, so a reader of a long generated report always knows where they
+   are. Long-document orientation, on the generated-reports pillar. Degrades to a
+   plain anchored list with zero JS. Not imported by core.css.
+
+   Boundary: the HOST owns the section IDs and the anchor list; Bronto owns the
+   rail's classes + the active treatment. The active state keys on the standard
+   `aria-current="true"` hook. CSS alone cannot know which section is in view, so
+   the host mirrors the in-view section onto its link's `aria-current` — either
+   statically (server-rendered "current page") or with a small IntersectionObserver
+   (~15 lines, copy-paste recipe in docs/toc.md). No Bronto kernel ships for it;
+   the rail is fully useful as a static sticky list without the observer.
+   ========================================================================== */
+
+.ui-toc {
+  --toc-top: var(--space-md);
+
+  align-self: start;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  inset-block-start: var(--toc-top);
+  letter-spacing: var(--tracking-wide);
+  position: sticky;
+}
+
+/* An optional eyebrow heading for the rail. */
+.ui-toc__title {
+  color: var(--text-dim);
+  font-size: var(--text-2xs);
+  margin-block-end: var(--space-xs);
+  text-transform: uppercase;
+}
+
+.ui-toc__list {
+  display: grid;
+  gap: 1px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Nested lists indent for sub-sections. */
+.ui-toc__list .ui-toc__list {
+  margin-inline-start: var(--space-sm);
+}
+
+.ui-toc__link {
+  border-inline-start: 2px solid var(--line);
+  color: var(--text-dim);
+  display: block;
+  padding: 0.3rem var(--space-sm);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+/* The section in view. Keys on `aria-current` (the framework rule every other
+   nav surface here uses) so a host that sets only aria-current still lights up. */
+.ui-toc__link[aria-current]:not([aria-current='false']) {
+  border-inline-start-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.ui-toc__link:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+
+@media (hover: hover) {
+  .ui-toc__link:hover:not([aria-current]:not([aria-current='false'])) {
+    color: var(--text);
+  }
+}
+
+/* Forced colours: the accent border + text collapse to the system surface and
+   the active entry loses its only cue — re-assert with the system highlight. */
+@media (forced-colors: active) {
+  .ui-toc__link[aria-current]:not([aria-current='false']) {
+    border-inline-start-color: Highlight;
+    color: Highlight;
+  }
+}
+
+/* Reduced motion: drop the colour transition. */
+@media (prefers-reduced-motion: reduce) {
+  .ui-toc__link {
+    transition: none;
+  }
+}

@@ -36,6 +36,11 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 - [code.md](./code.md) — fenced-code evidence chrome (`ui-code`, line numbers + add/del/hl states; never parses).
 - [spark.md](./spark.md) — inline datawords / word-sized microcharts (`ui-spark`, host-normalised `--v`).
 - [sidenote.md](./sidenote.md) — Tufte margin notes (`ui-sidenote` numbered, `ui-marginnote` plain).
+- [textref.md](./textref.md) — deep-link a citation to the exact cited sentence (`ui-textref` + `::target-text` paint).
+- [bullet.md](./bullet.md) — Stephen-Few bullet graph: measure vs target vs grayscale bands (`ui-bullet`, host-normalised `--v`/`--t`).
+- [term.md](./term.md) — inline glossary term + definition popover and end-of-report `<dl>` (`ui-term`/`ui-def`/`ui-glossary`).
+- [toc.md](./toc.md) — sticky scrollspy table-of-contents rail (`ui-toc`, `aria-current` active section).
+- [tree.md](./tree.md) — hierarchy outline on nested `<details>` (`ui-tree` branches/leaves; disclosure group, not an ARIA tree).
 - [connectors.md](./connectors.md) — leader lines between DOM elements.
 - [spotlight.md](./spotlight.md) — guided-focus overlay.
 - [crosshair.md](./crosshair.md) — plot ruler + pinned readout.

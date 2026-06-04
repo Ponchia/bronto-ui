@@ -423,6 +423,28 @@ export declare const cls: {
   readonly sidenote: 'ui-sidenote';
   readonly marginnote: 'ui-marginnote';
   readonly sidenoteRef: 'ui-sidenote__ref';
+  readonly textref: 'ui-textref';
+  readonly bullet: 'ui-bullet';
+  readonly bulletMeasure: 'ui-bullet__measure';
+  readonly bulletMeasureAccent: 'ui-bullet__measure--accent';
+  readonly bulletMeasurePos: 'ui-bullet__measure--pos';
+  readonly bulletMeasureNeg: 'ui-bullet__measure--neg';
+  readonly bulletTarget: 'ui-bullet__target';
+  readonly bulletLabel: 'ui-bullet__label';
+  readonly term: 'ui-term';
+  readonly def: 'ui-def';
+  readonly glossary: 'ui-glossary';
+  readonly glossaryTerm: 'ui-glossary__term';
+  readonly glossaryDef: 'ui-glossary__def';
+  readonly toc: 'ui-toc';
+  readonly tocTitle: 'ui-toc__title';
+  readonly tocList: 'ui-toc__list';
+  readonly tocLink: 'ui-toc__link';
+  readonly tree: 'ui-tree';
+  readonly treeBranch: 'ui-tree__branch';
+  readonly treeLeaf: 'ui-tree__leaf';
+  readonly treeSummary: 'ui-tree__summary';
+  readonly treeLabel: 'ui-tree__label';
   readonly state: 'ui-state';
   readonly stateLabel: 'ui-state__label';
   readonly stateDetail: 'ui-state__detail';
@@ -742,6 +764,10 @@ export interface SparkBarOpts {
   /** Emphasise / tone a single bar. The meaning must still be in the spark's aria-label. */
   tone?: 'accent' | 'pos' | 'neg';
 }
+export interface BulletMeasureOpts {
+  /** Emphasise / tone the measure bar. The meaning must still be in the bullet's aria-label. */
+  tone?: 'accent' | 'pos' | 'neg';
+}
 
 export interface Ui {
   button(opts?: ButtonOpts): string;
@@ -790,6 +816,7 @@ export interface Ui {
   code(opts?: CodeOpts): string;
   codeLine(opts?: CodeLineOpts): string;
   sparkBar(opts?: SparkBarOpts): string;
+  bulletMeasure(opts?: BulletMeasureOpts): string;
   state(opts?: StateOpts): string;
   originLabel(opts?: OriginLabelOpts): string;
 }

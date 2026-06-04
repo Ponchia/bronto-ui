@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — term specimen</title>
+    <meta
+      name="description"
+      content="Inline glossary term + definition popover specimen for @ponchia/ui term CSS."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/term.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .term-demo {
+        margin: 0 auto;
+        max-width: 56ch;
+        padding: 2rem 1rem 4rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="term-demo ui-prose">
+      <h1 class="ui-display">Term specimen</h1>
+
+      <p>
+        We held the
+        <button class="ui-term" popovertarget="def-eb">error budget</button>
+        through the change, and
+        <button class="ui-term" popovertarget="def-p95">p95</button>
+        latency fell within target. Each term is a real button, reachable by keyboard and touch —
+        unlike <code>abbr[title]</code>.
+        <span class="ui-def" popover id="def-eb">
+          The amount of unreliability a service is allowed to spend before its SLO is breached.
+        </span>
+        <span class="ui-def" popover id="def-p95">
+          The 95th-percentile value of a latency distribution — 95% of requests were at least this
+          fast.
+        </span>
+      </p>
+
+      <h2>Glossary</h2>
+      <dl class="ui-glossary">
+        <dt class="ui-glossary__term">Error budget</dt>
+        <dd class="ui-glossary__def">
+          The unreliability a service may spend before its SLO breaches.
+        </dd>
+        <dt class="ui-glossary__term">p95</dt>
+        <dd class="ui-glossary__def">The 95th-percentile value of a latency distribution.</dd>
+        <dt class="ui-glossary__term">SLO</dt>
+        <dd class="ui-glossary__def">
+          Service Level Objective — the reliability target a team commits to.
+        </dd>
+      </dl>
+    </main>
+  </body>
+</html>

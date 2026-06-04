@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — textref specimen</title>
+    <meta
+      name="description"
+      content="Deep-link-to-cited-text provenance specimen for @ponchia/ui textref CSS."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/textref.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .textref-demo {
+        margin: 0 auto;
+        max-width: 60ch;
+        padding: 2rem 1rem 60vh;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="textref-demo ui-prose">
+      <h1 class="ui-display">Textref specimen</h1>
+
+      <p>
+        The post-migration incident review records the headline result: the
+        <a class="ui-textref" href="#:~:text=p95%20latency%20fell%2038%25"
+          >jump to the measured claim</a
+        >. The link's <code>href</code> is a URL Text Fragment, so the browser scrolls to the
+        sentence and paints it with the on-brand <code>::target-text</code> wash.
+      </p>
+
+      <h2 id="review">Incident review — measured outcome</h2>
+      <p>
+        Over the first 24 hours after rollout, p95 latency fell 38% against the prior week's
+        baseline, and the error budget held through the change with no paging events. A canary at 5%
+        ran for an hour before the full cut-over, and the rollback path stayed warm the entire
+        window.
+      </p>
+    </main>
+  </body>
+</html>

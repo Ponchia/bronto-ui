@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 507 classes across 154 component groups
+- 529 classes across 161 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -245,6 +245,18 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.breakBefore` | `ui-break-before` | base |
 
+### `.ui-bullet`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.bullet` | `ui-bullet` | base |
+| `cls.bulletLabel` | `ui-bullet__label` | part |
+| `cls.bulletMeasure` | `ui-bullet__measure` | part |
+| `cls.bulletMeasureAccent` | `ui-bullet__measure--accent` | modifier |
+| `cls.bulletMeasureNeg` | `ui-bullet__measure--neg` | modifier |
+| `cls.bulletMeasurePos` | `ui-bullet__measure--pos` | modifier |
+| `cls.bulletTarget` | `ui-bullet__target` | part |
+
 ### `.ui-button`
 
 | Registry key | Class | Kind |
@@ -405,6 +417,12 @@ each one matches a real selector in the stylesheet.
 | `cls.crosshairLineY` | `ui-crosshair__line--y` | modifier |
 | `cls.crosshairMuted` | `ui-crosshair--muted` | modifier |
 
+### `.ui-def`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.def` | `ui-def` | base |
+
 ### `.ui-delta`
 
 | Registry key | Class | Kind |
@@ -547,6 +565,14 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.generated` | `ui-generated` | base |
 | `cls.generatedLabel` | `ui-generated__label` | part |
+
+### `.ui-glossary`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.glossary` | `ui-glossary` | base |
+| `cls.glossaryDef` | `ui-glossary__def` | part |
+| `cls.glossaryTerm` | `ui-glossary__term` | part |
 
 ### `.ui-grid`
 
@@ -1211,11 +1237,23 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.tags` | `ui-tags` | base |
 
+### `.ui-term`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.term` | `ui-term` | base |
+
 ### `.ui-textarea`
 
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.textarea` | `ui-textarea` | base |
+
+### `.ui-textref`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.textref` | `ui-textref` | base |
 
 ### `.ui-themetoggle`
 
@@ -1255,6 +1293,15 @@ each one matches a real selector in the stylesheet.
 | `cls.toastStack` | `ui-toast-stack` | base |
 | `cls.toastStackAssertive` | `ui-toast-stack--assertive` | modifier |
 
+### `.ui-toc`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.toc` | `ui-toc` | base |
+| `cls.tocLink` | `ui-toc__link` | part |
+| `cls.tocList` | `ui-toc__list` | part |
+| `cls.tocTitle` | `ui-toc__title` | part |
+
 ### `.ui-tool-call`
 
 | Registry key | Class | Kind |
@@ -1286,6 +1333,16 @@ each one matches a real selector in the stylesheet.
 | `cls.tourNoteBody` | `ui-tour-note__body` | part |
 | `cls.tourNoteStep` | `ui-tour-note__step` | part |
 | `cls.tourNoteTitle` | `ui-tour-note__title` | part |
+
+### `.ui-tree`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.tree` | `ui-tree` | base |
+| `cls.treeBranch` | `ui-tree__branch` | part |
+| `cls.treeLabel` | `ui-tree__label` | part |
+| `cls.treeLeaf` | `ui-tree__leaf` | part |
+| `cls.treeSummary` | `ui-tree__summary` | part |
 
 ### `.ui-visually-hidden`
 
