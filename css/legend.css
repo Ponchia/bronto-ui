@@ -90,10 +90,13 @@
   inline-size: 1.1rem;
 }
 
-/* Glyph/symbol swatch — fill an `.ui-icon` mask with the series colour. */
+/* Glyph/symbol swatch — fill an `.ui-icon` mask with the series colour. Match the
+   __swatch fallback chain exactly (--chart-color → --chart-1 → --accent): without
+   the --chart-1 layer, a symbol and a swatch for the SAME series diverge to two
+   colours whenever a theme overrides --chart-1. (audit C22.) */
 .ui-legend__symbol {
   block-size: 0.95rem;
-  color: var(--chart-color, var(--accent));
+  color: var(--chart-color, var(--chart-1, var(--accent)));
   flex: 0 0 auto;
   inline-size: 0.95rem;
 }

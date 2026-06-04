@@ -21,7 +21,15 @@ test('classes.json: every group member is a real class under its base', () => {
   // a part-modifier like `ui-crosshair__line--x`); a member with `__` and no
   // `--` is a part. Every member shares the base prefix by construction.
   for (const [base, g] of Object.entries(m.groups)) {
-    assert.equal(g.base, base);
+    // `g.base` is the standalone base class when it exists, else null for a
+    // parts-only namespace (e.g. ui-themetoggle — __button/__track but no bare
+    // .ui-themetoggle). Members still share the `base` key prefix either way. (C11.)
+    if (g.base === null) {
+      assert.ok(!allClasses.has(base), `group "${base}" has base:null but ${base} IS a real class`);
+    } else {
+      assert.equal(g.base, base);
+      assert.ok(allClasses.has(base), `non-null base "${base}" must be in classes[]`);
+    }
     for (const mod of g.modifiers) {
       assert.ok(allClasses.has(mod), `modifier ${mod} (group ${base}) not in classes[]`);
       assert.ok(mod.startsWith(base), `modifier ${mod} not under base ${base}`);
@@ -64,4 +72,30 @@ test('classes.json: rootAttributes are well-formed', () => {
   const byName = Object.fromEntries(m.rootAttributes.map((a) => [a.name, a]));
   assert.ok(byName['data-theme'], 'data-theme documented');
   assert.ok(byName['data-bronto-skin'], 'data-bronto-skin documented');
+});
+
+test('classes.json: behaviorAttributes + requiredAria are well-formed (C14/C18)', () => {
+  assert.ok(
+    Array.isArray(m.behaviorAttributes) && m.behaviorAttributes.length,
+    'behaviorAttributes present',
+  );
+  for (const a of m.behaviorAttributes) {
+    assert.match(a.name, /^data-bronto-[a-z-]+$/, `behaviorAttribute ${a.name} malformed`);
+    assert.ok(a.on && a.behavior && a.note, `behaviorAttribute ${a.name} missing on/behavior/note`);
+    assert.match(a.behavior, /^init[A-Z]/, `behaviorAttribute ${a.name} behavior not an init*`);
+  }
+  const hooks = new Set(m.behaviorAttributes.map((a) => a.name));
+  for (const h of ['data-bronto-open', 'data-bronto-popover', 'data-bronto-dismiss']) {
+    assert.ok(hooks.has(h), `${h} documented`);
+  }
+
+  assert.ok(Array.isArray(m.requiredAria) && m.requiredAria.length, 'requiredAria present');
+  for (const r of m.requiredAria) {
+    assert.match(r.on, /^\.ui-/, `requiredAria entry ${r.on} should target a .ui- class`);
+    assert.ok(r.require, `requiredAria ${r.on} missing require`);
+  }
+  const ariaFor = new Set(m.requiredAria.map((r) => r.on));
+  for (const c of ['.ui-progress', '.ui-meter', '.ui-error-summary']) {
+    assert.ok(ariaFor.has(c), `${c} requiredAria documented`);
+  }
 });

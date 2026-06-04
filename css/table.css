@@ -35,6 +35,11 @@
   position: sticky;
   text-transform: uppercase;
   inset-block-start: 0;
+
+  /* Keep the sticky header above body cells — cheap insurance for the
+     sticky-header + pinned/positioned-column combo, where an un-z-indexed th
+     scrolls under a positioned cell. (audit C30.) */
+  z-index: 1;
 }
 
 .ui-table td {

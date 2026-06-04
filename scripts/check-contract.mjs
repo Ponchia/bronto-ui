@@ -33,10 +33,12 @@ const errors = [];
 // stripped, so a name living only in a comment doesn't count as defined.
 const cssDir = resolve(root, 'css');
 const definedProps = new Set();
+const selectorClasses = new Set(); // every ui-* class that appears in a selector
 for (const f of readdirSync(cssDir)) {
   if (!f.endsWith('.css')) continue;
   const src = stripCssComments(readFileSync(resolve(cssDir, f), 'utf8'));
   for (const m of src.matchAll(/(--[\w-]+)\s*:/g)) definedProps.add(m[1]);
+  for (const m of src.matchAll(/\.(ui-[\w-]+)/g)) selectorClasses.add(m[1]);
 }
 
 const manifest = buildClassesJson();
@@ -122,6 +124,21 @@ for (const [name, where] of seen) {
   }
 }
 
+// ---- (d) every non-null groups[].base resolves to a real CSS selector ------
+// classes.json synthesises a `base` per namespace. A `base` with NO `.base { }`
+// rule is a phantom that renders unstyled — the `ui-themetoggle` C11 trap, where
+// classes.json advertised a base the CSS never defined. Gen now sets a parts-only
+// namespace's base to null; this proves every NON-null base really has a selector.
+for (const [name, g] of Object.entries(manifest.groups)) {
+  if (g.base && !selectorClasses.has(g.base)) {
+    errors.push(
+      `(d) groups["${name}"].base "${g.base}" is declared but has no .${g.base} ` +
+        `selector in css/ — a phantom base renders unstyled. Set it null if this ` +
+        `is a parts-only namespace, or add the missing CSS rule.`,
+    );
+  }
+}
+
 // ---- report ----------------------------------------------------------------
 if (errors.length) {
   console.error(`✗ check:contract — ${errors.length} doc/contract surface(s) silently lie:`);
@@ -133,7 +150,9 @@ if (errors.length) {
   process.exit(1);
 }
 
+const basesChecked = Object.values(manifest.groups).filter((g) => g.base).length;
 console.log(
   `✓ check:contract — ${manifest.customProperties.length} customProperties examples resolve, ` +
-    `${WIRING.length} wiring attrs in reference.md, ${seen.size} documented init*() all exported`,
+    `${WIRING.length} wiring attrs in reference.md, ${seen.size} documented init*() all exported, ` +
+    `${basesChecked} group bases resolve to a CSS selector`,
 );

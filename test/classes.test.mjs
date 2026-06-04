@@ -1,6 +1,29 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import ui, { ui as uiNamed, cls, cx } from '../classes/index.js';
+import ui, { ui as uiNamed, cls, cx, attrs } from '../classes/index.js';
+
+test('attrs.meter/progress bundle the painted value with its announced value', () => {
+  const p = attrs.progress(64);
+  assert.equal(p.role, 'progressbar');
+  assert.equal(p['aria-valuenow'], 64);
+  assert.equal(p.style['--value'], 64);
+
+  // {min,max} normalises the painted --value to 0..100 while aria-valuenow stays
+  // in the caller's real units.
+  const m = attrs.meter(30, { min: 0, max: 60 });
+  assert.equal(m['aria-valuenow'], 30);
+  assert.equal(m.style['--value'], 50);
+});
+
+test('attrs.progress() with no value is indeterminate — omits aria-valuenow (C9)', () => {
+  const ind = attrs.progress();
+  assert.equal(ind.role, 'progressbar');
+  assert.equal(ind['aria-busy'], 'true');
+  // The whole point: NO aria-valuenow (0 would announce "0%" — a stalled bar)
+  // and no --value (the .ui-progress--indeterminate class drives the sweep).
+  assert.ok(!('aria-valuenow' in ind));
+  assert.ok(!('style' in ind));
+});
 
 test('cx flattens nested arrays at any depth and skips falsy', () => {
   assert.equal(cx(['a', [false, 'b'], [['c']]]), 'a b c');

@@ -311,13 +311,42 @@ const NAMED_CHROMATIC = new RegExp(
   'i',
 );
 
+// `color: var(--accent)` as READABLE TEXT must instead use `--accent-text` (the
+// AA-darkened ramp step): raw --accent drops to ~1.5:1 after a one-knob re-brand
+// to a paler accent (the sidenote C6 trap, which shipped green because nothing
+// gated it). Accent-as-ICON is fine — a glyph is a graphical object (3:1), not
+// small text — so exempt selectors that target an icon/glyph/pseudo-element.
+const ACCENT_AS_TEXT = /^\s*color:\s*var\(\s*--accent(?:-strong)?\s*\)\s*;?\s*$/;
+const GRAPHICAL_SELECTOR =
+  /icon|svg|symbol|::(before|after)|caret|chevron|arrow|thumb|marker|__dot/i;
+
 // Scan assumes one declaration per line (Prettier guarantees this in-repo).
 // Multi-line values (e.g. hand-formatted `color-mix()`) could evade the named-color
 // arm because the `:` split only sees the first line of such a value.
 for (const file of readdirSync(cssDir).filter((f) => f.endsWith('.css') && !isDefinitionFile(f))) {
   const lines = stripCssComments(readFileSync(resolve(cssDir, file), 'utf8')).split('\n');
+  let selectorBuf = '';
+  let activeSelector = '';
   lines.forEach((raw, i) => {
     const line = stripUrls(raw);
+
+    // Accent-as-text policy (uses the selector from the `{` line already seen above).
+    if (ACCENT_AS_TEXT.test(line) && !GRAPHICAL_SELECTOR.test(activeSelector)) {
+      errors.push(
+        `css/${file}:${i + 1} \`color: var(--accent)\` on text "${activeSelector.trim()}" — ` +
+          `use --accent-text (raw --accent fails WCAG AA after a paler re-brand; ADR-0001 / audit C6)`,
+      );
+    }
+    // Track the active selector for the next declarations: accumulate comma-grouped
+    // selector lines, freeze on `{`, reset on `}`.
+    const t = line.trim();
+    if (t.includes('}')) selectorBuf = '';
+    if (t.includes('{')) {
+      activeSelector = `${selectorBuf} ${t.split('{')[0]}`.trim();
+      selectorBuf = '';
+    } else if (/,\s*$/.test(t)) {
+      selectorBuf += ` ${t}`;
+    }
     for (const m of line.matchAll(/#([0-9a-fA-F]{3,8})\b/g)) {
       if (!isGrayHex(m[1])) {
         errors.push(

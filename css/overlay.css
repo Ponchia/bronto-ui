@@ -152,6 +152,21 @@ dialog.ui-modal[open]::backdrop {
   }
 }
 
+/* Comfortable hit target on coarse pointers — this bespoke close button measured
+   ~26px on touch, below the 2.9rem floor the rest of the button family meets
+   (WCAG 2.5.8). Scoped to coarse so the fine-pointer (mouse) rendering, which
+   already clears 24×24, is unchanged; centre the glyph in the enlarged box.
+   (audit C3.) */
+@media (pointer: coarse) {
+  .ui-modal__close {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    min-block-size: 2.9rem;
+    min-inline-size: 2.9rem;
+  }
+}
+
 /* --- Lightbox — a full-viewport <dialog> wrapping a .ui-carousel. The
    native <dialog> brings the top layer, focus-trap and Escape; initDialog
    adds open (`data-bronto-open`) + focus-return; initCarousel drives the
@@ -337,6 +352,18 @@ dialog.ui-modal[open]::backdrop {
 .ui-combobox__option[aria-selected='true'] {
   background: var(--bg-accent);
   color: var(--text);
+}
+
+/* The active option is tracked by aria-activedescendant — it is NEVER DOM-focused,
+   so it gets no UA focus ring under HCM, and its only cue (--bg-accent) is stripped.
+   Re-assert a system Highlight like the command palette does. (audit C2.) */
+@media (forced-colors: active) {
+  .ui-combobox__option.is-active,
+  .ui-combobox__option[aria-selected='true'] {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
 }
 
 .ui-combobox__empty {

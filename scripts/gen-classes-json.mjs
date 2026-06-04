@@ -34,13 +34,21 @@ const baseOf = (v) => v.split('--')[0].split('__')[0];
 
 const all = [...new Set(Object.values(cls))].sort();
 
+const allSet = new Set(all);
+
 const groups = {};
 for (const value of all) {
-  const base = baseOf(value);
-  groups[base] ??= { base, modifiers: [], parts: [] };
-  if (value === base) continue;
-  if (value.includes('--')) groups[base].modifiers.push(value);
-  else if (value.includes('__')) groups[base].parts.push(value);
+  const prefix = baseOf(value);
+  // `base` is the standalone base class ONLY when it actually exists in `cls`
+  // (and therefore the CSS). A parts-only namespace — e.g. `ui-themetoggle` has
+  // `__button`/`__track` but NO bare `.ui-themetoggle` rule — gets `base: null`,
+  // so a contract-driven generator never emits a phantom unstyled
+  // `class="ui-themetoggle"`. A CSS-presence gate (check-classes.mjs) enforces
+  // that every non-null `base` resolves to a real selector. (component audit C11.)
+  groups[prefix] ??= { base: allSet.has(prefix) ? prefix : null, modifiers: [], parts: [] };
+  if (value === prefix) continue;
+  if (value.includes('--')) groups[prefix].modifiers.push(value);
+  else if (value.includes('__')) groups[prefix].parts.push(value);
 }
 
 // Sorted-key object so the JSON is byte-stable regardless of `cls` order.
@@ -236,6 +244,24 @@ const customProperties = [
     example: '50%',
     note: 'min width of the main child before the two stack (default 60%)',
   },
+  // Gap knobs for the two flex Every-Layout primitives. Every sibling layout
+  // (--stack-gap/--cluster-gap/--grid-gap) was already discoverable; these two
+  // were the only gaps an author had to guess, so an LLM hand-rolled a margin.
+  // (component audit C13.)
+  {
+    name: '--sidebar-gap',
+    on: '.ui-sidebar',
+    type: 'length',
+    example: '1.5rem',
+    note: 'gap between the sidebar and the main child (default var(--space-md))',
+  },
+  {
+    name: '--switcher-gap',
+    on: '.ui-switcher',
+    type: 'length',
+    example: '1.5rem',
+    note: 'gap between switcher children in both row and column states (default var(--space-md))',
+  },
   {
     name: '--switcher-min',
     on: '.ui-switcher',
@@ -346,16 +372,109 @@ const rootAttributes = [
   },
 ];
 
+// Behaviour-wiring attributes (`data-bronto-*`) — the open/close/dismiss hooks
+// the optional behaviors delegate on. classes/rootAttributes are about painting
+// and theming; this is the OTHER half a contract-driven generator needs: how to
+// wire an overlay up. Without it the open/close contract lived only in JSDoc, so
+// a tool reading the manifest could emit a `.ui-modal` but had no way to open it.
+// (component audit C14.)
+const behaviorAttributes = [
+  {
+    name: 'data-bronto-open',
+    on: 'a trigger (button/link)',
+    value: 'id of the target <dialog>',
+    behavior: 'initDialog',
+    note: 'click calls showModal() on the named <dialog>; focus returns to the trigger on every close path',
+  },
+  {
+    name: 'data-bronto-close',
+    on: 'a button inside a <dialog>',
+    behavior: 'initDialog',
+    note: 'click closes the nearest enclosing <dialog>',
+  },
+  {
+    name: 'data-bronto-dialog-light',
+    on: 'a <dialog>',
+    behavior: 'initDialog',
+    note: 'opt into backdrop light-dismiss (click the backdrop to close)',
+  },
+  {
+    name: 'data-bronto-modal',
+    on: 'a controlled (non-<dialog>) .ui-modal overlay',
+    behavior: 'initModal',
+    note: 'inert focus-trap + .is-open toggling for a modal that is not a native <dialog>; needs an accessible name',
+  },
+  {
+    name: 'data-bronto-menu',
+    on: 'a native <details> dropdown',
+    behavior: 'initMenu',
+    note: 'adds outside-click / Escape close affordances to a <details>-based .ui-menu',
+  },
+  {
+    name: 'data-bronto-popover',
+    on: 'a trigger',
+    value: 'id of the .ui-popover panel',
+    behavior: 'initPopover',
+    note: 'collision-aware NON-modal popover (no focus trap); top-layer via the native popover attr when present, else an .is-open class. Author an accessible name on the panel.',
+  },
+  {
+    name: 'data-bronto-command',
+    on: 'a .ui-command palette host wrapping its input',
+    behavior: 'initCommand',
+    note: 'wires the filter input + active-option keyboard model',
+  },
+  {
+    name: 'data-bronto-dismiss',
+    on: 'a button',
+    value: 'optional CSS selector of the ancestor to remove',
+    behavior: 'initDismissible',
+    note: 'click removes the nearest matching ancestor (or, with no value, the nearest [data-bronto-dismissible])',
+  },
+  {
+    name: 'data-bronto-disclosure',
+    on: 'a trigger',
+    value: 'id of the element it toggles',
+    behavior: 'initDisclosure',
+    note: 'toggles the named element + keeps aria-expanded in sync',
+  },
+];
+
+// Per-component ARIA a generator MUST emit for the role to mean anything — the
+// class paints, but a `.ui-meter`/`.ui-progress`/`.ui-error-summary` with no role
+// is invisible to AT. The `attrs.*` helpers from @ponchia/ui/classes set these for
+// you; this is the language-neutral statement of the same contract. (audit C18.)
+const requiredAria = [
+  {
+    on: '.ui-progress',
+    require:
+      'role="progressbar" + aria-valuenow/min/max (determinate); role="progressbar" + aria-busy="true" and NO aria-valuenow (indeterminate)',
+    helper: 'attrs.progress(value) / attrs.progress()',
+  },
+  {
+    on: '.ui-meter',
+    require: 'role="meter" + aria-valuenow/min/max',
+    helper: 'attrs.meter(value)',
+  },
+  {
+    on: '.ui-error-summary',
+    require:
+      'role="alert" + tabindex="-1" on the hand-authored summary so it is announced and focusable when validation fails',
+    helper: 'initForms wires this for the dynamic summary; a static summary needs it hand-set',
+  },
+];
+
 export function buildClassesJson() {
   return {
     $comment:
-      '@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.',
+      '@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `groups[].base` is null for a parts-only namespace (no standalone base class — do NOT emit it). A modifier whose name contains `__` (e.g. `ui-spark__bar--pos`) attaches to THAT part, not the base host. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `behaviorAttributes` are the `data-bronto-*` wiring hooks the optional behaviors delegate on; `requiredAria` is the role/aria a generator must emit per component. `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.',
     counts: { classes: all.length, groups: Object.keys(sortedGroups).length },
     groups: sortedGroups,
     classes: all,
     states,
     customProperties,
     rootAttributes,
+    behaviorAttributes,
+    requiredAria,
   };
 }
 

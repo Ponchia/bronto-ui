@@ -329,19 +329,35 @@
         <section class="ui-stack" data-shot="loaders">
           <h3 class="ui-eyebrow ui-eyebrow--muted">Loaders · Progress</h3>
           <div class="ui-cluster" style="gap: 1.5rem">
-            <span class="ui-dotspinner ui-dotspinner--sm"
+            <span class="ui-dotspinner ui-dotspinner--sm" aria-hidden="true"
               ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
             ></span>
-            <span class="ui-dotspinner"
+            <span class="ui-dotspinner" aria-hidden="true"
               ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
             ></span>
-            <span class="ui-spinner"></span>
-            <span class="ui-dotloader"><span></span><span></span><span></span></span>
+            <span class="ui-spinner" role="status" aria-label="Loading"></span>
+            <span class="ui-dotloader" aria-hidden="true"
+              ><span></span><span></span><span></span
+            ></span>
           </div>
-          <div class="ui-progress" style="max-width: 24rem">
+          <div
+            class="ui-progress"
+            style="max-width: 24rem"
+            role="progressbar"
+            aria-label="Upload progress"
+            aria-valuenow="64"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
             <div class="ui-progress__bar" style="--value: 64"></div>
           </div>
-          <div class="ui-progress ui-progress--indeterminate" style="max-width: 24rem">
+          <div
+            class="ui-progress ui-progress--indeterminate"
+            style="max-width: 24rem"
+            role="progressbar"
+            aria-busy="true"
+            aria-label="Loading"
+          >
             <div class="ui-progress__bar"></div>
           </div>
           <div class="ui-dotbar ui-dotbar--indeterminate" style="max-width: 18rem">

@@ -158,10 +158,13 @@
   animation: uiMatrixReveal var(--duration-slow) var(--ease-out) both;
 }
 
-/* Stagger children: set --i on each child (or use nth-child cap). */
+/* Stagger children: set --i on each child (or use nth-child cap). Cap the manual
+   --i path at index 6 (360ms) to match the .ui-stagger--auto ceiling — a long
+   list with --i:30 would otherwise hold the last child at opacity:0 for 1.8s
+   before popping in. (audit C32.) */
 .ui-stagger > * {
   animation: uiRise var(--duration-slow) var(--ease-spring) both;
-  animation-delay: calc(var(--i, 0) * 60ms);
+  animation-delay: calc(min(var(--i, 0), 6) * 60ms);
 }
 
 .ui-stagger--auto > *:nth-child(1) {
@@ -285,6 +288,14 @@
 
   .ui-scroll-progress {
     background: Highlight;
+  }
+
+  /* HCM strips the shimmer gradient, leaving an invisible box where a loading
+     placeholder should be. Give it a system-colour border so the skeleton
+     still reads as present. Same decorative-loading family as the spinner +
+     scroll-progress above. (audit C15.) */
+  .ui-skeleton {
+    border: 1px solid CanvasText;
   }
 }
 

@@ -1027,7 +1027,13 @@ export function renderGlyph(name, options = {}) {
   const style = [`--dotmatrix-cols:${GLYPH_SIZE}`];
   const dotLen = dot && cssLen(dot);
   const gapLen = gap && cssLen(gap);
-  if (dotLen) style.push(`--dotmatrix-dot:${dotLen}`);
+  // Default the dot track to an intrinsic icon scale when the author set no
+  // (valid) `--dotmatrix-dot`. Without it the CSS grid falls back to
+  // `minmax(0, 1fr)` and the 16×16 matrix balloons to fill its container
+  // (full-bleed, ~1250px) — the string API would then render an icon-intent call
+  // very differently from the DOM `initDotGlyph` path, which already defaults to
+  // 0.08em. Mirror that default here so both paths render the same icon. (C7.)
+  style.push(`--dotmatrix-dot:${dotLen || '0.08em'}`);
   // Solid mode fuses the dots into a crisp pixel glyph: square cells, no gap.
   if (solid) style.push('--dotmatrix-dot-radius:0', '--dotmatrix-gap:0');
   else if (gapLen) style.push(`--dotmatrix-gap:${gapLen}`);

@@ -1357,7 +1357,9 @@ works in any framework without a binding layer:
   back to the field's `.ui-hint`, restoring the help text when valid again); a
   `[data-bronto-error-summary]` (`.ui-error-summary`) block. The combobox
   reads `[data-bronto-combobox]` + per-option `data-value` and emits
-  `bronto:change` (`{ detail: { value } }`) on selection; the interactive
+  `bronto:change` (`{ detail: { value, label } }`) on selection — `label` is the
+  chosen option's text, so a live region can announce it without re-reading the DOM;
+  the interactive
   legend emits `bronto:legend:toggle` (`{ detail: { series, active } }`).
 - **Status indicator** — `ui-status` carries no dot of its own: compose it with
   a `.ui-dot` child + a text label, e.g.
@@ -1376,8 +1378,10 @@ works in any framework without a binding layer:
   lights a segment with `<i class="is-on">`. A childless
   `<span class="ui-dotspinner">` renders nothing.
 - **`ui-caret` is a typing cursor**, not a dropdown chevron — a blinking block
-  caret (driven by `initDotGlyph`/`uiBlink`). For a disclosure/affordance
-  arrow use `ui-link--arrow` (`ui.link({ arrow: true })`).
+  caret. It is **pure CSS** (a `uiBlink` keyframe on `::after`); it needs no
+  behavior — do NOT call `initDotGlyph` to animate it — and it is decorative, so
+  keep it out of the a11y tree (`aria-hidden`). For a disclosure/affordance arrow
+  use `ui-link--arrow` (`ui.link({ arrow: true })`).
 
 ## Tokens
 

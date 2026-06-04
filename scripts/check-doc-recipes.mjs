@@ -31,6 +31,11 @@ const shipped = shippedDocs(pkg);
 const SCRIPT_SRC = /<script\b[^>]*?\ssrc=["']([^"']+)["']/gi;
 // A jsDelivr npm URL pinned to a concrete X(.Y(.Z)) version.
 const JSDELIVR_PINNED = /cdn\.jsdelivr\.net\/npm\/[^"'@\s]+@\d[\w.-]*/i;
+// There is NO `--glyph-*` design token. A `var(--glyph-foo)` in `--icon-mask`
+// (or anywhere) resolves to nothing and the masked icon paints a solid square —
+// the exact legends.md C10 trap. The mask value comes from
+// renderGlyph(name, { render: 'mask' }); flag any `var(--glyph-…)` recipe.
+const GLYPH_TOKEN = /var\(\s*(--glyph-[\w-]*)/gi;
 
 const problems = [];
 
@@ -53,22 +58,28 @@ for (const rel of shipped) {
         );
       }
     }
+    for (const m of line.matchAll(GLYPH_TOKEN)) {
+      problems.push(
+        `${rel}:${i + 1}  references ${m[1]} — there is NO --glyph-* token; it ` +
+          `resolves to nothing and the masked icon paints a solid square. Build ` +
+          `the mask with renderGlyph(name, { render: 'mask' }).`,
+      );
+    }
   });
 }
 
 if (problems.length) {
-  console.error(
-    `✗ check:doc-recipes — ${problems.length} CDN <script src> recipe(s) miss the /build/ UMD path:`,
-  );
+  console.error(`✗ check:doc-recipes — ${problems.length} shipped-doc recipe(s) silently no-op:`);
   for (const p of problems) console.error(`    ${p}`);
   console.error(
     '  A bare cdn.jsdelivr.net/npm/<pkg>@N redirect serves a module bundle with no\n' +
-      '  global (window.vega …), so a <script src> consumer renders nothing. Use the\n' +
-      "  pinned `/build/*.min.js` path. (Prose/inline-code mentions aren't <script> tags.)",
+      '  global (window.vega …), so a <script src> consumer renders nothing — pin the\n' +
+      '  `/build/*.min.js` path. And var(--glyph-*) is not a token — use\n' +
+      '  renderGlyph(name, { render: "mask" }). Fix the recipe, not the gate.',
   );
   process.exit(1);
 }
 
 console.log(
-  `✓ check:doc-recipes — all CDN <script src> recipes in shipped docs pin a /build/ UMD bundle`,
+  `✓ check:doc-recipes — CDN <script src> recipes pin a /build/ UMD bundle; no phantom --glyph-* masks`,
 );

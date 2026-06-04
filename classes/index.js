@@ -828,11 +828,25 @@ export const ui = {
 // the painted value and its announced value together so they can't drift, and
 // normalizes an arbitrary {min,max} to the 0–100 `--value` the CSS expects while
 // keeping aria-valuenow in the caller's real units. (component audit C8.)
-const valueAttrs = (role, value, min, max) => {
+// `busyWhenIndeterminate` — a progressbar advertises aria-busy when its value is
+// unknown; a meter is never indeterminate so it passes false. (Kept a boolean
+// flag rather than testing the role string, so check:recipe-types doesn't read it
+// as a recipe option literal.)
+const valueAttrs = (role, value, min, max, busyWhenIndeterminate) => {
   const lo = Number(min);
   const hi = Number(max);
   const raw = Number(value);
-  const now = Number.isFinite(raw) ? Math.min(hi, Math.max(lo, raw)) : lo;
+  // Indeterminate: an omitted/unknown value (attrs.progress() with no argument).
+  // ARIA requires aria-valuenow be OMITTED here — emitting 0 announces "0%",
+  // indistinguishable from a real stalled-at-zero bar. A progressbar instead
+  // advertises aria-busy; a meter has no indeterminate state, so a non-finite
+  // value there is a caller error we still fail safe on by omitting the
+  // misleading 0. Pair with `ui.progress({ indeterminate: true })` for the CSS
+  // sweep. (component audit C9.)
+  if (!Number.isFinite(raw)) {
+    return busyWhenIndeterminate ? { role, 'aria-busy': 'true' } : { role };
+  }
+  const now = Math.min(hi, Math.max(lo, raw));
   const pct = hi > lo ? ((now - lo) / (hi - lo)) * 100 : 0;
   return {
     role,
@@ -849,11 +863,13 @@ const valueAttrs = (role, value, min, max) => {
  *     <span class={cls.meterFill} />
  *   </div>
  * `value` is in your own units; pass `{ min, max }` (default 0–100) and the
- * `--value` width is normalized for you.
+ * `--value` width is normalized for you. Call `attrs.progress()` with no value
+ * for an indeterminate bar (omits aria-valuenow, sets aria-busy). (audit C9.)
  */
 export const attrs = Object.freeze({
-  meter: (value, { min = 0, max = 100 } = {}) => valueAttrs('meter', value, min, max),
-  progress: (value, { min = 0, max = 100 } = {}) => valueAttrs('progressbar', value, min, max),
+  meter: (value, { min = 0, max = 100 } = {}) => valueAttrs('meter', value, min, max, false),
+  progress: (value, { min = 0, max = 100 } = {}) =>
+    valueAttrs('progressbar', value, min, max, true),
 });
 
 export default ui;

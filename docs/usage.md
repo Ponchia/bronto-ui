@@ -54,13 +54,24 @@ content label; don't reach for it to tag prose.)
 every component carries every tone. The status tones
 (`--success`/`--warning`/`--danger`) plus `--info` ride the status families —
 `ui-alert`, `ui-toast`, `ui-meter`, `ui-dot`, and `ui-badge` all carry `--info`.
-The neutral `--muted` is **not** a status tone: it exists only on `ui-badge` and
-`ui-num`, not on `ui-dot`/`ui-alert`/`ui-toast`/`ui-meter`. Because the CSS is a
+The neutral `--muted` is **not** a status tone: it rides several *neutral*
+bases (`ui-badge`, `ui-num`, `ui-eyebrow`, `ui-mark`, `ui-annotation`,
+`ui-connector`, `ui-crosshair`) but is deliberately absent from the status
+families `ui-dot`/`ui-alert`/`ui-toast`/`ui-meter`. Because the CSS is a
 plain class list, an unknown modifier (e.g. `ui-dot--muted`, `ui-meter--muted`)
 **silently no-ops** — it can't warn the way the TS builders do. The authoritative
 per-component tone list is each base's `modifiers` array in
 [`@ponchia/ui/classes.json`](../classes/classes.json) — read it rather than
 extrapolating a tone you saw on one component onto another.
+
+**Tone is a colour channel, so it collapses under Windows High-Contrast Mode.**
+A `ui-badge--success` and a `ui-badge--danger` render identically once HCM
+remaps colours (the tinted background + tone border are flattened to one system
+colour). Status dots and the meter fill re-assert a distinct system colour, but
+the badge/chip/tag tints cannot carry five differentiable tones — so treat badge
+tone as **decorative emphasis** and make sure the badge's text label carries the
+status word ("Failed", not a bare red pill). Same WCAG 1.4.1 reasoning the dots
+follow.
 
 ## Numbers: `ui-num` vs the table state classes
 
@@ -113,6 +124,20 @@ box models** — pick by intent:
 Rule of thumb: measure of text → `ui-center`; page-level frame → `ui-container`.
 Don't nest one inside the other expecting the caps to compose — they measure
 different boxes.
+
+## Container queries: `ui-cq`
+
+`ui-cq` is the one primitive that changes how *other* primitives respond. Add it
+to a wrapper and its descendants adapt to **that box's** inline size, not the
+viewport — so the same `ui-grid` / `ui-statgrid` / `ui-app-metrics` collapses to
+one column inside a slim panel even when the window is wide (island-safe; it
+nests). Two thresholds are built in: `ui-grid` drops to a single column at
+**34rem** and `ui-statgrid`/`ui-app-metrics` at **30rem**, measured on the `ui-cq`
+box. The container is named `bronto` (hardcoded — there is no `--cq-name` knob; an
+author-set one is ignored), so an outer query never accidentally matches an inner
+grid. `ui-cq` is inert until applied, so adding it never shifts an existing
+layout. Reach for it whenever a layout must respond to its container (a resizable
+pane, a sidebar widget, an embedded card) rather than the page.
 
 ## Static reports
 
@@ -172,7 +197,7 @@ Both are a thin horizontal bar; they mean different things.
   indeterminate (`ui-progress--indeterminate`). The fill is always accent.
 - **`ui-meter`** — a *measured static value*: coverage, disk, capacity, a
   KPI against a target. Never indeterminate. Tone the fill by threshold
-  (`ui.meter({ tone })` → accent/success/warning/danger); the unset
+  (`ui.meter({ tone })` → accent/success/warning/danger/info); the unset
   default is neutral. Drive the width with the shared `--value` knob — a
   **unitless number 0–100** (`style="--value: 72"`, *not* `72%`: a `%` is
   invalid against the registered `<number>` type and the fill drops to empty).
@@ -181,6 +206,13 @@ Both are a thin horizontal bar; they mean different things.
   from `@ponchia/ui/classes` — it returns `role="meter"` +
   `aria-valuenow/min/max` + the `--value` style, normalized to your
   `{ min, max }`. Spread it: `<div class={ui.meter({ tone })} {...attrs.meter(72)}>`.
+
+  **Indeterminate progress** is the one exception: call `attrs.progress()` with
+  **no argument**. ARIA requires `aria-valuenow` be *omitted* for an indeterminate
+  bar — emitting `0` would announce "0%", indistinguishable from a real stalled-at-
+  zero bar — so the helper returns just `role="progressbar"` + `aria-busy="true"`
+  (no `aria-valuenow`, no `--value`). Pair it with the class:
+  `<div class={ui.progress({ indeterminate: true })} {...attrs.progress()}>`.
 
 Rule of thumb: *something is happening* → progress; *something measures
 this much* → meter.
@@ -276,6 +308,14 @@ A dropdown menu is a native `<details data-bronto-menu>` styled as
 `ui-menu__label`). It opens/closes natively, but `initMenu()` adds the close
 affordances a menu needs: outside-click close, Escape, and closing on item
 activation. Without the behavior the menu opens but never dismisses itself.
+
+**Clipping limitation.** The menu panel is positioned in normal flow (not the
+top layer), so an ancestor with `overflow: hidden`/`auto` or a transform
+**clips** it — the same edge case the tooltip has. If your menu lives inside a
+scroll container or a clipped card and the panel gets cut off, either lift the
+`ui-menu-host` out of the clipping ancestor, or reach for `initPopover` (which
+escapes to the browser top layer via the native `popover` attribute) for that
+control instead.
 
 ## Avatar: it's an unlabelled blob until you name it
 
@@ -497,6 +537,14 @@ With scripting disabled it degrades to fully visible, but if scripting is *on*
 and nothing toggles `is-visible`, the content stays hidden — so only use
 `ui-reveal` when you are wiring that toggle.
 
+**View transitions (`ui-vt`).** `ui-vt` names an element via `--ui-vt-name` so it
+morphs across a `document.startViewTransition()` or a cross-document navigation.
+The name must be **unique per document** at the moment a transition runs: applying
+`ui-vt` with one shared `--ui-vt-name` across every card in a list (the obvious
+loop) makes the browser silently drop the transition — the promise still resolves,
+so there's no error to notice. Give each element its own name (`--ui-vt-name: card-7`)
+or only mark the single element that actually morphs.
+
 ## Loading affordances need a role you supply
 
 `ui-spinner`, `ui-dotspinner`, `ui-skeleton`, and an indeterminate `ui-progress`
@@ -512,6 +560,15 @@ carries the native `popover` attribute (never clipped by `overflow`/stacking);
 without it, it falls back to an `is-open` class that a clipping ancestor can cut
 off. Add `popover` to the panel for the robust path — the `is-open` form is a
 fallback, not the default to copy.
+
+It is a **non-modal** dialog by design: the panel gets `role="dialog"` and focus
+moves into it, but there is **no focus trap** and the rest of the page stays
+interactive — Tab moves *out* of the panel (it does not cycle), and it closes on
+Escape or outside-click. Don't assume `<dialog>`-modal semantics; if you need a
+trap and an inert backdrop, use a real modal (`<dialog>` + `initDialog`, or
+`initModal`). And the `is-open` fallback is a plain stacked element, so it sits
+*under* any open native `<dialog>`'s top layer — another reason to prefer the
+native `popover` attribute when a popover and a dialog can be open together.
 
 ## Two tiers: CSS-native vs behavior-required
 

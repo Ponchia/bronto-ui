@@ -71,12 +71,15 @@
   padding-inline: var(--center-gutter, var(--space-md));
 }
 
-/* Intrinsic aspect-ratio box; the media child fills it. */
+/* Intrinsic aspect-ratio box; the media child fills it. The contract is ONE
+   child (a single <img>/<video>/<iframe>). Scope the fill to :first-child rather
+   than every child: a second child would otherwise be forced to 100%/100% +
+   object-fit and stack on top, silently breaking the ratio. (audit C34.) */
 .ui-ratio {
   aspect-ratio: var(--ratio, 16 / 9);
 }
 
-.ui-ratio > * {
+.ui-ratio > :first-child {
   block-size: 100%;
   inline-size: 100%;
   object-fit: cover;
@@ -186,6 +189,12 @@
   border-radius: var(--radius-md);
   display: grid;
   gap: 0.4rem;
+
+  /* These tiles hold IDs / hashes / big numbers — the unbreakable-token case is
+     the common one. A grid item defaults to min-inline-size:auto, so a long
+     value pushes the whole statgrid track wider; allow the tile to shrink so the
+     value can wrap instead (paired with overflow-wrap on __value). (audit C5.) */
+  min-inline-size: 0;
   padding: var(--space-md);
 }
 
@@ -207,6 +216,7 @@
   font-weight: var(--display-weight-strong);
   letter-spacing: 0.02em;
   line-height: 1.05;
+  overflow-wrap: anywhere; /* break an unspaced ID/hash rather than overflow (audit C5) */
 }
 
 .ui-stat__delta,
@@ -247,6 +257,10 @@
    share one P&L vocabulary. Token-identical to the table's is-num/
    is-pos/is-neg (which stay table-local). */
 .ui-num {
+  /* inline-block so `text-align: end` actually applies: on a bare inline element
+     it computes but never paints (the box is shrink-wrapped), so an author who
+     followed the docs to right-align an inline figure saw no effect. (audit C17.) */
+  display: inline-block;
   font-variant-numeric: tabular-nums;
   text-align: end;
 }
@@ -417,8 +431,13 @@
 
 /* aria-disabled keeps the element in the a11y tree but the browser does NOT
    block activation (a real <a class="ui-button" aria-disabled> still navigates,
-   a <button> still fires). Looking dead while staying live is the defect — kill
-   pointer activation. (a11y review C3; native :disabled already inert.) */
+   a <button> still fires). `pointer-events: none` kills POINTER activation only
+   — a focused control still fires on Enter/Space, which CSS cannot intercept. So
+   this looks-dead state is NOT keyboard-inert: for that, prefer native
+   `<button disabled>`, run `initDisabledGuard()` (it intercepts Enter/Space on
+   aria-disabled controls), or add `tabindex="-1"` (and drop `href` on a link).
+   See docs/usage.md "Disabled vs aria-disabled". (a11y review C3 / audit C4;
+   native :disabled already inert.) */
 .ui-button[aria-disabled='true'],
 .ui-link[aria-disabled='true'] {
   pointer-events: none;
@@ -658,6 +677,8 @@
   color: var(--text);
   font-family: var(--mono);
   margin: 0;
+  min-inline-size: 0;
+  overflow-wrap: anywhere; /* IDs/hashes/paths are the common value — break, don't overflow (audit C5) */
 }
 
 /* --- Hover (pointer only) --- */
