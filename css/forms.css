@@ -118,6 +118,24 @@
   border-color: var(--danger);
 }
 
+/* Wrapper controls (switch / check / segmented) hide their native <input>, so
+   the `[aria-invalid]` the validator sets on it paints nothing — a sighted,
+   non-AT user couldn't see the error (WCAG 1.4.1). Mirror the invalid cue onto
+   the visible surface via :has(), the same way the disabled cue is mirrored.
+   (component audit C7.) */
+.ui-check:has(input[aria-invalid='true']) input {
+  outline: 2px solid var(--danger);
+  outline-offset: 1px;
+}
+
+.ui-switch:has(input[aria-invalid='true']) .ui-switch__track {
+  border-color: var(--danger);
+}
+
+.ui-segmented:has(input[aria-invalid='true']) {
+  border-color: var(--danger);
+}
+
 /* Forced colours flatten `var(--danger)` to a system colour identical to the
    resting border, so the invalid border becomes indistinguishable from a valid
    one and sighted HCM users lose the only error cue (WCAG 1.4.1). The switch got
@@ -129,6 +147,19 @@
   .ui-input[aria-invalid='true'],
   .ui-select[aria-invalid='true'],
   .ui-textarea[aria-invalid='true'] {
+    border-style: double;
+    border-width: 3px;
+  }
+
+  /* Same NON-colour re-assertion for the wrapper controls (C7): a thicker,
+     doubled outline/border survives the HCM colour flattening. */
+  .ui-check:has(input[aria-invalid='true']) input {
+    outline-width: 3px;
+    outline-style: double;
+  }
+
+  .ui-switch:has(input[aria-invalid='true']) .ui-switch__track,
+  .ui-segmented:has(input[aria-invalid='true']) {
     border-style: double;
     border-width: 3px;
   }

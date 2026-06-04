@@ -247,7 +247,15 @@
   text-transform: uppercase;
 }
 
-/* --- Table — raw Markdown tables look like ui-table --- */
+/* --- Table — raw Markdown tables look like ui-table ---
+   `display: block` makes a wide markdown table scroll horizontally (markdown
+   emits a bare <table> with no wrappable container, so the scroll has to live on
+   the element itself). Caveat: `display: block` can drop the implicit `table`
+   ARIA role in WebKit/Safari (intact in Chromium/Firefox). It is acceptable here
+   because `.ui-prose` is generated prose, not a data grid — but for a table whose
+   semantics MUST survive on WebKit, author the `.ui-table` component inside a
+   `.ui-table-wrap` instead (the wrap scrolls, the <table> keeps `display: table`),
+   or add `role="table"` to the markdown output. (component audit C29.) */
 
 .ui-prose table {
   border: 1px solid var(--line);

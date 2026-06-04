@@ -320,9 +320,19 @@
             <span class="ui-status"><span class="ui-dot ui-dot--info"></span> Info</span>
             <span class="ui-caret">typing</span>
           </div>
-          <div class="ui-dotbar" style="max-width: 18rem">
-            <i class="is-on"></i><i class="is-on"></i><i class="is-on"></i><i class="is-on"></i><i></i
-            ><i></i><i></i><i></i>
+          <div
+            class="ui-dotbar"
+            style="max-width: 18rem"
+            role="progressbar"
+            aria-label="Setup progress"
+            aria-valuenow="4"
+            aria-valuemin="0"
+            aria-valuemax="8"
+          >
+            <i class="is-on" aria-hidden="true"></i><i class="is-on" aria-hidden="true"></i
+            ><i class="is-on" aria-hidden="true"></i><i class="is-on" aria-hidden="true"></i
+            ><i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i
+            ><i aria-hidden="true"></i>
           </div>
         </section>
 
@@ -360,8 +370,16 @@
           >
             <div class="ui-progress__bar"></div>
           </div>
-          <div class="ui-dotbar ui-dotbar--indeterminate" style="max-width: 18rem">
-            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <div
+            class="ui-dotbar ui-dotbar--indeterminate"
+            style="max-width: 18rem"
+            role="progressbar"
+            aria-busy="true"
+            aria-label="Loading"
+          >
+            <i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i
+            ><i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i
+            ><i aria-hidden="true"></i><i aria-hidden="true"></i>
           </div>
         </section>
 
@@ -612,7 +630,7 @@
         <section class="ui-stack" data-shot="tabs" data-shot-rtl>
           <h3 class="ui-eyebrow ui-eyebrow--muted">Tabs · Accordion · Segmented · Disclosure</h3>
           <div class="ui-tabs" data-bronto-tabs>
-            <div class="ui-tabs__list" role="tablist">
+            <div class="ui-tabs__list" role="tablist" aria-label="Account sections">
               <button type="button" class="ui-tab is-active" role="tab" data-tab="a">Overview</button>
               <button type="button" class="ui-tab" role="tab" data-tab="b">Activity</button>
               <button type="button" class="ui-tab" role="tab" data-tab="c">Settings</button>

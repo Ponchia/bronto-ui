@@ -200,12 +200,13 @@ export const cls = Object.freeze({
   tableComfortable: 'ui-table--comfortable',
   tableLined: 'ui-table--lined',
   tableWrap: 'ui-table-wrap',
+  // Loading state goes on the WRAP, so the modifier is named for the wrap (C19).
+  tableLoading: 'ui-table-wrap--loading',
   tableEmpty: 'ui-table__empty',
   tableSort: 'ui-table__sort',
   tableSelect: 'ui-table__select',
   tableToolbar: 'ui-table__toolbar',
   tableSelectable: 'ui-table--selectable',
-  tableLoading: 'ui-table--loading',
   // shell / layout
   panel: 'ui-panel',
   panelHead: 'ui-panel__head',
@@ -620,53 +621,92 @@ const srcTone = (state) =>
 
 // Component tone → modifier class. Same object-literal idiom as srcTone/stateTone
 // (still grep-by-class-name; the modifier set differs per component). (Q9.)
-const badgeTone = (tone) =>
-  ({
-    accent: cls.badgeAccent,
-    success: cls.badgeSuccess,
-    warning: cls.badgeWarning,
-    danger: cls.badgeDanger,
-    info: cls.badgeInfo,
-    muted: cls.badgeMuted,
-  })[tone] || '';
+//
+// The set differs PER COMPONENT on purpose — `muted` is a badge/num tone, not an
+// alert/toast/meter/dot one — so a caller extrapolating a universal tone (e.g.
+// `ui.alert({ tone: 'muted' })`) used to get a silent no-op: a bare, untoned
+// element with no signal that the tone was dropped. Warn at dev time instead, so
+// that "validates-but-no-ops" trap is loud rather than invisible. An omitted tone
+// is fine (returns no modifier). (component audit C12.)
+const toneClass = (component, map, tone) => {
+  if (tone == null) return '';
+  const hit = map[tone];
+  if (!hit && typeof console !== 'undefined') {
+    console.warn(
+      `[bronto] ui.${component}(): "${tone}" is not a ${component} tone (use one of: ${Object.keys(map).join(', ')}).`,
+    );
+  }
+  return hit || '';
+};
 
-const numTone = (tone) => ({ pos: cls.numPos, neg: cls.numNeg, muted: cls.numMuted })[tone] || '';
+const badgeTone = (tone) =>
+  toneClass(
+    'badge',
+    {
+      accent: cls.badgeAccent,
+      success: cls.badgeSuccess,
+      warning: cls.badgeWarning,
+      danger: cls.badgeDanger,
+      info: cls.badgeInfo,
+      muted: cls.badgeMuted,
+    },
+    tone,
+  );
+
+const numTone = (tone) =>
+  toneClass('num', { pos: cls.numPos, neg: cls.numNeg, muted: cls.numMuted }, tone);
 
 const dotTone = (tone) =>
-  ({
-    accent: cls.dotAccent,
-    success: cls.dotSuccess,
-    warning: cls.dotWarning,
-    danger: cls.dotDanger,
-    info: cls.dotInfo,
-  })[tone] || '';
+  toneClass(
+    'dot',
+    {
+      accent: cls.dotAccent,
+      success: cls.dotSuccess,
+      warning: cls.dotWarning,
+      danger: cls.dotDanger,
+      info: cls.dotInfo,
+    },
+    tone,
+  );
 
 const alertTone = (tone) =>
-  ({
-    accent: cls.alertAccent,
-    success: cls.alertSuccess,
-    warning: cls.alertWarning,
-    danger: cls.alertDanger,
-    info: cls.alertInfo,
-  })[tone] || '';
+  toneClass(
+    'alert',
+    {
+      accent: cls.alertAccent,
+      success: cls.alertSuccess,
+      warning: cls.alertWarning,
+      danger: cls.alertDanger,
+      info: cls.alertInfo,
+    },
+    tone,
+  );
 
 const toastTone = (tone) =>
-  ({
-    accent: cls.toastAccent,
-    success: cls.toastSuccess,
-    warning: cls.toastWarning,
-    danger: cls.toastDanger,
-    info: cls.toastInfo,
-  })[tone] || '';
+  toneClass(
+    'toast',
+    {
+      accent: cls.toastAccent,
+      success: cls.toastSuccess,
+      warning: cls.toastWarning,
+      danger: cls.toastDanger,
+      info: cls.toastInfo,
+    },
+    tone,
+  );
 
 const meterTone = (tone) =>
-  ({
-    accent: cls.meterAccent,
-    success: cls.meterSuccess,
-    warning: cls.meterWarning,
-    danger: cls.meterDanger,
-    info: cls.meterInfo,
-  })[tone] || '';
+  toneClass(
+    'meter',
+    {
+      accent: cls.meterAccent,
+      success: cls.meterSuccess,
+      warning: cls.meterWarning,
+      danger: cls.meterDanger,
+      info: cls.meterInfo,
+    },
+    tone,
+  );
 
 export const ui = {
   button: ({ variant, icon, size } = {}) =>
@@ -899,11 +939,18 @@ const valueAttrs = (role, value, min, max, busyWhenIndeterminate) => {
  * `value` is in your own units; pass `{ min, max }` (default 0–100) and the
  * `--value` width is normalized for you. Call `attrs.progress()` with no value
  * for an indeterminate bar (omits aria-valuenow, sets aria-busy). (audit C9.)
+ *
+ * `attrs.dotbar(value)` is the segmented analogue of `attrs.progress`: a
+ * determinate `.ui-dotbar` carries the same progress data as `.ui-progress` but,
+ * without this, was eight empty `<span>`s to AT (the segments are decorative —
+ * mark them `aria-hidden`). Same progressbar role + aria-valuenow/min/max;
+ * call with no value for the indeterminate sweep. (component audit C10.)
  */
 export const attrs = Object.freeze({
   meter: (value, { min = 0, max = 100 } = {}) => valueAttrs('meter', value, min, max, false),
   progress: (value, { min = 0, max = 100 } = {}) =>
     valueAttrs('progressbar', value, min, max, true),
+  dotbar: (value, { min = 0, max = 100 } = {}) => valueAttrs('progressbar', value, min, max, true),
 });
 
 export default ui;

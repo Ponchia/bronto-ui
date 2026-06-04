@@ -38,7 +38,11 @@ subpaths such as `@ponchia/ui/behaviors`.
   <link rel="stylesheet" href="/node_modules/@ponchia/ui/dist/bronto.css" />
 </head>
 <body>
-  <button data-bronto-theme-toggle class="ui-themetoggle">Theme</button>
+  <button type="button" data-bronto-theme-toggle class="ui-themetoggle__button">
+    <span class="ui-themetoggle__prefix">Theme</span>
+    <span class="ui-themetoggle__label">Dark</span>
+    <span class="ui-themetoggle__track"><span class="ui-themetoggle__thumb"></span></span>
+  </button>
 
   <!-- 3. behaviors as an ES module -->
   <script type="module">
@@ -81,7 +85,11 @@ no `node_modules`, no bundler:
   </script>
 </head>
 <body>
-  <button data-bronto-theme-toggle class="ui-themetoggle">Theme</button>
+  <button type="button" data-bronto-theme-toggle class="ui-themetoggle__button">
+    <span class="ui-themetoggle__prefix">Theme</span>
+    <span class="ui-themetoggle__label">Dark</span>
+    <span class="ui-themetoggle__track"><span class="ui-themetoggle__thumb"></span></span>
+  </button>
   <script type="module">
     import { initThemeToggle } from '@ponchia/ui/behaviors';
     initThemeToggle();

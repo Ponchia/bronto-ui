@@ -112,7 +112,17 @@ export function initPopover({ root } = {}) {
   };
   const onKey = (e) => {
     // close() returns focus to the trigger because focus is inside the panel.
-    if (e.key === 'Escape' && openPanel) close();
+    if (e.key !== 'Escape' || !openPanel) return;
+    // A popover open *inside* a <dialog>/modal owns this Escape. Without this,
+    // the same keypress closed BOTH: we hidePopover() the panel synchronously,
+    // the browser's close-request then finds the dialog as the new topmost
+    // element and dismisses it too. preventDefault() stops that native
+    // close-request and stopPropagation() keeps it off other delegated keydown
+    // listeners (e.g. initModal's), so only the popover closes — the documented
+    // "popover + dialog open together" contract.
+    e.preventDefault();
+    e.stopPropagation();
+    close();
   };
   const onReflow = () => {
     if (openPanel && openTrigger) place(openTrigger, openPanel);

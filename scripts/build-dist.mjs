@@ -157,8 +157,13 @@ export function buildBundles() {
  *  forced-colors icon/skeleton/dot-accent/combobox-option blocks, the modal-close
  *  tap-target + coarse bump, overflow-wrap on stat/key-value/property, the
  *  reduced-motion indeterminate-progress hatch, the stagger cap, and the legend
- *  symbol fallback — again repetitive media-query/FC blocks that gzip well. */
-export const BUDGET = { raw: 85_000, gzip: 14_700 };
+ *  symbol fallback — again repetitive media-query/FC blocks that gzip well. The
+ *  fourth component-audit pass nudged it 85→86 kB (raw) / 14.7→14.85 kB (gzip):
+ *  the modal scroll-lock, the wrapper-control + forced-colors invalid cues, the
+ *  forced-colors app-nav active channel + menu hover/focus parity, the
+ *  uiScrollReveal keyframe + entry-bounded range, the coarse CTA-link floor, and
+ *  the static busy-button ring — once more repetitive FC/media-query blocks. */
+export const BUDGET = { raw: 86_000, gzip: 14_850 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };
