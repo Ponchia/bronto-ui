@@ -23,12 +23,9 @@
  *
  * Run: node scripts/gen-skins.mjs   (or: npm run skins:build)
  */
-import { writeFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { skins, SKIN_NAMES } from '../tokens/skins.js';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { repoRoot as root, isMain, writeGenerated } from './lib/emit.mjs';
 
 const decls = (obj, indent) =>
   Object.entries(obj)
@@ -105,9 +102,4 @@ export const generated = {
   'tokens/skins.d.ts': buildSkinsDts(),
 };
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  for (const [rel, content] of Object.entries(generated)) {
-    writeFileSync(resolve(root, rel), content);
-    console.log(`✓ wrote ${rel}`);
-  }
-}
+if (isMain(import.meta.url)) writeGenerated(root, generated);

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
 import { awaitDemoReady } from './_demo.mjs';
+import { blocking, scan } from './_demo-guards.mjs';
 
 // axe-core scans the whole kitchen-sink demo (×themes ×RTL ×interaction
 // states); on a loaded CI runner that legitimately approaches the default 30s
@@ -8,39 +8,13 @@ import { awaitDemoReady } from './_demo.mjs';
 test.beforeEach(() => test.setTimeout(60_000));
 
 /**
- * Deterministic accessibility gate (environment-independent, unlike
- * pixels). Fails CI on any serious/critical WCAG 2.1 A/AA violation in
- * the demo — which exercises every component — in both themes, plus the
- * modal open state (focus-trapped) and a keyboard-driven tab switch.
- *
- * `best-practice` is included so the structural issues Lighthouse flags
- * (these are axe rules too) are gated here per theme with zero extra
- * deps. Best-practice rules are often `moderate` impact, so they would
- * slip past the serious/critical filter — a curated STRUCTURAL set is
- * always blocking regardless of impact.
+ * Deterministic accessibility gate (environment-independent, unlike pixels).
+ * Fails CI on any serious/critical WCAG 2.1 A/AA violation in the demo — which
+ * exercises every component — in both themes, plus the modal open state
+ * (focus-trapped) and a keyboard-driven tab switch. The axe config (TAGS +
+ * curated always-blocking STRUCTURAL set) is shared from _demo-guards.mjs so
+ * this gate and the per-feature leaf specs can't drift apart.
  */
-const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'];
-const STRUCTURAL = new Set([
-  'heading-order',
-  'landmark-one-main',
-  'landmark-unique',
-  'landmark-no-duplicate-banner',
-  'landmark-no-duplicate-contentinfo',
-  'region',
-  'scrollable-region-focusable',
-  'duplicate-id',
-  'tabindex',
-]);
-
-function blocking(results) {
-  return results.violations
-    .filter((v) => v.impact === 'serious' || v.impact === 'critical' || STRUCTURAL.has(v.id))
-    .map((v) => ({
-      id: v.id,
-      impact: v.impact,
-      nodes: v.nodes.map((n) => ({ target: n.target, msg: n.failureSummary })),
-    }));
-}
 
 /**
  * Settle to a stable, fully-composited frame before axe samples pixels.
@@ -58,7 +32,6 @@ async function settle(page) {
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
   });
 }
-const scan = (page) => new AxeBuilder({ page }).withTags(TAGS).exclude('.ui-dotfield');
 
 for (const theme of ['dark', 'light']) {
   test(`a11y — demo (${theme})`, async ({ page }) => {
@@ -126,10 +99,10 @@ test('a11y — toast pushes into a persistent polite live region', async ({ page
   await page.locator('#toastBtn').click();
   await expect(stack).toHaveAttribute('aria-live', 'polite');
   await expect(stack.locator('.ui-toast')).toHaveText(/Order filled/);
-  // The region must persist (not be torn down) — drain then re-toast.
-  await page.waitForTimeout(4500);
+  // The region must persist (not be torn down) — let the toast auto-dismiss
+  // (poll its real count to 0 rather than sleeping a fixed ~4s), then re-toast.
+  await expect(stack.locator('.ui-toast')).toHaveCount(0, { timeout: 6000 });
   await expect(stack).toBeAttached();
-  await expect(stack.locator('.ui-toast')).toHaveCount(0);
   await page.locator('#toastBtn').click();
   await expect(page.locator('.ui-toast-stack')).toHaveCount(1); // reused, not duplicated
 });

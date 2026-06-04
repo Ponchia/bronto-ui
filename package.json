@@ -35,6 +35,9 @@
     "access": "public",
     "provenance": true
   },
+  "engines": {
+    "node": ">=18"
+  },
   "sideEffects": [
     "**/*.css"
   ],
@@ -149,7 +152,7 @@
     "@arethetypeswrong/cli": "^0.18.3",
     "@axe-core/playwright": "^4.11.3",
     "@builder.io/qwik": "^1.20.0",
-    "@playwright/test": "^1.60.0",
+    "@playwright/test": "1.60.0",
     "jsdom": "^29.1.1",
     "prettier": "^3.8.3",
     "publint": "^0.3.21",

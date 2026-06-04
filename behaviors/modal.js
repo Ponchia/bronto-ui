@@ -1,4 +1,4 @@
-import { hasDom, resolveHost, noop, bindOnce, collectHosts } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, collectHosts, focusInto } from './internal.js';
 
 /**
  * @typedef {object} ModalCloseDetail
@@ -38,22 +38,9 @@ export function initModal({ root } = {}) {
   const modals = collectHosts(host, '[data-bronto-modal]');
   const cleanups = [];
 
-  const FOCUSABLE =
-    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
   for (const modal of modals) {
     let opener = null;
     let inerted = [];
-
-    const focusInto = () => {
-      const first = modal.querySelector(FOCUSABLE);
-      if (first) {
-        first.focus?.();
-        return;
-      }
-      if (!modal.hasAttribute('tabindex')) modal.setAttribute('tabindex', '-1');
-      modal.focus?.();
-    };
 
     // Inert every sibling at each ancestor level up to <body>: the rest of the
     // page becomes non-focusable/non-interactive while the modal subtree stays
@@ -72,7 +59,7 @@ export function initModal({ root } = {}) {
         }
         el = el.parentElement;
       }
-      focusInto();
+      focusInto(modal);
     };
 
     const release = () => {

@@ -211,25 +211,19 @@ import {
   angleBetween,
   // Shared scalar/geometry kernel — single source of truth (was copy-pasted,
   // and the local clamp had silently diverged from the connectors one).
-  PRECISION,
+  roundNumber,
   finite,
   dimension,
   fmt,
   point,
   clamp,
+  rectPath,
 } from '../connectors/index.js';
 
-function roundedNumber(value) {
-  const rounded = Math.round((Object.is(value, -0) ? 0 : value) * PRECISION) / PRECISION;
-  return Object.is(rounded, -0) ? 0 : rounded;
-}
-
+// A circle subject is just a filled dot at (x, y) — delegate to the kernel's
+// dotMark so the arc geometry/precision can't diverge. (code-quality audit Q5.)
 function circlePathAt(x, y, radius) {
-  const r = dimension('radius', radius);
-  if (r === 0) return '';
-  return `M${point(x, y - r)}A${fmt(r)},${fmt(r)} 0 1 1 ${point(x, y + r)}A${fmt(r)},${fmt(
-    r,
-  )} 0 1 1 ${point(x, y - r)}Z`;
+  return dotMark({ x, y }, radius);
 }
 
 function samePoint(a, b) {
@@ -400,8 +394,8 @@ export function notePlacement({
     const rect = noteRect(anchorX, anchorY, w, h, placement);
     if (rect.left >= minX && rect.top >= minY && rect.right <= maxX && rect.bottom <= maxY) {
       return {
-        dx: roundedNumber(placement.dx),
-        dy: roundedNumber(placement.dy),
+        dx: roundNumber(placement.dx),
+        dy: roundNumber(placement.dy),
         align: placement.align,
         valign: placement.valign,
         transform: noteTransform({ ...placement, width: w, height: h }),
@@ -413,8 +407,8 @@ export function notePlacement({
   const rect = noteRect(anchorX, anchorY, w, h, fallback);
   const left = clamp(rect.left, minX, maxX - w);
   const top = clamp(rect.top, minY, maxY - h);
-  const dx = roundedNumber(left - anchorX);
-  const dy = roundedNumber(top - anchorY);
+  const dx = roundNumber(left - anchorX);
+  const dy = roundNumber(top - anchorY);
   return {
     dx,
     dy,
@@ -445,7 +439,7 @@ export function rectSubjectPath({ width, height, x, y, padding = 0 } = {}) {
   const top = finite('y', y, -h / 2) - p;
   const right = left + w + p * 2;
   const bottom = top + h + p * 2;
-  return `M${point(left, top)}H${fmt(right)}V${fmt(bottom)}H${fmt(left)}Z`;
+  return rectPath(left, top, right, bottom);
 }
 
 /**
@@ -586,7 +580,7 @@ export function evidenceMarkerPath({ x = 0, y = 0, width = 36, height = 36, padd
   const top = cy - h / 2 - p;
   const right = left + w + p * 2;
   const bottom = top + h + p * 2;
-  return `M${point(left, top)}H${fmt(right)}V${fmt(bottom)}H${fmt(left)}Z`;
+  return rectPath(left, top, right, bottom);
 }
 
 /**
@@ -658,6 +652,22 @@ export function connectorCurve(opts = {}) {
   return curvePath(start, end, { curvature: 0.35 });
 }
 
+// subject.type → its path builder. A flat dispatch table (replaces an 11-arm
+// if/else) keyed by the SubjectType union; an unknown type throws below. (Q10.)
+const SUBJECT_BUILDERS = {
+  circle: circleSubjectPath,
+  rect: rectSubjectPath,
+  threshold: thresholdPath,
+  bracket: bracketSubjectPath,
+  band: bandSubjectPath,
+  slope: slopeSubjectPath,
+  compare: comparisonBracePath,
+  cluster: outlierClusterPath,
+  axis: axisThresholdPath,
+  timeline: timelineEventPath,
+  evidence: evidenceMarkerPath,
+};
+
 /**
  * @param {AnnotationPartsOptions} [opts]
  * @returns {AnnotationParts}
@@ -678,18 +688,11 @@ export function annotationParts(opts = {}) {
   const note = noteTransform({ dx, dy });
   let subject = '';
 
-  if (opts.subject?.type === 'circle') subject = circleSubjectPath(opts.subject);
-  else if (opts.subject?.type === 'rect') subject = rectSubjectPath(opts.subject);
-  else if (opts.subject?.type === 'threshold') subject = thresholdPath(opts.subject);
-  else if (opts.subject?.type === 'bracket') subject = bracketSubjectPath(opts.subject);
-  else if (opts.subject?.type === 'band') subject = bandSubjectPath(opts.subject);
-  else if (opts.subject?.type === 'slope') subject = slopeSubjectPath(opts.subject);
-  else if (opts.subject?.type === 'compare') subject = comparisonBracePath(opts.subject);
-  else if (opts.subject?.type === 'cluster') subject = outlierClusterPath(opts.subject);
-  else if (opts.subject?.type === 'axis') subject = axisThresholdPath(opts.subject);
-  else if (opts.subject?.type === 'timeline') subject = timelineEventPath(opts.subject);
-  else if (opts.subject?.type === 'evidence') subject = evidenceMarkerPath(opts.subject);
-  else if (opts.subject != null) throw new TypeError('unsupported subject.type');
+  if (opts.subject != null) {
+    const build = SUBJECT_BUILDERS[opts.subject.type];
+    if (!build) throw new TypeError('unsupported subject.type');
+    subject = build(opts.subject);
+  }
 
   return { transform, subject, connector, note };
 }
@@ -736,7 +739,7 @@ export function declutterLabels(items, opts = {}) {
   }
 
   const out = new Array(nodes.length);
-  for (const n of nodes) out[n.index] = roundedNumber(n.pos);
+  for (const n of nodes) out[n.index] = roundNumber(n.pos);
   return out;
 }
 
@@ -782,9 +785,9 @@ export function directLabels(items, opts = {}) {
       ? ''
       : connectorPath({ from: a.anchor, to: labelPoint, shape });
     return {
-      x: roundedNumber(labelPoint.x),
-      y: roundedNumber(labelPoint.y),
-      anchor: { x: roundedNumber(a.anchor.x), y: roundedNumber(a.anchor.y) },
+      x: roundNumber(labelPoint.x),
+      y: roundNumber(labelPoint.y),
+      anchor: { x: roundNumber(a.anchor.x), y: roundNumber(a.anchor.y) },
       key: a.key,
       d,
     };

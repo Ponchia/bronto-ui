@@ -41,7 +41,7 @@ and the accent is a spotlight, not a paint bucket. Because everything lives in a
 single `@layer bronto`, your own un-layered CSS overrides the framework with no
 specificity fight and no `!important`.
 
-It ships a complete, accessible **standard component set** — but that's not where it competes. Its differentiator is an opt-in **analytical & communication layer** for interfaces that make complex work legible: annotations, legends, connectors, marks, a guided-focus spotlight, lifecycle/system-state and source-provenance vocabularies, and a static/PDF report grammar. Each owns only its visual grammar and pure geometry — no chart engine, no state, no hit-testing. See **[docs/frontier-primitives.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/frontier-primitives.md)** for the thesis.
+It ships a complete, accessible **standard component set**, but that's not where it competes — its differentiator is the opt-in **analytical & communication layer** sketched above. The line that holds it together: each primitive owns only its visual grammar and pure geometry — no chart engine, no state, no hit-testing. See **[docs/frontier-primitives.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/frontier-primitives.md)** for the thesis.
 
 ## Install
 

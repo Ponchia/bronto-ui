@@ -17,11 +17,10 @@
  * Run: node scripts/gen-dtcg.mjs   (or: npm run dtcg:build)
  */
 import { writeFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { cssVars } from '../tokens/index.js';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { repoRoot as root, isMain } from './lib/emit.mjs';
 
 const isHex = (v) => /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(v);
 const isRgb = (v) => /^rgba?\(/i.test(v);
@@ -92,8 +91,7 @@ export function buildDtcg() {
 export const DTCG_PATH = resolve(root, 'tokens/tokens.dtcg.json');
 export const dtcgJson = () => JSON.stringify(buildDtcg(), null, 2) + '\n';
 
-const isMain = resolve(process.argv[1] || '') === fileURLToPath(import.meta.url);
-if (isMain) {
+if (isMain(import.meta.url)) {
   writeFileSync(DTCG_PATH, dtcgJson());
   console.log('✓ wrote tokens/tokens.dtcg.json');
 }

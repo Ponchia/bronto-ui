@@ -25,16 +25,14 @@
  *
  * Run: node scripts/gen-vega.mjs   (or: npm run vega:build)
  */
-import { writeFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { format, resolveConfig } from 'prettier';
 import { cssVars } from '../tokens/index.js';
 import { charts } from '../tokens/charts.js';
 import { resolveColor } from './gen-charts.mjs';
 import { makeResolveRef } from './lib/resolve-ref.mjs';
+import { repoRoot as root, isMain, writeGenerated, genBanner } from './lib/emit.mjs';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const resolveRef = makeResolveRef('gen-vega');
 const JS_PATH = resolve(root, 'tokens/vega.js');
 const prettierCfg = await resolveConfig(JS_PATH);
@@ -158,14 +156,12 @@ export function buildVegaJson() {
 }
 
 export async function buildVegaJs() {
-  const banner =
-    `/** @ponchia/ui — GENERATED from the token source by scripts/gen-vega.mjs.\n` +
-    ` *  Do not edit by hand; run \`npm run vega:build\`. Drift-checked in CI.\n` +
-    ` *\n` +
-    ` *  An on-brand Vega-Lite / Vega \`config\`, resolved to static colours per\n` +
-    ` *  theme. Vega is the consumer's renderer — this is config only, we never\n` +
-    ` *  import it. Values are resolved hex on purpose: Vega bakes colours into\n` +
-    ` *  the SVG/canvas scene and cannot read \`var(--x)\`. See docs/vega.md. */\n`;
+  const banner = genBanner('gen-vega.mjs', 'vega:build', [
+    'An on-brand Vega-Lite / Vega `config`, resolved to static colours per',
+    "theme. Vega is the consumer's renderer — this is config only, we never",
+    'import it. Values are resolved hex on purpose: Vega bakes colours into',
+    'the SVG/canvas scene and cannot read `var(--x)`. See docs/vega.md.',
+  ]);
   const raw =
     `${banner}\n` +
     `/** Resolved Vega-Lite \`config\` for each bronto theme. */\n` +
@@ -196,9 +192,7 @@ export async function buildVegaJs() {
 }
 
 export function buildVegaDts() {
-  const banner =
-    `/** @ponchia/ui — GENERATED from the token source by scripts/gen-vega.mjs.\n` +
-    ` *  Do not edit by hand; run \`npm run vega:build\`. Drift-checked in CI. */\n`;
+  const banner = genBanner('gen-vega.mjs', 'vega:build');
   return `${banner}
 /** A resolved Vega-Lite \`config\`: colour-valued chrome slots (hex), font
  *  stacks, and \`range.*\` palette arrays. Pass as a spec's \`config\` (or
@@ -243,9 +237,4 @@ export async function buildGenerated() {
   };
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  for (const [rel, content] of Object.entries(await buildGenerated())) {
-    writeFileSync(resolve(root, rel), content);
-    console.log(`✓ wrote ${rel}`);
-  }
-}
+if (isMain(import.meta.url)) writeGenerated(root, await buildGenerated());

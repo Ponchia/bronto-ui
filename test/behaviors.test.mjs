@@ -759,13 +759,30 @@ test('initFormValidation: noValidate is set at init, restored on cleanup', () =>
   assert.equal(form.noValidate, false, 'prior noValidate restored on cleanup');
 });
 
-test('initFormValidation: SSR-safe', () => {
-  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
-  assert.doesNotThrow(() => {
-    const stop = initFormValidation();
-    stop();
+// SSR-safe contract: with no DOM each arg-less initializer no-ops and returns a
+// callable cleanup. One loop over the uniform initializers (theme + toast differ
+// — see their own tests above). (code-quality audit Q14.)
+const SSR_INITS = {
+  initFormValidation,
+  initCombobox,
+  initPopover,
+  initTableSort,
+  initCarousel,
+  initLegend,
+  initConnectors,
+  initSpotlight,
+  initCrosshair,
+  initCommand,
+  initModal,
+};
+for (const [name, init] of Object.entries(SSR_INITS)) {
+  test(`${name}: SSR-safe`, () => {
+    for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
+    const stop = init();
+    assert.equal(typeof stop, 'function', 'returns a callable cleanup');
+    assert.doesNotThrow(stop);
   });
-});
+}
 
 const CB = `
   <div class="ui-combobox" data-bronto-combobox>
@@ -941,14 +958,6 @@ test('initCombobox: ArrowUp wraps to last, Home/End jump to edges, Tab closes', 
   stop();
 });
 
-test('initCombobox: SSR-safe', () => {
-  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
-  assert.doesNotThrow(() => {
-    const stop = initCombobox();
-    stop();
-  });
-});
-
 test('initPopover: toggles panel, manages aria, Escape + outside close', () => {
   const d = mount(
     '<button id="t" data-bronto-popover="pop">Info</button>' +
@@ -1014,14 +1023,6 @@ test('initPopover scoped root resolves duplicate ids inside the root first', () 
   d.getElementById('t').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   assert.equal(outside.classList.contains('is-open'), false, 'outside duplicate ignored');
   assert.equal(inside.classList.contains('is-open'), true, 'inside duplicate opened');
-});
-
-test('initPopover: SSR-safe', () => {
-  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
-  assert.doesNotThrow(() => {
-    const stop = initPopover();
-    stop();
-  });
 });
 
 const TBL = `
@@ -1098,14 +1099,6 @@ test('initTableSort: select-all + row selection stay in sync', () => {
   assert.equal(all.indeterminate, true, 'header goes indeterminate on partial');
   assert.equal(count, 2);
   stop();
-});
-
-test('initTableSort: SSR-safe', () => {
-  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
-  assert.doesNotThrow(() => {
-    const stop = initTableSort();
-    stop();
-  });
 });
 
 const CAR = `
@@ -1224,14 +1217,6 @@ test('initCarousel: idempotent re-init does not stack, cleanup detaches', () => 
   assert.equal(status.textContent, '2 / 3', 'no-op after cleanup');
 });
 
-test('initCarousel: SSR-safe', () => {
-  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
-  assert.doesNotThrow(() => {
-    const stop = initCarousel();
-    stop();
-  });
-});
-
 const legendMarkup = `
   <ul class="ui-legend ui-legend--interactive" data-bronto-legend>
     <li><button class="ui-legend__item" aria-pressed="true" data-series="a">
@@ -1293,14 +1278,6 @@ test('initLegend: idempotent (re-init replaces, never stacks) and cleanup stops 
   assert.equal(count, 1, 'no-op after cleanup');
 });
 
-test('initLegend: SSR-safe', () => {
-  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
-  assert.doesNotThrow(() => {
-    const stop = initLegend();
-    stop();
-  });
-});
-
 test('initConnectors: draws a path with d and an end marker', () => {
   const d = mount(
     '<div style="position:relative"><span id="a">a</span><span id="b">b</span>' +
@@ -1343,14 +1320,6 @@ test('initConnectors: pathLength is set only for draw connectors (dashed keeps i
   assert.equal(draw.querySelector('.ui-connector__path').getAttribute('pathLength'), '1');
 });
 
-test('initConnectors: SSR-safe', () => {
-  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
-  assert.doesNotThrow(() => {
-    const stop = initConnectors();
-    stop();
-  });
-});
-
 test('initSpotlight: sets the cutout custom properties from the target', () => {
   const d = mount(
     '<button id="t">t</button>' +
@@ -1363,14 +1332,6 @@ test('initSpotlight: sets the cutout custom properties from the target', () => {
   assert.match(spot.style.getPropertyValue('--spot-x'), /px$/);
   assert.equal(typeof stop, 'function');
   assert.doesNotThrow(stop);
-});
-
-test('initSpotlight: SSR-safe', () => {
-  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
-  assert.doesNotThrow(() => {
-    const stop = initSpotlight();
-    stop();
-  });
 });
 
 test('initCrosshair: wires a plot without throwing and cleans up', () => {
@@ -1386,14 +1347,6 @@ test('initCrosshair: wires a plot without throwing and cleans up', () => {
   );
   assert.equal(typeof stop, 'function');
   assert.doesNotThrow(stop);
-});
-
-test('initCrosshair: SSR-safe', () => {
-  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
-  assert.doesNotThrow(() => {
-    const stop = initCrosshair();
-    stop();
-  });
 });
 
 const CMD = `
@@ -1487,14 +1440,6 @@ test('initCommand: ArrowUp wraps to last, Home/End jump to edges', () => {
   stop();
 });
 
-test('initCommand: SSR-safe', () => {
-  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
-  assert.doesNotThrow(() => {
-    const stop = initCommand();
-    stop();
-  });
-});
-
 test('initModal: inert traps focus, returns it on close, Escape only signals', async () => {
   const d = mount(`
     <button id="opener">Open</button>
@@ -1535,12 +1480,4 @@ test('initModal: inert traps focus, returns it on close, Escape only signals', a
   await tick();
   stop();
   assert.equal(d.getElementById('bg').inert, false, 'cleanup un-inerts');
-});
-
-test('initModal: SSR-safe', () => {
-  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
-  assert.doesNotThrow(() => {
-    const stop = initModal();
-    stop();
-  });
 });

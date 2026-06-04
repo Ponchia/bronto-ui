@@ -27,10 +27,7 @@ function oklchToRgb(L, C, H) {
         `pick an in-gamut value so its contrast can be measured honestly`,
     );
   }
-  const gamma = (x) => {
-    const c = x <= 0.0031308 ? 12.92 * x : 1.055 * x ** (1 / 2.4) - 0.055;
-    return Math.max(0, Math.min(1, c)) * 255;
-  };
+  const gamma = (x) => Math.max(0, Math.min(1, linearToSrgb(x))) * 255;
   return lin.map(gamma);
 }
 
@@ -98,12 +95,22 @@ export function rgbToHex([r, g, b]) {
   return `#${h(r)}${h(g)}${h(b)}`;
 }
 
+// sRGB gamma transfer (CSS Color 4), channels normalised to 0-1. Single source
+// for the gate (check-charts), the contrast-doc generator (gen-contrast) and
+// this module's own OKLab/OKLCH conversions, so a magic constant can't diverge
+// between what one measures and another renders. (code-quality audit Q6.)
+export const srgbToLinear = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+export const linearToSrgb = (x) => (x <= 0.0031308 ? 12.92 * x : 1.055 * x ** (1 / 2.4) - 0.055);
+
+/** `#rgb[a]`/`#rrggbb[aa]` → [r,g,b] (0-255). */
+export function hexToRgb(hex) {
+  const [r, g, b] = parseCssColor(hex);
+  return [r, g, b];
+}
+
 /** sRGB [r,g,b] (0-255) → OKLab [L,a,b] (for perceptual distance). */
 function rgbToOklab([r, g, b]) {
-  const lin = (c) => {
-    c /= 255;
-    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-  };
+  const lin = (c) => srgbToLinear(c / 255);
   const R = lin(r);
   const G = lin(g);
   const B = lin(b);
@@ -147,10 +154,7 @@ function oklchToRgbClamp(L, C, H) {
     -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
     -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s,
   ];
-  return lin.map((x) => {
-    const c = x <= 0.0031308 ? 12.92 * x : 1.055 * x ** (1 / 2.4) - 0.055;
-    return Math.round(Math.max(0, Math.min(1, c)) * 255);
-  });
+  return lin.map((x) => Math.round(Math.max(0, Math.min(1, linearToSrgb(x))) * 255));
 }
 
 /** Replicate CSS `color-mix(in oklch, A wA%, B wB%)` for two OPAQUE sRGB

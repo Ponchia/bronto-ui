@@ -20,11 +20,10 @@
  * Run: node scripts/gen-tokens-css.mjs   (or: npm run tokens:css:build)
  */
 import { readFileSync, writeFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { cssVars } from '../tokens/index.js';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { repoRoot as root, isMain } from './lib/emit.mjs';
 export const TOKENS_CSS_PATH = resolve(root, 'css/tokens.css');
 
 /** Stable boundary: everything from this line down is hand-authored and
@@ -133,8 +132,7 @@ export function tokensCss() {
   return paletteRegion() + handAuthoredTail();
 }
 
-const isMain = resolve(process.argv[1] || '') === fileURLToPath(import.meta.url);
-if (isMain) {
+if (isMain(import.meta.url)) {
   writeFileSync(TOKENS_CSS_PATH, tokensCss());
   console.log('✓ wrote css/tokens.css (palette generated from tokens/index.js cssVars)');
 }

@@ -19,15 +19,13 @@
  *
  * Run: node scripts/gen-mermaid.mjs   (or: npm run mermaid:build)
  */
-import { writeFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { format, resolveConfig } from 'prettier';
 import { cssVars } from '../tokens/index.js';
 import { charts } from '../tokens/charts.js';
 import { makeResolveRef } from './lib/resolve-ref.mjs';
+import { repoRoot as root, isMain, writeGenerated, genBanner } from './lib/emit.mjs';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const resolveRef = makeResolveRef('gen-mermaid');
 const JS_PATH = resolve(root, 'tokens/mermaid.js');
 const prettierCfg = await resolveConfig(JS_PATH);
@@ -141,14 +139,12 @@ export function buildMermaidJson() {
 }
 
 export async function buildMermaidJs() {
-  const banner =
-    `/** @ponchia/ui — GENERATED from the token source by scripts/gen-mermaid.mjs.\n` +
-    ` *  Do not edit by hand; run \`npm run mermaid:build\`. Drift-checked in CI.\n` +
-    ` *\n` +
-    ` *  An on-brand Mermaid theme, resolved to static colours per theme. Mermaid\n` +
-    ` *  is the consumer's renderer — this is config only, we never import it.\n` +
-    ` *  Values are resolved hex/rgba on purpose: Mermaid's theming engine derives\n` +
-    ` *  shades and cannot read \`var(--x)\`. See docs/mermaid.md. */\n`;
+  const banner = genBanner('gen-mermaid.mjs', 'mermaid:build', [
+    'An on-brand Mermaid theme, resolved to static colours per theme. Mermaid',
+    "is the consumer's renderer — this is config only, we never import it.",
+    "Values are resolved hex/rgba on purpose: Mermaid's theming engine derives",
+    'shades and cannot read `var(--x)`. See docs/mermaid.md.',
+  ]);
   const raw =
     `${banner}\n` +
     `/** Resolved Mermaid \`base\` themeVariables for each bronto theme. */\n` +
@@ -165,9 +161,7 @@ export async function buildMermaidJs() {
 }
 
 export function buildMermaidDts() {
-  const banner =
-    `/** @ponchia/ui — GENERATED from the token source by scripts/gen-mermaid.mjs.\n` +
-    ` *  Do not edit by hand; run \`npm run mermaid:build\`. Drift-checked in CI. */\n`;
+  const banner = genBanner('gen-mermaid.mjs', 'mermaid:build');
   return `${banner}
 /** A resolved Mermaid \`base\` theme: \`darkMode\` plus colour-valued
  *  themeVariables (hex/rgba). For the per-key contract see docs/mermaid.md. */
@@ -201,9 +195,4 @@ export async function buildGenerated() {
   };
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  for (const [rel, content] of Object.entries(await buildGenerated())) {
-    writeFileSync(resolve(root, rel), content);
-    console.log(`✓ wrote ${rel}`);
-  }
-}
+if (isMain(import.meta.url)) writeGenerated(root, await buildGenerated());

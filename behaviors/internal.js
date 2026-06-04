@@ -96,6 +96,24 @@ export function scrollIntoViewSafe(el, opts = { block: 'nearest' }) {
   }
 }
 
+// The focusable-element selector + "move focus into a container" helper shared
+// by the modal and popover focus paths (a dialog/modal must move focus into
+// itself on open). Focus the first focusable descendant, else make the
+// container programmatically focusable and focus it, so a content-only
+// panel/modal still receives focus. (code-quality audit Q4.)
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+export function focusInto(container) {
+  const first = container.querySelector(FOCUSABLE);
+  if (first) {
+    first.focus?.();
+    return;
+  }
+  if (!container.hasAttribute('tabindex')) container.setAttribute('tabindex', '-1');
+  container.focus?.();
+}
+
 // Wrap an index by `delta` within [0, len), the roving keyboard math shared by
 // the combobox and command listboxes (a -1 `cur` lands on the first/last as
 // before). Only this core is shared — the surrounding setActive/filter/group

@@ -2,13 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { charts, ACCENT, CHART_CATEGORICAL, CHART_PATTERN_COUNT } from '../tokens/charts.js';
 import { generated, resolveColor, PATTERNS } from '../scripts/gen-charts.mjs';
-import { deltaOklab } from '../scripts/lib/oklch.mjs';
+import { deltaOklab, srgbToLinear, linearToSrgb, hexToRgb } from '../scripts/lib/oklch.mjs';
 import { buildResolved } from '../scripts/gen-resolved.mjs';
-
-const hexToRgb = (h) => {
-  h = h.replace('#', '');
-  return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
-};
 
 test('categorical has 8 series and series 1 is the live accent, both themes', () => {
   for (const theme of ['light', 'dark']) {
@@ -54,8 +49,8 @@ test('categorical series stay distinguishable under simulated colourblindness', 
       [0.004733, 0.691367, 0.3039],
     ],
   };
-  const lin = (c) => (c / 255 <= 0.04045 ? c / 255 / 12.92 : ((c / 255 + 0.055) / 1.055) ** 2.4);
-  const delin = (c) => (c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055) * 255;
+  const lin = (c) => srgbToLinear(c / 255);
+  const delin = (c) => linearToSrgb(c) * 255;
   const sim = (rgb, t) => {
     if (t === 'normal') return rgb;
     const m = CVD[t];

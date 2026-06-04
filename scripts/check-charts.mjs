@@ -20,7 +20,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generated, resolveColor } from './gen-charts.mjs';
 import { charts, ACCENT, CHART_CATEGORICAL } from '../tokens/charts.js';
-import { deltaOklab } from './lib/oklch.mjs';
+import { deltaOklab, srgbToLinear, linearToSrgb, hexToRgb } from './lib/oklch.mjs';
 import { buildResolved } from './gen-resolved.mjs';
 import { freshnessErrors } from './lib/assert-fresh.mjs';
 import { reportAndExit } from './lib/gate-report.mjs';
@@ -57,10 +57,6 @@ for (const theme of ['light', 'dark']) {
 
 // --- 3. Distinguishability (normal + CVD) ------------------------------------
 const resolved = buildResolved();
-const hexToRgb = (h) => {
-  h = h.replace('#', '');
-  return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
-};
 // Machado 2009 severity-1.0 CVD matrices, applied in linear sRGB.
 const CVD = {
   protan: [
@@ -79,8 +75,8 @@ const CVD = {
     [0.004733, 0.691367, 0.3039],
   ],
 };
-const lin = (c) => (c / 255 <= 0.04045 ? c / 255 / 12.92 : ((c / 255 + 0.055) / 1.055) ** 2.4);
-const delin = (c) => (c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055) * 255;
+const lin = (c) => srgbToLinear(c / 255);
+const delin = (c) => linearToSrgb(c) * 255;
 const simulate = (rgb, type) => {
   if (type === 'normal') return rgb;
   const m = CVD[type];

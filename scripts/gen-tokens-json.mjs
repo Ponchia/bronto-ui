@@ -6,11 +6,10 @@
  * Run: node scripts/gen-tokens-json.mjs   (or: npm run tokens:build)
  */
 import { writeFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { cssVars, tokens } from '../tokens/index.js';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { repoRoot as root, isMain } from './lib/emit.mjs';
 
 // A self-describing banner so the file can't be mistaken for hand-authored
 // source. The $comment key is data (ignored by JSON consumers) and is part of
@@ -21,7 +20,7 @@ const $comment =
 export const TOKENS_JSON_PATH = resolve(root, 'tokens/index.json');
 export const tokensJson = JSON.stringify({ $comment, cssVars, tokens }, null, 2) + '\n';
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMain(import.meta.url)) {
   writeFileSync(TOKENS_JSON_PATH, tokensJson);
   console.log('✓ wrote tokens/index.json');
 }

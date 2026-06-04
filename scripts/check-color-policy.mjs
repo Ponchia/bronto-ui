@@ -161,7 +161,6 @@ const isDefinitionFile = (f) => f === 'tokens.css' || f === 'dataviz.css' || f.s
 // from the charts-only leak check below, but stays under the raw-color scans —
 // so a stray raw hex is still caught (unlike a blanket definition-file exempt).
 const consumesChartTokens = (f) => f === 'legend.css';
-const stripComments = stripCssComments;
 const stripUrls = (s) => s.replace(/url\([^)]*\)/gi, 'url()');
 
 // A hex is neutral iff R==G==B (ignoring any alpha). Handles #rgb, #rgba,
@@ -316,7 +315,7 @@ const NAMED_CHROMATIC = new RegExp(
 // Multi-line values (e.g. hand-formatted `color-mix()`) could evade the named-color
 // arm because the `:` split only sees the first line of such a value.
 for (const file of readdirSync(cssDir).filter((f) => f.endsWith('.css') && !isDefinitionFile(f))) {
-  const lines = stripComments(readFileSync(resolve(cssDir, file), 'utf8')).split('\n');
+  const lines = stripCssComments(readFileSync(resolve(cssDir, file), 'utf8')).split('\n');
   lines.forEach((raw, i) => {
     const line = stripUrls(raw);
     for (const m of line.matchAll(/#([0-9a-fA-F]{3,8})\b/g)) {

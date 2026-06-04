@@ -9,10 +9,8 @@
  */
 import { readFileSync, rmSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { resolve } from 'node:path';
+import { repoRoot as root } from './lib/emit.mjs';
 const cfg = JSON.parse(readFileSync(resolve(root, 'tsconfig.dts.json'), 'utf8'));
 
 for (const inc of cfg.include) {
