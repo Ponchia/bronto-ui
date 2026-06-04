@@ -1,7 +1,7 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 504,
+    "classes": 507,
     "groups": 154
   },
   "groups": {
@@ -690,7 +690,10 @@
         "ui-meter--warning"
       ],
       "parts": [
-        "ui-meter__fill"
+        "ui-meter__fill",
+        "ui-meter__label",
+        "ui-meter__row",
+        "ui-meter__value"
       ]
     },
     "ui-modal": {
@@ -1543,6 +1546,9 @@
     "ui-meter--success",
     "ui-meter--warning",
     "ui-meter__fill",
+    "ui-meter__label",
+    "ui-meter__row",
+    "ui-meter__value",
     "ui-modal",
     "ui-modal--drawer",
     "ui-modal__body",

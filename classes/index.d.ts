@@ -128,6 +128,9 @@ export declare const cls: {
   readonly progressIndeterminate: 'ui-progress--indeterminate';
   readonly meter: 'ui-meter';
   readonly meterFill: 'ui-meter__fill';
+  readonly meterRow: 'ui-meter__row';
+  readonly meterLabel: 'ui-meter__label';
+  readonly meterValue: 'ui-meter__value';
   readonly meterAccent: 'ui-meter--accent';
   readonly meterSuccess: 'ui-meter--success';
   readonly meterWarning: 'ui-meter--warning';

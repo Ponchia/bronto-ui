@@ -65,8 +65,9 @@ vega-embed 7), so don't mix a Vega-Lite 6 with a Vega 5 runtime:
 <script src="https://cdn.jsdelivr.net/npm/vega-lite@6.4.3/build/vega-lite.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vega-embed@7.1.0/build/vega-embed.min.js"></script>
 <script>
-  // INLINE the config (copy the object for your theme from @ponchia/ui/vega.json).
-  // This is the only path that also works from a file:// report — see below.
+  // INLINE the config — generate the paste-ready literal with
+  // `npm run emit:theme vega light` (mirrors the annotations author-time-copy
+  // pattern). This is the only path that also works from a file:// report.
   const brontoLight = {
     /* …paste tokens/vega.json → light here… */
   };
@@ -78,11 +79,29 @@ vega-embed 7), so don't mix a Vega-Lite 6 with a Vega 5 runtime:
 > `import` the `@ponchia/ui/vega` module **nor** `fetch('…/vega.json')` — the
 > browser blocks both across the `null`/file origin (CORS). So for a
 > double-clickable or PDF-bound report, **inline the resolved config object**
-> (as above) rather than fetching it. Over an `http(s)` origin (a dev server, a
+> (as above) rather than fetching it. Generate the paste-ready, sentinel-tagged
+> literal with `npm run emit:theme vega light` (or `dark`); re-running
+> `npm run emit:theme:check <file>` re-derives every tagged block and fails if a
+> token change has left an inlined copy stale. Over an `http(s)` origin (a dev server, a
 > static host, a bundler), the `import { brontoVegaConfig }` form and a
 > `fetch('https://cdn.jsdelivr.net/npm/@ponchia/ui@VERSION/tokens/vega.json')`
 > both work — pin the package version in the URL, since the unversioned latest
 > may predate this target.
+
+**Over `http(s)`, skip the inline copy — import the helper as an ES module.**
+`tokens/vega.js` (the `@ponchia/ui/vega` entry) has **zero dependencies**, so it
+loads straight from a CDN as a browser ES module with no bundler and no
+import-map. You get `brontoVegaConfig(theme)` itself (live theme switching), not
+a frozen object to keep in sync. Pin the package version; this needs a real
+origin (it does **not** work from `file://` — use the inline form above there):
+
+```html
+<script type="module">
+  import { brontoVegaConfig } from 'https://cdn.jsdelivr.net/npm/@ponchia/ui@VERSION/tokens/vega.js';
+  // vegaEmbed loaded from its UMD bundle above (window.vegaEmbed), or import it as ESM too.
+  vegaEmbed('#chart', spec, { config: brontoVegaConfig('light'), renderer: 'svg', actions: false });
+</script>
+```
 
 For a build step or non-JS host, read `@ponchia/ui/vega.json` directly
 (`{ light, dark }`, each a ready Vega-Lite `config`).

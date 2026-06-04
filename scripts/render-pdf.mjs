@@ -18,18 +18,23 @@
 import { chromium } from '@playwright/test';
 import { existsSync, mkdirSync } from 'node:fs';
 import { basename, resolve } from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const argv = process.argv.slice(2);
-const outIdx = argv.indexOf('--out');
-const outDir = outIdx !== -1 ? argv[outIdx + 1] : null;
-const inputs = argv.filter((a, i) => a !== '--out' && i !== outIdx + 1 && !a.startsWith('--'));
-
-if (!inputs.length) {
-  console.error('usage: node scripts/render-pdf.mjs <report.html> [more.html ...] [--out <dir>]');
-  process.exit(1);
+/**
+ * Split argv into the `--out <dir>` value and the list of input HTML files.
+ * Pure + exported so the arg handling is unit-testable without launching a
+ * browser. The subtlety: the arg right after `--out` is its value, not an
+ * input, but that index must only be skipped when `--out` is actually present —
+ * otherwise `indexOf` returns -1, `outIdx + 1` is 0, and the first input file
+ * (the common `report:pdf -- report.html` case) is silently dropped.
+ */
+export function parseArgs(argv) {
+  const outIdx = argv.indexOf('--out');
+  const outDir = outIdx !== -1 ? (argv[outIdx + 1] ?? null) : null;
+  const outValueIdx = outIdx === -1 ? -1 : outIdx + 1;
+  const inputs = argv.filter((a, i) => !a.startsWith('--') && i !== outValueIdx);
+  return { outDir, inputs };
 }
-if (outDir && !existsSync(outDir)) mkdirSync(outDir, { recursive: true });
 
 // Prefer the lightweight headless-shell binary; fall back to full chromium if
 // only that is installed.
@@ -41,26 +46,42 @@ async function launch() {
   }
 }
 
-const browser = await launch();
-const page = await browser.newPage();
+async function main(argv) {
+  const { outDir, inputs } = parseArgs(argv);
 
-for (const input of inputs) {
-  const abs = resolve(input);
-  if (!existsSync(abs)) {
-    console.error(`✗ not found: ${input}`);
-    continue;
+  if (!inputs.length) {
+    console.error('usage: node scripts/render-pdf.mjs <report.html> [more.html ...] [--out <dir>]');
+    process.exit(1);
   }
-  const out = outDir
-    ? resolve(outDir, basename(abs).replace(/\.html?$/i, '.pdf'))
-    : abs.replace(/\.html?$/i, '.pdf');
-  await page.goto(pathToFileURL(abs).href, { waitUntil: 'networkidle' });
-  await page.pdf({
-    path: out,
-    format: 'A4',
-    printBackground: true, // required, or chart fills/swatches drop out
-    margin: { top: '14mm', bottom: '14mm', left: '14mm', right: '14mm' },
-  });
-  console.log(`✓ ${out}`);
+  if (outDir && !existsSync(outDir)) mkdirSync(outDir, { recursive: true });
+
+  const browser = await launch();
+  const page = await browser.newPage();
+
+  for (const input of inputs) {
+    const abs = resolve(input);
+    if (!existsSync(abs)) {
+      console.error(`✗ not found: ${input}`);
+      continue;
+    }
+    const out = outDir
+      ? resolve(outDir, basename(abs).replace(/\.html?$/i, '.pdf'))
+      : abs.replace(/\.html?$/i, '.pdf');
+    await page.goto(pathToFileURL(abs).href, { waitUntil: 'networkidle' });
+    await page.pdf({
+      path: out,
+      format: 'A4',
+      printBackground: true, // required, or chart fills/swatches drop out
+      margin: { top: '14mm', bottom: '14mm', left: '14mm', right: '14mm' },
+    });
+    console.log(`✓ ${out}`);
+  }
+
+  await browser.close();
 }
 
-await browser.close();
+// Only render when run as a script — importing this module (e.g. from a test of
+// parseArgs) must not launch a browser.
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  await main(process.argv.slice(2));
+}

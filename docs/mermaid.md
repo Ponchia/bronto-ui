@@ -38,14 +38,31 @@ or read the raw maps (`import { mermaid } from '@ponchia/ui/mermaid'` →
 `{ light, dark }`). For a build step or non-JS host, read
 `@ponchia/ui/mermaid.json` directly.
 
+**Over `http(s)`, import the helper from a CDN as an ES module** — no bundler.
+`tokens/mermaid.js` (the `@ponchia/ui/mermaid` entry) has **zero dependencies**,
+so it loads directly as a browser ES module; you get `brontoMermaidTheme(theme)`
+itself, not a frozen object to keep in sync. Pin the package version; this needs
+a real origin (not `file://` — inline or pre-render to SVG there, per the note
+below):
+
+```html
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  import { brontoMermaidTheme } from 'https://cdn.jsdelivr.net/npm/@ponchia/ui@VERSION/tokens/mermaid.js';
+  mermaid.initialize(brontoMermaidTheme('light'));
+  await mermaid.run();
+</script>
+```
+
 > **file:// portability.** A report opened straight from disk (`file://`) cannot
 > `import` the `@ponchia/ui/mermaid` module **nor** `fetch('…/mermaid.json')` —
 > the browser blocks both across the `null`/file origin (CORS), exactly as with
 > [Vega](./vega.md#from-a-cdn-no-bundler). So for a double-clickable or PDF-bound
-> report either **inline the theme variables** (paste the object for your theme
-> from `mermaid.json` into the init directive) or, better, **pre-render to a
-> frozen SVG** with the Mermaid CLI (`mmdc`, below) so there is no runtime at
-> all. Over an `http(s)` origin the `import`/`fetch` forms both work.
+> report either **inline the theme variables** (generate the paste-ready literal
+> with `npm run emit:theme mermaid light` / `dark` — guard it from token drift
+> with `npm run emit:theme:check <file>`) or, better, **pre-render to a frozen
+> SVG** with the Mermaid CLI (`mmdc`, below) so there is no runtime at all. Over
+> an `http(s)` origin the `import`/`fetch` forms both work.
 
 The result is monochrome surfaces and lines with the rationed accent reserved
 for notes — a diagram that looks like the rest of a bronto surface and
