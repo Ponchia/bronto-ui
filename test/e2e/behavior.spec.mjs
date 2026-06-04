@@ -61,6 +61,39 @@ test('native <dialog> open/close glue works (initDialog)', async ({ page }) => {
   await expect(dialog).toBeHidden();
 });
 
+test('Escape on a popover nested in a <dialog> closes only the popover, not the dialog', async ({
+  page,
+}) => {
+  // Regression: without preventDefault()/stopPropagation() in initPopover's
+  // Escape handler, one keypress closed BOTH — hidePopover() ran, then the
+  // browser's close-request found the dialog as the new topmost element and
+  // dismissed it too. The doc contract is "popover + dialog open together".
+  await open(page);
+  await page.evaluate(() => {
+    const wrap = document.createElement('div');
+    wrap.innerHTML = `
+      <button id="c3-open" data-bronto-open="c3-dlg">open</button>
+      <dialog id="c3-dlg" class="ui-modal">
+        <button id="c3-trig" data-bronto-popover="c3-pop">pop</button>
+        <div id="c3-pop" class="ui-popover" popover aria-label="nested popover">hi</div>
+      </dialog>`;
+    document.body.appendChild(wrap);
+  });
+  await page.click('#c3-open');
+  await expect(page.locator('#c3-dlg')).toBeVisible();
+  await page.click('#c3-trig');
+  const isOpen = (id) =>
+    page.evaluate((i) => {
+      const el = document.getElementById(i);
+      return el.matches(':popover-open') || el.classList.contains('is-open');
+    }, id);
+  await expect.poll(() => isOpen('c3-pop')).toBe(true);
+
+  await page.keyboard.press('Escape');
+  await expect.poll(() => isOpen('c3-pop')).toBe(false); // popover closes
+  await expect(page.locator('#c3-dlg')).toBeVisible(); // …dialog stays open
+});
+
 test(':has()-driven segmented control reflects the checked radio', async ({ page }) => {
   await open(page);
   const seg = page.locator('.ui-segmented').first();

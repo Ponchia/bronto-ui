@@ -2,9 +2,11 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { buildClassesJson } from '../scripts/gen-classes-json.mjs';
 import { cls } from '../classes/index.js';
+import * as behaviors from '../behaviors/index.js';
 
 const m = buildClassesJson();
 const allClasses = new Set(m.classes);
+const behaviorExports = new Set(Object.keys(behaviors));
 
 test('classes.json: counts match the data', () => {
   assert.equal(m.counts.classes, m.classes.length);
@@ -82,7 +84,14 @@ test('classes.json: behaviorAttributes + requiredAria are well-formed (C14/C18)'
   for (const a of m.behaviorAttributes) {
     assert.match(a.name, /^data-bronto-[a-z-]+$/, `behaviorAttribute ${a.name} malformed`);
     assert.ok(a.on && a.behavior && a.note, `behaviorAttribute ${a.name} missing on/behavior/note`);
-    assert.match(a.behavior, /^init[A-Z]/, `behaviorAttribute ${a.name} behavior not an init*`);
+    // The named behavior must be a REAL export of the barrel — not just init*-shaped.
+    // (The old /^init/ regex passed `initDismissible`, which doesn't exist; the
+    // real export is `dismissible`. That is the initForms→initFormValidation class
+    // of contract lie this manifest must not ship — component audit C2/C32.)
+    assert.ok(
+      behaviorExports.has(a.behavior),
+      `behaviorAttribute ${a.name} names "${a.behavior}()" — not an export of behaviors/index.js`,
+    );
   }
   const hooks = new Set(m.behaviorAttributes.map((a) => a.name));
   for (const h of ['data-bronto-open', 'data-bronto-popover', 'data-bronto-dismiss']) {

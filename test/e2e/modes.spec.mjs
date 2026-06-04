@@ -27,6 +27,26 @@ test('forced-colors: the keyboard focus ring is re-asserted', async ({ page }) =
   expect(parseFloat(o.width)).toBeGreaterThanOrEqual(2);
 });
 
+test('forced-colors: the active app-nav link keeps a non-colour current-page cue', async ({
+  page,
+}) => {
+  // Regression: under HCM var(--accent) (border + bg + text) flattens to one
+  // system colour, so the .is-active link collapsed into its siblings. The fix
+  // adds a NON-colour channel — font-weight 700 — that the OS palette can't strip.
+  await page.emulateMedia({ forcedColors: 'active' });
+  await page.goto('/test/e2e/_app-shell.fixture.html', { waitUntil: 'networkidle' });
+  const weights = await page.evaluate(() => {
+    const links = [...document.querySelectorAll('.ui-app-nav a')];
+    const active = links.find((a) => a.classList.contains('is-active'));
+    const inactive = links.find((a) => !a.classList.contains('is-active'));
+    return {
+      active: getComputedStyle(active).fontWeight,
+      inactive: getComputedStyle(inactive).fontWeight,
+    };
+  });
+  expect(Number(weights.active)).toBeGreaterThan(Number(weights.inactive));
+});
+
 test('prefers-reduced-motion: the dot spinner stops animating', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/demo/', { waitUntil: 'networkidle' });
@@ -58,6 +78,40 @@ test('print: chrome is hidden, content + link URLs are kept', async ({ page }) =
   // link target surfaced on paper. Chromium/WebKit resolve attr(href) to the
   // URL in computed ::after content; Firefox returns the literal `attr(href)`.
   expect(r.afterContent).toMatch(/http|attr\(href\)/);
+});
+
+test('print under the dark theme: the panel/card surface flips to white paper, not near-black', async ({
+  page,
+}) => {
+  // Regression for the print `:root` specificity loss: a bare `:root` print
+  // remap (0,1,0) lost the cascade to `:root[data-theme='dark']` (0,2,0) and
+  // the OLED surface (0,3,0), so a dark-mode user printed a near-black .ui-card
+  // on white paper. The fix raises the print selector to `:root:root:root`.
+  await page.goto('/demo/', { waitUntil: 'networkidle' });
+  await page.emulateMedia({ media: 'print' });
+  const read = () =>
+    page.evaluate(() => {
+      const s = getComputedStyle(document.documentElement);
+      return {
+        panel: s.getPropertyValue('--panel').trim(),
+        panelStrong: s.getPropertyValue('--panel-strong').trim(),
+        text: s.getPropertyValue('--text').trim(),
+      };
+    });
+
+  await page.evaluate(() => {
+    document.documentElement.dataset.theme = 'dark';
+  });
+  const dark = await read();
+  expect(dark.panel).toBe('#fff'); // dark theme → white paper under print
+  expect(dark.text).toBe('#111'); // ink text, not the dark token
+
+  await page.evaluate(() => {
+    document.documentElement.dataset.surface = 'oled';
+  });
+  const oled = await read();
+  expect(oled.panel).toBe('#fff'); // OLED's (0,3,0) panel must not win either
+  expect(oled.panelStrong).toBe('#fff'); // and its dark --panel-strong is neutralised
 });
 
 test('surface=oled: dark surfaces flip to true black; the readable text token is untouched', async ({

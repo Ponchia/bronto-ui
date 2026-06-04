@@ -39,7 +39,14 @@ export function initCrosshair({ root } = {}) {
       if (!r.width || !r.height) return;
       const x = e.clientX - r.left;
       const y = e.clientY - r.top;
-      overlay.style.setProperty('--crosshair-x', `${x}px`);
+      // The CSS positions the vertical rule / readout with a *logical* inset
+      // (inset-inline-start), so --crosshair-x must be the distance from the
+      // inline-start edge — the physical left in LTR, the physical right in RTL.
+      // Emitting the physical x instead made the RTL rule land off-plot. The
+      // public `detail.x`/`fx` stay physical-from-left so host scale-mapping
+      // keeps one stable coordinate space regardless of direction.
+      const rtl = getComputedStyle(plot).direction === 'rtl';
+      overlay.style.setProperty('--crosshair-x', `${rtl ? r.right - e.clientX : x}px`);
       overlay.style.setProperty('--crosshair-y', `${y}px`);
       overlay.classList.add('is-active');
       plot.dispatchEvent(

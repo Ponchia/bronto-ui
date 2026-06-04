@@ -132,6 +132,7 @@ test('scroll-driven primitives bind a scroll/view timeline where supported (else
       barTransform: cb.transform,
       revName: cr.animationName,
       revTimeline: cr.animationTimeline,
+      revRange: cr.animationRange,
     };
     bar.remove();
     rev.remove();
@@ -140,8 +141,11 @@ test('scroll-driven primitives bind a scroll/view timeline where supported (else
   if (supported) {
     expect(probe.barName).toContain('uiScrollGrow');
     expect(probe.barTimeline).toMatch(/scroll/);
-    expect(probe.revName).toContain('uiRise');
+    // The reveal uses the early-opacity keyframe + an `entry`-bounded range, so
+    // an element near the document bottom can't freeze stranded transparent (C9).
+    expect(probe.revName).toContain('uiScrollReveal');
     expect(probe.revTimeline).toMatch(/view/);
+    expect(probe.revRange).not.toMatch(/cover/);
   } else {
     // Degrade to a static end state — no animation bound at all.
     expect(probe.barName).toBe('none');

@@ -71,16 +71,26 @@ export function initFormValidation({ root } = {}) {
     if (!control.willValidate) return true;
     const ok = control.validity.valid;
     const slot = slotFor(control);
-    const isHint = slot?.classList.contains('ui-hint');
+    // Decide the slot TYPE by the `[data-bronto-error]` attribute, NOT the
+    // `.ui-hint` class: the canonical markup is `<p class="ui-hint"
+    // data-bronto-error>`, which carries BOTH. Keying off `.ui-hint` sent that
+    // dedicated error node down the help-hint branch, which never unlink()s — so
+    // the field kept a dangling aria-describedby to an empty error node after it
+    // was fixed (component-audit C6). Only a *borrowed* plain `.ui-hint` (a help
+    // slot with no dedicated error node) snapshots/restores its help text and
+    // stays linked in the valid state.
+    const dedicated = !!slot?.matches?.('[data-bronto-error]');
+    const hasHintClass = !!slot?.classList.contains('ui-hint');
+    const borrowedHint = hasHintClass && !dedicated;
     if (ok) {
       control.removeAttribute('aria-invalid');
       if (slot) {
-        if (isHint) {
+        if (hasHintClass) slot.classList.remove('ui-hint--error');
+        if (borrowedHint) {
           // Restore the snapshotted help text (or clear if there was none); a
           // help-bearing hint stays linked via aria-describedby (it describes
           // the field in the valid state too).
           slot.textContent = hintHelp.get(slot) ?? '';
-          slot.classList.remove('ui-hint--error');
         } else {
           // Dedicated error node: clear it and drop the now-stale describedby
           // so AT doesn't announce an empty error association.
@@ -91,9 +101,9 @@ export function initFormValidation({ root } = {}) {
     } else {
       control.setAttribute('aria-invalid', 'true');
       if (slot) {
-        if (isHint && !hintHelp.has(slot)) hintHelp.set(slot, slot.textContent);
+        if (borrowedHint && !hintHelp.has(slot)) hintHelp.set(slot, slot.textContent);
         slot.textContent = control.validationMessage;
-        if (isHint) slot.classList.add('ui-hint--error');
+        if (hasHintClass) slot.classList.add('ui-hint--error');
         link(control, slot);
       }
     }

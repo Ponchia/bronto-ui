@@ -63,7 +63,12 @@ function toastElement(message, { tone, title }) {
   }
   el.className = validTone ? `ui-toast ui-toast--${validTone}` : 'ui-toast';
   // No per-item role: the stack itself is the live region; a nested
-  // live region risks double announcement in some SRs.
+  // live region risks double announcement in some SRs. But mark the toast
+  // aria-atomic so a *titled* toast announces title + message as one unit, not
+  // disjointly — and unlike aria-atomic on the polite STACK (which would re-read
+  // every resident toast on each new one), scoping it to the toast keeps sibling
+  // toasts out of the announcement. (component audit C23.)
+  el.setAttribute('aria-atomic', 'true');
   if (title) {
     const t = document.createElement('p');
     t.className = 'ui-toast__title';

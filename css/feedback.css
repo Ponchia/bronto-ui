@@ -492,7 +492,9 @@
    (task progress, can be indeterminate), a meter shows a measured static
    value for data display (coverage, capacity, a KPI against a target).
    Drive the fill with the same --value knob as progress; tone the fill by
-   threshold. Author role="meter" + aria-valuenow/min/max for AT. --- */
+   threshold. Author role="meter" + aria-valuenow/min/max for AT — but role=meter
+   has uneven AT support, so keep the visible .ui-meter__label/__value (they are
+   the real channel, not just decoration). (component audit C25.) --- */
 
 .ui-meter {
   background: var(--panel-soft);
@@ -559,7 +561,12 @@
   font-size: var(--text-xs);
   gap: 0.5rem;
   letter-spacing: var(--tracking-wide);
-  min-inline-size: max-content;
+
+  /* Prefer the natural one-line width, but never wider than the container: a
+     long step label at `max-content` couldn't shrink and overflowed the page on
+     narrow viewports (tabs scroll; steps didn't). Capping at 100% lets an
+     over-long label wrap instead of overflowing. (component audit C18.) */
+  min-inline-size: min(100%, max-content);
   text-transform: uppercase;
 }
 

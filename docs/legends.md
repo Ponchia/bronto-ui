@@ -48,7 +48,7 @@ Recommended structure: wrap the figure and its key in a `<figure>` with a
     <li class="ui-legend__item">
       <span
         class="ui-legend__swatch"
-        style="--chart-color: var(--chart-1); --chart-pattern: var(--chart-pattern-1)"
+        style="--chart-color: var(--chart-3); --chart-pattern: var(--chart-pattern-3)"
         aria-hidden="true"
       ></span>
       <span class="ui-legend__label">Research</span>

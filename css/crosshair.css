@@ -40,18 +40,19 @@
   position: absolute;
 }
 
+/* Positioned with logical insets, not a physical translateX/Y: --crosshair-x
+   is the offset from the inline-start edge (initCrosshair flips it in RTL), so
+   the vertical rule tracks the pointer correctly in both directions. */
 .ui-crosshair__line--x {
   inline-size: 1px;
   inset-block: 0;
-  inset-inline-start: 0;
-  transform: translateX(var(--crosshair-x));
+  inset-inline-start: var(--crosshair-x);
 }
 
 .ui-crosshair__line--y {
   block-size: 1px;
-  inset-block-start: 0;
+  inset-block-start: var(--crosshair-y);
   inset-inline: 0;
-  transform: translateY(var(--crosshair-y));
 }
 
 /* An axis value chip (host sets its text + which edge it sits on). On the
@@ -84,13 +85,12 @@
   color: var(--text);
   font-family: var(--mono);
   font-size: var(--text-xs);
-  inset-block-start: 0;
-  inset-inline-start: 0;
+  inset-block-start: var(--crosshair-y);
+  inset-inline-start: var(--crosshair-x);
   padding-block: 0.2rem;
   padding-inline: 0.4rem;
   pointer-events: none;
   position: absolute;
-  transform: translate(var(--crosshair-x), var(--crosshair-y));
 }
 
 @media (forced-colors: active) {

@@ -74,12 +74,13 @@ export function initCombobox({ root } = {}) {
     syncOptions();
     list.setAttribute('role', 'listbox');
     // Give the listbox its own accessible name (a bare role=listbox is unnamed
-    // to a screen reader) by mirroring the input's name. (a11y review C30.)
+    // to a screen reader) by mirroring the input's REAL name. (a11y review C30.)
+    // The placeholder is deliberately NOT in this chain: the input warning below
+    // already rejects a placeholder as an inadequate name, so papering the
+    // listbox over with it would contradict that — if there's no real name the
+    // listbox stays unnamed and the warning is the signal. (component audit C28.)
     if (!list.hasAttribute('aria-label') && !list.hasAttribute('aria-labelledby')) {
-      const name =
-        input.getAttribute('aria-label') ||
-        input.labels?.[0]?.textContent?.trim() ||
-        input.getAttribute('placeholder');
+      const name = input.getAttribute('aria-label') || input.labels?.[0]?.textContent?.trim();
       if (name) list.setAttribute('aria-label', name);
     }
     // A `role="combobox"` with no accessible name is a silent AT failure. A

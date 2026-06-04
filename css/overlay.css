@@ -88,6 +88,15 @@ dialog.ui-modal[open]::backdrop {
   grid-template-rows: auto 1fr auto;
 }
 
+/* Background scroll-lock. A native <dialog> top layer does NOT stop the page
+   behind it scrolling, and the no-JS native path can't lock it in script — so
+   lock it in CSS, for both the native [open] dialog and the controlled .is-open
+   overlay (incl. the drawer modifier, same base). (component audit C13.) */
+html:has(dialog.ui-modal[open]),
+html:has(.ui-modal.is-open) {
+  overflow: hidden;
+}
+
 .ui-modal__head {
   align-items: flex-start;
   border-block-end: 1px solid var(--line);
@@ -299,6 +308,25 @@ dialog.ui-modal[open]::backdrop {
 
 .ui-menu__item:focus-visible::before {
   opacity: 1;
+}
+
+/* Menu hover/focus paints var(--bg-accent), which HCM strips, so the hovered row
+   is indistinguishable from its siblings (focus keeps the UA ring; hover has no
+   such fallback). Re-assert a system Highlight like the combobox/command rows,
+   for parity with those sibling surfaces. (component audit C22.) */
+@media (forced-colors: active) {
+  .ui-menu__item:hover,
+  .ui-menu__item:focus-visible {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+
+  .ui-menu__item:hover::before,
+  .ui-menu__item:focus-visible::before {
+    background: HighlightText;
+    opacity: 1;
+  }
 }
 
 /* --- Combobox: an input with a filtered listbox popup (APG pattern,

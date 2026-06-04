@@ -139,6 +139,40 @@ for (const [name, g] of Object.entries(manifest.groups)) {
   }
 }
 
+// ---- (e) behaviorAttributes manifest is COMPLETE ---------------------------
+// (b) only checks a hand-picked WIRING subset appears as prose in reference.md.
+// That let the manifest itself drift: classes.json shipped 9 of ~34 consumed
+// data-bronto-* hooks, so an LLM reading the structured contract was blind to
+// tabs / theme-toggle / sortable / combobox-live / carousel / glyph / … (C2).
+// Derive the expected set from the behaviors source — the runtime truth — and
+// fail on any hook a behavior READS but the manifest omits (or lists but no
+// behavior reads). This is the structural fix that keeps C2 from recurring (C11).
+const behDir = resolve(root, 'behaviors');
+const consumed = new Set();
+for (const f of readdirSync(behDir)) {
+  if (!f.endsWith('.js') || f.endsWith('.d.ts')) continue;
+  const src = readFileSync(resolve(behDir, f), 'utf8');
+  for (const m of src.matchAll(/data-bronto-[a-z-]+/g)) consumed.add(m[0]);
+}
+const manifested = new Set(manifest.behaviorAttributes.map((a) => a.name));
+for (const attr of [...consumed].sort()) {
+  if (!manifested.has(attr)) {
+    errors.push(
+      `(e) "${attr}" is read by a behavior but MISSING from classes.json behaviorAttributes — ` +
+        `an LLM authoring from the structured contract can't wire it. Add an entry in ` +
+        `gen-classes-json.mjs (name/on/behavior/note).`,
+    );
+  }
+}
+for (const attr of [...manifested].sort()) {
+  if (!consumed.has(attr)) {
+    errors.push(
+      `(e) behaviorAttributes lists "${attr}" but NO behavior reads it — stale manifest entry; ` +
+        `remove it or fix the name.`,
+    );
+  }
+}
+
 // ---- report ----------------------------------------------------------------
 if (errors.length) {
   console.error(`✗ check:contract — ${errors.length} doc/contract surface(s) silently lie:`);
@@ -154,5 +188,6 @@ const basesChecked = Object.values(manifest.groups).filter((g) => g.base).length
 console.log(
   `✓ check:contract — ${manifest.customProperties.length} customProperties examples resolve, ` +
     `${WIRING.length} wiring attrs in reference.md, ${seen.size} documented init*() all exported, ` +
-    `${basesChecked} group bases resolve to a CSS selector`,
+    `${basesChecked} group bases resolve to a CSS selector, ` +
+    `${manifest.behaviorAttributes.length} behaviorAttributes cover all ${consumed.size} consumed data-bronto-* hooks`,
 );
