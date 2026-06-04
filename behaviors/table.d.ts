@@ -17,9 +17,14 @@
  *
  * SSR-safe, idempotent per table; returns a cleanup function.
  *
- * The numeric sort parses each cell as display text (strips non-[0-9.-] chars),
- * so it is locale-naive — group/decimal separators beyond `.`/`-` are not
- * interpreted. It is a client-side convenience sorter, not a data grid.
+ * The numeric sort parses each cell's display text after normalizing the
+ * common report shapes: a Unicode minus (U+2212) and en/em dashes count as a
+ * sign (so a "−5" loss sorts BELOW a "5" gain, not above it), accounting
+ * parentheses `(1,234)` read as negative, and `,` thousands separators are
+ * dropped. For anything ambiguous (e.g. a European decimal comma, mixed units)
+ * put the canonical number in a `data-sort-value` attribute on the cell — it
+ * wins over the parsed text. It is a client-side convenience sorter, not a data
+ * grid. (component audit C3.)
  *
  * @param {import('./internal.js').DelegateOpts} [opts]
  * @returns {import('./internal.js').Cleanup}

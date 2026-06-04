@@ -100,6 +100,8 @@ test.describe('app-shell collapse', () => {
         // stacked: content sits below the (now horizontal) rail
         stacked: c.top >= r.bottom - 1,
         railFlexDirection: getComputedStyle(rail).flexDirection,
+        railHeight: r.height,
+        viewportHeight: window.innerHeight,
       };
     });
   }
@@ -120,6 +122,9 @@ test.describe('app-shell collapse', () => {
     expect(m.columnCount).toBe(1); // single-column track
     expect(m.stacked).toBe(true); // content drops below the rail
     expect(m.railFlexDirection).toBe('row'); // rail laid out horizontally
+    // C7: the horizontal rail must stay a thin strip, not balloon to ~half the
+    // viewport because the grid stretched its auto track to fill min-block-size.
+    expect(m.railHeight).toBeLessThan(m.viewportHeight * 0.25);
   });
 });
 
@@ -231,9 +236,9 @@ test.describe('site nav folds into the details menu', () => {
 // ---------------------------------------------------------------------------
 // 5. TOUCH TARGETS (coarse pointer) — `@media (pointer: coarse)` enlarges
 //    .ui-button / .ui-input plus the dismiss/close affordances, which share one
-//    declaration block: `.ui-alert__dismiss, .ui-toast__close { min-block-size:
+//    declaration block: `.ui-alert__close, .ui-toast__close { min-block-size:
 //    2.9rem; ... }`. We measure the three controls statically present on the
-//    showcase (button, input, alert dismiss); the alert-dismiss measurement
+//    showcase (button, input, alert close); the alert-dismiss measurement
 //    exercises that shared block, so .ui-toast__close is covered transitively
 //    (the demo's default toast auto-dismisses without a close button, so there
 //    is none to measure live).
@@ -282,7 +287,7 @@ test.describe('coarse-pointer touch targets', () => {
         return {
           button: measure('.ui-button'),
           input: measure('.ui-input'),
-          alertDismiss: measure('.ui-alert__dismiss'),
+          alertClose: measure('.ui-alert__close'),
           // The coarse rule sets `min-block-size: 2.9rem`. Mobile emulation can
           // pick a non-16px root font (Pixel 7 reports 15px here), so derive the
           // target from the PAGE's own rem base — 2.9rem, whatever a rem is —
@@ -293,7 +298,7 @@ test.describe('coarse-pointer touch targets', () => {
       // ~1px slack for sub-pixel rounding; the contract is "control reaches 2.9rem".
       expect(sizes.button, 'button').toBeGreaterThanOrEqual(sizes.target - 1);
       expect(sizes.input, 'input').toBeGreaterThanOrEqual(sizes.target - 1);
-      expect(sizes.alertDismiss, 'alert dismiss').toBeGreaterThanOrEqual(sizes.target - 1);
+      expect(sizes.alertClose, 'alert close').toBeGreaterThanOrEqual(sizes.target - 1);
     } finally {
       await context.close();
       await browser.close();

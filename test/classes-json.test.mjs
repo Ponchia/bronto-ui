@@ -52,3 +52,16 @@ test('classes.json: states and customProperties are well-formed', () => {
     assert.ok(p.on && p.example, `custom property ${p.name} missing on/example`);
   }
 });
+
+test('classes.json: rootAttributes are well-formed', () => {
+  assert.ok(Array.isArray(m.rootAttributes) && m.rootAttributes.length, 'rootAttributes present');
+  for (const a of m.rootAttributes) {
+    assert.ok(a.name, 'rootAttribute missing name');
+    assert.ok(a.on, `rootAttribute ${a.name} missing on`);
+    assert.ok(Array.isArray(a.values) && a.values.length, `rootAttribute ${a.name} missing values`);
+    assert.ok(a.note, `rootAttribute ${a.name} missing note`);
+  }
+  const byName = Object.fromEntries(m.rootAttributes.map((a) => [a.name, a]));
+  assert.ok(byName['data-theme'], 'data-theme documented');
+  assert.ok(byName['data-bronto-skin'], 'data-bronto-skin documented');
+});

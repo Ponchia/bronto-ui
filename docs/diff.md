@@ -3,6 +3,9 @@
 `@ponchia/ui/css/diff.css` is an opt-in change-review grammar — the surface for
 showing what **changed**: code review, changelogs, version history, config
 diffs, and generated reports. Marks call out a sentence; diff calls out a line.
+Its sibling is [code.css](code.md) (single-file fenced code); the two share one
+change vocabulary — `--add` / `--remove` (`ui-diff__row--remove` ↔
+`ui-code__line--remove`).
 
 ```css
 @import '@ponchia/ui';
@@ -33,7 +36,7 @@ decorative — keep them `aria-hidden`; the `__code` cell carries the content.
 ```html
 <div class="ui-diff">
   <div class="ui-diff__hunk">
-    <div class="ui-diff__header">@@ -12,6 +12,6 @@ .ui-diff</div>
+    <div class="ui-diff__head">@@ -12,6 +12,6 @@ .ui-diff</div>
 
     <div class="ui-diff__row ui-diff__row--context">
       <span class="ui-diff__ln" aria-hidden="true">12</span>
@@ -103,7 +106,7 @@ For a hard before/after of two whole files, you can also drop two plain
 | `.ui-diff--split` | Two-pane (old \| new) layout modifier. |
 | `.ui-diff__pane` | One column in split view; its own `[ln] [code]` grid. |
 | `.ui-diff__hunk` | Optional `role="rowgroup"` wrapper for a hunk (layout-transparent). |
-| `.ui-diff__header` | A hunk / file header row, spanning all columns. |
+| `.ui-diff__head` | A hunk / file header row, spanning all columns. |
 | `.ui-diff__row` | A line row (layout-transparent; the cells are the grid items). |
 | `.ui-diff__row--add` | Added line — green tint + `+` gutter glyph. |
 | `.ui-diff__row--remove` | Removed line — red tint + `−` gutter glyph. |

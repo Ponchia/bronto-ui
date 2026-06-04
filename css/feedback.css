@@ -4,6 +4,19 @@
    never a fill. Nothing-flat, hairline, sharp.
    ========================================================================== */
 
+/* `--value` drives the progress/meter fill width: a UNITLESS number 0–100,
+   never a percentage. Registering it as `<number>` makes that contract real —
+   a stray `--value: 50%` is invalid against the typed syntax and falls back to
+   the initial `0` (empty bar) instead of poisoning the `clamp()` and painting a
+   FULL bar (the old failure mode). It inherits so the value set on the host
+   `.ui-meter` / `.ui-progress` cascades to the inner `__fill`/`__bar`.
+   (component audit C8.) */
+@property --value {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
 /* --- Alert / callout — inline, dismissible-compatible --- */
 
 .ui-alert {
@@ -50,7 +63,7 @@
   margin: 0;
 }
 
-.ui-alert__dismiss {
+.ui-alert__close {
   background: transparent;
   border: 0;
   color: var(--text-dim);
@@ -62,7 +75,7 @@
   padding: 0.1rem 0.3rem;
 }
 
-.ui-alert:has(.ui-alert__dismiss) {
+.ui-alert:has(.ui-alert__close) {
   grid-template-columns: auto 1fr auto;
 }
 
@@ -107,7 +120,7 @@
 }
 
 @media (hover: hover) {
-  .ui-alert__dismiss:hover {
+  .ui-alert__close:hover {
     color: var(--text);
   }
 }
@@ -216,7 +229,7 @@
    tap-target floor (2.9rem, as in primitives.css / forms.css) without changing
    the desktop glyph size. The box is centred so the glyph stays put. */
 @media (pointer: coarse) {
-  .ui-alert__dismiss,
+  .ui-alert__close,
   .ui-toast__close {
     display: inline-grid;
     place-items: center;
@@ -224,7 +237,7 @@
     min-inline-size: 2.9rem;
   }
 
-  .ui-alert__dismiss {
+  .ui-alert__close {
     padding: 0;
   }
 }

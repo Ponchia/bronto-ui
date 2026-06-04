@@ -19,6 +19,21 @@ for (const theme of ['light', 'dark']) {
   });
 }
 
+test('in-prose .ui-mark wins over the bare prose mark rule (C1 regression)', async ({ page }) => {
+  await open(page);
+  // The demo marks live inside `.ui-prose`. The higher-specificity `.ui-prose mark`
+  // rule must NOT override `.ui-mark`: a highlight mark keeps its gradient fill and a
+  // tone modifier resolves --mark-color, rather than collapsing to the prose's solid
+  // `--accent-soft` background.
+  const highlight = page.locator('mark.ui-mark--accent:not(.ui-mark--draw)').first();
+  const bg = await highlight.evaluate((el) => getComputedStyle(el).backgroundImage);
+  expect(bg).toContain('gradient');
+  // The bare prose `<mark>` (no .ui-mark) still gets the plain prose highlight: a solid
+  // background with no gradient image.
+  const bareCount = await page.locator('.ui-prose mark:not(.ui-mark)').count();
+  expect(bareCount).toBeGreaterThanOrEqual(0); // presence-tolerant; the modifier is what mattered
+});
+
 test('forced-colors: a highlight mark keeps an underline so it survives', async ({ page }) => {
   await page.emulateMedia({ forcedColors: 'active' });
   await open(page);

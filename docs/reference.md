@@ -37,7 +37,7 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.alert` | `ui-alert` | base |
 | `cls.alertBody` | `ui-alert__body` | part |
-| `cls.alertDismiss` | `ui-alert__dismiss` | part |
+| `cls.alertClose` | `ui-alert__close` | part |
 | `cls.alertTitle` | `ui-alert__title` | part |
 | `cls.alertAccent` | `ui-alert--accent` | modifier |
 | `cls.alertDanger` | `ui-alert--danger` | modifier |
@@ -328,8 +328,8 @@ each one matches a real selector in the stylesheet.
 | `cls.codeHead` | `ui-code__head` | part |
 | `cls.codeLine` | `ui-code__line` | part |
 | `cls.codeLineAdd` | `ui-code__line--add` | modifier |
-| `cls.codeLineDel` | `ui-code__line--del` | modifier |
 | `cls.codeLineHl` | `ui-code__line--hl` | modifier |
+| `cls.codeLineRemove` | `ui-code__line--remove` | modifier |
 | `cls.codeNumbered` | `ui-code--numbered` | modifier |
 
 ### `.ui-combobox`
@@ -421,7 +421,7 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.diff` | `ui-diff` | base |
 | `cls.diffCode` | `ui-diff__code` | part |
-| `cls.diffHeader` | `ui-diff__header` | part |
+| `cls.diffHead` | `ui-diff__head` | part |
 | `cls.diffHunk` | `ui-diff__hunk` | part |
 | `cls.diffLn` | `ui-diff__ln` | part |
 | `cls.diffPane` | `ui-diff__pane` | part |

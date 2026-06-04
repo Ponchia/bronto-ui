@@ -134,10 +134,10 @@ const customProperties = [
   },
   {
     name: '--value',
-    on: '.ui-meter__fill, .ui-progress__bar',
+    on: '.ui-meter, .ui-progress',
     type: 'number 0..100',
     example: '92',
-    note: 'measured value as a percentage — set on the fill element, not its track parent',
+    note: 'measured value as a UNITLESS number 0..100 (registered <number>, never a %). Set it on the meter/progress host — it inherits to the __fill/__bar. Prefer attrs.meter(value)/attrs.progress(value) from @ponchia/ui/classes, which sets it plus role + aria-valuenow/min/max together.',
   },
   {
     name: '--icon-mask',
@@ -271,6 +271,79 @@ const customProperties = [
     example: '16rem',
     note: 'width of the app-shell sidebar rail column (default 14rem)',
   },
+  // Page-frame container caps (component-audit C20 — these were real, working
+  // sizing knobs the manifest never surfaced). `.ui-container` is a border-box
+  // page frame; `.ui-center` is a content-box measure — see usage.md.
+  {
+    name: '--container',
+    on: '.ui-container',
+    type: 'length',
+    example: '72rem',
+    note: 'max inline width of the default page frame, border-box (default 72rem)',
+  },
+  {
+    name: '--container-narrow',
+    on: '.ui-container--narrow',
+    type: 'length',
+    example: '44rem',
+    note: 'max inline width of the narrow page frame (default 44rem)',
+  },
+  {
+    name: '--container-wide',
+    on: '.ui-container--wide',
+    type: 'length',
+    example: '82rem',
+    note: 'max inline width of the wide page frame (default 82rem)',
+  },
+  {
+    name: '--av-size',
+    on: '.ui-avatar',
+    type: 'length',
+    example: '2.6rem',
+    note: 'avatar box size; the initials font-size derives from it (default 2.2rem; --sm 1.5rem, --lg 3.2rem)',
+  },
+];
+
+// Root-level attributes that switch the whole theme/skin/density/surface. An
+// LLM consuming only the manifest had no signal that theming existed or how to
+// opt into a skin/OLED/density (component-audit C21). Set on :root / <html>.
+const rootAttributes = [
+  {
+    name: 'data-theme',
+    on: ':root',
+    values: ['light', 'dark'],
+    note: 'colour theme. Unset follows the OS via prefers-color-scheme; set it to force one.',
+  },
+  {
+    name: 'data-density',
+    on: ':root or any subtree',
+    values: ['compact', 'comfortable'],
+    note: 'spacing-scale preset (the middle scale is the default when unset). Scoped per-subtree, unlike the others.',
+  },
+  {
+    name: 'data-surface',
+    on: ':root',
+    values: ['oled'],
+    note: 'opt into a true-black surface ramp for OLED. Unset = the standard elevated dark base.',
+  },
+  {
+    name: 'data-contrast',
+    on: ':root',
+    values: ['high'],
+    note: 'raise contrast of lines/text for low-vision or glare. Unset = the standard ramp.',
+  },
+  {
+    name: 'data-bronto-skin',
+    on: ':root',
+    values: ['amber-crt', 'phosphor-green', 'e-ink'],
+    note: 'opt-in display colorway — requires @ponchia/ui/css/skins.css. Unset (the design target) = the default Nothing aesthetic.',
+  },
+  {
+    name: '--accent',
+    on: ':root or a theme root',
+    values: ['<color>'],
+    note: 'the single brand knob; the accent family derives from it. Re-brand at :root/[data-theme] (a subtree override is only a partial re-brand). See docs/theming.md.',
+  },
 ];
 
 export function buildClassesJson() {
@@ -282,6 +355,7 @@ export function buildClassesJson() {
     classes: all,
     states,
     customProperties,
+    rootAttributes,
   };
 }
 

@@ -13,7 +13,10 @@ import { hasDom, resolveHost, noop, bindOnce, collectHosts, focusInto } from './
  * for the `.is-open` path, which otherwise leaves focus management to the
  * consumer.
  *
- * Mark the overlay `[data-bronto-modal]` (opt-in). The behavior watches its
+ * Mark the overlay `[data-bronto-modal]` (opt-in). On bind it gives the modal a
+ * `role="dialog"` + `aria-modal="true"` (unless the author set a role) and
+ * dev-warns when it has no accessible name, so it announces as a named modal
+ * dialog — parity with `initPopover`. The behavior watches its
  * `class` for `is-open`: on open it remembers the focused element, moves focus
  * into the modal (first focusable, else the panel itself), and **traps focus by
  * marking every sibling at each ancestor level `inert`** so the rest of the page
@@ -41,6 +44,22 @@ export function initModal({ root } = {}) {
   for (const modal of modals) {
     let opener = null;
     let inerted = [];
+
+    // A controlled modal must announce AS a modal dialog, not a generic group —
+    // parity with initPopover. Apply a dialog role + aria-modal (unless the
+    // author set a role), and dev-warn on a missing accessible name since we
+    // can't invent a good one. (component audit C13.)
+    if (!modal.hasAttribute('role')) modal.setAttribute('role', 'dialog');
+    if (!modal.hasAttribute('aria-modal')) modal.setAttribute('aria-modal', 'true');
+    const named =
+      modal.hasAttribute('aria-label') ||
+      modal.hasAttribute('aria-labelledby') ||
+      modal.hasAttribute('title');
+    if (!named && typeof console !== 'undefined') {
+      console.warn(
+        `[bronto] initModal(): a [data-bronto-modal] has no accessible name — add aria-label or aria-labelledby so it is announced as a named dialog.`,
+      );
+    }
 
     // Inert every sibling at each ancestor level up to <body>: the rest of the
     // page becomes non-focusable/non-interactive while the modal subtree stays

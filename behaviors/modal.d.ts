@@ -10,7 +10,10 @@
  * for the `.is-open` path, which otherwise leaves focus management to the
  * consumer.
  *
- * Mark the overlay `[data-bronto-modal]` (opt-in). The behavior watches its
+ * Mark the overlay `[data-bronto-modal]` (opt-in). On bind it gives the modal a
+ * `role="dialog"` + `aria-modal="true"` (unless the author set a role) and
+ * dev-warns when it has no accessible name, so it announces as a named modal
+ * dialog — parity with `initPopover`. The behavior watches its
  * `class` for `is-open`: on open it remembers the focused element, moves focus
  * into the modal (first focusable, else the panel itself), and **traps focus by
  * marking every sibling at each ancestor level `inert`** so the rest of the page

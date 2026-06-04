@@ -104,7 +104,7 @@ export declare const cls: {
   readonly alert: 'ui-alert';
   readonly alertTitle: 'ui-alert__title';
   readonly alertBody: 'ui-alert__body';
-  readonly alertDismiss: 'ui-alert__dismiss';
+  readonly alertClose: 'ui-alert__close';
   readonly alertAccent: 'ui-alert--accent';
   readonly alertSuccess: 'ui-alert--success';
   readonly alertWarning: 'ui-alert--warning';
@@ -400,7 +400,7 @@ export declare const cls: {
   readonly diffSplit: 'ui-diff--split';
   readonly diffPane: 'ui-diff__pane';
   readonly diffHunk: 'ui-diff__hunk';
-  readonly diffHeader: 'ui-diff__header';
+  readonly diffHead: 'ui-diff__head';
   readonly diffRow: 'ui-diff__row';
   readonly diffRowAdd: 'ui-diff__row--add';
   readonly diffRowRemove: 'ui-diff__row--remove';
@@ -413,7 +413,7 @@ export declare const cls: {
   readonly codeBody: 'ui-code__body';
   readonly codeLine: 'ui-code__line';
   readonly codeLineAdd: 'ui-code__line--add';
-  readonly codeLineDel: 'ui-code__line--del';
+  readonly codeLineRemove: 'ui-code__line--remove';
   readonly codeLineHl: 'ui-code__line--hl';
   readonly spark: 'ui-spark';
   readonly sparkBar: 'ui-spark__bar';
@@ -733,8 +733,10 @@ export interface CodeOpts {
   numbered?: boolean;
 }
 export interface CodeLineOpts {
-  /** The host-classified line state — `hl` is a neutral highlight, not a change. */
-  change?: 'add' | 'del' | 'hl';
+  /** The host-classified line state — `hl` is a neutral highlight, not a change.
+   *  `remove` matches `ui.diffRow`'s verb (was `del`) so the two change-review
+   *  surfaces share one vocabulary. */
+  change?: 'add' | 'remove' | 'hl';
 }
 export interface SparkBarOpts {
   /** Emphasise / tone a single bar. The meaning must still be in the spark's aria-label. */
@@ -794,3 +796,23 @@ export interface Ui {
 
 export declare const ui: Ui;
 export default ui;
+
+/** Min/max for the value-bearing fills; defaults to 0–100. */
+export interface ValueRangeOpts {
+  min?: number;
+  max?: number;
+}
+/** ARIA + style bundle to spread onto a `ui-meter`/`ui-progress` host. */
+export interface ValueAttrs {
+  role: 'meter' | 'progressbar';
+  'aria-valuenow': number;
+  'aria-valuemin': number;
+  'aria-valuemax': number;
+  style: { '--value': number };
+}
+export interface Attrs {
+  meter(value: number, opts?: ValueRangeOpts): ValueAttrs;
+  progress(value: number, opts?: ValueRangeOpts): ValueAttrs;
+}
+/** Set the painted value AND its ARIA together so they cannot drift. */
+export declare const attrs: Attrs;

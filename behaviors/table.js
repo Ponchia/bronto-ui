@@ -19,9 +19,14 @@ import { hasDom, resolveHost, noop, bindOnce, collectHosts } from './internal.js
  *
  * SSR-safe, idempotent per table; returns a cleanup function.
  *
- * The numeric sort parses each cell as display text (strips non-[0-9.-] chars),
- * so it is locale-naive — group/decimal separators beyond `.`/`-` are not
- * interpreted. It is a client-side convenience sorter, not a data grid.
+ * The numeric sort parses each cell's display text after normalizing the
+ * common report shapes: a Unicode minus (U+2212) and en/em dashes count as a
+ * sign (so a "−5" loss sorts BELOW a "5" gain, not above it), accounting
+ * parentheses `(1,234)` read as negative, and `,` thousands separators are
+ * dropped. For anything ambiguous (e.g. a European decimal comma, mixed units)
+ * put the canonical number in a `data-sort-value` attribute on the cell — it
+ * wins over the parsed text. It is a client-side convenience sorter, not a data
+ * grid. (component audit C3.)
  *
  * @param {import('./internal.js').DelegateOpts} [opts]
  * @returns {import('./internal.js').Cleanup}
@@ -47,6 +52,32 @@ export function initTableSort({ root } = {}) {
 
     const colIndex = (th) => [...th.parentElement.children].indexOf(th);
     const cellText = (row, i) => row.children[i]?.textContent.trim() ?? '';
+    // Numeric value of a cell for sorting. A `data-sort-value` attribute is the
+    // authoritative escape hatch; otherwise normalize the display text so the
+    // sign survives (U+2212 / en-em dashes → minus, accounting parens →
+    // negative) and `,` grouping is dropped. Returns 0 for unparseable cells so
+    // they cluster rather than scatter. (component audit C3.)
+    const cellNum = (row, i) => {
+      const cell = row.children[i];
+      const explicit = cell?.getAttribute?.('data-sort-value');
+      if (explicit != null && explicit.trim() !== '') {
+        const v = Number(explicit.trim());
+        if (Number.isFinite(v)) return v;
+      }
+      let s = (cell?.textContent ?? '').trim();
+      if (!s) return 0;
+      let sign = 1;
+      const paren = /^\((.*)\)$/.exec(s); // accounting negative
+      if (paren) {
+        sign = -1;
+        s = paren[1];
+      }
+      s = s.replace(/[−–—]/g, '-'); // minus / en / em dash → '-'
+      if (/-/.test(s)) sign *= -1;
+      s = s.replace(/,/g, ''); // drop thousands separators
+      const v = parseFloat(s.replace(/[^\d.]/g, '')); // magnitude
+      return Number.isFinite(v) ? sign * v : 0;
+    };
 
     const sortBy = (th, numeric) => {
       const headers = th.closest('tr').querySelectorAll('th');
@@ -64,12 +95,9 @@ export function initTableSort({ root } = {}) {
       const emptyRows = [...tbody.rows].filter((r) => r.classList.contains('ui-table__empty'));
       const rows = [...tbody.rows].filter((r) => !r.classList.contains('ui-table__empty'));
       rows.sort((a, b) => {
-        const x = cellText(a, i);
-        const y = cellText(b, i);
         const cmp = numeric
-          ? (parseFloat(x.replace(/[^\d.-]/g, '')) || 0) -
-            (parseFloat(y.replace(/[^\d.-]/g, '')) || 0)
-          : x.localeCompare(y);
+          ? cellNum(a, i) - cellNum(b, i)
+          : cellText(a, i).localeCompare(cellText(b, i));
         return cmp * sign;
       });
       // Re-parent in document order: sorted data rows, then any empty/sentinel

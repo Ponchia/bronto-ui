@@ -827,8 +827,9 @@ test('initCombobox: wires ARIA, filters, keyboard-selects, emits change', () => 
   assert.ok(d.querySelector('.ui-combobox__option.is-active'), 'active option set');
   assert.equal(input.getAttribute('aria-activedescendant'), shown[0].id);
   input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-  assert.equal(input.value, 'banana', 'selected data-value');
-  assert.equal(changed, 'banana', 'bronto:change emitted');
+  // Input shows the human LABEL; the change event carries the data-value CODE (C10).
+  assert.equal(input.value, 'Banana', 'input shows the option label');
+  assert.equal(changed, 'banana', 'bronto:change emits the data-value code');
   assert.equal(list.hidden, true, 'closes on select');
   stop();
 });
@@ -881,7 +882,7 @@ test('initCombobox: data-bronto-combobox-live re-reads async-added options', asy
   assert.equal(li.hidden, false, 'async option filters in');
   input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
   input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-  assert.equal(input.value, 'mango', 'async option is keyboard-selectable');
+  assert.equal(input.value, 'Mango', 'async option is keyboard-selectable (label shown)');
   stop();
 });
 
@@ -1072,6 +1073,33 @@ test('initTableSort: cycles aria-sort and reorders rows (string + numeric)', () 
     'ascending',
     'active header sorted',
   );
+  stop();
+});
+
+test('initTableSort: numeric sort keeps the sign on U+2212, accounting parens, and data-sort-value (C3)', () => {
+  // P/L column mixing a Unicode minus (−), accounting parentheses, a thousands
+  // separator, and a data-sort-value escape hatch. The losses must sort below
+  // the gains, not above them.
+  const d = mount(`
+    <table class="ui-table" data-bronto-sortable>
+      <thead><tr>
+        <th><button class="ui-table__sort" data-sort>Row</button></th>
+        <th class="is-num"><button class="ui-table__sort" data-sort="num">P/L</button></th>
+      </tr></thead>
+      <tbody>
+        <tr><td>gain</td><td class="is-num">1,200</td></tr>
+        <tr><td>uniminus</td><td class="is-num">−5</td></tr>
+        <tr><td>parens</td><td class="is-num">(50)</td></tr>
+        <tr><td>override</td><td class="is-num" data-sort-value="-999">N/A</td></tr>
+      </tbody>
+    </table>`);
+  const stop = initTableSort();
+  const table = d.querySelector('table');
+  const order = () => [...table.tBodies[0].rows].map((r) => r.children[0].textContent);
+  const btn = table.querySelector('.ui-table__sort[data-sort="num"]');
+  btn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  // ascending: -999, -50, -5, 1200
+  assert.deepEqual(order(), ['override', 'parens', 'uniminus', 'gain'], 'sign-aware ascending');
   stop();
 });
 

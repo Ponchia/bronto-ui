@@ -143,8 +143,12 @@ export function buildBundles() {
  *  pass (forced-colors meter + modal backdrop scrim, coarse-pointer floors on
  *  tabs/pagination/switch/check, stat-delta direction glyph, app-nav aria-current
  *  parity, dotspinner overflow fail-safe); gzip held (more repetitive media-query
- *  + forced-colors blocks). */
-export const BUDGET = { raw: 83_000, gzip: 14_500 };
+ *  + forced-colors blocks). The second component-audit pass nudged it 83→84 kB:
+ *  the forced-colors error-family + spinner/scroll-progress blocks, the `--value`
+ *  @property, scripting-gated `.ui-matrix`, RTL link-arrow mirror, pagination
+ *  aria-current, disabled-link + read-only cues, and logical container queries —
+ *  all repetitive blocks, so gzip stayed well under ceiling. */
+export const BUDGET = { raw: 84_000, gzip: 14_500 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };

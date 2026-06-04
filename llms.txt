@@ -69,6 +69,14 @@ Optional vanilla behaviors (theme toggle, etc. — SSR-safe, tree-shakeable):
 import { applyStoredTheme } from '@ponchia/ui/behaviors';
 ```
 
+Notable behaviors beyond the obvious: `initMenu()` adds close affordances to a
+native `<details data-bronto-menu>` dropdown (outside-click/Escape/select-close);
+`initModal()` wires the controlled `.ui-modal.is-open` path (inert focus-trap +
+role/aria-modal); `initDisabledGuard()` makes every `aria-disabled` control
+keyboard-inert (CSS alone is only pointer-inert). For the value-bearing fills,
+`attrs.meter(value)` / `attrs.progress(value)` from `@ponchia/ui/classes` return
+`role`+`aria-valuenow/min/max`+the `--value` style to spread onto the host.
+
 For React/Solid/Qwik, optional thin hook bindings over those behaviors (peer
 deps `react` / `solid-js` / `@builder.io/qwik`, optional — core stays zero-dep):
 

@@ -68,7 +68,7 @@
 }
 
 /* The hunk / file header spans every column. */
-.ui-diff__header {
+.ui-diff__head {
   background: var(--surface-2);
   color: var(--text-dim);
   grid-column: 1 / -1;
@@ -138,7 +138,7 @@
 /* Print: the tints are meaning-carrying backgrounds, so force them through the
    print "economy" default that would otherwise drop them. */
 @media print {
-  .ui-diff__header,
+  .ui-diff__head,
   .ui-diff__row--add > .ui-diff__ln,
   .ui-diff__row--add > .ui-diff__code,
   .ui-diff__row--remove > .ui-diff__ln,
