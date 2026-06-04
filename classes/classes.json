@@ -1,8 +1,8 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `groups[].base` is null for a parts-only namespace (no standalone base class — do NOT emit it). A modifier whose name contains `__` (e.g. `ui-spark__bar--pos`) attaches to THAT part, not the base host. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `behaviorAttributes` are the `data-bronto-*` wiring hooks the optional behaviors delegate on; `requiredAria` is the role/aria a generator must emit per component. `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 507,
-    "groups": 154
+    "classes": 529,
+    "groups": 161
   },
   "groups": {
     "ui-accordion": {
@@ -220,6 +220,19 @@
       "modifiers": [],
       "parts": []
     },
+    "ui-bullet": {
+      "base": "ui-bullet",
+      "modifiers": [
+        "ui-bullet__measure--accent",
+        "ui-bullet__measure--neg",
+        "ui-bullet__measure--pos"
+      ],
+      "parts": [
+        "ui-bullet__label",
+        "ui-bullet__measure",
+        "ui-bullet__target"
+      ]
+    },
     "ui-button": {
       "base": "ui-button",
       "modifiers": [
@@ -381,6 +394,11 @@
         "ui-crosshair__line"
       ]
     },
+    "ui-def": {
+      "base": "ui-def",
+      "modifiers": [],
+      "parts": []
+    },
     "ui-delta": {
       "base": "ui-delta",
       "modifiers": [
@@ -516,6 +534,14 @@
       "modifiers": [],
       "parts": [
         "ui-generated__label"
+      ]
+    },
+    "ui-glossary": {
+      "base": "ui-glossary",
+      "modifiers": [],
+      "parts": [
+        "ui-glossary__def",
+        "ui-glossary__term"
       ]
     },
     "ui-grid": {
@@ -1155,8 +1181,18 @@
       "modifiers": [],
       "parts": []
     },
+    "ui-term": {
+      "base": "ui-term",
+      "modifiers": [],
+      "parts": []
+    },
     "ui-textarea": {
       "base": "ui-textarea",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-textref": {
+      "base": "ui-textref",
       "modifiers": [],
       "parts": []
     },
@@ -1200,6 +1236,15 @@
       ],
       "parts": []
     },
+    "ui-toc": {
+      "base": "ui-toc",
+      "modifiers": [],
+      "parts": [
+        "ui-toc__link",
+        "ui-toc__list",
+        "ui-toc__title"
+      ]
+    },
     "ui-tool-call": {
       "base": "ui-tool-call",
       "modifiers": [],
@@ -1229,6 +1274,16 @@
         "ui-tour-note__body",
         "ui-tour-note__step",
         "ui-tour-note__title"
+      ]
+    },
+    "ui-tree": {
+      "base": "ui-tree",
+      "modifiers": [],
+      "parts": [
+        "ui-tree__branch",
+        "ui-tree__label",
+        "ui-tree__leaf",
+        "ui-tree__summary"
       ]
     },
     "ui-visually-hidden": {
@@ -1341,6 +1396,13 @@
     "ui-breadcrumb__item",
     "ui-break-after",
     "ui-break-before",
+    "ui-bullet",
+    "ui-bullet__label",
+    "ui-bullet__measure",
+    "ui-bullet__measure--accent",
+    "ui-bullet__measure--neg",
+    "ui-bullet__measure--pos",
+    "ui-bullet__target",
     "ui-button",
     "ui-button--danger",
     "ui-button--ghost",
@@ -1416,6 +1478,7 @@
     "ui-crosshair__line",
     "ui-crosshair__line--x",
     "ui-crosshair__line--y",
+    "ui-def",
     "ui-delta",
     "ui-delta--down",
     "ui-delta--flat",
@@ -1469,6 +1532,9 @@
     "ui-file",
     "ui-generated",
     "ui-generated__label",
+    "ui-glossary",
+    "ui-glossary__def",
+    "ui-glossary__term",
     "ui-grid",
     "ui-hint",
     "ui-hint--error",
@@ -1717,7 +1783,9 @@
     "ui-tag",
     "ui-tag--accent",
     "ui-tags",
+    "ui-term",
     "ui-textarea",
+    "ui-textref",
     "ui-themetoggle__button",
     "ui-themetoggle__label",
     "ui-themetoggle__prefix",
@@ -1736,6 +1804,10 @@
     "ui-toast-stack--assertive",
     "ui-toast__close",
     "ui-toast__title",
+    "ui-toc",
+    "ui-toc__link",
+    "ui-toc__list",
+    "ui-toc__title",
     "ui-tool-call",
     "ui-tool-call__body",
     "ui-tool-call__name",
@@ -1748,6 +1820,11 @@
     "ui-tour-note__body",
     "ui-tour-note__step",
     "ui-tour-note__title",
+    "ui-tree",
+    "ui-tree__branch",
+    "ui-tree__label",
+    "ui-tree__leaf",
+    "ui-tree__summary",
     "ui-visually-hidden",
     "ui-vt"
   ],
@@ -1877,6 +1954,49 @@
       "type": "length",
       "example": "12rem",
       "note": "width of the floated margin note on wide viewports (default 12rem). The container must reserve a matching inline-end gutter — see docs/sidenote.md."
+    },
+    {
+      "name": "--textref-highlight",
+      "on": ".ui-textref",
+      "type": "color",
+      "example": "var(--accent-soft)",
+      "note": "the ::target-text highlight wash for the matched cited sentence (default var(--accent-soft)). The host builds the #:~:text= href; Bronto owns the paint — see docs/textref.md."
+    },
+    {
+      "name": "--v",
+      "on": ".ui-bullet__measure",
+      "type": "number 0..1",
+      "example": "0.62",
+      "required": true,
+      "note": "REQUIRED — the normalised measure (0..1). The host normalises; Bronto only paints. A measure with no --v collapses to the 2px floor. Pair every bullet with a host-written role=\"img\" + aria-label."
+    },
+    {
+      "name": "--t",
+      "on": ".ui-bullet__target",
+      "type": "number 0..1",
+      "example": "0.9",
+      "note": "the normalised target tick position (0..1). Omit to drop the target mark."
+    },
+    {
+      "name": "--band-lo",
+      "on": ".ui-bullet",
+      "type": "number 0..1",
+      "example": "0.5",
+      "note": "the lower qualitative-band boundary (0..1, default 0.5). Bands are grayscale by Few-design — meaning lives in the required aria-label."
+    },
+    {
+      "name": "--band-hi",
+      "on": ".ui-bullet",
+      "type": "number 0..1",
+      "example": "0.8",
+      "note": "the upper qualitative-band boundary (0..1, default 0.8). Must be ≥ --band-lo."
+    },
+    {
+      "name": "--toc-top",
+      "on": ".ui-toc",
+      "type": "length",
+      "example": "1rem",
+      "note": "the sticky inset from the top of the scroll container (default var(--space-md))."
     },
     {
       "name": "--stack-gap",

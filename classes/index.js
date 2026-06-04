@@ -448,6 +448,33 @@ export const cls = Object.freeze({
   sidenote: 'ui-sidenote',
   marginnote: 'ui-marginnote',
   sidenoteRef: 'ui-sidenote__ref',
+  // textref — deep-link-to-cited-text provenance link (css/textref.css)
+  textref: 'ui-textref',
+  // bullet — Stephen-Few bullet graph: measure vs target vs bands (css/bullet.css)
+  bullet: 'ui-bullet',
+  bulletMeasure: 'ui-bullet__measure',
+  bulletMeasureAccent: 'ui-bullet__measure--accent',
+  bulletMeasurePos: 'ui-bullet__measure--pos',
+  bulletMeasureNeg: 'ui-bullet__measure--neg',
+  bulletTarget: 'ui-bullet__target',
+  bulletLabel: 'ui-bullet__label',
+  // term — inline glossary term + definition popover + glossary <dl> (css/term.css)
+  term: 'ui-term',
+  def: 'ui-def',
+  glossary: 'ui-glossary',
+  glossaryTerm: 'ui-glossary__term',
+  glossaryDef: 'ui-glossary__def',
+  // toc — scrollspy table-of-contents rail (css/toc.css)
+  toc: 'ui-toc',
+  tocTitle: 'ui-toc__title',
+  tocList: 'ui-toc__list',
+  tocLink: 'ui-toc__link',
+  // tree — hierarchy outline on nested <details> (css/tree.css)
+  tree: 'ui-tree',
+  treeBranch: 'ui-tree__branch',
+  treeLeaf: 'ui-tree__leaf',
+  treeSummary: 'ui-tree__summary',
+  treeLabel: 'ui-tree__label',
   // lifecycle / system state (css/state.css)
   state: 'ui-state',
   stateLabel: 'ui-state__label',
@@ -817,6 +844,13 @@ export const ui = {
       tone === 'accent' && cls.sparkBarAccent,
       tone === 'pos' && cls.sparkBarPos,
       tone === 'neg' && cls.sparkBarNeg,
+    ),
+  bulletMeasure: ({ tone } = {}) =>
+    j(
+      cls.bulletMeasure,
+      tone === 'accent' && cls.bulletMeasureAccent,
+      tone === 'pos' && cls.bulletMeasurePos,
+      tone === 'neg' && cls.bulletMeasureNeg,
     ),
   state: ({ state, busy } = {}) => j(cls.state, stateTone(state), busy && cls.stateBusy),
   originLabel: ({ ai } = {}) => j(cls.originLabel, ai && cls.originLabelAi),

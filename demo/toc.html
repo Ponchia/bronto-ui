@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — toc specimen</title>
+    <meta
+      name="description"
+      content="Scrollspy table-of-contents specimen for @ponchia/ui toc CSS."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/toc.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .toc-demo {
+        display: grid;
+        gap: 2rem;
+        margin: 0 auto;
+        max-width: 60rem;
+        padding: 2rem 1rem 60vh;
+      }
+
+      @media (min-width: 48rem) {
+        .toc-demo {
+          grid-template-columns: 12rem 1fr;
+        }
+      }
+
+      .toc-demo section {
+        min-height: 60vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toc-demo">
+      <nav class="ui-toc" aria-label="Contents">
+        <p class="ui-toc__title">Contents</p>
+        <ul class="ui-toc__list">
+          <li><a class="ui-toc__link" href="#intro" aria-current="true">Introduction</a></li>
+          <li><a class="ui-toc__link" href="#method">Method</a></li>
+          <li><a class="ui-toc__link" href="#results">Results</a></li>
+          <li><a class="ui-toc__link" href="#conclusion">Conclusion</a></li>
+        </ul>
+      </nav>
+
+      <main class="ui-prose">
+        <section id="intro">
+          <h2>Introduction</h2>
+          <p>The active rail entry keys on <code>aria-current="true"</code>.</p>
+        </section>
+        <section id="method">
+          <h2>Method</h2>
+          <p>
+            Server-render the current section's <code>aria-current</code>, or wire a small observer.
+          </p>
+        </section>
+        <section id="results">
+          <h2>Results</h2>
+          <p>The rail sticks within its scroll container as the reader scrolls.</p>
+        </section>
+        <section id="conclusion">
+          <h2>Conclusion</h2>
+          <p>Without script the rail is a plain anchored list — every link still jumps.</p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
