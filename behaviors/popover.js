@@ -1,4 +1,4 @@
-import { hasDom, resolveHost, noop, bindOnce, byIdInHost } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, byIdInHost, focusInto } from './internal.js';
 
 /**
  * Collision-aware popover, dependency-free. A `[data-bronto-popover]`
@@ -35,22 +35,9 @@ export function initPopover({ root } = {}) {
   let openPanel = null;
   let openTrigger = null;
 
-  const FOCUSABLE =
-    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
   // The trigger advertises `aria-haspopup="dialog"`, so the open panel must BE a
-  // dialog: a role, an accessible name, and focus moved into it (C6). Focus the
-  // first focusable descendant, else the panel itself (made programmatically
-  // focusable) so a content-only panel still receives focus.
-  const focusInto = (panel) => {
-    const first = panel.querySelector(FOCUSABLE);
-    if (first) {
-      first.focus?.();
-      return;
-    }
-    if (!panel.hasAttribute('tabindex')) panel.setAttribute('tabindex', '-1');
-    panel.focus?.();
-  };
+  // dialog: a role, an accessible name, and focus moved into it (C6) — see the
+  // shared `focusInto` in internal.js.
 
   const place = (trigger, panel) => {
     const r = trigger.getBoundingClientRect();

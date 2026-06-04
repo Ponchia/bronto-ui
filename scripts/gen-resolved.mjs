@@ -18,12 +18,11 @@
  * Run: node scripts/gen-resolved.mjs   (or: npm run resolved:build)
  */
 import { writeFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { cssVars } from '../tokens/index.js';
 import { mixOklch, parseCssColor } from './lib/oklch.mjs';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { repoRoot as root, isMain } from './lib/emit.mjs';
 
 const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
 const r255 = (n) => clamp(Math.round(n), 0, 255);
@@ -159,8 +158,7 @@ export function buildResolved() {
 export const RESOLVED_PATH = resolve(root, 'tokens/resolved.json');
 export const resolvedJson = () => JSON.stringify(buildResolved(), null, 2) + '\n';
 
-const isMain = resolve(process.argv[1] || '') === fileURLToPath(import.meta.url);
-if (isMain) {
+if (isMain(import.meta.url)) {
   writeFileSync(RESOLVED_PATH, resolvedJson());
   console.log('✓ wrote tokens/resolved.json');
 }

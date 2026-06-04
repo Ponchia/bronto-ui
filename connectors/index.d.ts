@@ -1,5 +1,6 @@
 export function finite(name: any, value: any, fallback: any): any;
 export function dimension(name: any, value: any, fallback: any): any;
+export function roundNumber(value: any): number;
 export function fmt(value: any): string;
 export function point(x: any, y: any): string;
 export function clamp(value: any, min: any, max: any): any;
@@ -67,6 +68,17 @@ export function arrowHead(p: Point, angle: number, size?: number, spread?: numbe
  * @returns {string}
  */
 export function dotMark(p: Point, radius?: number): string;
+/**
+ * An axis-aligned rectangle path from its corners (callers derive the corners
+ * from a centre or a top-left as they need). Shared by the annotation
+ * rect/band and evidence-marker subjects. (code-quality audit Q5.)
+ * @param {number} left
+ * @param {number} top
+ * @param {number} right
+ * @param {number} bottom
+ * @returns {string}
+ */
+export function rectPath(left: number, top: number, right: number, bottom: number): string;
 /**
  * Pick facing edges from the rects' relative centres.
  * @param {Rect} fromRect

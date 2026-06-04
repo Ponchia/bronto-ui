@@ -11,14 +11,11 @@
  *
  * Run: node scripts/gen-charts.mjs   (or: npm run charts:build)
  */
-import { writeFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { charts, ACCENT, CHART_CATEGORICAL, CHART_PATTERN_COUNT } from '../tokens/charts.js';
 import { parseOklch, rgbToHex } from './lib/oklch.mjs';
 import { buildResolved } from './gen-resolved.mjs';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { repoRoot as root, isMain, writeGenerated } from './lib/emit.mjs';
 const resolved = buildResolved();
 
 /** Resolve a charts.js colour string to a concrete sRGB hex for a theme.
@@ -159,9 +156,4 @@ export const generated = {
   'tokens/charts.d.ts': buildChartsDts(),
 };
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  for (const [rel, content] of Object.entries(generated)) {
-    writeFileSync(resolve(root, rel), content);
-    console.log(`✓ wrote ${rel}`);
-  }
-}
+if (isMain(import.meta.url)) writeGenerated(root, generated);

@@ -22,15 +22,14 @@
  *   /* @ponchia/ui:inline-theme:end *\/
  */
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
-import { resolve, dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve, join } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { brontoVegaConfig } from '../tokens/vega.js';
 import { brontoMermaidTheme } from '../tokens/mermaid.js';
 import { brontoD2Overrides } from '../tokens/d2.js';
 import { reportAndExit } from './lib/gate-report.mjs';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { repoRoot as root, isMain } from './lib/emit.mjs';
 
 // target → { resolve(theme) → JSON-safe object, default var-name stem, what it feeds }
 export const TARGETS = {
@@ -137,7 +136,7 @@ function runCheck(paths) {
 }
 
 // CLI
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMain(import.meta.url)) {
   const argv = process.argv.slice(2);
   if (argv[0] === '--check') {
     runCheck(argv.slice(1));

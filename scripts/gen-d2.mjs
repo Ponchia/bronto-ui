@@ -27,13 +27,11 @@
  *
  * Run: node scripts/gen-d2.mjs   (or: npm run d2:build)
  */
-import { writeFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { format, resolveConfig } from 'prettier';
 import { makeResolveRef } from './lib/resolve-ref.mjs';
+import { repoRoot as root, isMain, writeGenerated, genBanner } from './lib/emit.mjs';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const resolveRef = makeResolveRef('gen-d2');
 const JS_PATH = resolve(root, 'tokens/d2.js');
 const prettierCfg = await resolveConfig(JS_PATH);
@@ -95,14 +93,12 @@ export function buildD2Json() {
 }
 
 export async function buildD2Js() {
-  const banner =
-    `/** @ponchia/ui — GENERATED from the token source by scripts/gen-d2.mjs.\n` +
-    ` *  Do not edit by hand; run \`npm run d2:build\`. Drift-checked in CI.\n` +
-    ` *\n` +
-    ` *  On-brand D2 (d2lang.com) theme overrides, resolved to static hex per\n` +
-    ` *  theme. D2 compiles to a frozen SVG and cannot read \`var(--x)\`. Apply via\n` +
-    ` *  the D2 source vars block (brontoD2Vars) or the Go/WASM render API\n` +
-    ` *  (brontoD2Overrides). See docs/d2.md. */\n`;
+  const banner = genBanner('gen-d2.mjs', 'd2:build', [
+    'On-brand D2 (d2lang.com) theme overrides, resolved to static hex per',
+    'theme. D2 compiles to a frozen SVG and cannot read `var(--x)`. Apply via',
+    'the D2 source vars block (brontoD2Vars) or the Go/WASM render API',
+    '(brontoD2Overrides). See docs/d2.md.',
+  ]);
   const raw =
     `${banner}\n` +
     `/** Resolved D2 theme colour slots for each bronto theme. */\n` +
@@ -127,9 +123,7 @@ export async function buildD2Js() {
 }
 
 export function buildD2Dts() {
-  const banner =
-    `/** @ponchia/ui — GENERATED from the token source by scripts/gen-d2.mjs.\n` +
-    ` *  Do not edit by hand; run \`npm run d2:build\`. Drift-checked in CI. */\n`;
+  const banner = genBanner('gen-d2.mjs', 'd2:build');
   const slots = REQUIRED_KEYS.map((k) => `  ${k}: string;`).join('\n');
   return `${banner}
 /** Resolved D2 theme colour slots (hex). See docs/d2.md for what each paints. */
@@ -161,9 +155,4 @@ export async function buildGenerated() {
   };
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  for (const [rel, content] of Object.entries(await buildGenerated())) {
-    writeFileSync(resolve(root, rel), content);
-    console.log(`✓ wrote ${rel}`);
-  }
-}
+if (isMain(import.meta.url)) writeGenerated(root, await buildGenerated());

@@ -30,6 +30,12 @@ export function attachGuards(page) {
   return { consoleErrors, pageErrors, badResponses };
 }
 
+// Canonical axe config for every demo/specimen scan (a11y.spec + the per-feature
+// leaf specs all route through `scan`/`blocking` so the rule set can't drift).
+// `best-practice` is included so the structural issues Lighthouse flags (these are
+// axe rules too) are gated per theme with zero extra deps. Best-practice rules are
+// often `moderate` impact, so they'd slip past the serious/critical filter — the
+// curated STRUCTURAL set is therefore always blocking regardless of impact.
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'];
 const STRUCTURAL = new Set([
   'heading-order',
@@ -43,7 +49,7 @@ const STRUCTURAL = new Set([
   'tabindex',
 ]);
 
-/** Same blocking filter as a11y.spec: serious/critical + a curated set. */
+/** Canonical blocking filter: serious/critical + the curated STRUCTURAL set. */
 export function blocking(results) {
   return results.violations
     .filter((v) => v.impact === 'serious' || v.impact === 'critical' || STRUCTURAL.has(v.id))

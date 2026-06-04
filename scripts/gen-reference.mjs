@@ -12,12 +12,11 @@
  * Run: node scripts/gen-reference.mjs
  */
 import { writeFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { cls } from '../classes/index.js';
 import { cssVars } from '../tokens/index.js';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { repoRoot as root, isMain } from './lib/emit.mjs';
 
 // Base = the class up to the first BEM separator (`--` modifier / `__`
 // part). Everything sharing a base is one component group.
@@ -183,7 +182,7 @@ ${tokenTable(cssVars.dark)}
 
 export const generated = { 'docs/reference.md': md };
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMain(import.meta.url)) {
   for (const [rel, content] of Object.entries(generated)) {
     writeFileSync(resolve(root, rel), content);
     console.log(`✓ wrote ${rel} (${totalClasses} classes, ${groups.size} groups)`);

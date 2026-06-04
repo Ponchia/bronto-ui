@@ -19,15 +19,14 @@
  * Run: node scripts/gen-contrast.mjs   (or: npm run contrast:build)
  */
 import { writeFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { buildResolved } from './gen-resolved.mjs';
 import { skins, SKIN_NAMES } from '../tokens/skins.js';
 import { charts } from '../tokens/charts.js';
 import { resolveColor } from './gen-charts.mjs';
-import { parseCssColor } from './lib/oklch.mjs';
+import { parseCssColor, srgbToLinear } from './lib/oklch.mjs';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { repoRoot as root, isMain } from './lib/emit.mjs';
 
 /** color-mix(in srgb, A p%, B) for two OPAQUE colours, per CSS Color 5 (gamma
  *  sRGB) — the only form the accent ramp uses. Returns an `rgb(r,g,b)` string.
@@ -50,10 +49,7 @@ function flatten(fg, bg) {
 
 /** WCAG 2.1 relative luminance of an opaque sRGB triple. */
 function luminance([r, g, b]) {
-  const lin = (c) => {
-    c /= 255;
-    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-  };
+  const lin = (c) => srgbToLinear(c / 255);
   return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
 }
 
@@ -373,7 +369,7 @@ ${datavizSection(buildResolved())}
 
 export const generated = { 'docs/contrast.md': build().md };
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMain(import.meta.url)) {
   const { md } = build();
   writeFileSync(resolve(root, 'docs/contrast.md'), md);
   console.log('✓ wrote docs/contrast.md');

@@ -60,9 +60,16 @@ export function dimension(name, value, fallback) {
   return v;
 }
 
-export function fmt(value) {
+// Round to PRECISION, normalising -0 → 0, and return the NUMBER (the numeric
+// core `fmt` stringifies). Shared with the annotations layer for the rounded
+// coordinates it echoes back to the host. (code-quality audit Q5.)
+export function roundNumber(value) {
   const rounded = Math.round((Object.is(value, -0) ? 0 : value) * PRECISION) / PRECISION;
-  return String(Object.is(rounded, -0) ? 0 : rounded);
+  return Object.is(rounded, -0) ? 0 : rounded;
+}
+
+export function fmt(value) {
+  return String(roundNumber(value));
 }
 
 export function point(x, y) {
@@ -220,6 +227,20 @@ export function dotMark(p, radius = 3) {
   return `M${point(px, py - r)}A${fmt(r)},${fmt(r)} 0 1 1 ${point(px, py + r)}A${fmt(r)},${fmt(
     r,
   )} 0 1 1 ${point(px, py - r)}Z`;
+}
+
+/**
+ * An axis-aligned rectangle path from its corners (callers derive the corners
+ * from a centre or a top-left as they need). Shared by the annotation
+ * rect/band and evidence-marker subjects. (code-quality audit Q5.)
+ * @param {number} left
+ * @param {number} top
+ * @param {number} right
+ * @param {number} bottom
+ * @returns {string}
+ */
+export function rectPath(left, top, right, bottom) {
+  return `M${point(left, top)}H${fmt(right)}V${fmt(bottom)}H${fmt(left)}Z`;
 }
 
 /**
