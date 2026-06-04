@@ -50,6 +50,7 @@ import {
   applyStoredTheme,
   initThemeToggle,
   dismissible,
+  initDisabledGuard,
   initDisclosure,
   initMenu,
   initFormValidation,
@@ -105,6 +106,8 @@ export function useBrontoBehavior(init, opts) {
 export const useThemeToggle = (opts) => useBrontoBehavior(initThemeToggle, opts);
 /** @param {BrontoBindingOptsResolver} [opts] @returns {void} */
 export const useDismissible = (opts) => useBrontoBehavior(dismissible, opts);
+/** @param {BrontoBindingOptsResolver} [opts] @returns {void} */
+export const useDisabledGuard = (opts) => useBrontoBehavior(initDisabledGuard, opts);
 /** @param {BrontoBindingOptsResolver} [opts] @returns {void} */
 export const useDisclosure = (opts) => useBrontoBehavior(initDisclosure, opts);
 /** @param {BrontoBindingOptsResolver} [opts] @returns {void} */

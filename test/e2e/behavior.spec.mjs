@@ -82,7 +82,8 @@ test('combobox filters and selects with keyboard in a real browser', async ({ pa
   await expect(page.getByRole('option', { name: 'Apple' })).toBeHidden();
   await input.press('ArrowDown');
   await input.press('Enter');
-  await expect(input).toHaveValue('banana');
+  // The input shows the human LABEL; the data-value code rides the change event (C10).
+  await expect(input).toHaveValue('Banana');
 });
 
 test('sortable selectable table updates order and selection state', async ({ page }) => {

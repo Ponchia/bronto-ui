@@ -12,13 +12,20 @@
  * Markup: `[data-bronto-combobox]` wrapping an `<input role="combobox">`
  * (`.ui-combobox__input`) and a `<ul role="listbox">`
  * (`.ui-combobox__list`) of `<li role="option">` (`.ui-combobox__option`,
- * optional `data-value`). An optional `.ui-combobox__empty` shows when
- * nothing matches. The behavior owns ids, `aria-expanded`,
+ * optional `data-value`). An optional `.ui-combobox__empty` (hidden at rest)
+ * shows when nothing matches. The behavior owns ids, `aria-expanded`,
  * `aria-controls`, `aria-activedescendant`, roving active option,
  * type-to-filter, full keyboard (Down/Up/Home/End/Enter/Escape/Tab),
- * pointer select, and outside-click close; it emits a `bronto:change`
- * CustomEvent ({ detail: { value } }) on selection. SSR-safe,
- * idempotent per instance; returns a cleanup function.
+ * pointer select, and outside-click close. On select the **visible input shows
+ * the option's text label**, while the emitted `bronto:change` CustomEvent
+ * carries the option's `data-value` code: `{ detail: { value, label } }` (value
+ * falls back to the label when there is no `data-value`). SSR-safe, idempotent
+ * per instance; returns a cleanup function.
+ *
+ * Single-select APG deviations (intentional, for a filtering text combobox):
+ * ArrowDown on a CLOSED list opens + filters rather than pre-activating the
+ * first option, and Tab closes the list without committing the merely-highlighted
+ * option (only Enter/click commits). Both are safe for single-select.
  *
  * Options are read from the DOM at init; if you replace the listbox contents
  * (e.g. async/remote results), either re-run initCombobox, or add

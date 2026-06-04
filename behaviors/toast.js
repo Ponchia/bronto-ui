@@ -25,7 +25,13 @@ function toastStack(isAssertive) {
     stack = document.createElement('div');
     stack.className = isAssertive ? 'ui-toast-stack ui-toast-stack--assertive' : 'ui-toast-stack';
     stack.setAttribute('aria-live', isAssertive ? 'assertive' : 'polite');
-    if (isAssertive) stack.setAttribute('role', 'alert');
+    if (isAssertive) {
+      stack.setAttribute('role', 'alert');
+      // The assertive region carries one error at a time and must be read whole;
+      // aria-atomic ensures the full toast (title + message) announces, not just
+      // the diff. (component audit C38.)
+      stack.setAttribute('aria-atomic', 'true');
+    }
     document.body.appendChild(stack);
   }
   return { stack, fresh };
@@ -171,6 +177,14 @@ export function toast(message, { tone, title, duration = 4000, assertive, closab
   // it gets a dismiss affordance by default; any toast can opt in via
   // `closable`. The button carries no text node (glyph is a CSS
   // ::before) so the toast's announced/textContent stays the message.
+  // Explicitly opting OUT of the close button on a sticky toast strands it with
+  // no in-UI dismissal — warn that the caller must retain and call the returned
+  // dismiss fn. (component audit C37.)
+  if (duration === 0 && closable === false && typeof console !== 'undefined') {
+    console.warn(
+      '[bronto] toast(): duration:0 + closable:false has no in-UI dismissal — keep the returned dismiss() and call it yourself, or set closable:true.',
+    );
+  }
   if (closable ?? duration === 0) addToastClose(el, dismiss);
   if (duration > 0) timer = setTimeout(dismiss, duration);
   return dismiss;

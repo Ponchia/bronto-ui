@@ -26,6 +26,14 @@ into a preset on `<html>` or any subtree:
 Scope it, don't globalize blindly: a dashboard with one marketing-style
 hero can set `compact` on `<html>` and `comfortable` on the hero section.
 
+> **`data-density` is the global preset; per-component density verbs differ by
+> family.** Some components carry their own local density modifier, and the verb
+> is **not** uniform: it's `--dense` on `ui-table`/`ui-dotgrid` but `--compact`
+> on `ui-prose`/`ui-legend`/`ui-report`. So `ui-prose--dense` and
+> `ui-table--compact` both no-op. When in doubt, reach for the global
+> `data-density` preset; use the local modifier only where it exists (check the
+> base's `modifiers` in classes.json).
+
 ## Badge vs chip vs status dot
 
 All three are small. They are **not** interchangeable:
@@ -35,15 +43,22 @@ All three are small. They are **not** interchangeable:
 | **status dot** | a single piece of state on something else (row online, build ok). Smallest possible signal; pair with text for a11y, never color-only. |
 | **badge**      | a label *classifying* the thing it sits on (count, tone, "BETA"). Static, not actionable. `ui.badge({ tone })`. |
 | **chip**       | a discrete, often removable/selectable token the user manipulated (a filter, a tag input value). Interactive affordance implied. |
+| **tag**        | a static keyword/category label (`ui.tag`), like a badge but reads as a non-interactive tag. Use `chip` for anything the user selects/removes; `tag` for a fixed label. |
 
 Rule of thumb: state → dot, classification → badge, user-controlled value
-→ chip.
+→ chip, fixed keyword → tag. (`ui-property` is a **workbench** primitive — a
+key/value spec row scoped to `@ponchia/ui/css/workbench.css`, not a general
+content label; don't reach for it to tag prose.)
 
 **Tone vocabulary varies by family — by design.** Colour is rationed, so not
-every component carries every tone: `--info`/`--muted` exist on some families
-(badge, dot, state) and not others (alert/toast/meter lead with
-`--success`/`--warning`/`--danger`). The authoritative per-component tone list is
-each base's `modifiers` array in
+every component carries every tone. The status tones
+(`--success`/`--warning`/`--danger`) plus `--info` ride the status families —
+`ui-alert`, `ui-toast`, `ui-meter`, `ui-dot`, and `ui-badge` all carry `--info`.
+The neutral `--muted` is **not** a status tone: it exists only on `ui-badge` and
+`ui-num`, not on `ui-dot`/`ui-alert`/`ui-toast`/`ui-meter`. Because the CSS is a
+plain class list, an unknown modifier (e.g. `ui-dot--muted`, `ui-meter--muted`)
+**silently no-ops** — it can't warn the way the TS builders do. The authoritative
+per-component tone list is each base's `modifiers` array in
 [`@ponchia/ui/classes.json`](../classes/classes.json) — read it rather than
 extrapolating a tone you saw on one component onto another.
 
@@ -57,6 +72,21 @@ extrapolating a tone you saw on one component onto another.
   freed from the table. Do not hand-roll right-align + `text-green`;
   that's the duplication `ui-num` exists to kill.
 
+**The positive/negative vocabulary is spelled three ways — match the mechanism
+to the host, they are not interchangeable:**
+
+| Where | Positive / negative | Kind |
+| --- | --- | --- |
+| `ui-num` primitive (anywhere) | `ui-num--pos` / `ui-num--neg` (`ui.num({ tone: 'pos' })`) | **modifier** |
+| Inside `.ui-table` | `is-pos` / `is-neg` | **state hook** (table-scoped) |
+| `ui-delta` trend | `ui-delta--up` / `ui-delta--down` (`ui.delta({ dir })`) | **direction** |
+
+They share the same tone tokens but **don't cross over**: `ui-num is-pos`
+no-ops (the `is-pos` rule is scoped to table cells), and `ui-delta--pos` doesn't
+exist. Use the modifier on `ui-num`, the `is-*` state inside a table, and
+`--up`/`--down` on `ui-delta` (which also flips with `ui.delta({ invert })` when
+up is the *bad* direction — latency, error rate, cost).
+
 ## Prose vs primitives, and prose inside a card
 
 - `ui-prose` styles **raw, unclassed semantic HTML** (MDX / CMS / LLM
@@ -67,6 +97,22 @@ extrapolating a tone you saw on one component onto another.
 - Prose **inside a card**: put `ui-prose` on an inner wrapper, not on
   `.ui-card` itself, so card padding/border stays the card's and prose
   rhythm stays the content's. One responsibility per element.
+
+## Centred width: `ui-center` vs `ui-container`
+
+Both cap a centred column, but they are **different primitives with different
+box models** — pick by intent:
+
+- **`ui-center`** — a *reading measure*. `--center-max` is the **inner** content
+  width (content-box); the `--center-gutter` padding adds *outside* it. Use it to
+  hold prose/body to a comfortable line length.
+- **`ui-container`** — a *page frame*. `--container` (/`--container-narrow`
+  /`--container-wide`) is the **total** max width (border-box). Use it as the
+  outer wrapper that aligns a page's sections to a shared edge.
+
+Rule of thumb: measure of text → `ui-center`; page-level frame → `ui-container`.
+Don't nest one inside the other expecting the caps to compose — they measure
+different boxes.
 
 ## Static reports
 
@@ -127,9 +173,14 @@ Both are a thin horizontal bar; they mean different things.
 - **`ui-meter`** — a *measured static value*: coverage, disk, capacity, a
   KPI against a target. Never indeterminate. Tone the fill by threshold
   (`ui.meter({ tone })` → accent/success/warning/danger); the unset
-  default is neutral. Drive the width with the shared `--value` knob
-  (`style="--value: 72"`, 0–100) and author `role="meter"` +
-  `aria-valuenow/min/max` for AT.
+  default is neutral. Drive the width with the shared `--value` knob — a
+  **unitless number 0–100** (`style="--value: 72"`, *not* `72%`: a `%` is
+  invalid against the registered `<number>` type and the fill drops to empty).
+  The class string paints a 0-width, unannounced bar on its own, so set the
+  value **and** its ARIA together with `attrs.meter(72)` (or `attrs.progress`)
+  from `@ponchia/ui/classes` — it returns `role="meter"` +
+  `aria-valuenow/min/max` + the `--value` style, normalized to your
+  `{ min, max }`. Spread it: `<div class={ui.meter({ tone })} {...attrs.meter(72)}>`.
 
 Rule of thumb: *something is happening* → progress; *something measures
 this much* → meter.
@@ -139,7 +190,10 @@ this much* → meter.
 - **`ui-steps`** — a stepper for a multi-step flow. Use an `<ol>`. State is
   ARIA-driven (the framework rule): the active step is `aria-current="step"`
   (no class); completed steps take `ui-steps__item--done`. Markers are
-  auto-numbered by CSS counter.
+  auto-numbered by CSS counter. `--done` is a **visual** state only — it isn't
+  announced, so if "completed" must reach AT, add visually-hidden text
+  (e.g. `<span class="ui-visually-hidden">completed</span>`) or an `aria-label`
+  on the step.
 - **`ui-timeline`** — a vertical event list on a hairline spine (`<ol>` of
   `ui-timeline__item`, optional `ui-timeline__time`). `aria-current` on an
   item marks the live/most-recent event.
@@ -161,17 +215,67 @@ without it these widgets are unlabelled or unannounced:
 - **`ui-pagination`** — wrap it in `<nav aria-label="Pagination">`; give the
   current page `aria-current="page"`; label icon-only prev/next controls
   (`aria-label="Previous page"`). Disable a control with native `disabled`
-  (a `<button>`) **or** `aria-disabled="true"` — both now render disabled and
-  are non-interactive; don't ship an `aria-disabled` control that still acts.
+  (a `<button>`) for full inertness, **or** `aria-disabled="true"` for a control
+  that stays focusable/announced (e.g. a disabled `<a>`). CSS dims both and makes
+  `aria-disabled` pointer-inert, but only native `disabled` is keyboard-inert on
+  its own — to stop an `aria-disabled` control from activating on Enter/Space,
+  wire `initDisabledGuard()` once near your root (see Behaviors).
 - **`ui-tabs`** — `initTabs` adds the full APG wiring (roles, roving tabindex,
   `aria-selected`, panel `hidden`, focusable panel). If you wire tabs yourself,
   name the `ui-tabs__list` (`role="tablist"` + an `aria-label`) and pair each
-  tab with its panel via `aria-controls`/`aria-labelledby`.
+  tab with its panel via `aria-controls`/`aria-labelledby`. Every tab needs a
+  matching panel — a tab with no `aria-controls` target is an orphan that
+  announces as selected but reveals nothing.
+- **Icon-only buttons** (`ui-button--icon` and any glyph-only control) carry no
+  text node, so they're nameless to AT — give them an `aria-label`
+  (`<button class="ui-button ui-button--icon" aria-label="Delete">`).
 - **`ui-sitenav` / `ui-app-nav`** — signal the current link with
   `aria-current="page"` (both honour it; `ui-app-nav` also accepts the
   visual-only `.is-active`, but prefer `aria-current`).
 - **`ui-skiplink`** — keep it the first focusable element and point its `href`
   at the `id` of your main landmark.
+
+## App shell: the admin dashboard frame
+
+`ui-app-shell` is a CSS-only two-column admin frame (sidebar rail + main
+column) that collapses to a single column with a horizontal rail below 880px —
+no behavior required. The nesting matters; the rail is `ui-app-rail` and the
+content side is `ui-app-main`:
+
+```html
+<div class="ui-app-shell">
+  <aside class="ui-app-rail">
+    <span class="ui-app-rail__brand">Acme</span>
+    <nav class="ui-app-nav" aria-label="Primary">
+      <span class="ui-app-nav__section">Main</span>
+      <a href="/overview" aria-current="page">Overview</a>
+      <a href="/reports">Reports</a>
+    </nav>
+    <div class="ui-app-rail__account">…</div>
+  </aside>
+  <main class="ui-app-main">
+    <header class="ui-app-topbar"><h1 class="ui-app-topbar__title">Overview</h1></header>
+    <div class="ui-app-content">
+      <section class="ui-app-panel">
+        <div class="ui-app-panel__head"><h2 class="ui-app-panel__title">KPIs</h2></div>
+        <div class="ui-app-metrics">…<div class="ui-app-metric">…</div></div>
+      </section>
+    </div>
+  </main>
+</div>
+```
+
+Knobs: `--app-rail` sets the rail width (default 14rem); `ui-app-shell--full`
+drops the rail for a single-column app. `ui-app-nav` honours `aria-current="page"`
+(preferred) and the visual-only `.is-active`.
+
+## Menus: `data-bronto-menu` + `initMenu`
+
+A dropdown menu is a native `<details data-bronto-menu>` styled as
+`ui-menu-host` → `ui-menu` (with `ui-menu__item` / `ui-menu__sep` /
+`ui-menu__label`). It opens/closes natively, but `initMenu()` adds the close
+affordances a menu needs: outside-click close, Escape, and closing on item
+activation. Without the behavior the menu opens but never dismisses itself.
 
 ## Avatar: it's an unlabelled blob until you name it
 
@@ -192,8 +296,16 @@ stay yours**, but you no longer have to hand-roll the focus trap: mark the
 overlay `data-bronto-modal` and call `initModal()`. While `is-open` it traps
 focus with `inert` (the rest of the page goes non-interactive), returns focus to
 the opener on close, and dispatches a cancelable `bronto:modal:close` on Escape —
-you still own the `is-open` class, so drop it in response. A drawer is a modal
+you still own the `is-open` class, so drop it in response. On bind `initModal`
+also gives the overlay `role="dialog"` + `aria-modal="true"` and dev-warns if it
+has no accessible name (add `aria-label`/`aria-labelledby`). A drawer is a modal
 that enters from an edge — same rule.
+
+**Scroll-lock is not automatic on either path.** Neither the native `<dialog>`
+nor the `is-open` path freezes the background — the page behind an open modal can
+still scroll. If that matters, toggle a lock yourself while the modal is open
+(`document.documentElement.style.overflow = 'hidden'`, restored on close), or add
+`html:has(dialog[open]) { overflow: hidden }` for the native path.
 
 ## Carousel & lightbox: one primitive, two skins
 
@@ -352,11 +464,25 @@ authoring engine.
   `ui-button`): the browser greys it, blocks activation, and skips it in tab
   order, and bronto styles the disabled cue. Use `aria-disabled="true"` **only**
   when the control must stay focusable/announced — bronto then adds
-  `pointer-events: none` to `ui-button`/`ui-link` so it can't be activated, but
-  you still own removing it from the submit logic.
+  `pointer-events: none` to `ui-button`/`ui-link` so the pointer can't activate
+  it. That is **pointer-inert, not keyboard-inert**: CSS can't stop Enter/Space,
+  so wire `initDisabledGuard()` (Behaviors) to block keyboard activation across
+  every `aria-disabled` control. Either way you still own removing it from the
+  submit logic.
+- **Read-only ≠ disabled.** A `readonly` input keeps its value in form submission
+  and stays focusable/selectable; `disabled` does neither. Bronto gives a
+  read-only field a quiet muted fill so it doesn't read as a live editable field —
+  reach for `readonly` when the value matters but mustn't be edited, `disabled`
+  when it should be inert and skipped.
 - **Combobox** (`data-bronto-combobox`) reads its options from the DOM at
-  `initCombobox()` time — re-run it after you replace the option list. The
-  `<input>` owns the value; the listbox is a view.
+  `initCombobox()` time — re-run it after you replace the option list (or add
+  `data-bronto-combobox-live`). The selected **option's text label** is shown in
+  the input while the `bronto:change` event carries the option's `data-value`
+  code — so put the human label in the `<li>` text and the code in `data-value`.
+  The `.ui-combobox__empty` ("No matches") is hidden until a filter empties the
+  list. Two intentional single-select APG deviations: ArrowDown on a closed list
+  filters rather than pre-selecting the first option, and Tab closes without
+  committing a merely-highlighted option (Enter/click commits).
 - **Validation** is opt-in via `data-bronto-validate` on the form plus
   `initFormValidation()`; it surfaces messages into a `ui-error-summary` you
   provide. The summary's title is the legible sans, not the display face — it's
@@ -416,7 +542,14 @@ These are JS widgets wearing the Bronto look; without the behavior they are iner
 | Popover (`ui-popover`) | `initPopover` | no placement/ARIA — prefer the native `popover` attribute |
 | Carousel (`ui-carousel`) | `initCarousel` | a native scroll-snap track (usable, no controls) |
 | Controlled modal (`ui-modal.is-open`) | `initModal` | no focus trap — provide one or use native `<dialog>` |
+| Menu (`data-bronto-menu`) | `initMenu` | a button next to a list with no open/close, outside-click, or Escape |
 | Toast | `toast()` | nothing — it is imperative-only |
+
+One cross-cutting guard, not tied to a single component:
+
+| Concern | Behavior | With the behavior absent |
+| --- | --- | --- |
+| `aria-disabled="true"` controls | `initDisabledGuard` | dimmed + pointer-inert via CSS, but still **keyboard**-activatable on Enter/Space (native `disabled` is already fully inert) |
 
 Rule of thumb: if a component needs ARIA-state sync, focus management, a keyboard
 model, or persisted/dynamic state, it is behavior-required — that is the exact

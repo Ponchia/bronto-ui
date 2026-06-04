@@ -246,10 +246,12 @@
 
 /* --- Scroll-driven (progressive enhancement) — the scroll/view timeline
    IS the engine, no JS. Everything is gated on `@supports
-   (animation-timeline: …)` so engines without it (today, Firefox/Safari)
-   keep the static end state, and on `prefers-reduced-motion: no-preference`
-   (a scroll timeline ignores animation-duration, so the global reduced-motion
-   reset below can't neutralise it — it must be gated here). --- */
+   (animation-timeline: …)` so an engine without it keeps the static end state
+   (as of 2026 Chrome 115+ and Safari 18.4+ drive scroll()/view(); Firefox is
+   the remaining holdout, still graceful via the @supports gate), and on
+   `prefers-reduced-motion: no-preference` (a scroll timeline ignores
+   animation-duration, so the global reduced-motion reset below can't neutralise
+   it — it must be gated here). --- */
 
 /* Reading-progress bar. Fixed hairline that fills with document scroll;
    unsupported → a static, empty (scaleX(0)) bar. Pair with role="progressbar"
@@ -268,6 +270,22 @@
 /* RTL: fill from the inline-start (right) edge. */
 [dir='rtl'] .ui-scroll-progress {
   transform-origin: 100% 50%;
+}
+
+/* Forced colours (HCM) flatten the spinner's accent top-border and its --line
+   rest to one system colour, so the ring looks uniform with no visible sweep,
+   and the scroll-progress bar can vanish into the canvas. Re-assert distinct
+   system colours so each keeps a visible channel; AT is already covered via
+   aria-busy / role="status" / role="progressbar". (component audit C35.) */
+@media (forced-colors: active) {
+  .ui-spinner {
+    border-color: CanvasText;
+    border-block-start-color: Highlight;
+  }
+
+  .ui-scroll-progress {
+    background: Highlight;
+  }
 }
 
 @supports (animation-timeline: scroll()) {

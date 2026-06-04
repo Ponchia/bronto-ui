@@ -104,7 +104,12 @@
   color: var(--text);
 }
 
-.ui-prose mark {
+/* The bare prose `<mark>` is the plain UA-reset highlight. A `<mark class="ui-mark">`
+   is the opt-in marks leaf (marks.css) and must win: this rule is higher-specificity
+   (0,1,1) than `.ui-mark` (0,1,0) and sits in the same `bronto` layer, so without the
+   `:not(.ui-mark)` it silently overrides every `.ui-mark` tone/draw modifier in prose —
+   the most-documented mark usage. (component audit C1.) */
+.ui-prose mark:not(.ui-mark) {
   background: var(--accent-soft);
   color: var(--text);
   padding: 0.02em 0.22em;
