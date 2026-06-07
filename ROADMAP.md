@@ -6,13 +6,21 @@ without turning the project into a per-framework component suite.
 
 > **Source of truth is [`CHANGELOG.md`](CHANGELOG.md).** This file describes
 > direction; the changelog records what actually shipped. If they disagree, the
-> changelog wins. Last reconciled against `0.6.0`.
+> changelog wins. Last reconciled against `0.6.1`.
 >
 > **Strategic north star:** Bronto should not out-catalog generic UI kits. It
 > should own framework-agnostic primitives for interfaces that explain
 > themselves: explanation, provenance, relationships, command access, workbench
 > ergonomics, generated reports, and durable system state. See
 > [`docs/frontier-primitives.md`](docs/frontier-primitives.md).
+
+## Shipped in 0.6.1
+
+- **Dev-only patch.** Refreshes the SHA-pinned GitHub Actions used by CI
+  (`actions/checkout` 6.0.2 → 6.0.3, `github/codeql-action` 4.36.0 → 4.36.2)
+  and the `dev` Dependabot group (`react`/`react-dom` 19.2.6 → 19.2.7,
+  `stylelint` 17.12.0 → 17.13.0). No public API, no published CSS/JS, no
+  `MIGRATIONS.json` entry. All bumps landed through Dependabot PRs #109 + #110.
 
 ## Shipped in 0.6.0
 

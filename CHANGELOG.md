@@ -1,9 +1,31 @@
 # Changelog
 
-> **Versioning:** pre-1.0, breaking changes ship in the _minor_. Pin to the
-> minor — `~0.4.0` (equivalently `^0.4.0`) resolves to `>=0.4.0 <0.5.0`; a bare
-> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
-> the deprecation policy in CONTRIBUTING.md.
+|> **Versioning:** pre-1.0, breaking changes ship in the _minor_. Pin to the
+|> minor — `~0.4.0` (equivalently `^0.4.0`) resolves to `>=0.4.0 <0.5.0`; a bare
+|> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
+|> the deprecation policy in CONTRIBUTING.md.
+
+## 0.6.1 — 2026-06-07
+
+Dev-only patch: refreshes the SHA-pinned GitHub Actions used by CI
+([`actions/checkout`](https://github.com/actions/checkout) 6.0.2 → 6.0.3 —
+SHA-256 repository init fix, expanded SHA regex; and
+[`github/codeql-action`](https://github.com/github/codeql-action) 4.36.0 →
+4.36.2 — CLI version caching, exponential-backoff SARIF polling, CodeQL
+bundle 2.25.6) plus a small DevDeps bump ([react](https://github.com/facebook/react)
+/[react-dom](https://github.com/facebook/react) 19.2.6 → 19.2.7 — Server
+Components `FormData` fix; [stylelint](https://github.com/stylelint/stylelint)
+17.12.0 → 17.13.0). No public API, no published CSS/JS, no `MIGRATIONS.json`
+entry. All bumps were authored by Dependabot and landed through #109 + #110.
+
+### Internal
+
+- Bump the **actions** Dependabot group: `actions/checkout` 6.0.2 → 6.0.3 and
+  `github/codeql-action` 4.36.0 → 4.36.2 (CI only, SHA-pinned in
+  `.github/workflows/*.yml`).
+- Bump the **dev** Dependabot group: `react`/`react-dom` 19.2.6 → 19.2.7 and
+  `stylelint` 17.12.0 → 17.13.0 (devDependencies only — the package itself
+  ships zero runtime deps).
 
 ## 0.6.0 — 2026-06-03
 
