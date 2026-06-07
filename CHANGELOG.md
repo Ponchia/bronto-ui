@@ -5,6 +5,45 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## 0.6.2 — 2026-06-07
+
+Test-only patch: fixes a WebKit-only e2e assertion that blocked the 0.6.1
+release publish (release run 27094283001, e2e / run, webkit project) at
+`test/e2e/diff.spec.mjs:42`. No public API, no published CSS/JS, no
+`MIGRATIONS.json` entry.
+
+The `diff` line-number test asserted that `.ui-diff__ln` computed
+`user-select: none` by reading `getComputedStyle(el).userSelect`. On
+chromium + firefox this returns `'none'`, but on WebKit the same property
+**returns `undefined`** because WebKit still exposes `user-select` under
+the legacy vendor-prefixed JS name (`webkitUserSelect`). The CSS rule
+itself is identical on every engine — the line numbers are genuinely
+excluded from a text selection in WebKit, the test was just reading the
+wrong JS key.
+
+Fix: read `getPropertyValue('-webkit-user-select')` first, fall back to
+`getPropertyValue('user-select')`, via the CSSOM `getPropertyValue()` API
+(not the JS keys). On WebKit, the standard `user-select` slot reports
+the cascade default (`"text"`) even when the rule is applied, so the
+JS-key `||` would short-circuit on the truthy "text" and never see the
+correct `"none"` that lives under `-webkit-user-select`. The
+`getPropertyValue()` API gives consistent empty-string-for-unset
+semantics across engines, but the reading order still has to be
+**inverted** for `user-select` (prefixed first) — unlike `print-color-adjust`
+(report.spec.mjs:105, standard first) or `mask-image` (behavior.spec.mjs:148,
+standard first), where WebKit returns the prefixed name as a fallback and
+the standard name is the reliable source. All 545 other e2e tests on all
+three engines are unaffected.
+
+### Internal
+
+- **`test/e2e/diff.spec.mjs`** — read
+  `getComputedStyle(el).getPropertyValue('-webkit-user-select').trim() ||
+  getComputedStyle(el).getPropertyValue('user-select').trim()` for the
+  line-number `user-select: none` assertion, so the test passes on
+  WebKit (where the standard `user-select` slot reports the cascade
+  default `"text"`) as well as chromium + firefox.
+
 ## 0.6.1 — 2026-06-07
 
 Dev-only patch: refreshes the SHA-pinned GitHub Actions used by CI
