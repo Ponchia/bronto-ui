@@ -5,6 +5,36 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## 0.6.2 — 2026-06-07
+
+Test-only patch: fixes a WebKit-only e2e assertion that blocked the 0.6.1
+release publish (release run 27094283001, e2e / run, webkit project) at
+`test/e2e/diff.spec.mjs:42`. No public API, no published CSS/JS, no
+`MIGRATIONS.json` entry.
+
+The `diff` line-number test asserted that `.ui-diff__ln` computed
+`user-select: none` by reading `getComputedStyle(el).userSelect`. On
+chromium + firefox this returns `'none'`, but on WebKit the same property
+**returns `undefined`** because WebKit still exposes `user-select` under
+the legacy vendor-prefixed JS name (`webkitUserSelect`). The CSS rule
+itself is identical on every engine — the line numbers are genuinely
+excluded from a text selection in WebKit, the test was just reading the
+wrong JS key.
+
+Fix: read `userSelect` first, fall back to `webkitUserSelect`. The same
+`a || b` pattern is already used for `webkitPrintColorAdjust ||
+printColorAdjust` in `test/e2e/report.spec.mjs:105` and for
+`mask + webkitMask` in `test/e2e/behavior.spec.mjs:148`. All 545 other
+e2e tests on all three engines are unaffected.
+
+### Internal
+
+- **`test/e2e/diff.spec.mjs`** — read `getComputedStyle(el).userSelect ||
+  getComputedStyle(el).webkitUserSelect` for the line-number
+  `user-select: none` assertion, so the test passes on WebKit (where
+  `userSelect` is `undefined` even when the standard CSS rule is
+  applied) as well as chromium + firefox.
+
 ## 0.6.1 — 2026-06-07
 
 Dev-only patch: refreshes the SHA-pinned GitHub Actions used by CI
