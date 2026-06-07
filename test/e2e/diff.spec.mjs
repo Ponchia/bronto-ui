@@ -35,9 +35,15 @@ test('the +/− gutter glyph is generated content, so add/remove survive forced-
 
 test('line numbers are excluded from a text selection (user-select: none)', async ({ page }) => {
   await open(page);
+  // WebKit exposes `user-select` under the legacy prefixed name (it returns
+  // `undefined` for the unprefixed JS key even when the standard CSS rule is
+  // applied); chromium + firefox expose both names. The fallback mirrors the
+  // cross-engine pattern used in report.spec.mjs (`webkitPrintColorAdjust ||
+  // printColorAdjust`). The CSS rule itself is identical on every engine —
+  // the test is asserting that the *computed* effect landed, not the JS key.
   const userSelect = await page
     .locator('.ui-diff__ln')
     .first()
-    .evaluate((el) => getComputedStyle(el).userSelect);
+    .evaluate((el) => getComputedStyle(el).userSelect || getComputedStyle(el).webkitUserSelect);
   expect(userSelect).toBe('none');
 });
