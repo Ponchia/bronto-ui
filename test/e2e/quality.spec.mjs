@@ -39,8 +39,13 @@ for (const theme of ['dark', 'light']) {
     await page.goto('/demo/', { waitUntil: 'networkidle' });
 
     // Exercise the behaviours that pull in the shipped modules.
+    const dialog = page.locator('dialog.ui-modal#demoModal');
     await page.getByRole('button', { name: 'Open modal' }).click();
-    await page.locator('dialog.ui-modal#demoModal [data-bronto-close]').first().click();
+    await expect(dialog).toBeVisible();
+    const closeButton = dialog.locator('[data-bronto-close]').first();
+    await expect(closeButton).toBeVisible();
+    await closeButton.click();
+    await expect(dialog).toBeHidden();
     await page.getByRole('button', { name: 'Push toast' }).click();
     await page.locator('[data-bronto-tabs] .ui-tab').nth(1).click();
     await page.waitForTimeout(100);
