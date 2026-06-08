@@ -242,12 +242,24 @@ function checkReportShape(rel, src) {
   }
 
   for (const source of doc.querySelectorAll('.ui-source-card')) {
+    if (!source.id) {
+      errors.push(`${rel}: ui-source-card needs a stable id for claim/source links`);
+    }
     if (
       ![...source.classList].some((name) =>
         /^ui-src--(?:verified|reviewed|generated|unverified|stale|conflict)$/.test(name),
       )
     ) {
       errors.push(`${rel}: ui-source-card needs an explicit ui-src--* trust state`);
+    }
+    for (const required of [
+      'ui-source-card__title',
+      'ui-source-card__origin',
+      'ui-source-card__time',
+    ]) {
+      if (!source.querySelector(`.${required}`)) {
+        errors.push(`${rel}: ui-source-card needs .${required}`);
+      }
     }
   }
 
@@ -264,18 +276,51 @@ function checkReportShape(rel, src) {
     }
   }
 
+  for (const citation of doc.querySelectorAll('.ui-citation[href^="#"]')) {
+    const id = citation.getAttribute('href')?.slice(1);
+    if (id && !doc.getElementById(id)) {
+      errors.push(`${rel}: ui-citation points to missing target #${id}`);
+    }
+  }
+
+  const sourceCardIds = new Set(
+    [...doc.querySelectorAll('.ui-source-card[id]')].map((node) => node.id),
+  );
   for (const claim of doc.querySelectorAll('.ui-claim')) {
+    if (!claim.id) {
+      errors.push(`${rel}: ui-claim needs a stable id for evidence ledgers`);
+    }
     const status = ['supported', 'partial', 'disputed', 'unsupported', 'unknown'].find((name) =>
       claim.classList.contains(`ui-claim--${name}`),
     );
-    if (status && !new RegExp(`\\b${status}\\b`, 'i').test(readableText(claim))) {
+    if (!status) {
+      errors.push(`${rel}: ui-claim needs an explicit ui-claim--* evidence state`);
+    } else if (!new RegExp(`\\b${status}\\b`, 'i').test(readableText(claim))) {
       errors.push(`${rel}: ui-claim--${status} must repeat "${status}" in readable text`);
     }
-    for (const link of claim.querySelectorAll('a[href^="#"]')) {
-      const id = link.getAttribute('href')?.slice(1);
-      if (id && !doc.getElementById(id)) {
-        errors.push(`${rel}: ui-claim has a broken source/evidence link #${id}`);
+    for (const required of ['ui-claim__statement', 'ui-claim__status']) {
+      if (!claim.querySelector(`.${required}`)) {
+        errors.push(`${rel}: ui-claim needs .${required}`);
       }
+    }
+    const declaredSources = (claim.getAttribute('data-source-ids') || '')
+      .split(/\s+/)
+      .map((id) => id.trim())
+      .filter(Boolean);
+    for (const id of declaredSources) {
+      if (!sourceCardIds.has(id)) {
+        errors.push(`${rel}: ui-claim data-source-ids references missing source card #${id}`);
+      }
+    }
+    const linkedSourceIds = [...claim.querySelectorAll('a[href^="#"]')]
+      .map((link) => link.getAttribute('href')?.slice(1))
+      .filter((id) => id && sourceCardIds.has(id));
+    if (
+      !['unsupported', 'unknown'].includes(status) &&
+      !declaredSources.length &&
+      !linkedSourceIds.length
+    ) {
+      errors.push(`${rel}: ui-claim needs data-source-ids or a source-card citation`);
     }
   }
 
