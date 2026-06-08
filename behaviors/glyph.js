@@ -1,9 +1,16 @@
 import { hasDom, resolveHost, noop, collectHosts } from './internal.js';
-import { GLYPH_SIZE, glyphCells } from '../glyphs/glyphs.js';
+import { GLYPH_SIZE, glyphCells, glyphMask } from '../glyphs/glyphs.js';
 
 function restoreAttr(el, name, prev) {
   if (prev === null) el.removeAttribute(name);
   else el.setAttribute(name, prev);
+}
+
+// `dot`/`gap`/`size` land in inline CSS, so allow only length/calc syntax —
+// drop anything with a `;`/`{` that could open a second declaration (mirrors
+// glyphs.js cssLen). Used for the mask path's --icon-size.
+function cssLen(v) {
+  return v && /^[\w.%+\-*/()\s,]+$/.test(v) ? v : '';
 }
 
 /**
@@ -14,6 +21,13 @@ function restoreAttr(el, name, prev) {
  * `data-bronto-glyph-label` to expose it as `role="img"`. An unknown glyph
  * name is left untouched. Idempotent (skips an already-expanded host); the
  * returned cleanup removes the cells and restores the original attributes.
+ *
+ * `data-bronto-glyph-render="mask"` takes the cheap one-node path instead:
+ * the host becomes a single `.ui-icon` masked by the glyph (no GLYPH_SIZE²
+ * cells), inheriting `currentColor` and scaling with the text — the DOM
+ * counterpart to renderGlyph's `render: 'mask'`, for an icon in every table
+ * row where 256 cells per glyph is too heavy. `data-bronto-glyph-size` sets
+ * `--icon-size`. The cell-mode attributes (solid/anim) don't apply.
  *
  * @param {import('./internal.js').DelegateOpts} [opts]
  * @returns {import('./internal.js').Cleanup}
@@ -26,14 +40,54 @@ export function initDotGlyph({ root } = {}) {
   const cleanups = [];
 
   for (const el of els) {
+    const name = el.getAttribute('data-bronto-glyph');
+    const label = el.getAttribute('data-bronto-glyph-label');
+
+    // One-node mask path — the icon-at-scale counterpart to the 256-cell grid.
+    if (el.getAttribute('data-bronto-glyph-render') === 'mask') {
+      if (el.classList.contains('ui-icon') && el.style.getPropertyValue('--icon-mask')) continue;
+      const mask = glyphMask(name);
+      if (!mask) continue; // unknown glyph — leave the placeholder as-is
+      const hadIcon = el.classList.contains('ui-icon');
+      const hadMask = el.style.getPropertyValue('--icon-mask');
+      const hadSize = el.style.getPropertyValue('--icon-size');
+      const hadAriaHiddenM = el.getAttribute('aria-hidden');
+      const hadRoleM = el.getAttribute('role');
+      const hadAriaLabelM = el.getAttribute('aria-label');
+      const sizeM = cssLen(el.getAttribute('data-bronto-glyph-size'));
+
+      el.classList.add('ui-icon');
+      el.style.setProperty('--icon-mask', mask);
+      if (sizeM) el.style.setProperty('--icon-size', sizeM);
+      if (label) {
+        el.setAttribute('role', 'img');
+        el.setAttribute('aria-label', label);
+        el.removeAttribute('aria-hidden');
+      } else {
+        el.setAttribute('aria-hidden', 'true');
+      }
+
+      cleanups.push(() => {
+        if (!hadIcon) el.classList.remove('ui-icon');
+        if (hadMask) el.style.setProperty('--icon-mask', hadMask);
+        else el.style.removeProperty('--icon-mask');
+        if (sizeM && !hadSize) el.style.removeProperty('--icon-size');
+        else if (hadSize) el.style.setProperty('--icon-size', hadSize);
+        restoreAttr(el, 'aria-hidden', hadAriaHiddenM);
+        restoreAttr(el, 'role', hadRoleM);
+        restoreAttr(el, 'aria-label', hadAriaLabelM);
+        if (el.getAttribute('class') === '') el.removeAttribute('class');
+        if (el.getAttribute('style') === '') el.removeAttribute('style');
+      });
+      continue;
+    }
+
     // Scope to DIRECT-child cells (the ones we append) — so a placeholder that
     // legitimately nests its own .ui-dotmatrix is neither mis-read as already
     // expanded here nor have its inner cells removed by cleanup below.
     if (el.querySelector(':scope > .ui-dotmatrix__cell')) continue; // already expanded
-    const cells = glyphCells(el.getAttribute('data-bronto-glyph'));
+    const cells = glyphCells(name);
     if (!cells.length) continue; // unknown glyph — leave the placeholder as-is
-
-    const label = el.getAttribute('data-bronto-glyph-label');
     // `data-bronto-glyph-solid` → square, gapless pixel glyph (legible small),
     // the DOM counterpart to renderGlyph's `solid` option. Implies glyph-only.
     const solid = el.hasAttribute('data-bronto-glyph-solid');

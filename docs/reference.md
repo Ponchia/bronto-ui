@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 529 classes across 161 component groups
+- 540 classes across 167 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -30,6 +30,12 @@ each one matches a real selector in the stylesheet.
 | `cls.accordionBody` | `ui-accordion__body` | part |
 | `cls.accordionItem` | `ui-accordion__item` | part |
 | `cls.accordionSummary` | `ui-accordion__summary` | part |
+
+### `.ui-activity`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.activity` | `ui-activity` | base |
 
 ### `.ui-alert`
 
@@ -486,6 +492,18 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.dotfield` | `ui-dotfield` | base |
 
+### `.ui-dotfit`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.dotfit` | `ui-dotfit` | base |
+
+### `.ui-dotgauge`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.dotgauge` | `ui-dotgauge` | base |
+
 ### `.ui-dotgrid`
 
 | Registry key | Class | Kind |
@@ -579,6 +597,12 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.grid` | `ui-grid` | base |
+
+### `.ui-halftone`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.halftone` | `ui-halftone` | base |
 
 ### `.ui-hint`
 
@@ -678,6 +702,14 @@ each one matches a real selector in the stylesheet.
 | `cls.legendThreshold` | `ui-legend--threshold` | modifier |
 | `cls.legendVertical` | `ui-legend--vertical` | modifier |
 | `cls.legendWithValues` | `ui-legend--with-values` | modifier |
+
+### `.ui-level`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.level` | `ui-level` | base |
+| `cls.levelDanger` | `ui-level--danger` | modifier |
+| `cls.levelWarn` | `ui-level--warn` | modifier |
 
 ### `.ui-lightbox`
 
@@ -893,6 +925,7 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.readout` | `ui-readout` | base |
+| `cls.readoutSpacer` | `ui-readout__spacer` | part |
 
 ### `.ui-reasoning`
 
@@ -1075,6 +1108,7 @@ each one matches a real selector in the stylesheet.
 | `cls.sparkBarAccent` | `ui-spark__bar--accent` | modifier |
 | `cls.sparkBarNeg` | `ui-spark__bar--neg` | modifier |
 | `cls.sparkBarPos` | `ui-spark__bar--pos` | modifier |
+| `cls.sparkDots` | `ui-spark--dots` | modifier |
 
 ### `.ui-spinner`
 
@@ -1204,6 +1238,7 @@ each one matches a real selector in the stylesheet.
 | `cls.tableSelect` | `ui-table__select` | part |
 | `cls.tableSort` | `ui-table__sort` | part |
 | `cls.tableToolbar` | `ui-table__toolbar` | part |
+| `cls.tableBreakAnywhere` | `ui-table--break-anywhere` | modifier |
 | `cls.tableComfortable` | `ui-table--comfortable` | modifier |
 | `cls.tableDense` | `ui-table--dense` | modifier |
 | `cls.tableLined` | `ui-table--lined` | modifier |
@@ -1355,6 +1390,12 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.vt` | `ui-vt` | base |
+
+### `.ui-waffle`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.waffle` | `ui-waffle` | base |
 
 ## Table-local state classes
 

@@ -44,6 +44,20 @@
   background: var(--danger);
 }
 
+/* Dot variant — each bar reads as a stack of dots (the dot-matrix dataword)
+   instead of a solid bar, for the signature look in a sentence/table. A vertical
+   repeating mask breaks every bar into segments; the host still only sets `--v`
+   per bar, so the contract is identical to the solid spark. */
+.ui-spark--dots .ui-spark__bar {
+  --_dot: var(--spark-dot, 0.16em);
+  --_step: calc(var(--_dot) + var(--spark-dot-gap, 0.06em));
+
+  border-radius: 0;
+  /* stylelint-disable-next-line property-no-vendor-prefix -- Safari still needs the prefixed mask property. */
+  -webkit-mask: repeating-linear-gradient(to top, #000 0 var(--_dot), transparent var(--_dot) var(--_step));
+  mask: repeating-linear-gradient(to top, #000 0 var(--_dot), transparent var(--_dot) var(--_step));
+}
+
 /* Forced colours would force the bar backgrounds to the system surface and the
    chart would vanish — repaint the bars in the system text colour so the shape
    survives (the tone distinction is carried by the required aria-label). */

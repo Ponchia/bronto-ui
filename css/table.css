@@ -20,10 +20,11 @@
 .ui-table th,
 .ui-table td {
   border-block-end: 1px solid var(--line);
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   padding: 0.7rem 0.85rem;
   text-align: start;
   vertical-align: top;
+  word-break: normal;
 }
 
 .ui-table th {
@@ -77,6 +78,11 @@
 
 .ui-table--lined td:last-child {
   border-inline-end: 0;
+}
+
+.ui-table--break-anywhere th,
+.ui-table--break-anywhere td {
+  overflow-wrap: anywhere;
 }
 
 /* Numeric / right-aligned cells. */

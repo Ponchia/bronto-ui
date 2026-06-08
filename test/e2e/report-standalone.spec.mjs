@@ -156,6 +156,25 @@ test('ui-compare is a CSS grid', async ({ page }) => {
   expect(display).toBe('grid');
 });
 
+test('report tables preserve words unless break-anywhere is explicit', async ({ page }) => {
+  await openReport(page, 'light');
+  const wrapping = await page.evaluate(() => {
+    const tableCell = document.querySelector('.ui-table td');
+    const fixture = document.createElement('table');
+    fixture.className = 'ui-table ui-table--break-anywhere';
+    fixture.innerHTML = '<tbody><tr><td>machine_token_without_spaces</td></tr></tbody>';
+    document.body.append(fixture);
+    const explicitCell = fixture.querySelector('td');
+    return {
+      defaultCell: getComputedStyle(tableCell).overflowWrap,
+      explicitCell: getComputedStyle(explicitCell).overflowWrap,
+    };
+  });
+
+  expect(wrapping.defaultCell).not.toBe('anywhere');
+  expect(wrapping.explicitCell).toBe('anywhere');
+});
+
 test('standalone report does not overflow horizontally at 360px', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 844 });
   await openReport(page, 'light');
@@ -172,6 +191,19 @@ test('standalone report does not overflow horizontally at 360px', async ({ page 
 test('standalone report exports a non-empty Chromium PDF', async ({ page, browserName }) => {
   test.skip(browserName !== 'chromium', 'page.pdf() is Chromium-only in Playwright');
   await openReport(page, 'light');
+  const css = await page.evaluate(async () => {
+    const stylesheets = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
+    const texts = await Promise.all(
+      stylesheets.map(async (link) => {
+        const res = await fetch(link.href);
+        return res.text();
+      }),
+    );
+    return texts.join('\n');
+  });
+  expect(css).toMatch(/@page\{margin:\s*18mm\}/);
+  expect(css).not.toMatch(/@page\{margin:\s*var\(--report-page-margin\)\}/);
+
   const pdf = await page.pdf({ format: 'A4', printBackground: true });
   expect(pdf.subarray(0, 4).toString()).toBe('%PDF');
   expect(pdf.length).toBeGreaterThan(20_000);

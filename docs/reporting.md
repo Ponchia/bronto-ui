@@ -150,6 +150,10 @@ they are all safe in the static, PDF-first report path.
   `ui-alert` for persistent notices, `ui-table` for structured evidence,
   `ui-timeline` for events, `ui-meter` for measured values, and `ui-num` for
   non-table numeric values.
+- In alerts, put the readable message in `<p class="ui-alert__body">…</p>`
+  and use `ui-alert__title` only for a separate title line. `ui-alert` is a
+  grid with a leading status dot; raw text or loose inline children such as
+  `<strong>` / `<code>` become separate grid items and can fragment in print.
 - Give `ui-report__finding` blocks an accessible name so the visual grouping is
   also programmatic: point `aria-labelledby` at the block's `ui-eyebrow` label
   (give it an `id`), or lead with a real heading. Do the same for a
@@ -167,6 +171,10 @@ they are all safe in the static, PDF-first report path.
   inside `ui-prose`; use `.ui-table` for curated evidence tables. If a
   `ui-report__evidence` block contains only a `ui-table-wrap`, the report layer
   removes the inner frame so evidence tables do not look double-boxed.
+  Report tables preserve words by default so identifiers and headings do not
+  split into unreadable fragments in PDF. Add `ui-table--break-anywhere` only
+  for machine-token tables where avoiding horizontal overflow matters more than
+  preserving words.
 - Every `<figure>` should include a `figcaption` using `ui-report__caption`.
 - Do not use raw color values. Theme with `--accent`; use status tones for
   status; use chart tokens only in chart figures.
@@ -589,9 +597,10 @@ need a full automatable browser, only a Chromium-class layout+print pass.
 - **By hand:** open the report in Chrome/Edge → Print (Cmd/Ctrl+P) → "Save as
   PDF". In **More settings**, enable **Background graphics** (the dialog's
   equivalent of `printBackground` — without it chart fills and swatches drop
-  out), and pick the paper size there. Paper size is a browser print setting,
-  not a token; the layer only themes the page _margin_ via
-  `--report-page-margin`.
+  out), and pick the paper size there. Paper size and page margins are browser
+  print settings; the report stylesheet uses a fixed 18mm `@page` margin because
+  Chromium-class print engines do not reliably resolve custom properties inside
+  `@page` rules.
 - **Headless, lightweight:** use **`chrome-headless-shell`** — the minimal
   headless-Chromium binary built for exactly this, a fraction of a full
   browser's weight. Drive it through Playwright/Puppeteer (or raw CDP) and
@@ -662,3 +671,5 @@ Before returning a report, an LLM should verify:
 - No raw chromatic colors appear in inline styles.
 - No remote scripts, styles, iframes, or images are required for the report.
 - Generated/untrusted body HTML was sanitized before insertion.
+- Alert text is wrapped in `.ui-alert__body`; no loose text or inline-only
+  elements are direct children of `.ui-alert`.
