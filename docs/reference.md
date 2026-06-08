@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 540 classes across 167 component groups
+- 593 classes across 171 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -330,6 +330,24 @@ each one matches a real selector in the stylesheet.
 | `cls.citation` | `ui-citation` | base |
 | `cls.citationChip` | `ui-citation--chip` | modifier |
 
+### `.ui-claim`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.claim` | `ui-claim` | base |
+| `cls.claimBasis` | `ui-claim__basis` | part |
+| `cls.claimCaveat` | `ui-claim__caveat` | part |
+| `cls.claimLimits` | `ui-claim__limits` | part |
+| `cls.claimRefs` | `ui-claim__refs` | part |
+| `cls.claimScope` | `ui-claim__scope` | part |
+| `cls.claimStatement` | `ui-claim__statement` | part |
+| `cls.claimStatus` | `ui-claim__status` | part |
+| `cls.claimDisputed` | `ui-claim--disputed` | modifier |
+| `cls.claimPartial` | `ui-claim--partial` | modifier |
+| `cls.claimSupported` | `ui-claim--supported` | modifier |
+| `cls.claimUnknown` | `ui-claim--unknown` | modifier |
+| `cls.claimUnsupported` | `ui-claim--unsupported` | modifier |
+
 ### `.ui-cluster`
 
 | Registry key | Class | Kind |
@@ -556,6 +574,33 @@ each one matches a real selector in the stylesheet.
 | `cls.errorSummary` | `ui-error-summary` | base |
 | `cls.errorSummaryList` | `ui-error-summary__list` | part |
 | `cls.errorSummaryTitle` | `ui-error-summary__title` | part |
+
+### `.ui-evidence-grid`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.evidenceGrid` | `ui-evidence-grid` | base |
+
+### `.ui-evidence-item`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.evidenceItem` | `ui-evidence-item` | base |
+| `cls.evidenceItemBody` | `ui-evidence-item__body` | part |
+| `cls.evidenceItemCaveat` | `ui-evidence-item__caveat` | part |
+| `cls.evidenceItemKind` | `ui-evidence-item__kind` | part |
+| `cls.evidenceItemMeta` | `ui-evidence-item__meta` | part |
+| `cls.evidenceItemMethod` | `ui-evidence-item__method` | part |
+| `cls.evidenceItemSource` | `ui-evidence-item__source` | part |
+| `cls.evidenceItemTitle` | `ui-evidence-item__title` | part |
+| `cls.evidenceItemValue` | `ui-evidence-item__value` | part |
+| `cls.evidenceItemWindow` | `ui-evidence-item__window` | part |
+
+### `.ui-evidence-ledger`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.evidenceLedger` | `ui-evidence-ledger` | base |
 
 ### `.ui-eyebrow`
 
@@ -939,13 +984,41 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.report` | `ui-report` | base |
+| `cls.reportAction` | `ui-report__action` | part |
+| `cls.reportActionCriteria` | `ui-report__action-criteria` | part |
+| `cls.reportActionDue` | `ui-report__action-due` | part |
+| `cls.reportActionOwner` | `ui-report__action-owner` | part |
+| `cls.reportActionPriority` | `ui-report__action-priority` | part |
+| `cls.reportActionSource` | `ui-report__action-source` | part |
+| `cls.reportActionStatus` | `ui-report__action-status` | part |
+| `cls.reportActionTitle` | `ui-report__action-title` | part |
+| `cls.reportActions` | `ui-report__actions` | part |
 | `cls.reportAppendix` | `ui-report__appendix` | part |
 | `cls.reportCaption` | `ui-report__caption` | part |
 | `cls.reportCover` | `ui-report__cover` | part |
 | `cls.reportCoverCompact` | `ui-report__cover--compact` | modifier |
+| `cls.reportDecision` | `ui-report__decision` | part |
+| `cls.reportDecisionBody` | `ui-report__decision-body` | part |
+| `cls.reportDecisionGrid` | `ui-report__decision-grid` | part |
+| `cls.reportDecisionItem` | `ui-report__decision-item` | part |
+| `cls.reportDecisionKicker` | `ui-report__decision-kicker` | part |
+| `cls.reportDecisionLabel` | `ui-report__decision-label` | part |
+| `cls.reportDecisionMeta` | `ui-report__decision-meta` | part |
+| `cls.reportDecisionTitle` | `ui-report__decision-title` | part |
+| `cls.reportDecisionValue` | `ui-report__decision-value` | part |
 | `cls.reportEvidence` | `ui-report__evidence` | part |
 | `cls.reportFigure` | `ui-report__figure` | part |
 | `cls.reportFinding` | `ui-report__finding` | part |
+| `cls.reportFindingCritical` | `ui-report__finding--critical` | modifier |
+| `cls.reportFindingMajor` | `ui-report__finding--major` | modifier |
+| `cls.reportFindingMinor` | `ui-report__finding--minor` | modifier |
+| `cls.reportFindingResolved` | `ui-report__finding--resolved` | modifier |
+| `cls.reportFindingCaveat` | `ui-report__finding-caveat` | part |
+| `cls.reportFindingClaim` | `ui-report__finding-claim` | part |
+| `cls.reportFindingEvidence` | `ui-report__finding-evidence` | part |
+| `cls.reportFindingImpact` | `ui-report__finding-impact` | part |
+| `cls.reportFindingRemediation` | `ui-report__finding-remediation` | part |
+| `cls.reportFindingTitle` | `ui-report__finding-title` | part |
 | `cls.reportFootnotes` | `ui-report__footnotes` | part |
 | `cls.reportHead` | `ui-report__head` | part |
 | `cls.reportMeta` | `ui-report__meta` | part |

@@ -106,6 +106,24 @@ they are all safe in the static, PDF-first report path.
     <div class="ui-report__summary">
       <p>The summary block is for the decision-level conclusion.</p>
     </div>
+    <aside class="ui-report__decision" aria-labelledby="decision-title">
+      <p class="ui-report__decision-kicker">Decision</p>
+      <h3 class="ui-report__decision-title" id="decision-title">Ship the low-risk path</h3>
+      <p class="ui-report__decision-body">
+        State the operator-facing call first, then list the evidence below it.
+      </p>
+      <dl class="ui-report__decision-grid">
+        <div class="ui-report__decision-item">
+          <dt class="ui-report__decision-label">Basis</dt>
+          <dd class="ui-report__decision-value">Two verified sources support the call.</dd>
+        </div>
+        <div class="ui-report__decision-item">
+          <dt class="ui-report__decision-label">Next action</dt>
+          <dd class="ui-report__decision-value">Owner rechecks the remaining caveat by Jun 8.</dd>
+        </div>
+      </dl>
+      <p class="ui-report__decision-meta">Evidence state: supported · Checked: 2026-06-01</p>
+    </aside>
     <div class="ui-statgrid">
       <div class="ui-stat">
         <span class="ui-stat__label">Open risks</span>
@@ -125,6 +143,147 @@ they are all safe in the static, PDF-first report path.
     </article>
   </section>
 </main>
+```
+
+## Report-specific primitives
+
+Use these report-layer primitives before inventing custom card layouts. They are
+generic, static, and PDF-safe; the host still owns the content, scoring, source
+fetching, and claim wording.
+
+- `ui-report__decision` is the above-the-fold call. Pair it with
+  `ui-report__decision-kicker`, `ui-report__decision-title`,
+  `ui-report__decision-body`, optional `ui-report__decision-grid` /
+  `ui-report__decision-item` detail rows, and optional
+  `ui-report__decision-meta`. It should answer "what should the reader do or
+  believe now?" before the deep evidence. Good rows are basis, impact, next
+  action, owner, recheck date, and evidence state.
+- `ui-report__finding` is the repeated finding block. Add
+  `ui-report__finding--critical`, `--major`, `--minor`, or `--resolved` only
+  when the written finding label also states the severity/status. The colour
+  band is a scanning aid, not the data of record. For dense reports, use
+  `ui-report__finding-title`, `ui-report__finding-claim`,
+  `ui-report__finding-impact`, `ui-report__finding-remediation`,
+  `ui-report__finding-evidence`, and `ui-report__finding-caveat` so impact,
+  evidence, caveat, and remediation do not collapse into one paragraph.
+- `ui-claim` is the smallest claim/evidence contract. Use
+  `ui-claim--supported`, `--partial`, `--disputed`, `--unsupported`, or
+  `--unknown` only when the written `ui-claim__status` says the same thing.
+  Use `ui-claim__statement`, `__scope`, `__basis`, `__limits`, `__refs`, and
+  `__caveat` to show what the report asserts, where it applies, what supports
+  it, what would limit or change it, and which sources/evidence entries it maps
+  to.
+- `ui-evidence-grid` and `ui-evidence-item` are for compact evidence packets:
+  one source, check, observation, counterexample, or assumption per item. Use
+  `ui-evidence-item__title`, `__meta`, and `__body` for simple cards; add
+  `__kind`, `__method`, `__window`, `__value`, `__source`, and `__caveat` when
+  the evidence needs to say how it was gathered. Link to source cards or a table
+  when the evidence is more than a sentence.
+- `ui-evidence-ledger` is a wrapper for a claim/evidence/source matrix. Put a
+  normal `ui-table` inside it with columns such as claim, evidence, source,
+  trust, freshness, relation, and caveat.
+- `ui-report__actions`, `ui-report__action`, and
+  `ui-report__action-status` are for follow-up rows in status, incident, and
+  audit reports. Add `ui-report__action-title`, `__action-owner`,
+  `__action-due`, `__action-priority`, `__action-criteria`, and
+  `__action-source` when the action is a real workflow item. The status text
+  must be written out; do not rely on tone alone.
+
+Decision brief pattern:
+
+```html
+<aside class="ui-report__decision" aria-labelledby="decision-title">
+  <p class="ui-report__decision-kicker">Decision</p>
+  <h3 class="ui-report__decision-title" id="decision-title">Adopt the safer option</h3>
+  <p class="ui-report__decision-body">
+    The current evidence supports the lower-risk path while the disputed source is rechecked.
+  </p>
+  <dl class="ui-report__decision-grid">
+    <div class="ui-report__decision-item">
+      <dt class="ui-report__decision-label">Basis</dt>
+      <dd class="ui-report__decision-value">Verified metrics support the call; one source is stale.</dd>
+    </div>
+    <div class="ui-report__decision-item">
+      <dt class="ui-report__decision-label">Recheck</dt>
+      <dd class="ui-report__decision-value"><time datetime="2026-06-08">2026-06-08</time></dd>
+    </div>
+  </dl>
+  <p class="ui-report__decision-meta">Evidence state: partial · Sources: 4 · Checked: 2026-06-01</p>
+</aside>
+```
+
+Finding + evidence pattern:
+
+```html
+<article class="ui-report__finding ui-report__finding--major" aria-labelledby="finding-cache">
+  <p class="ui-eyebrow" id="finding-cache">Major finding — cache pressure is rising</p>
+  <p class="ui-report__finding-claim">
+    Claim: cache pressure is rising during the refresh window.
+  </p>
+  <p class="ui-report__finding-impact">Impact: p95 latency is likely to breach target if volume rises.</p>
+  <p class="ui-report__finding-remediation">Remediation: lower the refresh batch size before the next rollout.</p>
+  <p class="ui-report__finding-caveat">
+    Caveat: the conclusion assumes comparable traffic shape in the next window.
+  </p>
+</article>
+<div class="ui-evidence-grid" aria-label="Evidence summary">
+  <article class="ui-evidence-item">
+    <h3 class="ui-evidence-item__title">Metric trend</h3>
+    <p class="ui-evidence-item__kind">Observation</p>
+    <p class="ui-evidence-item__meta">Prometheus · 24 h window</p>
+    <p class="ui-evidence-item__body">p95 latency rose 18% while request volume stayed flat.</p>
+  </article>
+  <article class="ui-evidence-item">
+    <h3 class="ui-evidence-item__title">Log sample</h3>
+    <p class="ui-evidence-item__meta">Application logs · reviewed</p>
+    <p class="ui-evidence-item__body">Timeouts cluster around cache refresh intervals.</p>
+  </article>
+</div>
+```
+
+Claim block pattern:
+
+```html
+<article class="ui-claim ui-claim--partial" id="claim-latency">
+  <p class="ui-claim__statement">The migration improved latency without reducing availability.</p>
+  <p class="ui-claim__status">Evidence state: partial</p>
+  <p class="ui-claim__scope">Scope: last 7 days, production traffic only</p>
+  <p class="ui-claim__basis">Basis: metrics export S1 and incident note S2 support the claim.</p>
+  <p class="ui-claim__limits">Limit: retry volume still needs a separate review.</p>
+  <p class="ui-claim__refs">Sources: <a class="ui-citation" href="#source-metrics">S1</a></p>
+</article>
+```
+
+Evidence ledger pattern:
+
+```html
+<div class="ui-evidence-ledger">
+  <div class="ui-table-wrap">
+    <table class="ui-table ui-table--dense">
+      <caption>Claim, evidence, and caveat ledger</caption>
+      <thead>
+        <tr>
+          <th>Claim</th>
+          <th>Evidence</th>
+          <th>Source</th>
+          <th>Trust</th>
+          <th>Relation</th>
+          <th>Caveat</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="#claim-latency">Latency improved</a></td>
+          <td>p95 fell 48 ms</td>
+          <td><a class="ui-citation" href="#source-metrics">S1</a></td>
+          <td>Verified</td>
+          <td>Supports</td>
+          <td>Last 7 days only</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 ```
 
 ## Composition rules
@@ -150,6 +309,12 @@ they are all safe in the static, PDF-first report path.
   `ui-alert` for persistent notices, `ui-table` for structured evidence,
   `ui-timeline` for events, `ui-meter` for measured values, and `ui-num` for
   non-table numeric values.
+- Put a `ui-report__decision` near the start of decision reports, audits, and
+  incident reviews. If the report is intentionally exploratory and has no
+  decision yet, say so in the summary instead of leaving the reader to infer it.
+- Use severity modifiers on `ui-report__finding` only for scanability. The
+  label should still include the severity/status in text, for example
+  "Major finding — …" or "Resolved finding — …".
 - In alerts, put the readable message in `<p class="ui-alert__body">…</p>`
   and use `ui-alert__title` only for a separate title line. `ui-alert` is a
   grid with a leading status dot; raw text or loose inline children such as
@@ -579,20 +744,111 @@ the target theme, or use the frozen inline `<svg>` route, which has no runtime.
 
 ## Common templates
 
-- Executive brief: compact cover, one summary block, KPI `ui-statgrid`, short
-  findings, and sources.
-- Research brief: compact header, decision frame, evidence table, quotes or
-  prose excerpts, and sources.
-- Incident review: compact cover, summary, `ui-timeline`, corrective-action
-  evidence table, and footnotes.
-- Project status: compact header, KPI `ui-statgrid`, chart figure with fallback
-  data, print-only notes, and unnumbered appendix.
+- Executive brief: compact cover, above-fold reader outcome, KPI
+  `ui-statgrid`, short findings, evidence-state disclosure, and sources.
+- Decision report: decision frame, options considered, chosen option, rationale,
+  tradeoffs, revisit trigger, next actions, evidence ledger, and sources.
+- Research brief: compact header, scope/method block, claim cards, evidence
+  table, quotes or prose excerpts, limitations, and sources.
+- Incident review: compact cover, impact summary, `ui-timeline`, root-cause
+  claim, corrective-action register, evidence ledger, and footnotes.
+- Audit: summary, finding cards with severity in text, evidence/caveat rows,
+  remediation owner/due dates, accepted risk, and sources.
+- Project status: compact header, KPI `ui-statgrid`, current state, blocked
+  decisions, action register, chart figure with fallback data, print-only notes,
+  and unnumbered appendix.
+
+Minimum blocks by report type:
+
+| Type | Required shape |
+| --- | --- |
+| Executive | Summary, above-fold outcome, evidence-state disclosure, source cards. |
+| Decision | Decision frame, options/tradeoffs, claim cards, evidence ledger, next actions, sources. |
+| Research | Scope/method, explicit claims, evidence table, limitations, sources. |
+| Primer | Scope, teaching sequence, key claims, examples, caveats, sources. |
+| Incident | Impact, root-cause claim, timeline, evidence ledger, corrective actions, footnotes. |
+| Audit | Severity-labelled findings, evidence/caveat rows, remediation owners/dates, accepted risk, sources. |
+| Status | Current state, risks/blockers, decision requests, action register, recheck timing, sources. |
+
+## Semantic contract
+
+The report layer is not a fact checker, but it should make a report's reasoning
+auditable. A useful report separates:
+
+- **Reader outcome** — what the reader should do or believe now.
+- **Claim** — the actual assertion, with scope and evidence state.
+- **Evidence** — observation, metric, log, quote, sample, method, assumption,
+  counterevidence, or limitation.
+- **Source** — where the evidence came from, with trust/freshness written in
+  text.
+- **Action** — who does what next, by when, and how completion is checked.
+
+Use inline citations and stable IDs to connect those layers:
+
+```html
+<article class="ui-claim ui-claim--supported" id="claim-1" data-source-ids="source-metrics">
+  <p class="ui-claim__statement">Availability remained above target.</p>
+  <p class="ui-claim__status">Evidence state: supported</p>
+  <p class="ui-claim__refs">Source: <a class="ui-citation" href="#source-metrics">S1</a></p>
+</article>
+
+<article class="ui-source-card ui-src--verified" id="source-metrics">
+  <h3 class="ui-source-card__title">Metrics export</h3>
+  <p class="ui-source-card__origin">Verified operational export</p>
+</article>
+```
+
+If a claim is generated, inferred, stale, disputed, or uncited, say so near the
+claim, not only in the source appendix. Do not use a numeric confidence widget
+unless the number has a real model, sample, or scoring method behind it.
+
+Generator-side tools should keep a machine-readable claim/source sidecar beside
+important reports. The HTML stays the readable artifact; the sidecar lets a
+checker prove that claim IDs, source IDs, trust states, retrieval dates and
+high-risk decisions still line up after editing.
+
+```json
+{
+  "schemaVersion": "bronto-report-claims.v1",
+  "report": { "title": "Decision readiness", "type": "decision" },
+  "claims": [
+    {
+      "id": "claim-primary",
+      "status": "supported",
+      "risk": "medium",
+      "statement": "The guarded option reduces operational risk.",
+      "scope": "Current release window",
+      "sourceIds": ["source-primary"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "source-primary",
+      "state": "verified",
+      "title": "Release metrics export",
+      "origin": "Verified operational export",
+      "retrievedAt": "2026-06-08T10:00:00Z",
+      "supports": ["claim-primary"]
+    }
+  ]
+}
+```
+
+For source archives, keep the same source IDs and add any available immutable
+handles: URL, artifact path, content hash, retrieval timestamp, collection
+method and caveats. A report is more useful when the source appendix, inline
+citations, evidence ledger and sidecar all name the same IDs.
 
 ## Print and PDF
 
 The supported export target is modern Chromium print/PDF. A bronto report is
 static and zero-JS, so producing the PDF is just _load → print_ — you do not
 need a full automatable browser, only a Chromium-class layout+print pass.
+
+Chromium's generated PDF is a visual/export artifact, not a tagged accessible
+PDF. Keep the HTML report as the accessible artifact unless the host application
+adds a separate tagged-PDF pipeline and verifies it with PDF accessibility
+tooling.
 
 - **By hand:** open the report in Chrome/Edge → Print (Cmd/Ctrl+P) → "Save as
   PDF". In **More settings**, enable **Background graphics** (the dialog's
@@ -666,6 +922,19 @@ Before returning a report, an LLM should verify:
   cells and `.ui-stat` deltas, `is-open`/`is-active`) are valid but live
   outside `cls` by design — keep them.
 - The document has one `h1`, ordered headings, and a single main report region.
+- The report type is clear: executive, decision, research, incident, audit,
+  primer, or status. The above-fold block answers what the reader should do or
+  believe now, unless the report explicitly says it is exploratory.
+- Every decision, major finding, quantitative claim, and recommendation has a
+  nearby citation, claim block, evidence packet, evidence ledger row, or an
+  explicit assumption/uncited/generated label.
+- Claim/source sidecars, when present, resolve every claim ID and source ID back
+  to visible HTML. High-risk claims have at least one verified or reviewed
+  source.
+- Stale, conflicting, unverified, or generated inputs are surfaced near the
+  affected claim or decision, not buried only in the source appendix.
+- Actions that represent real follow-up include owner, due/recheck date, status,
+  and success criteria, or explicitly say why those fields are unassigned.
 - Tables have captions and header cells.
 - Charts have captions, direct labels or legends, and fallback data.
 - No raw chromatic colors appear in inline styles.

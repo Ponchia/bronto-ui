@@ -43,9 +43,14 @@ for (const theme of ['dark', 'light']) {
 
     await expect(page.locator('main.ui-report')).toHaveCount(1);
     await expect(page.locator('h1.ui-report__title')).toHaveCount(1);
+    await expect(page.locator('.ui-report__decision')).toHaveCount(1);
+    await expect(page.locator('.ui-report__finding--major')).toHaveCount(1);
+    await expect(page.locator('.ui-evidence-item')).toHaveCount(2);
     await expect(page.locator('table caption')).toHaveCount(2);
     await expect(page.locator('figure.ui-report__figure figcaption')).toHaveCount(1);
     await expect(page.locator('.ui-legend')).toHaveCount(1);
+    await expect(page.locator('.ui-provenance')).toHaveCount(1);
+    await expect(page.locator('.ui-source-card')).toHaveCount(2);
     // The CSS-bar renderer is gone; the figure now carries hand-authored inline
     // SVGs. Assert the figure renders and the focus-split bar chart still draws
     // one <rect> per series (Research / Delivery / Maintenance).
@@ -83,6 +88,7 @@ test('report print utilities and overflow rules apply', async ({ page }) => {
       tableOverflow: css('.ui-table-wrap').overflow,
       breakBefore: css('.ui-break-before').breakBefore,
       breakAfter: css('.ui-break-after').breakAfter,
+      sectionBreakInside: css('.ui-report__section').breakInside,
       keepInside: css('.ui-keep').breakInside,
       evidencePadding: css('.ui-report__evidence').paddingTop,
       unnumberedBefore: getComputedStyle(
@@ -115,6 +121,7 @@ test('report print utilities and overflow rules apply', async ({ page }) => {
   expect(result.tableOverflow).toBe('visible');
   expect(result.breakBefore).toBe('page');
   expect(result.breakAfter).toBe('page');
+  expect(result.sectionBreakInside).not.toBe('avoid');
   expect(result.keepInside).toBe('avoid');
   expect(result.evidencePadding).toBe('0px');
   expect(['none', 'normal', '']).toContain(result.unnumberedBefore);
@@ -126,6 +133,26 @@ test('report print utilities and overflow rules apply', async ({ page }) => {
   // Firefox returns the unresolved `attr(href)` literal — both confirm the
   // print rule surfaces the link target (it resolves at paint time in FF too).
   expect(result.proseLinkAfter).toMatch(/https:\/\/example\.com\/report-source|attr\(href\)/);
+});
+
+test('report annotation notes stay inside the SVG viewport', async ({ page }) => {
+  await openReport(page, 'light');
+  const result = await page.evaluate(() => {
+    const svg = document.querySelector(
+      'svg[aria-labelledby="focus-annotation-title focus-annotation-desc"]',
+    );
+    if (!svg) return { missing: true };
+    const s = svg.getBoundingClientRect();
+    const overshoot = [...svg.querySelectorAll('.ui-annotation__note')].map((note) => {
+      const b = note.getBoundingClientRect();
+      return Math.max(0, b.right - s.right, s.left - b.left, b.bottom - s.bottom, s.top - b.top);
+    });
+    return { missing: false, count: overshoot.length, maxOvershoot: Math.max(0, ...overshoot) };
+  });
+
+  expect(result.missing, 'expected annotated report SVG to exist').toBe(false);
+  expect(result.count).toBeGreaterThan(0);
+  expect(result.maxOvershoot).toBeLessThanOrEqual(1);
 });
 
 // Note: the report fixture is intentionally NOT pixel-snapshotted. It is a

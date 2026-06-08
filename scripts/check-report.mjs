@@ -6,12 +6,14 @@
  *  - report.css / annotations.css stay opt-in, never imported by core.css
  *  - static report examples do not depend on remote executable/media assets
  *  - report examples do not use raw chromatic inline colors
+ *  - report fixtures keep the semantic/print contracts the docs teach
  *
  * Run: node scripts/check-report.mjs
  */
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { JSDOM } from 'jsdom';
 import { cls } from '../classes/index.js';
 import { reportAndExit } from './lib/gate-report.mjs';
 
@@ -37,6 +39,7 @@ const classSources = [
   'docs/command.md',
   'llms.txt',
   'demo/report.html',
+  'demo/report-standalone.html',
   'demo/annotations.html',
   'demo/legends.html',
   'demo/marks.html',
@@ -87,6 +90,7 @@ for (const [file, noun] of OPTIN_LAYERS) {
 
 const htmlSources = [
   'demo/report.html',
+  'demo/report-standalone.html',
   'demo/annotations.html',
   'demo/legends.html',
   'demo/marks.html',
@@ -112,6 +116,15 @@ for (const rel of htmlSources) {
   if (/<iframe\b/i.test(src)) errors.push(`${rel}: report examples must not embed iframes`);
 }
 
+const reportHtmlSources = [
+  'demo/report.html',
+  'demo/report-standalone.html',
+  ...walk('examples/report-static').filter((p) => /\.html$/.test(p)),
+];
+for (const rel of reportHtmlSources) {
+  checkReportShape(rel, read(rel));
+}
+
 const rawColor = /#[0-9a-fA-F]{3,8}\b|\b(?:rgba?|hsla?|oklch|oklab|lab|lch|hwb|color)\(/i;
 for (const rel of [
   'docs/reporting.md',
@@ -128,6 +141,7 @@ for (const rel of [
   'docs/workbench.md',
   'docs/command.md',
   'demo/report.html',
+  'demo/report-standalone.html',
   'demo/annotations.html',
   'demo/legends.html',
   'demo/marks.html',
@@ -155,16 +169,155 @@ for (const rel of [
   }
 }
 
+const forbiddenTerms = loadForbiddenTerms();
+if (forbiddenTerms.length) {
+  const publicBoundarySources = walk('.').filter(
+    (p) => /\.(md|html|css|js|json|mjs|ts|tsx|jsx|d\.ts)$/.test(p) && p !== 'package-lock.json',
+  );
+  for (const rel of publicBoundarySources) {
+    const src = read(rel).toLowerCase();
+    for (const term of forbiddenTerms) {
+      if (src.includes(term)) {
+        errors.push(`${rel}: public-boundary check found forbidden local term "${term}"`);
+      }
+    }
+  }
+}
+
 reportAndExit(errors, {
   label: 'report-kit',
   ok: `report kit: ${classSources.length} docs/fixtures use valid ui-* classes`,
 });
 
+function loadForbiddenTerms() {
+  const terms = [];
+  const env = process.env.BRONTO_UI_FORBIDDEN_TERMS || '';
+  terms.push(...env.split(/[\n,]/));
+  const localPath = resolve(root, '.bronto-ui-forbidden-terms');
+  if (existsSync(localPath)) {
+    terms.push(...readFileSync(localPath, 'utf8').split(/\n/));
+  }
+  return [
+    ...new Set(terms.map((term) => term.replace(/#.*/, '').trim().toLowerCase()).filter(Boolean)),
+  ];
+}
+
+function checkReportShape(rel, src) {
+  const doc = new JSDOM(src).window.document;
+  const h1s = [...doc.querySelectorAll('h1')];
+  if (h1s.length !== 1) errors.push(`${rel}: expected exactly one <h1>, found ${h1s.length}`);
+
+  const reportMains = [...doc.querySelectorAll('main.ui-report')];
+  if (reportMains.length !== 1) {
+    errors.push(
+      `${rel}: expected exactly one <main class="ui-report">, found ${reportMains.length}`,
+    );
+  }
+
+  for (const table of doc.querySelectorAll('table')) {
+    if (!table.querySelector('caption')) errors.push(`${rel}: table is missing a caption`);
+    if (!table.querySelector('th')) errors.push(`${rel}: table is missing header cells`);
+  }
+
+  for (const figure of doc.querySelectorAll('figure')) {
+    if (!figure.querySelector('figcaption')) errors.push(`${rel}: figure is missing a figcaption`);
+  }
+
+  for (const svg of doc.querySelectorAll('svg')) {
+    if (
+      svg.hasAttribute('role') ||
+      svg.hasAttribute('aria-label') ||
+      svg.hasAttribute('aria-labelledby') ||
+      svg.closest('figure')
+    ) {
+      if (!svg.querySelector('title')) errors.push(`${rel}: report SVG is missing a <title>`);
+      if (!svg.querySelector('desc')) errors.push(`${rel}: report SVG is missing a <desc>`);
+    }
+  }
+
+  for (const alert of doc.querySelectorAll('.ui-alert')) {
+    if (!alert.querySelector('.ui-alert__body')) {
+      errors.push(`${rel}: ui-alert text must be wrapped in .ui-alert__body`);
+    }
+  }
+
+  for (const source of doc.querySelectorAll('.ui-source-card')) {
+    if (
+      ![...source.classList].some((name) =>
+        /^ui-src--(?:verified|reviewed|generated|unverified|stale|conflict)$/.test(name),
+      )
+    ) {
+      errors.push(`${rel}: ui-source-card needs an explicit ui-src--* trust state`);
+    }
+  }
+
+  for (const finding of doc.querySelectorAll('.ui-report__finding')) {
+    for (const severity of ['critical', 'major', 'minor', 'resolved']) {
+      if (finding.classList.contains(`ui-report__finding--${severity}`)) {
+        const text = readableText(finding).toLowerCase();
+        if (!new RegExp(`\\b${severity}\\b`).test(text)) {
+          errors.push(
+            `${rel}: ui-report__finding--${severity} must repeat "${severity}" in readable text`,
+          );
+        }
+      }
+    }
+  }
+
+  for (const claim of doc.querySelectorAll('.ui-claim')) {
+    const status = ['supported', 'partial', 'disputed', 'unsupported', 'unknown'].find((name) =>
+      claim.classList.contains(`ui-claim--${name}`),
+    );
+    if (status && !new RegExp(`\\b${status}\\b`, 'i').test(readableText(claim))) {
+      errors.push(`${rel}: ui-claim--${status} must repeat "${status}" in readable text`);
+    }
+    for (const link of claim.querySelectorAll('a[href^="#"]')) {
+      const id = link.getAttribute('href')?.slice(1);
+      if (id && !doc.getElementById(id)) {
+        errors.push(`${rel}: ui-claim has a broken source/evidence link #${id}`);
+      }
+    }
+  }
+
+  for (const action of doc.querySelectorAll('.ui-report__action')) {
+    if (!action.querySelector('.ui-report__action-status')) {
+      errors.push(`${rel}: ui-report__action needs .ui-report__action-status text`);
+    }
+    if (action.querySelector('.ui-report__action-title')) {
+      for (const required of [
+        'ui-report__action-owner',
+        'ui-report__action-due',
+        'ui-report__action-criteria',
+      ]) {
+        if (!action.querySelector(`.${required}`)) {
+          errors.push(`${rel}: action-register row with a title needs .${required}`);
+        }
+      }
+    }
+  }
+}
+
+function readableText(node) {
+  return (node.textContent || '').replace(/\s+/g, ' ').trim();
+}
+
 function walk(rel) {
   const abs = resolve(root, rel);
   const out = [];
   for (const name of readdirSync(abs)) {
-    if (name === 'node_modules' || name === 'dist') continue;
+    if (
+      name === '.git' ||
+      name === '.bronto-ui-forbidden-terms' ||
+      name === 'node_modules' ||
+      name === 'dist' ||
+      name === 'playwright-report' ||
+      name === 'test-results' ||
+      name === 'blob-report' ||
+      name === 'reports-lab' ||
+      name === '_site'
+    ) {
+      continue;
+    }
     const childRel = join(rel, name).replaceAll('\\', '/');
     const childAbs = resolve(root, childRel);
     if (statSync(childAbs).isDirectory()) out.push(...walk(childRel));

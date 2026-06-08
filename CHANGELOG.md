@@ -5,6 +5,25 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased
+
+### Added
+
+- **Report decision/evidence grammar** — adds public, static report primitives
+  for decision blocks, severity-labelled findings, compact evidence packets and
+  follow-up action rows.
+- **Claim and action-register grammar** — adds claim status blocks, structured
+  finding parts, evidence-method parts, evidence ledgers, decision detail rows,
+  and action owner/due/criteria/source parts for more auditable reports.
+
+### Changed
+
+- **Report fixtures and local guardrails** — expands the standalone and full
+  report demos with source/provenance examples, SVG accessibility details and a
+  local-only public-boundary terms gate for `check:report`.
+- **Report shape checks** — `check:report` now parses report demos with a DOM
+  instead of regexes and validates the public claim/action contracts.
+
 ## 0.6.4 — 2026-06-08
 
 Patch release for the dot-matrix expansion and static report hardening shipped

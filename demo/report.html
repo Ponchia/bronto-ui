@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="../dist/css/dataviz.css" />
     <link rel="stylesheet" href="../dist/css/annotations.css" />
     <link rel="stylesheet" href="../dist/css/legend.css" />
+    <link rel="stylesheet" href="../dist/css/sources.css" />
   </head>
   <body>
     <main class="ui-report ui-report--numbered">
@@ -40,6 +41,15 @@
           <li><a href="#appendix">Appendix</a></li>
         </ol>
       </nav>
+      <nav class="ui-report__toc ui-print-only" aria-label="Printed report contents">
+        <p class="ui-eyebrow ui-eyebrow--muted">Contents</p>
+        <ol>
+          <li>Executive summary</li>
+          <li>Findings and evidence</li>
+          <li>Focus split</li>
+          <li>Appendix</li>
+        </ol>
+      </nav>
 
       <section id="summary" class="ui-report__section">
         <h2 class="ui-report__section-head">Executive summary</h2>
@@ -56,6 +66,21 @@
             </p>
           </div>
         </div>
+        <aside class="ui-report__decision ui-keep" aria-labelledby="fixture-decision-title">
+          <p class="ui-report__decision-kicker">Decision</p>
+          <h3 class="ui-report__decision-title" id="fixture-decision-title">
+            Treat source-backed static output as the default
+          </h3>
+          <p class="ui-report__decision-body">
+            The report fixture should prove that a generated HTML report can be readable, printable,
+            and traceable without behavior JavaScript.
+          </p>
+          <p class="ui-report__decision-meta">
+            <span>Confidence: high</span>
+            <span>Scope: fixture data</span>
+            <span>Checked: <time datetime="2026-06-01">2026-06-01</time></span>
+          </p>
+        </aside>
 
         <div class="ui-statgrid">
           <div class="ui-stat">
@@ -78,8 +103,11 @@
 
       <section id="findings" class="ui-report__section">
         <h2 class="ui-report__section-head">Findings and evidence</h2>
-        <article class="ui-report__finding ui-keep" aria-labelledby="finding-static">
-          <p class="ui-eyebrow" id="finding-static">Finding 1 — keep report output static</p>
+        <article
+          class="ui-report__finding ui-report__finding--major ui-keep"
+          aria-labelledby="finding-static"
+        >
+          <p class="ui-eyebrow" id="finding-static">Major finding 1 — keep report output static</p>
           <div class="ui-prose">
             <p>
               Report output should stay static by default. Interactive behaviors belong in the host
@@ -89,6 +117,23 @@
             </p>
           </div>
         </article>
+
+        <div class="ui-evidence-grid" aria-label="Finding evidence summary">
+          <article class="ui-evidence-item">
+            <h3 class="ui-evidence-item__title">Class contract</h3>
+            <p class="ui-evidence-item__meta">classes.json · generated</p>
+            <p class="ui-evidence-item__body">
+              The report fixture uses only registered public classes.
+            </p>
+          </article>
+          <article class="ui-evidence-item">
+            <h3 class="ui-evidence-item__title">Print path</h3>
+            <p class="ui-evidence-item__meta">Chromium PDF · checked</p>
+            <p class="ui-evidence-item__body">
+              The e2e fixture exports a non-empty PDF with background graphics.
+            </p>
+          </article>
+        </div>
 
         <div class="ui-report__evidence">
           <div class="ui-table-wrap">
@@ -168,6 +213,8 @@
             aria-label="Weekly focus split: Research 18 hours, Delivery 11 hours, Maintenance 7 hours."
             style="display: block; max-inline-size: 480px; margin-inline: auto"
           >
+            <title>Weekly focus split</title>
+            <desc>Research is 18 hours, delivery is 11 hours, and maintenance is 7 hours.</desc>
             <line x1="96" y1="12" x2="96" y2="120" stroke="var(--line)" />
             <g font-size="11" text-anchor="end" fill="var(--text-soft)">
               <text x="90" y="28">Research</text>
@@ -242,7 +289,7 @@
               <path class="ui-annotation__subject" d="M0,-22A22,22 0 1 1 0,22A22,22 0 1 1 0,-22Z" />
               <path class="ui-annotation__connector" d="M-20.123,-9.281L-118,-54" />
               <circle class="ui-annotation__connector-end" cx="-118" cy="-54" r="3" />
-              <g class="ui-annotation__note" transform="translate(-214, -76)">
+              <g class="ui-annotation__note" transform="translate(-214, -70)">
                 <rect x="-8" y="-18" width="126" height="46" />
                 <path class="ui-annotation__note-line" d="M0,24H98" />
                 <text class="ui-annotation__title" y="-4">Peak</text>
@@ -364,9 +411,29 @@
         </div>
         <footer class="ui-report__sources" aria-labelledby="sources-title">
           <p class="ui-eyebrow ui-eyebrow--muted" id="sources-title">Sources</p>
-          <ol>
-            <li>Local report fixture data.</li>
-            <li>Package class registry and token contracts.</li>
+          <p class="ui-provenance ui-src--verified" aria-label="Report provenance">
+            <span class="ui-provenance__item">Fixture data</span>
+            <span class="ui-provenance__item">Generated class registry</span>
+          </p>
+          <ol class="ui-source-list">
+            <li class="ui-source-list__item">
+              <article class="ui-source-card ui-src--verified">
+                <h3 class="ui-source-card__title">Local report fixture data</h3>
+                <p class="ui-source-card__origin">Synthetic package fixture · verified</p>
+                <p class="ui-source-card__excerpt">
+                  Stable sample values for layout, print, chart and accessibility checks.
+                </p>
+              </article>
+            </li>
+            <li class="ui-source-list__item">
+              <article class="ui-source-card ui-src--generated">
+                <h3 class="ui-source-card__title">Package class registry</h3>
+                <p class="ui-source-card__origin">classes/classes.json · generated</p>
+                <p class="ui-source-card__excerpt">
+                  The public class contract used by report validators and examples.
+                </p>
+              </article>
+            </li>
           </ol>
         </footer>
         <section class="ui-report__footnotes" aria-labelledby="footnotes-title">
