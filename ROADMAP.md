@@ -6,13 +6,19 @@ without turning the project into a per-framework component suite.
 
 > **Source of truth is [`CHANGELOG.md`](CHANGELOG.md).** This file describes
 > direction; the changelog records what actually shipped. If they disagree, the
-> changelog wins. Last reconciled against `0.6.3`.
+> changelog wins. Last reconciled against `0.6.4`.
 >
 > **Strategic north star:** Bronto should not out-catalog generic UI kits. It
 > should own framework-agnostic primitives for interfaces that explain
 > themselves: explanation, provenance, relationships, command access, workbench
 > ergonomics, generated reports, and durable system state. See
 > [`docs/frontier-primitives.md`](docs/frontier-primitives.md).
+
+## Shipped in 0.6.4
+
+- **Dot-matrix + report hardening.** Expands the generated glyph/readout
+  surface and docs, and tightens standalone static-report print/table behavior
+  for local HTML/PDF workflows.
 
 ## Shipped in 0.6.3
 
