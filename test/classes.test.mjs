@@ -66,8 +66,8 @@ test('recipes emit only registry classes', () => {
   assert.equal(ui.badge({ tone: 'success' }), 'ui-badge ui-badge--success');
   assert.equal(ui.dot({ tone: 'accent', live: true }), 'ui-dot ui-dot--accent ui-dot--live');
   assert.equal(
-    ui.table({ density: 'dense', lined: true }),
-    'ui-table ui-table--dense ui-table--lined',
+    ui.table({ density: 'dense', lined: true, breakAnywhere: true }),
+    'ui-table ui-table--dense ui-table--lined ui-table--break-anywhere',
   );
   assert.equal(
     ui.card({ accent: true, interactive: true }),

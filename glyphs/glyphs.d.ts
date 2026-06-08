@@ -8,7 +8,9 @@ export type GlyphName =
   | 'arrow-left'
   | 'arrow-right'
   | 'arrow-up'
+  | 'bar-chart'
   | 'bell'
+  | 'calendar'
   | 'check'
   | 'check-circle'
   | 'chevron-down'
@@ -18,14 +20,30 @@ export type GlyphName =
   | 'circle'
   | 'clock'
   | 'close'
+  | 'colon'
+  | 'comma'
+  | 'copy'
+  | 'database'
+  | 'digit-0'
+  | 'digit-1'
+  | 'digit-2'
+  | 'digit-3'
+  | 'digit-4'
+  | 'digit-5'
+  | 'digit-6'
+  | 'digit-7'
+  | 'digit-8'
+  | 'digit-9'
   | 'download'
   | 'edit'
   | 'eye'
   | 'eye-off'
   | 'file'
+  | 'filter'
   | 'folder'
   | 'gear'
   | 'grid'
+  | 'hash'
   | 'heart'
   | 'home'
   | 'info'
@@ -39,11 +57,16 @@ export type GlyphName =
   | 'more-horizontal'
   | 'more-vertical'
   | 'pause'
+  | 'percent'
+  | 'period'
   | 'play'
   | 'plus'
   | 'plus-circle'
   | 'refresh'
   | 'search'
+  | 'share'
+  | 'sliders'
+  | 'sort'
   | 'spark'
   | 'star'
   | 'sun'
@@ -111,5 +134,43 @@ export declare function glyph(name: GlyphNameInput): Glyph | undefined;
 /** 256 cell descriptors (row-major), or `[]` if unknown. */
 export declare function glyphCells(name: GlyphNameInput): GlyphCell[];
 
+/** The CSS `mask-image` `url()` for a glyph (the `--icon-mask` value on a
+ *  `.ui-icon`), or `''` if unknown. Single-tone. */
+export declare function glyphMask(name: GlyphNameInput): string;
+
 /** A full `.ui-dotmatrix` HTML string for a glyph (`''` if unknown). */
 export declare function renderGlyph(name: GlyphNameInput, options?: RenderGlyphOptions): string;
+
+/** Hand-curated intent→glyph search aliases (e.g. `trash`→`delete`/`remove`).
+ *  Keys are real glyph names; values are extra search terms. */
+export declare const GLYPH_TAGS: Readonly<Partial<Record<GlyphName, readonly string[]>>>;
+
+/** Glyph names whose name OR a search alias contains `query` (case-insensitive),
+ *  sorted. `findGlyphs('')` returns every name. */
+export declare function findGlyphs(query: string): GlyphName[];
+
+/** Options for renderReadout. The per-glyph fields pass through to renderGlyph
+ *  for each character; `gap` sets `--readout-gap` on the row. */
+export interface RenderReadoutOptions {
+  /** Accessible name for the whole readout (defaults to the raw text). The dot
+   *  digits are decorative; this carries the real value. */
+  label?: string;
+  /** CSS length between characters (sets `--readout-gap`; sanitized). */
+  gap?: string;
+  /** Render each character as square gapless pixels (legible small). */
+  solid?: boolean;
+  /** Show the unlit panel dots behind each character (default true). */
+  grid?: boolean;
+  /** Decorative per-character animation (reduced-motion-safe). */
+  anim?: 'reveal' | 'pulse';
+  /** CSS length for one dot of each character (sets `--dotmatrix-dot`). */
+  dot?: string;
+  /** `'mask'` renders each character as a single `.ui-icon` node (lightest). */
+  render?: 'mask';
+  /** With `render: 'mask'`, the per-character icon size. */
+  size?: string;
+}
+
+/** A row of dot-matrix glyphs for a numeric string (digits + `: , . % - +` and
+ *  space) — the big Nothing-style readout. `''` for empty input. */
+export declare function renderReadout(text: string, options?: RenderReadoutOptions): string;

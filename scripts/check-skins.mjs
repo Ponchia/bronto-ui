@@ -38,11 +38,42 @@ for (const name of SKIN_NAMES) {
   // accent contract must exist in both — already checked above. Warn only if a
   // non-accent key is set in one theme but not the other AND is not a known
   // display knob, to catch typos.
-  const known = new Set(['--accent', '--dotmatrix-glow', '--dotmatrix-pulse-min']);
+  const known = new Set([
+    '--accent',
+    '--dotmatrix-glow',
+    '--dotmatrix-pulse-min',
+    '--dotmatrix-reveal-step',
+  ]);
   for (const k of [...lk, ...dk]) {
     if (!known.has(k))
       errors.push(`skin "${name}" sets unknown token "${k}" — typo, or add it to the known set`);
   }
+}
+
+// 2b. Tier-3 display knobs must not be dead. dots.css documents
+// --dotmatrix-glow / --dotmatrix-pulse-min / --dotmatrix-reveal-step as the
+// "display expression" language the colorways set; the check-classes gate
+// can only prove a knob is *referenced* (a `var(--x, default)` read counts),
+// not that any colorway actually *sets* it — exactly the "validates-but-no-ops"
+// trap. So assert here that each documented colorway knob has at least one
+// set-site across the skins. (Author code may also set these inline; this only
+// guards the colorway-set claim.)
+const COLORWAY_DISPLAY_KNOBS = [
+  '--dotmatrix-glow',
+  '--dotmatrix-pulse-min',
+  '--dotmatrix-reveal-step',
+];
+const setAcrossSkins = new Set();
+for (const name of SKIN_NAMES) {
+  for (const k of Object.keys(skins[name].light ?? {})) setAcrossSkins.add(k);
+  for (const k of Object.keys(skins[name].dark ?? {})) setAcrossSkins.add(k);
+}
+for (const knob of COLORWAY_DISPLAY_KNOBS) {
+  if (!setAcrossSkins.has(knob))
+    errors.push(
+      `dots.css documents "${knob}" as a colorway-set display knob, but no skin in ` +
+        `tokens/skins.js sets it — it is dead. Wire it into a skin or drop the doc claim.`,
+    );
 }
 
 // 3. Not in the default bundle.

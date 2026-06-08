@@ -348,6 +348,177 @@
   animation-delay: 0.63s;
 }
 
+/* ==========================================================================
+   Data-bound dot surfaces — the reporting/dashboard family. Each is a thin,
+   token-driven leaf over the same lit/dim/accent dot vocabulary: the HOST
+   normalises the data (lights `is-on`, sets `data-level`, or writes `--v`
+   0..1) and the leaf only lays out + tones. None compute a scale, bin, or
+   threshold — that stays with the host (the spark/meter boundary).
+
+   a11y: every one is opaque to assistive tech, so the container MUST carry a
+   host-written `role="img"` + `aria-label` with the exact value/meaning
+   (rounding to whole cells is presentation-only; keep the figure in the label).
+   ========================================================================== */
+
+/* Waffle / unit chart — part-to-whole as an N×N field of lit dots ("73 of
+   100"). Host marks the lit cells with `is-on`. */
+.ui-waffle {
+  display: grid;
+  gap: var(--waffle-gap, 0.18em);
+  grid-template-columns: repeat(var(--waffle-cols, 10), 1fr);
+  inline-size: var(--waffle-size, 7em);
+}
+
+.ui-waffle i {
+  aspect-ratio: 1;
+  background: var(--field-dot);
+  border-radius: var(--dotmatrix-dot-radius, 50%);
+}
+
+.ui-waffle i.is-on {
+  background: var(--field-dot-accent);
+  box-shadow: 0 0 var(--dotmatrix-glow, 0) var(--field-dot-accent);
+}
+
+/* Activity / contribution grid — density-over-time. A flat list of day cells
+   flows down each weekday column via grid-auto-flow; intensity is a 5-step
+   ramp on `data-level="0..4"` (the host bins data → level). */
+.ui-activity {
+  display: grid;
+  gap: var(--activity-gap, 0.18em);
+  grid-auto-columns: var(--activity-cell, 0.82em);
+  grid-auto-flow: column;
+  grid-template-rows: repeat(var(--activity-rows, 7), 1fr);
+}
+
+.ui-activity i {
+  aspect-ratio: 1;
+  background: var(--field-dot);
+  border-radius: var(--dotmatrix-dot-radius, 2px);
+}
+
+.ui-activity i[data-level='1'] {
+  background: color-mix(in oklab, var(--field-dot-accent) 30%, var(--field-dot));
+}
+
+.ui-activity i[data-level='2'] {
+  background: color-mix(in oklab, var(--field-dot-accent) 55%, var(--field-dot));
+}
+
+.ui-activity i[data-level='3'] {
+  background: color-mix(in oklab, var(--field-dot-accent) 78%, var(--field-dot));
+}
+
+.ui-activity i[data-level='4'] {
+  background: var(--field-dot-accent);
+}
+
+/* LED level meter — a column of discrete segments lit to a threshold (signal /
+   load / VU). Fills from the bottom; host marks lit segments with `is-on`.
+   `--warn`/`--danger` re-point the lit colour for the whole meter when the host
+   crosses a threshold (the host owns the threshold, not the leaf). */
+.ui-level {
+  block-size: var(--level-height, 4em);
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--level-gap, 2px);
+  inline-size: var(--level-size, 0.7em);
+}
+
+.ui-level i {
+  background: var(--field-dot);
+  border-radius: var(--radius-sm);
+  flex: 1;
+}
+
+.ui-level i.is-on {
+  background: var(--accent);
+  box-shadow: 0 0 var(--dotmatrix-glow, 0) var(--accent);
+}
+
+.ui-level--warn i.is-on {
+  background: var(--warning);
+}
+
+.ui-level--danger i.is-on {
+  background: var(--danger);
+}
+
+/* Dot gauge — a 0..1 reading (`--v`) as a ring of dots filling along an arc.
+   A conic-gradient sweep (accent up to --v, dim beyond) intersected with a
+   donut-ring × dot-pattern mask, so the lit arc reads as discrete dots. */
+.ui-dotgauge {
+  --_v: var(--v, 0);
+  --_sweep: var(--gauge-sweep, 270deg);
+
+  aspect-ratio: 1;
+  background: conic-gradient(
+    from var(--gauge-from, 135deg),
+    var(--field-dot-accent) calc(var(--_v) * var(--_sweep)),
+    var(--field-dot) calc(var(--_v) * var(--_sweep)) var(--_sweep),
+    transparent var(--_sweep)
+  );
+  border-radius: 50%;
+  inline-size: var(--gauge-size, 5em);
+
+  /* ring (donut) ∩ dot lattice → a ring of dots */
+  /* stylelint-disable property-no-vendor-prefix -- Safari still needs the prefixed mask props. */
+  -webkit-mask:
+    radial-gradient(closest-side, transparent 58%, #000 59%),
+    radial-gradient(circle, #000 34%, transparent 36%) 0 0 / var(--gauge-dot, 0.5em) var(--gauge-dot, 0.5em);
+  -webkit-mask-composite: source-in;
+  /* stylelint-enable property-no-vendor-prefix */
+  mask:
+    radial-gradient(closest-side, transparent 58%, #000 59%),
+    radial-gradient(circle, #000 34%, transparent 36%) 0 0 / var(--gauge-dot, 0.5em) var(--gauge-dot, 0.5em);
+  mask-composite: intersect;
+}
+
+/* Readout — a row of dot-matrix glyphs forming a big numeric (renderReadout).
+   The glyphs are decorative; the row carries role=img + the value as its name. */
+.ui-readout {
+  align-items: flex-end;
+  display: inline-flex;
+  gap: var(--readout-gap, 0.12em);
+}
+
+.ui-readout__spacer {
+  display: inline-block;
+  inline-size: var(--readout-space, 0.5em);
+}
+
+/* Halftone — render host content (an <img> or a box with its own background)
+   through a dot lattice so a thumbnail/cover takes on the dot look. A style
+   filter, NOT a data viz: the dots are a fixed lattice, not value-modulated. */
+.ui-halftone {
+  /* stylelint-disable-next-line property-no-vendor-prefix -- Safari still needs the prefixed mask property. */
+  -webkit-mask: radial-gradient(circle, #000 var(--halftone-dot, 38%), transparent calc(var(--halftone-dot, 38%) + 1%)) 0 0 /
+    var(--halftone-gap, 0.5em) var(--halftone-gap, 0.5em);
+  mask: radial-gradient(circle, #000 var(--halftone-dot, 38%), transparent calc(var(--halftone-dot, 38%) + 1%)) 0 0 /
+    var(--halftone-gap, 0.5em) var(--halftone-gap, 0.5em);
+}
+
+/* Density wrapper — make any dot surface inside respond to the CARD it sits in,
+   not the viewport, so the same component reads well in a wide hero and a
+   narrow tile. Opt-in: wrap the surface and the breakpoint below densifies it. */
+.ui-dotfit {
+  container: dotfit / inline-size;
+}
+
+@container dotfit (width < 18rem) {
+  .ui-dotfit .ui-dotgrid {
+    --dot-gap: 8px;
+  }
+
+  .ui-dotfit .ui-activity {
+    --activity-cell: 0.6em;
+  }
+
+  .ui-dotfit .ui-waffle {
+    --waffle-size: 5em;
+  }
+}
+
 /* Matrix-reveal wrapper — content wipes in left→right on .is-in. Gate the
    clipped from-state on `scripting: enabled`: with JS off, `.is-in` is never
    toggled, so without the gate the content stays permanently clipped away and
@@ -443,16 +614,52 @@
     forced-color-adjust: none;
     background: LinkText;
   }
+
+  /* The data-bound dot surfaces encode their value via background-color, which
+     HCM flattens. Opt out and pin the lit state to a system colour so the
+     reading survives. The activity ramp's 5 steps can't all stay distinct under
+     HCM — collapse to present (CanvasText) vs absent (the unstyled track). */
+  .ui-waffle i.is-on,
+  .ui-level i.is-on {
+    forced-color-adjust: none;
+    background: LinkText;
+  }
+
+  .ui-level--warn i.is-on {
+    background: Mark;
+  }
+
+  .ui-level--danger i.is-on {
+    background: Highlight;
+  }
+
+  .ui-activity i[data-level='1'],
+  .ui-activity i[data-level='2'],
+  .ui-activity i[data-level='3'],
+  .ui-activity i[data-level='4'] {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+
+  /* The gauge is a masked gradient; keep its paint rather than let HCM drop it. */
+  .ui-dotgauge {
+    forced-color-adjust: none;
+  }
 }
 
 /* Print: the dot surfaces carry data (heatmap cells, the segmented meter, the
-   status dot, the masked glyph), so their painted fills must survive the print
-   "economy" default that drops backgrounds. */
+   status dot, the masked glyph, the waffle/activity/level/gauge readings), so
+   their painted fills must survive the print "economy" default that drops
+   backgrounds. */
 @media print {
   .ui-dotmatrix__cell,
   .ui-dotbar i,
   .ui-dot,
-  .ui-icon {
+  .ui-icon,
+  .ui-waffle i,
+  .ui-activity i,
+  .ui-level i,
+  .ui-dotgauge {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }

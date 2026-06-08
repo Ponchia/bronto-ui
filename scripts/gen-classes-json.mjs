@@ -749,6 +749,20 @@ const behaviorAttributes = [
     behavior: 'initDotGlyph',
     note: 'decorative entrance/idle animation (honours prefers-reduced-motion).',
   },
+  {
+    name: 'data-bronto-glyph-render',
+    on: 'a [data-bronto-glyph] placeholder',
+    value: "'mask'",
+    behavior: 'initDotGlyph',
+    note: 'take the one-node .ui-icon mask path (inherits currentColor, scales with text) instead of the 256-cell grid — the icon-at-scale path.',
+  },
+  {
+    name: 'data-bronto-glyph-size',
+    on: "a [data-bronto-glyph-render='mask'] placeholder",
+    value: 'CSS length',
+    behavior: 'initDotGlyph',
+    note: 'sets --icon-size on the masked glyph (sanitized to a length/calc allowlist).',
+  },
 ];
 
 // Per-component ARIA a generator MUST emit for the role to mean anything — the

@@ -7,6 +7,13 @@
  * name is left untouched. Idempotent (skips an already-expanded host); the
  * returned cleanup removes the cells and restores the original attributes.
  *
+ * `data-bronto-glyph-render="mask"` takes the cheap one-node path instead:
+ * the host becomes a single `.ui-icon` masked by the glyph (no GLYPH_SIZE²
+ * cells), inheriting `currentColor` and scaling with the text — the DOM
+ * counterpart to renderGlyph's `render: 'mask'`, for an icon in every table
+ * row where 256 cells per glyph is too heavy. `data-bronto-glyph-size` sets
+ * `--icon-size`. The cell-mode attributes (solid/anim) don't apply.
+ *
  * @param {import('./internal.js').DelegateOpts} [opts]
  * @returns {import('./internal.js').Cleanup}
  */

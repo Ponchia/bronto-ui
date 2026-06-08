@@ -79,6 +79,16 @@ export declare const cls: {
   readonly dotspinner: 'ui-dotspinner';
   readonly dotspinnerSm: 'ui-dotspinner--sm';
   readonly dotspinnerLg: 'ui-dotspinner--lg';
+  readonly waffle: 'ui-waffle';
+  readonly activity: 'ui-activity';
+  readonly level: 'ui-level';
+  readonly levelWarn: 'ui-level--warn';
+  readonly levelDanger: 'ui-level--danger';
+  readonly dotgauge: 'ui-dotgauge';
+  readonly readout: 'ui-readout';
+  readonly readoutSpacer: 'ui-readout__spacer';
+  readonly halftone: 'ui-halftone';
+  readonly dotfit: 'ui-dotfit';
   readonly field: 'ui-field';
   readonly label: 'ui-label';
   readonly input: 'ui-input';
@@ -189,6 +199,7 @@ export declare const cls: {
   readonly tableDense: 'ui-table--dense';
   readonly tableComfortable: 'ui-table--comfortable';
   readonly tableLined: 'ui-table--lined';
+  readonly tableBreakAnywhere: 'ui-table--break-anywhere';
   readonly tableWrap: 'ui-table-wrap';
   readonly tableLoading: 'ui-table-wrap--loading';
   readonly tableEmpty: 'ui-table__empty';
@@ -372,7 +383,6 @@ export declare const cls: {
   readonly crosshairLineX: 'ui-crosshair__line--x';
   readonly crosshairLineY: 'ui-crosshair__line--y';
   readonly crosshairBadge: 'ui-crosshair__badge';
-  readonly readout: 'ui-readout';
   readonly sel: 'ui-sel';
   readonly selOn: 'ui-sel--on';
   readonly selOff: 'ui-sel--off';
@@ -416,6 +426,7 @@ export declare const cls: {
   readonly codeLineRemove: 'ui-code__line--remove';
   readonly codeLineHl: 'ui-code__line--hl';
   readonly spark: 'ui-spark';
+  readonly sparkDots: 'ui-spark--dots';
   readonly sparkBar: 'ui-spark__bar';
   readonly sparkBarAccent: 'ui-spark__bar--accent';
   readonly sparkBarPos: 'ui-spark__bar--pos';

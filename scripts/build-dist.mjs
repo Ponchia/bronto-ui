@@ -162,8 +162,12 @@ export function buildBundles() {
  *  the modal scroll-lock, the wrapper-control + forced-colors invalid cues, the
  *  forced-colors app-nav active channel + menu hover/focus parity, the
  *  uiScrollReveal keyframe + entry-bounded range, the coarse CTA-link floor, and
- *  the static busy-button ring — once more repetitive FC/media-query blocks. */
-export const BUDGET = { raw: 86_000, gzip: 14_850 };
+ *  the static busy-button ring — once more repetitive FC/media-query blocks.
+ *  The dot-matrix expansion nudged it 86→90 kB (raw) / 14.85→15.5 kB (gzip):
+ *  the reporting dot family (waffle, activity, level, dotgauge, halftone,
+ *  readout, dotfit) + their forced-colors/print blocks, all in the core dots
+ *  leaf — small base rules plus the usual repetitive FC/print blocks. */
+export const BUDGET = { raw: 90_000, gzip: 15_500 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };

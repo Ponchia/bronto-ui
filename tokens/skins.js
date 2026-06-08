@@ -38,22 +38,35 @@ export const skins = {
   'amber-crt': {
     label: 'Amber CRT',
     // Phosphor amber. Dark+saturated in light theme (AA under a white label),
-    // bright with a warm bloom in dark theme (the classic CRT glow).
-    light: { '--accent': 'oklch(52% 0.11 67deg)' },
-    dark: { '--accent': 'oklch(82% 0.15 82deg)', '--dotmatrix-glow': '0.4em' },
+    // bright with a warm bloom in dark theme (the classic CRT glow). The glow
+    // and a deeper --pulse breath (`--dotmatrix-pulse-min`) are the Tier-3
+    // "display expression" knobs the colorway is allowed to re-point.
+    light: { '--accent': 'oklch(52% 0.11 67deg)', '--dotmatrix-pulse-min': '0.35' },
+    dark: {
+      '--accent': 'oklch(82% 0.15 82deg)',
+      '--dotmatrix-glow': '0.4em',
+      '--dotmatrix-pulse-min': '0.3',
+    },
   },
   'phosphor-green': {
     label: 'Phosphor Green',
-    // P1-phosphor green. Same light=dark-ink / dark=bright-glow split.
-    light: { '--accent': 'oklch(52% 0.13 150deg)' },
-    dark: { '--accent': 'oklch(84% 0.19 150deg)', '--dotmatrix-glow': '0.4em' },
+    // P1-phosphor green. Same light=dark-ink / dark=bright-glow split, with the
+    // same deeper phosphor breath as Amber CRT.
+    light: { '--accent': 'oklch(52% 0.13 150deg)', '--dotmatrix-pulse-min': '0.35' },
+    dark: {
+      '--accent': 'oklch(84% 0.19 150deg)',
+      '--dotmatrix-glow': '0.4em',
+      '--dotmatrix-pulse-min': '0.3',
+    },
   },
   'e-ink': {
     label: 'E-ink',
     // The opposite move: drop the hue almost entirely → a near-monochrome
-    // ink/paper accent, no glow. The most restrained look in the set.
-    light: { '--accent': 'oklch(34% 0.012 250deg)' },
-    dark: { '--accent': 'oklch(84% 0.008 250deg)' },
+    // ink/paper accent, no glow. The most restrained look in the set — and the
+    // --reveal scan snaps on instantly (`--dotmatrix-reveal-step: 0ms`), since
+    // e-ink panels don't sweep, they flip.
+    light: { '--accent': 'oklch(34% 0.012 250deg)', '--dotmatrix-reveal-step': '0ms' },
+    dark: { '--accent': 'oklch(84% 0.008 250deg)', '--dotmatrix-reveal-step': '0ms' },
   },
 };
 

@@ -84,6 +84,17 @@ export const cls = Object.freeze({
   dotspinner: 'ui-dotspinner',
   dotspinnerSm: 'ui-dotspinner--sm',
   dotspinnerLg: 'ui-dotspinner--lg',
+  // data-bound dot surfaces (reporting/dashboard family)
+  waffle: 'ui-waffle',
+  activity: 'ui-activity',
+  level: 'ui-level',
+  levelWarn: 'ui-level--warn',
+  levelDanger: 'ui-level--danger',
+  dotgauge: 'ui-dotgauge',
+  readout: 'ui-readout',
+  readoutSpacer: 'ui-readout__spacer',
+  halftone: 'ui-halftone',
+  dotfit: 'ui-dotfit',
   // forms
   field: 'ui-field',
   label: 'ui-label',
@@ -199,6 +210,7 @@ export const cls = Object.freeze({
   tableDense: 'ui-table--dense',
   tableComfortable: 'ui-table--comfortable',
   tableLined: 'ui-table--lined',
+  tableBreakAnywhere: 'ui-table--break-anywhere',
   tableWrap: 'ui-table-wrap',
   // Loading state goes on the WRAP, so the modifier is named for the wrap (C19).
   tableLoading: 'ui-table-wrap--loading',
@@ -441,6 +453,7 @@ export const cls = Object.freeze({
   codeLineHl: 'ui-code__line--hl',
   // spark — inline datawords / microcharts (css/spark.css)
   spark: 'ui-spark',
+  sparkDots: 'ui-spark--dots',
   sparkBar: 'ui-spark__bar',
   sparkBarAccent: 'ui-spark__bar--accent',
   sparkBarPos: 'ui-spark__bar--pos',
@@ -737,12 +750,13 @@ export const ui = {
   dot: ({ tone, live } = {}) => j(cls.dot, dotTone(tone), live && cls.dotLive),
   dotgrid: ({ accent, dense } = {}) =>
     j(cls.dotgrid, accent && cls.dotgridAccent, dense && cls.dotgridDense),
-  table: ({ density, lined } = {}) =>
+  table: ({ density, lined, breakAnywhere } = {}) =>
     j(
       cls.table,
       density === 'dense' && cls.tableDense,
       density === 'comfortable' && cls.tableComfortable,
       lined && cls.tableLined,
+      breakAnywhere && cls.tableBreakAnywhere,
     ),
   eyebrow: ({ muted, sm } = {}) => j(cls.eyebrow, muted && cls.eyebrowMuted, sm && cls.eyebrowSm),
   hint: ({ error } = {}) => j(cls.hint, error && cls.hintError),
