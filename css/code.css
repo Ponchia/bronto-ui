@@ -57,6 +57,8 @@
   inline-size: 3ch;
   margin-inline-end: var(--space-sm);
   text-align: end;
+  /* stylelint-disable-next-line property-no-vendor-prefix -- WebKit still requires the prefixed slot for this selection opt-out. */
+  -webkit-user-select: none;
   user-select: none;
 }
 
