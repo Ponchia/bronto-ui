@@ -81,6 +81,8 @@
   font-variant-numeric: tabular-nums;
   padding: 0 var(--space-sm);
   text-align: end;
+  /* stylelint-disable-next-line property-no-vendor-prefix -- WebKit still requires the prefixed slot for this selection opt-out. */
+  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -99,6 +101,8 @@
   display: inline-block;
   inline-size: 1ch;
   margin-inline-end: var(--space-2xs);
+  /* stylelint-disable-next-line property-no-vendor-prefix -- WebKit still requires the prefixed slot for this selection opt-out. */
+  -webkit-user-select: none;
   user-select: none;
 }
 
