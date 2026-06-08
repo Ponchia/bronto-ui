@@ -35,15 +35,30 @@ test('the +/− gutter glyph is generated content, so add/remove survive forced-
 
 test('line numbers are excluded from a text selection (user-select: none)', async ({ page }) => {
   await open(page);
-  // WebKit exposes `user-select` under the legacy prefixed name (it returns
-  // `undefined` for the unprefixed JS key even when the standard CSS rule is
-  // applied); chromium + firefox expose both names. The fallback mirrors the
-  // cross-engine pattern used in report.spec.mjs (`webkitPrintColorAdjust ||
-  // printColorAdjust`). The CSS rule itself is identical on every engine —
-  // the test is asserting that the *computed* effect landed, not the JS key.
+  // Cross-engine `user-select` introspection via the CSSOM `getPropertyValue`
+  // API. Unlike `print-color-adjust` (report.spec.mjs:105) or `mask-image`
+  // (behavior.spec.mjs:148) — where the standard JS name is the reliable
+  // cross-engine value and WebKit returns the prefixed name as a fallback —
+  // for `user-select` the relationship is inverted: WebKit still treats the
+  // standard `user-select` rule as the legacy `-webkit-user-select` slot, so
+  // `getPropertyValue('user-select')` on WebKit reports the cascade default
+  // ("text") even when the standard rule is applied, and
+  // `getPropertyValue('-webkit-user-select')` is where the computed value
+  // actually lives. chromium + firefox return "none" for the standard name
+  // and "none" for the prefixed name. Reading the prefixed name first and
+  // falling back to the standard is the only reading order that works on
+  // all three engines; an OR in the standard-first order would short-circuit
+  // on WebKit's truthy "text" default and never see the correct "none"
+  // (which is why an earlier `a || b` on the JS keys failed at line 42).
   const userSelect = await page
     .locator('.ui-diff__ln')
     .first()
-    .evaluate((el) => getComputedStyle(el).userSelect || getComputedStyle(el).webkitUserSelect);
+    .evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return (
+        cs.getPropertyValue('-webkit-user-select').trim() ||
+        cs.getPropertyValue('user-select').trim()
+      );
+    });
   expect(userSelect).toBe('none');
 });
