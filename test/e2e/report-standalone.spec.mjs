@@ -76,7 +76,24 @@ for (const theme of ['dark', 'light']) {
 
     await expect(page.locator('main.ui-report')).toHaveCount(1);
     await expect(page.locator('h1.ui-report__title')).toHaveCount(1);
-    await expect(page.locator('.ui-delta')).toHaveCount(4);
+    await expect(page.locator('.ui-delta')).toHaveCount(6);
+    await expect(page.locator('.ui-report__decision')).toHaveCount(1);
+    await expect(page.locator('.ui-report__decision-item')).toHaveCount(3);
+    await expect(page.locator('.ui-report__decision-title')).toHaveText(
+      'Keep the migration in place',
+    );
+    await expect(page.locator('.ui-report__finding--major')).toHaveCount(1);
+    await expect(page.locator('.ui-report__finding-claim')).toContainText(
+      'The migration improved latency',
+    );
+    await expect(page.locator('.ui-claim.ui-claim--supported')).toHaveCount(1);
+    await expect(page.locator('.ui-claim__refs .ui-citation')).toHaveCount(2);
+    await expect(page.locator('.ui-evidence-item')).toHaveCount(3);
+    await expect(page.locator('.ui-evidence-item__kind')).toHaveCount(3);
+    await expect(page.locator('.ui-evidence-ledger table')).toHaveCount(1);
+    await expect(page.locator('.ui-report__action')).toHaveCount(2);
+    await expect(page.locator('.ui-report__action-owner')).toHaveCount(2);
+    await expect(page.locator('.ui-report__action-criteria')).toHaveCount(2);
     await expect(page.locator('.ui-compare')).toHaveCount(1);
     await expect(page.locator('.ui-compare__col')).toHaveCount(2);
     await expect(page.locator('.ui-compare__head')).toHaveCount(2);
@@ -85,9 +102,13 @@ for (const theme of ['dark', 'light']) {
     const figure = page.locator('figure.ui-report__figure');
     const barChart = figure.locator('svg[aria-label^="Weekly request mix"]');
     await expect(barChart).toBeVisible();
+    await expect(barChart.locator('title')).toHaveText('Weekly request mix');
+    await expect(barChart.locator('desc')).toContainText('Reads account for 68 percent');
     await expect(barChart.locator('rect')).toHaveCount(2);
     await expect(figure.locator('.ui-table-wrap table')).toHaveCount(1);
     await expect(page.locator('.ui-legend')).toHaveCount(1);
+    await expect(page.locator('.ui-provenance')).toHaveCount(1);
+    await expect(page.locator('.ui-source-card')).toHaveCount(2);
   });
 }
 
@@ -106,7 +127,7 @@ test('ui-delta injects its arrow glyph via ::before (no JS)', async ({ page }) =
       getComputedStyle(document.querySelector(sel), '::before').getPropertyValue('content');
     return {
       up: read('.ui-delta--up:not(.ui-delta--invert)'),
-      down: read('.ui-delta--down'),
+      down: read('.ui-delta--down:not(.ui-delta--invert)'),
       flat: read('.ui-delta--flat'),
       invertUp: read('.ui-delta--invert.ui-delta--up'),
     };
@@ -134,7 +155,7 @@ test('ui-delta--invert swaps only the tone', async ({ page }) => {
     const colour = (sel) => getComputedStyle(document.querySelector(sel)).color;
     return {
       up: colour('.ui-delta--up:not(.ui-delta--invert)'),
-      down: colour('.ui-delta--down'),
+      down: colour('.ui-delta--down:not(.ui-delta--invert)'),
       invertUp: colour('.ui-delta--invert.ui-delta--up'),
     };
   });
@@ -180,6 +201,95 @@ test('standalone report does not overflow horizontally at 360px', async ({ page 
   await openReport(page, 'light');
   const overflow = await page.evaluate(pageOverflow);
   expect(overflow, `page overflowed by ${overflow}px`).toBeLessThanOrEqual(0);
+});
+
+test('report grid children do not let dense evidence widen mobile pages', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openReport(page, 'light');
+  await page.evaluate(() => {
+    document.body.innerHTML = `
+      <main class="ui-report ui-report--numbered">
+        <header class="ui-report__cover ui-report__cover--compact">
+          <p class="ui-eyebrow">Platform primer · Autoscaling · CNCF graduated</p>
+          <h1 class="ui-report__title">KEDA</h1>
+          <p class="ui-report__subtitle">
+            Kubernetes Event-Driven Autoscaling with a deliberately long subtitle
+            and dense report metadata.
+          </p>
+          <ul class="ui-report__meta">
+            <li><time datetime="2026-06-08">Jun 8, 2026</time></li>
+            <li>Author: report generator</li>
+            <li>Scope: <span class="ui-state ui-state--reviewed">Reference + plan</span></li>
+            <li>Static HTML · Chromium PDF-ready</li>
+          </ul>
+        </header>
+        <section class="ui-report__section" id="summary">
+          <h2 class="ui-report__section-head">Summary</h2>
+          <div class="ui-statgrid">
+            ${Array.from({ length: 6 })
+              .map(
+                (_, index) => `
+                  <div class="ui-stat">
+                    <span class="ui-stat__label">Metric ${index + 1}</span>
+                    <span class="ui-stat__value">${index + 1}</span>
+                    <span class="ui-delta ui-delta--flat">dense evidence item</span>
+                  </div>
+                `,
+              )
+              .join('')}
+          </div>
+        </section>
+        <section class="ui-report__section" id="architecture">
+          <h2 class="ui-report__section-head">Architecture</h2>
+          <figure class="ui-report__figure" role="group" aria-labelledby="cap">
+            <svg viewBox="0 0 860 360" role="img" aria-labelledby="svg-t svg-d">
+              <title id="svg-t">Wide architecture diagram</title>
+              <desc id="svg-d">A wide SVG that must shrink inside the report grid.</desc>
+              <rect x="20" y="20" width="820" height="320" fill="var(--panel-soft)" stroke="var(--line)" />
+            </svg>
+            <figcaption class="ui-report__caption" id="cap">Wide diagram with fallback data.</figcaption>
+            <div class="ui-table-wrap">
+              <table class="ui-table">
+                <caption>Fallback table</caption>
+                <thead>
+                  <tr><th>Component</th><th>Responsibility</th><th>Notes</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="is-key">Metrics adapter</td>
+                    <td>Provides external metrics to the autoscaler.</td>
+                    <td>Long but ordinary prose should wrap instead of widening the page.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </figure>
+        </section>
+        <section class="ui-report__section ui-report__section--unnumbered" id="sources">
+          <h2 class="ui-report__section-head">Sources</h2>
+          <ol class="ui-source-list">
+            <li class="ui-source-list__item">
+              <article class="ui-source-card ui-src--reviewed">
+                <h3 class="ui-source-card__title">KEDA platform adoption plan — internal review</h3>
+                <p class="ui-source-card__origin">investigation: keda_platform_adoption_2026_06</p>
+                <p class="ui-source-card__time">2026-06-08</p>
+                <p class="ui-source-card__excerpt">
+                  finding:claude_analysis_2026_06_08_keda_platform_adoption_reference_phased_explorat_21e1e05d25
+                </p>
+              </article>
+            </li>
+          </ol>
+        </section>
+      </main>
+    `;
+  });
+
+  const overflow = await page.evaluate(pageOverflow);
+  expect(overflow, `synthetic report overflowed by ${overflow}px`).toBeLessThanOrEqual(0);
+  const coverWidth = await page
+    .locator('.ui-report__cover')
+    .evaluate((el) => el.getBoundingClientRect().width);
+  expect(coverWidth).toBeLessThanOrEqual(390);
 });
 
 // ---------------------------------------------------------------------------
