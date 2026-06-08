@@ -117,11 +117,13 @@
   gap: var(--space-sm);
   list-style: none;
   margin: 0;
+  min-inline-size: 0;
   padding: 0;
 }
 
 .ui-source-list__item {
   margin: 0;
+  min-inline-size: 0;
 }
 
 /* --- Source card — a single source preview. --- */
@@ -132,8 +134,13 @@
   border-radius: var(--radius-md);
   display: grid;
   gap: 0.3rem;
+  min-inline-size: 0;
   padding: 0.75rem 0.9rem;
   print-color-adjust: exact;
+}
+
+.ui-source-card > * {
+  min-inline-size: 0;
 }
 
 .ui-source-card__title {
@@ -141,6 +148,7 @@
   font-size: var(--text-sm);
   font-weight: 600;
   margin: 0;
+  overflow-wrap: break-word;
 }
 
 .ui-source-card__origin {
@@ -148,17 +156,20 @@
   font-family: var(--mono);
   font-size: var(--text-2xs);
   letter-spacing: var(--tracking-wide);
+  overflow-wrap: anywhere;
 }
 
 .ui-source-card__time {
   color: var(--text-dim);
   font-family: var(--mono);
   font-size: var(--text-2xs);
+  overflow-wrap: anywhere;
 }
 
 .ui-source-card__excerpt {
   color: var(--text-soft);
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .ui-source-card__actions {

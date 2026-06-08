@@ -263,16 +263,69 @@ export declare const cls: {
   readonly reportMeta: 'ui-report__meta';
   readonly reportToc: 'ui-report__toc';
   readonly reportSummary: 'ui-report__summary';
+  readonly reportDecision: 'ui-report__decision';
+  readonly reportDecisionKicker: 'ui-report__decision-kicker';
+  readonly reportDecisionTitle: 'ui-report__decision-title';
+  readonly reportDecisionBody: 'ui-report__decision-body';
+  readonly reportDecisionMeta: 'ui-report__decision-meta';
+  readonly reportDecisionGrid: 'ui-report__decision-grid';
+  readonly reportDecisionItem: 'ui-report__decision-item';
+  readonly reportDecisionLabel: 'ui-report__decision-label';
+  readonly reportDecisionValue: 'ui-report__decision-value';
   readonly reportSection: 'ui-report__section';
   readonly reportSectionUnnumbered: 'ui-report__section--unnumbered';
   readonly reportSectionHead: 'ui-report__section-head';
   readonly reportFinding: 'ui-report__finding';
+  readonly reportFindingCritical: 'ui-report__finding--critical';
+  readonly reportFindingMajor: 'ui-report__finding--major';
+  readonly reportFindingMinor: 'ui-report__finding--minor';
+  readonly reportFindingResolved: 'ui-report__finding--resolved';
+  readonly reportFindingTitle: 'ui-report__finding-title';
+  readonly reportFindingClaim: 'ui-report__finding-claim';
+  readonly reportFindingImpact: 'ui-report__finding-impact';
+  readonly reportFindingRemediation: 'ui-report__finding-remediation';
+  readonly reportFindingEvidence: 'ui-report__finding-evidence';
+  readonly reportFindingCaveat: 'ui-report__finding-caveat';
   readonly reportEvidence: 'ui-report__evidence';
   readonly reportFigure: 'ui-report__figure';
   readonly reportCaption: 'ui-report__caption';
   readonly reportSources: 'ui-report__sources';
   readonly reportAppendix: 'ui-report__appendix';
   readonly reportFootnotes: 'ui-report__footnotes';
+  readonly reportActions: 'ui-report__actions';
+  readonly reportAction: 'ui-report__action';
+  readonly reportActionStatus: 'ui-report__action-status';
+  readonly reportActionTitle: 'ui-report__action-title';
+  readonly reportActionOwner: 'ui-report__action-owner';
+  readonly reportActionDue: 'ui-report__action-due';
+  readonly reportActionPriority: 'ui-report__action-priority';
+  readonly reportActionCriteria: 'ui-report__action-criteria';
+  readonly reportActionSource: 'ui-report__action-source';
+  readonly claim: 'ui-claim';
+  readonly claimSupported: 'ui-claim--supported';
+  readonly claimPartial: 'ui-claim--partial';
+  readonly claimDisputed: 'ui-claim--disputed';
+  readonly claimUnsupported: 'ui-claim--unsupported';
+  readonly claimUnknown: 'ui-claim--unknown';
+  readonly claimStatement: 'ui-claim__statement';
+  readonly claimStatus: 'ui-claim__status';
+  readonly claimScope: 'ui-claim__scope';
+  readonly claimBasis: 'ui-claim__basis';
+  readonly claimLimits: 'ui-claim__limits';
+  readonly claimRefs: 'ui-claim__refs';
+  readonly claimCaveat: 'ui-claim__caveat';
+  readonly evidenceGrid: 'ui-evidence-grid';
+  readonly evidenceLedger: 'ui-evidence-ledger';
+  readonly evidenceItem: 'ui-evidence-item';
+  readonly evidenceItemTitle: 'ui-evidence-item__title';
+  readonly evidenceItemMeta: 'ui-evidence-item__meta';
+  readonly evidenceItemBody: 'ui-evidence-item__body';
+  readonly evidenceItemKind: 'ui-evidence-item__kind';
+  readonly evidenceItemMethod: 'ui-evidence-item__method';
+  readonly evidenceItemWindow: 'ui-evidence-item__window';
+  readonly evidenceItemValue: 'ui-evidence-item__value';
+  readonly evidenceItemSource: 'ui-evidence-item__source';
+  readonly evidenceItemCaveat: 'ui-evidence-item__caveat';
   readonly compare: 'ui-compare';
   readonly compare2up: 'ui-compare--2up';
   readonly compareCol: 'ui-compare__col';
@@ -585,6 +638,14 @@ export interface CompareOpts {
   /** Pin exactly two equal columns (hard before/after) instead of the auto-fitting set. */
   cols?: 2;
 }
+export interface ReportFindingOpts {
+  /** Severity/status band. Pair with an author-written label; tone is not the only signal. */
+  severity?: 'critical' | 'major' | 'minor' | 'resolved';
+}
+export interface ClaimOpts {
+  /** Evidence status. Pair with written status text; tone is only a scanning aid. */
+  status?: 'supported' | 'partial' | 'disputed' | 'unsupported' | 'unknown';
+}
 export interface ChipOpts {
   accent?: boolean;
 }
@@ -787,6 +848,8 @@ export interface Ui {
   num(opts?: NumOpts): string;
   delta(opts?: DeltaOpts): string;
   compare(opts?: CompareOpts): string;
+  reportFinding(opts?: ReportFindingOpts): string;
+  claim(opts?: ClaimOpts): string;
   chip(opts?: ChipOpts): string;
   link(opts?: LinkOpts): string;
   dot(opts?: DotOpts): string;

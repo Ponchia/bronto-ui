@@ -562,6 +562,7 @@ specifiers only work after a bundler rewrites them:
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/bronto.css" />
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/report.css" />
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/dataviz.css" />
+<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/sources.css" />
 ```
 
 In Vite/webpack/etc., import `@ponchia/ui`, `@ponchia/ui/css/report.css`, and
@@ -585,25 +586,59 @@ Canonical report skeleton:
     <div class="ui-report__summary">
       <div class="ui-prose"><p>Use prose only for narrative body content.</p></div>
     </div>
+    <aside class="ui-report__decision" aria-labelledby="decision-title">
+      <p class="ui-report__decision-kicker">Decision</p>
+      <h3 class="ui-report__decision-title" id="decision-title">Ship the low-risk path</h3>
+      <p class="ui-report__decision-body">State the operator-facing call before the evidence.</p>
+      <dl class="ui-report__decision-grid">
+        <div class="ui-report__decision-item">
+          <dt class="ui-report__decision-label">Basis</dt>
+          <dd class="ui-report__decision-value">Two verified sources support the call.</dd>
+        </div>
+      </dl>
+      <p class="ui-report__decision-meta">Evidence state: supported · Sources: 4 verified</p>
+    </aside>
   </section>
 </main>
 ```
 
-Report rules for agents: static output by default; do not initialize behaviors
-over untrusted generated content; sanitize arbitrary LLM/CMS/user HTML before
-rendering; use semantic headings; give tables captions and header cells; give
-charts captions, legends/direct labels, and fallback data; for a chart, theme
-Vega-Lite with `@ponchia/ui/vega` (or hand-author a token-themed inline `<svg>`)
-inside a `ui-report__figure` — bronto ships no chart component; use
-`ui-delta` (`--up`/`--down`/`--flat`, `--invert` when up is bad) for a
-trend figure and `ui-compare` (`--2up`) for an A/B / before-after section; use
-`ui-report__section--unnumbered` for appendices in numbered reports; never
-use raw chromatic inline colors. Format numbers/dates yourself (the framework
-aligns figures, it does not format them) — see the reporting cookbook. To make
-a PDF, render with `chrome-headless-shell` (or any Chromium) using
-`printBackground: true` so figure fills survive — reports are static/zero-JS, so
-it is just load → print; see "Print and PDF" in `docs/reporting.md`. Full
-cookbook: `docs/reporting.md`.
+Report rules for agents:
+
+- Static output by default; do not initialize behaviors over untrusted generated
+  content; sanitize arbitrary LLM/CMS/user HTML before rendering.
+- Use semantic headings; give tables captions and header cells; give charts
+  captions, legends/direct labels, and fallback data.
+- For a chart, theme Vega-Lite with `@ponchia/ui/vega` or hand-author a
+  token-themed inline `<svg>` inside a `ui-report__figure`. Bronto ships no
+  chart component.
+- Put the above-the-fold call in `ui-report__decision`; use
+  `ui-report__finding--critical|--major|--minor|--resolved` only when the
+  written finding label also states the severity/status.
+- Use `ui-claim` (`--supported|--partial|--disputed|--unsupported|--unknown`)
+  for auditable claims. Pair it with written `ui-claim__status`, source links,
+  scope, basis, limits, and caveats; tone is only a scanning aid.
+- Use `ui-evidence-grid` / `ui-evidence-item` for compact evidence packets and
+  `ui-evidence-ledger` + `ui-table` for claim/evidence/source matrices.
+- Use `ui-report__actions` for follow-up rows. Real workflow actions should
+  include title, owner, due/recheck date, status, criteria, and source/claim
+  link when available.
+- Use `ui-source-card` + `ui-provenance` for source-backed claims; stale,
+  conflicting, unverified, or generated inputs should be surfaced near affected
+  claims, not only in the source appendix.
+- For important reports, emit a sidecar `claims.json` / source archive manifest
+  with stable claim IDs, source IDs, status, risk, retrieval time, and
+  claim-source relations. The visible HTML remains the primary artifact, but the
+  sidecar lets tools prove IDs and high-risk evidence still resolve.
+- Use `ui-delta` (`--up`/`--down`/`--flat`, `--invert` when up is bad) for a
+  trend figure and `ui-compare` (`--2up`) for an A/B / before-after section.
+- Use `ui-report__section--unnumbered` for appendices in numbered reports.
+  Never use raw chromatic inline colors. Format numbers/dates yourself (the
+  framework aligns figures, it does not format them).
+- To make a PDF, render with `chrome-headless-shell` (or any Chromium) using
+  `printBackground: true` so figure fills survive. Reports are static/zero-JS,
+  so it is just load → print; see "Print and PDF" in `docs/reporting.md`.
+
+Full cookbook: `docs/reporting.md`.
 
 ## Authoritative offline references (shipped in this package)
 
@@ -632,8 +667,8 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   density, prose-in-card, when to add a behavior. Read this before
   re-implementing UI the framework already has an opinion about.
 - `docs/reporting.md` — static/PDF-first report cookbook for LLM-authored
-  reports, including report skeletons, chart rules, print utilities, and safety
-  boundaries.
+  reports, including report skeletons, decision/finding/evidence patterns,
+  chart rules, print utilities, and safety boundaries.
 - `docs/annotations.md` — SVG annotation recipes and helper guidance for
   analytical figures.
 - `docs/mermaid.md` — theme Mermaid diagrams from bronto tokens (resolved
@@ -681,10 +716,14 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   (§"Table-local state classes" / §"Composition & state") and emitted by the
   `ui.*()` recipes, but deliberately NOT in `cls`. Do not strip them.
 - Prefer the `ui.*()` recipes over hand-concatenating modifier strings.
-  Report/layout classes added in 0.4.1 are the exception: use `cls.report*`,
-  `cls.chart*`, `cls.printOnly`, or literal documented class names because
-  there are no `ui.report()` / `ui.chart()` recipes yet. Annotations do have a
-  `ui.annotation()` recipe for variant/tone selection.
+  Report/layout classes are mostly literal (`cls.report*`, `cls.printOnly`,
+  `ui-evidence-grid`, `ui-evidence-ledger`, `ui-evidence-item`,
+  `ui-evidence-item__title`, `ui-evidence-item__meta`, and
+  `ui-evidence-item__body`); use `ui.reportFinding({ severity })` for finding
+  severity, `ui.claim({ status })` for claim status, and
+  `ui.compare({ cols: 2 })` for hard A/B layouts. Bronto still has no chart
+  recipe or component. Annotations do have a `ui.annotation()` recipe for
+  variant/tone selection.
 - For a standalone HTML report, never `<link>` a `@ponchia/ui/css/*.css`
   package specifier (it does not resolve in a browser) and never assume
   `dist/bronto.css` carries the report/chart/legend/annotation layers — it

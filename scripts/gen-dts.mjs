@@ -77,6 +77,14 @@ export interface CompareOpts {
   /** Pin exactly two equal columns (hard before/after) instead of the auto-fitting set. */
   cols?: 2;
 }
+export interface ReportFindingOpts {
+  /** Severity/status band. Pair with an author-written label; tone is not the only signal. */
+  severity?: 'critical' | 'major' | 'minor' | 'resolved';
+}
+export interface ClaimOpts {
+  /** Evidence status. Pair with written status text; tone is only a scanning aid. */
+  status?: 'supported' | 'partial' | 'disputed' | 'unsupported' | 'unknown';
+}
 export interface ChipOpts {
   accent?: boolean;
 }
@@ -279,6 +287,8 @@ export interface Ui {
   num(opts?: NumOpts): string;
   delta(opts?: DeltaOpts): string;
   compare(opts?: CompareOpts): string;
+  reportFinding(opts?: ReportFindingOpts): string;
+  claim(opts?: ClaimOpts): string;
   chip(opts?: ChipOpts): string;
   link(opts?: LinkOpts): string;
   dot(opts?: DotOpts): string;

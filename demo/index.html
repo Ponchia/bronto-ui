@@ -1450,6 +1450,106 @@ ui.source({ state: 'generated' });  ui.provenance({ state: 'reviewed' });</code>
           </p>
         </article>
 
+        <article class="spec" id="spec-report-semantics" data-shot="report-semantics">
+          <div>
+            <h3 class="spec__name">Report semantic contract</h3>
+            <p class="spec__one">
+              A compact report slice for LLM-authored documents: reader outcome, claim, evidence
+              ledger, action and source card stay visually distinct while the host owns the facts.
+            </p>
+          </div>
+          <div class="spec__demo">
+            <div class="ui-report ui-report--compact" role="region" aria-label="Report semantic contract specimen">
+              <section class="ui-report__section ui-report__section--unnumbered">
+                <h4 class="ui-report__section-head">Decision readiness</h4>
+                <aside class="ui-report__decision ui-keep" aria-labelledby="demo-decision-title">
+                  <p class="ui-report__decision-kicker">Reader outcome</p>
+                  <h5 class="ui-report__decision-title" id="demo-decision-title">Proceed with the guarded option</h5>
+                  <p class="ui-report__decision-body">
+                    Basis: reviewed source and one verified check. Next action: recheck the caveat
+                    before rollout. Evidence state: partial.
+                  </p>
+                  <dl class="ui-report__decision-grid">
+                    <div class="ui-report__decision-item">
+                      <dt class="ui-report__decision-label">Basis</dt>
+                      <dd class="ui-report__decision-value">Reviewed source plus verified metric.</dd>
+                    </div>
+                    <div class="ui-report__decision-item">
+                      <dt class="ui-report__decision-label">Recheck</dt>
+                      <dd class="ui-report__decision-value">Before the next release window.</dd>
+                    </div>
+                  </dl>
+                  <p class="ui-report__decision-meta">Evidence state: partial · Sources: S1 reviewed, S2 verified</p>
+                </aside>
+
+                <article class="ui-claim ui-claim--partial" id="demo-claim" data-source-ids="demo-source">
+                  <p class="ui-claim__statement">The guarded option reduces operational risk for the next release.</p>
+                  <p class="ui-claim__scope">Scope: release-readiness review, current evidence window.</p>
+                  <p class="ui-claim__status">Evidence state: partial.</p>
+                  <p class="ui-claim__basis">Basis: reviewed rollout note and verified metric sample.</p>
+                  <p class="ui-claim__limits">Limit: final load-test result is still pending.</p>
+                  <p class="ui-claim__refs">Source: <a class="ui-citation" href="#demo-source">S1</a></p>
+                </article>
+
+                <div class="ui-evidence-ledger">
+                  <div class="ui-table-wrap">
+                    <table class="ui-table ui-table--dense">
+                      <caption>Claim, source and caveat matrix</caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">Claim</th>
+                          <th scope="col">Source</th>
+                          <th scope="col">Caveat</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><a href="#demo-claim">C1</a></td>
+                          <td><a class="ui-citation" href="#demo-source">S1</a></td>
+                          <td>Pending load-test sample.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div class="ui-report__actions">
+                  <article class="ui-report__action">
+                    <p class="ui-report__action-title">Recheck the pending load-test result.</p>
+                    <p class="ui-report__action-owner">Owner: release lead</p>
+                    <p class="ui-report__action-due">Due: before rollout</p>
+                    <p class="ui-report__action-status">Status: open</p>
+                    <p class="ui-report__action-criteria">Success criteria: result supports or revises C1.</p>
+                  </article>
+                </div>
+
+                <p class="ui-provenance">
+                  <span class="ui-provenance__item ui-src--reviewed">S1 reviewed</span>
+                  <span class="ui-provenance__item ui-src--verified">S2 verified</span>
+                </p>
+                <article class="ui-source-card ui-src--reviewed" id="demo-source">
+                  <h5 class="ui-source-card__title">Release readiness note</h5>
+                  <p class="ui-source-card__origin">Reviewed: release checklist</p>
+                  <time class="ui-source-card__time" datetime="2026-06-08">2026-06-08</time>
+                </article>
+              </section>
+            </div>
+          </div>
+          <details class="spec__code">
+            <summary>Markup &amp; recipe</summary>
+            <pre><code>&lt;aside class="ui-report__decision"&gt;…&lt;/aside&gt;
+&lt;article class="ui-claim ui-claim--partial" data-source-ids="source-1"&gt;…&lt;/article&gt;
+&lt;div class="ui-evidence-ledger"&gt;&lt;table class="ui-table"&gt;…&lt;/table&gt;&lt;/div&gt;
+&lt;article class="ui-source-card ui-src--reviewed" id="source-1"&gt;…&lt;/article&gt;</code></pre>
+          </details>
+          <p class="spec__meta">
+            <span class="ui-badge ui-badge--muted">opt-in · static</span>
+            <span class="spec__boundary">Styles report semantics; the host owns claims, evidence and checks.</span>
+            <a class="ui-link ui-link--arrow" href="./report.html">Full specimen</a>
+            <a class="ui-link ui-link--arrow" href="../docs/#reporting.md">Docs</a>
+          </p>
+        </article>
+
         <article class="spec" id="spec-state">
           <div>
             <h3 class="spec__name">Lifecycle &amp; system state</h3>

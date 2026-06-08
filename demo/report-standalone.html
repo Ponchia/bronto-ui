@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="../dist/css/report.css" />
     <link rel="stylesheet" href="../dist/css/dataviz.css" />
     <link rel="stylesheet" href="../dist/css/legend.css" />
+    <link rel="stylesheet" href="../dist/css/sources.css" />
   </head>
   <body>
     <main class="ui-report ui-report--numbered">
@@ -49,6 +50,18 @@
           <li><a href="#migration">Before / after</a></li>
           <li><a href="#evidence">Evidence</a></li>
           <li><a href="#timeline">Incident timeline</a></li>
+          <li><a href="#sources">Sources</a></li>
+        </ol>
+      </nav>
+      <nav class="ui-report__toc ui-print-only" aria-label="Printed report contents">
+        <p class="ui-eyebrow ui-eyebrow--muted">Contents</p>
+        <ol>
+          <li>Executive summary</li>
+          <li>Trend</li>
+          <li>Before / after</li>
+          <li>Evidence</li>
+          <li>Incident timeline</li>
+          <li>Sources</li>
         </ol>
       </nav>
 
@@ -60,6 +73,40 @@
             incident, fully recovered, is reviewed below.
           </p>
         </div>
+        <aside class="ui-report__decision ui-keep" aria-labelledby="decision-title">
+          <p class="ui-report__decision-kicker">Decision</p>
+          <h3 class="ui-report__decision-title" id="decision-title">Keep the migration in place</h3>
+          <p class="ui-report__decision-body">
+            The observed reliability gains outweigh the remaining follow-up work. Continue watching
+            error-budget burn and review the retry policy before the next rollout.
+          </p>
+          <dl class="ui-report__decision-grid">
+            <div class="ui-report__decision-item">
+              <dt class="ui-report__decision-label">Basis</dt>
+              <dd class="ui-report__decision-value">
+                Verified metrics support the latency claim; the retry concern is isolated to one
+                reviewed incident window.
+              </dd>
+            </div>
+            <div class="ui-report__decision-item">
+              <dt class="ui-report__decision-label">Next action</dt>
+              <dd class="ui-report__decision-value">
+                Platform owner reviews retry-policy thresholds before the next rollout.
+              </dd>
+            </div>
+            <div class="ui-report__decision-item">
+              <dt class="ui-report__decision-label">Recheck</dt>
+              <dd class="ui-report__decision-value">
+                <time datetime="2026-06-09">Jun 9, 2026</time>
+              </dd>
+            </div>
+          </dl>
+          <p class="ui-report__decision-meta">
+            <span>Evidence state: supported</span>
+            <span>Sources: 2 reviewed or verified</span>
+            <span>Checked: <time datetime="2026-06-02">Jun 2, 2026</time></span>
+          </p>
+        </aside>
         <div class="ui-statgrid">
           <div class="ui-stat">
             <span class="ui-stat__label">Availability</span>
@@ -69,7 +116,7 @@
           <div class="ui-stat">
             <span class="ui-stat__label">p95 latency</span>
             <span class="ui-stat__value">172 ms</span>
-            <span class="ui-stat__delta is-pos">−48 ms</span>
+            <span class="ui-delta ui-delta--down ui-delta--invert">−48 ms</span>
           </div>
           <div class="ui-stat">
             <span class="ui-stat__label">Open incidents</span>
@@ -111,15 +158,138 @@
               <div class="ui-stat">
                 <span class="ui-stat__label">p95 latency</span>
                 <span class="ui-stat__value">172 ms</span>
-                <span class="ui-stat__delta is-pos">−48 ms</span>
+                <span class="ui-delta ui-delta--down ui-delta--invert">−48 ms</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
+      <section id="findings" class="ui-report__section" aria-labelledby="findings-head">
+        <h2 class="ui-report__section-head" id="findings-head">Findings</h2>
+        <article
+          class="ui-report__finding ui-report__finding--major ui-keep"
+          aria-labelledby="finding-retry"
+        >
+          <p class="ui-eyebrow" id="finding-retry">
+            Major finding — retry policy still needs review
+          </p>
+          <p class="ui-report__finding-claim">
+            The migration improved latency, but retry volume rose during the incident window. Keep
+            the migration and schedule a retry-policy review before the next rollout.
+          </p>
+          <p class="ui-report__finding-impact">
+            Impact: the risk is bounded today, but could consume error budget during a larger
+            rollout.
+          </p>
+          <p class="ui-report__finding-remediation">
+            Remediation: review retry-policy thresholds and archive the outcome with this report.
+          </p>
+          <p class="ui-report__finding-caveat">
+            Caveat: the conclusion assumes the next rollout keeps traffic shape comparable.
+          </p>
+          <article
+            class="ui-claim ui-claim--supported"
+            id="claim-latency"
+            data-source-ids="source-metrics source-incident"
+          >
+            <p class="ui-claim__statement">
+              The migration improved p95 latency while availability remained above target.
+            </p>
+            <p class="ui-claim__status">Evidence state: supported</p>
+            <p class="ui-claim__scope">Scope: service traffic reviewed through Jun 2, 2026</p>
+            <p class="ui-claim__basis">
+              Basis: metrics export and reviewed incident note both support the claim.
+            </p>
+            <p class="ui-claim__limits">
+              Limit: retry volume still requires a separate threshold review.
+            </p>
+            <p class="ui-claim__refs">
+              Sources:
+              <a class="ui-citation" href="#source-metrics">S1</a>
+              <a class="ui-citation" href="#source-incident">S2</a>
+            </p>
+          </article>
+        </article>
+        <div class="ui-evidence-grid" aria-label="Finding evidence summary">
+          <article class="ui-evidence-item">
+            <h3 class="ui-evidence-item__title">Metric trend</h3>
+            <p class="ui-evidence-item__kind">Observation</p>
+            <p class="ui-evidence-item__meta">Prometheus export · verified</p>
+            <p class="ui-evidence-item__window">Window: 7 days</p>
+            <p class="ui-evidence-item__value">−48 ms p95 latency</p>
+            <p class="ui-evidence-item__body">
+              p95 latency fell 48 ms while availability stayed above target.
+            </p>
+            <p class="ui-evidence-item__source">
+              Source: <a class="ui-citation" href="#source-metrics">S1</a>
+            </p>
+          </article>
+          <article class="ui-evidence-item">
+            <h3 class="ui-evidence-item__title">Incident log</h3>
+            <p class="ui-evidence-item__kind">Log</p>
+            <p class="ui-evidence-item__meta">On-call note · reviewed</p>
+            <p class="ui-evidence-item__body">
+              Recovery completed within the same hour with no manual rollback.
+            </p>
+            <p class="ui-evidence-item__source">
+              Source: <a class="ui-citation" href="#source-incident">S2</a>
+            </p>
+          </article>
+          <article class="ui-evidence-item">
+            <h3 class="ui-evidence-item__title">Assumption</h3>
+            <p class="ui-evidence-item__kind">Assumption</p>
+            <p class="ui-evidence-item__meta">Capacity model · generated</p>
+            <p class="ui-evidence-item__body">
+              The next rollout keeps traffic shape comparable to this review window.
+            </p>
+            <p class="ui-evidence-item__caveat">
+              Treat as a planning assumption until the next rollout profile is fixed.
+            </p>
+          </article>
+        </div>
+      </section>
+
       <section id="evidence" class="ui-report__section" aria-labelledby="evidence-head">
         <h2 class="ui-report__section-head" id="evidence-head">Evidence</h2>
+
+        <div class="ui-evidence-ledger">
+          <div class="ui-table-wrap">
+            <table class="ui-table ui-table--dense">
+              <caption>
+                Claim, evidence, and caveat ledger
+              </caption>
+              <thead>
+                <tr>
+                  <th>Claim</th>
+                  <th>Evidence</th>
+                  <th>Source</th>
+                  <th>Trust</th>
+                  <th>Relation</th>
+                  <th>Caveat</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="#claim-latency">Latency improved</a></td>
+                  <td>p95 fell 48 ms while availability stayed above target.</td>
+                  <td><a class="ui-citation" href="#source-metrics">S1</a></td>
+                  <td>Verified</td>
+                  <td>Supports</td>
+                  <td>Retry-volume review remains open.</td>
+                </tr>
+                <tr>
+                  <td><a href="#claim-latency">No rollback needed</a></td>
+                  <td>Incident closed in the same hour.</td>
+                  <td><a class="ui-citation" href="#source-incident">S2</a></td>
+                  <td>Reviewed</td>
+                  <td>Supports</td>
+                  <td>Single incident window.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
         <figure
           class="ui-report__figure ui-print-exact ui-keep"
@@ -154,6 +324,8 @@
             aria-label="Weekly request mix: Reads 68 percent, Writes 32 percent."
             style="display: block; max-inline-size: 480px; margin-inline: auto"
           >
+            <title>Weekly request mix</title>
+            <desc>Reads account for 68 percent of requests and writes account for 32 percent.</desc>
             <line x1="72" y1="12" x2="72" y2="80" stroke="var(--line)" />
             <g font-size="11" text-anchor="end" fill="var(--text-soft)">
               <text x="66" y="28">Reads</text>
@@ -207,6 +379,81 @@
           <li class="ui-timeline__item" aria-current="step">
             <time class="ui-timeline__time" datetime="2026-06-01T09:54:00">09:54</time>
             <span>Latency returned to baseline; incident closed.</span>
+          </li>
+        </ol>
+        <div class="ui-report__actions" aria-label="Follow-up actions">
+          <div class="ui-report__action">
+            <div>
+              <p class="ui-report__action-title">
+                Review retry-policy threshold before the next production rollout.
+              </p>
+              <p class="ui-report__action-owner">Owner: platform lead</p>
+              <p class="ui-report__action-due">
+                Due: <time datetime="2026-06-09">Jun 9, 2026</time>
+              </p>
+              <p class="ui-report__action-criteria">
+                Success criteria: threshold change accepted or the current policy is documented as
+                intentionally retained.
+              </p>
+              <p class="ui-report__action-source">
+                Evidence: <a class="ui-citation" href="#claim-latency">C1</a>
+              </p>
+            </div>
+            <span class="ui-report__action-status">Open</span>
+          </div>
+          <div class="ui-report__action">
+            <div>
+              <p class="ui-report__action-title">
+                Archive this report with the source export and generated PDF.
+              </p>
+              <p class="ui-report__action-owner">Owner: report author</p>
+              <p class="ui-report__action-due">
+                Due: <time datetime="2026-06-02">Jun 2, 2026</time>
+              </p>
+              <p class="ui-report__action-criteria">
+                Success criteria: HTML, PDF, source export, and visual review notes are stored
+                together.
+              </p>
+            </div>
+            <span class="ui-report__action-status">Ready</span>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="sources"
+        class="ui-report__section ui-report__section--unnumbered ui-report__sources"
+        aria-labelledby="sources-head"
+      >
+        <p class="ui-eyebrow ui-eyebrow--muted" id="sources-head">Sources</p>
+        <p class="ui-provenance ui-src--verified" aria-label="Report provenance">
+          <span class="ui-provenance__item">Generated from verified operational exports</span>
+          <span class="ui-provenance__item">No remote runtime assets</span>
+        </p>
+        <ol class="ui-source-list">
+          <li class="ui-source-list__item">
+            <article class="ui-source-card ui-src--verified" id="source-metrics">
+              <h3 class="ui-source-card__title">Metrics export</h3>
+              <p class="ui-source-card__origin">Prometheus · availability and latency window</p>
+              <time class="ui-source-card__time" datetime="2026-06-02T10:00:00Z">
+                Checked Jun 2, 2026
+              </time>
+              <p class="ui-source-card__excerpt">
+                Weekly availability, latency, request mix and retry-volume readings.
+              </p>
+            </article>
+          </li>
+          <li class="ui-source-list__item">
+            <article class="ui-source-card ui-src--reviewed" id="source-incident">
+              <h3 class="ui-source-card__title">Incident review note</h3>
+              <p class="ui-source-card__origin">On-call review · human reviewed</p>
+              <time class="ui-source-card__time" datetime="2026-06-02T11:30:00Z">
+                Reviewed Jun 2, 2026
+              </time>
+              <p class="ui-source-card__excerpt">
+                Recovery timeline, mitigation notes and follow-up ownership.
+              </p>
+            </article>
           </li>
         </ol>
       </section>

@@ -37,6 +37,10 @@ sonar-project.properties
 # Multi-agent audit scratch (dated review writeups) — local-only, never commit
 reports-lab/
 
+# Local-only public-boundary terms for scripts/check-report.mjs.
+# One term per line; use this to catch private consumer names before publishing.
+.bronto-ui-forbidden-terms
+
 # Core dumps. The Linux/amd64 Playwright image crashes its x86 chromium
 # under QEMU on Apple Silicon and drops `qemu_<exe>_<ts>.core` files (GBs
 # each) into the bind-mounted working dir. Never commit them — and don't
