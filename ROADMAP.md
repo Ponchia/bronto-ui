@@ -6,7 +6,7 @@ without turning the project into a per-framework component suite.
 
 > **Source of truth is [`CHANGELOG.md`](CHANGELOG.md).** This file describes
 > direction; the changelog records what actually shipped. If they disagree, the
-> changelog wins. Last reconciled against `0.6.2`.
+> changelog wins. Last reconciled against `0.6.3`.
 >
 > **Strategic north star:** Bronto should not out-catalog generic UI kits. It
 > should own framework-agnostic primitives for interfaces that explain
@@ -14,15 +14,18 @@ without turning the project into a per-framework component suite.
 > ergonomics, generated reports, and durable system state. See
 > [`docs/frontier-primitives.md`](docs/frontier-primitives.md).
 
+## Shipped in 0.6.3
+
+- **WebKit release fix.** Adds `-webkit-user-select: none` beside the standard
+  `user-select: none` on diff/code line-number affordances and updates the
+  cross-engine e2e assertion to read the prefixed CSSOM property directly. This
+  is a CSS/runtime patch with no public API, class contract, or migration entry.
+
 ## Shipped in 0.6.2
 
-- **Test-only patch.** Fixes a WebKit-only e2e assertion at
-  `test/e2e/diff.spec.mjs:42` that read `getComputedStyle().userSelect` (a
-  key WebKit returns as `undefined` even when the standard CSS rule is
-  applied) and so blocked the 0.6.1 release publish. The test now reads
-  `userSelect || webkitUserSelect` and passes on all three engines. No
-  public API change, no published CSS/JS, no `MIGRATIONS.json` entry.
-  Found by the cross-browser run in the v0.6.1 release workflow.
+- **Release attempt, superseded by 0.6.3.** Tried to fix the WebKit-only e2e
+  failure with a test-side computed-style fallback. The follow-up cross-engine
+  repro showed the CSS itself also needed the prefixed WebKit property.
 
 ## Shipped in 0.6.1
 

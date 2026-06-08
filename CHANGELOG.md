@@ -5,27 +5,35 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## 0.6.3 — 2026-06-08
+
+Patch release to publish the WebKit release fix after the `v0.6.1` and `v0.6.2`
+tag runs failed before npm publish. No public API change, no class contract
+change, no `MIGRATIONS.json` entry.
+
+The 0.6.2 test-only diagnosis was incomplete: WebKit does not reliably honor
+the unprefixed `user-select: none` on the generated line-number affordances.
+The actual fix is CSS-side. `css/diff.css` and `css/code.css` now include the
+legacy `-webkit-user-select: none` declaration alongside the standard property,
+and the built `dist/css/diff.css` / `dist/css/code.css` leaves were regenerated.
+
+### Fixed
+
+- **Diff/code line numbers in WebKit** — `.ui-diff__ln`,
+  `.ui-diff__code::before`, and `.ui-code--numbered .ui-code__line::before`
+  now opt out of selection in WebKit as well as chromium/firefox.
+
+### Internal
+
+- **`test/e2e/diff.spec.mjs`** — reads the CSSOM `-webkit-user-select` value
+  before the standard property so the assertion verifies the prefixed WebKit
+  path directly.
+
 ## 0.6.2 — 2026-06-07
 
-Test-only patch: fixes a WebKit-only e2e assertion that blocked the 0.6.1
-release publish (release run 27094283001, e2e / run, webkit project) at
-`test/e2e/diff.spec.mjs:42`. No public API, no published CSS/JS, no
-`MIGRATIONS.json` entry.
-
-The `diff` line-number test asserted that `.ui-diff__ln` computed
-`user-select: none` by reading `getComputedStyle(el).userSelect`. On
-chromium + firefox this returns `'none'`, but on WebKit the same property
-**returns `undefined`** because WebKit still exposes `user-select` under
-the legacy vendor-prefixed JS name (`webkitUserSelect`). The CSS rule
-itself is identical on every engine — the line numbers are genuinely
-excluded from a text selection in WebKit, the test was just reading the
-wrong JS key.
-
-Fix: read `userSelect` first, fall back to `webkitUserSelect`. The same
-`a || b` pattern is already used for `webkitPrintColorAdjust ||
-printColorAdjust` in `test/e2e/report.spec.mjs:105` and for
-`mask + webkitMask` in `test/e2e/behavior.spec.mjs:148`. All 545 other
-e2e tests on all three engines are unaffected.
+Release attempt: test-only WebKit e2e patch for the `0.6.1` publish blocker. The
+tag was cut but the release still did not publish. The diagnosis here was
+superseded by `0.6.3`, which fixes the CSS rule itself.
 
 ### Internal
 
