@@ -199,6 +199,7 @@ export declare const cls: {
   readonly tableDense: 'ui-table--dense';
   readonly tableComfortable: 'ui-table--comfortable';
   readonly tableLined: 'ui-table--lined';
+  readonly tableBreakAnywhere: 'ui-table--break-anywhere';
   readonly tableWrap: 'ui-table-wrap';
   readonly tableLoading: 'ui-table-wrap--loading';
   readonly tableEmpty: 'ui-table__empty';

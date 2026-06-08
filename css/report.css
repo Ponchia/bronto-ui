@@ -12,7 +12,6 @@
   --report-padding-block: var(--space-2xl);
   --report-gap: var(--space-lg);
   --report-measure: 74ch;
-  --report-page-margin: 18mm;
 
   color: var(--text-soft);
   display: grid;
@@ -312,10 +311,10 @@
 }
 
 @media print {
-  /* Re-tokenises the base 18mm default (base.css) so report margins stay
-     themeable via --report-page-margin. */
+  /* Chromium-class print engines do not reliably resolve custom properties in
+     @page rules. Keep this literal so reports cannot print edge-to-edge. */
   @page {
-    margin: var(--report-page-margin);
+    margin: 18mm;
   }
 
   .ui-report {

@@ -210,6 +210,7 @@ export const cls = Object.freeze({
   tableDense: 'ui-table--dense',
   tableComfortable: 'ui-table--comfortable',
   tableLined: 'ui-table--lined',
+  tableBreakAnywhere: 'ui-table--break-anywhere',
   tableWrap: 'ui-table-wrap',
   // Loading state goes on the WRAP, so the modifier is named for the wrap (C19).
   tableLoading: 'ui-table-wrap--loading',
@@ -749,12 +750,13 @@ export const ui = {
   dot: ({ tone, live } = {}) => j(cls.dot, dotTone(tone), live && cls.dotLive),
   dotgrid: ({ accent, dense } = {}) =>
     j(cls.dotgrid, accent && cls.dotgridAccent, dense && cls.dotgridDense),
-  table: ({ density, lined } = {}) =>
+  table: ({ density, lined, breakAnywhere } = {}) =>
     j(
       cls.table,
       density === 'dense' && cls.tableDense,
       density === 'comfortable' && cls.tableComfortable,
       lined && cls.tableLined,
+      breakAnywhere && cls.tableBreakAnywhere,
     ),
   eyebrow: ({ muted, sm } = {}) => j(cls.eyebrow, muted && cls.eyebrowMuted, sm && cls.eyebrowSm),
   hint: ({ error } = {}) => j(cls.hint, error && cls.hintError),
