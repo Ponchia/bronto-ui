@@ -5,6 +5,24 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## 0.6.4 — 2026-06-08
+
+Patch release for the dot-matrix expansion and static report hardening shipped
+in #116. No breaking changes, no `MIGRATIONS.json` entry.
+
+### Added
+
+- **Dot-matrix/glyph expansion** — adds the generated glyph metadata surface,
+  docs, and contract tests for the expanded dot/readout vocabulary.
+- **Report authoring guidance** — documents the static report grammar around
+  captions, alert bodies, table wrapping, and local/CDN asset handling.
+
+### Fixed
+
+- **Static report print/layout behavior** — hardens report print margins and
+  table wrapping so standalone HTML reports and PDF exports degrade more
+  predictably across long tokens and normal prose.
+
 ## 0.6.3 — 2026-06-08
 
 Patch release to publish the WebKit release fix after the `v0.6.1` and `v0.6.2`
