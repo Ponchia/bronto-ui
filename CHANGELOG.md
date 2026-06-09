@@ -5,16 +5,29 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
-## Unreleased
+## 0.6.5 — 2026-06-09
+
+Patch release: the source-backref behavior, the report decision/evidence
+grammar, and package/release hardening. No breaking changes, no
+`MIGRATIONS.json` entry.
 
 ### Added
 
+- **`initSources` behavior** — optional citation→source backref focus:
+  inside a `data-bronto-sources` host, a `.ui-citation[href^="#"]` (or an
+  explicit `data-bronto-source-ref`) click scrolls to its source card and
+  marks it `is-source-active`, emitting a cancellable focus event with the
+  `SourceFocusDetail` payload. Progressive enhancement over authored ids —
+  no DOM is generated; framework bindings re-export it.
 - **Report decision/evidence grammar** — adds public, static report primitives
   for decision blocks, severity-labelled findings, compact evidence packets and
   follow-up action rows.
 - **Claim and action-register grammar** — adds claim status blocks, structured
   finding parts, evidence-method parts, evidence ledgers, decision detail rows,
   and action owner/due/criteria/source parts for more auditable reports.
+- **Package contract doc** — `docs/package-contract.md` pins the published
+  surface (exports map, files allowlist, generated-artifact freshness) that
+  `check:pack`/`check:publint`/`check:attw` enforce.
 
 ### Changed
 
@@ -23,6 +36,9 @@
   local-only public-boundary terms gate for `check:report`.
 - **Report shape checks** — `check:report` now parses report demos with a DOM
   instead of regexes and validates the public claim/action contracts.
+- **Release observability** — the release workflow gains a metadata gate and
+  theme-axis verification; the examples consumer build broadens its smoke
+  coverage.
 
 ## 0.6.4 — 2026-06-08
 
