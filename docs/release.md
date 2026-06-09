@@ -18,11 +18,14 @@
 3. Wait for `validate`, `e2e`, and `examples` to pass.
 4. Approve the protected `npm-publish` environment only after the gates are
    green.
+5. In the `publish-npm` job summary, review the generated size report and pack
+   manifest before publish runs. After publish, the same summary records the npm
+   registry view: published version, tarball, integrity, and current dist-tags.
 
 ## After Publish
 
 1. Confirm the npm package page shows the new version and provenance.
-2. Confirm `npm view @ponchia/ui version dist-tags --json` reports the expected
+2. Confirm the recorded `npm view @ponchia/ui version dist-tags --json` reports the expected
    `latest` / `next`.
 3. Confirm the GitHub Release body is the curated changelog section.
 4. Run one clean consumer install if the release touched exports, package files,

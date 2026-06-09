@@ -27,7 +27,7 @@
     </style>
   </head>
   <body>
-    <main class="src-demo ui-prose">
+    <main class="src-demo ui-prose" data-bronto-sources>
       <h1 class="ui-display">Sources &amp; provenance</h1>
       <p>
         The trust layer for generated reports and AI output: where did this come from? Opt-in; not
@@ -108,5 +108,10 @@
         </ol>
       </section>
     </main>
+
+    <script type="module">
+      import { initSources } from '../behaviors/index.js';
+      initSources();
+    </script>
   </body>
 </html>

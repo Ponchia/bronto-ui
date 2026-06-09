@@ -117,6 +117,35 @@ jobs:
 
       - run: npm ci
 
+      - name: Capture publish preflight summary
+        run: |
+          set -euo pipefail
+          npm pack --dry-run --json --ignore-scripts > "${RUNNER_TEMP}/pack.json"
+          npm run size:report > "${RUNNER_TEMP}/size-report.txt"
+          node <<'NODE' >> "$GITHUB_STEP_SUMMARY"
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const tmp = process.env.RUNNER_TEMP;
+          const pack = JSON.parse(fs.readFileSync(path.join(tmp, 'pack.json'), 'utf8'))[0];
+          const size = fs.readFileSync(path.join(tmp, 'size-report.txt'), 'utf8').trim();
+          console.log('## Publish preflight');
+          console.log('');
+          console.log(`Package: ${pack.name}@${pack.version}`);
+          console.log(`Files: ${pack.files.length}`);
+          console.log(`Packed size: ${pack.size} bytes`);
+          console.log(`Unpacked size: ${pack.unpackedSize} bytes`);
+          console.log('');
+          console.log('### Size report');
+          console.log('');
+          console.log('```text');
+          console.log(size);
+          console.log('```');
+          console.log('');
+          console.log('### Pack manifest');
+          console.log('');
+          for (const file of pack.files) console.log(`- ${file.path} (${file.size} B)`);
+          NODE
+
       # Publish with --ignore-scripts so NODE_AUTH_TOKEN is never exposed
       # to the prepack/prepublishOnly lifecycle (the whole check+test+build
       # surface + devDeps). Safe because the committed artifacts were
@@ -142,6 +171,31 @@ jobs:
           npm publish --ignore-scripts --tag "$dist_tag"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Record npm registry state
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          for i in 1 2 3 4 5; do
+            if npm view "@ponchia/ui@$version" version dist.integrity dist.tarball --json > "${RUNNER_TEMP}/npm-view.json"; then
+              break
+            fi
+            sleep 5
+          done
+          npm view @ponchia/ui dist-tags --json > "${RUNNER_TEMP}/npm-dist-tags.json"
+          node <<'NODE' >> "$GITHUB_STEP_SUMMARY"
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const tmp = process.env.RUNNER_TEMP;
+          const view = JSON.parse(fs.readFileSync(path.join(tmp, 'npm-view.json'), 'utf8'));
+          const tags = JSON.parse(fs.readFileSync(path.join(tmp, 'npm-dist-tags.json'), 'utf8'));
+          console.log('');
+          console.log('## npm registry state');
+          console.log('');
+          console.log('```json');
+          console.log(JSON.stringify({ published: view, distTags: tags }, null, 2));
+          console.log('```');
+          NODE
 
   release-notes:
     # Gate on a successful publish — never announce a GitHub Release for

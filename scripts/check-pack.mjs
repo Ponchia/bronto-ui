@@ -85,6 +85,7 @@ for (const must of [
   'dist/css/workbench.css',
   'dist/css/command.css',
   'dist/css/analytical.css',
+  'docs/package-contract.md',
   'tokens/index.js',
   'classes/index.js',
   'behaviors/index.js',

@@ -282,8 +282,15 @@
   --shadow-raised: 0 0 0 1px var(--text);
 }
 
+:root[data-contrast='high'] {
+  --line: var(--line-strong);
+  --text-dim: var(--text-soft);
+  --focus-ring: var(--accent);
+  --shadow-raised: 0 0 0 1px var(--text);
+}
+
 @media (prefers-contrast: more) {
-  :root {
+  :root:root {
     --line: var(--line-strong);
     --text-dim: var(--text-soft);
     --focus-ring: var(--accent);

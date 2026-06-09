@@ -102,6 +102,35 @@ A references section: a reset list of source cards (or rows).
 </ol>
 ```
 
+## Optional behavior — `initSources`
+
+When you want citations to jump back to their source cards with a visible focus
+cue, wrap the report or article in `data-bronto-sources` and initialize the
+behavior:
+
+```html
+<main data-bronto-sources>
+  <p>Latency fell 38%<a class="ui-citation" href="#s1" aria-label="Source 1">[1]</a>.</p>
+  <article id="s1" class="ui-source-card ui-src--verified">…</article>
+</main>
+
+<script type="module">
+  import { initSources } from '@ponchia/ui/behaviors';
+  const stop = initSources();
+</script>
+```
+
+`initSources()` is progressive enhancement over authored IDs. It resolves
+`.ui-citation[href^="#"]` and `[data-bronto-source-ref]` controls inside each
+`[data-bronto-sources]` island, adds preview metadata (`title` and
+`aria-describedby`) when the author did not already provide it, and activation
+focuses the matching source card with a temporary `.is-source-active` highlight.
+It emits `bronto:source:focus` with `{ id, citation, source }`.
+
+The host still owns fetching, numbering, permission checks, trust decisions, and
+any rich preview popover. Generated/static reports can stay behavior-free:
+hash-link navigation and `.ui-source-card:target` still provide a CSS-only cue.
+
 ## Provenance — `.ui-provenance`
 
 A compact metadata row beside generated content — each `__item` carries a trust
@@ -130,6 +159,9 @@ ui.provenance({ state: 'reviewed' }); // "ui-provenance ui-src--reviewed"
 
 - A citation must be a real link or button with a stable accessible name; the
   bracketed index alone is not enough.
+- `initSources()` is optional. Initialize it only on trusted markup; the
+  delegated `data-bronto-source-ref` / `href="#…"` relationships focus elements
+  inside the source island.
 - The trust state must be readable as text — the tone dot/border is decorative
   reinforcement. Under `forced-colors`, dots and borders fall back to
   `CanvasText`, so the label remains the channel.
