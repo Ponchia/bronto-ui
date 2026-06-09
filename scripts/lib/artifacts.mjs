@@ -18,6 +18,7 @@
 import { repoRoot, writeGenerated } from './emit.mjs';
 
 import { generated as dtsGenerated } from '../gen-dts.mjs';
+import { packageContractMd } from '../gen-package-contract.mjs';
 import { generated as referenceGenerated } from '../gen-reference.mjs';
 import { generated as vscodeGenerated } from '../gen-vscode-data.mjs';
 import { classesJson } from '../gen-classes-json.mjs';
@@ -31,6 +32,7 @@ export const artifacts = {
   ...dtsGenerated, // classes/index.d.ts, tokens/index.d.ts
   ...referenceGenerated, // docs/reference.md
   ...vscodeGenerated, // classes/vscode.css-custom-data.json
+  'docs/package-contract.md': packageContractMd,
   'classes/classes.json': classesJson(),
   'tokens/tokens.dtcg.json': dtcgJson(),
   'tokens/resolved.json': resolvedJson(),

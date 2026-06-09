@@ -11,6 +11,6 @@ import { artifacts } from './lib/artifacts.mjs';
 import { assertFresh } from './lib/assert-fresh.mjs';
 
 assertFresh(artifacts, {
-  label: `${Object.keys(artifacts).length} generated artifacts are fresh (tokens.css/json, dtcg, resolved, .d.ts, reference, classes.json, vscode data)`,
+  label: `${Object.keys(artifacts).length} generated artifacts are fresh (tokens.css/json, dtcg, resolved, .d.ts, reference/package contract, classes.json, vscode data)`,
   buildHint: 'npm run fresh:build',
 });

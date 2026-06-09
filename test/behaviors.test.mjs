@@ -20,6 +20,7 @@ import {
   initSpotlight,
   initCrosshair,
   initCommand,
+  initSources,
   toast,
 } from '../behaviors/index.js';
 
@@ -817,6 +818,7 @@ const SSR_INITS = {
   initSpotlight,
   initCrosshair,
   initCommand,
+  initSources,
   initModal,
 };
 for (const [name, init] of Object.entries(SSR_INITS)) {
@@ -1446,6 +1448,92 @@ test('initCrosshair: wires a plot without throwing and cleans up', () => {
   );
   assert.equal(typeof stop, 'function');
   assert.doesNotThrow(stop);
+});
+
+const SOURCES = `
+  <main data-bronto-sources>
+    <p>
+      Claim <a class="ui-citation" href="#s1" aria-label="Source 1">[1]</a>
+      <button type="button" data-bronto-source-ref="s2">Preview source 2</button>
+    </p>
+    <ol class="ui-source-list">
+      <li class="ui-source-list__item">
+        <article id="s1" class="ui-source-card ui-src--verified">
+          <h3 class="ui-source-card__title">Incident review</h3>
+          <p class="ui-source-card__origin">ops export</p>
+          <p class="ui-source-card__time">2026-06-09</p>
+          <p class="ui-source-card__excerpt">Rollback restored service.</p>
+        </article>
+      </li>
+      <li class="ui-source-list__item">
+        <article id="s2" class="ui-source-card ui-src--generated">
+          <h3 class="ui-source-card__title">Model summary</h3>
+          <p class="ui-source-card__excerpt">Error rate doubled.</p>
+        </article>
+      </li>
+    </ol>
+  </main>`;
+
+test('initSources: seeds source preview metadata and focuses the referenced card', () => {
+  const d = mount(SOURCES);
+  const island = d.querySelector('[data-bronto-sources]');
+  const ref = d.querySelector('.ui-citation');
+  const source = d.getElementById('s1');
+  const events = [];
+  island.addEventListener('bronto:source:focus', (e) => events.push(e.detail));
+
+  const stop = initSources();
+  assert.equal(ref.getAttribute('aria-describedby'), 's1');
+  assert.match(ref.getAttribute('title'), /Incident review/);
+  assert.match(ref.getAttribute('title'), /Rollback restored service/);
+  assert.equal(source.getAttribute('tabindex'), '-1');
+
+  ref.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(d.activeElement, source, 'source card receives focus');
+  assert.ok(source.classList.contains('is-source-active'), 'source card is highlighted');
+  assert.deepEqual(
+    events.map((e) => [e.id, e.citation, e.source]),
+    [['s1', ref, source]],
+  );
+
+  stop();
+  assert.equal(ref.hasAttribute('aria-describedby'), false, 'cleanup restores describedby');
+  assert.equal(ref.hasAttribute('title'), false, 'cleanup restores title');
+  assert.equal(source.hasAttribute('tabindex'), false, 'cleanup restores tabindex');
+  assert.equal(source.classList.contains('is-source-active'), false, 'cleanup clears highlight');
+});
+
+test('initSources: supports button refs, scoped duplicate ids, idempotence, cleanup, and root:null', () => {
+  const d = mount(`
+    <article id="dup" class="ui-source-card">outside</article>
+    <main id="scope" data-bronto-sources>
+      <button type="button" data-bronto-source-ref="#dup">Inside source</button>
+      <article id="dup" class="ui-source-card">
+        <h3 class="ui-source-card__title">Scoped source</h3>
+      </article>
+    </main>`);
+  const scope = d.getElementById('scope');
+  const inside = childById(scope, 'dup');
+  const button = scope.querySelector('[data-bronto-source-ref]');
+  let count = 0;
+  scope.addEventListener('bronto:source:focus', () => count++);
+
+  const noopStop = initSources({ root: null });
+  button.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(count, 0, 'root:null does not widen to document');
+  noopStop();
+
+  initSources({ root: scope });
+  const stop = initSources({ root: scope }); // replaces instead of stacking
+  button.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(count, 1, 'fires once after re-init');
+  assert.equal(d.activeElement, inside, 'duplicate id inside the scope wins');
+  assert.equal(d.getElementById('dup').classList.contains('is-source-active'), false);
+  assert.ok(inside.classList.contains('is-source-active'));
+
+  stop();
+  button.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(count, 1, 'cleanup removes listener');
 });
 
 const CMD = `

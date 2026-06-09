@@ -5,8 +5,8 @@ body:
   - type: textarea
     id: need
     attributes:
-      label: What's missing and which projects need it
-      description: Framework-agnostic by design — say which consuming app(s) hit this.
+      label: What's missing and who needs it
+      description: Framework-agnostic by design — describe the consuming framework and user workflow, not private project names.
     validations:
       required: true
   - type: dropdown

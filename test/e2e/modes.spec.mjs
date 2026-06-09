@@ -139,3 +139,73 @@ test('surface=oled: dark surfaces flip to true black; the readable text token is
   expect(v.oled.bg).toBe('#000000'); // OLED preset flips --bg to true black
   expect(v.oled.text).toBe('#e6e6e6'); // text untouched — stays the readable token
 });
+
+test('density presets: compact and comfortable move only the spacing scale', async ({ page }) => {
+  await page.goto('/demo/', { waitUntil: 'networkidle' });
+  const v = await page.evaluate(() => {
+    const root = document.documentElement;
+    const read = () => {
+      const s = getComputedStyle(root);
+      return {
+        xs: s.getPropertyValue('--space-xs').trim(),
+        md: s.getPropertyValue('--space-md').trim(),
+        xl: s.getPropertyValue('--space-xl').trim(),
+        text: s.getPropertyValue('--text').trim(),
+      };
+    };
+    delete root.dataset.density;
+    const base = read();
+    root.dataset.density = 'compact';
+    const compact = read();
+    root.dataset.density = 'comfortable';
+    const comfortable = read();
+    return { base, compact, comfortable };
+  });
+
+  expect(v.base).toEqual({ xs: '0.5rem', md: '1rem', xl: '1.75rem', text: '#e6e6e6' });
+  expect(v.compact).toEqual({ xs: '0.4rem', md: '0.8rem', xl: '1.35rem', text: '#e6e6e6' });
+  expect(v.comfortable).toEqual({
+    xs: '0.6rem',
+    md: '1.25rem',
+    xl: '2.2rem',
+    text: '#e6e6e6',
+  });
+});
+
+test('contrast preset: manual and OS high-contrast paths re-point soft tokens', async ({
+  page,
+}) => {
+  const read = () =>
+    page.evaluate(() => {
+      const s = getComputedStyle(document.documentElement);
+      return {
+        line: s.getPropertyValue('--line').trim(),
+        lineStrong: s.getPropertyValue('--line-strong').trim(),
+        textDim: s.getPropertyValue('--text-dim').trim(),
+        textSoft: s.getPropertyValue('--text-soft').trim(),
+        focusRing: s.getPropertyValue('--focus-ring').trim(),
+        accent: s.getPropertyValue('--accent').trim(),
+        shadowRaised: s.getPropertyValue('--shadow-raised').trim(),
+        text: s.getPropertyValue('--text').trim(),
+      };
+    });
+
+  await page.goto('/demo/', { waitUntil: 'networkidle' });
+  const base = await read();
+  await page.evaluate(() => {
+    document.documentElement.dataset.contrast = 'high';
+  });
+  const manual = await read();
+
+  await page.emulateMedia({ contrast: 'more' });
+  await page.goto('/demo/', { waitUntil: 'networkidle' });
+  const os = await read();
+
+  expect(base.line).not.toBe(base.lineStrong);
+  for (const high of [manual, os]) {
+    expect(high.line).toBe(high.lineStrong);
+    expect(high.textDim).toBe(high.textSoft);
+    expect(high.focusRing).toBe(high.accent);
+    expect(high.shadowRaised).toBe(`0 0 0 1px ${high.text}`);
+  }
+});

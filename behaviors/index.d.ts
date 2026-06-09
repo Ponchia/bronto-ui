@@ -17,6 +17,7 @@ export { initConnectors } from "./connectors.js";
 export { initSpotlight } from "./spotlight.js";
 export { initCrosshair } from "./crosshair.js";
 export { initCommand } from "./command.js";
+export { initSources } from "./sources.js";
 export type Cleanup = import("./internal.js").Cleanup;
 export type DelegateOpts = import("./internal.js").DelegateOpts;
 export type ThemeStorageOpts = import("./theme.js").ThemeStorageOpts;
@@ -27,5 +28,6 @@ export type ModalCloseDetail = import("./modal.js").ModalCloseDetail;
 export type LegendToggleDetail = import("./legend.js").LegendToggleDetail;
 export type CrosshairMoveDetail = import("./crosshair.js").CrosshairMoveDetail;
 export type CommandSelectDetail = import("./command.js").CommandSelectDetail;
+export type SourceFocusDetail = import("./sources.js").SourceFocusDetail;
 export { applyStoredTheme, initThemeToggle } from "./theme.js";
 //# sourceMappingURL=index.d.ts.map

@@ -139,6 +139,13 @@
   print-color-adjust: exact;
 }
 
+.ui-source-card:target,
+.ui-source-card.is-source-active {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--src-tone) 22%, transparent);
+  outline: 2px solid var(--src-tone);
+  outline-offset: 2px;
+}
+
 .ui-source-card > * {
   min-inline-size: 0;
 }

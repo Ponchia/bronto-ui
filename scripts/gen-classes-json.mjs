@@ -94,6 +94,12 @@ const states = [
     effect: 'active/selected state',
   },
   {
+    class: 'is-source-active',
+    scope: '.ui-source-card',
+    effect: 'temporary source highlight after a citation/backref activation',
+    managed: 'runtime',
+  },
+  {
     class: 'is-inactive',
     scope: 'interactive .ui-legend__item',
     effect: 'host-set toggled-off state',
@@ -577,6 +583,19 @@ const behaviorAttributes = [
     on: 'a .ui-command palette host wrapping its input',
     behavior: 'initCommand',
     note: 'wires the filter input + active-option keyboard model',
+  },
+  {
+    name: 'data-bronto-sources',
+    on: 'a source/citation island',
+    behavior: 'initSources',
+    note: 'scopes citation preview metadata and source-card focus/highlight behavior; the host still owns numbering, fetching, and trust decisions.',
+  },
+  {
+    name: 'data-bronto-source-ref',
+    on: 'a button/control that references a source card',
+    value: 'id of the source card, with or without a leading #',
+    behavior: 'initSources',
+    note: 'button/control equivalent of a .ui-citation[href="#source-id"]; activation focuses and highlights the referenced source.',
   },
   {
     name: 'data-bronto-dismiss',

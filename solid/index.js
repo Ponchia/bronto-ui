@@ -69,6 +69,7 @@ import {
   initSpotlight,
   initCrosshair,
   initCommand,
+  initSources,
   toast,
 } from '../behaviors/index.js';
 
@@ -145,6 +146,8 @@ export const useSpotlight = (opts) => useBrontoBehavior(initSpotlight, opts);
 export const useCrosshair = (opts) => useBrontoBehavior(initCrosshair, opts);
 /** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useCommand = (opts) => useBrontoBehavior(initCommand, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
+export const useSources = (opts) => useBrontoBehavior(initSources, opts);
 
 /** The `toast()` imperative (no lifecycle of its own).
  * @type {() => (message: string, opts?: ToastOpts) => Cleanup} */
