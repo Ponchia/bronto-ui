@@ -73,6 +73,7 @@ import {
   initSpotlight,
   initCrosshair,
   initCommand,
+  initSources,
   toast,
 } from '../behaviors/index.js';
 
@@ -198,6 +199,10 @@ export const useCrosshair = (opts) =>
 export const useCommand = (opts) =>
   // eslint-disable-next-line qwik/no-use-visible-task -- delegated DOM glue + cleanup
   useVisibleTask$((ctx) => start(initCommand, opts, ctx));
+/** @param {BrontoBindingOptsResolver} [opts] @returns {void} */
+export const useSources = (opts) =>
+  // eslint-disable-next-line qwik/no-use-visible-task -- delegated DOM glue + cleanup
+  useVisibleTask$((ctx) => start(initSources, opts, ctx));
 
 /** The `toast()` imperative (no lifecycle of its own).
  *  @returns {(message: string, opts?: ToastOpts) => Cleanup} */

@@ -1,12 +1,15 @@
 # Public API Stability
 
 `@ponchia/ui` is pre-1.0. Breaking changes ship in the minor (`0.x.0`), and
-patches are non-breaking. In practical terms: **PATCH releases (`0.5.x`) are
+patches are non-breaking. In practical terms: **PATCH releases (`0.6.x`) are
 non-breaking bug-fixes and additive changes — safe to upgrade without review;
 MINOR releases (`0.x.0`) may include breaking changes and consumers should
 review the CHANGELOG before upgrading.** Pin `~0.x` (tilde) to accept only
 patches, or `^0.x` only if you accept minor-level churn. This policy holds
 until `1.0.0` is tagged. This matrix defines what counts as public API.
+For the exhaustive package-manifest inventory — every `exports` key, every
+shipped `files` entry, and the generated artifact provenance map — see
+[package-contract.md](./package-contract.md).
 
 | Surface | Stability | Contract |
 | --- | --- | --- |
@@ -18,7 +21,7 @@ until `1.0.0` is tagged. This matrix defines what counts as public API.
 | Design tokens | Stable names/roles | Token names and documented roles are public. Exact values and generated colour math outputs may change for visual tuning before 1.0. |
 | `--accent-1..6` | Stable names/roles | A subtle-to-bold accent ramp derived from `--accent`. Exact resolved values are visual tuning; algorithm changes require release-note visibility and resolver/browser checks. |
 | Tokens as data (`tokens.json`, `tokens.dtcg.json`, `tokens/resolved.json`) | Stable additive | The JSON shapes are public for non-CSS/non-JS consumers. `resolved.json` exposes `light`/`dark` (resolved colours) and `scale` (resolved non-colour scales). Token names/roles are stable; exact resolved values are visual tuning (pin `~0.x`). |
-| Theme axes | Mixed | `data-theme` (light/dark) is the **contractual** base. `data-surface="oled"`, `data-density`, and `data-contrast` are **convenience presets** — best-effort visual variants, **not** part of the stability contract; their presence and exact values may change for tuning. (A computed-style smoke test guards the OLED `--bg` flip; the others are unverified.) |
+| Theme axes | Mixed | `data-theme` (light/dark) is the **contractual** base. `data-surface="oled"`, `data-density`, and `data-contrast` are **convenience presets** — best-effort visual variants, **not** part of the stability contract; their presence and exact values may change for tuning. Computed-style smoke tests guard that the presets apply to their intended token families. |
 | Behavior attributes (`data-bronto-*`) | Stable | Attribute names and documented markup relationships are public. Behavior internals are not. |
 | Behavior functions (`@ponchia/ui/behaviors`) | Stable | Exported function names, option names, custom events, SSR no-op behavior, idempotency, and cleanup-returning contract are public. |
 | Glyph registry/renderers (`@ponchia/ui/glyphs`) | Stable additive | Existing glyph names stay valid. New glyphs are additive. Renderer option names and accessibility defaults are public. |
@@ -35,7 +38,7 @@ until `1.0.0` is tagged. This matrix defines what counts as public API.
 | Crosshair (`css/crosshair.css`, `.ui-crosshair*`, `.ui-readout`, `initCrosshair`) | Stable additive | Crosshair/readout class names, the `--crosshair-x/y` properties, the `data-bronto-crosshair` attribute, and the `bronto:crosshair:move`/`:leave` event contract are public. Opt-in. Reports pointer position only — no data mapping. |
 | Selection states (`css/selection.css`, `.ui-sel*`) | Stable additive | The `.ui-sel`/`--on`/`--off`/`--maybe` emphasis classes and recipe options are public. Opt-in, cross-cutting. The host owns selection logic; Bronto only styles the states. |
 | Analytical roll-up (`css/analytical.css`) | Stable additive | A convenience `@import` of the seven analytical leaves (annotations, legend, marks, connectors, spotlight, crosshair, selection). The set of leaves it bundles may grow additively; each leaf also stays individually exported. Opt-in, not in the default bundle. |
-| Sources / provenance (`css/sources.css`, `.ui-citation*`, `.ui-source-card*`, `.ui-source-list*`, `.ui-provenance*`, `.ui-src--*`) | Stable additive | Citation/source/provenance class names, the cross-cutting `.ui-src--*` trust-state modifiers (always paired with an author label), and the `ui.citation`/`ui.source`/`ui.provenance` recipes + `cls.sourceList` are public. Opt-in, not in the default bundle. |
+| Sources / provenance (`css/sources.css`, `.ui-citation*`, `.ui-source-card*`, `.ui-source-list*`, `.ui-provenance*`, `.ui-src--*`, `initSources`) | Stable additive | Citation/source/provenance class names, the cross-cutting `.ui-src--*` trust-state modifiers (always paired with an author label), the optional `data-bronto-sources` / `data-bronto-source-ref` behavior contract, `bronto:source:focus`, and the `ui.citation`/`ui.source`/`ui.provenance` recipes + `cls.sourceList` are public. Opt-in, not in the default bundle. |
 | Lifecycle state (`css/state.css`, `.ui-state*`, `.ui-syncbar`) | Stable additive | The `.ui-state`/`__label`/`__detail`/`--busy` classes, the canonical lifecycle state modifiers, `.ui-syncbar`, and the `ui.state` recipe are public. Opt-in, not in the default bundle. |
 | Generated / AI-trust (`css/generated.css`, `.ui-generated*`, `.ui-origin-label*`, `.ui-reasoning*`, `.ui-tool-log`, `.ui-tool-call*`) | Stable additive | The generated-content, origin-label (incl. `--ai`), reasoning-trace and tool-log/tool-call class names and the `ui.originLabel` recipe are public. Opt-in, not in the default bundle. Not a chat kit; no confidence widget. |
 | Workbench (`css/workbench.css`, `.ui-inspector*`, `.ui-property*`, `.ui-selectionbar*`) | Stable additive | Inspector, property-row and selection-bar class + BEM part names are public (class-only — no recipe). Opt-in, not in the default bundle. Splitters/drag handles are out of scope. |

@@ -154,14 +154,15 @@ NOT an ARIA `tree`; the roving-focus kernel is deferred behind a real consumer
 
 Shipped as `@ponchia/ui/css/sources.css` (`ui-citation`/`ui-source-card`/
 `ui-source-list`/`ui-provenance` + the cross-cutting `ui-src--*` trust states),
-matching the surface below. The optional `initSources()` behavior is still
-deferred until a consumer needs backref focus / preview toggles.
+matching the surface below. The optional `initSources` behavior now adds
+source-card focus, a temporary `.is-source-active` cue, and lightweight preview
+metadata over existing citation/source IDs.
 
 Why it matters: AI output, generated reports, audit views, docs, and operational
 tools all need to answer "where did this come from?" Normal UI kits have tags
 and footnotes, but not a trust grammar. The shipped surface and its trust-state
-vocabulary are documented with the component — only the optional `initSources()`
-disclosure behavior is still open.
+vocabulary are documented with the component; richer preview popovers remain
+host-owned.
 
 ### 2. Lifecycle and system-state UI — 🟡 `ui-state` family shipped in 0.5.0
 
@@ -227,9 +228,8 @@ The CSS cores of candidates 1–5 shipped in 0.5.0, the 2026 scout batch shipped
 in PRs #97/#100, and scout batch #2 (textref / bullet / term / toc / tree)
 shipped 2026-06-04. The remaining active work, in order:
 
-1. `initSources()` backref-focus / preview disclosure (candidate 1).
-2. `ui-job` / `ui-conflict` lifecycle surfaces (candidate 2).
-3. The `ui-splitter` ARIA window-splitter behavior + drag affordances
+1. `ui-job` / `ui-conflict` lifecycle surfaces (candidate 2).
+2. The `ui-splitter` ARIA window-splitter behavior + drag affordances
    (candidate 4) — also the gating consumer for `ui-tree`'s deferred roving-focus
    tree kernel.
 

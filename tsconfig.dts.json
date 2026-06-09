@@ -39,6 +39,7 @@
     "behaviors/connectors.js",
     "behaviors/spotlight.js",
     "behaviors/crosshair.js",
-    "behaviors/command.js"
+    "behaviors/command.js",
+    "behaviors/sources.js"
   ]
 }

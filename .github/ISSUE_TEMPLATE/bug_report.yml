@@ -6,7 +6,7 @@ body:
     id: version
     attributes:
       label: '@ponchia/ui version'
-      placeholder: '0.3.0'
+      placeholder: '0.6.4'
     validations:
       required: true
   - type: dropdown
@@ -25,7 +25,7 @@ body:
     id: consumer
     attributes:
       label: Consuming framework
-      description: Astro / SvelteKit / React / Solid / plain HTML, + version
+      description: Astro / SvelteKit / React / Solid / Qwik / plain HTML, + version. Do not include private project names or secrets in public issues.
       placeholder: 'Astro 4.x'
     validations:
       required: true
@@ -38,7 +38,7 @@ body:
     id: repro
     attributes:
       label: Reproduction
-      description: Minimal markup/CSS/JS, or a link. Note theme (light/dark), RTL, density/contrast presets if relevant.
+      description: Minimal markup/CSS/JS, or a public link. Note theme (light/dark), RTL, density/contrast presets if relevant.
     validations:
       required: true
   - type: textarea
@@ -51,5 +51,5 @@ body:
     id: browser
     attributes:
       label: Browser + version
-      description: The floor is Chrome/Edge 111+, Safari 16.4+, Firefox 121+.
-      placeholder: 'Safari 17.4'
+      description: The floor is Chrome/Edge 125+, Safari 18+, Firefox 129+.
+      placeholder: 'Safari 18'

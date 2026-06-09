@@ -8,8 +8,8 @@ the README).
 
 | Version | Supported |
 | ------- | --------- |
-| 0.5.x   | ✅        |
-| < 0.5   | ❌        |
+| 0.6.x   | ✅        |
+| < 0.6   | ❌        |
 
 ## Reporting a vulnerability
 
@@ -27,9 +27,9 @@ new patch/minor and noted in `CHANGELOG.md`.
 The package ships **zero runtime dependencies** — it is CSS plus
 optional dependency-free, side-effect-free-on-import, SSR-safe vanilla
 JS (`tokens` / `classes` / `behaviors` / `glyphs` / `skins` /
-`charts`). The `react` and `solid` subpaths are optional lifecycle
-bindings over the same behavior layer and require their matching
-optional peer only when imported.
+`charts`). The `react`, `solid`, and `qwik` subpaths are optional
+lifecycle bindings over the same behavior layer and require their
+matching optional peer only when imported.
 
 Behaviors assume trusted application markup. Do not initialize them over
 untrusted user/CMS HTML unless you have sanitized that markup and are

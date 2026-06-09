@@ -9,7 +9,9 @@
 > This file orients an LLM/agent. The authoritative, always-correct API
 > is the TypeScript declarations shipped in this package (paths below):
 > they are generated from the runtime sources and CI-drift-checked, so
-> they never lie. Read them before guessing class or token names.
+> they never lie. Read them before guessing class or token names. For the
+> manifest-level inventory, use `docs/package-contract.md`: it is generated
+> from package.json and lists every export, shipped path, and provenance gate.
 
 ## Use the framework
 
@@ -76,6 +78,11 @@ role/aria-modal); `initDisabledGuard()` makes every `aria-disabled` control
 keyboard-inert (CSS alone is only pointer-inert). For the value-bearing fills,
 `attrs.meter(value)` / `attrs.progress(value)` from `@ponchia/ui/classes` return
 `role`+`aria-valuenow/min/max`+the `--value` style to spread onto the host.
+`initSources()` wires `[data-bronto-sources]` citation/source islands:
+`.ui-citation[href^="#"]` and `[data-bronto-source-ref]` focus/highlight the
+matching `.ui-source-card`, seed lightweight preview metadata, and emit
+`bronto:source:focus`; the host still owns numbering, fetching, trust decisions,
+and any rich preview popover.
 
 For React/Solid/Qwik, optional thin hook bindings over those behaviors (peer
 deps `react` / `solid-js` / `@builder.io/qwik`, optional — core stays zero-dep):

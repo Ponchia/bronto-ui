@@ -12,6 +12,7 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 
 - [architecture.md](./architecture.md) — the layered architecture, the repository layout, drift control, and release gating.
 - [stability.md](./stability.md) — what is contractual (and what is a convenience preset) across versions.
+- [package-contract.md](./package-contract.md) — the generated package manifest matrix: every export, shipped path, and artifact provenance row. _(generated — do not hand-edit)_
 - [usage.md](./usage.md) — the decision guide: which primitive to reach for when.
 - [reference.md](./reference.md) — the generated catalog of every `.ui-*` class and token. _(generated — do not hand-edit)_
 - [release.md](./release.md) — the release runbook.

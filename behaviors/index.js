@@ -27,6 +27,7 @@
  * @typedef {import('./legend.js').LegendToggleDetail} LegendToggleDetail
  * @typedef {import('./crosshair.js').CrosshairMoveDetail} CrosshairMoveDetail
  * @typedef {import('./command.js').CommandSelectDetail} CommandSelectDetail
+ * @typedef {import('./sources.js').SourceFocusDetail} SourceFocusDetail
  */
 export { applyStoredTheme, initThemeToggle } from './theme.js';
 export { dismissible } from './dismissible.js';
@@ -48,3 +49,4 @@ export { initConnectors } from './connectors.js';
 export { initSpotlight } from './spotlight.js';
 export { initCrosshair } from './crosshair.js';
 export { initCommand } from './command.js';
+export { initSources } from './sources.js';
