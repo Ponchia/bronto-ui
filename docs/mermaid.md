@@ -54,6 +54,12 @@ below):
 </script>
 ```
 
+> **There is no classic-script path.** Mermaid v11 ships **no UMD bundle** —
+> its `dist/` is ESM-chunked, so vendoring a `mermaid.min.js` for a plain
+> `<script src>` is a dead end. In the browser it is the ES-module import
+> above (over a real `http(s)` origin); for everything else, pre-render to a
+> frozen SVG with `mmdc` (below) so there is no runtime at all.
+
 > **file:// portability.** A report opened straight from disk (`file://`) cannot
 > `import` the `@ponchia/ui/mermaid` module **nor** `fetch('…/mermaid.json')` —
 > the browser blocks both across the `null`/file origin (CORS), exactly as with
