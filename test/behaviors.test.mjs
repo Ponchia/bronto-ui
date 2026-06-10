@@ -20,6 +20,7 @@ import {
   initSpotlight,
   initCrosshair,
   initCommand,
+  initDisabledGuard,
   initSources,
   toast,
 } from '../behaviors/index.js';
@@ -1667,4 +1668,73 @@ test('initModal: inert traps focus, returns it on close, Escape only signals', a
   await tick();
   stop();
   assert.equal(d.getElementById('bg').inert, false, 'cleanup un-inerts');
+});
+
+// ---------------------------------------------------------------------------
+// initDisabledGuard — aria-disabled controls become keyboard-inert, not just
+// pointer-inert (component audit C4). Capturing listeners must swallow the
+// activation before any component handler sees it.
+// ---------------------------------------------------------------------------
+test('disabled guard blocks click + Enter/Space on aria-disabled controls', () => {
+  const d = mount(
+    '<button id="dead" aria-disabled="true">Dead</button>' + '<button id="live">Live</button>',
+  );
+  const stop = initDisabledGuard();
+
+  let deadFired = 0;
+  let liveFired = 0;
+  d.getElementById('dead').addEventListener('click', () => deadFired++);
+  d.getElementById('live').addEventListener('click', () => liveFired++);
+
+  const deadClick = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+  d.getElementById('dead').dispatchEvent(deadClick);
+  assert.equal(deadFired, 0, 'capturing guard swallows the click before the handler');
+  assert.equal(deadClick.defaultPrevented, true, 'click default is prevented');
+
+  for (const key of ['Enter', ' ']) {
+    const e = new dom.window.KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
+    d.getElementById('dead').dispatchEvent(e);
+    assert.equal(e.defaultPrevented, true, `${JSON.stringify(key)} activation is blocked`);
+  }
+
+  // Enabled controls are untouched.
+  const liveClick = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+  d.getElementById('live').dispatchEvent(liveClick);
+  assert.equal(liveFired, 1, 'enabled control still fires');
+  assert.equal(liveClick.defaultPrevented, false);
+  stop();
+});
+
+test('disabled guard lets Tab pass so focus can move PAST the control', () => {
+  const d = mount('<a id="dead" href="#x" aria-disabled="true">Dead link</a>');
+  const stop = initDisabledGuard();
+  const tab = new dom.window.KeyboardEvent('keydown', {
+    key: 'Tab',
+    bubbles: true,
+    cancelable: true,
+  });
+  d.getElementById('dead').dispatchEvent(tab);
+  assert.equal(tab.defaultPrevented, false, 'Tab must not be swallowed');
+  stop();
+});
+
+test('disabled guard scopes to its root and cleans up', () => {
+  const d = mount(
+    '<div id="scope"><button id="inside" aria-disabled="true">In</button></div>' +
+      '<button id="outside" aria-disabled="true">Out</button>',
+  );
+  const stop = initDisabledGuard({ root: d.getElementById('scope') });
+
+  const outsideClick = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+  d.getElementById('outside').dispatchEvent(outsideClick);
+  assert.equal(outsideClick.defaultPrevented, false, 'controls outside the root are not guarded');
+
+  const insideClick = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+  d.getElementById('inside').dispatchEvent(insideClick);
+  assert.equal(insideClick.defaultPrevented, true, 'controls inside the root are guarded');
+
+  stop();
+  const afterCleanup = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+  d.getElementById('inside').dispatchEvent(afterCleanup);
+  assert.equal(afterCleanup.defaultPrevented, false, 'cleanup detaches the guard');
 });
