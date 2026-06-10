@@ -107,6 +107,15 @@ function main(argv) {
   }
   if (!repinned) console.log('· no stale @ponchia/ui@X.Y.Z literals found');
 
+  // 4. Issue-template version placeholder (check:public-metadata gates it).
+  const bugPath = resolve(root, '.github/ISSUE_TEMPLATE/bug_report.yml');
+  const bug = readFileSync(bugPath, 'utf8');
+  const bumped = bug.replace(`placeholder: '${from}'`, `placeholder: '${version}'`);
+  if (bumped !== bug) {
+    writeFileSync(bugPath, bumped);
+    console.log('✓ bumped the bug-report version placeholder');
+  }
+
   console.log(
     '\nNext: review the diff, run `npm run check && npm test`, then follow docs/release.md.',
   );

@@ -5,7 +5,7 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
-## Unreleased — 0.6.6
+## 0.6.6 — 2026-06-10
 
 Consolidation pass from the 2026-06-10 multi-agent audit: two real PDF-export
 defects fixed and gated, the reporting hub routed to every shipped leaf, and
