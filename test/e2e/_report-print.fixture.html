@@ -1,0 +1,740 @@
+<!doctype html>
+<!--
+  Print/PDF gate fixture — the promoted multi-page report.
+
+  Purpose-built for test/e2e/report-print.spec.mjs, which proves the two
+  defects the dogfood lab caught can never ship again:
+
+    1. OVERPRINT — Chromium-class print engines restart grid tracks at the
+       top of each page, printing new rows over the running content. The
+       cover + summary + confusion blocks are copied VERBATIM from the
+       dogfood report that reproduced this: the page 1-2 boundary falls
+       inside the "Row = true class ..." paragraph while the break-avoided
+       Fig-1 figure is positioned from unfragmented geometry. Fonts are
+       self-hosted, so this pagination is deterministic. The spec asserts
+       the trap stays ARMED (that paragraph still straddles a page break);
+       if a layout change moves it, re-tune this slice, do not delete it.
+       The sections AFTER the trap exercise every other vertical wrapper
+       report.css demotes in @media print (.ui-report__actions,
+       .ui-evidence-ledger, ...) and the column grids that must stay grids
+       (.ui-compare, .ui-report__decision-item).
+
+    2. SILENT MODULE DROP — figures rendered by relative ES-module imports
+       vanish over file:// (CORS). The #figure section is rendered by a real
+       module import, flags completion with data-report-ready, and plants a
+       text sentinel the spec asserts inside the exported PDF.
+
+  Hermetic on purpose: local built CSS + local module imports, no CDN.
+-->
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Print fixture — pipeline migration verification report</title>
+    <link rel="stylesheet" href="../../dist/bronto.css" />
+    <link rel="stylesheet" href="../../dist/css/report.css" />
+    <link rel="stylesheet" href="../../dist/css/dataviz.css" />
+    <link rel="stylesheet" href="../../dist/css/legend.css" />
+    <link rel="stylesheet" href="../../dist/css/annotations.css" />
+    <link rel="stylesheet" href="../../dist/css/marks.css" />
+    <link rel="stylesheet" href="../../dist/css/sources.css" />
+    <style>
+      /* Report-local layout only — tokens only, no chromatic literals.
+         Outside @layer bronto so it wins without specificity fights. */
+      .me-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-sm);
+        flex-wrap: wrap;
+        margin-block-end: var(--space-md);
+      }
+      .me-note {
+        color: var(--text-dim);
+        font-size: var(--text-2xs);
+        font-family: var(--mono);
+      }
+      /* The frozen Vega SVG + its annotation overlay share one positioning box. */
+      /* Match the frozen Vega SVG's intrinsic size (264 plot + ~10 padding ≈ 274)
+         so the absolutely-positioned annotation overlay shares its scale 1:1 and
+         doesn't stretch. */
+      .me-figure-stage {
+        position: relative;
+        inline-size: 274px;
+        max-inline-size: 100%;
+      }
+      .me-figure-stage > .me-vega-frozen {
+        inline-size: 100%;
+      }
+      .me-figure-stage :where(svg) {
+        display: block;
+      }
+      .me-annotation-overlay {
+        position: absolute;
+        inset: 0;
+        inline-size: 100%;
+        block-size: 100%;
+        pointer-events: none;
+        overflow: visible;
+      }
+      .me-twocol {
+        display: grid;
+        gap: var(--space-lg);
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+      @media (min-width: 52rem) {
+        .me-twocol {
+          grid-template-columns: minmax(0, 1fr) minmax(12rem, 16rem);
+        }
+      }
+      .me-key-stack {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="ui-report ui-report--numbered">
+      <!-- ============ OVERPRINT TRAP — verbatim geometry, see header note ============ -->
+      <header class="ui-report__cover">
+        <div class="me-toolbar ui-screen-only">
+          <span class="me-note">Static HTML · charts re-render on theme flip</span>
+          <button
+            type="button"
+            class="ui-button ui-button--ghost ui-button--sm"
+            data-bronto-theme-toggle
+            aria-pressed="false"
+          >
+            Toggle theme
+          </button>
+        </div>
+
+        <p class="ui-eyebrow">Model evaluation · classifier v4.2</p>
+        <h1 class="ui-report__title">Aurora-6 image classifier — evaluation</h1>
+        <p class="ui-report__subtitle">
+          Confusion, regression against the prior model, and class-wise quality on the held-out test
+          set — themed end-to-end from the design tokens.
+        </p>
+        <ul class="ui-report__meta">
+          <li><time datetime="2026-06-03">Jun 3, 2026</time></li>
+          <li>Held-out set · 12,000 images</li>
+          <li>6 classes</li>
+          <li>Chromium PDF-ready</li>
+        </ul>
+
+        <!-- Decorative cover mark: no data, so the whole SVG is aria-hidden. -->
+        <svg
+          class="ui-screen-only"
+          width="440"
+          height="84"
+          viewBox="0 0 440 84"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <g
+            class="ui-annotation ui-annotation--circle ui-annotation--accent"
+            transform="translate(30, 54)"
+          >
+            <path class="ui-annotation__subject" d="M0,-15A15,15 0 1 1 0,15A15,15 0 1 1 0,-15Z" />
+            <circle r="3.5" fill="var(--accent)" />
+            <path class="ui-annotation__connector" d="M13.485,-6.57L78,-38" />
+            <g class="ui-annotation__note" transform="translate(78, -38)">
+              <path class="ui-annotation__note-line" d="M0,0H214" />
+              <text class="ui-annotation__title" y="-8">Read the diagonal</text>
+              <text class="ui-annotation__label" y="12">off-diagonal = confusions</text>
+            </g>
+          </g>
+        </svg>
+      </header>
+
+      <section id="summary" class="ui-report__section">
+        <h2 class="ui-report__section-head">Executive summary</h2>
+        <div class="ui-report__summary">
+          <p>
+            Aurora-6 reaches <strong>91.4%</strong> top-1 accuracy on the held-out set, up from
+            88.1% in v3.8. The gain is concentrated in the <em>Bird</em> and
+            <em>Vehicle</em> classes; the persistent failure mode is
+            <strong>Cat ↔ Dog</strong> confusion, which the new model <em>worsens</em> slightly.
+            Calibration improved overall but the model is mildly over-confident above the 0.8 bin.
+          </p>
+        </div>
+
+        <div class="ui-statgrid">
+          <div class="ui-stat">
+            <span class="ui-stat__label">Top-1 accuracy</span>
+            <span class="ui-stat__value">91.4%</span>
+            <span class="ui-delta ui-delta--up">+3.3 pts vs v3.8</span>
+          </div>
+          <div class="ui-stat">
+            <span class="ui-stat__label">Macro F1</span>
+            <span class="ui-stat__value">0.908</span>
+            <span class="ui-delta ui-delta--up">+0.041</span>
+          </div>
+          <div class="ui-stat">
+            <span class="ui-stat__label">Worst-class recall</span>
+            <span class="ui-stat__value">0.79</span>
+            <span class="ui-delta ui-delta--down ui-delta--invert">Cat, −0.02</span>
+          </div>
+          <div class="ui-stat">
+            <span class="ui-stat__label">Expected calibration error</span>
+            <span class="ui-stat__value">0.043</span>
+            <span class="ui-delta ui-delta--down">−0.011 (better)</span>
+          </div>
+        </div>
+
+        <div class="ui-alert ui-alert--warning" role="note">
+          <p>
+            <strong>Ship with a caveat.</strong> The headline accuracy is a clear win, but Cat↔Dog
+            recall regressed. Gate deployment on a targeted evaluation of that pair before promoting
+            v4.2 to production.
+          </p>
+        </div>
+      </section>
+
+      <section id="confusion" class="ui-report__section">
+        <h2 class="ui-report__section-head">Confusion matrix</h2>
+        <div class="ui-prose">
+          <p>
+            Row = true class, column = predicted class; each cell is the share of that true class
+            assigned to each prediction (row-normalised, %). The diagonal is correct classification
+            — it should sit at the ramp's strong end (the extreme stop in either theme; see the
+            legend). Off-diagonal cells are the confusions worth investigating.
+          </p>
+        </div>
+
+        <figure class="ui-report__figure" role="group" aria-labelledby="cm-cap">
+          <figcaption id="cm-cap" class="ui-report__caption">
+            Fig 1 — Row-normalised confusion (%), sequential <code>range.heatmap</code> ramp
+          </figcaption>
+
+          <div class="me-twocol">
+            <!-- Live Vega heatmap: screen-only. A live chart bakes the on-screen
+                 theme into its SVG, so it must not print; the fallback table below
+                 carries the data into print. -->
+            <div id="cm-chart" class="ui-screen-only" style="min-block-size: 320px">
+              <noscript>Heatmap needs JavaScript — the matrix is in the table below.</noscript>
+            </div>
+
+            <!-- STEPPED legend, one swatch per band, each from the SAME charts.json
+                 sequential ramp stop the Vega heatmap uses (--chart-seq-1..6).
+                 A continuous gradient key would NOT pixel-match the Vega ramp
+                 (OKLCH vs d3-RGB interpolation), so per docs/vega.md we use a
+                 stepped key. The swatch reads the token, so it inverts with the
+                 theme exactly as the heatmap does — no hard-coded hex. -->
+            <div class="me-key-stack">
+              <div
+                class="ui-legend ui-legend--threshold"
+                role="group"
+                aria-label="Cell value — share of true class"
+              >
+                <span
+                  class="ui-legend__swatch"
+                  style="--chart-color: var(--chart-seq-1)"
+                  aria-hidden="true"
+                ></span>
+                <span class="ui-legend__label">0 – 2%</span>
+                <span
+                  class="ui-legend__swatch"
+                  style="--chart-color: var(--chart-seq-2)"
+                  aria-hidden="true"
+                ></span>
+                <span class="ui-legend__label">2 – 8%</span>
+                <span
+                  class="ui-legend__swatch"
+                  style="--chart-color: var(--chart-seq-3)"
+                  aria-hidden="true"
+                ></span>
+                <span class="ui-legend__label">8 – 20%</span>
+                <span
+                  class="ui-legend__swatch"
+                  style="--chart-color: var(--chart-seq-4)"
+                  aria-hidden="true"
+                ></span>
+                <span class="ui-legend__label">20 – 50%</span>
+                <span
+                  class="ui-legend__swatch"
+                  style="--chart-color: var(--chart-seq-5)"
+                  aria-hidden="true"
+                ></span>
+                <span class="ui-legend__label">50 – 80%</span>
+                <span
+                  class="ui-legend__swatch"
+                  style="--chart-color: var(--chart-seq-6)"
+                  aria-hidden="true"
+                ></span>
+                <span class="ui-legend__label">≥ 80%</span>
+              </div>
+              <p class="me-note">
+                Ramp runs pale→deep in light, deep→pale in dark — the key re-reads the same tokens,
+                so it always tracks the chart. Cells carry no baked ink colour; read exact values
+                from the table.
+              </p>
+            </div>
+          </div>
+
+          <!-- Fallback / print table: the full matrix as numbers. -->
+          <div class="ui-table-wrap">
+            <table class="ui-table ui-table--dense">
+              <caption>
+                Confusion matrix — row-normalised (% of true class)
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">True ↓ / Pred →</th>
+                  <th scope="col" class="is-num">Cat</th>
+                  <th scope="col" class="is-num">Dog</th>
+                  <th scope="col" class="is-num">Bird</th>
+                  <th scope="col" class="is-num">Car</th>
+                  <th scope="col" class="is-num">Truck</th>
+                  <th scope="col" class="is-num">Plane</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">Cat</th>
+                  <td class="is-num is-key">79.0</td>
+                  <td class="is-num">15.2</td>
+                  <td class="is-num">3.1</td>
+                  <td class="is-num">0.6</td>
+                  <td class="is-num">0.4</td>
+                  <td class="is-num">1.7</td>
+                </tr>
+                <tr>
+                  <th scope="row">Dog</th>
+                  <td class="is-num">12.8</td>
+                  <td class="is-num is-key">82.4</td>
+                  <td class="is-num">2.6</td>
+                  <td class="is-num">0.5</td>
+                  <td class="is-num">0.7</td>
+                  <td class="is-num">1.0</td>
+                </tr>
+                <tr>
+                  <th scope="row">Bird</th>
+                  <td class="is-num">2.4</td>
+                  <td class="is-num">1.9</td>
+                  <td class="is-num is-key">90.1</td>
+                  <td class="is-num">0.8</td>
+                  <td class="is-num">0.6</td>
+                  <td class="is-num">4.2</td>
+                </tr>
+                <tr>
+                  <th scope="row">Car</th>
+                  <td class="is-num">0.3</td>
+                  <td class="is-num">0.4</td>
+                  <td class="is-num">0.5</td>
+                  <td class="is-num is-key">94.6</td>
+                  <td class="is-num">3.8</td>
+                  <td class="is-num">0.4</td>
+                </tr>
+                <tr>
+                  <th scope="row">Truck</th>
+                  <td class="is-num">0.2</td>
+                  <td class="is-num">0.3</td>
+                  <td class="is-num">0.7</td>
+                  <td class="is-num">5.1</td>
+                  <td class="is-num is-key">92.9</td>
+                  <td class="is-num">0.8</td>
+                </tr>
+                <tr>
+                  <th scope="row">Plane</th>
+                  <td class="is-num">0.9</td>
+                  <td class="is-num">0.6</td>
+                  <td class="is-num">4.4</td>
+                  <td class="is-num">0.7</td>
+                  <td class="is-num">0.9</td>
+                  <td class="is-num is-key">92.5</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </figure>
+      </section>
+
+      <!-- ===== broad wrapper coverage (after the trap, so it cannot move the trapped boundary) ===== -->
+      <section id="figure" class="ui-report__section" aria-labelledby="figure-head">
+        <h2 class="ui-report__section-head" id="figure-head">Throughput figure</h2>
+        <p>
+          The figure below is rendered by a relative ES-module import at load time. Over file:// the
+          import is blocked by CORS and the mount stays empty — exactly the silent failure the print
+          spec exists to catch. The caption sentinel it appends is asserted inside the PDF.
+        </p>
+        <figure class="ui-report__figure" role="group" aria-labelledby="figure-caption">
+          <div id="module-figure" aria-hidden="true"></div>
+          <figcaption class="ui-report__caption" id="figure-caption">
+            Fig 1 — partition throughput against the promotion threshold.
+          </figcaption>
+          <div class="ui-table-wrap">
+            <table class="ui-table ui-table--dense">
+              <caption>
+                Partition throughput (fallback data)
+              </caption>
+              <thead>
+                <tr>
+                  <th>Partition</th>
+                  <th>Before</th>
+                  <th>After</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="is-key">p0</td>
+                  <td>61 MB/s</td>
+                  <td>68 MB/s</td>
+                </tr>
+                <tr>
+                  <td class="is-key">p1</td>
+                  <td>63 MB/s</td>
+                  <td>71 MB/s</td>
+                </tr>
+                <tr>
+                  <td class="is-key">p2</td>
+                  <td>60 MB/s</td>
+                  <td>66 MB/s</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </figure>
+      </section>
+
+      <section id="evidence" class="ui-report__section" aria-labelledby="evidence-head">
+        <h2 class="ui-report__section-head" id="evidence-head">Evidence ledger</h2>
+        <p>
+          Each verification check is one ledger row. The ledger is a vertical wrapper tall enough to
+          cross at least one page boundary, which is precisely what makes it a fragmentation gate: a
+          grid container here used to restart its tracks at the page top, printing the first rows of
+          the new page on top of the running content.
+        </p>
+        <div class="ui-evidence-ledger">
+          <div class="ui-table-wrap">
+            <table class="ui-table ui-table--dense">
+              <caption>
+                Verification checks, evidence, and caveats
+              </caption>
+              <thead>
+                <tr>
+                  <th>Check</th>
+                  <th>Evidence</th>
+                  <th>Trust</th>
+                  <th>Caveat</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="#summary">Throughput above baseline</a></td>
+                  <td>
+                    All six partitions exceeded their pre-migration weekly mean for seven days.
+                  </td>
+                  <td>Verified</td>
+                  <td>Holiday week excluded from the baseline window.</td>
+                </tr>
+                <tr>
+                  <td><a href="#summary">Error rate within budget</a></td>
+                  <td>Consumer error rate stayed under 0.05% for the full observation window.</td>
+                  <td>Verified</td>
+                  <td>Synthetic probes only cover the three largest tenants.</td>
+                </tr>
+                <tr>
+                  <td><a href="#summary">No duplicate delivery</a></td>
+                  <td>Idempotency audit found zero duplicate keys across 1.2B messages.</td>
+                  <td>Verified</td>
+                  <td>Audit samples 1-in-10 partitions per hour.</td>
+                </tr>
+                <tr>
+                  <td><a href="#summary">Backlog drains in window</a></td>
+                  <td>Forced 30-minute outage drained within one scheduling window.</td>
+                  <td>Reviewed</td>
+                  <td>Test ran against the staging tier sizing.</td>
+                </tr>
+                <tr>
+                  <td><a href="#summary">Schema round-trip</a></td>
+                  <td>Every registered schema serialised and round-tripped byte-identical.</td>
+                  <td>Verified</td>
+                  <td>Deprecated v1 schemas excluded by policy.</td>
+                </tr>
+                <tr>
+                  <td><a href="#summary">Consumer lag alarms</a></td>
+                  <td>Alarm thresholds re-derived from the new pipeline's lag distribution.</td>
+                  <td>Reviewed</td>
+                  <td>Thresholds reviewed manually, not load-tested.</td>
+                </tr>
+                <tr>
+                  <td><a href="#summary">Failover rehearsal</a></td>
+                  <td>Regional failover completed in 74 seconds with zero message loss.</td>
+                  <td>Verified</td>
+                  <td>Single rehearsal; second region pending.</td>
+                </tr>
+                <tr>
+                  <td><a href="#summary">Cost envelope</a></td>
+                  <td>Steady-state cost landed 4% under the approved envelope.</td>
+                  <td>Reviewed</td>
+                  <td>Burst pricing not yet observed in production.</td>
+                </tr>
+                <tr>
+                  <td><a href="#summary">Access audit</a></td>
+                  <td>Service accounts reduced from nine to three; scopes minimised.</td>
+                  <td>Verified</td>
+                  <td>Quarterly re-audit scheduled.</td>
+                </tr>
+                <tr>
+                  <td><a href="#summary">Runbook coverage</a></td>
+                  <td>All five operational alarms link to a tested runbook step.</td>
+                  <td>Reviewed</td>
+                  <td>Runbooks tested by the migration team, not on-call.</td>
+                </tr>
+                <tr>
+                  <td><a href="#summary">Retention parity</a></td>
+                  <td>Retention policies match the legacy pipeline tier for tier.</td>
+                  <td>Verified</td>
+                  <td>Legal review of the archive tier still open.</td>
+                </tr>
+                <tr>
+                  <td><a href="#summary">Dashboard parity</a></td>
+                  <td>Every legacy dashboard panel has a successor on the new source.</td>
+                  <td>Reviewed</td>
+                  <td>Two panels renamed; bookmarks may dangle.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="compare" class="ui-report__section" aria-labelledby="compare-head">
+        <h2 class="ui-report__section-head" id="compare-head">Before / after</h2>
+        <aside class="ui-report__decision ui-keep" aria-labelledby="decision-title">
+          <p class="ui-report__decision-kicker">Decision</p>
+          <h3 class="ui-report__decision-title" id="decision-title">Promote the new pipeline</h3>
+          <p class="ui-report__decision-body">
+            Verified throughput and error-rate evidence support promotion; the open follow-ups are
+            tracked in the actions list and do not block the cutover.
+          </p>
+          <dl class="ui-report__decision-grid">
+            <div class="ui-report__decision-item">
+              <dt class="ui-report__decision-label">Basis</dt>
+              <dd class="ui-report__decision-value">
+                Twelve verification checks passed; the ledger lists each with its caveat.
+              </dd>
+            </div>
+            <div class="ui-report__decision-item">
+              <dt class="ui-report__decision-label">Recheck</dt>
+              <dd class="ui-report__decision-value">
+                <time datetime="2026-07-01">Jul 1, 2026</time>
+              </dd>
+            </div>
+          </dl>
+        </aside>
+        <div class="ui-compare ui-compare--2up">
+          <div class="ui-compare__col">
+            <p class="ui-compare__head">Legacy pipeline</p>
+            <p>
+              Nine consumers, hand-tuned batching, and a backlog alarm that fired weekly. Failover
+              required a coordinated runbook with two manual approvals.
+            </p>
+          </div>
+          <div class="ui-compare__col">
+            <p class="ui-compare__head">Migrated pipeline</p>
+            <p>
+              Three consumers behind one scheduler, derived alarm thresholds, and a rehearsed
+              automatic failover. The compare grid you are reading must stay a grid in print.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="actions" class="ui-report__section" aria-labelledby="actions-head">
+        <h2 class="ui-report__section-head" id="actions-head">Follow-up actions</h2>
+        <div class="ui-report__actions" aria-label="Follow-up actions">
+          <div class="ui-report__action">
+            <div>
+              <p class="ui-report__action-title">Decommission the legacy consumers.</p>
+              <p class="ui-report__action-owner">Owner: platform lead</p>
+              <p class="ui-report__action-due">
+                Due: <time datetime="2026-07-01">Jul 1, 2026</time>
+              </p>
+              <p class="ui-report__action-criteria">
+                Success criteria: legacy consumer group deleted and its dashboards archived.
+              </p>
+            </div>
+            <span class="ui-report__action-status">Open</span>
+          </div>
+          <div class="ui-report__action">
+            <div>
+              <p class="ui-report__action-title">Run the second-region failover rehearsal.</p>
+              <p class="ui-report__action-owner">Owner: reliability rotation</p>
+              <p class="ui-report__action-due">
+                Due: <time datetime="2026-06-24">Jun 24, 2026</time>
+              </p>
+              <p class="ui-report__action-criteria">
+                Success criteria: failover under 120 seconds with zero loss, observed by on-call.
+              </p>
+            </div>
+            <span class="ui-report__action-status">Open</span>
+          </div>
+          <div class="ui-report__action">
+            <div>
+              <p class="ui-report__action-title">Close the archive-tier legal review.</p>
+              <p class="ui-report__action-owner">Owner: data governance</p>
+              <p class="ui-report__action-due">
+                Due: <time datetime="2026-06-30">Jun 30, 2026</time>
+              </p>
+              <p class="ui-report__action-criteria">
+                Success criteria: retention exception signed off or the tier re-configured.
+              </p>
+            </div>
+            <span class="ui-report__action-status">Open</span>
+          </div>
+          <div class="ui-report__action">
+            <div>
+              <p class="ui-report__action-title">Archive this report with its PDF export.</p>
+              <p class="ui-report__action-owner">Owner: report author</p>
+              <p class="ui-report__action-due">
+                Due: <time datetime="2026-06-12">Jun 12, 2026</time>
+              </p>
+              <p class="ui-report__action-criteria">
+                Success criteria: HTML and PDF stored together with the verification data export.
+              </p>
+            </div>
+            <span class="ui-report__action-status">Ready</span>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="finding-2"
+        class="ui-report__section"
+        aria-labelledby="finding-2-head"
+        data-trap="prose-figure"
+      >
+        <h2 class="ui-report__section-head" id="finding-2-head">Finding: retry amplification</h2>
+        <p>
+          Retry amplification was the second effect under review. The legacy consumers retried
+          failed batches whole, so a single poisoned message re-enqueued its entire batch and the
+          batch size itself grew under pressure, which is the classic shape of a retry storm. The
+          migrated pipeline retries at message granularity with jittered backoff and a poison queue
+          after three attempts. During the forced-failure rehearsal the amplification factor — the
+          ratio of delivered attempts to distinct messages — peaked at one point zero eight against
+          a legacy baseline of two point six under the same fault. The poison queue collected the
+          seeded failures within one scheduling window and nothing else, which is the acceptance
+          criterion the runbook states. As with the previous section, this paragraph is long on
+          purpose so that the figure below it sits hard against a page boundary somewhere in the
+          printed artifact, whatever the exact font rasterisation does to line counts on the page.
+        </p>
+        <figure class="ui-report__figure" role="group" aria-labelledby="finding-2-caption">
+          <figcaption class="ui-report__caption" id="finding-2-caption">
+            Fig 3 — delivered attempts per distinct message under fault.
+          </figcaption>
+          <div style="min-block-size: 320px">
+            <svg
+              viewBox="0 0 560 96"
+              width="560"
+              height="96"
+              role="img"
+              aria-label="Retry amplification"
+            >
+              <title>Retry amplification</title>
+              <rect
+                x="8"
+                y="16"
+                width="500"
+                height="24"
+                fill="var(--panel-soft)"
+                stroke="var(--line)"
+              ></rect>
+              <rect
+                x="8"
+                y="56"
+                width="60"
+                height="24"
+                fill="var(--panel-soft)"
+                stroke="var(--line)"
+              ></rect>
+            </svg>
+          </div>
+        </figure>
+      </section>
+
+      <section
+        id="finding-3"
+        class="ui-report__section"
+        aria-labelledby="finding-3-head"
+        data-trap="prose-figure"
+      >
+        <h2 class="ui-report__section-head" id="finding-3-head">Finding: cold-start latency</h2>
+        <p>
+          Cold-start latency closed the verification set. A consumer that restarts must rebuild its
+          assignment state before it accepts work, and in the legacy system that rebuild walked the
+          full partition metadata on every start, which put the median restart at forty seconds and
+          the tail past three minutes during deploys. The migrated scheduler snapshots assignment
+          state to the coordination store every window, so a restarting consumer resumes from the
+          last snapshot and reconciles only the delta. Across forty observed restarts the median
+          came down to six seconds and the worst case to nineteen, both inside the deploy budget.
+          The remaining tail is dominated by container image pulls rather than by state rebuild,
+          which moves the optimisation conversation to the platform layer and out of this report's
+          scope. One more deliberately long paragraph closes the set, holding the same prose-then-
+          figure geometry against whichever page boundary remains, so the overprint trap covers the
+          full span of the printed document rather than a single lucky offset.
+        </p>
+        <figure class="ui-report__figure" role="group" aria-labelledby="finding-3-caption">
+          <figcaption class="ui-report__caption" id="finding-3-caption">
+            Fig 4 — consumer restart-to-accepting-work, before and after.
+          </figcaption>
+          <div style="min-block-size: 320px">
+            <svg
+              viewBox="0 0 560 96"
+              width="560"
+              height="96"
+              role="img"
+              aria-label="Cold-start latency"
+            >
+              <title>Cold-start latency</title>
+              <rect
+                x="8"
+                y="16"
+                width="320"
+                height="24"
+                fill="var(--panel-soft)"
+                stroke="var(--line)"
+              ></rect>
+              <rect
+                x="8"
+                y="56"
+                width="100"
+                height="24"
+                fill="var(--panel-soft)"
+                stroke="var(--line)"
+              ></rect>
+            </svg>
+          </div>
+        </figure>
+      </section>
+    </main>
+
+    <script type="module">
+      // A real relative module import — the thing file:// CORS silently kills.
+      import { thresholdPath } from '../../annotations/index.js';
+
+      const mount = document.getElementById('module-figure');
+      const path = thresholdPath({ x1: 0, y1: 96, x2: 560, y2: 96 });
+      mount.innerHTML =
+        '<svg viewBox="0 0 560 128" width="560" height="128" role="img" aria-label="Partition throughput">' +
+        '<title>Partition throughput</title>' +
+        '<rect x="8" y="40" width="120" height="72" fill="var(--panel-soft)" stroke="var(--line)"></rect>' +
+        '<rect x="148" y="24" width="120" height="88" fill="var(--panel-soft)" stroke="var(--line)"></rect>' +
+        '<rect x="288" y="12" width="120" height="100" fill="var(--panel-soft)" stroke="var(--line)"></rect>' +
+        `<path d="${path}" stroke="var(--line-strong)" stroke-dasharray="4 3" fill="none"></path>` +
+        '</svg>';
+
+      // Extractable-text sentinel: proves in the PDF itself that the module
+      // executed (SVG text may be outlined by the print engine; a <p> cannot).
+      const sentinel = document.createElement('p');
+      sentinel.className = 'ui-report__caption';
+      sentinel.textContent = 'module-figure-rendered';
+      mount.after(sentinel);
+
+      document.documentElement.setAttribute('data-report-ready', '1');
+    </script>
+  </body>
+</html>
