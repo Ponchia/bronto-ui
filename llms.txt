@@ -583,10 +583,10 @@ Canonical report skeleton:
     <p class="ui-eyebrow">Report</p>
     <h1 class="ui-report__title">System review</h1>
     <p class="ui-report__subtitle">Static HTML, Chromium PDF-ready.</p>
-    <ol class="ui-report__meta">
+    <ul class="ui-report__meta">
       <li>2026-06-01</li>
       <li>Generated</li>
-    </ol>
+    </ul>
   </header>
   <section class="ui-report__section">
     <h2 class="ui-report__section-head">Executive summary</h2>

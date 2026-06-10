@@ -59,8 +59,11 @@ sanitize that content before rendering it and do not initialize
 `css/report.css` gives you the document grammar (covers, sections, findings,
 evidence). The _content_ inside those sections is where the rest of the
 analytical layer earns its place. Each one is an opt-in import that stays out of
-the default bundle — add the leaves a given report actually needs, or pull the
-whole set with `@ponchia/ui/css/analytical.css`. Reach for:
+the default bundle — add the leaves a given report actually needs.
+`@ponchia/ui/css/analytical.css` is a convenience roll-up of the **seven
+figure-layer leaves only** (annotations, legends, marks, connectors, spotlight,
+crosshair, selection) — sources, generated, state, and the prose/evidence
+leaves below are NOT in it and must be linked individually. Reach for:
 
 | Layer | Import | Reach for it when… |
 | --- | --- | --- |
@@ -72,6 +75,16 @@ whole set with `@ponchia/ui/css/analytical.css`. Reach for:
 | **D2 theme** (`@ponchia/ui/d2`) | _(JS/JSON, no CSS)_ | The report embeds a [D2](https://d2lang.com) diagram and you want it on-brand. Resolved theme-override slots (monochrome base + one rationed accent) projected from the same tokens; annotate the rendered SVG. See [d2.md](./d2.md). |
 | **Generated-content trust** (`.ui-generated`, `.ui-origin-label`, `.ui-reasoning`, `.ui-tool-log`) | `css/generated.css` | The report (or a section of it) is AI/system-authored and should _say so_ — an origin label plus quiet, collapsible reasoning / tool-call logs. Pairs with the sources layer. See [generated.md](./generated.md). |
 | **Lifecycle / system state** (`.ui-state`, `.ui-syncbar`) | `css/state.css` | A status report needs to show the state a thing is in — saving / queued / stale / conflict / reviewed — as a labelled object, not a bare coloured dot. See [state.md](./state.md). |
+| **Spark** (`.ui-spark*`) | `css/spark.css` | A trend belongs _inside a sentence or table cell_ — a word-sized inline microchart, the inline counterpart to `ui-delta`/`ui-num`/`ui-stat`. See [spark.md](./spark.md). |
+| **Bullet graph** (`.ui-bullet*`) | `css/bullet.css` | A measure needs "inside budget? vs target?" at a glance — the canonical SLO / error-budget figure that `ui-meter` structurally cannot express. See [bullet.md](./bullet.md). |
+| **Diff** (`.ui-diff*`) | `css/diff.css` | The report shows what _changed_ — code review, changelogs, version history, config diffs. Marks call out a sentence; diff calls out a line. See [diff.md](./diff.md). |
+| **Code** (`.ui-code*`) | `css/code.css` | Code-as-evidence: fenced snippets with an optional gutter and add/remove/highlight line states, sharing diff's change vocabulary. On-brand syntax colours via the [Shiki theme](./code.md). See [code.md](./code.md). |
+| **Sidenotes** (`.ui-sidenote`, `.ui-marginnote`) | `css/sidenote.css` | Evidence, caveats, and provenance asides that belong _beside_ the prose, Tufte-style, instead of interrupting it. See [sidenote.md](./sidenote.md). |
+| **Textref** (`.ui-textref`) | `css/textref.css` | A citation should deep-link to the _exact quoted sentence_ (URL text fragments, on-brand `::target-text` paint) — the inline counterpart to the source-card layer. See [textref.md](./textref.md). |
+| **Term / glossary** (`.ui-term`, `.ui-glossary`) | `css/term.css` | Jargon should explain itself inline (native popover definition) and gather into an end-of-report glossary. See [term.md](./term.md). |
+| **Contents rail** (`.ui-toc*`) | `css/toc.css` | A long report needs a sticky table of contents with the in-view section highlighted; degrades to a plain anchored list with zero JS. Distinct from the in-flow `ui-report__toc` block. See [toc.md](./toc.md). |
+| **Tree** (`.ui-tree*`) | `css/tree.css` | Nested structure — file trees, object graphs, nested provenance — as a depth-indented outline on native `<details>`. See [tree.md](./tree.md). |
+| **Dot surfaces** (`.ui-waffle`, `.ui-activity`, `.ui-level`, `.ui-dotgauge`, `.ui-readout`, …) | _(in the core bundle)_ | A count, rate, level, or gauge wants the library's signature dot-matrix expression — waffle units, activity strips, dot gauges, readouts. See [dots.md](./dots.md). |
 
 These compose with the report-native primitives already called out in
 [Composition rules](#composition-rules): `ui-statgrid`, `ui-alert`, `ui-table`,
@@ -876,6 +889,14 @@ tooling.
   (Puppeteer ships its own). The repo's `scripts/render-pdf.mjs` is a working
   copy of this (`npm run report:pdf -- report.html`); it is a dev/example
   helper, not part of the published API — bronto does not own rendering.
+
+  **If the report renders figures from `<script type="module">`, do not load
+  it over `file://`** — browsers block relative module imports from `file://`
+  (CORS, opaque `null` origin), so the figures silently render empty in the
+  PDF. Serve the report over HTTP first; `render-pdf.mjs --serve` does this
+  (loopback server + load over `http://127.0.0.1`), waits for the report's
+  `data-report-ready` signal if it sets one, and logs page errors instead of
+  swallowing them.
 - **As a service / from another language:** run Chromium-as-a-service
   (e.g. **Gotenberg**'s `POST /forms/chromium/convert/html`, or a hosted CDP
   endpoint) and POST the HTML + the `dist/css/*` assets. A Python/Go/any host

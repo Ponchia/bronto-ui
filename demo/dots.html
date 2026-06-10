@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — dot surfaces specimen</title>
+    <meta
+      name="description"
+      content="Data-bound dot-matrix surfaces (waffle, activity, level, dotgauge, readout, halftone) for @ponchia/ui."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/spark.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .dots-demo {
+        margin: 0 auto;
+        max-width: 60ch;
+        padding: 2rem 1rem 4rem;
+      }
+
+      .dots-demo figure {
+        margin: 0 0 2rem;
+      }
+
+      .dots-demo figcaption {
+        color: var(--text-dim);
+        font-family: var(--mono);
+        font-size: var(--text-2xs);
+        margin-block-end: 0.5rem;
+      }
+
+      .dots-demo .halftone-subject {
+        background: linear-gradient(135deg, var(--text) 0%, var(--panel-soft) 100%);
+        block-size: 6rem;
+        inline-size: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="dots-demo">
+      <h1 class="ui-display">Dot surfaces</h1>
+      <p class="ui-prose">
+        The data-bound dot family: the host computes the values and lights the cells; the dots only
+        paint. Every figure carries its exact value in the accessible name.
+      </p>
+
+      <figure>
+        <figcaption>ui-waffle — 73 of 100 quota met</figcaption>
+        <div
+          id="waffle"
+          class="ui-waffle"
+          role="img"
+          aria-label="73 of 100 quota met"
+          style="--waffle-cols: 10"
+        ></div>
+      </figure>
+
+      <figure>
+        <figcaption>ui-activity — commits, last 12 weeks</figcaption>
+        <div id="activity" class="ui-activity" role="img" aria-label="commits, last 12 weeks"></div>
+      </figure>
+
+      <figure>
+        <figcaption>ui-level — CPU 82%, high (warn tone)</figcaption>
+        <div
+          id="level"
+          class="ui-level ui-level--warn"
+          role="img"
+          aria-label="CPU 82 percent, high"
+        ></div>
+      </figure>
+
+      <figure>
+        <figcaption>ui-dotgauge — health 64%</figcaption>
+        <div class="ui-dotgauge" role="img" aria-label="Health 64 percent" style="--v: 0.64"></div>
+      </figure>
+
+      <figure>
+        <figcaption>ui-readout — rendered by renderReadout()</figcaption>
+        <div id="readout"></div>
+      </figure>
+
+      <figure>
+        <figcaption>ui-spark--dots — inline dataword, dot bars</figcaption>
+        <p>
+          Deploy frequency
+          <span
+            class="ui-spark ui-spark--dots"
+            role="img"
+            aria-label="Deploys per week: 2, 4, 3, 6, 5"
+          >
+            <i class="ui-spark__bar" style="--v: 0.33"></i>
+            <i class="ui-spark__bar" style="--v: 0.66"></i>
+            <i class="ui-spark__bar" style="--v: 0.5"></i>
+            <i class="ui-spark__bar ui-spark__bar--accent" style="--v: 1"></i>
+            <i class="ui-spark__bar" style="--v: 0.83"></i>
+          </span>
+          is trending up.
+        </p>
+      </figure>
+
+      <figure>
+        <figcaption>ui-halftone — host content under the dot screen</figcaption>
+        <div class="ui-halftone" aria-hidden="true">
+          <div class="halftone-subject"></div>
+        </div>
+      </figure>
+
+      <figure>
+        <figcaption>ui-dotfit — container-responsive density</figcaption>
+        <div class="ui-dotfit">
+          <div class="ui-waffle" role="img" aria-label="9 of 20 done" style="--waffle-cols: 10">
+            <i class="is-on"></i><i class="is-on"></i><i class="is-on"></i><i class="is-on"></i
+            ><i class="is-on"></i><i class="is-on"></i><i class="is-on"></i><i class="is-on"></i
+            ><i class="is-on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+            ><i></i><i></i>
+          </div>
+        </div>
+      </figure>
+    </main>
+
+    <script type="module">
+      import { renderReadout } from '../glyphs/glyphs.js';
+
+      // Host-computed data → lit cells. The surfaces only paint.
+      const waffle = document.getElementById('waffle');
+      waffle.innerHTML = Array.from(
+        { length: 100 },
+        (_, i) => `<i${i < 73 ? ' class="is-on"' : ''}></i>`,
+      ).join('');
+
+      const activity = document.getElementById('activity');
+      // 12 weeks × 7 days, deterministic pseudo-data binned to data-level 0..4.
+      activity.innerHTML = Array.from({ length: 84 }, (_, i) => {
+        const level = (i * 7 + (i % 13)) % 23 < 9 ? (i * 5) % 5 : 0;
+        return `<i data-level="${level}"></i>`;
+      }).join('');
+
+      const level = document.getElementById('level');
+      level.innerHTML = Array.from(
+        { length: 10 },
+        (_, i) => `<i${i < 8 ? ' class="is-on"' : ''}></i>`,
+      ).join('');
+
+      document.getElementById('readout').innerHTML = renderReadout('12:48', {
+        label: '12 minutes 48 seconds remaining',
+      });
+
+      document.documentElement.setAttribute('data-demo-ready', '1');
+    </script>
+  </body>
+</html>

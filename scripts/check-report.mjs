@@ -16,93 +16,95 @@ import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
 import { cls } from '../classes/index.js';
 import { reportAndExit } from './lib/gate-report.mjs';
+import { shippedDocs } from './lib/shipped-docs.mjs';
+import { CORE_BUNDLE, optInLeaves } from './lib/css-leaves.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const errors = [];
 const valid = new Set(Object.values(cls));
 
 const read = (rel) => readFileSync(resolve(root, rel), 'utf8');
 
+// The unknown-class scan covers EVERY shipped doc and EVERY demo page by
+// construction (derived, not hand-listed — the hand list had already drifted
+// behind the post-0.6.0 leaves). The only carve-outs are docs whose job is to
+// name classes that deliberately do not exist:
+const CLASS_SCAN_EXCLUDES = new Set([
+  'CHANGELOG.md', // historical: references removed classes (e.g. ui-chart)
+  'docs/frontier-primitives.md', // names candidate primitives by design (ui-job, ui-interval, …)
+]);
+
+const allDemos = readdirSync(resolve(root, 'demo'))
+  .filter((f) => f.endsWith('.html'))
+  .map((f) => `demo/${f}`);
+
 const classSources = [
-  'docs/reporting.md',
-  'docs/annotations.md',
-  'docs/legends.md',
-  'docs/marks.md',
-  'docs/connectors.md',
-  'docs/spotlight.md',
-  'docs/crosshair.md',
-  'docs/selection.md',
-  'docs/sources.md',
-  'docs/state.md',
-  'docs/generated.md',
-  'docs/workbench.md',
-  'docs/command.md',
-  'llms.txt',
-  'demo/report.html',
-  'demo/report-standalone.html',
-  'demo/annotations.html',
-  'demo/legends.html',
-  'demo/marks.html',
-  'demo/connectors.html',
-  'demo/spotlight.html',
-  'demo/crosshair.html',
-  'demo/selection.html',
-  'demo/sources.html',
-  'demo/state.html',
-  'demo/generated.html',
-  'demo/workbench.html',
-  'demo/command.html',
+  ...shippedDocs(pkg).filter((rel) => !CLASS_SCAN_EXCLUDES.has(rel)),
+  ...allDemos,
   ...walk('examples/report-static').filter((p) => /\.(html|js|css|md)$/.test(p)),
 ];
+
+// Parts-only namespaces (classes.json group keys with base:null, e.g.
+// ui-themetoggle) are honest namespace mentions even though no standalone
+// base class exists — the generated reference headings name them.
+const classesJson = JSON.parse(read('classes/classes.json'));
+const groupNames = new Set(Object.keys(classesJson.groups ?? {}));
+
+// Standard CSS generic font families that happen to share the ui- prefix.
+const CSS_FONT_KEYWORDS = new Set(['ui-monospace', 'ui-sans-serif', 'ui-serif', 'ui-rounded']);
+
+// Pedagogical anti-examples: classes the docs name precisely BECAUSE they do
+// not exist ("…silently no-ops", "there is deliberately no …"). Anything
+// added here must appear in that negative framing.
+const KNOWN_NEGATIVE = new Set([
+  'ui-field--invalid', // reference.md: "There is deliberately no ui-field--invalid class."
+  'ui-prose--dense', // usage.md teaches that hand-invented modifiers no-op
+  'ui-table--compact',
+  'ui-dot--muted',
+  'ui-meter--muted',
+  'ui-delta--pos',
+]);
 
 for (const rel of classSources) {
   const src = read(rel);
   for (const m of src.matchAll(/(?<![\w-])ui-[a-z][\w-]*/g)) {
     const name = m[0];
-    if (!valid.has(name)) errors.push(`${rel}: unknown ui-* class "${name}"`);
+    if (valid.has(name) || groupNames.has(name)) continue;
+    if (CSS_FONT_KEYWORDS.has(name) || KNOWN_NEGATIVE.has(name)) continue;
+    // `ui-src--*`-style family wildcards surface as a trailing dash; they are
+    // fine as long as the family actually exists.
+    if (name.endsWith('-')) {
+      const family = name.replace(/-+$/, '-');
+      if ([...valid].some((c) => c.startsWith(family))) continue;
+    }
+    errors.push(`${rel}: unknown ui-* class "${name}"`);
   }
 }
 
 const core = read('css/core.css');
-// Opt-in leaves that core.css must NEVER @import — [file, human-noun]. A loop,
-// not 13 hand-rolled `if`s, so adding a 14th opt-in layer is one array entry and
-// the three places this list used to be spelled out can't drift. (audit Q11.)
-const OPTIN_LAYERS = [
-  ['report', 'report'],
-  ['annotations', 'annotation'],
-  ['legend', 'legend'],
-  ['marks', 'marks'],
-  ['connectors', 'connector'],
-  ['spotlight', 'spotlight'],
-  ['crosshair', 'crosshair'],
-  ['selection', 'selection'],
-  ['sources', 'sources'],
-  ['state', 'state'],
-  ['generated', 'generated'],
-  ['workbench', 'workbench'],
-  ['command', 'command'],
-];
-for (const [file, noun] of OPTIN_LAYERS) {
-  if (new RegExp(`\\b${file}\\.css`).test(core)) {
-    errors.push(`css/core.css imports ${file}.css — ${noun} CSS must stay opt-in`);
+// The default bundle is a closed set: every @import in core.css must be in
+// CORE_BUNDLE (growing the default bundle is a deliberate registry edit), and
+// every other exported leaf must never be imported — opt-in by contract.
+// Both directions derive from package.json exports via lib/css-leaves.mjs.
+for (const m of core.matchAll(/@import\s+url\('\.\/([a-z-]+)\.css'\)/g)) {
+  if (!CORE_BUNDLE.has(m[1])) {
+    errors.push(
+      `css/core.css imports ${m[1]}.css which is not in CORE_BUNDLE — ` +
+        'either it is an opt-in leaf (must stay out of core) or the default bundle ' +
+        'is deliberately growing (add it to scripts/lib/css-leaves.mjs)',
+    );
+  }
+}
+for (const leaf of optInLeaves(pkg)) {
+  if (new RegExp(`\\b${leaf}\\.css`).test(core)) {
+    errors.push(`css/core.css imports ${leaf}.css — opt-in CSS must stay opt-in`);
   }
 }
 
+// No demo page or report example may depend on remote executable/media assets.
 const htmlSources = [
-  'demo/report.html',
-  'demo/report-standalone.html',
-  'demo/annotations.html',
-  'demo/legends.html',
-  'demo/marks.html',
-  'demo/connectors.html',
-  'demo/spotlight.html',
-  'demo/crosshair.html',
-  'demo/selection.html',
-  'demo/sources.html',
-  'demo/state.html',
-  'demo/generated.html',
-  'demo/workbench.html',
-  'demo/command.html',
+  ...allDemos,
   ...walk('examples/report-static').filter((p) => /\.html$/.test(p)),
 ];
 for (const rel of htmlSources) {
@@ -125,35 +127,21 @@ for (const rel of reportHtmlSources) {
   checkReportShape(rel, read(rel));
 }
 
+// Raw chromatic literals in inline report styling — scan the same derived
+// doc + demo surface as the class scan, plus a carve-out for docs whose JOB
+// is to show literal colours (theming/token/diagram-theme recipes).
+const RAW_COLOR_EXCLUDES = new Set([
+  'CHANGELOG.md',
+  'docs/theming.md', // re-skin recipe shows literal oklch()/hex by design
+  'docs/contrast.md', // contrast tables discuss explicit colour values
+  'docs/mermaid.md', // resolved-hex theme maps are the whole point
+  'docs/d2.md',
+  'docs/vega.md',
+]);
 const rawColor = /#[0-9a-fA-F]{3,8}\b|\b(?:rgba?|hsla?|oklch|oklab|lab|lch|hwb|color)\(/i;
 for (const rel of [
-  'docs/reporting.md',
-  'docs/annotations.md',
-  'docs/legends.md',
-  'docs/marks.md',
-  'docs/connectors.md',
-  'docs/spotlight.md',
-  'docs/crosshair.md',
-  'docs/selection.md',
-  'docs/sources.md',
-  'docs/state.md',
-  'docs/generated.md',
-  'docs/workbench.md',
-  'docs/command.md',
-  'demo/report.html',
-  'demo/report-standalone.html',
-  'demo/annotations.html',
-  'demo/legends.html',
-  'demo/marks.html',
-  'demo/connectors.html',
-  'demo/spotlight.html',
-  'demo/crosshair.html',
-  'demo/selection.html',
-  'demo/sources.html',
-  'demo/state.html',
-  'demo/generated.html',
-  'demo/workbench.html',
-  'demo/command.html',
+  ...shippedDocs(pkg).filter((rel) => !RAW_COLOR_EXCLUDES.has(rel)),
+  ...allDemos,
   ...walk('examples/report-static'),
 ]) {
   if (!/\.(md|html|css|js)$/.test(rel)) continue;

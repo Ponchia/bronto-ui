@@ -5,6 +5,77 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased — 0.6.6
+
+Consolidation pass from the 2026-06-10 multi-agent audit: two real PDF-export
+defects fixed and gated, the reporting hub routed to every shipped leaf, and
+the drift-prone hand lists in the gates derived from registries. No breaking
+changes, no `MIGRATIONS.json` entry.
+
+### Fixed
+
+- **Print overprint (the big one)** — Chromium-class print engines restart
+  grid tracks at each page break, printing new rows over the running content.
+  `css/report.css` `@media print` now demotes the vertical document-flow
+  wrappers (`.ui-report`, `__section`, `__figure`, `__actions`,
+  `.ui-evidence-ledger`) to block flow with margin-emulated gaps; the column
+  grids (`.ui-compare`, `.ui-meter__row`, `.ui-report__decision-item`,
+  `.ui-evidence-grid`) keep their tracks. Gated by a promoted multi-page
+  fixture (`test/e2e/_report-print.fixture.html`) whose PDF is parsed with
+  pdfjs-dist and asserted overlap-free (`test/e2e/report-print.spec.mjs`).
+- **Silent module-figure drop in PDFs** — reports that render figures from
+  relative `<script type="module">` imports lose them over `file://` (CORS).
+  `scripts/render-pdf.mjs` gains `--serve` (loopback HTTP + the report's
+  `data-report-ready` signal), forwards page/console errors to stderr, and
+  warns when a module report is rendered over `file://`.
+- **Demo class drift** — `demo/index.html` still used the renamed
+  `ui-inspector__header` (now `__head`), and `demo/version-history-report.html`
+  carried a never-registered cover-mark class; both were silent no-ops. The
+  generated reference's analytical-leaves note now names `ui-annotation`
+  (singular, the real class).
+- `scripts/smoke-example.mjs` imports Chromium from `@playwright/test` (the
+  installed devDependency) instead of the hoisting-dependent bare
+  `playwright` specifier.
+
+### Added
+
+- **Reporting hub routing** — `docs/reporting.md`'s analytical-toolbox table
+  now routes ALL report-relevant leaves (spark, bullet, diff, code, sidenote,
+  textref, term, glossary, contents rail, tree, dot surfaces) and states
+  precisely what `analytical.css` does and does not bundle. New convention in
+  CONTRIBUTING: a new report-relevant leaf ships in the same PR as its
+  routing row.
+- **`npm run release:prep -- X.Y.Z`** — one-shot release prep: version + lock
+  bump, CHANGELOG heading dating, and re-pinning every `@ponchia/ui@X.Y.Z`
+  literal across the gated shipped docs AND the ungated `demo/*.html` pages
+  (which had already drifted a version behind).
+- **Cross-engine e2e on merge-to-main** — pushes to `main` that touch
+  engine-sensitive surfaces (`css/`, `dist/`, `behaviors/`, `fonts/`,
+  `tokens/`, `test/e2e/`, the Playwright config) now run the firefox/webkit
+  pass too, instead of deferring it to the release tag.
+- **`demo/dots.html`** — the dot data surfaces (waffle, activity, level,
+  dotgauge, readout, spark--dots, halftone, dotfit) get a specimen page,
+  axe/guard coverage in `demos.spec`, and render-geometry boundingBox
+  assertions (their only possible executable gate — they ship no JS).
+- jsdom coverage for `initDisabledGuard` (activation blocking, Tab
+  pass-through, root scoping, cleanup).
+
+### Changed
+
+- `check:report` and `check:pack` derive their scan/entrypoint lists from
+  registries (`package.json` `files`/`exports` via `scripts/lib/css-leaves.mjs`
+  + `lib/shipped-docs.mjs`) instead of hand lists that had drifted behind the
+  post-0.6.0 leaves. The broadened scan immediately caught the demo/reference
+  class defects above. `core.css` imports are now closed over an explicit
+  CORE_BUNDLE allowlist in both directions.
+- `ROADMAP.md` / `docs/frontier-primitives.md` reconciled to 0.6.5: the
+  report/provenance/explanation lane is named the proven core; ui-job,
+  ui-conflict, ui-splitter, the tree roving-focus kernel, and
+  command/workbench follow-ons are explicitly dormant until a real app
+  consumer exists; the 2026-06-09 scout keeps (ui-interval, ui-clamp,
+  ui-highlights) are recorded as report-lane candidates gated behind the
+  routing hub. The adoption stance is stated in ROADMAP.
+
 ## 0.6.5 — 2026-06-09
 
 Patch release: the source-backref behavior, the report decision/evidence

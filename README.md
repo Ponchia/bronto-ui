@@ -22,9 +22,16 @@ SVG annotations, legends, leader-line connectors, a guided-focus spotlight, text
 marks, a colourblind-safe data-viz palette, and a static/PDF report grammar — for
 dashboards and LLM-authored reports.
 
-### [Live demo →](https://ponchia.github.io/bronto-ui/) &nbsp;·&nbsp; [Theme playground →](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)
+### [Live demo →](https://ponchia.github.io/bronto-ui/) &nbsp;·&nbsp; [Static report →](https://ponchia.github.io/bronto-ui/demo/report-standalone.html) &nbsp;·&nbsp; [Theme playground →](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)
 
 The demo is the kitchen sink — every component, light/dark, RTL, live theming.
+The static report is the differentiator in one file: a complete, no-build,
+no-JS, Chromium-PDF-ready report built from the report grammar.
+
+<p>
+  <img alt="A research report built with the @ponchia/ui report layer" src="https://raw.githubusercontent.com/Ponchia/bronto-ui/main/demo/_preview-report-research.png" width="49%" />
+  <img alt="The same report grammar printed to PDF" src="https://raw.githubusercontent.com/Ponchia/bronto-ui/main/demo/_preview-report-print.png" width="49%" />
+</p>
 
 ---
 
@@ -104,7 +111,7 @@ toast('Saved', { tone: 'success' });   // body-anchored stack, no markup needed
 
 Behaviors cover theme persistence, disclosure, dropdown menus, native-`<dialog>` modals/drawers, tabs, combobox, form validation, table sort, carousel, source backrefs and toasts — wired by `data-bronto-*` attributes.
 
-**5. (Optional) display glyphs — a 48-glyph dot-matrix icon set:**
+**5. (Optional) display glyphs — a 71-glyph dot-matrix icon set:**
 
 ```js
 import { renderGlyph } from '@ponchia/ui/glyphs';
@@ -128,7 +135,7 @@ Arrows, chevrons, check/close/plus/minus, search/menu/gear, info/warning/bell/lo
 - **Analytical & communication primitives** _(opt-in)_ — `@ponchia/ui/css/analytical.css`: SVG **annotations** (subject/connector/note), standalone **legends**/data-keys, text/evidence **marks**, leader-line **connectors** (+ a pure `@ponchia/ui/connectors` geometry kernel), a guided-focus **spotlight**, a **crosshair**/readout, and a cross-cutting **selection** vocabulary. Each owns its visual grammar + pure geometry and refuses scales/state/hit-testing — figures that explain themselves, not a chart engine. Plus standalone **`source`/provenance** (trust) and **lifecycle `state`** leaves.
 - **Reports** _(opt-in)_ — `@ponchia/ui/css/report.css`, a static/PDF-first report grammar for LLM-authored HTML: covers, decisions, claims, sections, severity-labelled findings, evidence packets, evidence ledgers, action registers, source-card bindings, figures, chart wrappers and print utilities.
 - **Motion & dots** — the dot-matrix motif kit: dot grid, status dots, dot loaders, the orbital spinner, matrix reveal — all reduced-motion aware.
-- **Glyphs** — `@ponchia/ui/glyphs`, a 48-glyph dot-matrix icon set on the `.ui-dotmatrix` primitive (display marks + crisp `solid` inline icons + one-node `.ui-icon` mask rendering).
+- **Glyphs** — `@ponchia/ui/glyphs`, a 71-glyph dot-matrix icon set on the `.ui-dotmatrix` primitive (display marks + crisp `solid` inline icons + one-node `.ui-icon` mask rendering).
 - **Colorways** _(opt-in)_ — `data-bronto-skin="amber-crt | phosphor-green | e-ink"`: a root-level recolour of the one accent (OKLCH, per-theme, contrast-gated), never in the default bundle.
 - **Data-viz** _(opt-in)_ — a colourblind-safe chart palette (`--chart-*` + dot-matrix pattern fills, resolved hex in `charts.json`), gated under simulated protan/deutan/tritan vision. Charts only, never UI chrome.
 

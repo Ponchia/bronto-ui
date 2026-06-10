@@ -32,15 +32,10 @@
           <li>Chromium PDF-ready</li>
         </ul>
 
-        <!-- Decorative off-chart annotation: a margin "pin" for vibe, not data. -->
-        <svg
-          class="ui-report__cover-mark"
-          width="440"
-          height="92"
-          viewBox="0 0 440 92"
-          aria-hidden="true"
-          focusable="false"
-        >
+        <!-- Decorative off-chart annotation: a margin "pin" for vibe, not data.
+             No wrapper class on purpose: the one previously here was never in
+             the registry, so it was a silent no-op. -->
+        <svg width="440" height="92" viewBox="0 0 440 92" aria-hidden="true" focusable="false">
           <g
             class="ui-annotation ui-annotation--circle ui-annotation--accent ui-annotation--draw"
             transform="translate(34, 58)"
