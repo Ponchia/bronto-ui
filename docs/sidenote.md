@@ -24,6 +24,10 @@ tradition — the channel for evidence, caveats, and provenance asides that belo
 2. **The margin gutter.** At the same breakpoint, give that container
    `padding-inline-end: calc(var(--sidenote-width) + var(--sidenote-gap))` so the
    floated note has room. `--sidenote-width` defaults to `12rem`.
+   **This is load-bearing, not cosmetic:** without the gutter the floated note
+   spills past the page edge — a horizontal-overflow defect any visual QA pass
+   will flag. In a constrained shell that cannot spare a gutter, use the
+   in-flow `ui-sidenote` (which collapses inline) rather than `ui-marginnote`.
 
 ```html
 <article style="counter-reset: ui-sidenote">
