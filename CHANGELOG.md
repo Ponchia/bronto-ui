@@ -5,6 +5,29 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased — 0.6.7
+
+### Fixed
+
+- **Sidenote gutter contract actually works now** — `--sidenote-width` /
+  `--sidenote-gap` are root-scoped instead of declared only on the notes.
+  The documented host wiring (container
+  `padding-inline-end: calc(var(--sidenote-width) + var(--sidenote-gap))`)
+  referenced vars an ancestor could never see, so the calc was invalid and
+  silently reserved NO gutter — the floated notes spilled past the page edge
+  (caught by a real report's visual QA). The demo now uses the documented
+  calc verbatim (it previously masked the bug with a hardcoded literal), and
+  a wide-viewport e2e asserts the contract: gutter resolves, float stays
+  on-page, no horizontal scroll. Overriding either knob on the container now
+  re-sizes the notes and the gutter together.
+
+### Changed
+
+- `docs/d2.md` tokenize recipe covers the full embedded-style surface
+  (`.color-*` / `.background-color-*` rules, not just `fill`/`stroke`) and
+  warns that `tooltip:`/`|md` shapes embed GitHub-Primer styling that
+  survives tokenization. `docs/sidenote.md` documents the root-scoped knobs.
+
 ## 0.6.6 — 2026-06-10
 
 Consolidation pass from the 2026-06-10 multi-agent audit: two real PDF-export

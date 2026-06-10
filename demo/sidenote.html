@@ -24,7 +24,10 @@
       @media (min-width: 60rem) {
         .sidenote-demo {
           margin-inline: auto 16rem;
-          padding-inline-end: 14rem;
+          /* The documented host contract, verbatim — exercises the root-scoped
+             knobs (a hardcoded literal here once masked that the calc resolved
+             to nothing on containers). */
+          padding-inline-end: calc(var(--sidenote-width) + var(--sidenote-gap));
         }
       }
     </style>

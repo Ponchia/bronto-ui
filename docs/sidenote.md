@@ -23,7 +23,9 @@ tradition — the channel for evidence, caveats, and provenance asides that belo
    (or a section) so the count starts at 1 there.
 2. **The margin gutter.** At the same breakpoint, give that container
    `padding-inline-end: calc(var(--sidenote-width) + var(--sidenote-gap))` so the
-   floated note has room. `--sidenote-width` defaults to `12rem`.
+   floated note has room. The two knobs are **root-scoped** (defaults `12rem` /
+   `2rem`) precisely so this calc resolves on any container — and overriding
+   either one on the container re-sizes the notes and the gutter together.
    **This is load-bearing, not cosmetic:** without the gutter the floated note
    spills past the page edge — a horizontal-overflow defect any visual QA pass
    will flag. In a constrained shell that cannot spare a gutter, use the
