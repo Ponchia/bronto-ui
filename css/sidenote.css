@@ -14,11 +14,21 @@
    same breakpoint. Place each note in the DOM right after its `.ui-sidenote__ref`.
    ========================================================================== */
 
-.ui-sidenote,
-.ui-marginnote {
+/* The two knobs are ROOT-scoped on purpose: the documented host contract has
+   the CONTAINER reserve the gutter with
+   `padding-inline-end: calc(var(--sidenote-width) + var(--sidenote-gap))`,
+   and custom properties do not flow upward — declared only on the notes,
+   that calc is invalid on any ancestor and silently resolves to NO gutter
+   (the floated notes then spill past the page edge). Root scope makes the
+   documented calc work anywhere, and overriding either var on the container
+   re-sizes the notes and the gutter together. */
+:root {
   --sidenote-width: 12rem;
   --sidenote-gap: 2rem;
+}
 
+.ui-sidenote,
+.ui-marginnote {
   border-inline-start: 2px solid var(--line);
   color: var(--text-dim);
   display: block;

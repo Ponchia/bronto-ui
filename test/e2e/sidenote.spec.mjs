@@ -31,3 +31,38 @@ test('narrow viewport keeps the note inline (not floated off-screen)', async ({ 
     .evaluate((el) => getComputedStyle(el).cssFloat);
   expect(float).toBe('none');
 });
+
+// The documented host contract must actually work: the container reserves the
+// gutter with `padding-inline-end: calc(var(--sidenote-width) +
+// var(--sidenote-gap))` (the demo uses that calc verbatim). The knobs are
+// ROOT-scoped for exactly this — when they were declared only on the notes,
+// the container calc was invalid, resolved to NO gutter, and the floated
+// notes spilled past the page edge (caught in a real report's visual QA).
+test('wide viewport: the documented gutter calc reserves room and the float stays on-page', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await open(page);
+
+  const gutter = await page
+    .locator('.sidenote-demo')
+    .evaluate((el) => parseFloat(getComputedStyle(el).paddingInlineEnd));
+  // 12rem + 2rem at 16px root = 224px; anything ~0 means the calc went invalid.
+  expect(gutter).toBeGreaterThan(200);
+
+  const note = page.locator('.ui-sidenote').first();
+  const float = await note.evaluate((el) => getComputedStyle(el).cssFloat);
+  expect(float).not.toBe('none');
+
+  const fits = await note.evaluate((el) => {
+    const rect = el.getBoundingClientRect();
+    return rect.right <= document.documentElement.clientWidth + 1;
+  });
+  expect(fits, 'floated note must not spill past the page edge').toBe(true);
+
+  // No page-level horizontal scroll either.
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(0);
+});
