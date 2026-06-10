@@ -34,6 +34,7 @@ const SHOWCASE = [
   'generated',
   'workbench',
   'command',
+  'dots',
   'report',
   'version-history-report',
 ];

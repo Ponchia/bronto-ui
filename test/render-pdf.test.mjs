@@ -6,13 +6,18 @@ import { parseArgs } from '../scripts/render-pdf.mjs';
 // returned -1, `outIdx + 1` was 0, and the filter silently dropped the first
 // input — so the documented `report:pdf -- report.html` rendered nothing.
 test('keeps the first input when --out is absent (the documented one-arg case)', () => {
-  assert.deepEqual(parseArgs(['report.html']), { outDir: null, inputs: ['report.html'] });
+  assert.deepEqual(parseArgs(['report.html']), {
+    outDir: null,
+    inputs: ['report.html'],
+    serve: false,
+  });
 });
 
 test('keeps every input when --out is absent', () => {
   assert.deepEqual(parseArgs(['a.html', 'b.html', 'c.html']), {
     outDir: null,
     inputs: ['a.html', 'b.html', 'c.html'],
+    serve: false,
   });
 });
 
@@ -20,6 +25,7 @@ test('parses --out and drops only its value, keeping all inputs', () => {
   assert.deepEqual(parseArgs(['a.html', 'b.html', '--out', 'pdfs']), {
     outDir: 'pdfs',
     inputs: ['a.html', 'b.html'],
+    serve: false,
   });
 });
 
@@ -27,10 +33,26 @@ test('parses --out placed before the inputs', () => {
   assert.deepEqual(parseArgs(['--out', 'pdfs', 'a.html', 'b.html']), {
     outDir: 'pdfs',
     inputs: ['a.html', 'b.html'],
+    serve: false,
   });
 });
 
 test('no inputs yields an empty list (caller prints usage and exits)', () => {
-  assert.deepEqual(parseArgs([]), { outDir: null, inputs: [] });
-  assert.deepEqual(parseArgs(['--out', 'pdfs']), { outDir: 'pdfs', inputs: [] });
+  assert.deepEqual(parseArgs([]), { outDir: null, inputs: [], serve: false });
+  assert.deepEqual(parseArgs(['--out', 'pdfs']), { outDir: 'pdfs', inputs: [], serve: false });
+});
+
+// --serve flips the transport without being mistaken for an input, wherever
+// it appears relative to --out and the input list.
+test('parses --serve and never treats it as an input', () => {
+  assert.deepEqual(parseArgs(['--serve', 'a.html']), {
+    outDir: null,
+    inputs: ['a.html'],
+    serve: true,
+  });
+  assert.deepEqual(parseArgs(['a.html', '--out', 'pdfs', '--serve']), {
+    outDir: 'pdfs',
+    inputs: ['a.html'],
+    serve: true,
+  });
 });

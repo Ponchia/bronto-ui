@@ -51,6 +51,10 @@ specifier).
 - Accessibility is a gate, not an afterthought: keyboard paths, both
   themes, RTL, forced-colors and reduced-motion are covered by the e2e
   axe suite. New interactive components need matching coverage.
+- **A new report-relevant CSS leaf ships in the same PR as its routing
+  row in `docs/reporting.md`** (the analytical-toolbox table). The hub is
+  what an LLM consumer actually reads; a leaf with its own doc but no
+  when-to-use row there is effectively undiscoverable.
 - Every breaking change gets a **BREAKING** entry in `CHANGELOG.md`
   with a migration note. The changelog is hand-curated — keep it
   narrative and accurate. The version in `package.json` must map to a
@@ -123,8 +127,10 @@ in one deliberate PR.
 Releases publish to npm and are tag-driven:
 
 ```bash
-# bump "version" in package.json + date the CHANGELOG section
-# (check:release enforces this), land on main, let CI go green:
+# bump version + lock, date the CHANGELOG section, re-pin doc/demo
+# version literals (check:release / check:versions enforce this):
+npm run release:prep -- X.Y.Z
+# land on main, let CI go green, then:
 git tag vX.Y.Z && git push origin vX.Y.Z
 ```
 

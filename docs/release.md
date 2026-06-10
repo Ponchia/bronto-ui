@@ -2,6 +2,10 @@
 
 ## Before Tagging
 
+0. Run `npm run release:prep -- X.Y.Z` — bumps `package.json` + lock, dates the
+   `## Unreleased — X.Y.Z` CHANGELOG heading, and re-pins every
+   `@ponchia/ui@X.Y.Z` literal across the gated shipped docs **and** the
+   ungated `demo/*.html` pages (the surface that drifted when this was manual).
 1. Reconcile `README.md`, `CHANGELOG.md`, `ROADMAP.md`, `.github/SECURITY.md`, and
    `docs/adr/*` against the version being released.
 2. Run `npm run check`, `npm test`, and the Playwright suite in the pinned

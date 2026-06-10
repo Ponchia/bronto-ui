@@ -6,13 +6,28 @@ without turning the project into a per-framework component suite.
 
 > **Source of truth is [`CHANGELOG.md`](CHANGELOG.md).** This file describes
 > direction; the changelog records what actually shipped. If they disagree, the
-> changelog wins. Last reconciled against `0.6.4`.
+> changelog wins. Last reconciled against `0.6.5`.
 >
 > **Strategic north star:** Bronto should not out-catalog generic UI kits. It
-> should own framework-agnostic primitives for interfaces that explain
-> themselves: explanation, provenance, relationships, command access, workbench
-> ergonomics, generated reports, and durable system state. See
-> [`docs/frontier-primitives.md`](docs/frontier-primitives.md).
+> owns framework-agnostic primitives for interfaces that explain themselves —
+> and its **proven core is the report lane: generated reports, explanation,
+> and provenance**, the one lane with a real consumer (LLM-authored
+> reports). Command access, workbench ergonomics, and durable system state
+> shipped their CSS cores and stay demand-gated behind a real app consumer.
+> See [`docs/frontier-primitives.md`](docs/frontier-primitives.md).
+>
+> **Adoption stance:** published openly on npm with provenance, but built and
+> maintained primarily for the maintainer's own agents and report tooling.
+> Public-surface fixes are kept correct (README, docs site, llms.txt);
+> marketing pushes are not a goal.
+
+## Shipped in 0.6.5
+
+- **`initSources` + report decision/evidence/claim grammar.** Optional
+  citation→source backref behavior, decision blocks, severity-labelled
+  findings, evidence packets/ledgers, claim status, and action
+  owner/due/criteria rows; plus `docs/package-contract.md` and release
+  hardening. See the CHANGELOG `0.6.5` section.
 
 ## Shipped in 0.6.4
 
@@ -132,9 +147,10 @@ without turning the project into a per-framework component suite.
 
 ## Later / under consideration
 
-- Date-time picker, command palette, tree-view, and richer data-table recipes:
-  only if real consumers need them, and preferably as documented recipes before
-  growing the core behavior layer.
+- Date-time picker and richer data-table recipes: only if real consumers need
+  them, and preferably as documented recipes before growing the core behavior
+  layer. (The command palette and tree outline shipped in 0.5.0/0.6.0; their
+  follow-ons are demand-gated — see `docs/frontier-primitives.md`.)
 - Optional font-weight strategy: WOFF2/subsetting or a fontless preset if the
   install-size report shows the current bundled TTF set is too heavy.
 

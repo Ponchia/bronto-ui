@@ -693,6 +693,33 @@
     min-block-size: auto;
   }
 
+  /* Chromium-class print engines overprint grid rows across page breaks
+     (fragmented grid tracks restart at the page top, on top of the running
+     content). Demote ONLY the vertical document-flow wrappers to block flow
+     and emulate their gap with margins; multi-column grids (.ui-compare,
+     .ui-meter__row, .ui-report__decision-item, .ui-evidence-grid, …) keep
+     grid — their content is break-inside-avoided as a unit instead. */
+  .ui-report,
+  .ui-report__section,
+  .ui-report__figure,
+  .ui-report__actions,
+  .ui-evidence-ledger {
+    display: block;
+  }
+
+  .ui-report > * + * {
+    margin-block-start: var(--report-gap);
+  }
+
+  .ui-report__section > * + * {
+    margin-block-start: var(--space-md);
+  }
+
+  .ui-report__figure > * + *,
+  .ui-evidence-ledger > * + * {
+    margin-block-start: var(--space-sm);
+  }
+
   .ui-report__cover,
   .ui-report__head,
   .ui-report__decision,
@@ -700,6 +727,7 @@
   .ui-report__finding,
   .ui-report__evidence,
   .ui-report__figure,
+  .ui-report__toc,
   .ui-claim,
   .ui-evidence-item,
   .ui-report__action {

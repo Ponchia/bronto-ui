@@ -49,3 +49,45 @@ test('standalone .ui-src pill renders a non-zero box', async ({ page }) => {
   expect(box.width, 'ui-src pill paints a non-zero width').toBeGreaterThan(0);
   expect(box.height, 'ui-src pill paints a non-zero height').toBeGreaterThan(0);
 });
+
+// The dot-matrix data surfaces are pure CSS with no behavior layer, so this
+// is their ONLY executable gate: each must lay out a real box with lit cells
+// (the validates-but-renders-nothing trap — a waffle whose <i> cells paint
+// 0×0 passes every structural gate and shows nothing).
+test('dot data surfaces paint non-zero boxes with lit cells', async ({ page }) => {
+  await page.goto('/demo/dots.html', { waitUntil: 'networkidle' });
+  await page.waitForSelector('html[data-demo-ready]');
+
+  for (const [selector, minCells] of [
+    ['.ui-waffle', 50],
+    ['.ui-activity', 50],
+    ['.ui-level', 5],
+  ]) {
+    const host = page.locator(selector).first();
+    await expect(host).toBeVisible();
+    const box = await host.boundingBox();
+    expect(box, `${selector} has a layout box`).not.toBeNull();
+    expect(box.width, `${selector} paints a non-zero width`).toBeGreaterThan(0);
+    expect(box.height, `${selector} paints a non-zero height`).toBeGreaterThan(0);
+
+    const cells = await host.locator('i').count();
+    expect(cells, `${selector} carries its data cells`).toBeGreaterThanOrEqual(minCells);
+    const cellBox = await host.locator('i').first().boundingBox();
+    expect(cellBox, `${selector} cell has a layout box`).not.toBeNull();
+    expect(cellBox.width, `${selector} cell paints`).toBeGreaterThan(0);
+  }
+
+  // The radial gauge is a single element painted from --v.
+  const gauge = page.locator('.ui-dotgauge').first();
+  const gaugeBox = await gauge.boundingBox();
+  expect(gaugeBox, 'dotgauge has a layout box').not.toBeNull();
+  expect(gaugeBox.width, 'dotgauge paints a non-zero width').toBeGreaterThan(0);
+  expect(gaugeBox.height, 'dotgauge paints a non-zero height').toBeGreaterThan(0);
+
+  // renderReadout output must produce visible glyph nodes, not empty markup.
+  const readout = page.locator('.ui-readout').first();
+  await expect(readout).toBeVisible();
+  const readoutBox = await readout.boundingBox();
+  expect(readoutBox, 'readout has a layout box').not.toBeNull();
+  expect(readoutBox.width, 'readout paints a non-zero width').toBeGreaterThan(0);
+});

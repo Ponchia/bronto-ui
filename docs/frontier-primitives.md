@@ -226,14 +226,38 @@ precision signal the product does not have).
 
 The CSS cores of candidates 1–5 shipped in 0.5.0, the 2026 scout batch shipped
 in PRs #97/#100, and scout batch #2 (textref / bullet / term / toc / tree)
-shipped 2026-06-04. The remaining active work, in order:
+shipped 2026-06-04.
 
-1. `ui-job` / `ui-conflict` lifecycle surfaces (candidate 2).
-2. The `ui-splitter` ARIA window-splitter behavior + drag affordances
-   (candidate 4) — also the gating consumer for `ui-tree`'s deferred roving-focus
-   tree kernel.
+**The proven lane is report / provenance / explanation** — it is the only lane
+with a real consumer (LLM-authored reports). The command, workbench, and
+durable-state lanes shipped their CSS cores and have had **no non-demo
+consumer since**; their follow-ons are demand-gated, not queued. Active work
+is therefore consolidation of the report lane (hub routing, print/PDF
+fidelity, consumer-contract gates), not new surfaces.
 
-Deferred items stay gated on a real consumer needing them. This order keeps
+### Report-lane candidates (build only after the routing hub carries them)
+
+From the 2026-06-09 local scout — kept on merit, deliberately NOT started
+until the reporting.md routing/adoption pass has landed (shipping more leaves
+into an unrouted hub repeats the discoverability gap):
+
+1. `ui-interval` — honest low–high uncertainty span + ± chip, inline in
+   reports; the error-bar grammar generic kits never ship.
+2. `ui-clamp` — N-line clamp + fade + native show-more for claim-basis and
+   source excerpts (`-webkit-line-clamp` + `mask-image` + `<details>`).
+3. `ui-highlights` — cited-evidence / search-hit spans painted from host
+   Ranges via the CSS Custom Highlight API (progressive enhancement; clean
+   no-op below the floor).
+
+### Dormant (build with the first real app consumer, not before)
+
+- `ui-job` / `ui-conflict` lifecycle surfaces (candidate 2).
+- `ui-splitter` ARIA window-splitter behavior + drag affordances
+  (candidate 4), which is also the gating consumer for `ui-tree`'s deferred
+  roving-focus tree kernel.
+- Any command/workbench follow-ons beyond the shipped CSS cores.
+
+Dormant items stay gated on a real consumer needing them. This posture keeps
 Bronto differentiated while staying inside its core philosophy: small,
 framework-agnostic primitives that make complex interfaces clearer.
 

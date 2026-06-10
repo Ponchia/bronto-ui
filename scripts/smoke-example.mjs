@@ -10,7 +10,9 @@ import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { dirname, extname, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright';
+// @playwright/test is the installed devDependency; the bare 'playwright'
+// specifier only resolved through npm hoisting and broke under pnpm/yarn-pnp.
+import { chromium } from '@playwright/test';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const example = process.argv[2];

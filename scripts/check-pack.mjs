@@ -14,6 +14,7 @@ import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { reportAndExit } from './lib/gate-report.mjs';
+import { cssLeaves } from './lib/css-leaves.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
@@ -64,27 +65,18 @@ for (const p of files) {
   }
 }
 
-// Sanity: the runtime entrypoints must actually be present.
-for (const must of [
-  'css/core.css',
-  'css/report.css',
-  'css/annotations.css',
-  'dist/css/report.css',
-  'dist/css/annotations.css',
+// Sanity: the runtime entrypoints must actually be present. The CSS set is
+// DERIVED from package.json exports (every `./css/<leaf>.css` key must ship
+// its source leaf AND its built dist twin) — the old hand list had already
+// drifted behind the post-0.6.0 leaves (spark/bullet/diff/code/sidenote/
+// textref/term/toc/tree were exported but never asserted here).
+const must = [
+  'dist/bronto.css', // core's built twin (there is no dist/css/core.css)
+  ...cssLeaves(pkg).flatMap((leaf) =>
+    leaf === 'core' ? ['css/core.css'] : [`css/${leaf}.css`, `dist/css/${leaf}.css`],
+  ),
   'docs/reporting.md',
   'docs/annotations.md',
-  'dist/css/legend.css',
-  'dist/css/marks.css',
-  'dist/css/connectors.css',
-  'dist/css/spotlight.css',
-  'dist/css/crosshair.css',
-  'dist/css/selection.css',
-  'dist/css/sources.css',
-  'dist/css/state.css',
-  'dist/css/generated.css',
-  'dist/css/workbench.css',
-  'dist/css/command.css',
-  'dist/css/analytical.css',
   'docs/package-contract.md',
   'tokens/index.js',
   'classes/index.js',
@@ -95,8 +87,9 @@ for (const must of [
   'react/index.js',
   'solid/index.js',
   'qwik/index.js',
-]) {
-  if (!files.includes(must)) errors.push(`expected entrypoint missing from package: ${must}`);
+];
+for (const m of must) {
+  if (!files.includes(m)) errors.push(`expected entrypoint missing from package: ${m}`);
 }
 
 reportAndExit(errors, {
