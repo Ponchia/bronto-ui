@@ -1545,7 +1545,7 @@ works in any framework without a binding layer:
 - **Opt-in component CSS** — a few classes are not in the core bundle and need
   their leaf imported, or they render unstyled: `ui-property`/`ui-readout` →
   `@ponchia/ui/css/workbench.css`; `ui-mark`/`ui-bracket-note` →
-  `@ponchia/ui/css/marks.css`; the analytical leaves (`ui-annotations`,
+  `@ponchia/ui/css/marks.css`; the analytical leaves (`ui-annotation`,
   `ui-crosshair`, `ui-spotlight`, …) → their matching leaf.
 - **Loaders need their children** — `ui-dotspinner` requires exactly eight
   `<i>` children, `ui-dotloader` three `<span>`, and a static `ui-dotbar`
