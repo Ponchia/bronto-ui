@@ -195,6 +195,13 @@
 
       <section id="confusion" class="ui-report__section">
         <h2 class="ui-report__section-head">Confusion matrix</h2>
+        <!-- The prose block is deliberately TALLER THAN ONE A4 PAGE (the same
+             verbatim sentences repeated), so it straddles a page boundary in
+             EVERY rendering environment — macOS and the pinned CI container
+             paginate slightly differently (font rasterisation moves line
+             wraps), and the overprint geometry (fragmenting prose row followed
+             by a break-avoided figure) must exist regardless. The spec asserts
+             the straddle via the first sentence vs the unique tail sentinel. -->
         <div class="ui-prose">
           <p>
             Row = true class, column = predicted class; each cell is the share of that true class
@@ -202,6 +209,85 @@
             — it should sit at the ramp's strong end (the extreme stop in either theme; see the
             legend). Off-diagonal cells are the confusions worth investigating.
           </p>
+          <p>
+            Row = true class, column = predicted class; each cell is the share of that true class
+            assigned to each prediction (row-normalised, %). The diagonal is correct classification
+            — it should sit at the ramp's strong end (the extreme stop in either theme; see the
+            legend). Off-diagonal cells are the confusions worth investigating.
+          </p>
+          <p>
+            Row = true class, column = predicted class; each cell is the share of that true class
+            assigned to each prediction (row-normalised, %). The diagonal is correct classification
+            — it should sit at the ramp's strong end (the extreme stop in either theme; see the
+            legend). Off-diagonal cells are the confusions worth investigating.
+          </p>
+          <p>
+            Row = true class, column = predicted class; each cell is the share of that true class
+            assigned to each prediction (row-normalised, %). The diagonal is correct classification
+            — it should sit at the ramp's strong end (the extreme stop in either theme; see the
+            legend). Off-diagonal cells are the confusions worth investigating.
+          </p>
+          <p>
+            Row = true class, column = predicted class; each cell is the share of that true class
+            assigned to each prediction (row-normalised, %). The diagonal is correct classification
+            — it should sit at the ramp's strong end (the extreme stop in either theme; see the
+            legend). Off-diagonal cells are the confusions worth investigating.
+          </p>
+          <p>
+            Row = true class, column = predicted class; each cell is the share of that true class
+            assigned to each prediction (row-normalised, %). The diagonal is correct classification
+            — it should sit at the ramp's strong end (the extreme stop in either theme; see the
+            legend). Off-diagonal cells are the confusions worth investigating.
+          </p>
+          <p>
+            Row = true class, column = predicted class; each cell is the share of that true class
+            assigned to each prediction (row-normalised, %). The diagonal is correct classification
+            — it should sit at the ramp's strong end (the extreme stop in either theme; see the
+            legend). Off-diagonal cells are the confusions worth investigating.
+          </p>
+          <p>
+            Row = true class, column = predicted class; each cell is the share of that true class
+            assigned to each prediction (row-normalised, %). The diagonal is correct classification
+            — it should sit at the ramp's strong end (the extreme stop in either theme; see the
+            legend). Off-diagonal cells are the confusions worth investigating.
+          </p>
+          <p>
+            Row = true class, column = predicted class; each cell is the share of that true class
+            assigned to each prediction (row-normalised, %). The diagonal is correct classification
+            — it should sit at the ramp's strong end (the extreme stop in either theme; see the
+            legend). Off-diagonal cells are the confusions worth investigating.
+          </p>
+          <p>
+            Row = true class, column = predicted class; each cell is the share of that true class
+            assigned to each prediction (row-normalised, %). The diagonal is correct classification
+            — it should sit at the ramp's strong end (the extreme stop in either theme; see the
+            legend). Off-diagonal cells are the confusions worth investigating.
+          </p>
+          <p>
+            Row = true class, column = predicted class; each cell is the share of that true class
+            assigned to each prediction (row-normalised, %). The diagonal is correct classification
+            — it should sit at the ramp's strong end (the extreme stop in either theme; see the
+            legend). Off-diagonal cells are the confusions worth investigating.
+          </p>
+          <p>
+            Row = true class, column = predicted class; each cell is the share of that true class
+            assigned to each prediction (row-normalised, %). The diagonal is correct classification
+            — it should sit at the ramp's strong end (the extreme stop in either theme; see the
+            legend). Off-diagonal cells are the confusions worth investigating.
+          </p>
+          <p>
+            Row = true class, column = predicted class; each cell is the share of that true class
+            assigned to each prediction (row-normalised, %). The diagonal is correct classification
+            — it should sit at the ramp's strong end (the extreme stop in either theme; see the
+            legend). Off-diagonal cells are the confusions worth investigating.
+          </p>
+          <p>
+            Row = true class, column = predicted class; each cell is the share of that true class
+            assigned to each prediction (row-normalised, %). The diagonal is correct classification
+            — it should sit at the ramp's strong end (the extreme stop in either theme; see the
+            legend). Off-diagonal cells are the confusions worth investigating.
+          </p>
+          <p>End of the confusion commentary — tail sentinel.</p>
         </div>
 
         <figure class="ui-report__figure" role="group" aria-labelledby="cm-cap">

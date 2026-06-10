@@ -37,11 +37,16 @@ export function repinVersionLiterals(text, version) {
 /**
  * Date the `## Unreleased — <version>` heading. Returns the unchanged text
  * when the heading is absent (already dated, or a prerelease whose base
- * section stays undated — check:release allows both).
+ * section stays undated — check:release allows both). Plain line comparison,
+ * no regex — the version comes from argv and must never reach a RegExp
+ * constructor (CodeQL js/regex-injection).
  */
 export function dateChangelogHeading(text, version, isoDate) {
-  const re = new RegExp(`^## Unreleased — ${version.replace(/\./g, '\\.')}\\s*$`, 'm');
-  return text.replace(re, `## ${version} — ${isoDate}`);
+  const target = `## Unreleased — ${version}`;
+  return text
+    .split('\n')
+    .map((line) => (line.trimEnd() === target ? `## ${version} — ${isoDate}` : line))
+    .join('\n');
 }
 
 function main(argv) {

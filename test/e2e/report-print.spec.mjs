@@ -138,21 +138,22 @@ test('exported PDF is multi-page, carries the module figure, and never overprint
 
   expect(sentinelSeen, `"${SENTINEL}" missing from PDF text — module figure dropped`).toBe(true);
 
-  // TRAP ARMED — the fixture's verbatim ml-eval slice only exercises the
-  // overprint defect while its "Row = true class …" paragraph still straddles
-  // a page boundary (start on one page, tail on the next, ahead of the
-  // break-avoided Fig-1). If layout/content drift ever parks the whole
-  // paragraph on one page, this gate stops testing anything — fail loudly so
-  // the slice gets re-tuned instead of rotting.
+  // TRAP ARMED — the overprint geometry only exists while the trap prose
+  // block straddles a page boundary ahead of the break-avoided Fig-1. The
+  // fixture makes that true BY CONSTRUCTION (the block is taller than one A4
+  // page — pagination differs between macOS and the pinned CI container, so
+  // an offset-tuned trap disarms across environments). If content drift ever
+  // shrinks the block onto one page, fail loudly instead of rotting.
   const startPage = pageTexts.findIndex((t) => t.includes('true class'));
-  const tailPage = pageTexts.findIndex((t) => t.includes('investigating'));
-  expect(startPage, '"Row = true class" paragraph missing from PDF').toBeGreaterThanOrEqual(0);
+  const tailPage = pageTexts.findIndex((t) => t.includes('tail sentinel'));
+  expect(startPage, '"Row = true class" trap prose missing from PDF').toBeGreaterThanOrEqual(0);
+  expect(tailPage, 'trap tail sentinel missing from PDF').toBeGreaterThanOrEqual(0);
   expect(
     tailPage,
-    `overprint trap DISARMED: paragraph start on page ${startPage + 1}, tail on page ${
+    `overprint trap DISARMED: trap prose starts on page ${startPage + 1} and ends on page ${
       tailPage + 1
-    } — it must straddle a page break. Re-tune the trap slice in the fixture.`,
-  ).toBe(startPage + 1);
+    } — it must straddle a page break (be taller than one page). Re-grow the trap block.`,
+  ).toBeGreaterThan(startPage);
 
   expect(overlaps, `overprinted text runs:\n${overlaps.join('\n')}`).toEqual([]);
 });
