@@ -7,6 +7,18 @@
 
 ## Unreleased — 0.6.7
 
+### Added
+
+- **Report-primitive batch** — four additive opt-in leaves for static reports
+  and explanation surfaces: `ui-figure` (`css/figure.css`) for reusable
+  chart/diagram/media stages with overlay, key and fallback-data slots;
+  `ui-interval` (`css/interval.css`) for host-normalised low/high evidence
+  windows; `ui-clamp` (`css/clamp.css`) for bounded excerpts with CSS-only
+  show-more / show-less; and `ui-highlights` (`css/highlights.css`) for named
+  CSS Custom Highlight API paints (`bronto-evidence`, `bronto-search`,
+  `bronto-current`). All stay out of `dist/bronto.css`; `figure.css` and
+  `highlights.css` join the analytical roll-up.
+
 ### Fixed
 
 - **Print: stat tiles and table rows no longer slice across PDF page

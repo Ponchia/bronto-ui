@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — highlights specimen</title>
+    <meta
+      name="description"
+      content="CSS Custom Highlight API specimen for @ponchia/ui highlights CSS."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/highlights.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .highlights-demo {
+        display: grid;
+        gap: var(--space-md);
+        margin-inline: auto;
+        max-inline-size: 66ch;
+        padding: 2rem 1rem 4rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="highlights-demo">
+      <h1 class="ui-display">Highlights specimen</h1>
+      <article class="ui-highlights ui-prose" id="highlight-review">
+        <p id="highlight-evidence">
+          Latency improved after the migration, but the observation window is short. Search should
+          find migration twice: migration and migration. The current match is the second migration.
+        </p>
+      </article>
+    </main>
+    <script>
+      (() => {
+        const supported = 'CSS' in window && 'highlights' in CSS && 'Highlight' in window;
+        document.documentElement.dataset.highlightSupport = supported ? 'true' : 'false';
+        if (!supported) return;
+
+        const textNode = document.querySelector('#highlight-evidence').firstChild;
+        const text = textNode.textContent;
+        const rangeFor = (needle, occurrence = 0) => {
+          let start = -1;
+          let from = 0;
+          for (let i = 0; i <= occurrence; i += 1) {
+            start = text.indexOf(needle, from);
+            if (start === -1) return null;
+            from = start + needle.length;
+          }
+          const range = new Range();
+          range.setStart(textNode, start);
+          range.setEnd(textNode, start + needle.length);
+          return range;
+        };
+        const compact = (ranges) => ranges.filter(Boolean);
+
+        CSS.highlights.set(
+          'bronto-evidence',
+          new Highlight(...compact([rangeFor('Latency improved')])),
+        );
+        CSS.highlights.set(
+          'bronto-search',
+          new Highlight(...compact([rangeFor('migration'), rangeFor('migration', 1)])),
+        );
+        CSS.highlights.set(
+          'bronto-current',
+          new Highlight(...compact([rangeFor('second migration')])),
+        );
+      })();
+    </script>
+  </body>
+</html>

@@ -13,6 +13,7 @@ import { attachGuards, blocking, scan, settle } from './_demo-guards.mjs';
 
 // Pages that are component/figure showcases — full console + axe sweep.
 const SHOWCASE = [
+  'figure',
   'annotations',
   'legends',
   'marks',
@@ -20,7 +21,10 @@ const SHOWCASE = [
   'spotlight',
   'crosshair',
   'selection',
+  'highlights',
   'sources',
+  'interval',
+  'clamp',
   'diff',
   'code',
   'spark',

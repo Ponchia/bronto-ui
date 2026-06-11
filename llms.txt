@@ -213,10 +213,30 @@ simulated protan/deutan/tritan), `--chart-seq-*` (sequential), `--chart-div-*`
 pattern N; colour is never the sole signal). Details in `docs/theming.md`.
 
 Building analytical / generated-report UI? Import the roll-up
-`@ponchia/ui/css/analytical.css` (bundles annotations + legend + marks +
-connectors + spotlight + crosshair + selection) instead of the seven leaves;
-add `css/dataviz.css` for chart colours and `css/report.css` for the document
-grammar. The individual layers (each opt-in, none in the default bundle):
+`@ponchia/ui/css/analytical.css` (bundles figure + annotations + legend +
+marks + connectors + spotlight + crosshair + selection + highlights) instead
+of the nine leaves; add `css/dataviz.css` for chart colours and `css/report.css`
+for the document grammar. Interval and clamp are report/evidence leaves but are
+NOT in the roll-up; link them individually. The individual layers (each opt-in,
+none in the default bundle):
+
+Optional figure stage for charts, diagrams, screenshots, and annotated media —
+opt-in, never in the default bundle. It composes with `ui-report__figure` but
+does not replace it:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/figure.css" />
+```
+
+Use `ui-figure` on the `<figure>`, `ui-figure__caption` on the caption,
+`ui-figure__body` and optional `ui-figure__body--key-right` for stage + key
+layout, `ui-figure__stage` for the centered media box, `ui-figure__media` for
+the chart/SVG/img/canvas, `ui-figure__overlay` for pointer-transparent absolute
+overlays, `ui-figure__key` for legends, and `ui-figure__data` for fallback
+tables. Author-set knobs: `--figure-max-inline`, `--figure-min-block`,
+`--figure-key-width`. Bronto owns layout only; the host owns data, scales,
+chart rendering, overlay content, and accessibility text. Details:
+`docs/figure.md`.
 
 Optional SVG annotations for charts/reports — opt-in, never in the default
 bundle. This is Bronto's subject / connector / note grammar inspired by
@@ -351,6 +371,20 @@ Apply `ui-sel` + `ui-sel--on` (selected), `ui-sel--off` (excluded), or
 row, list item, map region) from YOUR selection/brush logic — Bronto only styles
 them. `ui.sel({ state: 'on'|'off'|'maybe' })`. Details: `docs/selection.md`.
 
+Optional Custom Highlight API paint — opt-in, CSS only, never in the default
+bundle. For cited evidence, search hits, and current match ranges without
+wrapping text nodes:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/highlights.css" />
+```
+
+Put `ui-highlights` on the text scope. The host creates `Range` objects and
+registers `Highlight` sets as `CSS.highlights.set('bronto-evidence', ...)`,
+`bronto-search`, and `bronto-current`; Bronto only paints them. Custom props:
+`--highlight-evidence`, `--highlight-search`, `--highlight-current`. Always
+check `CSS.highlights` before registering. Details: `docs/highlights.md`.
+
 Optional source/citation/provenance trust layer — opt-in, CSS only, never in
 the default bundle. The grammar for "where did this come from?" in generated
 reports/AI output:
@@ -370,6 +404,32 @@ author-written label (never colour alone). A tone class **needs a host**:
 `ui-citation`, `ui-source-card`, or `ui-provenance__item`. Bronto styles +
 states; the host owns fetching, numbering, and trust. `ui.citation({chip,state})` / `ui.source({state})` /
 `ui.provenance({state})`. Details: `docs/sources.md`.
+
+Optional low/high interval — opt-in, CSS only, never in the default bundle. For
+confidence windows, estimates, budget bands, or caveated evidence readings:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/interval.css" />
+```
+
+Use `ui-interval` with host-normalised `--lo` and `--hi` (0..1), optional
+`ui-interval__point` with `--v`, plus `ui-interval__track`,
+`ui-interval__range`, `ui-interval__label`, and `ui-interval__bounds`.
+The container needs host-written text (`role="img"` + `aria-label`, or nearby
+visible prose). Bronto paints geometry only. Details: `docs/interval.md`.
+
+Optional bounded excerpt clamp — opt-in, CSS only, never in the default bundle.
+For source excerpts, claim basis, and caveats that should scan compactly but
+remain reachable:
+
+```html
+<link rel="stylesheet" href="@ponchia/ui/css/clamp.css" />
+```
+
+Use `ui-clamp` with `--clamp-lines`, `ui-clamp__body`, and optionally a checkbox
+`ui-clamp__toggle` followed by a visible `ui-clamp__control` containing explicit
+`ui-clamp__more` / `ui-clamp__less` text. Host owns IDs and content. Print
+expands the body and hides the control. Details: `docs/clamp.md`.
 
 Optional line/row change-review grammar — opt-in, CSS only, never in the
 default bundle. For code review, changelogs, version history, config diffs, and
@@ -569,11 +629,13 @@ specifiers only work after a bundler rewrites them:
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/bronto.css" />
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/report.css" />
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/dataviz.css" />
+<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/figure.css" />
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/sources.css" />
 ```
 
 In Vite/webpack/etc., import `@ponchia/ui`, `@ponchia/ui/css/report.css`, and
-`@ponchia/ui/css/dataviz.css` instead.
+`@ponchia/ui/css/dataviz.css` instead; add `figure.css`, `interval.css`,
+`clamp.css`, or `highlights.css` only when the report uses them.
 
 Canonical report skeleton:
 
@@ -616,8 +678,9 @@ Report rules for agents:
 - Use semantic headings; give tables captions and header cells; give charts
   captions, legends/direct labels, and fallback data.
 - For a chart, theme Vega-Lite with `@ponchia/ui/vega` or hand-author a
-  token-themed inline `<svg>` inside a `ui-report__figure`. Bronto ships no
-  chart component.
+  token-themed inline `<svg>` inside `ui-report__figure ui-figure`, with a
+  `ui-figure__stage`, optional `ui-figure__key`, and fallback `ui-figure__data`.
+  Bronto ships no chart component.
 - Put the above-the-fold call in `ui-report__decision`; use
   `ui-report__finding--critical|--major|--minor|--resolved` only when the
   written finding label also states the severity/status.

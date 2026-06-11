@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 593 classes across 171 component groups
+- 615 classes across 175 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -348,6 +348,17 @@ each one matches a real selector in the stylesheet.
 | `cls.claimUnknown` | `ui-claim--unknown` | modifier |
 | `cls.claimUnsupported` | `ui-claim--unsupported` | modifier |
 
+### `.ui-clamp`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.clamp` | `ui-clamp` | base |
+| `cls.clampBody` | `ui-clamp__body` | part |
+| `cls.clampControl` | `ui-clamp__control` | part |
+| `cls.clampLess` | `ui-clamp__less` | part |
+| `cls.clampMore` | `ui-clamp__more` | part |
+| `cls.clampToggle` | `ui-clamp__toggle` | part |
+
 ### `.ui-cluster`
 
 | Registry key | Class | Kind |
@@ -616,6 +627,20 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.field` | `ui-field` | base |
 
+### `.ui-figure`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.figure` | `ui-figure` | base |
+| `cls.figureBody` | `ui-figure__body` | part |
+| `cls.figureBodyKeyRight` | `ui-figure__body--key-right` | modifier |
+| `cls.figureCaption` | `ui-figure__caption` | part |
+| `cls.figureData` | `ui-figure__data` | part |
+| `cls.figureKey` | `ui-figure__key` | part |
+| `cls.figureMedia` | `ui-figure__media` | part |
+| `cls.figureOverlay` | `ui-figure__overlay` | part |
+| `cls.figureStage` | `ui-figure__stage` | part |
+
 ### `.ui-file`
 
 | Registry key | Class | Kind |
@@ -648,6 +673,12 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.halftone` | `ui-halftone` | base |
+
+### `.ui-highlights`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.highlights` | `ui-highlights` | base |
 
 ### `.ui-hint`
 
@@ -690,6 +721,17 @@ each one matches a real selector in the stylesheet.
 | `cls.inspector` | `ui-inspector` | base |
 | `cls.inspectorBody` | `ui-inspector__body` | part |
 | `cls.inspectorHead` | `ui-inspector__head` | part |
+
+### `.ui-interval`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.interval` | `ui-interval` | base |
+| `cls.intervalBounds` | `ui-interval__bounds` | part |
+| `cls.intervalLabel` | `ui-interval__label` | part |
+| `cls.intervalPoint` | `ui-interval__point` | part |
+| `cls.intervalRange` | `ui-interval__range` | part |
+| `cls.intervalTrack` | `ui-interval__track` | part |
 
 ### `.ui-kbd`
 

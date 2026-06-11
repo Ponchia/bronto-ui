@@ -346,6 +346,16 @@ export const cls = Object.freeze({
   compare2up: 'ui-compare--2up',
   compareCol: 'ui-compare__col',
   compareHead: 'ui-compare__head',
+  // figure — analytical/report figure stage (css/figure.css)
+  figure: 'ui-figure',
+  figureCaption: 'ui-figure__caption',
+  figureBody: 'ui-figure__body',
+  figureBodyKeyRight: 'ui-figure__body--key-right',
+  figureStage: 'ui-figure__stage',
+  figureMedia: 'ui-figure__media',
+  figureOverlay: 'ui-figure__overlay',
+  figureKey: 'ui-figure__key',
+  figureData: 'ui-figure__data',
   // legend (standalone data keys — css/legend.css)
   legend: 'ui-legend',
   legendVertical: 'ui-legend--vertical',
@@ -483,6 +493,22 @@ export const cls = Object.freeze({
   srcReviewed: 'ui-src--reviewed',
   srcStale: 'ui-src--stale',
   srcConflict: 'ui-src--conflict',
+  // interval — low/high uncertainty span (css/interval.css)
+  interval: 'ui-interval',
+  intervalTrack: 'ui-interval__track',
+  intervalRange: 'ui-interval__range',
+  intervalPoint: 'ui-interval__point',
+  intervalLabel: 'ui-interval__label',
+  intervalBounds: 'ui-interval__bounds',
+  // clamp — bounded excerpt + reveal (css/clamp.css)
+  clamp: 'ui-clamp',
+  clampBody: 'ui-clamp__body',
+  clampToggle: 'ui-clamp__toggle',
+  clampControl: 'ui-clamp__control',
+  clampMore: 'ui-clamp__more',
+  clampLess: 'ui-clamp__less',
+  // highlights — CSS Custom Highlight API paint host (css/highlights.css)
+  highlights: 'ui-highlights',
   // diff — line/row change-review grammar (css/diff.css)
   diff: 'ui-diff',
   diffSplit: 'ui-diff--split',
