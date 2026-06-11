@@ -720,6 +720,9 @@
     margin-block-start: var(--space-sm);
   }
 
+  /* Stat tiles and table rows are guarded at the item level (the tile / the
+     row), not the container — a long statgrid or table may legitimately span
+     pages, but a sliced tile or row is unreadable. */
   .ui-report__cover,
   .ui-report__head,
   .ui-report__decision,
@@ -730,7 +733,10 @@
   .ui-report__toc,
   .ui-claim,
   .ui-evidence-item,
-  .ui-report__action {
+  .ui-report__action,
+  .ui-stat,
+  .ui-statgrid > *,
+  tr {
     break-inside: avoid;
   }
 
