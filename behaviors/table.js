@@ -49,6 +49,7 @@ export function initTableSort({ root } = {}) {
     // announces the column as sortable from the start (it was unset until the
     // first click — C10).
     for (const sort of table.querySelectorAll('.ui-table__sort')) {
+      if (sort.tagName === 'BUTTON' && !sort.hasAttribute('type')) sort.type = 'button';
       const th = sort.closest('th');
       if (th && !th.hasAttribute('aria-sort')) th.setAttribute('aria-sort', 'none');
     }

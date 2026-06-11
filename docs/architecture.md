@@ -92,8 +92,9 @@ on top of the CSS, none of which require a framework commitment**:
   `import '@ponchia/ui'` in Vite/Astro/SvelteKit). There is no runtime JS at
   the package root — Node/runtime JS imports of `.` are not supported. All JS
   entrypoints are explicit subpaths (`/behaviors`, `/classes`, `/tokens`,
-  `/glyphs`, `/react`, `/solid`, `/qwik`, `/skins`, `/charts`). This is a
-  permanent, intentional contract.
+  `/glyphs`, `/annotations`, `/connectors`, `/react`, `/solid`, `/qwik`,
+  `/skins`, `/charts`, `/mermaid`, `/d2`, `/vega`). This is a permanent,
+  intentional contract.
 
 ## Repository layout
 
@@ -163,29 +164,36 @@ freshness (`check-fresh`).
 
 ## Release gating
 
-`release.yml` (on a pushed `v*` tag) is a five-job DAG, serialized by a
+`release.yml` (on a pushed `v*` tag) is a six-job DAG, serialized by a
 `concurrency: release-publish` group so two tags can't race the dist-tag
 pointer:
 
-- `validate` — read-only: `npm run check` + tag↔version match. `check`
-  includes `check:release`; for a prerelease tag the base version's
-  CHANGELOG section need only exist (`## Unreleased — x.y.z` is fine) —
-  only a stable release must carry a dated heading.
-- `e2e` — Playwright (visual + axe a11y, both themes, cross-engine) in
+- `validate` — read-only: verifies the tag commit is reachable from `main`,
+  then runs `npm run check`, `npm test`, and the tag↔version match. `check`
+  includes `check:release`; for a prerelease tag the base version's CHANGELOG
+  section need only exist (`## Unreleased — x.y.z` is fine) — only a stable
+  release must carry a dated heading.
+- `e2e` — `needs: validate`: Playwright (visual + axe a11y, both themes, cross-engine) in
   the pinned `mcr.microsoft.com/playwright` container.
 - `examples` — `needs: validate`: builds the downstream example
   apps against the **packed tarball**, mirroring CI. Catches a broken
   published surface (exports map / missing file / unresolved subpath)
   that `check:pack`'s file-allowlist inspection cannot — so the release
   path runs the same consumer smoke as merge-to-main.
-- `publish-npm` — `needs: [validate, e2e, examples]`: `npm publish` with
-  provenance. Runs in the `npm-publish` **Environment** (required-reviewer
-  protection), so after the gates pass the run pauses for a manual approval
-  in the Actions UI before anything reaches npm — a guard against an
-  accidental tag push publishing. Dist-tag is derived from the tag: stable
-  (`v0.4.0`) → `latest`; SemVer prerelease (`v0.4.0-rc.1`, any hyphenated
-  identifier) → `next`, so the default `npm i @ponchia/ui` never moves onto
-  an unstable build (opt in with `@ponchia/ui@next`).
+- `publish-preflight` — `needs: [validate, e2e, examples]`: installs with
+  lifecycle scripts disabled, runs `npm pack --dry-run --ignore-scripts`, and
+  writes the pack manifest + size report to the job summary for review before
+  the protected publish approval.
+- `publish-npm` — `needs: publish-preflight`: `npm publish --ignore-scripts`
+  with provenance. Runs in the `npm-publish` **Environment**
+  (required-reviewer protection), so after the gates and preflight pass the run
+  pauses for a manual approval in the Actions UI before anything reaches npm —
+  a guard against an accidental tag push publishing. Dist-tag is derived from
+  the tag: stable (`v0.4.0`) → `latest`; SemVer prerelease (`v0.4.0-rc.1`, any
+  hyphenated identifier) → `next`, so the default `npm i @ponchia/ui` never
+  moves onto an unstable build (opt in with `@ponchia/ui@next`). Post-publish
+  `npm view` registry observation is best-effort only: a registry read flake must
+  not fail the job after the immutable publish already succeeded.
 - `release-notes` — `needs: publish-npm`: a GitHub Release for visibility
   (transitively gated on a successful publish, hence on the gates above);
   prerelease tags are flagged so they aren't surfaced as "Latest". The Release
@@ -194,7 +202,7 @@ pointer:
   source of truth, surfaced where readers look.
 
 Because the documented install path is the npm package, **the npm publish
-is a real gate**: if `validate`, `e2e`, *or* `examples` fails,
+is a real gate**: if `validate`, `e2e`, `examples`, or `publish-preflight` fails,
 `publish-npm` never runs, the version never reaches the registry, and
 consumers never resolve it.
 (Corollary: a flaky `e2e` blocks releases — that is deliberate; fix the

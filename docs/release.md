@@ -4,7 +4,7 @@
 
 0. Run `npm run release:prep -- X.Y.Z` — bumps `package.json` + lock, dates the
    `## Unreleased — X.Y.Z` CHANGELOG heading, and re-pins every
-   `@ponchia/ui@X.Y.Z` literal across the gated shipped docs **and** the
+   `@ponchia/ui@X.Y.Z` literal across the gated README/shipped docs **and** the
    ungated `demo/*.html` pages (the surface that drifted when this was manual).
 1. Reconcile `README.md`, `CHANGELOG.md`, `ROADMAP.md`, `.github/SECURITY.md`, and
    `docs/adr/*` against the version being released.
@@ -19,12 +19,14 @@
 1. Land the release commit on `main`.
 2. Push a `vX.Y.Z` tag. Stable tags publish to `latest`; prerelease tags publish
    to `next`.
-3. Wait for `validate`, `e2e`, and `examples` to pass.
-4. Approve the protected `npm-publish` environment only after the gates are
-   green.
-5. In the `publish-npm` job summary, review the generated size report and pack
-   manifest before publish runs. After publish, the same summary records the npm
-   registry view: published version, tarball, integrity, and current dist-tags.
+3. Wait for `validate`, `e2e`, `examples`, and `publish-preflight` to pass.
+4. Review the `publish-preflight` job summary: generated size report and pack
+   manifest.
+5. Approve the protected `npm-publish` environment only after the gates and
+   preflight are green. After publish, the `publish-npm` summary attempts to
+   record the npm registry view: published version, tarball, integrity, and
+   current dist-tags. That observation is best-effort; the irreversible gate is
+   the publish itself, not the later `npm view`.
 
 ## After Publish
 

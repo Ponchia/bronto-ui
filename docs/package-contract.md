@@ -115,6 +115,7 @@ semantic versioning contract for the surfaces listed here.
 | `./tokens/resolved.json` | `./tokens/resolved.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
 | `./shiki/nothing.json` | `./shiki/nothing.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
 | `./llms.txt` | `./llms.txt` | Agent entrypoint | Stable path | Plain-text orientation file shipped for offline agents and tooling. |
+| `./MIGRATIONS.json` | `./MIGRATIONS.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
 | `./docs/architecture.md` | `./docs/architecture.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/reference.md` | `./docs/reference.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/theming.md` | `./docs/theming.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
@@ -150,6 +151,10 @@ semantic versioning contract for the surfaces listed here.
 | `./docs/generated.md` | `./docs/generated.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/workbench.md` | `./docs/workbench.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/command.md` | `./docs/command.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/migrations/0.2-to-0.3.md` | `./docs/migrations/0.2-to-0.3.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/migrations/0.3-to-0.4.md` | `./docs/migrations/0.3-to-0.4.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/migrations/0.4-to-0.5.md` | `./docs/migrations/0.4-to-0.5.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/migrations/0.5-to-0.6.md` | `./docs/migrations/0.5-to-0.6.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/adr/0001-color-system.md` | `./docs/adr/0001-color-system.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/adr/0002-scope-and-2026-baseline.md` | `./docs/adr/0002-scope-and-2026-baseline.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/adr/0003-theme-model.md` | `./docs/adr/0003-theme-model.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
@@ -232,6 +237,10 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `docs/generated.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/workbench.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/command.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/migrations/0.2-to-0.3.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/migrations/0.3-to-0.4.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/migrations/0.4-to-0.5.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/migrations/0.5-to-0.6.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/adr/0001-color-system.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/adr/0002-scope-and-2026-baseline.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/adr/0003-theme-model.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |

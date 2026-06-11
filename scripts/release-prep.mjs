@@ -11,9 +11,9 @@
  *   2. CHANGELOG.md: rewrites `## Unreleased — <new-version>` to the dated
  *      `## <new-version> — YYYY-MM-DD` heading check:release requires.
  *      (Prereleases keep the undated base heading; nothing to rewrite.)
- *   3. Re-pins every exact `@ponchia/ui@X.Y.Z` literal to <new-version> in
- *      ALL surfaces that carry them: the shipped docs check:versions gates
- *      AND the ungated demo/*.html pages (GH-Pages copies).
+ *   3. Re-pins every exact `@ponchia/ui@X.Y.Z[-prerelease]` literal to
+ *      <new-version> in ALL surfaces that carry them: the README/shipped docs
+ *      check:versions gates AND the ungated demo/*.html pages (GH-Pages copies).
  *
  * It does NOT commit, tag, or publish — see docs/release.md for the runbook.
  * Run `npm run check` afterwards; check:release + check:versions verify the
@@ -27,9 +27,9 @@ import { shippedDocs } from './lib/shipped-docs.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
-const EXACT = /@ponchia\/ui@\d+\.\d+\.\d+/g;
+const EXACT = /@ponchia\/ui@\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?/g;
 
-/** Re-pin every exact `@ponchia/ui@X.Y.Z` literal. Pure for testability. */
+/** Re-pin every exact `@ponchia/ui@X.Y.Z[-prerelease]` literal. Pure for testability. */
 export function repinVersionLiterals(text, version) {
   return text.replace(EXACT, `@ponchia/ui@${version}`);
 }
@@ -85,7 +85,7 @@ function main(argv) {
     );
   }
 
-  // 3. Version literals: gated shipped docs + UNGATED demo pages.
+  // 3. Version literals: gated README/shipped docs + UNGATED demo pages.
   const demoPages = readdirSync(resolve(root, 'demo'))
     .filter((f) => f.endsWith('.html'))
     .map((f) => `demo/${f}`);

@@ -569,9 +569,8 @@
 }
 
 .ui-chip--accent {
-  /* accent-strong, not accent: chip text is small uppercase mono and must
-     clear WCAG AA 4.5:1 — same rule as .ui-eyebrow above. */
-  color: var(--accent-text);
+  /* Tone rides the border + hover tint; text stays neutral-readable. */
+  color: var(--text-soft);
   border-color: var(--accent);
 }
 

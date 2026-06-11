@@ -103,7 +103,7 @@
 .ui-app-nav a[aria-current]:not([aria-current='false']) {
   background: var(--accent-soft);
   border-inline-start-color: var(--accent);
-  color: var(--accent-text);
+  color: var(--text);
 }
 
 @media (pointer: coarse) {

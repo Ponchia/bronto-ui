@@ -29,6 +29,12 @@ export function initFormValidation({ root } = {}) {
   if (!hasDom()) return noop;
   const host = resolveHost(root);
   if (!host) return noop;
+  let priorNoValidate = new Map();
+
+  const suppressNativeValidation = (form) => {
+    if (!priorNoValidate.has(form)) priorNoValidate.set(form, form.noValidate);
+    form.noValidate = true;
+  };
 
   const ensureId = (el, prefix) => {
     if (!el.id) el.id = `${prefix}-${nextFieldUid()}`;
@@ -150,7 +156,7 @@ export function initFormValidation({ root } = {}) {
   const onSubmit = (e) => {
     const form = e.target.closest?.('[data-bronto-validate]');
     if (!form) return;
-    form.noValidate = true;
+    suppressNativeValidation(form);
     const invalid = controlsOf(form).filter((c) => !validateField(c));
     refreshSummary(form, invalid);
     if (invalid.length) {
@@ -165,7 +171,7 @@ export function initFormValidation({ root } = {}) {
     if (!control.willValidate) return;
     const form = control.closest?.('[data-bronto-validate]');
     if (!form) return;
-    form.noValidate = true;
+    suppressNativeValidation(form);
     validateField(control);
     const summary = form.querySelector('[data-bronto-error-summary]');
     if (summary && !summary.hidden)
@@ -183,10 +189,9 @@ export function initFormValidation({ root } = {}) {
     // summary — contradicting the documented contract. (Forms added
     // after init are still covered by the in-handler set.)
     const forms = collectHosts(host, '[data-bronto-validate]');
-    const priorNoValidate = new Map();
+    priorNoValidate = new Map();
     for (const f of forms) {
-      priorNoValidate.set(f, f.noValidate);
-      f.noValidate = true;
+      suppressNativeValidation(f);
     }
     host.addEventListener('submit', onSubmit, true);
     host.addEventListener('focusout', onBlur);
@@ -194,6 +199,7 @@ export function initFormValidation({ root } = {}) {
       host.removeEventListener('submit', onSubmit, true);
       host.removeEventListener('focusout', onBlur);
       for (const [f, v] of priorNoValidate) f.noValidate = v;
+      priorNoValidate.clear();
     };
   });
 }

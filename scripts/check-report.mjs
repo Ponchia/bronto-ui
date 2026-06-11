@@ -34,13 +34,14 @@ const CLASS_SCAN_EXCLUDES = new Set([
   'CHANGELOG.md', // historical: references removed classes (e.g. ui-chart)
   'docs/frontier-primitives.md', // names candidate primitives by design (ui-job, ui-interval, …)
 ]);
+const isMigrationDoc = (rel) => rel.startsWith('docs/migrations/');
 
 const allDemos = readdirSync(resolve(root, 'demo'))
   .filter((f) => f.endsWith('.html'))
   .map((f) => `demo/${f}`);
 
 const classSources = [
-  ...shippedDocs(pkg).filter((rel) => !CLASS_SCAN_EXCLUDES.has(rel)),
+  ...shippedDocs(pkg).filter((rel) => !CLASS_SCAN_EXCLUDES.has(rel) && !isMigrationDoc(rel)),
   ...allDemos,
   ...walk('examples/report-static').filter((p) => /\.(html|js|css|md)$/.test(p)),
 ];
@@ -72,6 +73,9 @@ for (const rel of classSources) {
     const name = m[0];
     if (valid.has(name) || groupNames.has(name)) continue;
     if (CSS_FONT_KEYWORDS.has(name) || KNOWN_NEGATIVE.has(name)) continue;
+    // Backtick docs sometimes name a whole prefix family (`ui-site*`). Accept it
+    // only when the prefix is backed by real registry classes.
+    if (src[m.index + name.length] === '*' && [...valid].some((c) => c.startsWith(name))) continue;
     // `ui-src--*`-style family wildcards surface as a trailing dash; they are
     // fine as long as the family actually exists.
     if (name.endsWith('-')) {
@@ -140,7 +144,7 @@ const RAW_COLOR_EXCLUDES = new Set([
 ]);
 const rawColor = /#[0-9a-fA-F]{3,8}\b|\b(?:rgba?|hsla?|oklch|oklab|lab|lch|hwb|color)\(/i;
 for (const rel of [
-  ...shippedDocs(pkg).filter((rel) => !RAW_COLOR_EXCLUDES.has(rel)),
+  ...shippedDocs(pkg).filter((rel) => !RAW_COLOR_EXCLUDES.has(rel) && !isMigrationDoc(rel)),
   ...allDemos,
   ...walk('examples/report-static'),
 ]) {

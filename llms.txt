@@ -705,7 +705,7 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   annotation geometry.
 - `classes/vscode.css-custom-data.json` — editor autocomplete for tokens.
 
-## Human-browsable references (not shipped in the npm tarball, by design)
+## External web references
 
 - Live kitchen-sink demo (every component, light/dark, RTL): https://ponchia.github.io/bronto-ui/
 - Architecture & the CSS-first decision: https://github.com/Ponchia/bronto-ui/blob/main/docs/architecture.md

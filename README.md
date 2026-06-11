@@ -59,7 +59,7 @@ npm i @ponchia/ui
 Or drop it in with no build step, straight from a CDN:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui/dist/bronto.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.6/dist/bronto.css">
 ```
 
 ## Quick start
@@ -143,12 +143,16 @@ Full generated catalog of every class: **[docs/reference.md](https://github.com/
 
 ## Theming: one knob
 
-Everything accent-colored derives from a single `--accent` variable via `color-mix()`. Re-brand the entire app — both light and dark — with one declaration, globally or scoped to any subtree:
+Everything accent-colored derives from a single `--accent` variable via `color-mix()`. Re-brand the entire app — both light and dark — with root-level, per-theme overrides:
 
 ```css
 :root   { --accent: #2f6df6; }   /* whole app blue   */
-.promo  { --accent: #16a34a; }   /* …or just this section green */
 ```
+
+Scoped `--accent` overrides recolor direct accent uses in that subtree, but the
+derived family (`--accent-text`, `--accent-soft`, focus/dot/ramp tokens) is a
+root-level skin contract. Use the full per-theme recipe in
+[`docs/theming.md`](docs/theming.md) for production rebrands.
 
 Buttons, focus rings, dot motifs, accent borders and soft fills all follow automatically. Light/dark is `data-theme="light"` / `"dark"` on `<html>` (defaults to `prefers-color-scheme`); `data-density` and `data-contrast` give density and contrast presets. A full re-skin (radius, display face, dot density, surfaces) is a handful more token overrides — the default monochrome look is **one skin, not the architecture**.
 
@@ -188,7 +192,7 @@ Per-framework getting-started guides + runnable example apps live in the repo:
   ```
 - **For AI coding agents** — the package ships `llms.txt` at its root plus `docs/reference.md`, `docs/usage.md`, `docs/reporting.md`, `docs/theming.md`, `docs/contrast.md`, `docs/stability.md`, `docs/package-contract.md`, the color constitution `docs/adr/0001-color-system.md` and the `CHANGELOG` inside the tarball, so an offline agent has the full API and rationale without guessing.
 
-> The package root is **CSS-only**. Use `@import '@ponchia/ui'` in CSS, or `import '@ponchia/ui'` only as a CSS side-effect import in a CSS-aware bundler (Vite, Astro, SvelteKit, webpack). Do not import the package root from Node/runtime JS. JS entrypoints are explicit subpaths: `/tokens`, `/classes`, `/behaviors`, `/glyphs`, `/react`, `/solid`, `/qwik`, `/skins`, and `/charts`.
+> The package root is **CSS-only**. Use `@import '@ponchia/ui'` in CSS, or `import '@ponchia/ui'` only as a CSS side-effect import in a CSS-aware bundler (Vite, Astro, SvelteKit, webpack). Do not import the package root from Node/runtime JS. JS entrypoints are explicit subpaths: `/tokens`, `/classes`, `/behaviors`, `/glyphs`, `/annotations`, `/connectors`, `/react`, `/solid`, `/qwik`, `/skins`, `/charts`, `/mermaid`, `/d2`, and `/vega`.
 > JS subpaths are **ESM-only**. CommonJS consumers should use dynamic
 > `import('@ponchia/ui/behaviors')`.
 

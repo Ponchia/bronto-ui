@@ -17,6 +17,7 @@ import { dirname, resolve, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { reportAndExit } from './lib/gate-report.mjs';
 import { leafFiles, EXTRA_LEAVES } from './build-dist.mjs';
+import { cssImports, stripCssComments } from './lib/patterns.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
@@ -39,19 +40,18 @@ for (const [key, target] of exportTargets()) {
   if (!existsSync(abs)) errors.push(`exports["${key}"] → missing file ${target}`);
 }
 
-// 2. @import graph of the entrypoints.
-// Matches both `@import './x.css'` and `@import url('./x.css') layer(...)`.
-const importRe = /@import\s+(?:url\(\s*)?['"]([^'"]+)['"]/g;
-for (const entry of ['css/core.css']) {
+// 2. @import graph of the entrypoints. Use the same parser as build-dist so a
+// valid import form cannot build differently from what this gate checks.
+for (const entry of ['css/core.css', 'css/analytical.css']) {
   const abs = resolve(root, entry);
   if (!existsSync(abs)) {
     errors.push(`entrypoint ${entry} missing`);
     continue;
   }
-  const src = readFileSync(abs, 'utf8');
-  for (const m of src.matchAll(importRe)) {
-    const dep = resolve(dirname(abs), m[1]);
-    if (!existsSync(dep)) errors.push(`${entry} imports missing ${m[1]}`);
+  const src = stripCssComments(readFileSync(abs, 'utf8'));
+  for (const href of cssImports(src)) {
+    const dep = resolve(dirname(abs), href);
+    if (!existsSync(dep)) errors.push(`${entry} imports missing ${href}`);
   }
 }
 

@@ -4,12 +4,13 @@
 # merging to main.
 #
 # GATING: the npm publish IS the gate for the documented install path.
-# `validate` runs read-only checks + the tag↔version match; `publish-npm`
-# only runs if validate passes, so a failing check means the version is
-# never on npm and consumers never resolve it. (GitHub still serves the
-# raw tag tarball `archive/refs/tags/vX.Y.Z.tar.gz` for any tag,
-# ungated — that path is legacy/fallback, not the documented install;
-# see docs/architecture.md.)
+# `validate` runs read-only checks + tag ancestry/version matches;
+# `publish-preflight` records the pack manifest/size after all gates; and
+# `publish-npm` only runs after a protected-environment approval, so a failing
+# check means the version is never on npm and consumers never resolve it.
+# (GitHub still serves the raw tag tarball `archive/refs/tags/vX.Y.Z.tar.gz`
+# for any tag, ungated — that path is legacy/fallback, not the documented
+# install; see docs/architecture.md.)
 #
 # The e2e + examples gates are the SAME reusable workflows ci.yml runs
 # (.github/workflows/{e2e,examples}.yml) — one definition, never a drifted
@@ -56,11 +57,22 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: 22
           cache: npm
+
+      - name: Verify tag commit is on main
+        run: |
+          set -euo pipefail
+          git fetch origin main:refs/remotes/origin/main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" refs/remotes/origin/main; then
+            echo "::error::release tag $GITHUB_REF_NAME points at $GITHUB_SHA, which is not reachable from origin/main"
+            exit 1
+          fi
 
       - run: npm ci
 
@@ -79,9 +91,10 @@ jobs:
 
   # Reused, not re-implemented (these jobs used to be duplicated here and
   # had drifted — the release copies lacked the registry retry CI had).
-  # publish-npm needs these; a release must not skip what merge-to-main
+  # publish-preflight needs these; a release must not skip what merge-to-main
   # runs, and adds the cross-engine e2e pass PRs defer.
   e2e:
+    needs: validate
     # Full cross-engine pass gates the publish — PRs run chromium-only for
     # speed, so the release is where firefox/webkit must go green.
     uses: ./.github/workflows/e2e.yml
@@ -92,20 +105,10 @@ jobs:
     needs: validate
     uses: ./.github/workflows/examples.yml
 
-  publish-npm:
+  publish-preflight:
     needs: [validate, e2e, examples]
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # Manual approval gate: this job is the ONLY thing that reaches npm, so
-    # it runs in the `npm-publish` Environment (required-reviewer protection
-    # rule). After the gates pass, the run pauses here until a maintainer
-    # approves in the Actions UI — a deliberate guard against an accidental
-    # tag push publishing. NPM_TOKEN is an Environment secret here, so no
-    # other job (or future workflow) can read it.
-    environment: npm-publish
-    permissions:
-      contents: read
-      id-token: write # npm provenance (publishConfig.provenance)
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
@@ -113,9 +116,8 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          registry-url: https://registry.npmjs.org
 
-      - run: npm ci
+      - run: npm ci --ignore-scripts
 
       - name: Capture publish preflight summary
         run: |
@@ -146,13 +148,35 @@ jobs:
           for (const file of pack.files) console.log(`- ${file.path} (${file.size} B)`);
           NODE
 
+  publish-npm:
+    needs: publish-preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Manual approval gate: this job is the ONLY thing that reaches npm, so
+    # it runs in the `npm-publish` Environment (required-reviewer protection
+    # rule). After the gates and preflight pass, the run pauses here until a
+    # maintainer approves in the Actions UI — a deliberate guard against an
+    # accidental tag push publishing. NPM_TOKEN is an Environment secret here,
+    # so no other job (or future workflow) can read it.
+    environment: npm-publish
+    permissions:
+      contents: read
+      id-token: write # npm provenance (publishConfig.provenance)
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
       # Publish with --ignore-scripts so NODE_AUTH_TOKEN is never exposed
       # to the prepack/prepublishOnly lifecycle (the whole check+test+build
       # surface + devDeps). Safe because the committed artifacts were
-      # already byte-verified by `validate` (check-dist/tokens/dts/pack) on
-      # this exact commit, and e2e gated separately — so we ship exactly
-      # what was validated, not a re-build. prepublishOnly stays the
-      # intrinsic guard for any non-CI/manual publish.
+      # already byte-verified by `validate` and summarized by
+      # `publish-preflight` on this exact commit — so we ship exactly what
+      # was validated, not a re-build. prepublishOnly stays the intrinsic
+      # guard for any non-CI/manual publish.
       #
       # --tag is explicit on both paths: a bare `npm publish` defaults to
       # `latest`, so a prerelease would otherwise hijack the default
@@ -173,34 +197,53 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Record npm registry state
+        continue-on-error: true
         run: |
-          set -euo pipefail
+          set -uo pipefail
           version="${GITHUB_REF_NAME#v}"
+          view_ok=false
           for i in 1 2 3 4 5; do
             if npm view "@ponchia/ui@$version" version dist.integrity dist.tarball --json > "${RUNNER_TEMP}/npm-view.json"; then
+              view_ok=true
               break
             fi
             sleep 5
           done
-          npm view @ponchia/ui dist-tags --json > "${RUNNER_TEMP}/npm-dist-tags.json"
-          node <<'NODE' >> "$GITHUB_STEP_SUMMARY"
+          tags_ok=false
+          if npm view @ponchia/ui dist-tags --json > "${RUNNER_TEMP}/npm-dist-tags.json"; then
+            tags_ok=true
+          fi
+
+          {
+            echo ''
+            echo '## npm registry state'
+            echo ''
+            if [ "$view_ok" = true ] && [ "$tags_ok" = true ]; then
+              node <<'NODE'
           const fs = require('node:fs');
           const path = require('node:path');
           const tmp = process.env.RUNNER_TEMP;
           const view = JSON.parse(fs.readFileSync(path.join(tmp, 'npm-view.json'), 'utf8'));
           const tags = JSON.parse(fs.readFileSync(path.join(tmp, 'npm-dist-tags.json'), 'utf8'));
-          console.log('');
-          console.log('## npm registry state');
-          console.log('');
           console.log('```json');
           console.log(JSON.stringify({ published: view, distTags: tags }, null, 2));
           console.log('```');
           NODE
+            else
+              echo '> npm publish completed, but the post-publish registry observation did not return a complete response.'
+              echo ''
+              echo "- package lookup: $view_ok"
+              echo "- dist-tag lookup: $tags_ok"
+              echo ''
+              echo 'Verify manually with `npm view @ponchia/ui version dist-tags --json`.'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
 
   release-notes:
     # Gate on a successful publish — never announce a GitHub Release for
-    # a version that failed to reach npm (no split-brain). publish-npm
-    # itself needs [validate, e2e, examples], so the gate is transitive.
+    # a version that failed to reach npm (no split-brain). publish-npm itself
+    # needs publish-preflight, which needs [validate, e2e, examples], so the
+    # gate is transitive.
     needs: publish-npm
     runs-on: ubuntu-latest
     timeout-minutes: 10

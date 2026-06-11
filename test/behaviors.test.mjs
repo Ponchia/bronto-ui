@@ -96,6 +96,18 @@ test('initThemeToggle toggles, persists, reflects aria, emits event', () => {
   assert.equal(d.documentElement.getAttribute('data-theme'), 'light', 'no-op after cleanup');
 });
 
+test('initThemeToggle reflects aria when the root is the toggle itself', () => {
+  const d = mount('<button data-bronto-theme-toggle id="t">x</button>');
+  const btn = d.getElementById('t');
+  const stop = initThemeToggle({ root: btn });
+
+  assert.equal(btn.getAttribute('aria-pressed'), 'false');
+  btn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(d.documentElement.getAttribute('data-theme'), 'dark');
+  assert.equal(btn.getAttribute('aria-pressed'), 'true');
+  stop();
+});
+
 test('forced toggle sets a fixed theme and reflects pressed = forced===current', () => {
   const d = mount('<button data-bronto-theme-toggle="dark" id="f">dark</button>');
   initThemeToggle();
@@ -519,6 +531,24 @@ test('initDialog returns focus to the trigger on close (every path)', () => {
   assert.equal(d.activeElement, opener, 'focus returned to the trigger on close');
 });
 
+test('initDialog cleanup removes a pending focus-return listener', () => {
+  const d = mount(
+    '<button data-bronto-open="dlg" id="open">open</button>' +
+      '<button id="other">other</button>' +
+      '<dialog id="dlg"><button data-bronto-close>x</button></dialog>',
+  );
+  const opener = d.getElementById('open');
+  const other = d.getElementById('other');
+  const dlg = stubDialog(d.getElementById('dlg'));
+  const stop = initDialog();
+
+  opener.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  other.focus();
+  stop();
+  dlg.close();
+  assert.equal(d.activeElement, other);
+});
+
 test('initThemeToggle is idempotent — re-init does not stack listeners', () => {
   const d = mount('<button data-bronto-theme-toggle id="t">x</button>');
   initThemeToggle();
@@ -805,6 +835,21 @@ test('initFormValidation: noValidate is set at init, restored on cleanup', () =>
   assert.equal(form.noValidate, false, 'prior noValidate restored on cleanup');
 });
 
+test('initFormValidation: dynamically handled forms restore noValidate on cleanup', () => {
+  const d = mount('<section id="root"></section>');
+  const stop = initFormValidation();
+  const form = d.createElement('form');
+  form.setAttribute('data-bronto-validate', '');
+  form.innerHTML = '<input class="ui-input" name="x" required /><button type="submit">Go</button>';
+  d.getElementById('root').appendChild(form);
+
+  assert.equal(form.noValidate, false, 'precondition: native validation on');
+  form.dispatchEvent(new dom.window.Event('submit', { bubbles: true, cancelable: true }));
+  assert.equal(form.noValidate, true, 'delegated submit suppresses native bubbles');
+  stop();
+  assert.equal(form.noValidate, false, 'prior noValidate restored on cleanup');
+});
+
 // SSR-safe contract: with no DOM each arg-less initializer no-ops and returns a
 // callable cleanup. One loop over the uniform initializers (theme + toast differ
 // — see their own tests above). (code-quality audit Q14.)
@@ -1009,7 +1054,7 @@ test('initCombobox: ArrowUp wraps to last, Home/End jump to edges, Tab closes', 
 test('initPopover: toggles panel, manages aria, Escape + outside close', () => {
   const d = mount(
     '<button id="t" data-bronto-popover="pop">Info</button>' +
-      '<div class="ui-popover" id="pop">Details</div>' +
+      '<div class="ui-popover" id="pop" aria-label="Details">Details</div>' +
       '<button id="away">elsewhere</button>',
   );
   const stop = initPopover();
@@ -1096,6 +1141,8 @@ test('initTableSort: cycles aria-sort and reorders rows (string + numeric)', () 
   const scoreBtn = table.querySelectorAll('.ui-table__sort')[1];
 
   // Sortable headers are seeded aria-sort="none" on init (announced sortable).
+  assert.equal(nameBtn.type, 'button', 'sort control is not an accidental submit');
+  assert.equal(scoreBtn.type, 'button', 'sort control is not an accidental submit');
   assert.equal(nameBtn.closest('th').getAttribute('aria-sort'), 'none', 'seeded none');
   assert.equal(scoreBtn.closest('th').getAttribute('aria-sort'), 'none', 'seeded none');
 
@@ -1238,6 +1285,10 @@ test('initCarousel: wires ARIA + counter, next advances index, emits change', ()
   assert.equal(status.getAttribute('aria-live'), 'polite');
   assert.equal(status.textContent, '1 / 3');
   assert.equal(thumbs[0].getAttribute('aria-current'), 'true');
+  assert.ok(
+    thumbs.every((b) => b.type === 'button'),
+    'thumbnail controls are not accidental submits',
+  );
   assert.equal(prev.disabled, true, 'prev disabled at start when not looping');
   assert.equal(next.disabled, false);
 
@@ -1362,6 +1413,28 @@ test('initLegend: falls back to the 0-based index when data-series is absent', (
   d.addEventListener('bronto:legend:toggle', (e) => events.push(e.detail));
   second.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   assert.deepEqual(events.at(-1), { series: 1, active: false });
+});
+
+test('initLegend: role=button entries get tabindex and keyboard activation', () => {
+  const d = mount(`
+    <ul class="ui-legend ui-legend--interactive" data-bronto-legend>
+      <li><span class="ui-legend__item" role="button" aria-pressed="true" data-series="a">
+        <span class="ui-legend__label">A</span>
+      </span></li>
+    </ul>`);
+  initLegend();
+  const item = d.querySelector('.ui-legend__item');
+  const events = [];
+  d.addEventListener('bronto:legend:toggle', (e) => events.push(e.detail));
+
+  assert.equal(item.tabIndex, 0);
+  item.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+  assert.equal(item.getAttribute('aria-pressed'), 'false');
+  assert.deepEqual(events.at(-1), { series: 'a', active: false });
+
+  item.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  assert.equal(item.getAttribute('aria-pressed'), 'true');
+  assert.deepEqual(events.at(-1), { series: 'a', active: true });
 });
 
 test('initLegend: idempotent (re-init replaces, never stacks) and cleanup stops it', () => {

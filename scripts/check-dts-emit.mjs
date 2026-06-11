@@ -22,6 +22,20 @@ import { reportAndExit } from './lib/gate-report.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const out = mkdtempSync(join(tmpdir(), 'bronto-dts-'));
+const tsconfig = JSON.parse(readFileSync(resolve(root, 'tsconfig.dts.json'), 'utf8'));
+const expected = (tsconfig.include ?? [])
+  .filter((rel) => rel.endsWith('.js'))
+  .flatMap((rel) => {
+    const base = rel.replace(/\.js$/, '.d.ts');
+    return [base, `${base}.map`];
+  });
+const expectedSet = new Set(expected);
+const seen = new Set();
+const errors = [];
+
+if (!expected.length) {
+  errors.push('tsconfig.dts.json include produced no expected declaration outputs');
+}
 
 // Re-emit every leaf declaration to a throwaway dir. tsc may exit non-zero on
 // advisory config diagnostics while still emitting (noEmitOnError:false), so we
@@ -35,8 +49,9 @@ try {
   /* fall through to the file comparison */
 }
 
-// Walk the emitted tree; every emitted file must byte-match its committed twin.
-const errors = [];
+// Walk the emitted tree; every emitted expected file must byte-match its
+// committed twin. Extra .d.ts files are reported: they usually mean the
+// tsconfig include list or shipped declaration set drifted.
 const walk = (dir) => {
   for (const e of readdirSync(dir, { withFileTypes: true })) {
     const abs = join(dir, e.name);
@@ -48,7 +63,10 @@ const walk = (dir) => {
       // gate the mapping data (`version`/`file`/`names`/`mappings`) against
       // drift — closing the hole where shipped map content could rot unchecked.
       const rel = relative(out, abs).split(sep).join('/');
+      seen.add(rel);
       const committed = resolve(root, rel);
+      if (!expectedSet.has(rel))
+        errors.push(`${rel} emitted but is not expected by tsconfig.dts.json`);
       if (!existsSync(committed)) errors.push(`${rel} missing — run: npm run dts:emit`);
       else {
         const norm = (json) => {
@@ -62,7 +80,10 @@ const walk = (dir) => {
     } else if (e.name.endsWith('.d.ts')) {
       // The declaration surface byte-matches in place (no volatile paths).
       const rel = relative(out, abs).split(sep).join('/');
+      seen.add(rel);
       const committed = resolve(root, rel);
+      if (!expectedSet.has(rel))
+        errors.push(`${rel} emitted but is not expected by tsconfig.dts.json`);
       if (!existsSync(committed)) errors.push(`${rel} missing — run: npm run dts:emit`);
       else if (readFileSync(committed, 'utf8') !== readFileSync(abs, 'utf8'))
         errors.push(`${rel} is stale — run: npm run dts:emit`);
@@ -70,6 +91,10 @@ const walk = (dir) => {
   }
 };
 walk(out);
+
+for (const rel of expected) {
+  if (!seen.has(rel)) errors.push(`${rel} was not emitted by tsc — check tsconfig.dts.json`);
+}
 
 reportAndExit(errors, {
   label: 'generated-declaration',

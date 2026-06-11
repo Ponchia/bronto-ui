@@ -21,19 +21,17 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
-import { stripCssComments } from './lib/patterns.mjs';
+import { cssImports, stripCssComments } from './lib/patterns.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const cssDir = resolve(root, 'css');
 
-const IMPORT_RE = /@import\s+url\(\s*['"]([^'"]+)['"]\s*\)/g;
-
 /** Ordered list of leaf css files an entrypoint pulls in (recursing
  *  through nested entrypoints like core.css). */
 function leaves(entry, acc = []) {
-  const src = readFileSync(resolve(cssDir, entry), 'utf8');
-  for (const m of src.matchAll(IMPORT_RE)) {
-    const dep = m[1].replace(/^\.\//, '');
+  const src = stripCssComments(readFileSync(resolve(cssDir, entry), 'utf8'));
+  for (const href of cssImports(src)) {
+    const dep = href.replace(/^\.\//, '');
     if (/(?:^|\/)(core|index)\.css$/.test(dep)) leaves(dep, acc);
     // Dedupe: a leaf reachable from two entrypoints must be emitted
     // once, or the published bundle ships its rules (and the layered

@@ -17,6 +17,18 @@ test('repins every exact @ponchia/ui@X.Y.Z literal, and only those', () => {
   assert.doesNotMatch(out, /@ponchia\/ui@0\.6\.\d/);
 });
 
+test('repins prerelease literals without keeping the old suffix', () => {
+  const text = [
+    'href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.7.0-rc.1/dist/bronto.css"',
+    "import '@ponchia/ui@0.7.0-beta.2/css/report.css';",
+  ].join('\n');
+  const out = repinVersionLiterals(text, '0.7.0-rc.2');
+  assert.match(out, /@ponchia\/ui@0\.7\.0-rc\.2\/dist\/bronto\.css/);
+  assert.match(out, /@ponchia\/ui@0\.7\.0-rc\.2\/css\/report\.css/);
+  assert.doesNotMatch(out, /rc\.2-rc\.1/);
+  assert.doesNotMatch(out, /beta\.2/);
+});
+
 test('dates the Unreleased heading for the released version only', () => {
   const cl = ['# Changelog', '', '## Unreleased — 0.7.0', '', '## 0.6.5 — 2026-06-09'].join('\n');
   const out = dateChangelogHeading(cl, '0.7.0', '2026-06-10');

@@ -33,8 +33,9 @@ function App() {
 
 There's a `useX` for each behavior (`useDialog`, `useTabs`, `useMenu`,
 `useCombobox`, `usePopover`, `useDisclosure`, `useFormValidation`,
-`useTableSort`, `useCarousel`, `useDismissible`, `useThemeToggle`,
-`useDotGlyph`), `useToast()` → the imperative, and the generic
+`useTableSort`, `useCarousel`, `useDismissible`, `useDisabledGuard`,
+`useThemeToggle`, `useDotGlyph`, `useLegend`, `useConnectors`, `useSpotlight`,
+`useCrosshair`, `useCommand`, `useSources`), `useToast()` → the imperative, and the generic
 `useBrontoBehavior(init, opts)`. To scope a hook to a subtree, pass a
 React ref object (`{ root: ref }`) or a resolver callback (`() => ({
 root: el })`). The bindings resolve options on mount, after refs have
