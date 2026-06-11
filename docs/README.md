@@ -26,6 +26,7 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 ## Reporting & analytical primitives
 
 - [reporting.md](./reporting.md) — the static, PDF-first report grammar **and the analytical toolbox available to a report**.
+- [figure.md](./figure.md) — reusable chart/diagram/media figure stage with overlay, key, and fallback-data slots.
 - [annotations.md](./annotations.md) — SVG annotations (subject / connector / note), off-chart use, and the geometry helpers.
 - [legends.md](./legends.md) — standalone data keys / legends.
 - [mermaid.md](./mermaid.md) — theme Mermaid diagrams from bronto tokens, and annotate the rendered SVG.
@@ -33,6 +34,9 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 - [vega.md](./vega.md) — theme Vega-Lite charts from bronto tokens (resolved `config`) — the recommended path when a report needs a chart, since bronto ships no chart component.
 - [marks.md](./marks.md) — text/evidence emphasis for running prose (`ui-mark`, `ui-bracket-note`).
 - [sources.md](./sources.md) — the citations / provenance trust layer.
+- [interval.md](./interval.md) — host-normalised low/high uncertainty spans for estimates and evidence windows.
+- [clamp.md](./clamp.md) — bounded excerpts with optional CSS-only show-more / show-less reveal.
+- [highlights.md](./highlights.md) — CSS Custom Highlight API paint for evidence, search, and current ranges.
 - [diff.md](./diff.md) — line/row change-review grammar (`ui-diff`, add/remove/context rows).
 - [code.md](./code.md) — fenced-code evidence chrome (`ui-code`, line numbers + add/del/hl states; never parses).
 - [spark.md](./spark.md) — inline datawords / word-sized microcharts (`ui-spark`, host-normalised `--v`).

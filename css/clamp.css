@@ -1,0 +1,92 @@
+/* ==========================================================================
+   clamp — opt-in bounded excerpt + reveal.
+
+   For source excerpts, claim basis, caveats, and evidence text that should
+   scan as a bounded block but remain reachable. Bronto owns the visual clamp
+   and optional CSS-only reveal affordance; the host owns content, IDs, and
+   whether truncation is appropriate. Not imported by core.css.
+   ========================================================================== */
+
+.ui-clamp {
+  --clamp-lines: 4;
+
+  display: grid;
+  gap: var(--space-2xs);
+  min-inline-size: 0;
+  position: relative;
+}
+
+.ui-clamp__body {
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--clamp-lines);
+  display: -webkit-box;
+  line-clamp: var(--clamp-lines);
+  mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+  overflow: hidden;
+}
+
+.ui-clamp:has(> .ui-clamp__toggle:checked) .ui-clamp__body {
+  -webkit-line-clamp: unset;
+  display: block;
+  line-clamp: none;
+  mask-image: none;
+}
+
+.ui-clamp__toggle {
+  block-size: 1px;
+  clip-path: inset(50%);
+  inline-size: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+}
+
+.ui-clamp__control {
+  color: var(--accent-text);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  inline-size: max-content;
+  letter-spacing: var(--tracking-wide);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  text-underline-offset: 0.2rem;
+  text-transform: uppercase;
+}
+
+.ui-clamp__toggle:focus-visible + .ui-clamp__body + .ui-clamp__control {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.ui-clamp__less {
+  display: none;
+}
+
+.ui-clamp:has(> .ui-clamp__toggle:checked) .ui-clamp__more {
+  display: none;
+}
+
+.ui-clamp:has(> .ui-clamp__toggle:checked) .ui-clamp__less {
+  display: inline;
+}
+
+@media (hover: hover) {
+  .ui-clamp__control:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+@media print {
+  .ui-clamp__body {
+    -webkit-line-clamp: unset;
+    display: block;
+    line-clamp: none;
+    mask-image: none;
+  }
+
+  .ui-clamp__toggle,
+  .ui-clamp__control {
+    display: none;
+  }
+}

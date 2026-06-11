@@ -60,15 +60,20 @@ sanitize that content before rendering it and do not initialize
 evidence). The _content_ inside those sections is where the rest of the
 analytical layer earns its place. Each one is an opt-in import that stays out of
 the default bundle — add the leaves a given report actually needs.
-`@ponchia/ui/css/analytical.css` is a convenience roll-up of the **seven
-figure-layer leaves only** (annotations, legends, marks, connectors, spotlight,
-crosshair, selection) — sources, generated, state, and the prose/evidence
-leaves below are NOT in it and must be linked individually. Reach for:
+`@ponchia/ui/css/analytical.css` is a convenience roll-up of the **nine
+figure/evidence-layer leaves only** (figure, annotations, legends, marks,
+connectors, spotlight, crosshair, selection, highlights) — sources, generated,
+state, interval, clamp, and the prose/evidence leaves below are NOT in it and
+must be linked individually. Reach for:
 
 | Layer | Import | Reach for it when… |
 | --- | --- | --- |
+| **Figure stage** (`.ui-figure*`) | `css/figure.css` | A chart, diagram, screenshot, or annotated SVG needs a stable media box, overlay slot, right-side key, and fallback-data slot. It composes with `ui-report__figure`; it does not render charts or own scales. See [figure.md](./figure.md). |
 | **Marks** (`.ui-mark`, `.ui-bracket-note`) | `css/marks.css` | You want to emphasise a phrase _in prose_ — a highlight on the finding, an underline on a risk, or a bracket around an evidence/caveat passage. The inline counterpart to annotations. See [marks.md](./marks.md). |
 | **Sources / provenance** (`.ui-citation`, `.ui-source-card`, `.ui-source-list`, `.ui-provenance`) | `css/sources.css` | The report makes claims a reader will question — "where did this come from?". A CSS-only trust layer whose cross-cutting state modifier (`.ui-src--verified`, plus reviewed / generated / unverified / stale / conflict) sets a rationed tone, always paired with a written label, never colour alone. See [sources.md](./sources.md). |
+| **Interval** (`.ui-interval*`) | `css/interval.css` | Evidence is a low/high estimate, confidence window, target band, or uncertain reading. The host normalises `--lo`, `--hi`, and optional `--v`; Bronto only paints the range and point. See [interval.md](./interval.md). |
+| **Clamp** (`.ui-clamp*`) | `css/clamp.css` | A source excerpt, claim basis, or caveat should scan as a bounded text block but remain reachable through explicit "Show more" / "Show less" labels and print expansion. See [clamp.md](./clamp.md). |
+| **Highlights** (`.ui-highlights`) | `css/highlights.css` | The host registers CSS Custom Highlight API ranges for cited evidence, search hits, or the current match without wrapping DOM text nodes. See [highlights.md](./highlights.md). |
 | **Annotations** (`.ui-annotation*`) | `css/annotations.css` | A figure needs an explicit callout — a peak, a limit, a watched region — or a small decorative margin mark. SVG only. See [annotations.md](./annotations.md) and the [off-chart + scaling notes](./annotations.md#using-annotations-off-chart) before you size one. |
 | **Legends / data keys** (`.ui-legend*`) | `css/legend.css` | A chart figure needs a colour key. WCAG 1.4.1 by construction. See [legends.md](./legends.md). |
 | **Mermaid theme** (`@ponchia/ui/mermaid`) | _(JS/JSON, no CSS)_ | The report embeds a [Mermaid](https://mermaid.js.org) diagram (flowchart, sequence, pie…) and you want it on-brand instead of generic. A resolved `base` theme projected from the same tokens as `charts.json`; annotate the rendered SVG with the annotation layer. See [mermaid.md](./mermaid.md). |
@@ -473,12 +478,14 @@ from one of two routes:
   painting marks from the `--chart-N` palette so the figure prints exactly and
   carries no runtime.
 
-Whichever route, the figure frame is the same: wrap it in `ui-report__figure`,
-caption it with `ui-report__caption`, give it the standalone, portable
-`.ui-legend` data key (`@ponchia/ui/css/legend.css` — see
-[legends.md](./legends.md)), and pair every colour with a direct label, a
-pattern, **and** a fallback `ui-table` so the figure survives mono print and
-colour-vision deficiency.
+Whichever route, the figure frame is the same: wrap it in
+`ui-report__figure ui-figure`, caption it with
+`ui-report__caption ui-figure__caption`, put the rendered chart in
+`ui-figure__stage`, give it the standalone, portable `.ui-legend` data key
+(`@ponchia/ui/css/legend.css` — see [legends.md](./legends.md)), and pair every
+colour with a direct label, a pattern, **and** a fallback `ui-table` in
+`ui-figure__data` so the figure survives mono print and colour-vision
+deficiency.
 
 A Vega-Lite figure. The live mount is **`ui-screen-only`** and the fallback
 `ui-table` carries the data into print — a live chart bakes the on-screen theme
@@ -486,14 +493,16 @@ into its SVG/canvas at render time, so printing it would emit a dark-baked chart
 on white paper. Print the table; keep the chart for screen:
 
 ```html
-<figure class="ui-report__figure" role="group" aria-labelledby="chart-title">
-  <figcaption id="chart-title" class="ui-report__caption">
+<figure class="ui-report__figure ui-figure" role="group" aria-labelledby="chart-title">
+  <figcaption id="chart-title" class="ui-report__caption ui-figure__caption">
     Fig 1 - Weekly focus split
   </figcaption>
-  <div id="focus-chart" class="ui-screen-only" style="min-block-size: 240px">
-    <noscript>Chart needs JavaScript — the data is in the table below.</noscript>
+  <div class="ui-figure__stage ui-screen-only" style="--figure-min-block: 240px">
+    <div id="focus-chart" class="ui-figure__media">
+      <noscript>Chart needs JavaScript — the data is in the table below.</noscript>
+    </div>
   </div>
-  <div class="ui-table-wrap">
+  <div class="ui-figure__data ui-table-wrap">
     <table class="ui-table ui-table--dense">
       <caption>Chart source data</caption>
       <thead>
@@ -543,35 +552,42 @@ A frozen, token-themed inline `<svg>` for the same data — no runtime, prints
 exactly, with a `.ui-legend` key and the fallback table:
 
 ```html
-<figure class="ui-report__figure ui-print-exact" role="group" aria-labelledby="chart-title">
-  <figcaption id="chart-title" class="ui-report__caption">
+<figure class="ui-report__figure ui-figure ui-print-exact" role="group" aria-labelledby="chart-title">
+  <figcaption id="chart-title" class="ui-report__caption ui-figure__caption">
     Fig 1 - Weekly focus split
   </figcaption>
-  <ul class="ui-legend" aria-label="Series">
-    <li class="ui-legend__item">
-      <span
-        class="ui-legend__swatch"
-        style="--chart-color: var(--chart-1); --chart-pattern: var(--chart-pattern-1)"
-        aria-hidden="true"
-      ></span>
-      <span class="ui-legend__label">Research</span>
-    </li>
-    <li class="ui-legend__item">
-      <span
-        class="ui-legend__swatch"
-        style="--chart-color: var(--chart-2); --chart-pattern: var(--chart-pattern-2)"
-        aria-hidden="true"
-      ></span>
-      <span class="ui-legend__label">Delivery</span>
-    </li>
-  </ul>
-  <svg viewBox="0 0 360 160" role="img" aria-labelledby="focus-svg-title">
-    <title id="focus-svg-title">Weekly focus split</title>
-    <line x1="36" y1="132" x2="324" y2="132" stroke="var(--line)" />
-    <rect x="72" y="42" width="96" height="90" fill="var(--chart-1)" />
-    <rect x="200" y="77" width="96" height="55" fill="var(--chart-2)" />
-  </svg>
-  <div class="ui-table-wrap">
+  <div class="ui-figure__body ui-figure__body--key-right">
+    <div class="ui-figure__stage">
+      <svg class="ui-figure__media" viewBox="0 0 360 160" role="img" aria-labelledby="focus-svg-title focus-svg-desc">
+        <title id="focus-svg-title">Weekly focus split</title>
+        <desc id="focus-svg-desc">Research is 18 hours and delivery is 11 hours.</desc>
+        <line x1="36" y1="132" x2="324" y2="132" stroke="var(--line)" />
+        <rect x="72" y="42" width="96" height="90" fill="var(--chart-1)" />
+        <rect x="200" y="77" width="96" height="55" fill="var(--chart-2)" />
+      </svg>
+    </div>
+    <div class="ui-figure__key">
+      <ul class="ui-legend" aria-label="Series">
+        <li class="ui-legend__item">
+          <span
+            class="ui-legend__swatch"
+            style="--chart-color: var(--chart-1); --chart-pattern: var(--chart-pattern-1)"
+            aria-hidden="true"
+          ></span>
+          <span class="ui-legend__label">Research</span>
+        </li>
+        <li class="ui-legend__item">
+          <span
+            class="ui-legend__swatch"
+            style="--chart-color: var(--chart-2); --chart-pattern: var(--chart-pattern-2)"
+            aria-hidden="true"
+          ></span>
+          <span class="ui-legend__label">Delivery</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="ui-figure__data ui-table-wrap">
     <table class="ui-table ui-table--dense">
       <caption>Chart source data</caption>
       <thead>

@@ -1,0 +1,50 @@
+/* ==========================================================================
+   highlights — opt-in CSS Custom Highlight API paint.
+
+   Named text ranges for cited evidence, search hits, and current match. The
+   HOST creates Range objects and registers Highlight instances in CSS.highlights
+   under the documented names. Bronto only paints the registered ranges. Not
+   imported by core.css.
+   ========================================================================== */
+
+.ui-highlights {
+  --highlight-evidence: var(--accent-soft);
+  --highlight-search: var(--warning-soft);
+  --highlight-current: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.ui-highlights::highlight(bronto-evidence) {
+  background-color: var(--highlight-evidence);
+  color: inherit;
+  text-decoration-color: var(--accent);
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.1em;
+  text-underline-offset: 0.18em;
+}
+
+.ui-highlights::highlight(bronto-search) {
+  background-color: var(--highlight-search);
+  color: inherit;
+}
+
+.ui-highlights::highlight(bronto-current) {
+  background-color: var(--highlight-current);
+  color: var(--text);
+}
+
+@media (forced-colors: active) {
+  .ui-highlights::highlight(bronto-evidence),
+  .ui-highlights::highlight(bronto-search),
+  .ui-highlights::highlight(bronto-current) {
+    background-color: Highlight;
+    color: HighlightText;
+    text-decoration-color: HighlightText;
+  }
+}
+
+@media print {
+  .ui-highlights {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

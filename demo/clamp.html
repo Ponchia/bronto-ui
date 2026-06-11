@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — clamp specimen</title>
+    <meta
+      name="description"
+      content="Bounded excerpt and CSS-only reveal specimen for @ponchia/ui clamp CSS."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/clamp.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .clamp-demo {
+        display: grid;
+        gap: var(--space-md);
+        margin-inline: auto;
+        max-inline-size: 62ch;
+        padding: 2rem 1rem 4rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="clamp-demo">
+      <h1 class="ui-display">Clamp specimen</h1>
+
+      <article class="ui-panel">
+        <p class="ui-eyebrow">Source excerpt</p>
+        <div class="ui-clamp" style="--clamp-lines: 3">
+          <input class="ui-clamp__toggle" id="clamp-source-excerpt" type="checkbox" />
+          <p class="ui-clamp__body">
+            The incident note records a short retry spike during the migration window, followed by a
+            recovery inside the same hour. The source remains real text in the DOM, so search, copy,
+            assistive technology, and print output all receive the full excerpt. The bounded view is
+            only a scanning affordance for dense reports, not a data hiding mechanism.
+          </p>
+          <label class="ui-clamp__control" for="clamp-source-excerpt">
+            <span class="ui-clamp__more">Show more</span>
+            <span class="ui-clamp__less">Show less</span>
+          </label>
+        </div>
+      </article>
+
+      <article class="ui-panel">
+        <p class="ui-eyebrow">No reveal</p>
+        <div class="ui-clamp" style="--clamp-lines: 2">
+          <p class="ui-clamp__body">
+            A host can omit the checkbox and visible control when the excerpt should stay bounded on
+            screen. Print still expands the body, because archived reports should not silently drop
+            evidence text.
+          </p>
+        </div>
+      </article>
+    </main>
+  </body>
+</html>

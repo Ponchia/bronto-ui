@@ -18,8 +18,9 @@ hairline borders — all re-skinnable from a single `--accent` knob (opt-in
 amber-CRT, phosphor-green, and e-ink colorways).
 
 Beyond the standard component set it ships an opt-in analytical & report layer —
-SVG annotations, legends, leader-line connectors, a guided-focus spotlight, text
-marks, a colourblind-safe data-viz palette, and a static/PDF report grammar — for
+figure stages, SVG annotations, legends, leader-line connectors, a guided-focus
+spotlight, text marks, evidence highlights, bounded excerpts, low/high intervals,
+a colourblind-safe data-viz palette, and a static/PDF report grammar — for
 dashboards and LLM-authored reports.
 
 ### [Live demo →](https://ponchia.github.io/bronto-ui/) &nbsp;·&nbsp; [Static report →](https://ponchia.github.io/bronto-ui/demo/report-standalone.html) &nbsp;·&nbsp; [Theme playground →](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)
@@ -77,7 +78,7 @@ Or drop it in with no build step, straight from a CDN:
 
 > Prefer source leaves through a bundler? Use `@import '@ponchia/ui/css'` (a thin `@import` fan-out) instead. Both resolve the Doto `@font-face` with relative URLs, so there's no `/fonts` path assumption.
 
-> The bundle is the standard component set. The opt-in analytical & report layers — `report.css`, `dataviz.css`, `annotations.css`, `legend.css`, and the rest — are **not** in `bronto.css`; link each one you need from `dist/css/`. For LLM-authored static reports see [docs/reporting.md](docs/reporting.md).
+> The bundle is the standard component set. The opt-in analytical & report layers — `report.css`, `dataviz.css`, `figure.css`, `annotations.css`, `legend.css`, `interval.css`, `clamp.css`, `highlights.css`, and the rest — are **not** in `bronto.css`; link each one you need from `dist/css/`. For LLM-authored static reports see [docs/reporting.md](docs/reporting.md).
 
 **2. Write markup with `ui-*` classes** (primary is the default button; modifiers are opt-in):
 
@@ -132,8 +133,8 @@ Arrows, chevrons, check/close/plus/minus, search/menu/gear, info/warning/bell/lo
 - **Disclosure & nav** — tabs, accordion, segmented, breadcrumb, pagination, `ui-steps`, `ui-timeline`, `ui-pagehead`, `ui-kbd`.
 - **Shells** — an admin dashboard shell (`ui-app-*`) and a content/marketing site shell (`ui-site*`, `ui-container`).
 - **Prose** — `.ui-prose` styles raw, unclassed semantic HTML (Markdown / CMS / LLM output) with zero classes.
-- **Analytical & communication primitives** _(opt-in)_ — `@ponchia/ui/css/analytical.css`: SVG **annotations** (subject/connector/note), standalone **legends**/data-keys, text/evidence **marks**, leader-line **connectors** (+ a pure `@ponchia/ui/connectors` geometry kernel), a guided-focus **spotlight**, a **crosshair**/readout, and a cross-cutting **selection** vocabulary. Each owns its visual grammar + pure geometry and refuses scales/state/hit-testing — figures that explain themselves, not a chart engine. Plus standalone **`source`/provenance** (trust) and **lifecycle `state`** leaves.
-- **Reports** _(opt-in)_ — `@ponchia/ui/css/report.css`, a static/PDF-first report grammar for LLM-authored HTML: covers, decisions, claims, sections, severity-labelled findings, evidence packets, evidence ledgers, action registers, source-card bindings, figures, chart wrappers and print utilities.
+- **Analytical & communication primitives** _(opt-in)_ — `@ponchia/ui/css/analytical.css`: **figure** stages, SVG **annotations** (subject/connector/note), standalone **legends**/data-keys, text/evidence **marks**, leader-line **connectors** (+ a pure `@ponchia/ui/connectors` geometry kernel), a guided-focus **spotlight**, a **crosshair**/readout, a cross-cutting **selection** vocabulary, and CSS Custom Highlight API **highlights**. Each owns its visual grammar + pure geometry and refuses scales/state/hit-testing — figures that explain themselves, not a chart engine. Plus standalone **`source`/provenance** (trust), **interval**, **clamp**, and **lifecycle `state`** leaves.
+- **Reports** _(opt-in)_ — `@ponchia/ui/css/report.css`, a static/PDF-first report grammar for LLM-authored HTML: covers, decisions, claims, sections, severity-labelled findings, evidence packets, evidence ledgers, action registers, source-card bindings, `ui-figure` composition, intervals, bounded excerpts, chart wrappers and print utilities.
 - **Motion & dots** — the dot-matrix motif kit: dot grid, status dots, dot loaders, the orbital spinner, matrix reveal — all reduced-motion aware.
 - **Glyphs** — `@ponchia/ui/glyphs`, a 71-glyph dot-matrix icon set on the `.ui-dotmatrix` primitive (display marks + crisp `solid` inline icons + one-node `.ui-icon` mask rendering).
 - **Colorways** _(opt-in)_ — `data-bronto-skin="amber-crt | phosphor-green | e-ink"`: a root-level recolour of the one accent (OKLCH, per-theme, contrast-gated), never in the default bundle.
@@ -184,7 +185,7 @@ Per-framework getting-started guides + runnable example apps live in the repo:
 
 - **Tokens as data** — `import tokens, { themeColor, cssVars } from '@ponchia/ui/tokens'` (plus `tokens.json`, W3C DTCG `tokens.dtcg.json`, and `tokens/resolved.json` — concrete hex per theme for canvas/SVG/MapLibre).
 - **Chart colours for dashboards** — `import charts from '@ponchia/ui/charts.json' with { type: 'json' }` in Node ESM, or the same path through a bundler JSON import (resolved hex per theme; series 1 = your accent) plus the opt-in `@ponchia/ui/css/dataviz.css`.
-- **Static reports for LLMs** — add `@ponchia/ui/css/report.css` for report structure, claim/evidence/action grammar, source-card bindings, and print utilities; pair with `@ponchia/ui/css/dataviz.css` only when the report contains charts. Full cookbook: `docs/reporting.md`.
+- **Static reports for LLMs** — add `@ponchia/ui/css/report.css` for report structure, claim/evidence/action grammar, source-card bindings, and print utilities; pair with `@ponchia/ui/css/figure.css`, `dataviz.css`, `interval.css`, `clamp.css`, or `highlights.css` only when the report uses those primitives. Full cookbook: `docs/reporting.md`.
 - **Modern-platform motion** — overlays (modal/drawer/popover), toasts and the `<details>` accordion animate **in and out** with zero JS (`@starting-style` + `allow-discrete`, `::details-content` + `interpolate-size`). Progressive-enhancement extras: `.ui-scroll-progress` / `.ui-scroll-reveal` (scroll-driven, no JS) and `.ui-vt` for View Transitions. All degrade to a static end-state and respect `prefers-reduced-motion`. For smooth **cross-document** navigations, add the document-global one-liner to your own top-level (unlayered) CSS: `@view-transition { navigation: auto; }`.
 - **Editor IntelliSense** — point VS Code at the shipped custom-data file so every token autocompletes in `var(--…)`:
   ```json

@@ -47,6 +47,7 @@ semantic versioning contract for the surfaces listed here.
 | `./css/skins.css` | `./dist/css/skins.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
 | `./css/dataviz.css` | `./dist/css/dataviz.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
 | `./css/report.css` | `./dist/css/report.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
+| `./css/figure.css` | `./dist/css/figure.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
 | `./css/annotations.css` | `./dist/css/annotations.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
 | `./css/legend.css` | `./dist/css/legend.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
 | `./css/marks.css` | `./dist/css/marks.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
@@ -55,6 +56,9 @@ semantic versioning contract for the surfaces listed here.
 | `./css/crosshair.css` | `./dist/css/crosshair.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
 | `./css/selection.css` | `./dist/css/selection.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
 | `./css/sources.css` | `./dist/css/sources.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
+| `./css/interval.css` | `./dist/css/interval.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
+| `./css/clamp.css` | `./dist/css/clamp.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
+| `./css/highlights.css` | `./dist/css/highlights.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
 | `./css/diff.css` | `./dist/css/diff.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
 | `./css/code.css` | `./dist/css/code.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
 | `./css/spark.css` | `./dist/css/spark.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
@@ -87,6 +91,7 @@ semantic versioning contract for the surfaces listed here.
 | `./css/unlayered/skins.css` | `./css/skins.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
 | `./css/unlayered/dataviz.css` | `./css/dataviz.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
 | `./css/unlayered/report.css` | `./css/report.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
+| `./css/unlayered/figure.css` | `./css/figure.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
 | `./css/unlayered/annotations.css` | `./css/annotations.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
 | `./css/unlayered/legend.css` | `./css/legend.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
 | `./css/unlayered/marks.css` | `./css/marks.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
@@ -95,6 +100,9 @@ semantic versioning contract for the surfaces listed here.
 | `./css/unlayered/crosshair.css` | `./css/crosshair.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
 | `./css/unlayered/selection.css` | `./css/selection.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
 | `./css/unlayered/sources.css` | `./css/sources.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
+| `./css/unlayered/interval.css` | `./css/interval.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
+| `./css/unlayered/clamp.css` | `./css/clamp.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
+| `./css/unlayered/highlights.css` | `./css/highlights.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
 | `./css/unlayered/diff.css` | `./css/diff.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
 | `./css/unlayered/code.css` | `./css/code.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
 | `./css/unlayered/spark.css` | `./css/spark.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
@@ -130,6 +138,7 @@ semantic versioning contract for the surfaces listed here.
 | `./docs/mermaid.md` | `./docs/mermaid.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/d2.md` | `./docs/d2.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/vega.md` | `./docs/vega.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/figure.md` | `./docs/figure.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/annotations.md` | `./docs/annotations.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/legends.md` | `./docs/legends.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/marks.md` | `./docs/marks.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
@@ -138,6 +147,9 @@ semantic versioning contract for the surfaces listed here.
 | `./docs/crosshair.md` | `./docs/crosshair.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/selection.md` | `./docs/selection.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/sources.md` | `./docs/sources.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/interval.md` | `./docs/interval.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/clamp.md` | `./docs/clamp.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/highlights.md` | `./docs/highlights.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/diff.md` | `./docs/diff.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/code.md` | `./docs/code.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/spark.md` | `./docs/spark.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
@@ -216,6 +228,7 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `docs/mermaid.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/d2.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/vega.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/figure.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/annotations.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/legends.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/marks.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
@@ -224,6 +237,9 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `docs/crosshair.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/selection.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/sources.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/interval.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/clamp.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/highlights.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/diff.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/code.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/spark.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
@@ -256,7 +272,7 @@ result. The listed gates are part of `npm run check`.
 | Package manifest | `package.json` | docs/package-contract.md | `npm run package-contract:build` | check:fresh | The complete export/file matrix in this document is generated from the manifest. |
 | Token model | `tokens/index.js` | css/tokens.css; tokens/index.json; tokens/tokens.dtcg.json; tokens/resolved.json; tokens/index.d.ts | `npm run tokens:css:build; tokens:build; dtcg:build; resolved:build; dts:build` | check:fresh; check:contrast | Token names/roles are public. Resolved values are visual tuning before 1.0. |
 | Class registry | `classes/index.js plus css/*.css selectors` | classes/classes.json; classes/index.d.ts; classes/vscode.css-custom-data.json; docs/reference.md | `npm run classes:json:build; dts:build; vscode:build; reference:build` | check:fresh; check:classes; check:contract | The typed registry, JSON vocabulary, and generated reference stay aligned with real selectors. |
-| Authored CSS graph | `css/core.css plus css/*.css leaves` | dist/bronto.css; dist/css/*.css (40 layered outputs) | `npm run dist:build` | check:dist; check:exports | Default bundle and direct layered leaf imports are generated from authored CSS and size-gated. |
+| Authored CSS graph | `css/core.css plus css/*.css leaves` | dist/bronto.css; dist/css/*.css (44 layered outputs) | `npm run dist:build` | check:dist; check:exports | Default bundle and direct layered leaf imports are generated from authored CSS and size-gated. |
 | JSDoc-authored public JS | `behaviors/; annotations/; connectors/; react/; solid/; qwik/` | adjacent *.d.ts and *.d.ts.map files | `npm run dts:emit` | check:dts-emit; check:types; check:attw; check:publint | Declarations are emitted from the shipped JS, not separately maintained. |
 | Glyph registry | `glyphs/glyphs.js` | glyphs/glyphs.d.ts | `npm run glyphs:build` | check:glyphs; npm test | Glyph names and render options are public. The registry stays sorted and type-covered. |
 | Display colorways | `tokens/skins.js` | css/skins.css; tokens/skins.d.ts | `npm run skins:build` | check:skins; check:contrast | Skins are opt-in root-level choices and never part of dist/bronto.css. |

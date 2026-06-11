@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — figure specimen</title>
+    <meta name="description" content="Figure-stage specimen for @ponchia/ui figure CSS." />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/dataviz.css" />
+    <link rel="stylesheet" href="../dist/css/figure.css" />
+    <link rel="stylesheet" href="../dist/css/legend.css" />
+    <link rel="stylesheet" href="../dist/css/annotations.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .figure-demo {
+        margin-inline: auto;
+        max-inline-size: 72rem;
+        padding: 2rem 1rem 4rem;
+      }
+
+      .figure-demo__bars {
+        block-size: 1rem;
+        border-radius: var(--radius-pill);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="figure-demo">
+      <h1 class="ui-display">Figure specimen</h1>
+
+      <figure class="ui-figure ui-print-exact" role="group" aria-labelledby="figure-title">
+        <figcaption id="figure-title" class="ui-figure__caption">
+          Fig 1 - Release readiness with overlay, key, and fallback data
+        </figcaption>
+        <div class="ui-figure__body ui-figure__body--key-right">
+          <div
+            class="ui-figure__stage"
+            style="--figure-max-inline: 42rem; --figure-min-block: 18rem"
+          >
+            <svg
+              class="ui-figure__media"
+              viewBox="0 0 420 220"
+              role="img"
+              aria-labelledby="figure-svg-title figure-svg-desc"
+            >
+              <title id="figure-svg-title">Release readiness bars</title>
+              <desc id="figure-svg-desc">
+                Quality is 84 percent, documentation is 72 percent, and release risk is 38 percent.
+              </desc>
+              <line x1="108" y1="30" x2="108" y2="188" stroke="var(--line)" />
+              <line x1="108" y1="188" x2="380" y2="188" stroke="var(--line)" />
+              <g font-size="12" text-anchor="end" fill="var(--text-soft)">
+                <text x="96" y="62">Quality</text>
+                <text x="96" y="112">Docs</text>
+                <text x="96" y="162">Risk</text>
+              </g>
+              <rect
+                class="figure-demo__bars"
+                x="108"
+                y="48"
+                width="226"
+                height="18"
+                fill="var(--chart-1)"
+              />
+              <rect
+                class="figure-demo__bars"
+                x="108"
+                y="98"
+                width="194"
+                height="18"
+                fill="var(--chart-2)"
+              />
+              <rect
+                class="figure-demo__bars"
+                x="108"
+                y="148"
+                width="102"
+                height="18"
+                fill="var(--chart-3)"
+              />
+              <g font-size="12" fill="var(--text)">
+                <text x="342" y="62">84%</text>
+                <text x="310" y="112">72%</text>
+                <text x="218" y="162">38%</text>
+              </g>
+            </svg>
+            <svg
+              class="ui-figure__overlay"
+              viewBox="0 0 420 220"
+              role="img"
+              aria-labelledby="figure-overlay-title figure-overlay-desc"
+            >
+              <title id="figure-overlay-title">Readiness annotation overlay</title>
+              <desc id="figure-overlay-desc">An annotation calls out the quality score.</desc>
+              <g
+                class="ui-annotation ui-annotation--callout ui-annotation--accent"
+                transform="translate(334, 57)"
+              >
+                <path class="ui-annotation__connector" d="M0,0L46,-28" />
+                <circle class="ui-annotation__connector-end" cx="0" cy="0" r="3" />
+                <g class="ui-annotation__note" transform="translate(48, -36)">
+                  <path class="ui-annotation__note-line" d="M0,20H74" />
+                  <text class="ui-annotation__title" y="0">Ready</text>
+                  <text class="ui-annotation__label" y="18">Quality gate</text>
+                </g>
+              </g>
+            </svg>
+          </div>
+          <div class="ui-figure__key">
+            <ul class="ui-legend ui-legend--vertical" aria-label="Readiness series">
+              <li class="ui-legend__item">
+                <span class="ui-legend__swatch ui-legend__swatch--1" aria-hidden="true"></span>
+                <span class="ui-legend__label">Quality</span>
+              </li>
+              <li class="ui-legend__item">
+                <span class="ui-legend__swatch ui-legend__swatch--2" aria-hidden="true"></span>
+                <span class="ui-legend__label">Documentation</span>
+              </li>
+              <li class="ui-legend__item">
+                <span class="ui-legend__swatch ui-legend__swatch--3" aria-hidden="true"></span>
+                <span class="ui-legend__label">Release risk</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="ui-figure__data ui-table-wrap">
+          <table class="ui-table ui-table--dense">
+            <caption>
+              Release readiness fallback data
+            </caption>
+            <thead>
+              <tr>
+                <th>Signal</th>
+                <th class="is-num">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Quality</td>
+                <td class="is-num">84%</td>
+              </tr>
+              <tr>
+                <td>Documentation</td>
+                <td class="is-num">72%</td>
+              </tr>
+              <tr>
+                <td>Release risk</td>
+                <td class="is-num">38%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </figure>
+    </main>
+  </body>
+</html>
