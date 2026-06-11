@@ -13,8 +13,8 @@
 // Scope, deliberately narrow: only STRING-literal option keys (tone, variant,
 // style, motion, state, size, density, orient, type, shape, …). Numeric keys
 // (`series === 1`) and booleans carry no string literal in either source, so
-// they fall out naturally. Keys a factory delegates to a helper (srcTone /
-// stateTone) have no inline literal to read, so they are reported as skipped.
+// they fall out naturally. Helper-backed maps (`badgeTone(tone)`,
+// `srcTone(state)`, `stateTone(state)`, …) are read as runtime truth too.
 //
 // Run: node scripts/check-recipe-types.mjs
 import { readFileSync } from 'node:fs';
@@ -28,6 +28,42 @@ const dts = readFileSync(resolve(root, 'classes/index.d.ts'), 'utf8');
 // --- factory side: classes/index.js `const ui = { … }` -----------------------
 const uiStart = js.indexOf('const ui = {');
 const uiBody = uiStart >= 0 ? js.slice(uiStart) : js;
+
+function matchingBraceEnd(source, open) {
+  let depth = 0;
+  for (let i = open; i < source.length; i++) {
+    if (source[i] === '{') depth++;
+    else if (source[i] === '}') {
+      depth--;
+      if (depth === 0) return i;
+    }
+  }
+  return -1;
+}
+
+const objectKeys = (body) =>
+  [...body.matchAll(/(?:^|[,{])\s*(?:'([^']+)'|"([^"]+)"|([A-Za-z_$][\w$]*))\s*:/gm)].map(
+    (m) => m[1] ?? m[2] ?? m[3],
+  );
+
+// Helper maps are still runtime truth. They appear in two local shapes:
+//   const srcTone = (state) => ({ verified: cls.x })[state] || '';
+//   const badgeTone = (tone) => toneClass('badge', { accent: cls.x }, tone);
+const helperMaps = {};
+for (const m of js.matchAll(/const\s+(\w+)\s*=\s*\((\w+)\)\s*=>/g)) {
+  const [helper, arg] = [m[1], m[2]];
+  const objectStart = js.indexOf('{', m.index);
+  if (objectStart < 0) continue;
+  const objectEnd = matchingBraceEnd(js, objectStart);
+  if (objectEnd < 0) continue;
+  const prefix = js.slice(m.index, objectStart);
+  const suffix = js.slice(objectEnd + 1, objectEnd + 120);
+  const isToneClass = /=>\s*toneClass\(/s.test(prefix);
+  const isLookup = new RegExp(`^\\s*\\)\\s*\\[\\s*${arg}\\s*\\]\\s*\\|\\|\\s*['"]{2}`).test(suffix);
+  if (!isToneClass && !isLookup) continue;
+  helperMaps[helper] = new Set(objectKeys(js.slice(objectStart + 1, objectEnd)));
+}
+
 // Split into per-method chunks. Methods are `  name: (` at two-space indent
 // (prettier-enforced), so the next such header bounds each chunk.
 const methodRe = /\n {2}([a-zA-Z]\w*): \(/g;
@@ -40,6 +76,13 @@ heads.forEach((m, i) => {
   const keys = {};
   for (const lit of chunk.matchAll(/(\w+)\s*===\s*'([^']+)'/g)) {
     (keys[lit[1]] ??= new Set()).add(lit[2]);
+  }
+  for (const [helper, lits] of Object.entries(helperMaps)) {
+    const callRe = new RegExp(`\\b${helper}\\(\\s*(\\w+)\\s*\\)`, 'g');
+    for (const call of chunk.matchAll(callRe)) {
+      const key = call[1];
+      for (const lit of lits) (keys[key] ??= new Set()).add(lit);
+    }
   }
   factory[name] = keys;
 });
@@ -109,12 +152,12 @@ if (problems.length) {
   for (const p of problems) console.error(`    ${p}`);
   console.error(
     '  Fix the `*Opts` union in scripts/gen-dts.mjs to match the factory branches\n' +
-      '  in classes/index.js (then `npm run dts:build`), or fix the factory.',
+      '  / helper maps in classes/index.js (then `npm run dts:build`), or fix the factory.',
   );
   process.exit(1);
 }
 
 console.log(
-  `✓ check:recipe-types — ${checked} factory option set(s) match their .d.ts unions` +
+  `✓ check:recipe-types — ${checked} factory/helper option set(s) match their .d.ts unions` +
     (skipped.length ? ` (${skipped.length} helper/typeless keys skipped)` : ''),
 );

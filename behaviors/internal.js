@@ -9,8 +9,9 @@
  *   behavior's listeners/observers.
  *
  * @typedef {object} DelegateOpts
- * @property {Document | Element} [root]
+ * @property {Document | Element | null} [root]
  *   Event-delegation root; also scopes which controls are queried. Default: `document`.
+ *   `null` means a scope was requested but is not ready yet, so the behavior no-ops.
  */
 
 export const noop = () => {};

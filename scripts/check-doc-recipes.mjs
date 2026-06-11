@@ -24,7 +24,8 @@ import { shippedDocs } from './lib/shipped-docs.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 
-// Same shipped surface as check:versions — llms.txt plus every `.md` in `files`.
+// Same shipped surface as check:versions — README, llms.txt, plus every `.md` in
+// `files`.
 const shipped = shippedDocs(pkg);
 
 // `<script … src="…">` — capture the src URL. `[^>]*?` stays within the one tag.

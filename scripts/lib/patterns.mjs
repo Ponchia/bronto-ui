@@ -6,6 +6,14 @@
 /** A fully-resolved CSS colour: hex (3–8 digits) or rgb()/rgba(). No var(). */
 export const CSS_COLOR = /^(#[0-9a-f]{3,8}|rgba?\([^)]+\))$/i;
 
+// CSS @import parser shared by build and integrity gates. Supports both
+// `@import url('./x.css') layer(...)`, `@import url(./x.css) layer(...)`, and
+// `@import './x.css' layer(...)`.
+export const CSS_IMPORT =
+  /@import\s+(?:url\(\s*(?:(['"])([^'")]+)\1|([^'")\s]+))\s*\)|(['"])([^'")]+)\4)[^;]*;/g;
+
+export const cssImports = (css) => [...css.matchAll(CSS_IMPORT)].map((m) => m[2] ?? m[3] ?? m[5]);
+
 /**
  * Strip `/* … *​/` block comments from a CSS source string. The bundler
  * (build-dist minify) and every gate that SCRAPES CSS rather than diffing a

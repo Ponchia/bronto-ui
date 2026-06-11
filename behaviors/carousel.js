@@ -74,6 +74,9 @@ export function initCarousel({ root } = {}) {
       if (!b) continue;
       if (b.tagName === 'BUTTON' && !b.hasAttribute('type')) b.type = 'button';
     }
+    for (const b of thumbs) {
+      if (b.tagName === 'BUTTON' && !b.hasAttribute('type')) b.type = 'button';
+    }
     if (prevBtn && !prevBtn.hasAttribute('aria-label'))
       prevBtn.setAttribute('aria-label', 'Previous');
     if (nextBtn && !nextBtn.hasAttribute('aria-label')) nextBtn.setAttribute('aria-label', 'Next');

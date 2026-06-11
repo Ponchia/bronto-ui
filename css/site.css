@@ -318,10 +318,11 @@
   padding: 0.28rem 0.6rem;
 }
 
+/* Tone rides the tint + border; text stays neutral-readable. */
 .ui-tag--accent {
   background: var(--accent-soft);
   border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
-  color: var(--accent-text);
+  color: var(--text-soft);
 }
 
 /* --- Meta row — date · author · read-time, dot-separated --- */
