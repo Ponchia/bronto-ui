@@ -27,8 +27,9 @@ concurrency:
 jobs:
   build:
     # Manual dispatch always; the CI-completion trigger only when it
-    # actually succeeded (workflow_run fires on failure too).
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    # actually succeeded (workflow_run fires on failure too). Manual dispatch is
+    # limited to main so Pages cannot publish an arbitrary un-gated ref.
+    if: ${{ (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -37,6 +38,11 @@ jobs:
       # no id-token here: OIDC is only minted by deploy-pages in `deploy`.
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          # workflow_run fires after CI succeeds for a specific commit. Check out
+          # that exact SHA so Pages cannot deploy a later main commit before its
+          # own CI completes. Manual dispatch is already limited to main.
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.ref }}
 
       - name: Assemble static site (demo + docs + runtime surface)
         run: |

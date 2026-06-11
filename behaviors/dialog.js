@@ -23,19 +23,19 @@ export function initDialog({ root } = {}) {
   const host = resolveHost(root);
   if (!host) return noop;
   const managedDialogs = new WeakSet();
+  const focusRestorers = new Map();
   const canManageDialog = (dlg, origin) => host.contains(origin) || managedDialogs.has(dlg);
 
   const openFrom = (opener) => {
     const dlg = byIdInHost(host, opener.getAttribute('data-bronto-open'));
     if (!dlg || typeof dlg.showModal !== 'function' || dlg.open) return;
     managedDialogs.add(dlg);
-    dlg.addEventListener(
-      'close',
-      () => {
-        if (opener.isConnected && typeof opener.focus === 'function') opener.focus();
-      },
-      { once: true },
-    );
+    const restoreFocus = () => {
+      focusRestorers.delete(dlg);
+      if (opener.isConnected && typeof opener.focus === 'function') opener.focus();
+    };
+    focusRestorers.set(dlg, restoreFocus);
+    dlg.addEventListener('close', restoreFocus, { once: true });
     dlg.showModal();
   };
 
@@ -72,6 +72,12 @@ export function initDialog({ root } = {}) {
   };
   return bindOnce(host, 'dialog', () => {
     document.addEventListener('click', onClick);
-    return () => document.removeEventListener('click', onClick);
+    return () => {
+      document.removeEventListener('click', onClick);
+      for (const [dlg, restoreFocus] of focusRestorers) {
+        dlg.removeEventListener('close', restoreFocus);
+      }
+      focusRestorers.clear();
+    };
   });
 }

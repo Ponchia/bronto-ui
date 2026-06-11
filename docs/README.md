@@ -65,4 +65,4 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 
 ## Migrations
 
-- [migrations/0.2-to-0.3.md](./migrations/0.2-to-0.3.md) · [migrations/0.3-to-0.4.md](./migrations/0.3-to-0.4.md) · [migrations/0.4-to-0.5.md](./migrations/0.4-to-0.5.md)
+- [migrations/0.2-to-0.3.md](./migrations/0.2-to-0.3.md) · [migrations/0.3-to-0.4.md](./migrations/0.3-to-0.4.md) · [migrations/0.4-to-0.5.md](./migrations/0.4-to-0.5.md) · [migrations/0.5-to-0.6.md](./migrations/0.5-to-0.6.md)

@@ -237,16 +237,16 @@
 /* --------------------------------------------------------------------------
    Theming contract — the public override surface.
 
-   Re-brand a whole project (or a subtree) by setting ONE knob; the rest
-   of the accent family derives from it via color-mix:
+   Re-brand a whole project by setting ONE knob; the rest of the accent
+   family derives from it via color-mix:
 
      :root { --accent: #2f6df6; }          // brand it blue, everywhere
-     .promo { --accent: #16a34a; }          // or just a subtree
 
-   --accent-strong/-soft, --bg-accent, --field-dot-accent and --focus-ring
-   all follow. The other documented knobs: the --space-* scale (or the
-   [data-density] presets below), --radius-*, and the font vars
-   (--display / --mono / --sans). docs/theming.md is the full contract.
+   Scoped --accent overrides recolor direct accent uses in that subtree, but
+   the derived family is declared at :root and is a root-level skin contract.
+   For full rebrands, override per theme at :root as shown in docs/theming.md.
+   The other documented knobs: the --space-* scale (or the [data-density]
+   presets below), --radius-*, and the font vars (--display / --mono / --sans).
 
    Density and contrast are CSS-only presets (not part of the JS token
    model): opt in with [data-density] / [data-contrast] on any element.

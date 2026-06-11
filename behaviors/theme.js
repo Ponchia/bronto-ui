@@ -1,4 +1,4 @@
-import { hasDom, resolveHost, noop, bindOnce } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, collectHosts } from './internal.js';
 
 const THEMES = ['light', 'dark'];
 
@@ -66,7 +66,7 @@ export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
 
   const reflect = () => {
     const c = current();
-    host.querySelectorAll('[data-bronto-theme-toggle]').forEach((el) => {
+    collectHosts(host, '[data-bronto-theme-toggle]').forEach((el) => {
       const forced = el.getAttribute('data-bronto-theme-toggle');
       // A forced control is "pressed" when its theme is the active one;
       // a plain toggle reflects whether dark is active.

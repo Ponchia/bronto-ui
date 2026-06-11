@@ -464,7 +464,7 @@
             </label>
             <button class="ui-button" aria-busy="true">Saving</button>
             <button class="ui-button ui-button--subtle" data-bronto-popover="pop1">Open popover</button>
-            <div class="ui-popover" id="pop1" popover>Collision-aware, dependency-free.</div>
+            <div class="ui-popover" id="pop1" popover aria-label="Popover details">Collision-aware, dependency-free.</div>
           </div>
           <form data-bronto-validate class="ui-stack" novalidate>
             <div class="ui-field">
@@ -515,8 +515,8 @@
                   <th class="ui-table__select">
                     <input type="checkbox" data-bronto-select-all aria-label="Select all" />
                   </th>
-                  <th><button class="ui-table__sort" data-sort>Name</button></th>
-                  <th class="is-num"><button class="ui-table__sort" data-sort="num">Score</button></th>
+                  <th><button class="ui-table__sort" data-sort type="button">Name</button></th>
+                  <th class="is-num"><button class="ui-table__sort" data-sort="num" type="button">Score</button></th>
                 </tr>
               </thead>
               <tbody>
@@ -853,17 +853,17 @@
             </div>
             <ul class="ui-carousel__thumbs">
               <li>
-                <button class="ui-carousel__thumb" aria-label="Photo 1">
+                <button class="ui-carousel__thumb" aria-label="Photo 1" type="button">
                   <svg viewBox="0 0 160 90" aria-hidden="true" style="display: block; inline-size: 100%; block-size: 100%; background: var(--panel-soft)"></svg>
                 </button>
               </li>
               <li>
-                <button class="ui-carousel__thumb" aria-label="Photo 2">
+                <button class="ui-carousel__thumb" aria-label="Photo 2" type="button">
                   <svg viewBox="0 0 160 90" aria-hidden="true" style="display: block; inline-size: 100%; block-size: 100%; background: var(--panel-strong)"></svg>
                 </button>
               </li>
               <li>
-                <button class="ui-carousel__thumb" aria-label="Photo 3">
+                <button class="ui-carousel__thumb" aria-label="Photo 3" type="button">
                   <svg viewBox="0 0 160 90" aria-hidden="true" style="display: block; inline-size: 100%; block-size: 100%; background: var(--panel-soft)"></svg>
                 </button>
               </li>

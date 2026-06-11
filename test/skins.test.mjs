@@ -59,6 +59,17 @@ test('every shipped colorway accent meets its WCAG floor (the gate, in a test)',
   }
 });
 
+test('skin contrast audit recomputes translucent accent tints from the skin accent', () => {
+  const resolved = buildResolved();
+  const coreTint = resolved.dark['--accent-soft'];
+  const skin = auditSkins(resolved).find((s) => s.name === 'phosphor-green' && s.theme === 'dark');
+  const tintRow = skin.rows.find((r) => r.fg === '--text-soft' && r.bg === '--accent-soft');
+
+  assert.ok(tintRow, 'expected the neutral-on-accent-tint row');
+  assert.match(tintRow.bv, /^rgba\(/);
+  assert.notEqual(tintRow.bv, coreTint);
+});
+
 test('generated css/skins.css is root-anchored and opt-in (no bare / descendant selector)', () => {
   const css = genSkins['css/skins.css'];
   for (const name of SKIN_NAMES) {

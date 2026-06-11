@@ -28,17 +28,22 @@ import { parseCssColor, srgbToLinear } from './lib/oklch.mjs';
 
 import { repoRoot as root, isMain } from './lib/emit.mjs';
 
-/** color-mix(in srgb, A p%, B) for two OPAQUE colours, per CSS Color 5 (gamma
- *  sRGB) — the only form the accent ramp uses. Returns an `rgb(r,g,b)` string.
- *  Used to derive a skin's --accent-strong/-text from its (oklch) --accent the
- *  same way css/tokens.css does, so the skin audit measures real values. */
-function mixSrgbOpaque(aRaw, bRaw, aPct) {
+/** color-mix(in srgb, A p%, B) per CSS Color 5 (gamma sRGB,
+ * alpha-premultiplied). Returns a resolved `rgb()`/`rgba()` string. Used to
+ * derive a skin's accent family from its (oklch) --accent the same way
+ * css/tokens.css does, so the skin audit measures real values. */
+function mixSrgb(aRaw, bRaw, aPct) {
   const a = parseCssColor(aRaw);
   const b = parseCssColor(bRaw);
   if (!a || !b) return null;
   const w = aPct / 100;
-  const ch = (i) => Math.round(a[i] * w + b[i] * (1 - w));
-  return `rgb(${ch(0)}, ${ch(1)}, ${ch(2)})`;
+  const oa = a[3] * w + b[3] * (1 - w);
+  const ch = (i) => (oa === 0 ? 0 : (a[i] * a[3] * w + b[i] * b[3] * (1 - w)) / oa);
+  const r = Math.round(ch(0));
+  const g = Math.round(ch(1));
+  const bl = Math.round(ch(2));
+  if (oa >= 1) return `rgb(${r}, ${g}, ${bl})`;
+  return `rgba(${r}, ${g}, ${bl}, ${Number(oa.toFixed(4))})`;
 }
 
 /** Composite a possibly-translucent fg over an opaque bg (simple alpha). */
@@ -53,12 +58,20 @@ function luminance([r, g, b]) {
   return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
 }
 
-/** Contrast ratio of fg (over bg) against bg. bg is treated as opaque. */
-export function ratio(fgRaw, bgRaw) {
+/** Resolve an opaque background, flattening translucent fills over a base. */
+function opaqueBg(bg, baseRaw) {
+  if (bg[3] >= 1) return bg.slice(0, 3);
+  const base = parseCssColor(baseRaw ?? '#ffffff');
+  const baseOpaque = base && base[3] >= 1 ? base.slice(0, 3) : [255, 255, 255];
+  return flatten(bg, baseOpaque);
+}
+
+/** Contrast ratio of fg (over bg) against bg. Translucent bg may pass a base. */
+export function ratio(fgRaw, bgRaw, baseRaw) {
   const fg = parseCssColor(fgRaw);
   const bg = parseCssColor(bgRaw);
   if (!fg || !bg) return null;
-  const bgOpaque = bg[3] >= 1 ? bg.slice(0, 3) : flatten(bg, [255, 255, 255]);
+  const bgOpaque = opaqueBg(bg, baseRaw);
   const fgOpaque = fg[3] >= 1 ? fg.slice(0, 3) : flatten(fg, bgOpaque);
   const L1 = luminance(fgOpaque);
   const L2 = luminance(bgOpaque);
@@ -70,11 +83,11 @@ export function ratio(fgRaw, bgRaw) {
  *  perceptual cross-check that accounts for polarity (light-on-dark vs
  *  dark-on-light), which WCAG 2.1's symmetric ratio cannot. NOT gated:
  *  WCAG 3 is a Working Draft, so WCAG 2.1 AA stays the hard floor. */
-export function apcaLc(fgRaw, bgRaw) {
+export function apcaLc(fgRaw, bgRaw, baseRaw) {
   const fg = parseCssColor(fgRaw);
   const bg = parseCssColor(bgRaw);
   if (!fg || !bg) return null;
-  const bgO = bg[3] >= 1 ? bg.slice(0, 3) : flatten(bg, [255, 255, 255]);
+  const bgO = opaqueBg(bg, baseRaw);
   const fgO = fg[3] >= 1 ? fg.slice(0, 3) : flatten(fg, bgO);
   // APCA luminance: simple ^2.4, Nimbusic coefficients (no WCAG piecewise).
   const Y = ([r, g, b]) =>
@@ -93,20 +106,22 @@ export function apcaLc(fgRaw, bgRaw) {
 
 /**
  * Build a skin's accent family over a base (resolved) palette — re-pointing
- * `--accent` to the skin's (oklch) value and recomputing `--accent-text`
- * (= `--accent-strong`) with the same color-mix the core palette uses
- * (83% accent + black in light, 84% accent + white in dark). `--focus-ring`
- * follows `--accent`. Everything else (canvas, status) is the base palette.
+ * `--accent` to the skin's (oklch) value and recomputing the derived accent
+ * family exactly like css/tokens.css (`--accent-text`/strong plus the soft
+ * translucent tints). `--focus-ring` follows `--accent`. Everything else
+ * (canvas, status) is the base palette.
  */
 function skinPalette(name, theme, base) {
   const accent = skins[name][theme]['--accent'];
-  const strong =
-    theme === 'light' ? mixSrgbOpaque(accent, '#000000', 83) : mixSrgbOpaque(accent, '#ffffff', 84);
+  const isLight = theme === 'light';
+  const strong = mixSrgb(accent, isLight ? '#000000' : '#ffffff', isLight ? 83 : 84);
   return {
     ...base,
     '--accent': accent,
     '--accent-strong': strong,
     '--accent-text': strong,
+    '--accent-soft': mixSrgb(accent, 'transparent', isLight ? 10 : 14),
+    '--bg-accent': mixSrgb(accent, 'transparent', isLight ? 6 : 8),
     '--focus-ring': accent,
   };
 }
@@ -137,12 +152,19 @@ const PAIRS = [
   // AA-safe one, so it is gated at full text level deliberately.
   ['--accent-text', '--bg', 'Accent text on page background', 'text'],
   ['--accent-text', '--surface', 'Accent text on a card', 'text'],
-  // Accent text on an accent TINT — the obligation the tokens.css comments
-  // assert (accent-text must read on --accent-soft / --bg-accent). Reported,
-  // not gated (component-audit C34): both tints are translucent, and the
-  // ratio model flattens a translucent bg over white, which misreads the dark
-  // theme (the tint actually sits over the dark canvas). Surfaced here so the
-  // obligation is visible in the table rather than living only in CSS comments.
+  // Component text on accent tints uses the neutral text ramp, not accent text.
+  // Gate the real component case over the darkest common neutral surface so a
+  // soft accent tag/badge cannot regress while the tint remains translucent.
+  [
+    '--text-soft',
+    '--accent-soft',
+    'Neutral tag/badge text on an accent tint',
+    'text',
+    '--surface-muted',
+  ],
+  // Accent text on an accent TINT is a diagnostic only: it is the inverse role
+  // (accent-coloured text) and should not be used for small component labels.
+  // It stays visible in the table because authors often try it when re-skinning.
   ['--accent-text', '--accent-soft', 'Accent text on an accent tint', 'advisory'],
   ['--accent-text', '--bg-accent', 'Accent text on an accent-tinted surface', 'advisory'],
   // Label on the primary (filled accent) button.
@@ -180,17 +202,19 @@ const LABEL = {
 /** Audit one theme → rows + worst-case failure list. */
 export function auditTheme(palette, pairs = PAIRS) {
   const rows = [];
-  for (const [fg, bg, role, level] of pairs) {
+  for (const [fg, bg, role, level, base] of pairs) {
     const fv = palette[fg];
     const bv = palette[bg];
-    const r = fv != null && bv != null ? ratio(fv, bv) : null;
-    const apca = fv != null && bv != null ? apcaLc(fv, bv) : null;
+    const basev = base ? palette[base] : undefined;
+    const r = fv != null && bv != null && (!base || basev != null) ? ratio(fv, bv, basev) : null;
+    const apca =
+      fv != null && bv != null && (!base || basev != null) ? apcaLc(fv, bv, basev) : null;
     const floor = FLOOR[level];
     // Decorative (1.4.11-exempt) and advisory (translucent-tint, model can't
     // fairly flatten per-theme) rows are reported, never gated.
     const gated = level !== 'decorative' && level !== 'advisory';
     const pass = !gated || (r != null && r >= floor);
-    rows.push({ fg, bg, role, level, fv, bv, ratio: r, apca, floor, gated, pass });
+    rows.push({ fg, bg, base, role, level, fv, bv, basev, ratio: r, apca, floor, gated, pass });
   }
   return rows;
 }
@@ -244,10 +268,10 @@ function themeTable(rows) {
     '| Foreground | Background | Role | Held to | Ratio | APCA _(advisory)_ | Verdict |\n' +
     '| --- | --- | --- | --- | --- | --- | --- |';
   const body = rows
-    .map(
-      (x) =>
-        `| \`${x.fg}\` | \`${x.bg}\` | ${x.role} | ${LABEL[x.level]} | ${r2(x.ratio)} | ${apcaCell(x.apca)} | ${verdict(x)} |`,
-    )
+    .map((x) => {
+      const bg = x.base ? `\`${x.bg}\` over \`${x.base}\`` : `\`${x.bg}\``;
+      return `| \`${x.fg}\` | ${bg} | ${x.role} | ${LABEL[x.level]} | ${r2(x.ratio)} | ${apcaCell(x.apca)} | ${verdict(x)} |`;
+    })
     .join('\n');
   return `${head}\n${body}`;
 }
@@ -291,7 +315,8 @@ model (\`tokens/resolved.json\`) so it cannot drift from the palette, and
 
 - **Body / UI text** pairings are guaranteed **WCAG 2.1 AA — 4.5:1**
   (1.4.3). This covers \`--text\`, \`--text-soft\`, \`--text-dim\`,
-  \`--accent-text\`, and the primary-button label.
+  \`--accent-text\`, neutral text on soft accent-tint components, and the
+  primary-button label.
 - **Non-text UI** (focus ring, accent fill, status colour) is guaranteed
   **3:1** (1.4.11 non-text contrast / the large-text bar). These are
   deliberately *not* held to 4.5:1 — a focus
@@ -308,7 +333,8 @@ model (\`tokens/resolved.json\`) so it cannot drift from the palette, and
   further but is out of scope for this gated baseline.
 
 Translucent foregrounds (soft fills) are alpha-flattened over their
-background before measuring — the ratio the eye actually gets.
+background before measuring. When a translucent background is a component
+tint, the table names the neutral base it is composited over.
 
 Overall: **${allPass ? 'all contractual pairings meet their floor ✅' : 'one or more pairings are below floor — see ❌ rows ❌'}**.
 
