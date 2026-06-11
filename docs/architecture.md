@@ -80,12 +80,13 @@ on top of the CSS, none of which require a framework commitment**:
   They do not define markup, own state, or fork behavior logic; they only run
   the vanilla initializers on mount and cleanup on unmount/dispose.
 - **`css/analytical.css` — the analytical roll-up.** This convenience file
-  `@import`s exactly **seven** analytical-figure leaves: `annotations`,
-  `legend`, `marks`, `connectors`, `spotlight`, `crosshair`, and `selection`.
-  The adjacent opt-in leaves — `sources`, `state`, `generated`, `workbench`,
-  and `command` — are report/tooling/trust surfaces that are intentionally
-  **not** part of the analytical roll-up and must be imported individually.
-  Importing `analytical.css` does not pull in any of those five.
+  `@import`s exactly **nine** analytical figure/evidence leaves: `figure`,
+  `annotations`, `legend`, `marks`, `connectors`, `spotlight`, `crosshair`,
+  `selection`, and `highlights`. The adjacent opt-in leaves — `sources`,
+  `interval`, `clamp`, `state`, `generated`, `workbench`, and `command` — are
+  report/tooling/trust surfaces that are intentionally **not** part of the
+  analytical roll-up and must be imported individually. Importing
+  `analytical.css` does not pull in any of those seven.
 - **Root export (`.`) is CSS-only.** `exports["."]` resolves to the CSS
   bundle (`dist/bronto.css`). It is a CSS side-effect import for CSS-aware
   bundlers (`@import '@ponchia/ui'` in CSS, or a side-effect

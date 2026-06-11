@@ -1,0 +1,90 @@
+/* ==========================================================================
+   interval — opt-in low/high uncertainty span.
+
+   A compact report primitive for "the value is somewhere in this range" —
+   confidence intervals, estimates, budget windows, and measured uncertainty.
+   Boundary: the HOST normalises `--lo`, `--hi`, and optional `--v` to 0..1 and
+   writes the accessible label. Bronto only paints geometry. Not imported by
+   core.css.
+   ========================================================================== */
+
+.ui-interval {
+  --lo: 0;
+  --hi: 1;
+
+  display: grid;
+  gap: 0.35rem;
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.ui-interval__track {
+  background: var(--surface-4);
+  block-size: 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  min-inline-size: 8rem;
+  position: relative;
+}
+
+.ui-interval__range {
+  background: color-mix(in srgb, var(--accent) 26%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 58%, var(--line));
+  border-radius: var(--radius-pill);
+  inline-size: max(2px, calc((var(--hi) - var(--lo)) * 100%));
+  inset-block: 18%;
+  inset-inline-start: calc(var(--lo) * 100%);
+  position: absolute;
+}
+
+.ui-interval__point {
+  background: var(--text);
+  border: 2px solid var(--panel);
+  border-radius: 50%;
+  block-size: 0.72rem;
+  box-shadow: 0 0 0 1px var(--line-strong);
+  inline-size: 0.72rem;
+  inset-block-start: 50%;
+  inset-inline-start: calc(var(--v, var(--lo)) * 100%);
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.ui-interval__label,
+.ui-interval__bounds {
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0;
+}
+
+.ui-interval__label {
+  color: var(--text-soft);
+}
+
+.ui-interval__bounds {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: space-between;
+}
+
+@media (forced-colors: active) {
+  .ui-interval__track,
+  .ui-interval__range,
+  .ui-interval__point {
+    border-color: CanvasText;
+  }
+
+  .ui-interval__range,
+  .ui-interval__point {
+    background: CanvasText;
+  }
+}
+
+@media print {
+  .ui-interval__range,
+  .ui-interval__point {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

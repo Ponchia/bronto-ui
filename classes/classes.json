@@ -1,8 +1,8 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `groups[].base` is null for a parts-only namespace (no standalone base class — do NOT emit it). A modifier whose name contains `__` (e.g. `ui-spark__bar--pos`) attaches to THAT part, not the base host. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `behaviorAttributes` are the `data-bronto-*` wiring hooks the optional behaviors delegate on; `requiredAria` is the role/aria a generator must emit per component. `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 593,
-    "groups": 171
+    "classes": 615,
+    "groups": 175
   },
   "groups": {
     "ui-accordion": {
@@ -322,6 +322,17 @@
         "ui-claim__status"
       ]
     },
+    "ui-clamp": {
+      "base": "ui-clamp",
+      "modifiers": [],
+      "parts": [
+        "ui-clamp__body",
+        "ui-clamp__control",
+        "ui-clamp__less",
+        "ui-clamp__more",
+        "ui-clamp__toggle"
+      ]
+    },
     "ui-cluster": {
       "base": "ui-cluster",
       "modifiers": [
@@ -583,6 +594,21 @@
       "modifiers": [],
       "parts": []
     },
+    "ui-figure": {
+      "base": "ui-figure",
+      "modifiers": [
+        "ui-figure__body--key-right"
+      ],
+      "parts": [
+        "ui-figure__body",
+        "ui-figure__caption",
+        "ui-figure__data",
+        "ui-figure__key",
+        "ui-figure__media",
+        "ui-figure__overlay",
+        "ui-figure__stage"
+      ]
+    },
     "ui-file": {
       "base": "ui-file",
       "modifiers": [],
@@ -610,6 +636,11 @@
     },
     "ui-halftone": {
       "base": "ui-halftone",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-highlights": {
+      "base": "ui-highlights",
       "modifiers": [],
       "parts": []
     },
@@ -652,6 +683,17 @@
       "parts": [
         "ui-inspector__body",
         "ui-inspector__head"
+      ]
+    },
+    "ui-interval": {
+      "base": "ui-interval",
+      "modifiers": [],
+      "parts": [
+        "ui-interval__bounds",
+        "ui-interval__label",
+        "ui-interval__point",
+        "ui-interval__range",
+        "ui-interval__track"
       ]
     },
     "ui-kbd": {
@@ -1554,6 +1596,12 @@
     "ui-claim__scope",
     "ui-claim__statement",
     "ui-claim__status",
+    "ui-clamp",
+    "ui-clamp__body",
+    "ui-clamp__control",
+    "ui-clamp__less",
+    "ui-clamp__more",
+    "ui-clamp__toggle",
     "ui-cluster",
     "ui-cluster--between",
     "ui-code",
@@ -1667,6 +1715,15 @@
     "ui-eyebrow--muted",
     "ui-eyebrow--sm",
     "ui-field",
+    "ui-figure",
+    "ui-figure__body",
+    "ui-figure__body--key-right",
+    "ui-figure__caption",
+    "ui-figure__data",
+    "ui-figure__key",
+    "ui-figure__media",
+    "ui-figure__overlay",
+    "ui-figure__stage",
     "ui-file",
     "ui-generated",
     "ui-generated__label",
@@ -1675,6 +1732,7 @@
     "ui-glossary__term",
     "ui-grid",
     "ui-halftone",
+    "ui-highlights",
     "ui-hint",
     "ui-hint--error",
     "ui-icon",
@@ -1687,6 +1745,12 @@
     "ui-inspector",
     "ui-inspector__body",
     "ui-inspector__head",
+    "ui-interval",
+    "ui-interval__bounds",
+    "ui-interval__label",
+    "ui-interval__point",
+    "ui-interval__range",
+    "ui-interval__track",
     "ui-kbd",
     "ui-keep",
     "ui-key-value",
@@ -2143,6 +2207,27 @@
       "note": "the ::target-text highlight wash for the matched cited sentence (default var(--accent-soft)). The host builds the #:~:text= href; Bronto owns the paint — see docs/textref.md."
     },
     {
+      "name": "--figure-max-inline",
+      "on": ".ui-figure__stage",
+      "type": "length",
+      "example": "32rem",
+      "note": "maximum inline size of the centered figure stage (default 42rem). The host still owns chart/media dimensions and data mapping."
+    },
+    {
+      "name": "--figure-min-block",
+      "on": ".ui-figure__stage",
+      "type": "length",
+      "example": "16rem",
+      "note": "minimum block size reserved for a live or late-rendered figure stage (default 0px)."
+    },
+    {
+      "name": "--figure-key-width",
+      "on": ".ui-figure__body--key-right",
+      "type": "length",
+      "example": "12rem",
+      "note": "width of the right-side key column before the figure body collapses to one column (default 14rem)."
+    },
+    {
       "name": "--v",
       "on": ".ui-bullet__measure",
       "type": "number 0..1",
@@ -2177,6 +2262,57 @@
       "type": "length",
       "example": "1rem",
       "note": "the sticky inset from the top of the scroll container (default var(--space-md))."
+    },
+    {
+      "name": "--lo",
+      "on": ".ui-interval",
+      "type": "number 0..1",
+      "example": "0.22",
+      "required": true,
+      "note": "REQUIRED — normalised lower bound of the interval. The host normalises; Bronto only paints."
+    },
+    {
+      "name": "--hi",
+      "on": ".ui-interval",
+      "type": "number 0..1",
+      "example": "0.68",
+      "required": true,
+      "note": "REQUIRED — normalised upper bound of the interval. The host normalises; Bronto only paints."
+    },
+    {
+      "name": "--v",
+      "on": ".ui-interval__point",
+      "type": "number 0..1",
+      "example": "0.52",
+      "note": "optional normalised point estimate inside the interval. Omit the point element when there is no point estimate."
+    },
+    {
+      "name": "--clamp-lines",
+      "on": ".ui-clamp",
+      "type": "integer",
+      "example": "3",
+      "note": "number of lines shown before the optional reveal control expands the excerpt (default 4)."
+    },
+    {
+      "name": "--highlight-evidence",
+      "on": ".ui-highlights",
+      "type": "color",
+      "example": "var(--accent-soft)",
+      "note": "CSS Custom Highlight API wash for host-registered bronto-evidence ranges."
+    },
+    {
+      "name": "--highlight-search",
+      "on": ".ui-highlights",
+      "type": "color",
+      "example": "var(--warning-soft)",
+      "note": "CSS Custom Highlight API wash for host-registered bronto-search ranges."
+    },
+    {
+      "name": "--highlight-current",
+      "on": ".ui-highlights",
+      "type": "color",
+      "example": "color-mix(in srgb, var(--accent) 22%, transparent)",
+      "note": "CSS Custom Highlight API wash for the host-registered bronto-current range."
     },
     {
       "name": "--stack-gap",
