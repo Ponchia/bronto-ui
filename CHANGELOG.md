@@ -9,6 +9,15 @@
 
 ### Fixed
 
+- **Print: stat tiles and table rows no longer slice across PDF page
+  boundaries** — the report-layer `@media print` break-inside guard covered
+  the report shell (`.ui-report__*`, `.ui-claim`, `.ui-evidence-item`) but
+  not `.ui-stat` tiles, generic `.ui-statgrid` children, or `tr`, so a stat
+  card landing on a page boundary printed half its value on one page and the
+  delta on the next (observed in a consumer report's PDF export). Guarded at
+  the item level — the tile / the row, not the container — so a long
+  statgrid or table can still span pages.
+
 - **Sidenote gutter contract actually works now** — `--sidenote-width` /
   `--sidenote-gap` are root-scoped instead of declared only on the notes.
   The documented host wiring (container
