@@ -34,9 +34,20 @@ async function renderSvg(spec) {
   return svg;
 }
 
-/** Count `attr="value"` occurrences (value is a literal hex — no regex metachars). */
-const countAttr = (svg, attr, value) =>
-  (svg.match(new RegExp(`${attr}="${value}"`, 'gi')) || []).length;
+/** Count `attr="value"` occurrences without a regex; inputs are fixed test literals. */
+function countAttr(svg, attr, value) {
+  const haystack = svg.toLowerCase();
+  const needle = `${attr}="${value}"`.toLowerCase();
+  let count = 0;
+  for (
+    let i = haystack.indexOf(needle);
+    i !== -1;
+    i = haystack.indexOf(needle, i + needle.length)
+  ) {
+    count++;
+  }
+  return count;
+}
 
 const barSpec = (config, color) => ({
   $schema: 'https://vega.github.io/schema/vega-lite/v6.json',

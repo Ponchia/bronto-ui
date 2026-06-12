@@ -25,7 +25,7 @@ The pattern that worked for annotations should stay the rule:
 - Prefer CSS and markup first. Add JS only when the browser cannot express the
   behavior without measuring, filtering, keyboard state, or pointer tracking.
 
-This keeps Bronto useful across Astro, SvelteKit, React, Solid, Qwik, plain
+This keeps Bronto useful across Astro, SvelteKit, Vue, React, Solid, Qwik, plain
 HTML, and generated static reports without becoming a framework component kit.
 
 ## Already aligned in 0.5.0
@@ -164,19 +164,21 @@ and footnotes, but not a trust grammar. The shipped surface and its trust-state
 vocabulary are documented with the component; richer preview popovers remain
 host-owned.
 
-### 2. Lifecycle and system-state UI — 🟡 `ui-state` family shipped in 0.5.0
+### 2. Lifecycle and system-state UI — 🟡 `ui-state` family shipped in 0.5.0, `ui-job` added for 0.6.7
 
 Shipped as `@ponchia/ui/css/state.css` (`ui-state` + the canonical state matrix
-+ `ui-syncbar`), matching the "good first build" below. `ui-job` (background
-progress) and `ui-conflict` (resolution affordances) remain deferred until a
-consumer needs them; `ui-review-state` is covered by the reviewed/needs-review
++ `ui-syncbar`), matching the "good first build" below. The 0.6.7 local pass
+adds `ui-job`: a persistent background-job row with determinate progress,
+written status, and action slots, while polling/retry/cancel semantics stay in
+the host. `ui-conflict` (resolution affordances) remains deferred until a
+consumer needs it; `ui-review-state` is covered by the reviewed/needs-review
 state modifiers.
 
 Why it matters: serious apps spend a lot of time in states like saving, saved,
 queued, offline, stale, retrying, conflicted, locked, reviewed, and background
 job running. These states are usually improvised per product, so even good apps
-feel inconsistent. Still deferred: `ui-job` (background progress) and
-`ui-conflict` (resolution affordances), each until a consumer needs it.
+feel inconsistent. Still deferred: `ui-conflict` (resolution affordances), until
+a consumer needs it.
 
 ### 3. Command-first UI — ✅ shipped in 0.5.0
 
@@ -193,20 +195,19 @@ design-system contract: shortcuts, actions, groups, disabled reasons, context,
 and command result feedback. The host still owns the action registry and
 execution; global Cmd/Ctrl+K stays opt-in by design.
 
-### 4. Workbench UI — 🟡 inspector / property / selectionbar shipped in 0.5.0
+### 4. Workbench UI — 🟡 inspector / property / selectionbar shipped in 0.5.0, splitter added in 0.6.7
 
 Shipped as `@ponchia/ui/css/workbench.css` (`ui-inspector`, `ui-property`,
-`ui-selectionbar`) — the low-risk CSS core below. Resizable split panes
-(`ui-splitter`, an ARIA window-splitter behavior) and drag handles remain
-deferred until a consumer needs them.
+`ui-selectionbar`, `ui-splitter`) plus `initSplitter` — the low-risk workbench
+core below. Splitters own the focusable ARIA separator, keyboard/pointer resize,
+`--splitter-pos`, and `aria-valuenow`; the host owns pane contents, persistence,
+collapse policy, and saved layout state.
 
 Why it matters: real tools need inspectors, object action bars, split panes,
 resize handles, property rows, dense trees, and selected-object affordances.
 Generic UI kits tend to stop at cards/tables/forms, leaving every app to build
-its own half-consistent workbench. Still open: a `ui-splitter` ARIA
-window-splitter behavior (focusable separator, `aria-valuemin/max/now`,
-arrow-key resize) and drag/drop affordances — both deferred, and Bronto should
-style drag handles, not become a drag-and-drop framework.
+its own half-consistent workbench. Still open: drag/drop affordances. Bronto
+should style drag handles and drop targets, not become a drag-and-drop framework.
 
 ### 5. Generated-content and AI trust primitives — 🟡 shipped in 0.5.0
 
@@ -235,11 +236,10 @@ consumer since**; their follow-ons are demand-gated, not queued. Active work
 is therefore consolidation of the report lane (hub routing, print/PDF
 fidelity, consumer-contract gates), not new surfaces.
 
-### Report-lane candidates (build only after the routing hub carries them)
+### Report-lane primitives shipped in 0.6.7
 
-From the 2026-06-09 local scout — kept on merit, deliberately NOT started
-until the reporting.md routing/adoption pass has landed (shipping more leaves
-into an unrouted hub repeats the discoverability gap):
+From the 2026-06-09 local scout. These were kept on merit, then shipped only
+after `docs/reporting.md` carried routing rows so the leaves are discoverable:
 
 1. `ui-interval` — honest low–high uncertainty span + ± chip, inline in
    reports; the error-bar grammar generic kits never ship.
@@ -248,14 +248,15 @@ into an unrouted hub repeats the discoverability gap):
 3. `ui-highlights` — cited-evidence / search-hit spans painted from host
    Ranges via the CSS Custom Highlight API (progressive enhancement; clean
    no-op below the floor).
+4. `ui-figure` — stable chart/diagram/screenshot stage with overlay/key/fallback
+   slots; it composes with report figures but still refuses chart scales.
 
 ### Dormant (build with the first real app consumer, not before)
 
-- `ui-job` / `ui-conflict` lifecycle surfaces (candidate 2).
-- `ui-splitter` ARIA window-splitter behavior + drag affordances
-  (candidate 4), which is also the gating consumer for `ui-tree`'s deferred
-  roving-focus tree kernel.
-- Any command/workbench follow-ons beyond the shipped CSS cores.
+- `ui-conflict` lifecycle surface (candidate 2).
+- Drag/drop workbench affordances (candidate 4) and any gating consumer for
+  `ui-tree`'s deferred roving-focus tree kernel.
+- Any command/workbench follow-ons beyond the shipped cores.
 
 Dormant items stay gated on a real consumer needing them. This posture keeps
 Bronto differentiated while staying inside its core philosophy: small,

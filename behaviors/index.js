@@ -28,6 +28,7 @@
  * @typedef {import('./crosshair.js').CrosshairMoveDetail} CrosshairMoveDetail
  * @typedef {import('./command.js').CommandSelectDetail} CommandSelectDetail
  * @typedef {import('./sources.js').SourceFocusDetail} SourceFocusDetail
+ * @typedef {import('./splitter.js').SplitterResizeDetail} SplitterResizeDetail
  */
 export { applyStoredTheme, initThemeToggle } from './theme.js';
 export { dismissible } from './dismissible.js';
@@ -50,3 +51,4 @@ export { initSpotlight } from './spotlight.js';
 export { initCrosshair } from './crosshair.js';
 export { initCommand } from './command.js';
 export { initSources } from './sources.js';
+export { initSplitter } from './splitter.js';

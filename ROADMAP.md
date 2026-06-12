@@ -6,20 +6,59 @@ without turning the project into a per-framework component suite.
 
 > **Source of truth is [`CHANGELOG.md`](CHANGELOG.md).** This file describes
 > direction; the changelog records what actually shipped. If they disagree, the
-> changelog wins. Last reconciled against `0.6.5`.
+> changelog wins. Last reconciled against the `0.6.7` unreleased working tree.
 >
 > **Strategic north star:** Bronto should not out-catalog generic UI kits. It
 > owns framework-agnostic primitives for interfaces that explain themselves —
 > and its **proven core is the report lane: generated reports, explanation,
 > and provenance**, the one lane with a real consumer (LLM-authored
 > reports). Command access, workbench ergonomics, and durable system state
-> shipped their CSS cores and stay demand-gated behind a real app consumer.
+> shipped their cores and stay demand-gated behind a real app consumer for
+> follow-ons.
 > See [`docs/frontier-primitives.md`](docs/frontier-primitives.md).
 >
 > **Adoption stance:** published openly on npm with provenance, but built and
 > maintained primarily for the maintainer's own agents and report tooling.
 > Public-surface fixes are kept correct (README, docs site, llms.txt);
 > marketing pushes are not a goal.
+
+## In progress for 0.6.7
+
+- **Adoption bridges without component sprawl.** Tailwind v4 gets a CSS-only
+  `@theme inline` bridge plus a packed Vite example; Svelte and Vue get thin
+  lifecycle adapters over the existing delegated behaviors; token handoff gains
+  a generated local Figma Variables artifact beside DTCG. These close consumer
+  DX gaps while preserving the CSS-first, zero-runtime package contract.
+- **Report-lane primitives.** `ui-figure`, `ui-interval`, `ui-clamp`, and
+  `ui-highlights` extend the static report/explanation lane. They stay
+  opt-in, own visual grammar only, and avoid chart scales, fetch/state, or app
+  workflow logic.
+- **Durable state primitive.** `ui-job` extends the lifecycle state layer for
+  persistent background work: progress and status are visible after the
+  initiating interaction ends, while the host still owns polling, retry/cancel,
+  and conflict-resolution workflow.
+- **Workbench splitter primitive.** `ui-splitter` and `initSplitter` close the
+  accessible pane-resize gap for workbench UIs: Bronto owns the separator
+  affordance, keyboard/pointer resizing, and ARIA value sync; the host owns
+  pane contents, persistence, collapse policy, and selection state.
+- **Local reproduction of CI risk.** `npm run test:e2e:nonpixel` captures the
+  cross-engine non-screenshot browser suite, and `npm run test:examples` packs
+  the real tarball, builds every example in temp dirs, and browser-smokes the
+  runtime examples. Pixel baselines remain pinned-container-only.
+
+## Shipped in 0.6.6
+
+- **Report PDF/export hardening.** Fixed Chromium print overprint by demoting
+  vertical report-flow wrappers to block flow at print time while preserving
+  column grids; promoted a multi-page PDF fixture parsed with pdfjs-dist.
+- **Module report rendering.** `scripts/render-pdf.mjs --serve` renders module
+  reports over loopback HTTP, waits for `data-report-ready`, and surfaces
+  page/console failures instead of silently dropping relative module figures
+  over `file://`.
+- **Gate/list consolidation.** Reporting and pack checks derive their scan
+  surfaces from registries instead of hand lists, cross-engine e2e runs on
+  engine-sensitive pushes to `main`, and release prep is scripted through
+  `npm run release:prep -- X.Y.Z`.
 
 ## Shipped in 0.6.5
 
@@ -133,9 +172,9 @@ without turning the project into a per-framework component suite.
 
 ## Active hardening
 
-- **Binding parity.** Keep React/Solid/Qwik hook options and lifecycle behavior
-  in parity with vanilla behaviors, with packed-example smoke tests (all three
-  build from the tarball in CI) and runtime tests for scoped roots.
+- **Binding parity.** Keep React/Solid/Qwik/Svelte hooks/actions and Vue
+  directives in parity with vanilla behaviors, with packed-example smoke tests
+  building from the tarball in CI and runtime tests for scoped roots.
 - **Browser proof for new surfaces.** Maintain real-browser checks for glyph
   mask rendering, OKLCH computed colors, and behavior paths that jsdom cannot
   faithfully model.
@@ -147,7 +186,8 @@ without turning the project into a per-framework component suite.
 
 ## Later / under consideration
 
-- Date-time picker and richer data-table recipes: only if real consumers need
+- Date-time picker, richer data-table recipes, and workbench drag/drop
+  affordances: only if real consumers need
   them, and preferably as documented recipes before growing the core behavior
   layer. (The command palette and tree outline shipped in 0.5.0/0.6.0; their
   follow-ons are demand-gated — see `docs/frontier-primitives.md`.)

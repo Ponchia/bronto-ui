@@ -1,0 +1,11 @@
+.gitignore
+node_modules/
+dist/
+build/
+.codeql/
+.semgrep/
+reports-lab/
+code-quality-audits/
+examples/*/node_modules/
+examples/*/dist/
+examples/*/build/

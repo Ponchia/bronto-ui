@@ -58,7 +58,7 @@ for (const [theme, rows] of [
 // while WCAG 3 is a Working Draft) — see docs/contrast.md. `--accent-text` is
 // accent-constrained and stays WCAG-gated, but we cross-check it perceptually
 // here at the large/emphasis-text bar (Lc 45): the core red accent-as-text is
-// the lowest (~Lc 44), the brighter colorways clear it comfortably.
+// calibrated to clear it, and the brighter colorways clear it comfortably.
 const APCA_TARGET = { '--text': 60, '--text-soft': 60, '--text-dim': 45, '--accent-text': 45 };
 const apcaScopes = [
   ['dark', dark],

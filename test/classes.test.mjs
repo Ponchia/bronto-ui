@@ -49,6 +49,9 @@ test('cls is the frozen registry', () => {
   assert.equal(cls.annotationBand, 'ui-annotation--band');
   assert.equal(cls.annotationDraw, 'ui-annotation--draw');
   assert.equal(cls.annotationAccent, 'ui-annotation--accent');
+  assert.equal(cls.splitter, 'ui-splitter');
+  assert.equal(cls.splitterHandle, 'ui-splitter__handle');
+  assert.equal(cls.splitterHorizontal, 'ui-splitter--horizontal');
   assert.equal(cls.printOnly, 'ui-print-only');
 });
 
@@ -187,6 +190,13 @@ test('lifecycle state recipe', () => {
   assert.equal(ui.state({ state: 'conflict' }), 'ui-state ui-state--conflict');
   assert.equal(ui.state({ state: 'needs-review' }), 'ui-state ui-state--needs-review');
   assert.equal(ui.state({ state: 'bogus' }), 'ui-state');
+  assert.equal(ui.job(), 'ui-job');
+  assert.equal(ui.job({ state: 'running' }), 'ui-job ui-job--running');
+  assert.equal(
+    ui.job({ state: 'blocked', compact: true }),
+    'ui-job ui-job--blocked ui-job--compact',
+  );
+  assert.equal(ui.job({ state: 'bogus' }), 'ui-job');
 });
 
 test('originLabel recipe (AI-trust)', () => {
@@ -218,13 +228,18 @@ test('every declared *Opts option is wired in its runtime recipe', async () => {
   );
 
   const optionsOf = (iface) => {
-    const m = dts.match(new RegExp(`export interface ${iface} \\{([\\s\\S]*?)\\n\\}`));
-    if (!m) return [];
-    return [...m[1].matchAll(/^\s*(\w+)\??:\s*([^;]+);/gm)].map(([, name, type]) => {
-      const lits = [...type.matchAll(/'([^']+)'/g)].map((x) => x[1]); // every union literal
-      const probes = lits.length ? lits : /boolean/.test(type) ? [true] : [];
-      return { name, probes, isEnum: lits.length > 1 };
-    });
+    const start = dts.indexOf(`export interface ${iface} {`);
+    if (start === -1) return [];
+    const bodyStart = start + `export interface ${iface} {`.length;
+    const end = dts.indexOf('\n}', bodyStart);
+    if (end === -1) return [];
+    return [...dts.slice(bodyStart, end).matchAll(/^\s*(\w+)\??:\s*([^;]+);/gm)].map(
+      ([, name, type]) => {
+        const lits = [...type.matchAll(/'([^']+)'/g)].map((x) => x[1]); // every union literal
+        const probes = lits.length ? lits : /boolean/.test(type) ? [true] : [];
+        return { name, probes, isEnum: lits.length > 1 };
+      },
+    );
   };
 
   let checked = 0;

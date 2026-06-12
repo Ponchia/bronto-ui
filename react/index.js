@@ -68,6 +68,7 @@ import {
   initCrosshair,
   initCommand,
   initSources,
+  initSplitter,
   toast,
 } from '../behaviors/index.js';
 
@@ -100,7 +101,7 @@ function resolveOpts(opts) {
  *  @param {BrontoBindingOptsResolver} [opts]
  *  @returns {void} */
 export function useBrontoBehavior(init, opts) {
-  useEffect(() => init(resolveOpts(opts)), []); // eslint-disable-line react-hooks/exhaustive-deps -- delegated once on mount
+  useEffect(() => init(resolveOpts(opts)), []); // eslint-disable-line react-hooks/exhaustive-deps -- intentional delegated once on mount
 }
 
 /** @param {BrontoBindingOptsResolver<ThemeStorageOpts & DelegateOpts>} [opts] @returns {void} */
@@ -143,6 +144,8 @@ export const useCrosshair = (opts) => useBrontoBehavior(initCrosshair, opts);
 export const useCommand = (opts) => useBrontoBehavior(initCommand, opts);
 /** @param {BrontoBindingOptsResolver} [opts] @returns {void} */
 export const useSources = (opts) => useBrontoBehavior(initSources, opts);
+/** @param {BrontoBindingOptsResolver} [opts] @returns {void} */
+export const useSplitter = (opts) => useBrontoBehavior(initSplitter, opts);
 
 /** The `toast()` imperative (no lifecycle of its own).
  *  @returns {(message: string, opts?: ToastOpts) => Cleanup} */

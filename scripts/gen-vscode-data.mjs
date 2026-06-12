@@ -20,6 +20,7 @@ import { resolve } from 'node:path';
 import { cssVars } from '../tokens/index.js';
 
 import { repoRoot as root, isMain } from './lib/emit.mjs';
+import { log } from './lib/stdio.mjs';
 
 // Token name → human description. Tokens defined per-theme show both
 // values so the hover explains the light/dark split.
@@ -65,6 +66,6 @@ export const generated = { 'classes/vscode.css-custom-data.json': json };
 if (isMain(import.meta.url)) {
   for (const [rel, content] of Object.entries(generated)) {
     writeFileSync(resolve(root, rel), content);
-    console.log(`✓ wrote ${rel} (${properties.length} custom properties)`);
+    log(`✓ wrote ${rel} (${properties.length} custom properties)`);
   }
 }

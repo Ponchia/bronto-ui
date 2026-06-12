@@ -23,6 +23,7 @@ import { cssVars } from '../tokens/index.js';
 import { mixOklch, parseCssColor } from './lib/oklch.mjs';
 
 import { repoRoot as root, isMain } from './lib/emit.mjs';
+import { log } from './lib/stdio.mjs';
 
 const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
 const r255 = (n) => clamp(Math.round(n), 0, 255);
@@ -160,5 +161,5 @@ export const resolvedJson = () => JSON.stringify(buildResolved(), null, 2) + '\n
 
 if (isMain(import.meta.url)) {
   writeFileSync(RESOLVED_PATH, resolvedJson());
-  console.log('✓ wrote tokens/resolved.json');
+  log('✓ wrote tokens/resolved.json');
 }

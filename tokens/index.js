@@ -150,7 +150,7 @@ export const cssVars = {
     '--text-dim': '#a0a0a0',
     '--accent': '#ff3b41',
     '--accent-ramp-end': '#000000',
-    '--accent-strong': 'color-mix(in srgb, var(--accent) 84%, #fff)',
+    '--accent-strong': 'color-mix(in srgb, var(--accent) 80%, #fff)',
     '--accent-text': 'var(--accent-strong)',
     // Read-only export: the resolved on-accent ink for FOREIGN renderers
     // (D2/Mermaid/Vega labels on an accent fill — see tokens/*.json). In-DOM

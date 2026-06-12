@@ -712,7 +712,7 @@
           "$type": "color",
           "$value": null,
           "$extensions": {
-            "com.ponchia.css": "color-mix(in srgb, var(--accent) 84%, #fff)"
+            "com.ponchia.css": "color-mix(in srgb, var(--accent) 80%, #fff)"
           }
         },
         "text": {

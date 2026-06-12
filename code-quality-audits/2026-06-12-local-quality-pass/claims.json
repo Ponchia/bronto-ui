@@ -1,0 +1,189 @@
+{
+  "schemaVersion": "bronto-report-claims.v1",
+  "report": {
+    "title": "Bronto UI Local Quality Pass",
+    "type": "audit"
+  },
+  "generatedAt": "2026-06-12T16:13:47Z",
+  "claims": [
+    {
+      "id": "claim-dead-code-gated",
+      "status": "supported",
+      "risk": "medium",
+      "statement": "Dead-code detection is now part of the native check contract.",
+      "scope": "Current working tree on 2026-06-12.",
+      "sourceIds": ["source-dead-code", "source-native-check"]
+    },
+    {
+      "id": "claim-checkov-green",
+      "status": "supported",
+      "risk": "medium",
+      "statement": "Checkov reports zero failed GitHub Actions checks.",
+      "scope": ".github/workflows in the current working tree.",
+      "sourceIds": ["source-security"]
+    },
+    {
+      "id": "claim-browser-green",
+      "status": "supported",
+      "risk": "medium",
+      "statement": "Real-browser non-pixel checks pass across Chromium, Firefox, and WebKit.",
+      "scope": "Playwright e2e non-pixel specs on 2026-06-12.",
+      "sourceIds": ["source-playwright-chromium", "source-playwright-cross-engine"]
+    },
+    {
+      "id": "claim-semgrep-clean",
+      "status": "supported",
+      "risk": "medium",
+      "statement": "Semgrep registry/security scan reports zero findings and zero errors.",
+      "scope": "Registry/security packs run locally through uvx on 2026-06-12.",
+      "sourceIds": ["source-semgrep-registry"]
+    },
+    {
+      "id": "claim-ai-slop-helper-clean",
+      "status": "supported",
+      "risk": "low",
+      "statement": "AI-slop helper completes successfully after local Semgrep activation.",
+      "scope": "Local AI-slop helper run on 2026-06-12 against this working tree.",
+      "sourceIds": ["source-ai-slop", "source-semgrep-shim", "source-semgrep-registry"]
+    },
+    {
+      "id": "claim-dark-accent-apca",
+      "status": "supported",
+      "risk": "medium",
+      "statement": "Dark accent text now clears the project's Lc 45 APCA advisory target.",
+      "scope": "Core dark palette and shipped dark colorways in the current working tree.",
+      "sourceIds": ["source-contrast", "source-native-check"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "source-native-check",
+      "state": "verified",
+      "title": "Native check and unit-test run",
+      "origin": "Local terminal commands in /Users/zeno/bronto/bronto-ui.",
+      "retrievedAt": "2026-06-12T15:55:01Z",
+      "supports": ["claim-dead-code-gated", "claim-dark-accent-apca"]
+    },
+    {
+      "id": "source-dead-code",
+      "state": "verified",
+      "title": "Dead-code helper report",
+      "origin": "Generated local dead-code helper report.",
+      "retrievedAt": "2026-06-12T15:54:34Z",
+      "supports": ["claim-dead-code-gated"]
+    },
+    {
+      "id": "source-security",
+      "state": "verified",
+      "title": "Checkov and security-policy scan",
+      "origin": "Local Checkov run after CI workflow cleanup.",
+      "retrievedAt": "2026-06-12T15:54:00Z",
+      "supports": ["claim-checkov-green"]
+    },
+    {
+      "id": "source-playwright-chromium",
+      "state": "verified",
+      "title": "Chromium non-pixel Playwright run",
+      "origin": "Local Playwright Chromium run excluding Linux-only pixel snapshots.",
+      "retrievedAt": "2026-06-12T15:58:00Z",
+      "supports": ["claim-browser-green"]
+    },
+    {
+      "id": "source-playwright-cross-engine",
+      "state": "verified",
+      "title": "Firefox and WebKit non-pixel Playwright run",
+      "origin": "Local Playwright cross-engine run.",
+      "retrievedAt": "2026-06-12T15:59:24Z",
+      "supports": ["claim-browser-green"]
+    },
+    {
+      "id": "source-ai-slop",
+      "state": "verified",
+      "title": "AI-slop helper report",
+      "origin": "Generated local AI-slop helper report.",
+      "retrievedAt": "2026-06-12T16:09:38Z",
+      "supports": ["claim-ai-slop-helper-clean"]
+    },
+    {
+      "id": "source-semgrep-shim",
+      "state": "verified",
+      "title": "Local Semgrep activation check",
+      "origin": "Local semgrep command resolution and mise lookup.",
+      "retrievedAt": "2026-06-12T16:13:47Z",
+      "supports": ["claim-ai-slop-helper-clean"]
+    },
+    {
+      "id": "source-semgrep-registry",
+      "state": "verified",
+      "title": "Isolated Semgrep registry/security scan",
+      "origin": "Local Semgrep 1.166.0 run through uvx --from semgrep.",
+      "retrievedAt": "2026-06-12T15:54:00Z",
+      "supports": ["claim-semgrep-clean", "claim-ai-slop-helper-clean"]
+    },
+    {
+      "id": "source-contrast",
+      "state": "verified",
+      "title": "Contrast gate after dark accent calibration",
+      "origin": "Local artifact rebuild followed by npm run check:contrast.",
+      "retrievedAt": "2026-06-12T15:51:46Z",
+      "supports": ["claim-dark-accent-apca"]
+    }
+  ],
+  "relations": [
+    {
+      "claimId": "claim-dead-code-gated",
+      "sourceId": "source-dead-code",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-dead-code-gated",
+      "sourceId": "source-native-check",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-checkov-green",
+      "sourceId": "source-security",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-browser-green",
+      "sourceId": "source-playwright-chromium",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-browser-green",
+      "sourceId": "source-playwright-cross-engine",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-semgrep-clean",
+      "sourceId": "source-semgrep-registry",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-ai-slop-helper-clean",
+      "sourceId": "source-ai-slop",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-ai-slop-helper-clean",
+      "sourceId": "source-semgrep-shim",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-ai-slop-helper-clean",
+      "sourceId": "source-semgrep-registry",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-dark-accent-apca",
+      "sourceId": "source-contrast",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-dark-accent-apca",
+      "sourceId": "source-native-check",
+      "relation": "supports"
+    }
+  ]
+}

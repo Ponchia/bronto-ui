@@ -22,6 +22,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { cssImports, stripCssComments } from './lib/patterns.mjs';
+import { log } from './lib/stdio.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const cssDir = resolve(root, 'css');
@@ -181,8 +182,6 @@ if (isMain) {
   for (const [rel, content] of Object.entries(buildBundles())) {
     writeFileSync(resolve(root, rel), content);
     const s = sizes(content);
-    console.log(
-      `✓ ${rel} — ${(s.raw / 1024).toFixed(1)}kB raw, ${(s.gzip / 1024).toFixed(1)}kB gzip`,
-    );
+    log(`✓ ${rel} — ${(s.raw / 1024).toFixed(1)}kB raw, ${(s.gzip / 1024).toFixed(1)}kB gzip`);
   }
 }

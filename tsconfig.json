@@ -24,6 +24,8 @@
     "tokens/d2.d.ts",
     "react/index.d.ts",
     "solid/index.d.ts",
-    "qwik/index.d.ts"
+    "qwik/index.d.ts",
+    "svelte/index.d.ts",
+    "vue/index.d.ts"
   ]
 }

@@ -24,6 +24,7 @@ import { resolve } from 'node:path';
 import { cssVars } from '../tokens/index.js';
 
 import { repoRoot as root, isMain } from './lib/emit.mjs';
+import { log } from './lib/stdio.mjs';
 export const TOKENS_CSS_PATH = resolve(root, 'css/tokens.css');
 
 /** Stable boundary: everything from this line down is hand-authored and
@@ -134,5 +135,5 @@ export function tokensCss() {
 
 if (isMain(import.meta.url)) {
   writeFileSync(TOKENS_CSS_PATH, tokensCss());
-  console.log('✓ wrote css/tokens.css (palette generated from tokens/index.js cssVars)');
+  log('✓ wrote css/tokens.css (palette generated from tokens/index.js cssVars)');
 }

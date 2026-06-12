@@ -17,6 +17,7 @@ import { cls } from '../classes/index.js';
 import { cssVars } from '../tokens/index.js';
 
 import { repoRoot as root, isMain } from './lib/emit.mjs';
+import { log } from './lib/stdio.mjs';
 
 // Base = the class up to the first BEM separator (`--` modifier / `__`
 // part). Everything sharing a base is one component group.
@@ -128,9 +129,11 @@ works in any framework without a binding layer:
   vocabulary onto a tone is application logic, not a framework class.
 - **Modal** — native \`<dialog>\` gets backdrop + top-layer + focus-trap
   free. For a controlled/portal modal, add \`is-open\`
-  (\`ui.modal({ open: true })\`) for the same skin/layout; the
-  backdrop, top-layer stacking AND focus-trap are then yours (\`.is-open\`
-  is a bare grid — it does not float or stack on its own).
+  (\`ui.modal({ open: true })\`) for the same skin/layout, mark the overlay
+  \`data-bronto-modal\`, and run \`initModal()\` for the inert focus trap,
+  focus-return, and Escape close signal. You still own the \`is-open\` state,
+  backdrop, and top-layer stacking (\`.is-open\` is a bare grid — it does not
+  float or stack on its own).
 - **Current page** — mark the active link with \`aria-current="page"\`; it is
   the programmatic cue the navs honour (\`ui-sitenav\`, \`ui-app-nav\`). The
   \`.is-active\` class is the visual-only equivalent on \`ui-app-nav\`/\`ui-tab\`;
@@ -192,6 +195,6 @@ export const generated = { 'docs/reference.md': md };
 if (isMain(import.meta.url)) {
   for (const [rel, content] of Object.entries(generated)) {
     writeFileSync(resolve(root, rel), content);
-    console.log(`✓ wrote ${rel} (${totalClasses} classes, ${groups.size} groups)`);
+    log(`✓ wrote ${rel} (${totalClasses} classes, ${groups.size} groups)`);
   }
 }

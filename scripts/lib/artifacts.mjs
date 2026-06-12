@@ -23,6 +23,7 @@ import { generated as referenceGenerated } from '../gen-reference.mjs';
 import { generated as vscodeGenerated } from '../gen-vscode-data.mjs';
 import { classesJson } from '../gen-classes-json.mjs';
 import { dtcgJson } from '../gen-dtcg.mjs';
+import { figmaVariablesJson } from '../gen-figma-variables.mjs';
 import { resolvedJson } from '../gen-resolved.mjs';
 import { tokensCss } from '../gen-tokens-css.mjs';
 import { tokensJson } from '../gen-tokens-json.mjs';
@@ -36,6 +37,7 @@ export const artifacts = {
   'classes/classes.json': classesJson(),
   'tokens/tokens.dtcg.json': dtcgJson(),
   'tokens/resolved.json': resolvedJson(),
+  'tokens/figma.variables.json': figmaVariablesJson(),
   'css/tokens.css': tokensCss(),
   'tokens/index.json': tokensJson,
 };

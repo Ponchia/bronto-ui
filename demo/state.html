@@ -26,6 +26,12 @@
         gap: 0.75rem;
         margin-block: 1.5rem;
       }
+
+      .state-demo__jobs {
+        display: grid;
+        gap: 0.9rem;
+        margin-block-start: 1.5rem;
+      }
     </style>
   </head>
   <body>
@@ -79,6 +85,66 @@
           <span class="ui-state__label">Needs review</span>
         </span>
       </div>
+
+      <section class="state-demo__jobs" aria-labelledby="jobs-title">
+        <h2 class="ui-display" id="jobs-title">Background jobs</h2>
+
+        <article
+          class="ui-job ui-job--running"
+          style="--job-progress: 64%"
+          aria-labelledby="job-running-title"
+        >
+          <div class="ui-job__head">
+            <h3 class="ui-job__title" id="job-running-title">Importing listings</h3>
+            <span class="ui-state ui-state--saving ui-state--busy">
+              <span class="ui-state__label">Running</span>
+              <span class="ui-state__detail">64%</span>
+            </span>
+          </div>
+          <p class="ui-job__body">124 of 194 records processed. Latest checkpoint saved.</p>
+          <div
+            class="ui-job__progress"
+            role="progressbar"
+            aria-label="Import progress"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="64"
+          >
+            <span class="ui-job__bar"></span>
+          </div>
+          <div class="ui-job__actions">
+            <button class="ui-button ui-button--subtle ui-button--sm" type="button">
+              View log
+            </button>
+            <button class="ui-button ui-button--ghost ui-button--sm" type="button">Cancel</button>
+          </div>
+        </article>
+
+        <article
+          class="ui-job ui-job--blocked ui-job--compact"
+          style="--job-progress: 38%"
+          aria-labelledby="job-blocked-title"
+        >
+          <div class="ui-job__head">
+            <h3 class="ui-job__title" id="job-blocked-title">Syncing variables</h3>
+            <span class="ui-state ui-state--stale">
+              <span class="ui-state__label">Blocked</span>
+              <span class="ui-state__detail">permission required</span>
+            </span>
+          </div>
+          <p class="ui-job__body">Waiting for design-tool write access before retry.</p>
+          <div
+            class="ui-job__progress"
+            role="progressbar"
+            aria-label="Variable sync progress"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="38"
+          >
+            <span class="ui-job__bar"></span>
+          </div>
+        </article>
+      </section>
     </main>
   </body>
 </html>
