@@ -584,6 +584,20 @@ export const cls = Object.freeze({
   stateReviewed: 'ui-state--reviewed',
   stateNeedsReview: 'ui-state--needs-review',
   syncbar: 'ui-syncbar',
+  job: 'ui-job',
+  jobHead: 'ui-job__head',
+  jobTitle: 'ui-job__title',
+  jobMeta: 'ui-job__meta',
+  jobBody: 'ui-job__body',
+  jobProgress: 'ui-job__progress',
+  jobBar: 'ui-job__bar',
+  jobActions: 'ui-job__actions',
+  jobCompact: 'ui-job--compact',
+  jobQueued: 'ui-job--queued',
+  jobRunning: 'ui-job--running',
+  jobBlocked: 'ui-job--blocked',
+  jobFailed: 'ui-job--failed',
+  jobComplete: 'ui-job--complete',
   // generated content / AI-trust surfaces (css/generated.css)
   generated: 'ui-generated',
   generatedLabel: 'ui-generated__label',
@@ -596,7 +610,7 @@ export const cls = Object.freeze({
   toolCallName: 'ui-tool-call__name',
   toolCallStatus: 'ui-tool-call__status',
   toolCallBody: 'ui-tool-call__body',
-  // workbench — inspector / property / selection bar (css/workbench.css)
+  // workbench — inspector / property / selection bar / splitter (css/workbench.css)
   inspector: 'ui-inspector',
   inspectorHead: 'ui-inspector__head',
   inspectorBody: 'ui-inspector__body',
@@ -606,6 +620,11 @@ export const cls = Object.freeze({
   selectionbar: 'ui-selectionbar',
   selectionbarCount: 'ui-selectionbar__count',
   selectionbarActions: 'ui-selectionbar__actions',
+  splitter: 'ui-splitter',
+  splitterVertical: 'ui-splitter--vertical',
+  splitterHorizontal: 'ui-splitter--horizontal',
+  splitterPane: 'ui-splitter__pane',
+  splitterHandle: 'ui-splitter__handle',
   // command palette shell (css/command.css + initCommand)
   command: 'ui-command',
   commandInput: 'ui-command__input',
@@ -697,6 +716,15 @@ const stateTone = (state) =>
     locked: cls.stateLocked,
     reviewed: cls.stateReviewed,
     'needs-review': cls.stateNeedsReview,
+  })[state] || '';
+
+const jobTone = (state) =>
+  ({
+    queued: cls.jobQueued,
+    running: cls.jobRunning,
+    blocked: cls.jobBlocked,
+    failed: cls.jobFailed,
+    complete: cls.jobComplete,
   })[state] || '';
 
 // Trust-state → tone class, shared by the source/citation/provenance recipes.
@@ -1013,6 +1041,7 @@ export const ui = {
       tone === 'neg' && cls.bulletMeasureNeg,
     ),
   state: ({ state, busy } = {}) => j(cls.state, stateTone(state), busy && cls.stateBusy),
+  job: ({ state, compact } = {}) => j(cls.job, jobTone(state), compact && cls.jobCompact),
   originLabel: ({ ai } = {}) => j(cls.originLabel, ai && cls.originLabelAi),
 };
 

@@ -70,6 +70,7 @@ import {
   initCrosshair,
   initCommand,
   initSources,
+  initSplitter,
   toast,
 } from '../behaviors/index.js';
 
@@ -148,6 +149,8 @@ export const useCrosshair = (opts) => useBrontoBehavior(initCrosshair, opts);
 export const useCommand = (opts) => useBrontoBehavior(initCommand, opts);
 /** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useSources = (opts) => useBrontoBehavior(initSources, opts);
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
+export const useSplitter = (opts) => useBrontoBehavior(initSplitter, opts);
 
 /** The `toast()` imperative (no lifecycle of its own).
  * @type {() => (message: string, opts?: ToastOpts) => Cleanup} */

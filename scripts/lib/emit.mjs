@@ -8,6 +8,7 @@
 import { writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { log } from './stdio.mjs';
 
 /** Absolute repo root (this file lives at scripts/lib/emit.mjs). */
 export const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
@@ -22,7 +23,7 @@ export function isMain(importMetaUrl) {
 export function writeGenerated(root, files) {
   for (const [rel, content] of Object.entries(files)) {
     writeFileSync(resolve(root, rel), content);
-    console.log(`✓ wrote ${rel}`);
+    log(`✓ wrote ${rel}`);
   }
 }
 

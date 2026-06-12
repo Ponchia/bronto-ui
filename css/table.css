@@ -85,6 +85,10 @@
   overflow-wrap: anywhere;
 }
 
+.ui-table--break-anywhere {
+  table-layout: fixed;
+}
+
 /* Numeric / right-aligned cells. */
 .ui-table .is-num,
 .ui-table th.is-num {

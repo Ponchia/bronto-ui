@@ -15,6 +15,7 @@ import {
   initConnectors,
   initCrosshair,
   initCommand,
+  initSplitter,
   toast,
 } from '../behaviors/index.js';
 import { ui, cx } from '../classes/index.js';
@@ -199,6 +200,7 @@ initConnectors(); // draws + tracks the leader lines in the analytical tier
 initCrosshair(); // pointer-tracking crosshair in the analytical tier
 initLegend(); // interactive legend toggle in the analytical tier
 initCommand(); // command-palette filtering in the frontier tier
+initSplitter(); // workbench pane resizing in the frontier tier
 
 // Command palette: host-owned, like the legend/crosshair below. Bronto filters
 // + navigates and emits the event; the host (this demo) owns what a selection
@@ -357,7 +359,6 @@ console.assert(
   ui.button({ variant: 'ghost' }) === 'ui-button ui-button--ghost',
   'classes recipe mismatch',
 );
-console.log('showcase wired via @ponchia/ui modules', cx('ok'));
 
 // Deterministic readiness signal for the e2e suite. This module is loaded as an
 // external <script type="module"> (an extra fetch + import graph), and it builds

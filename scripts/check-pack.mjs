@@ -15,6 +15,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { reportAndExit } from './lib/gate-report.mjs';
 import { cssLeaves } from './lib/css-leaves.mjs';
+import { exportTargetFiles } from './lib/package-targets.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
@@ -65,31 +66,18 @@ for (const p of files) {
   }
 }
 
-// Sanity: the runtime entrypoints must actually be present. The CSS set is
-// DERIVED from package.json exports (every `./css/<leaf>.css` key must ship
-// its source leaf AND its built dist twin) — the old hand list had already
-// drifted behind the post-0.6.0 leaves (spark/bullet/diff/code/sidenote/
-// textref/term/toc/tree were exported but never asserted here).
+// Sanity: every concrete export target must actually be present in the npm
+// pack file list, including `types` targets. This is the tarball-level inverse
+// of check:exports: that gate proves exported paths exist in the worktree and
+// are under `files`; this one proves npm will actually include them.
 const must = [
-  'dist/bronto.css', // core's built twin (there is no dist/css/core.css)
-  ...cssLeaves(pkg).flatMap((leaf) =>
-    leaf === 'core' ? ['css/core.css'] : [`css/${leaf}.css`, `dist/css/${leaf}.css`],
-  ),
-  'docs/reporting.md',
-  'docs/annotations.md',
-  'docs/package-contract.md',
-  'tokens/index.js',
-  'classes/index.js',
-  'behaviors/index.js',
-  'glyphs/glyphs.js',
-  'annotations/index.js',
-  'connectors/index.js',
-  'react/index.js',
-  'solid/index.js',
-  'qwik/index.js',
+  ...exportTargetFiles(pkg),
+  // `css/core.css` has no dist twin, but every other CSS leaf must ship both
+  // its layered export target and its unlayered source escape hatch.
+  ...cssLeaves(pkg).flatMap((leaf) => (leaf === 'core' ? [] : [`css/${leaf}.css`])),
 ];
 for (const m of must) {
-  if (!files.includes(m)) errors.push(`expected entrypoint missing from package: ${m}`);
+  if (!files.includes(m)) errors.push(`expected exported package file missing: ${m}`);
 }
 
 reportAndExit(errors, {

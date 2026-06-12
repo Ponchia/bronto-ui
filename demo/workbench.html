@@ -6,7 +6,7 @@
     <title>@ponchia/ui — workbench specimen</title>
     <meta
       name="description"
-      content="Inspector, property rows and selection bar primitives for tool UIs."
+      content="Split panes, inspector, property rows and selection bar primitives for tool UIs."
     />
     <link rel="stylesheet" href="../dist/bronto.css" />
     <link rel="stylesheet" href="../dist/css/workbench.css" />
@@ -17,7 +17,7 @@
 
       .wb-demo {
         margin: 0 auto;
-        max-width: 60ch;
+        max-width: 72rem;
         padding: 2rem 1rem 4rem;
       }
 
@@ -26,17 +26,67 @@
         gap: 1.5rem;
         margin-block-start: 1.5rem;
       }
+
+      .wb-file-list {
+        display: grid;
+        gap: 0.35rem;
+        margin: 0;
+        padding: 0;
+      }
+
+      .wb-file-list li {
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        display: flex;
+        justify-content: space-between;
+        list-style: none;
+        padding: 0.45rem 0.6rem;
+      }
     </style>
   </head>
   <body>
     <main class="wb-demo">
       <h1 class="ui-display">Workbench</h1>
       <p>
-        Inspector, property rows and a selection bar — the low-risk CSS core for real tools. Opt-in;
-        not in the core bundle.
+        Split panes, inspector, property rows and a selection bar — the low-risk workbench core for
+        real tools. Opt-in; not in the core bundle.
       </p>
 
       <div class="wb-demo__stack">
+        <div
+          class="ui-splitter ui-splitter--vertical"
+          data-bronto-splitter
+          style="--splitter-pos: 36%; --splitter-pane-min: 12rem"
+        >
+          <section class="ui-splitter__pane" id="workbench-files" aria-label="Files">
+            <h2 class="ui-eyebrow">Files</h2>
+            <ul class="wb-file-list">
+              <li><span>report.html</span><span class="ui-badge ui-badge--success">clean</span></li>
+              <li><span>claims.json</span><span class="ui-badge ui-badge--warning">draft</span></li>
+              <li><span>index.pdf</span><span class="ui-badge ui-badge--muted">ready</span></li>
+            </ul>
+          </section>
+          <div
+            class="ui-splitter__handle"
+            role="separator"
+            tabindex="0"
+            aria-controls="workbench-files"
+            aria-label="Resize files pane"
+            aria-orientation="vertical"
+            aria-valuemin="20"
+            aria-valuemax="72"
+            aria-valuenow="36"
+          ></div>
+          <section class="ui-splitter__pane" aria-label="Preview">
+            <h2 class="ui-eyebrow">Preview</h2>
+            <p class="ui-prose ui-prose--compact">
+              The host owns the editor, selection state, persistence and file model. Bronto owns the
+              splitter affordance, keyboard path and ARIA value sync.
+            </p>
+          </section>
+        </div>
+
         <aside class="ui-inspector" aria-label="Inspector">
           <div class="ui-inspector__head">
             <h2 class="ui-eyebrow">Rectangle</h2>
@@ -74,5 +124,10 @@
         </div>
       </div>
     </main>
+    <script type="module">
+      import { initSplitter } from '../behaviors/index.js';
+
+      initSplitter();
+    </script>
   </body>
 </html>

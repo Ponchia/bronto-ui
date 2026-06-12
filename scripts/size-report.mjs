@@ -11,6 +11,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { buildBundles, sizes as cssSizes } from './build-dist.mjs';
+import { log } from './lib/stdio.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const bytes = (n) => `${(n / 1024).toFixed(1)} kB`;
@@ -52,11 +53,11 @@ const pack = JSON.parse(
   }),
 )[0];
 
-console.log('| Surface | Raw | Gzip |');
-console.log('| --- | ---: | ---: |');
+log('| Surface | Raw | Gzip |');
+log('| --- | ---: | ---: |');
 for (const [name, raw, gzip] of rows) {
-  console.log(`| ${name} | ${bytes(raw)} | ${gzip == null ? 'n/a' : bytes(gzip)} |`);
+  log(`| ${name} | ${bytes(raw)} | ${gzip == null ? 'n/a' : bytes(gzip)} |`);
 }
-console.log(
+log(
   `| npm tarball (${pack.entryCount} files) | ${bytes(pack.unpackedSize)} unpacked | ${bytes(pack.size)} packed |`,
 );

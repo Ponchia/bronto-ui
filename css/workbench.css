@@ -1,12 +1,11 @@
 /* ==========================================================================
-   workbench — opt-in inspector / property / selection-bar primitives.
+   workbench — opt-in inspector / property / selection-bar / splitter primitives.
 
-   Real tools need inspectors, property rows, and a bar of actions on the
-   current selection. Generic kits stop at cards/tables/forms, so every app
-   builds its own half-consistent workbench. This is the low-risk CSS core:
-   layout and affordances only. Resizable split panes (a focusable ARIA
-   window-splitter behavior) and drag handles are deliberately deferred until a
-   consumer needs them. Not imported by core.css.
+   Real tools need inspectors, property rows, a bar of actions on the current
+   selection, and resizable panes. Generic kits stop at cards/tables/forms, so
+   every app builds its own half-consistent workbench. This is the low-risk
+   core: layout and affordances, plus a tiny optional ARIA splitter behavior.
+   Not imported by core.css.
    ========================================================================== */
 
 /* --- Inspector — a panel of details for the selected object. --- */
@@ -80,4 +79,98 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-xs);
+}
+
+/* --- Splitter — two panes separated by a focusable ARIA separator handle. --- */
+.ui-splitter {
+  --splitter-pos: 50%;
+  --splitter-handle: 0.75rem;
+  --splitter-pane-min: 0px;
+
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  display: grid;
+  grid-template-columns:
+    minmax(var(--splitter-pane-min), var(--splitter-pos))
+    var(--splitter-handle)
+    minmax(0, 1fr);
+  min-block-size: 18rem;
+  overflow: hidden;
+}
+
+.ui-splitter--vertical {
+  grid-template-columns:
+    minmax(var(--splitter-pane-min), var(--splitter-pos))
+    var(--splitter-handle)
+    minmax(0, 1fr);
+}
+
+.ui-splitter--horizontal {
+  grid-template-columns: 1fr;
+  grid-template-rows:
+    minmax(var(--splitter-pane-min), var(--splitter-pos))
+    var(--splitter-handle)
+    minmax(0, 1fr);
+}
+
+.ui-splitter__pane {
+  min-block-size: 0;
+  min-inline-size: 0;
+  overflow: auto;
+  padding: var(--space-md);
+}
+
+.ui-splitter__handle {
+  align-self: stretch;
+  background: var(--panel-strong);
+  border-block: 0;
+  border-inline: 1px solid var(--line);
+  cursor: col-resize;
+  display: grid;
+  min-inline-size: var(--splitter-handle);
+  place-items: center;
+  touch-action: none;
+}
+
+.ui-splitter__handle::before {
+  background: var(--line-strong);
+  border-radius: var(--radius-pill);
+  block-size: 2.5rem;
+  content: "";
+  inline-size: 2px;
+}
+
+.ui-splitter__handle:hover::before,
+.ui-splitter__handle.is-active::before,
+.ui-splitter__handle[aria-valuenow]:focus-visible::before {
+  background: var(--accent);
+}
+
+.ui-splitter__handle:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+.ui-splitter--horizontal .ui-splitter__handle {
+  border-block: 1px solid var(--line);
+  border-inline: 0;
+  cursor: row-resize;
+  min-block-size: var(--splitter-handle);
+  min-inline-size: 0;
+}
+
+.ui-splitter--horizontal .ui-splitter__handle::before {
+  block-size: 2px;
+  inline-size: 2.5rem;
+}
+
+@media (forced-colors: active) {
+  .ui-splitter__handle {
+    border-color: CanvasText;
+  }
+
+  .ui-splitter__handle::before {
+    background: CanvasText;
+  }
 }

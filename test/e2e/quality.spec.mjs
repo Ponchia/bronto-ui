@@ -93,11 +93,12 @@ test('quality — opt-in showcase leaves are loaded and applied', async ({ page 
     ).toBe(true);
   }
 
-  // .ui-command and .ui-inspector are `display: grid` only when their leaf CSS
+  // .ui-command, .ui-inspector and .ui-splitter are `display: grid` only when their leaf CSS
   // applies (UA default for the <div> is block) — direct proof the styles took
   // effect, not just that the <link> tag is present.
   await expect(page.locator('.ui-command').first()).toHaveCSS('display', 'grid');
   await expect(page.locator('.ui-inspector').first()).toHaveCSS('display', 'grid');
+  await expect(page.locator('.ui-splitter').first()).toHaveCSS('display', 'grid');
 });
 
 // The kitchen-sink annotation figure is a hand-placed SVG (subject/connector/

@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bronto UI Local Quality Pass</title>
+    <link rel="stylesheet" href="../../dist/bronto.css" />
+    <link rel="stylesheet" href="../../dist/css/report.css" />
+    <link rel="stylesheet" href="../../dist/css/sources.css" />
+  </head>
+  <body>
+    <!-- VERIFIER CONTRACT (report.py verify) — these scaffold blocks already
+         satisfy it. EDIT THEM IN PLACE; if you rewrite the file, carry every
+         block AND these comments along:
+           - exactly one <main class="ui-report"> and one <h1>
+           - an above-fold ui-report__decision stating basis, next action,
+             recheck timing, and evidence state IN TEXT
+           - every source card: a ui-src--* class AND its trust word
+             (verified/reviewed/…) repeated in the card text
+           - every titled action row: owner, due/recheck date, status,
+             success criteria
+           - every claim in claims.json must render as a ui-claim here, and
+             every ui-claim needs an id, a ui-claim--* state repeated in
+             text, and a source citation
+           - never hand-write claims.json — copy the scaffold sidecar's
+             schema (bronto-report-claims.v1) and keep ids in sync
+           - tables need <caption> + header cells; figures need figcaption;
+             SVGs need <title> + <desc>
+           - a deliberately interactive report is verified with --dynamic;
+             without it, any script element is an error -->
+    <main class="ui-report ui-report--numbered ui-report--compact">
+      <header class="ui-report__cover ui-report__cover--compact">
+        <p class="ui-eyebrow">Audit</p>
+        <h1 class="ui-report__title">Bronto UI Local Quality Pass</h1>
+        <p class="ui-report__subtitle">
+          Local quality, dead-code, security-policy, report/PDF, and browser verification pass for
+          the current <code>@ponchia/ui</code> working tree.
+        </p>
+        <ul class="ui-report__meta">
+          <li>Generated: <time datetime="2026-06-12T15:30:00Z">2026-06-12</time></li>
+          <li>Profile: Audit</li>
+          <li>Evidence state: supported</li>
+        </ul>
+      </header>
+
+      <nav class="ui-report__toc" aria-label="Report contents">
+        <ol>
+          <li><a href="#summary">Summary</a></li>
+          <li><a href="#findings">Findings</a></li>
+          <li><a href="#evidence">Evidence ledger</a></li>
+          <li><a href="#actions">Actions</a></li>
+        </ol>
+      </nav>
+
+      <section id="summary" class="ui-report__section">
+        <h2 class="ui-report__section-head">Summary</h2>
+        <div class="ui-report__summary">
+          <p>
+            The repository is in a strong local state after this pass. The native integrity suite,
+            unit tests, dead-code gate, Checkov policy scan, npm audit, real-browser e2e checks, and
+            Semgrep registry/security scan are green. A local ignored <code>mise.local.toml</code>
+            now pins Semgrep for this working tree, so the AI-slop helper's Semgrep leg completes as
+            part of the one-command local review path.
+          </p>
+        </div>
+
+        <!-- verifier: keep this decision block above the fold; its text must
+             state basis, next action, recheck timing, and evidence state -->
+        <aside class="ui-report__decision ui-keep" aria-labelledby="decision-title">
+          <p class="ui-report__decision-kicker">Reader outcome</p>
+          <h3 class="ui-report__decision-title" id="decision-title">
+            Keep the new local gates and continue from a green base
+          </h3>
+          <p class="ui-report__decision-body">
+            Basis: verified local commands and generated scanner reports. Next action: keep
+            <code>check:dead</code> in the aggregate check chain and keep the repo-local Semgrep
+            activation ignored so local SAST remains reproducible. Recheck:
+            <time datetime="2026-06-12">2026-06-12</time>. Evidence state: supported.
+          </p>
+          <dl class="ui-report__decision-grid">
+            <div class="ui-report__decision-item">
+              <dt class="ui-report__decision-label">Basis</dt>
+              <dd class="ui-report__decision-value">
+                Native checks, unit tests, dead-code helper, AI-slop helper, Checkov, Semgrep, and
+                Playwright logs.
+              </dd>
+            </div>
+            <div class="ui-report__decision-item">
+              <dt class="ui-report__decision-label">Next action</dt>
+              <dd class="ui-report__decision-value">
+                Keep the dead-code gate and ignored local Semgrep activation.
+              </dd>
+            </div>
+            <div class="ui-report__decision-item">
+              <dt class="ui-report__decision-label">Recheck</dt>
+              <dd class="ui-report__decision-value">
+                <time datetime="2026-06-12">2026-06-12</time>
+              </dd>
+            </div>
+          </dl>
+          <p class="ui-report__decision-meta">
+            Evidence state: supported · Sources: S1-S9 verified
+          </p>
+        </aside>
+
+        <div class="ui-statgrid" aria-label="Local quality gate summary">
+          <div class="ui-stat">
+            <span class="ui-stat__label">Native gates</span>
+            <span class="ui-stat__value">green</span>
+            <span class="ui-stat__delta is-pos">check + test</span>
+          </div>
+          <div class="ui-stat">
+            <span class="ui-stat__label">Browser tests</span>
+            <span class="ui-stat__value">579</span>
+            <span class="ui-stat__delta is-pos">579 passed, 9 expected skips</span>
+          </div>
+          <div class="ui-stat">
+            <span class="ui-stat__label">Security policy</span>
+            <span class="ui-stat__value">332</span>
+            <span class="ui-stat__delta is-pos">Checkov checks passed</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="findings" class="ui-report__section">
+        <h2 class="ui-report__section-head">Findings</h2>
+        <!-- verifier: each finding needs a claim, citation, evidence packet,
+             or explicit assumption label; severity modifiers (--major …)
+             must repeat the severity word in readable text -->
+        <article
+          class="ui-report__finding ui-report__finding--major"
+          aria-labelledby="finding-primary"
+        >
+          <h3 class="ui-report__finding-title" id="finding-primary">
+            Major finding: dead-code detection is now a native gate
+          </h3>
+          <p class="ui-report__finding-claim">
+            Claim: the project now fails <code>npm run check</code> when unused exports or unlisted
+            dead-code/dependency surfaces appear.
+          </p>
+          <p class="ui-report__finding-impact">
+            Impact: the unused <code>CSS_IMPORT</code> export that Knip found can no longer reappear
+            silently outside the normal CI-quality path.
+          </p>
+          <p class="ui-report__finding-remediation">
+            Remediation: <code>CSS_IMPORT</code> was made module-local, <code>knip</code> was
+            declared as a dev dependency, and <code>check:dead</code> was wired into the aggregate
+            check chain.
+          </p>
+          <article
+            class="ui-claim ui-claim--supported"
+            id="claim-dead-code-gated"
+            data-risk="medium"
+            data-source-ids="source-dead-code source-native-check"
+          >
+            <p class="ui-claim__statement">
+              Dead-code detection is now part of the native check contract.
+            </p>
+            <p class="ui-claim__scope">Scope: current working tree on 2026-06-12.</p>
+            <p class="ui-claim__status">Evidence state: supported.</p>
+            <p class="ui-claim__basis">
+              Basis: <code>npm run check:dead</code>, dead-code helper, and aggregate
+              <code>npm run check</code> passed.
+            </p>
+            <p class="ui-claim__refs">
+              Sources: <a class="ui-citation" href="#source-dead-code">S2</a>,
+              <a class="ui-citation" href="#source-native-check">S1</a>
+            </p>
+          </article>
+        </article>
+
+        <article
+          class="ui-report__finding ui-report__finding--resolved"
+          aria-labelledby="finding-ci-policy"
+        >
+          <h3 class="ui-report__finding-title" id="finding-ci-policy">
+            Resolved finding: CI manual inputs no longer trip Checkov
+          </h3>
+          <p class="ui-report__finding-claim">
+            Claim: the GitHub Actions policy finding <code>CKV_GHA_7</code> is resolved.
+          </p>
+          <p class="ui-report__finding-impact">
+            Impact: the manual CI dispatch still provides an any-branch cross-engine run, but no
+            longer exposes a user parameter that changes the build graph.
+          </p>
+          <p class="ui-report__finding-remediation">
+            Remediation: <code>workflow_dispatch</code> is now input-free and manual runs always
+            request cross-engine e2e.
+          </p>
+          <article
+            class="ui-claim ui-claim--supported"
+            id="claim-checkov-green"
+            data-risk="medium"
+            data-source-ids="source-security"
+          >
+            <p class="ui-claim__statement">Checkov reports zero failed GitHub Actions checks.</p>
+            <p class="ui-claim__scope">
+              Scope: <code>.github/workflows</code> in the current working tree.
+            </p>
+            <p class="ui-claim__status">Evidence state: supported.</p>
+            <p class="ui-claim__basis">
+              Basis: <code>checkov -d . --quiet</code> reported 332 passed checks and 0 failed
+              checks.
+            </p>
+            <p class="ui-claim__refs">
+              Source: <a class="ui-citation" href="#source-security">S3</a>
+            </p>
+          </article>
+        </article>
+
+        <article
+          class="ui-report__finding ui-report__finding--major"
+          aria-labelledby="finding-browser"
+        >
+          <h3 class="ui-report__finding-title" id="finding-browser">
+            Major finding: browser and PDF-facing surfaces are green locally
+          </h3>
+          <p class="ui-report__finding-claim">
+            Claim: Chromium, Firefox, and WebKit non-pixel e2e coverage passes locally.
+          </p>
+          <p class="ui-report__finding-impact">
+            Impact: the high-risk surfaces for a CSS-first library are exercised in real engines:
+            a11y, print, responsive overflow, report primitives, PDF export in Chromium, and
+            behavior glue.
+          </p>
+          <p class="ui-report__finding-remediation">
+            Remediation: no product change was required after the browser pass.
+          </p>
+          <article
+            class="ui-claim ui-claim--supported"
+            id="claim-browser-green"
+            data-risk="medium"
+            data-source-ids="source-playwright-chromium source-playwright-cross-engine"
+          >
+            <p class="ui-claim__statement">
+              Real-browser non-pixel checks pass across the supported local engines.
+            </p>
+            <p class="ui-claim__scope">
+              Scope: Playwright e2e non-pixel specs on Chromium, Firefox, and WebKit.
+            </p>
+            <p class="ui-claim__status">Evidence state: supported.</p>
+            <p class="ui-claim__basis">
+              Basis: Chromium passed 196 tests; Firefox/WebKit passed 383 tests with 9 expected
+              skips.
+            </p>
+            <p class="ui-claim__refs">
+              Sources: <a class="ui-citation" href="#source-playwright-chromium">S4</a>,
+              <a class="ui-citation" href="#source-playwright-cross-engine">S5</a>
+            </p>
+          </article>
+        </article>
+
+        <article
+          class="ui-report__finding ui-report__finding--resolved"
+          aria-labelledby="finding-semgrep"
+        >
+          <h3 class="ui-report__finding-title" id="finding-semgrep">
+            Resolved finding: Semgrep registry coverage is clean through an isolated runner
+          </h3>
+          <p class="ui-report__finding-claim">
+            Claim: Semgrep registry/security packs run cleanly when invoked through an isolated
+            <code>uvx</code> binary.
+          </p>
+          <p class="ui-report__finding-impact">
+            Impact: the repository has local SAST coverage through an isolated registry scan as well
+            as the now-repaired repo-local Semgrep activation.
+          </p>
+          <p class="ui-report__finding-remediation">
+            Remediation: two raw ampersands in demo <code>&lt;title&gt;</code> elements were escaped
+            after the registry scan reported HTML partial-parse warnings.
+          </p>
+          <article
+            class="ui-claim ui-claim--supported"
+            id="claim-semgrep-clean"
+            data-risk="medium"
+            data-source-ids="source-semgrep-registry"
+          >
+            <p class="ui-claim__statement">
+              Semgrep registry/security scan reports zero findings and zero errors.
+            </p>
+            <p class="ui-claim__scope">
+              Scope: registry/security packs run locally through <code>uvx</code> on 2026-06-12.
+            </p>
+            <p class="ui-claim__status">Evidence state: supported.</p>
+            <p class="ui-claim__basis">
+              Basis: rerun after escaping raw ampersands reported 0 results and 0 errors.
+            </p>
+            <p class="ui-claim__refs">
+              Source: <a class="ui-citation" href="#source-semgrep-registry">S8</a>
+            </p>
+          </article>
+        </article>
+
+        <article
+          class="ui-report__finding ui-report__finding--resolved"
+          aria-labelledby="finding-ai-slop"
+        >
+          <h3 class="ui-report__finding-title" id="finding-ai-slop">
+            Resolved finding: AI-slop helper completes after local Semgrep activation
+          </h3>
+          <p class="ui-report__finding-claim">
+            Claim: the AI-slop helper now completes with native checks, dead-code analysis, and its
+            Semgrep helper leg passing.
+          </p>
+          <p class="ui-report__finding-impact">
+            Impact: the convenience helper is now a clean one-command anti-slop gate on this
+            machine; local custom Semgrep rules still emit advisory false positives for documented
+            trust labels and intentional CLI output.
+          </p>
+          <p class="ui-report__finding-remediation">
+            Remediation: keep the repo-local <code>mise.local.toml</code> activation ignored and
+            tune external custom slop rules separately if their advisory noise becomes blocking.
+          </p>
+          <article
+            class="ui-claim ui-claim--supported"
+            id="claim-ai-slop-helper-clean"
+            data-risk="low"
+            data-source-ids="source-ai-slop source-semgrep-shim source-semgrep-registry"
+          >
+            <p class="ui-claim__statement">
+              AI-slop helper completes successfully after local Semgrep activation.
+            </p>
+            <p class="ui-claim__scope">
+              Scope: local AI-slop helper run on 2026-06-12 against this working tree.
+            </p>
+            <p class="ui-claim__status">Evidence state: supported.</p>
+            <p class="ui-claim__basis">
+              Basis: helper report recorded 12 passed checks, 0 failed checks, and 4 skipped checks;
+              the Semgrep deep leg passed. Separate registry/security packs reported 0 findings and
+              0 errors.
+            </p>
+            <p class="ui-claim__refs">
+              Sources: <a class="ui-citation" href="#source-ai-slop">S6</a>,
+              <a class="ui-citation" href="#source-semgrep-shim">S7</a>,
+              <a class="ui-citation" href="#source-semgrep-registry">S8</a>
+            </p>
+          </article>
+        </article>
+
+        <article
+          class="ui-report__finding ui-report__finding--resolved"
+          aria-labelledby="finding-contrast"
+        >
+          <h3 class="ui-report__finding-title" id="finding-contrast">
+            Resolved finding: dark accent text clears the APCA advisory bar
+          </h3>
+          <p class="ui-report__finding-claim">
+            Claim: the core dark accent-as-text pairing now clears the local Lc 45 APCA advisory
+            target.
+          </p>
+          <p class="ui-report__finding-impact">
+            Impact: the dark palette no longer carries a known perceptual contrast warning under the
+            project's own contrast audit.
+          </p>
+          <p class="ui-report__finding-remediation">
+            Remediation: dark <code>--accent-strong</code> was recalibrated and the contrast
+            generator was updated to match the derived token.
+          </p>
+          <article
+            class="ui-claim ui-claim--supported"
+            id="claim-dark-accent-apca"
+            data-risk="medium"
+            data-source-ids="source-contrast source-native-check"
+          >
+            <p class="ui-claim__statement">
+              Dark accent text now clears the project's Lc 45 APCA advisory target.
+            </p>
+            <p class="ui-claim__scope">
+              Scope: core dark palette and shipped dark colorways in the current working tree.
+            </p>
+            <p class="ui-claim__status">Evidence state: supported.</p>
+            <p class="ui-claim__basis">
+              Basis: <code>npm run check:contrast</code> completed without APCA advisory shortfalls
+              after rebuilding generated artifacts.
+            </p>
+            <p class="ui-claim__refs">
+              Sources: <a class="ui-citation" href="#source-contrast">S9</a>,
+              <a class="ui-citation" href="#source-native-check">S1</a>
+            </p>
+          </article>
+        </article>
+      </section>
+
+      <section id="evidence" class="ui-report__section">
+        <h2 class="ui-report__section-head">Evidence ledger</h2>
+        <div class="ui-evidence-ledger">
+          <div class="ui-table-wrap">
+            <table class="ui-table ui-table--dense ui-table--break-anywhere">
+              <caption>
+                Claim, evidence, source, and caveat ledger
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Claim</th>
+                  <th scope="col">Evidence</th>
+                  <th scope="col">Source</th>
+                  <th scope="col">Caveat</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="#claim-dead-code-gated">Dead-code gate</a></td>
+                  <td>
+                    <code>npm run check:dead</code>, dead-code helper, and aggregate check passed.
+                  </td>
+                  <td><a class="ui-citation" href="#source-dead-code">S2</a></td>
+                  <td>Requires <code>knip</code> to stay declared in dev dependencies.</td>
+                </tr>
+                <tr>
+                  <td><a href="#claim-checkov-green">Checkov policy</a></td>
+                  <td>Checkov reported 332 passed checks and 0 failed checks.</td>
+                  <td><a class="ui-citation" href="#source-security">S3</a></td>
+                  <td>Only GitHub Actions policy was checked by Checkov in this repo.</td>
+                </tr>
+                <tr>
+                  <td><a href="#claim-browser-green">Browser checks</a></td>
+                  <td>
+                    Chromium passed 196 non-pixel tests; Firefox/WebKit passed 383 with 9 expected
+                    skips.
+                  </td>
+                  <td><a class="ui-citation" href="#source-playwright-cross-engine">S5</a></td>
+                  <td>Pixel baselines remain intentionally pinned to Linux/Chromium CI.</td>
+                </tr>
+                <tr>
+                  <td><a href="#claim-semgrep-clean">Semgrep registry</a></td>
+                  <td>Isolated Semgrep registry/security scan reported 0 results and 0 errors.</td>
+                  <td><a class="ui-citation" href="#source-semgrep-registry">S8</a></td>
+                  <td>
+                    Local custom slop rules still emit known false positives for CLI output and
+                    trust-label docs.
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#claim-ai-slop-helper-clean">AI-slop helper</a></td>
+                  <td>
+                    AI-slop helper reported 12 passed checks, 0 failed checks, and 4 skipped checks.
+                  </td>
+                  <td><a class="ui-citation" href="#source-ai-slop">S6</a></td>
+                  <td>
+                    External custom slop rules still emit known false-positive advisory findings.
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#claim-dark-accent-apca">Dark accent APCA</a></td>
+                  <td><code>npm run check:contrast</code> completed with no APCA warnings.</td>
+                  <td><a class="ui-citation" href="#source-contrast">S9</a></td>
+                  <td>APCA remains advisory until the project promotes it to a hard gate.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="actions" class="ui-report__section">
+        <h2 class="ui-report__section-head">Actions</h2>
+        <div class="ui-report__actions">
+          <!-- verifier: a titled action row needs owner, due/recheck date,
+               status, and success criteria — keep all parts when you copy
+               this row for more actions -->
+          <article class="ui-report__action">
+            <p class="ui-report__action-title">Keep the dead-code gate in the native check path.</p>
+            <p class="ui-report__action-owner">Owner: maintainer</p>
+            <p class="ui-report__action-due">
+              Due/recheck: <time datetime="2026-06-12">2026-06-12</time>
+            </p>
+            <p class="ui-report__action-status">Status: complete</p>
+            <p class="ui-report__action-priority">Priority: medium</p>
+            <p class="ui-report__action-criteria">
+              Success criteria: <code>npm run check:dead</code> and
+              <code>npm run check:chain</code> pass.
+            </p>
+            <p class="ui-report__action-source">
+              Source: <a class="ui-citation" href="#claim-dead-code-gated">C1</a>
+            </p>
+          </article>
+          <article class="ui-report__action">
+            <p class="ui-report__action-title">Activate local Semgrep command.</p>
+            <p class="ui-report__action-owner">Owner: maintainer</p>
+            <p class="ui-report__action-due">
+              Due/recheck: <time datetime="2026-06-12">2026-06-12</time>
+            </p>
+            <p class="ui-report__action-status">Status: complete</p>
+            <p class="ui-report__action-priority">Priority: low</p>
+            <p class="ui-report__action-criteria">
+              Success criteria: the normal <code>semgrep</code> command resolves through the
+              repo-local activation and produces JSON/SARIF without a <code>mise</code> shim error.
+            </p>
+            <p class="ui-report__action-source">
+              Source: <a class="ui-citation" href="#claim-ai-slop-helper-clean">C5</a>
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="sources" class="ui-report__section ui-report__section--unnumbered">
+        <h2 class="ui-report__section-head">Sources</h2>
+        <p class="ui-provenance">
+          <span class="ui-provenance__item ui-src--verified">S1-S9 verified</span>
+          <span class="ui-provenance__item">6 claims mapped</span>
+        </p>
+        <!-- verifier: every source card needs a stable id, a ui-src--* trust
+             class, AND that trust word (verified/reviewed/…) repeated in the
+             card's text -->
+        <article class="ui-source-card ui-src--verified" id="source-native-check">
+          <h3 class="ui-source-card__title">Native check and unit-test run</h3>
+          <p class="ui-source-card__origin">
+            Verified: local terminal commands in /Users/zeno/bronto/bronto-ui.
+          </p>
+          <time class="ui-source-card__time" datetime="2026-06-12T15:55:01Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            <code>npm run check</code> passed with the new <code>check:dead</code> gate;
+            <code>npm test</code> passed 233 tests; <code>npm audit --audit-level=moderate</code>
+            found 0 vulnerabilities.
+          </p>
+        </article>
+        <article class="ui-source-card ui-src--verified" id="source-dead-code">
+          <h3 class="ui-source-card__title">Dead-code helper report</h3>
+          <p class="ui-source-card__origin">Verified: generated local dead-code helper report.</p>
+          <time class="ui-source-card__time" datetime="2026-06-12T15:54:34Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            Temporary artifact: dead-code helper report for timestamp
+            <code>20260612-175434</code>. Result: 1 passed check, 0 failed checks.
+          </p>
+        </article>
+        <article class="ui-source-card ui-src--verified" id="source-security">
+          <h3 class="ui-source-card__title">Checkov and security-policy scan</h3>
+          <p class="ui-source-card__origin">
+            Verified: local Checkov run after CI workflow cleanup.
+          </p>
+          <time class="ui-source-card__time" datetime="2026-06-12T15:54:00Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            <code>checkov -d . --quiet</code> reported 332 passed GitHub Actions checks, 0 failed
+            checks, and 0 skipped checks.
+          </p>
+        </article>
+        <article class="ui-source-card ui-src--verified" id="source-playwright-chromium">
+          <h3 class="ui-source-card__title">Chromium non-pixel Playwright run</h3>
+          <p class="ui-source-card__origin">
+            Verified: local Playwright Chromium run excluding Linux-only pixel snapshots.
+          </p>
+          <time class="ui-source-card__time" datetime="2026-06-12T15:58:00Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            <code>npx playwright test --project=chromium</code> over non-pixel specs passed 196
+            tests in 49.1 seconds.
+          </p>
+        </article>
+        <article class="ui-source-card ui-src--verified" id="source-playwright-cross-engine">
+          <h3 class="ui-source-card__title">Firefox and WebKit non-pixel Playwright run</h3>
+          <p class="ui-source-card__origin">Verified: local Playwright cross-engine run.</p>
+          <time class="ui-source-card__time" datetime="2026-06-12T15:59:24Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            <code>npx playwright test --project=firefox --project=webkit</code> reported 383 passed
+            tests and 9 expected skips in 1.7 minutes.
+          </p>
+        </article>
+        <article class="ui-source-card ui-src--verified" id="source-ai-slop">
+          <h3 class="ui-source-card__title">AI-slop helper report</h3>
+          <p class="ui-source-card__origin">Verified: generated local AI-slop helper report.</p>
+          <time class="ui-source-card__time" datetime="2026-06-12T16:09:38Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            Temporary artifact: AI-slop helper report for timestamp
+            <code>20260612T160938Z</code>. Result: 12 passed checks, 0 failed checks, and 4 skipped
+            checks; the Semgrep deep leg passed.
+          </p>
+        </article>
+        <article class="ui-source-card ui-src--verified" id="source-semgrep-shim">
+          <h3 class="ui-source-card__title">Local Semgrep activation check</h3>
+          <p class="ui-source-card__origin">
+            Verified: local <code>semgrep</code> command resolution and <code>mise</code> lookup.
+          </p>
+          <time class="ui-source-card__time" datetime="2026-06-12T16:13:47Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            The normal <code>semgrep</code> command now resolves through an ignored repo-local
+            <code>mise.local.toml</code> activation; <code>semgrep --version</code> and the AI-slop
+            Semgrep helper completed without the prior shim error, and a local custom-rule smoke
+            test emitted JSON/SARIF with 65 advisory findings and 0 errors.
+          </p>
+        </article>
+        <article class="ui-source-card ui-src--verified" id="source-semgrep-registry">
+          <h3 class="ui-source-card__title">Isolated Semgrep registry/security scan</h3>
+          <p class="ui-source-card__origin">
+            Verified: local Semgrep 1.166.0 run through
+            <code>uvx --from semgrep</code>.
+          </p>
+          <time class="ui-source-card__time" datetime="2026-06-12T15:54:00Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            Registry/security packs reported 0 results and 0 errors after escaping raw ampersands in
+            <code>demo/generated.html</code> and <code>demo/sources.html</code>.
+          </p>
+        </article>
+        <article class="ui-source-card ui-src--verified" id="source-contrast">
+          <h3 class="ui-source-card__title">Contrast gate after dark accent calibration</h3>
+          <p class="ui-source-card__origin">
+            Verified: local artifact rebuild followed by <code>npm run check:contrast</code>.
+          </p>
+          <time class="ui-source-card__time" datetime="2026-06-12T15:51:46Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            The contrast gate completed without the previous dark
+            <code>--accent-text</code> APCA advisory shortfalls.
+          </p>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

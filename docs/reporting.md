@@ -205,7 +205,8 @@ fetching, and claim wording.
   audit reports. Add `ui-report__action-title`, `__action-owner`,
   `__action-due`, `__action-priority`, `__action-criteria`, and
   `__action-source` when the action is a real workflow item. The status text
-  must be written out; do not rely on tone alone.
+  must be written out; do not rely on tone alone. The status occupies the side
+  rail on wide screens; the other action fields stay in the main text column.
 
 Decision brief pattern:
 
@@ -353,11 +354,11 @@ Evidence ledger pattern:
   deltas — they are not free-standing utilities.) Keep raw Markdown tables
   inside `ui-prose`; use `.ui-table` for curated evidence tables. If a
   `ui-report__evidence` block contains only a `ui-table-wrap`, the report layer
-  removes the inner frame so evidence tables do not look double-boxed.
-  Report tables preserve words by default so identifiers and headings do not
-  split into unreadable fragments in PDF. Add `ui-table--break-anywhere` only
-  for machine-token tables where avoiding horizontal overflow matters more than
-  preserving words.
+  removes the inner frame so evidence tables do not look double-boxed. Report
+  tables preserve words by default so identifiers and headings do not split into
+  unreadable fragments in PDF. Add `ui-table--break-anywhere` only for
+  machine-token tables where fixed, shrink-to-fit columns and forced wrapping
+  matter more than preserving words.
 - Every `<figure>` should include a `figcaption` using `ui-report__caption`.
 - Do not use raw color values. Theme with `--accent`; use status tones for
   status; use chart tokens only in chart figures.

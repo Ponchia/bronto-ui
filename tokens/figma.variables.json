@@ -1,0 +1,2241 @@
+{
+  "schemaVersion": "bronto-figma-variables.v1",
+  "$comment": "@ponchia/ui local Figma Variables handoff manifest. Generated from tokens/resolved.json; do not edit by hand. This is an importer-friendly projection, not a direct Figma REST payload.",
+  "source": {
+    "tokens": "tokens/index.js",
+    "resolved": "tokens/resolved.json"
+  },
+  "collections": [
+    {
+      "name": "Bronto / Color",
+      "modes": [
+        {
+          "modeId": "light",
+          "name": "Light"
+        },
+        {
+          "modeId": "dark",
+          "name": "Dark"
+        }
+      ],
+      "variables": [
+        {
+          "name": "accent",
+          "type": "COLOR",
+          "sourceCssVariable": "--accent",
+          "valuesByMode": {
+            "light": {
+              "r": 0.843137,
+              "g": 0.098039,
+              "b": 0.129412,
+              "a": 1
+            },
+            "dark": {
+              "r": 1,
+              "g": 0.231373,
+              "b": 0.254902,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent",
+              "value": "#d71921",
+              "darkValue": "#ff3b41"
+            }
+          }
+        },
+        {
+          "name": "accent/1",
+          "type": "COLOR",
+          "sourceCssVariable": "--accent-1",
+          "valuesByMode": {
+            "light": {
+              "r": 1,
+              "g": 0.937255,
+              "b": 0.929412,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.007843,
+              "g": 0,
+              "b": 0,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-1",
+              "value": "#ffefed",
+              "darkValue": "#020000"
+            }
+          }
+        },
+        {
+          "name": "accent/2",
+          "type": "COLOR",
+          "sourceCssVariable": "--accent-2",
+          "valuesByMode": {
+            "light": {
+              "r": 1,
+              "g": 0.878431,
+              "b": 0.858824,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.05098,
+              "g": 0.003922,
+              "b": 0.003922,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-2",
+              "value": "#ffe0db",
+              "darkValue": "#0d0101"
+            }
+          }
+        },
+        {
+          "name": "accent/3",
+          "type": "COLOR",
+          "sourceCssVariable": "--accent-3",
+          "valuesByMode": {
+            "light": {
+              "r": 0.984314,
+              "g": 0.752941,
+              "b": 0.72549,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.2,
+              "g": 0.019608,
+              "b": 0.023529,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-3",
+              "value": "#fbc0b9",
+              "darkValue": "#330506"
+            }
+          }
+        },
+        {
+          "name": "accent/4",
+          "type": "COLOR",
+          "sourceCssVariable": "--accent-4",
+          "valuesByMode": {
+            "light": {
+              "r": 0.945098,
+              "g": 0.529412,
+              "b": 0.490196,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.501961,
+              "g": 0.098039,
+              "b": 0.109804,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-4",
+              "value": "#f1877d",
+              "darkValue": "#80191c"
+            }
+          }
+        },
+        {
+          "name": "accent/5",
+          "type": "COLOR",
+          "sourceCssVariable": "--accent-5",
+          "valuesByMode": {
+            "light": {
+              "r": 0.843137,
+              "g": 0.098039,
+              "b": 0.129412,
+              "a": 1
+            },
+            "dark": {
+              "r": 1,
+              "g": 0.231373,
+              "b": 0.254902,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-5",
+              "value": "#d71921",
+              "darkValue": "#ff3b41"
+            }
+          }
+        },
+        {
+          "name": "accent/6",
+          "type": "COLOR",
+          "sourceCssVariable": "--accent-6",
+          "valuesByMode": {
+            "light": {
+              "r": 0.698039,
+              "g": 0.082353,
+              "b": 0.105882,
+              "a": 1
+            },
+            "dark": {
+              "r": 1,
+              "g": 0.384314,
+              "b": 0.403922,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-6",
+              "value": "#b2151b",
+              "darkValue": "#ff6267"
+            }
+          }
+        },
+        {
+          "name": "accent/ramp/end",
+          "type": "COLOR",
+          "sourceCssVariable": "--accent-ramp-end",
+          "valuesByMode": {
+            "light": {
+              "r": 1,
+              "g": 1,
+              "b": 1,
+              "a": 1
+            },
+            "dark": {
+              "r": 0,
+              "g": 0,
+              "b": 0,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-ramp-end",
+              "value": "#ffffff",
+              "darkValue": "#000000"
+            }
+          }
+        },
+        {
+          "name": "accent/soft",
+          "type": "COLOR",
+          "sourceCssVariable": "--accent-soft",
+          "valuesByMode": {
+            "light": {
+              "r": 0.843137,
+              "g": 0.098039,
+              "b": 0.129412,
+              "a": 0.1
+            },
+            "dark": {
+              "r": 1,
+              "g": 0.231373,
+              "b": 0.254902,
+              "a": 0.14
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-soft",
+              "value": "rgba(215, 25, 33, 0.1)",
+              "darkValue": "rgba(255, 59, 65, 0.14)"
+            }
+          }
+        },
+        {
+          "name": "accent/strong",
+          "type": "COLOR",
+          "sourceCssVariable": "--accent-strong",
+          "valuesByMode": {
+            "light": {
+              "r": 0.698039,
+              "g": 0.082353,
+              "b": 0.105882,
+              "a": 1
+            },
+            "dark": {
+              "r": 1,
+              "g": 0.384314,
+              "b": 0.403922,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-strong",
+              "value": "#b2151b",
+              "darkValue": "#ff6267"
+            }
+          }
+        },
+        {
+          "name": "accent/text",
+          "type": "COLOR",
+          "sourceCssVariable": "--accent-text",
+          "valuesByMode": {
+            "light": {
+              "r": 0.698039,
+              "g": 0.082353,
+              "b": 0.105882,
+              "a": 1
+            },
+            "dark": {
+              "r": 1,
+              "g": 0.384314,
+              "b": 0.403922,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-text",
+              "value": "#b2151b",
+              "darkValue": "#ff6267"
+            }
+          }
+        },
+        {
+          "name": "bg",
+          "type": "COLOR",
+          "sourceCssVariable": "--bg",
+          "valuesByMode": {
+            "light": {
+              "r": 0.956863,
+              "g": 0.956863,
+              "b": 0.94902,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.070588,
+              "g": 0.070588,
+              "b": 0.070588,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bg",
+              "value": "#f4f4f2",
+              "darkValue": "#121212"
+            }
+          }
+        },
+        {
+          "name": "bg/accent",
+          "type": "COLOR",
+          "sourceCssVariable": "--bg-accent",
+          "valuesByMode": {
+            "light": {
+              "r": 0.843137,
+              "g": 0.098039,
+              "b": 0.129412,
+              "a": 0.06
+            },
+            "dark": {
+              "r": 1,
+              "g": 0.231373,
+              "b": 0.254902,
+              "a": 0.08
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bg-accent",
+              "value": "rgba(215, 25, 33, 0.06)",
+              "darkValue": "rgba(255, 59, 65, 0.08)"
+            }
+          }
+        },
+        {
+          "name": "bg/elevated",
+          "type": "COLOR",
+          "sourceCssVariable": "--bg-elevated",
+          "valuesByMode": {
+            "light": {
+              "r": 0.984314,
+              "g": 0.984314,
+              "b": 0.980392,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.094118,
+              "g": 0.094118,
+              "b": 0.094118,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bg-elevated",
+              "value": "#fbfbfa",
+              "darkValue": "#181818"
+            }
+          }
+        },
+        {
+          "name": "border",
+          "type": "COLOR",
+          "sourceCssVariable": "--border",
+          "valuesByMode": {
+            "light": {
+              "r": 0.847059,
+              "g": 0.847059,
+              "b": 0.831373,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.219608,
+              "g": 0.219608,
+              "b": 0.219608,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--border",
+              "value": "#d8d8d4",
+              "darkValue": "#383838"
+            }
+          }
+        },
+        {
+          "name": "border/strong",
+          "type": "COLOR",
+          "sourceCssVariable": "--border-strong",
+          "valuesByMode": {
+            "light": {
+              "r": 0.658824,
+              "g": 0.658824,
+              "b": 0.635294,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.333333,
+              "g": 0.333333,
+              "b": 0.333333,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--border-strong",
+              "value": "#a8a8a2",
+              "darkValue": "#555555"
+            }
+          }
+        },
+        {
+          "name": "bronto/color/action",
+          "type": "COLOR",
+          "sourceCssVariable": "--bronto-color-action",
+          "valuesByMode": {
+            "light": {
+              "r": 0.843137,
+              "g": 0.098039,
+              "b": 0.129412,
+              "a": 1
+            },
+            "dark": {
+              "r": 1,
+              "g": 0.231373,
+              "b": 0.254902,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-action",
+              "value": "#d71921",
+              "darkValue": "#ff3b41"
+            }
+          }
+        },
+        {
+          "name": "bronto/color/bg",
+          "type": "COLOR",
+          "sourceCssVariable": "--bronto-color-bg",
+          "valuesByMode": {
+            "light": {
+              "r": 0.956863,
+              "g": 0.956863,
+              "b": 0.94902,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.070588,
+              "g": 0.070588,
+              "b": 0.070588,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-bg",
+              "value": "#f4f4f2",
+              "darkValue": "#121212"
+            }
+          }
+        },
+        {
+          "name": "bronto/color/border",
+          "type": "COLOR",
+          "sourceCssVariable": "--bronto-color-border",
+          "valuesByMode": {
+            "light": {
+              "r": 0.847059,
+              "g": 0.847059,
+              "b": 0.831373,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.219608,
+              "g": 0.219608,
+              "b": 0.219608,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-border",
+              "value": "#d8d8d4",
+              "darkValue": "#383838"
+            }
+          }
+        },
+        {
+          "name": "bronto/color/border/strong",
+          "type": "COLOR",
+          "sourceCssVariable": "--bronto-color-border-strong",
+          "valuesByMode": {
+            "light": {
+              "r": 0.658824,
+              "g": 0.658824,
+              "b": 0.635294,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.333333,
+              "g": 0.333333,
+              "b": 0.333333,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-border-strong",
+              "value": "#a8a8a2",
+              "darkValue": "#555555"
+            }
+          }
+        },
+        {
+          "name": "bronto/color/danger",
+          "type": "COLOR",
+          "sourceCssVariable": "--bronto-color-danger",
+          "valuesByMode": {
+            "light": {
+              "r": 0.752941,
+              "g": 0.086275,
+              "b": 0.133333,
+              "a": 1
+            },
+            "dark": {
+              "r": 1,
+              "g": 0.301961,
+              "b": 0.329412,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-danger",
+              "value": "#c01622",
+              "darkValue": "#ff4d54"
+            }
+          }
+        },
+        {
+          "name": "bronto/color/focus",
+          "type": "COLOR",
+          "sourceCssVariable": "--bronto-color-focus",
+          "valuesByMode": {
+            "light": {
+              "r": 0.843137,
+              "g": 0.098039,
+              "b": 0.129412,
+              "a": 1
+            },
+            "dark": {
+              "r": 1,
+              "g": 0.231373,
+              "b": 0.254902,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-focus",
+              "value": "#d71921",
+              "darkValue": "#ff3b41"
+            }
+          }
+        },
+        {
+          "name": "bronto/color/info",
+          "type": "COLOR",
+          "sourceCssVariable": "--bronto-color-info",
+          "valuesByMode": {
+            "light": {
+              "r": 0.121569,
+              "g": 0.388235,
+              "b": 0.768627,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.435294,
+              "g": 0.690196,
+              "b": 0.901961,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-info",
+              "value": "#1f63c4",
+              "darkValue": "#6fb0e6"
+            }
+          }
+        },
+        {
+          "name": "bronto/color/on/action",
+          "type": "COLOR",
+          "sourceCssVariable": "--bronto-color-on-action",
+          "valuesByMode": {
+            "light": {
+              "r": 1,
+              "g": 1,
+              "b": 1,
+              "a": 1
+            },
+            "dark": {
+              "r": 0,
+              "g": 0,
+              "b": 0,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-on-action",
+              "value": "#ffffff",
+              "darkValue": "#000000"
+            }
+          }
+        },
+        {
+          "name": "bronto/color/success",
+          "type": "COLOR",
+          "sourceCssVariable": "--bronto-color-success",
+          "valuesByMode": {
+            "light": {
+              "r": 0.184314,
+              "g": 0.490196,
+              "b": 0.309804,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.305882,
+              "g": 0.760784,
+              "b": 0.494118,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-success",
+              "value": "#2f7d4f",
+              "darkValue": "#4ec27e"
+            }
+          }
+        },
+        {
+          "name": "bronto/color/surface",
+          "type": "COLOR",
+          "sourceCssVariable": "--bronto-color-surface",
+          "valuesByMode": {
+            "light": {
+              "r": 1,
+              "g": 1,
+              "b": 1,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.109804,
+              "g": 0.109804,
+              "b": 0.109804,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-surface",
+              "value": "#ffffff",
+              "darkValue": "#1c1c1c"
+            }
+          }
+        },
+        {
+          "name": "bronto/color/surface/raised",
+          "type": "COLOR",
+          "sourceCssVariable": "--bronto-color-surface-raised",
+          "valuesByMode": {
+            "light": {
+              "r": 1,
+              "g": 1,
+              "b": 1,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.133333,
+              "g": 0.133333,
+              "b": 0.133333,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-surface-raised",
+              "value": "#ffffff",
+              "darkValue": "#222222"
+            }
+          }
+        },
+        {
+          "name": "bronto/color/text",
+          "type": "COLOR",
+          "sourceCssVariable": "--bronto-color-text",
+          "valuesByMode": {
+            "light": {
+              "r": 0.039216,
+              "g": 0.039216,
+              "b": 0.039216,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.901961,
+              "g": 0.901961,
+              "b": 0.901961,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-text",
+              "value": "#0a0a0a",
+              "darkValue": "#e6e6e6"
+            }
+          }
+        },
+        {
+          "name": "bronto/color/text/muted",
+          "type": "COLOR",
+          "sourceCssVariable": "--bronto-color-text-muted",
+          "valuesByMode": {
+            "light": {
+              "r": 0.407843,
+              "g": 0.407843,
+              "b": 0.388235,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.627451,
+              "g": 0.627451,
+              "b": 0.627451,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-text-muted",
+              "value": "#686863",
+              "darkValue": "#a0a0a0"
+            }
+          }
+        },
+        {
+          "name": "bronto/color/warning",
+          "type": "COLOR",
+          "sourceCssVariable": "--bronto-color-warning",
+          "valuesByMode": {
+            "light": {
+              "r": 0.501961,
+              "g": 0.392157,
+              "b": 0.078431,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.847059,
+              "g": 0.741176,
+              "b": 0.447059,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-warning",
+              "value": "#806414",
+              "darkValue": "#d8bd72"
+            }
+          }
+        },
+        {
+          "name": "button/text",
+          "type": "COLOR",
+          "sourceCssVariable": "--button-text",
+          "valuesByMode": {
+            "light": {
+              "r": 1,
+              "g": 1,
+              "b": 1,
+              "a": 1
+            },
+            "dark": {
+              "r": 0,
+              "g": 0,
+              "b": 0,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--button-text",
+              "value": "#ffffff",
+              "darkValue": "#000000"
+            }
+          }
+        },
+        {
+          "name": "code/bg",
+          "type": "COLOR",
+          "sourceCssVariable": "--code-bg",
+          "valuesByMode": {
+            "light": {
+              "r": 0.039216,
+              "g": 0.039216,
+              "b": 0.039216,
+              "a": 0.05
+            },
+            "dark": {
+              "r": 1,
+              "g": 1,
+              "b": 1,
+              "a": 0.05
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--code-bg",
+              "value": "rgba(10, 10, 10, 0.05)",
+              "darkValue": "rgba(255, 255, 255, 0.05)"
+            }
+          }
+        },
+        {
+          "name": "danger",
+          "type": "COLOR",
+          "sourceCssVariable": "--danger",
+          "valuesByMode": {
+            "light": {
+              "r": 0.752941,
+              "g": 0.086275,
+              "b": 0.133333,
+              "a": 1
+            },
+            "dark": {
+              "r": 1,
+              "g": 0.301961,
+              "b": 0.329412,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--danger",
+              "value": "#c01622",
+              "darkValue": "#ff4d54"
+            }
+          }
+        },
+        {
+          "name": "danger/soft",
+          "type": "COLOR",
+          "sourceCssVariable": "--danger-soft",
+          "valuesByMode": {
+            "light": {
+              "r": 0.752941,
+              "g": 0.086275,
+              "b": 0.133333,
+              "a": 0.1
+            },
+            "dark": {
+              "r": 1,
+              "g": 0.301961,
+              "b": 0.329412,
+              "a": 0.15
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--danger-soft",
+              "value": "rgba(192, 22, 34, 0.1)",
+              "darkValue": "rgba(255, 77, 84, 0.15)"
+            }
+          }
+        },
+        {
+          "name": "field/dot",
+          "type": "COLOR",
+          "sourceCssVariable": "--field-dot",
+          "valuesByMode": {
+            "light": {
+              "r": 0.039216,
+              "g": 0.039216,
+              "b": 0.039216,
+              "a": 0.16
+            },
+            "dark": {
+              "r": 0.94902,
+              "g": 0.94902,
+              "b": 0.94902,
+              "a": 0.14
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--field-dot",
+              "value": "rgba(10, 10, 10, 0.16)",
+              "darkValue": "rgba(242, 242, 242, 0.14)"
+            }
+          }
+        },
+        {
+          "name": "field/dot/accent",
+          "type": "COLOR",
+          "sourceCssVariable": "--field-dot-accent",
+          "valuesByMode": {
+            "light": {
+              "r": 0.843137,
+              "g": 0.098039,
+              "b": 0.129412,
+              "a": 0.78
+            },
+            "dark": {
+              "r": 1,
+              "g": 0.231373,
+              "b": 0.254902,
+              "a": 0.82
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--field-dot-accent",
+              "value": "rgba(215, 25, 33, 0.78)",
+              "darkValue": "rgba(255, 59, 65, 0.82)"
+            }
+          }
+        },
+        {
+          "name": "field/dot/hot",
+          "type": "COLOR",
+          "sourceCssVariable": "--field-dot-hot",
+          "valuesByMode": {
+            "light": {
+              "r": 0.039216,
+              "g": 0.039216,
+              "b": 0.039216,
+              "a": 0.4
+            },
+            "dark": {
+              "r": 0.94902,
+              "g": 0.94902,
+              "b": 0.94902,
+              "a": 0.36
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--field-dot-hot",
+              "value": "rgba(10, 10, 10, 0.4)",
+              "darkValue": "rgba(242, 242, 242, 0.36)"
+            }
+          }
+        },
+        {
+          "name": "focus/ring",
+          "type": "COLOR",
+          "sourceCssVariable": "--focus-ring",
+          "valuesByMode": {
+            "light": {
+              "r": 0.843137,
+              "g": 0.098039,
+              "b": 0.129412,
+              "a": 1
+            },
+            "dark": {
+              "r": 1,
+              "g": 0.231373,
+              "b": 0.254902,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--focus-ring",
+              "value": "#d71921",
+              "darkValue": "#ff3b41"
+            }
+          }
+        },
+        {
+          "name": "info",
+          "type": "COLOR",
+          "sourceCssVariable": "--info",
+          "valuesByMode": {
+            "light": {
+              "r": 0.121569,
+              "g": 0.388235,
+              "b": 0.768627,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.435294,
+              "g": 0.690196,
+              "b": 0.901961,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--info",
+              "value": "#1f63c4",
+              "darkValue": "#6fb0e6"
+            }
+          }
+        },
+        {
+          "name": "info/soft",
+          "type": "COLOR",
+          "sourceCssVariable": "--info-soft",
+          "valuesByMode": {
+            "light": {
+              "r": 0.121569,
+              "g": 0.388235,
+              "b": 0.768627,
+              "a": 0.12
+            },
+            "dark": {
+              "r": 0.435294,
+              "g": 0.690196,
+              "b": 0.901961,
+              "a": 0.14
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--info-soft",
+              "value": "rgba(31, 99, 196, 0.12)",
+              "darkValue": "rgba(111, 176, 230, 0.14)"
+            }
+          }
+        },
+        {
+          "name": "line",
+          "type": "COLOR",
+          "sourceCssVariable": "--line",
+          "valuesByMode": {
+            "light": {
+              "r": 0.847059,
+              "g": 0.847059,
+              "b": 0.831373,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.219608,
+              "g": 0.219608,
+              "b": 0.219608,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--line",
+              "value": "#d8d8d4",
+              "darkValue": "#383838"
+            }
+          }
+        },
+        {
+          "name": "line/strong",
+          "type": "COLOR",
+          "sourceCssVariable": "--line-strong",
+          "valuesByMode": {
+            "light": {
+              "r": 0.658824,
+              "g": 0.658824,
+              "b": 0.635294,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.333333,
+              "g": 0.333333,
+              "b": 0.333333,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--line-strong",
+              "value": "#a8a8a2",
+              "darkValue": "#555555"
+            }
+          }
+        },
+        {
+          "name": "on/accent",
+          "type": "COLOR",
+          "sourceCssVariable": "--on-accent",
+          "valuesByMode": {
+            "light": {
+              "r": 1,
+              "g": 1,
+              "b": 1,
+              "a": 1
+            },
+            "dark": {
+              "r": 0,
+              "g": 0,
+              "b": 0,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--on-accent",
+              "value": "#ffffff",
+              "darkValue": "#000000"
+            }
+          }
+        },
+        {
+          "name": "panel",
+          "type": "COLOR",
+          "sourceCssVariable": "--panel",
+          "valuesByMode": {
+            "light": {
+              "r": 1,
+              "g": 1,
+              "b": 1,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.109804,
+              "g": 0.109804,
+              "b": 0.109804,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--panel",
+              "value": "#ffffff",
+              "darkValue": "#1c1c1c"
+            }
+          }
+        },
+        {
+          "name": "panel/soft",
+          "type": "COLOR",
+          "sourceCssVariable": "--panel-soft",
+          "valuesByMode": {
+            "light": {
+              "r": 0.92549,
+              "g": 0.92549,
+              "b": 0.917647,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.141176,
+              "g": 0.141176,
+              "b": 0.141176,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--panel-soft",
+              "value": "#ececea",
+              "darkValue": "#242424"
+            }
+          }
+        },
+        {
+          "name": "panel/strong",
+          "type": "COLOR",
+          "sourceCssVariable": "--panel-strong",
+          "valuesByMode": {
+            "light": {
+              "r": 1,
+              "g": 1,
+              "b": 1,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.133333,
+              "g": 0.133333,
+              "b": 0.133333,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--panel-strong",
+              "value": "#ffffff",
+              "darkValue": "#222222"
+            }
+          }
+        },
+        {
+          "name": "success",
+          "type": "COLOR",
+          "sourceCssVariable": "--success",
+          "valuesByMode": {
+            "light": {
+              "r": 0.184314,
+              "g": 0.490196,
+              "b": 0.309804,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.305882,
+              "g": 0.760784,
+              "b": 0.494118,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--success",
+              "value": "#2f7d4f",
+              "darkValue": "#4ec27e"
+            }
+          }
+        },
+        {
+          "name": "success/soft",
+          "type": "COLOR",
+          "sourceCssVariable": "--success-soft",
+          "valuesByMode": {
+            "light": {
+              "r": 0.184314,
+              "g": 0.490196,
+              "b": 0.309804,
+              "a": 0.12
+            },
+            "dark": {
+              "r": 0.305882,
+              "g": 0.760784,
+              "b": 0.494118,
+              "a": 0.14
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--success-soft",
+              "value": "rgba(47, 125, 79, 0.12)",
+              "darkValue": "rgba(78, 194, 126, 0.14)"
+            }
+          }
+        },
+        {
+          "name": "surface",
+          "type": "COLOR",
+          "sourceCssVariable": "--surface",
+          "valuesByMode": {
+            "light": {
+              "r": 1,
+              "g": 1,
+              "b": 1,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.109804,
+              "g": 0.109804,
+              "b": 0.109804,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface",
+              "value": "#ffffff",
+              "darkValue": "#1c1c1c"
+            }
+          }
+        },
+        {
+          "name": "surface/1",
+          "type": "COLOR",
+          "sourceCssVariable": "--surface-1",
+          "valuesByMode": {
+            "light": {
+              "r": 0.956863,
+              "g": 0.956863,
+              "b": 0.94902,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.070588,
+              "g": 0.070588,
+              "b": 0.070588,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-1",
+              "value": "#f4f4f2",
+              "darkValue": "#121212"
+            }
+          }
+        },
+        {
+          "name": "surface/2",
+          "type": "COLOR",
+          "sourceCssVariable": "--surface-2",
+          "valuesByMode": {
+            "light": {
+              "r": 0.984314,
+              "g": 0.984314,
+              "b": 0.980392,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.094118,
+              "g": 0.094118,
+              "b": 0.094118,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-2",
+              "value": "#fbfbfa",
+              "darkValue": "#181818"
+            }
+          }
+        },
+        {
+          "name": "surface/3",
+          "type": "COLOR",
+          "sourceCssVariable": "--surface-3",
+          "valuesByMode": {
+            "light": {
+              "r": 1,
+              "g": 1,
+              "b": 1,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.109804,
+              "g": 0.109804,
+              "b": 0.109804,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-3",
+              "value": "#ffffff",
+              "darkValue": "#1c1c1c"
+            }
+          }
+        },
+        {
+          "name": "surface/4",
+          "type": "COLOR",
+          "sourceCssVariable": "--surface-4",
+          "valuesByMode": {
+            "light": {
+              "r": 0.92549,
+              "g": 0.92549,
+              "b": 0.917647,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.141176,
+              "g": 0.141176,
+              "b": 0.141176,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-4",
+              "value": "#ececea",
+              "darkValue": "#242424"
+            }
+          }
+        },
+        {
+          "name": "surface/5",
+          "type": "COLOR",
+          "sourceCssVariable": "--surface-5",
+          "valuesByMode": {
+            "light": {
+              "r": 0.847059,
+              "g": 0.847059,
+              "b": 0.831373,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.219608,
+              "g": 0.219608,
+              "b": 0.219608,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-5",
+              "value": "#d8d8d4",
+              "darkValue": "#383838"
+            }
+          }
+        },
+        {
+          "name": "surface/6",
+          "type": "COLOR",
+          "sourceCssVariable": "--surface-6",
+          "valuesByMode": {
+            "light": {
+              "r": 0.658824,
+              "g": 0.658824,
+              "b": 0.635294,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.333333,
+              "g": 0.333333,
+              "b": 0.333333,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-6",
+              "value": "#a8a8a2",
+              "darkValue": "#555555"
+            }
+          }
+        },
+        {
+          "name": "surface/muted",
+          "type": "COLOR",
+          "sourceCssVariable": "--surface-muted",
+          "valuesByMode": {
+            "light": {
+              "r": 0.92549,
+              "g": 0.92549,
+              "b": 0.917647,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.141176,
+              "g": 0.141176,
+              "b": 0.141176,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-muted",
+              "value": "#ececea",
+              "darkValue": "#242424"
+            }
+          }
+        },
+        {
+          "name": "surface/raised",
+          "type": "COLOR",
+          "sourceCssVariable": "--surface-raised",
+          "valuesByMode": {
+            "light": {
+              "r": 1,
+              "g": 1,
+              "b": 1,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.133333,
+              "g": 0.133333,
+              "b": 0.133333,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-raised",
+              "value": "#ffffff",
+              "darkValue": "#222222"
+            }
+          }
+        },
+        {
+          "name": "text",
+          "type": "COLOR",
+          "sourceCssVariable": "--text",
+          "valuesByMode": {
+            "light": {
+              "r": 0.039216,
+              "g": 0.039216,
+              "b": 0.039216,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.901961,
+              "g": 0.901961,
+              "b": 0.901961,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--text",
+              "value": "#0a0a0a",
+              "darkValue": "#e6e6e6"
+            }
+          }
+        },
+        {
+          "name": "text/dim",
+          "type": "COLOR",
+          "sourceCssVariable": "--text-dim",
+          "valuesByMode": {
+            "light": {
+              "r": 0.407843,
+              "g": 0.407843,
+              "b": 0.388235,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.627451,
+              "g": 0.627451,
+              "b": 0.627451,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--text-dim",
+              "value": "#686863",
+              "darkValue": "#a0a0a0"
+            }
+          }
+        },
+        {
+          "name": "text/soft",
+          "type": "COLOR",
+          "sourceCssVariable": "--text-soft",
+          "valuesByMode": {
+            "light": {
+              "r": 0.207843,
+              "g": 0.207843,
+              "b": 0.2,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.784314,
+              "g": 0.784314,
+              "b": 0.784314,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--text-soft",
+              "value": "#353533",
+              "darkValue": "#c8c8c8"
+            }
+          }
+        },
+        {
+          "name": "warning",
+          "type": "COLOR",
+          "sourceCssVariable": "--warning",
+          "valuesByMode": {
+            "light": {
+              "r": 0.501961,
+              "g": 0.392157,
+              "b": 0.078431,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.847059,
+              "g": 0.741176,
+              "b": 0.447059,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--warning",
+              "value": "#806414",
+              "darkValue": "#d8bd72"
+            }
+          }
+        },
+        {
+          "name": "warning/soft",
+          "type": "COLOR",
+          "sourceCssVariable": "--warning-soft",
+          "valuesByMode": {
+            "light": {
+              "r": 0.501961,
+              "g": 0.392157,
+              "b": 0.078431,
+              "a": 0.13
+            },
+            "dark": {
+              "r": 0.847059,
+              "g": 0.741176,
+              "b": 0.447059,
+              "a": 0.14
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--warning-soft",
+              "value": "rgba(128, 100, 20, 0.13)",
+              "darkValue": "rgba(216, 189, 114, 0.14)"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bronto / Scale",
+      "modes": [
+        {
+          "modeId": "global",
+          "name": "Global"
+        }
+      ],
+      "variables": [
+        {
+          "name": "display",
+          "type": "STRING",
+          "sourceCssVariable": "--display",
+          "valuesByMode": {
+            "global": "'Doto', 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', ui-monospace, monospace"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--display",
+              "value": "'Doto', 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', ui-monospace, monospace"
+            }
+          }
+        },
+        {
+          "name": "display/weight",
+          "type": "FLOAT",
+          "sourceCssVariable": "--display-weight",
+          "valuesByMode": {
+            "global": 700
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--display-weight",
+              "value": "700"
+            }
+          },
+          "unit": "number"
+        },
+        {
+          "name": "display/weight/strong",
+          "type": "FLOAT",
+          "sourceCssVariable": "--display-weight-strong",
+          "valuesByMode": {
+            "global": 800
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--display-weight-strong",
+              "value": "800"
+            }
+          },
+          "unit": "number"
+        },
+        {
+          "name": "dot/font",
+          "type": "STRING",
+          "sourceCssVariable": "--dot-font",
+          "valuesByMode": {
+            "global": "'Doto', 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', ui-monospace, monospace"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--dot-font",
+              "value": "'Doto', 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', ui-monospace, monospace"
+            }
+          }
+        },
+        {
+          "name": "dot/gap",
+          "type": "FLOAT",
+          "sourceCssVariable": "--dot-gap",
+          "valuesByMode": {
+            "global": 14
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--dot-gap",
+              "value": "14px"
+            }
+          },
+          "unit": "px"
+        },
+        {
+          "name": "dot/size",
+          "type": "FLOAT",
+          "sourceCssVariable": "--dot-size",
+          "valuesByMode": {
+            "global": 2
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--dot-size",
+              "value": "2px"
+            }
+          },
+          "unit": "px"
+        },
+        {
+          "name": "duration/base",
+          "type": "FLOAT",
+          "sourceCssVariable": "--duration-base",
+          "valuesByMode": {
+            "global": 200
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--duration-base",
+              "value": "200ms"
+            }
+          },
+          "unit": "ms"
+        },
+        {
+          "name": "duration/fast",
+          "type": "FLOAT",
+          "sourceCssVariable": "--duration-fast",
+          "valuesByMode": {
+            "global": 130
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--duration-fast",
+              "value": "130ms"
+            }
+          },
+          "unit": "ms"
+        },
+        {
+          "name": "duration/slow",
+          "type": "FLOAT",
+          "sourceCssVariable": "--duration-slow",
+          "valuesByMode": {
+            "global": 360
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--duration-slow",
+              "value": "360ms"
+            }
+          },
+          "unit": "ms"
+        },
+        {
+          "name": "ease/out",
+          "type": "STRING",
+          "sourceCssVariable": "--ease-out",
+          "valuesByMode": {
+            "global": "cubic-bezier(0.33, 1, 0.68, 1)"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--ease-out",
+              "value": "cubic-bezier(0.33, 1, 0.68, 1)"
+            }
+          }
+        },
+        {
+          "name": "ease/spring",
+          "type": "STRING",
+          "sourceCssVariable": "--ease-spring",
+          "valuesByMode": {
+            "global": "cubic-bezier(0.16, 1, 0.3, 1)"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--ease-spring",
+              "value": "cubic-bezier(0.16, 1, 0.3, 1)"
+            }
+          }
+        },
+        {
+          "name": "ease/standard",
+          "type": "STRING",
+          "sourceCssVariable": "--ease-standard",
+          "valuesByMode": {
+            "global": "cubic-bezier(0.2, 0.8, 0.2, 1)"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--ease-standard",
+              "value": "cubic-bezier(0.2, 0.8, 0.2, 1)"
+            }
+          }
+        },
+        {
+          "name": "mono",
+          "type": "STRING",
+          "sourceCssVariable": "--mono",
+          "valuesByMode": {
+            "global": "'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', ui-monospace, monospace"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--mono",
+              "value": "'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', ui-monospace, monospace"
+            }
+          }
+        },
+        {
+          "name": "radius/lg",
+          "type": "FLOAT",
+          "sourceCssVariable": "--radius-lg",
+          "valuesByMode": {
+            "global": 3
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--radius-lg",
+              "value": "3px"
+            }
+          },
+          "unit": "px"
+        },
+        {
+          "name": "radius/md",
+          "type": "FLOAT",
+          "sourceCssVariable": "--radius-md",
+          "valuesByMode": {
+            "global": 2
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--radius-md",
+              "value": "2px"
+            }
+          },
+          "unit": "px"
+        },
+        {
+          "name": "radius/pill",
+          "type": "FLOAT",
+          "sourceCssVariable": "--radius-pill",
+          "valuesByMode": {
+            "global": 999
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--radius-pill",
+              "value": "999px"
+            }
+          },
+          "unit": "px"
+        },
+        {
+          "name": "radius/sm",
+          "type": "FLOAT",
+          "sourceCssVariable": "--radius-sm",
+          "valuesByMode": {
+            "global": 1
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--radius-sm",
+              "value": "1px"
+            }
+          },
+          "unit": "px"
+        },
+        {
+          "name": "radius/xl",
+          "type": "FLOAT",
+          "sourceCssVariable": "--radius-xl",
+          "valuesByMode": {
+            "global": 4
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--radius-xl",
+              "value": "4px"
+            }
+          },
+          "unit": "px"
+        },
+        {
+          "name": "sans",
+          "type": "STRING",
+          "sourceCssVariable": "--sans",
+          "valuesByMode": {
+            "global": "'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--sans",
+              "value": "'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+            }
+          }
+        },
+        {
+          "name": "space/2xl",
+          "type": "FLOAT",
+          "sourceCssVariable": "--space-2xl",
+          "valuesByMode": {
+            "global": 2.5
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--space-2xl",
+              "value": "2.5rem"
+            }
+          },
+          "unit": "rem"
+        },
+        {
+          "name": "space/2xs",
+          "type": "FLOAT",
+          "sourceCssVariable": "--space-2xs",
+          "valuesByMode": {
+            "global": 0.25
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--space-2xs",
+              "value": "0.25rem"
+            }
+          },
+          "unit": "rem"
+        },
+        {
+          "name": "space/lg",
+          "type": "FLOAT",
+          "sourceCssVariable": "--space-lg",
+          "valuesByMode": {
+            "global": 1.35
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--space-lg",
+              "value": "1.35rem"
+            }
+          },
+          "unit": "rem"
+        },
+        {
+          "name": "space/md",
+          "type": "FLOAT",
+          "sourceCssVariable": "--space-md",
+          "valuesByMode": {
+            "global": 1
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--space-md",
+              "value": "1rem"
+            }
+          },
+          "unit": "rem"
+        },
+        {
+          "name": "space/sm",
+          "type": "FLOAT",
+          "sourceCssVariable": "--space-sm",
+          "valuesByMode": {
+            "global": 0.75
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--space-sm",
+              "value": "0.75rem"
+            }
+          },
+          "unit": "rem"
+        },
+        {
+          "name": "space/xl",
+          "type": "FLOAT",
+          "sourceCssVariable": "--space-xl",
+          "valuesByMode": {
+            "global": 1.75
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--space-xl",
+              "value": "1.75rem"
+            }
+          },
+          "unit": "rem"
+        },
+        {
+          "name": "space/xs",
+          "type": "FLOAT",
+          "sourceCssVariable": "--space-xs",
+          "valuesByMode": {
+            "global": 0.5
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--space-xs",
+              "value": "0.5rem"
+            }
+          },
+          "unit": "rem"
+        },
+        {
+          "name": "text/2xs",
+          "type": "FLOAT",
+          "sourceCssVariable": "--text-2xs",
+          "valuesByMode": {
+            "global": 0.68
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--text-2xs",
+              "value": "0.68rem"
+            }
+          },
+          "unit": "rem"
+        },
+        {
+          "name": "text/base",
+          "type": "FLOAT",
+          "sourceCssVariable": "--text-base",
+          "valuesByMode": {
+            "global": 0.95
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--text-base",
+              "value": "0.95rem"
+            }
+          },
+          "unit": "rem"
+        },
+        {
+          "name": "text/lg",
+          "type": "FLOAT",
+          "sourceCssVariable": "--text-lg",
+          "valuesByMode": {
+            "global": 1.15
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--text-lg",
+              "value": "1.15rem"
+            }
+          },
+          "unit": "rem"
+        },
+        {
+          "name": "text/sm",
+          "type": "FLOAT",
+          "sourceCssVariable": "--text-sm",
+          "valuesByMode": {
+            "global": 0.86
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--text-sm",
+              "value": "0.86rem"
+            }
+          },
+          "unit": "rem"
+        },
+        {
+          "name": "text/xl",
+          "type": "FLOAT",
+          "sourceCssVariable": "--text-xl",
+          "valuesByMode": {
+            "global": 1.45
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--text-xl",
+              "value": "1.45rem"
+            }
+          },
+          "unit": "rem"
+        },
+        {
+          "name": "text/xs",
+          "type": "FLOAT",
+          "sourceCssVariable": "--text-xs",
+          "valuesByMode": {
+            "global": 0.76
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--text-xs",
+              "value": "0.76rem"
+            }
+          },
+          "unit": "rem"
+        },
+        {
+          "name": "tracking/wide",
+          "type": "FLOAT",
+          "sourceCssVariable": "--tracking-wide",
+          "valuesByMode": {
+            "global": 0.14
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--tracking-wide",
+              "value": "0.14em"
+            }
+          },
+          "unit": "em"
+        },
+        {
+          "name": "tracking/wider",
+          "type": "FLOAT",
+          "sourceCssVariable": "--tracking-wider",
+          "valuesByMode": {
+            "global": 0.22
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--tracking-wider",
+              "value": "0.22em"
+            }
+          },
+          "unit": "em"
+        },
+        {
+          "name": "z/base",
+          "type": "FLOAT",
+          "sourceCssVariable": "--z-base",
+          "valuesByMode": {
+            "global": 0
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--z-base",
+              "value": "0"
+            }
+          },
+          "unit": "number"
+        },
+        {
+          "name": "z/overlay",
+          "type": "FLOAT",
+          "sourceCssVariable": "--z-overlay",
+          "valuesByMode": {
+            "global": 30
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--z-overlay",
+              "value": "30"
+            }
+          },
+          "unit": "number"
+        },
+        {
+          "name": "z/popover",
+          "type": "FLOAT",
+          "sourceCssVariable": "--z-popover",
+          "valuesByMode": {
+            "global": 50
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--z-popover",
+              "value": "50"
+            }
+          },
+          "unit": "number"
+        },
+        {
+          "name": "z/raised",
+          "type": "FLOAT",
+          "sourceCssVariable": "--z-raised",
+          "valuesByMode": {
+            "global": 10
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--z-raised",
+              "value": "10"
+            }
+          },
+          "unit": "number"
+        },
+        {
+          "name": "z/sticky",
+          "type": "FLOAT",
+          "sourceCssVariable": "--z-sticky",
+          "valuesByMode": {
+            "global": 20
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--z-sticky",
+              "value": "20"
+            }
+          },
+          "unit": "number"
+        },
+        {
+          "name": "z/toast",
+          "type": "FLOAT",
+          "sourceCssVariable": "--z-toast",
+          "valuesByMode": {
+            "global": 60
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--z-toast",
+              "value": "60"
+            }
+          },
+          "unit": "number"
+        }
+      ]
+    }
+  ]
+}

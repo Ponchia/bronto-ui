@@ -8,6 +8,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { log } from './lib/stdio.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
@@ -52,6 +53,6 @@ if (problems.length) {
   process.exit(1);
 }
 
-console.log(
+log(
   `✓ check:chain — all ${gates.length} check:* gates are wired into the aggregate \`check\` chain`,
 );

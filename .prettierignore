@@ -21,6 +21,12 @@ demo/theme-playground.html
 
 # Dogfood scratch reports (untracked, not shipped) — evidence, not source.
 reports-lab
+.codeql
+.semgrep
+code-quality-audits/**/semgrep*/
+code-quality-audits/**/trufflehog-exclude-paths.txt
+code-quality-audits/**/readiness*/
+code-quality-audits/**/visual*/
 
 # Data / binaries / lockfile.
 fonts

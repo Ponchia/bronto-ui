@@ -606,10 +606,11 @@ These are JS widgets wearing the Bronto look; without the behavior they are iner
 | Tabs (`ui-tabs`) | `initTabs` | **author panels visible** — ship `hidden` panels and if `initTabs` never runs the content is unreachable |
 | Combobox (`ui-combobox`) | `initCombobox` | a plain text input beside an unfiltered list |
 | Command palette (`ui-command`) | `initCommand` | a static, unfiltered list |
+| Splitter (`ui-splitter`) | `initSplitter` | fixed panes at the authored `--splitter-pos`; no keyboard/pointer resize or `aria-valuenow` updates |
 | Table sort/select (`[data-bronto-sortable]`) | `initTableSort` | a static table (still readable) |
 | Popover (`ui-popover`) | `initPopover` | no placement/ARIA — prefer the native `popover` attribute |
 | Carousel (`ui-carousel`) | `initCarousel` | a native scroll-snap track (usable, no controls) |
-| Controlled modal (`ui-modal.is-open`) | `initModal` | no focus trap — provide one or use native `<dialog>` |
+| Controlled modal (`ui-modal.is-open`) | `initModal` | open skin only — no inert trap, focus-return, or Escape close signal |
 | Menu (`data-bronto-menu`) | `initMenu` | a button next to a list with no open/close, outside-click, or Escape |
 | Toast | `toast()` | nothing — it is imperative-only |
 
@@ -628,10 +629,10 @@ boundary of what CSS alone cannot do.
 The CSS is the framework; `@ponchia/ui/behaviors` is the *sanctioned*
 home for the little JS that genuinely needs scripting (theme persistence,
 disclosure, dialog glue, modal focus-trap, toast, combobox, form-validation,
-table-sort). Reach for it instead of reimplementing — every initializer is
-SSR-safe, idempotent, and returns a cleanup. If you find yourself writing focus
-management or `aria-expanded` toggling by hand, there is probably already
-a behavior for it.
+table-sort, splitter resizing). Reach for it instead of reimplementing — every
+initializer is SSR-safe, idempotent, and returns a cleanup. If you find yourself
+writing focus management, ARIA value sync, or `aria-expanded` toggling by hand,
+there is probably already a behavior for it.
 
 ## Re-brand obligations (the short version)
 

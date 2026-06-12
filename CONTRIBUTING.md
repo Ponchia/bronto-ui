@@ -18,6 +18,12 @@ npm run check   # the full integrity suite: lint, format, exports; the
                 #   contrast; behaviors / bindings / glyphs parity;
                 #   color-policy, skins, charts, report
 npm test        # node:test unit + type-d + contract tests
+npm run test:e2e:nonpixel
+                # local-safe Playwright: chromium + firefox + webkit for every
+                #   non-screenshot behavior/a11y/print/motion spec
+npm run test:examples
+                # packs the real tarball, builds every example in a temp dir,
+                #   then browser-smokes the runtime examples
 ```
 
 `main` is protected: changes land via PR, squash-merged, with `check`
@@ -112,6 +118,11 @@ on a dev machine** (cross-OS rasterisation differs). After an
 intentional visual change, run the **“Update visual baselines”**
 workflow (Actions → run `workflow_dispatch`); it rebuilds them in the
 container and opens a PR with the new baselines.
+
+For local browser regression work, use `npm run test:e2e:nonpixel`.
+`npm run test:e2e` and `npm run test:e2e:chromium` include
+`visual.spec.mjs`, so run them only in the pinned Playwright container
+when the screenshot gate itself is the target.
 
 ## Dependencies
 

@@ -17,24 +17,15 @@ import { dirname, resolve, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { reportAndExit } from './lib/gate-report.mjs';
 import { leafFiles, EXTRA_LEAVES } from './build-dist.mjs';
+import { exportTargets } from './lib/package-targets.mjs';
 import { cssImports, stripCssComments } from './lib/patterns.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const errors = [];
 
-// Flatten conditional exports ({ types, default, ... }) to [key, target] leaves.
-function exportTargets() {
-  const out = [];
-  for (const [key, val] of Object.entries(pkg.exports ?? {})) {
-    if (typeof val === 'string') out.push([key, val]);
-    else for (const [cond, t] of Object.entries(val)) out.push([`${key} (${cond})`, t]);
-  }
-  return out;
-}
-
 // 1. exports → real files (skip glob targets like ./fonts/*)
-for (const [key, target] of exportTargets()) {
+for (const [key, target] of exportTargets(pkg)) {
   if (target.includes('*')) continue;
   const abs = resolve(root, target);
   if (!existsSync(abs)) errors.push(`exports["${key}"] → missing file ${target}`);
@@ -57,7 +48,7 @@ for (const entry of ['css/core.css', 'css/analytical.css']) {
 
 // 3. exported files fall under the `files` allowlist
 const allow = pkg.files ?? [];
-for (const [key, target] of exportTargets()) {
+for (const [key, target] of exportTargets(pkg)) {
   const rel = target.replace(/^\.\//, '').replace(/\*.*$/, '');
   if (!allow.some((f) => rel === f || rel.startsWith(`${f}/`))) {
     errors.push(`exports["${key}"] → ${target} not covered by "files" ${JSON.stringify(allow)}`);

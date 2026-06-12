@@ -11,7 +11,7 @@ theme-owned neutral ramp endpoint:
 
 | Token                 | Derivation (light / dark)                    | Role |
 | --------------------- | -------------------------------------------- | ---- |
-| `--accent-strong`     | `--accent` mixed 83% with black / 84% white  | darker/lighter accent for hover, emphasis |
+| `--accent-strong`     | `--accent` mixed 83% with black / 80% white  | darker/lighter accent for hover, emphasis |
 | `--accent-ramp-end`   | white / black                                | neutral endpoint for the low-chroma OKLCH ramp |
 | `--accent-text`       | `var(--accent-strong)` (alias)               | **accent used as foreground text** — the on-surface, AA-safe one |
 | `--accent-soft`       | `--accent` at 10% / 14% over transparent     | tinted fills |
@@ -63,7 +63,7 @@ fills — follows automatically, in both light and dark.
 >    defaults to `--accent-strong` (a darkened/​lightened accent). If you
 >    re-brand to a pale hue, raw `--accent` would fail as text — override
 >    `--accent-text` to a sufficiently dark/light value rather than
->    relying on the 83%/84% mix.
+>    relying on the 83%/80% mix.
 >
 > The defaults are tuned for both; verify if you deviate hard. The focus
 > ring is solid `--accent` (≥ 3:1 non-text) — re-brand to a near-`--bg`
@@ -302,6 +302,14 @@ palette) carry real `$value`s; the CSS-runtime-derived family
 (`accent-soft`, `focus-ring`, aliases) is spec-shaped with
 `$value: null` + the CSS in `$extensions["com.ponchia.css"]` rather than
 fabricating a number — the resolvable knob is `color.<theme>.accent`.
+
+`@ponchia/ui/tokens/figma.variables.json` is the resolved local handoff for
+Figma Variables import/sync scripts. It is generated from `tokens/resolved.json`
+and keeps a `Bronto / Color` collection with `Light` and `Dark` modes plus a
+`Bronto / Scale` collection for spacing, radius, type, z-index and motion.
+Colour values are exported as Figma-style RGBA objects; non-colour values keep
+their original CSS value under `$extensions["com.ponchia.css"]` so importer
+scripts do not lose units.
 
 ## Reading tokens from JS
 

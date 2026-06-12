@@ -39,7 +39,7 @@
     },
     {
       "name": "--accent-strong",
-      "description": "Theme token. Light: `color-mix(in srgb, var(--accent) 83%, #000)` · Dark: `color-mix(in srgb, var(--accent) 84%, #fff)`"
+      "description": "Theme token. Light: `color-mix(in srgb, var(--accent) 83%, #000)` · Dark: `color-mix(in srgb, var(--accent) 80%, #fff)`"
     },
     {
       "name": "--accent-text",

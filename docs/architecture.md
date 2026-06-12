@@ -41,7 +41,9 @@ on top of the CSS, none of which require a framework commitment**:
 ├── glyphs/      dot-matrix glyph registry/renderers                 [optional]
 ├── react/       thin React hooks over behaviors                     [optional peer]
 ├── solid/       thin Solid primitives over behaviors                [optional peer]
-└── qwik/        thin Qwik hooks over behaviors (useVisibleTask$)     [optional peer]
+├── qwik/        thin Qwik hooks over behaviors (useVisibleTask$)     [optional peer]
+├── svelte/      thin Svelte actions over behaviors                  [optional]
+└── vue/         thin Vue directives over behaviors                  [optional]
 ```
 
 ### Consequences of each layer
@@ -57,12 +59,12 @@ on top of the CSS, none of which require a framework commitment**:
 - **tokens/** — `index.js` (`cssVars`) is the single source of truth for token
   values. The four `:root` palette blocks of `css/tokens.css` are **generated**
   from it (`scripts/gen-tokens-css.mjs`), as are the JSON artifacts (`index.json`,
-  `tokens.dtcg.json`, `resolved.json`). So the dark palette is authored once,
-  not in three places (the two CSS dark blocks are now identical by
-  construction), resolving the duplication ADR-0003 flagged. The CSS-only
-  presets (density / contrast / OLED) stay hand-authored below a marker and are
-  preserved across regeneration. `scripts/check-fresh.mjs` fails CI if
-  `css/tokens.css` drifts from the model.
+  `tokens.dtcg.json`, `resolved.json`, `figma.variables.json`). So the dark
+  palette is authored once, not in three places (the two CSS dark blocks are now
+  identical by construction), resolving the duplication ADR-0003 flagged. The
+  CSS-only presets (density / contrast / OLED) stay hand-authored below a marker
+  and are preserved across regeneration. `scripts/check-fresh.mjs` fails CI if a
+  generated mirror drifts from the model.
 - **classes/** — `cls` is the flat registry; recipes only emit from it;
   `scripts/check-classes.mjs` enforces a bidirectional match with the
   stylesheet's `.ui-*` selectors. The class contract cannot silently rot.
@@ -76,9 +78,11 @@ on top of the CSS, none of which require a framework commitment**:
 - **glyphs/** — static bitmap data and SSR-safe render helpers. The
   256-cell DOM renderers are for display and solid inline icons; the `.ui-icon`
   mask renderer is for dense icon-at-scale use.
-- **react/** / **solid/** / **qwik/** — optional lifecycle adapters over `behaviors/`.
-  They do not define markup, own state, or fork behavior logic; they only run
-  the vanilla initializers on mount and cleanup on unmount/dispose.
+- **react/** / **solid/** / **qwik/** / **svelte/** / **vue/** — optional lifecycle
+  adapters over `behaviors/`. They do not define markup, own state, or fork
+  behavior logic; they only run the vanilla initializers on mount and cleanup
+  on unmount/dispose. The Svelte and Vue adapters are plain action/directive
+  objects, so they do not add runtime dependencies to the package.
 - **`css/analytical.css` — the analytical roll-up.** This convenience file
   `@import`s exactly **nine** analytical figure/evidence leaves: `figure`,
   `annotations`, `legend`, `marks`, `connectors`, `spotlight`, `crosshair`,
@@ -110,9 +114,9 @@ generator overwrites them and a drift gate fails CI).
 | --- | --- | --- | --- |
 | `css/` | source | yes | The framework. Hand-authored `@layer bronto` CSS. (`css/tokens.css` palette blocks and `css/generated.css` are generated — see below.) |
 | `tokens/index.js` | source | yes | The single source of truth for token **values** (`cssVars`). |
-| `classes/index.js`, `behaviors/`, `annotations/`, `connectors/`, `react/`, `solid/`, `qwik/`, `glyphs/`, `shiki/` | source · published-subpath (path-frozen) | yes — but **do not move** | Authored ESM shipped as-is; the dir name is the public import path. The `.d.ts` beside them are generated/drift-checked: `connectors`/`annotations`/`react`/`solid`/`qwik`/`behaviors` are emitted from JSDoc by `tsc` (`npm run dts:emit`), `classes`/`tokens`/`glyphs` from the runtime. No leaf `.d.ts` is hand-maintained. |
+| `classes/index.js`, `behaviors/`, `annotations/`, `connectors/`, `react/`, `solid/`, `qwik/`, `svelte/`, `vue/`, `glyphs/`, `shiki/` | source · published-subpath (path-frozen) | yes — but **do not move** | Authored ESM shipped as-is; the dir name is the public import path. The `.d.ts` beside them are generated/drift-checked: `connectors`/`annotations`/`react`/`solid`/`qwik`/`svelte`/`vue`/`behaviors` are emitted from JSDoc by `tsc` (`npm run dts:emit`), `classes`/`tokens`/`glyphs` from the runtime. No leaf `.d.ts` is hand-maintained. |
 | `dist/` | generated | no | Build of `css/` (`npm run dist:build`); byte-checked by `check:dist`. |
-| `tokens/index.json`, `tokens/resolved.json`, `tokens/tokens.dtcg.json`, `tokens/charts.json`, `classes/index.d.ts`, `tokens/index.d.ts`, `tokens/{skins,charts}.d.ts`, `glyphs/glyphs.d.ts`, `classes/vscode.css-custom-data.json`, `docs/reference.md` | generated | no | Committed build artifacts; regenerate with `npm run prepack`, never hand-edit. Drift-checked in `npm run check`. |
+| `tokens/index.json`, `tokens/resolved.json`, `tokens/tokens.dtcg.json`, `tokens/figma.variables.json`, `tokens/charts.json`, `classes/index.d.ts`, `tokens/index.d.ts`, `tokens/{skins,charts}.d.ts`, `glyphs/glyphs.d.ts`, `classes/vscode.css-custom-data.json`, `docs/reference.md` | generated | no | Committed build artifacts; regenerate with `npm run prepack`, never hand-edit. Drift-checked in `npm run check`. |
 | `fonts/` | vendored | — | The Doto webfont (woff2) + its OFL license. |
 | `scripts/` | tooling | yes | `gen-*` regenerate artifacts, `check-*` are the drift/contract gates wired into `npm run check`, plus `build-dist`, `serve`, `size-report`. |
 | `docs/` | source (mostly) | yes | Hand-authored docs + ADRs; the curated subset in `package.json` `files` ships in the tarball. `docs/reference.md` is generated. |
@@ -136,9 +140,9 @@ gating" below), so a version that fails any invariant never reaches npm.
 | Invariant                                       | Enforced by         |
 | ----------------------------------------------- | ------------------- |
 | exports / import graph / `files` consistent     | `check-exports.mjs` |
-| pure generated mirrors fresh — `tokens.css`/`index.json`, `dtcg.json`, `resolved.json`, `classes`/`tokens` `.d.ts`, `reference.md`, vscode data — each byte-equal to its generator (registry: `scripts/lib/artifacts.mjs`) | `check-fresh.mjs` |
+| pure generated mirrors fresh — `tokens.css`/`index.json`, `dtcg.json`, `resolved.json`, `figma.variables.json`, `classes`/`tokens` `.d.ts`, `reference.md`, vscode data — each byte-equal to its generator (registry: `scripts/lib/artifacts.mjs`) | `check-fresh.mjs` |
 | `classes` `cls` ⇄ `.ui-*` selectors             | `check-classes.mjs` |
-| `connectors`/`annotations`/`react`/`solid`/`qwik`/`behaviors` `.d.ts` (+ maps) == fresh `tsc` emit of their JSDoc | `check-dts-emit.mjs` |
+| `connectors`/`annotations`/`react`/`solid`/`qwik`/`svelte`/`vue`/`behaviors` `.d.ts` (+ maps) == fresh `tsc` emit of their JSDoc | `check-dts-emit.mjs` |
 | legend swatch colours ⊆ `charts.js` · opt-in   | `check-legend.mjs`  |
 | color tokens tiered · no raw chromatic color in components | `check-color-policy.mjs` |
 | `css/skins.css` ⇄ `tokens/skins.js` · colorways opt-in | `check-skins.mjs` |
@@ -147,6 +151,7 @@ gating" below), so a version that fails any invariant never reaches npm.
 | `shiki/nothing.json` valid + on rationed palette | `check-shiki.mjs`  |
 | `dist/*.css` == fresh build of `css/` + budget  | `check-dist.mjs`    |
 | published tarball == intended `files` only      | `check-pack.mjs`    |
+| example inventory ⇄ CI matrix ⇄ browser-smoke list ⇄ README rows ⇄ preview ports | `check-examples.mjs` |
 | published `.d.ts` compile + reject typos        | `tsc` (`check:types`) |
 | CSS style/correctness                           | Stylelint           |
 | non-CSS source style                            | Prettier (`check:format`) |
@@ -174,8 +179,12 @@ pointer:
   includes `check:release`; for a prerelease tag the base version's CHANGELOG
   section need only exist (`## Unreleased — x.y.z` is fine) — only a stable
   release must carry a dated heading.
-- `e2e` — `needs: validate`: Playwright (visual + axe a11y, both themes, cross-engine) in
-  the pinned `mcr.microsoft.com/playwright` container.
+- `e2e` — `needs: validate`: Playwright (visual + axe a11y, both themes,
+  cross-engine) in the pinned `mcr.microsoft.com/playwright` container. Local
+  cross-engine reproduction without screenshot rasterisation is
+  `npm run test:e2e:nonpixel`; use `npm run test:e2e` or
+  `npm run test:e2e:chromium` only in the pinned container when the pixel
+  baseline gate itself is in scope.
 - `examples` — `needs: validate`: builds the downstream example
   apps against the **packed tarball**, mirroring CI. Catches a broken
   published surface (exports map / missing file / unresolved subpath)
@@ -219,9 +228,9 @@ Process still applies: bump `package.json`, land on `main`, go green, tag.
 ## Decision — distribution: npm public `@ponchia/ui`
 
 Decided 2026-05-15. The framework is consumed by a growing set of
-heterogeneous web frontends (Astro, SvelteKit, React, Solid, Qwik, vanilla),
-several deploying via third-party CI. The only option where onboarding a new
-frontend is `npm i @ponchia/ui` with zero per-consumer config is **npm
+heterogeneous web frontends (Astro, SvelteKit, React, Solid, Qwik, Vue,
+Tailwind, vanilla), several deploying via third-party CI. The only option where
+onboarding a new frontend is `npm i @ponchia/ui` with zero per-consumer config is **npm
 public**, and it uniquely also closes the release-gating gap (publish *is*
 the gate). GitHub Packages was rejected: it requires auth to install even
 public packages, i.e. an `.npmrc` + token on every frontend and CI runner —
@@ -246,8 +255,9 @@ explained, not surprising.
   provenance.
 - Run `npm pack --dry-run --json` locally or from CI logs and confirm the
   intended file count/payload.
-- Build the packed examples matrix (vanilla, Astro, SvelteKit, React, Solid, Qwik)
-  from the tarball, not a workspace link.
+- Build the packed examples matrix from the tarball, not a workspace link:
+  `npm run test:examples` covers vanilla, Astro, SvelteKit, Vue, React, Solid,
+  Qwik, Tailwind, and report-static, with browser smokes for runtime examples.
 - Confirm the GitHub Release body matches the curated changelog section.
 - If a bad package is published, deprecate that exact version on npm, publish a
   patched version, and link the deprecation note to the changelog/security

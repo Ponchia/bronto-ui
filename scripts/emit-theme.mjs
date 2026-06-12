@@ -28,6 +28,7 @@ import { brontoVegaConfig } from '../tokens/vega.js';
 import { brontoMermaidTheme } from '../tokens/mermaid.js';
 import { brontoD2Overrides } from '../tokens/d2.js';
 import { reportAndExit } from './lib/gate-report.mjs';
+import { log } from './lib/stdio.mjs';
 
 import { repoRoot as root, isMain } from './lib/emit.mjs';
 
@@ -150,7 +151,7 @@ if (isMain(import.meta.url)) {
       process.exit(1);
     }
     try {
-      console.log(emitTheme(target, theme, { name }));
+      log(emitTheme(target, theme, { name }));
     } catch (e) {
       console.error(`✖ ${e.message}`);
       process.exit(1);

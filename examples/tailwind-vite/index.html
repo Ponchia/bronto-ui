@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:," />
+    <title>@ponchia/ui — Tailwind + Vite</title>
+    <script>
+      try {
+        var t = localStorage.getItem('bronto-theme');
+        if (t) document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <main class="ui-center min-h-dvh p-bronto-xl text-bronto-text">
+      <section
+        class="ui-stack w-full max-w-3xl rounded-bronto-lg border border-bronto-border bg-bronto-surface p-bronto-xl shadow-bronto-raised bronto-dark:bg-bronto-surface-raised"
+      >
+        <p class="ui-eyebrow text-bronto-action">Tailwind bridge</p>
+        <h1 class="font-bronto-display text-bronto-xl">Tailwind + Vite</h1>
+        <p class="text-bronto-sm text-bronto-text-muted">
+          Bronto tokens are available as Tailwind utilities and stay live across themes.
+        </p>
+        <div class="ui-cluster">
+          <button class="ui-button" data-bronto-theme-toggle>Toggle theme</button>
+          <button
+            class="ui-button ui-button--subtle rounded-bronto-pill border border-bronto-border-strong"
+            type="button"
+            data-toast
+          >
+            Toast
+          </button>
+        </div>
+        <div
+          class="rounded-bronto-md border border-bronto-border bg-bronto-accent-1 p-bronto-md bronto-dark:bg-bronto-accent-2"
+        >
+          <p class="text-bronto-sm text-bronto-text">
+            Uses <code>bg-bronto-accent-1</code>, <code>p-bronto-md</code>, and
+            <code>bronto-dark:bg-bronto-accent-2</code>.
+          </p>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

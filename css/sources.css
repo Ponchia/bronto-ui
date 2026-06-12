@@ -236,4 +236,9 @@
   .ui-citation[href]::after {
     content: none !important;
   }
+
+  .ui-source-card,
+  .ui-source-list__item {
+    break-inside: avoid;
+  }
 }

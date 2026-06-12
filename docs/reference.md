@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 615 classes across 175 component groups
+- 634 classes across 177 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -733,6 +733,25 @@ each one matches a real selector in the stylesheet.
 | `cls.intervalRange` | `ui-interval__range` | part |
 | `cls.intervalTrack` | `ui-interval__track` | part |
 
+### `.ui-job`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.job` | `ui-job` | base |
+| `cls.jobActions` | `ui-job__actions` | part |
+| `cls.jobBar` | `ui-job__bar` | part |
+| `cls.jobBody` | `ui-job__body` | part |
+| `cls.jobHead` | `ui-job__head` | part |
+| `cls.jobMeta` | `ui-job__meta` | part |
+| `cls.jobProgress` | `ui-job__progress` | part |
+| `cls.jobTitle` | `ui-job__title` | part |
+| `cls.jobBlocked` | `ui-job--blocked` | modifier |
+| `cls.jobCompact` | `ui-job--compact` | modifier |
+| `cls.jobComplete` | `ui-job--complete` | modifier |
+| `cls.jobFailed` | `ui-job--failed` | modifier |
+| `cls.jobQueued` | `ui-job--queued` | modifier |
+| `cls.jobRunning` | `ui-job--running` | modifier |
+
 ### `.ui-kbd`
 
 | Registry key | Class | Kind |
@@ -1231,6 +1250,16 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.spinner` | `ui-spinner` | base |
 
+### `.ui-splitter`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.splitter` | `ui-splitter` | base |
+| `cls.splitterHandle` | `ui-splitter__handle` | part |
+| `cls.splitterPane` | `ui-splitter__pane` | part |
+| `cls.splitterHorizontal` | `ui-splitter--horizontal` | modifier |
+| `cls.splitterVertical` | `ui-splitter--vertical` | modifier |
+
 ### `.ui-spotlight`
 
 | Registry key | Class | Kind |
@@ -1559,9 +1588,11 @@ works in any framework without a binding layer:
   vocabulary onto a tone is application logic, not a framework class.
 - **Modal** — native `<dialog>` gets backdrop + top-layer + focus-trap
   free. For a controlled/portal modal, add `is-open`
-  (`ui.modal({ open: true })`) for the same skin/layout; the
-  backdrop, top-layer stacking AND focus-trap are then yours (`.is-open`
-  is a bare grid — it does not float or stack on its own).
+  (`ui.modal({ open: true })`) for the same skin/layout, mark the overlay
+  `data-bronto-modal`, and run `initModal()` for the inert focus trap,
+  focus-return, and Escape close signal. You still own the `is-open` state,
+  backdrop, and top-layer stacking (`.is-open` is a bare grid — it does not
+  float or stack on its own).
 - **Current page** — mark the active link with `aria-current="page"`; it is
   the programmatic cue the navs honour (`ui-sitenav`, `ui-app-nav`). The
   `.is-active` class is the visual-only equivalent on `ui-app-nav`/`ui-tab`;
@@ -1736,7 +1767,7 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--text-dim` | `#a0a0a0` |
 | `--accent` | `#ff3b41` |
 | `--accent-ramp-end` | `#000000` |
-| `--accent-strong` | `color-mix(in srgb, var(--accent) 84%, #fff)` |
+| `--accent-strong` | `color-mix(in srgb, var(--accent) 80%, #fff)` |
 | `--accent-text` | `var(--accent-strong)` |
 | `--on-accent` | `var(--button-text)` |
 | `--accent-soft` | `color-mix(in srgb, var(--accent) 14%, transparent)` |

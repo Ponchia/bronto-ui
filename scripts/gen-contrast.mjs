@@ -27,6 +27,7 @@ import { resolveColor } from './gen-charts.mjs';
 import { parseCssColor, srgbToLinear } from './lib/oklch.mjs';
 
 import { repoRoot as root, isMain } from './lib/emit.mjs';
+import { log } from './lib/stdio.mjs';
 
 /** color-mix(in srgb, A p%, B) per CSS Color 5 (gamma sRGB,
  * alpha-premultiplied). Returns a resolved `rgb()`/`rgba()` string. Used to
@@ -114,7 +115,7 @@ export function apcaLc(fgRaw, bgRaw, baseRaw) {
 function skinPalette(name, theme, base) {
   const accent = skins[name][theme]['--accent'];
   const isLight = theme === 'light';
-  const strong = mixSrgb(accent, isLight ? '#000000' : '#ffffff', isLight ? 83 : 84);
+  const strong = mixSrgb(accent, isLight ? '#000000' : '#ffffff', isLight ? 83 : 80);
   return {
     ...base,
     '--accent': accent,
@@ -398,5 +399,5 @@ export const generated = { 'docs/contrast.md': build().md };
 if (isMain(import.meta.url)) {
   const { md } = build();
   writeFileSync(resolve(root, 'docs/contrast.md'), md);
-  console.log('✓ wrote docs/contrast.md');
+  log('✓ wrote docs/contrast.md');
 }

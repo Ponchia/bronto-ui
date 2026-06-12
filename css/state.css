@@ -4,7 +4,8 @@
    Serious apps spend a lot of time in states like saving, saved, queued,
    offline, stale, conflicted, locked, and reviewed — usually improvised per
    product, so even good apps feel inconsistent. This is the canonical set:
-   a labelled state object with a rationed tone, plus a page/document sync bar.
+   a labelled state object with a rationed tone, a page/document sync bar, and
+   a persistent background-job row.
 
    The state is carried by a tone dot AND an author-written label, never colour
    alone (WCAG 1.4.1) — the label is the canonical wording (see docs/state.md).
@@ -112,10 +113,128 @@
   padding-block: var(--space-xs);
 }
 
+/* Background job — persistent progress/status for asynchronous work. The host
+   owns polling, retries, cancellation, and partial-failure semantics; Bronto
+   paints the durable row so long-running work is not hidden in a toast. */
+.ui-job {
+  --job-progress: 0%;
+  --job-tone: var(--text-dim);
+
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-inline-start: 2px solid var(--job-tone);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+}
+
+.ui-job__head {
+  align-items: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-md);
+  justify-content: space-between;
+}
+
+.ui-job__title {
+  color: var(--text);
+  font-family: var(--display);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-wide);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.ui-job__meta {
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.ui-job__body {
+  color: var(--text-soft);
+  margin: 0;
+}
+
+.ui-job__progress {
+  background: var(--panel-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  block-size: 0.5rem;
+  overflow: hidden;
+}
+
+.ui-job__bar {
+  background: var(--job-tone);
+  block-size: 100%;
+  display: block;
+  inline-size: clamp(0%, var(--job-progress), 100%);
+  min-inline-size: 1px;
+  print-color-adjust: exact;
+  transition: inline-size var(--duration-base) var(--ease-standard);
+}
+
+.ui-job__actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.ui-job--compact {
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+}
+
+.ui-job--queued {
+  --job-tone: var(--text-dim);
+}
+
+.ui-job--running {
+  --job-tone: var(--accent);
+}
+
+.ui-job--blocked {
+  --job-tone: var(--warning);
+}
+
+.ui-job--failed {
+  --job-tone: var(--danger);
+}
+
+.ui-job--complete {
+  --job-tone: var(--success);
+}
+
+.ui-job--running .ui-job__bar {
+  background-image: linear-gradient(
+    90deg,
+    var(--job-tone),
+    color-mix(in srgb, var(--job-tone) 62%, var(--panel))
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-job__bar {
+    transition: none;
+  }
+}
+
 /* Forced colours: the tone dot collapses to a system colour, so the
    author-written label remains the state channel (it already must be). */
 @media (forced-colors: active) {
   .ui-state::before {
+    background: CanvasText;
+  }
+
+  .ui-job {
+    border-inline-start-color: CanvasText;
+  }
+
+  .ui-job__bar {
     background: CanvasText;
   }
 }

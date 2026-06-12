@@ -19,6 +19,8 @@
     "react/index.js",
     "solid/index.js",
     "qwik/index.js",
+    "svelte/index.js",
+    "vue/index.js",
     "behaviors/index.js",
     "behaviors/internal.js",
     "behaviors/theme.js",
@@ -40,6 +42,7 @@
     "behaviors/spotlight.js",
     "behaviors/crosshair.js",
     "behaviors/command.js",
-    "behaviors/sources.js"
+    "behaviors/sources.js",
+    "behaviors/splitter.js"
   ]
 }

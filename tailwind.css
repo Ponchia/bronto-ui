@@ -1,0 +1,87 @@
+/**
+ * @ponchia/ui/tailwind — Tailwind CSS v4 bridge.
+ *
+ * Import from the app stylesheet after Tailwind itself:
+ *
+ *   @import "tailwindcss";
+ *   @import "@ponchia/ui/tailwind";
+ *
+ * This file is deliberately CSS-only. It maps Bronto's already-loaded CSS
+ * custom properties into Tailwind v4 theme namespaces and state variants; it
+ * does not import @ponchia/ui's component CSS for you.
+ */
+
+@theme inline {
+  --color-bronto-bg: var(--bronto-color-bg);
+  --color-bronto-surface: var(--bronto-color-surface);
+  --color-bronto-surface-muted: var(--surface-muted);
+  --color-bronto-surface-raised: var(--bronto-color-surface-raised);
+  --color-bronto-border: var(--bronto-color-border);
+  --color-bronto-border-strong: var(--bronto-color-border-strong);
+  --color-bronto-text: var(--bronto-color-text);
+  --color-bronto-text-muted: var(--bronto-color-text-muted);
+  --color-bronto-action: var(--bronto-color-action);
+  --color-bronto-on-action: var(--bronto-color-on-action);
+  --color-bronto-focus: var(--bronto-color-focus);
+  --color-bronto-success: var(--bronto-color-success);
+  --color-bronto-warning: var(--bronto-color-warning);
+  --color-bronto-danger: var(--bronto-color-danger);
+  --color-bronto-info: var(--bronto-color-info);
+  --color-bronto-accent-1: var(--accent-1);
+  --color-bronto-accent-2: var(--accent-2);
+  --color-bronto-accent-3: var(--accent-3);
+  --color-bronto-accent-4: var(--accent-4);
+  --color-bronto-accent-5: var(--accent-5);
+  --color-bronto-accent-6: var(--accent-6);
+  --color-bronto-surface-1: var(--surface-1);
+  --color-bronto-surface-2: var(--surface-2);
+  --color-bronto-surface-3: var(--surface-3);
+  --color-bronto-surface-4: var(--surface-4);
+  --color-bronto-surface-5: var(--surface-5);
+  --color-bronto-surface-6: var(--surface-6);
+
+  --font-bronto-sans: var(--sans);
+  --font-bronto-mono: var(--mono);
+  --font-bronto-display: var(--display);
+
+  --text-bronto-2xs: var(--text-2xs);
+  --text-bronto-xs: var(--text-xs);
+  --text-bronto-sm: var(--text-sm);
+  --text-bronto-base: var(--text-base);
+  --text-bronto-lg: var(--text-lg);
+  --text-bronto-xl: var(--text-xl);
+
+  --spacing-bronto-2xs: var(--space-2xs);
+  --spacing-bronto-xs: var(--space-xs);
+  --spacing-bronto-sm: var(--space-sm);
+  --spacing-bronto-md: var(--space-md);
+  --spacing-bronto-lg: var(--space-lg);
+  --spacing-bronto-xl: var(--space-xl);
+  --spacing-bronto-2xl: var(--space-2xl);
+
+  --radius-bronto-sm: var(--radius-sm);
+  --radius-bronto-md: var(--radius-md);
+  --radius-bronto-lg: var(--radius-lg);
+  --radius-bronto-xl: var(--radius-xl);
+  --radius-bronto-pill: var(--radius-pill);
+
+  --shadow-bronto: var(--shadow);
+  --shadow-bronto-raised: var(--shadow-raised);
+
+  --ease-bronto-standard: var(--ease-standard);
+  --ease-bronto-spring: var(--ease-spring);
+  --ease-bronto-out: var(--ease-out);
+}
+
+@custom-variant bronto-light (&:where([data-theme="light"] *));
+@custom-variant bronto-dark (&:where([data-theme="dark"] *));
+@custom-variant bronto-oled (&:where([data-surface="oled"] *));
+@custom-variant bronto-contrast-more (&:where([data-contrast="more"] *));
+@custom-variant bronto-compact (&:where([data-density="compact"] *));
+@custom-variant bronto-comfortable (&:where([data-density="comfortable"] *));
+
+@custom-variant bronto-active (&:where(.is-active, [aria-current="page"], [aria-selected="true"]));
+@custom-variant bronto-open (&:where(.is-open, [open], [popover]:popover-open, [aria-expanded="true"]));
+@custom-variant bronto-selected (&:where(.is-selected, [aria-selected="true"], [aria-pressed="true"]));
+@custom-variant bronto-invalid (&:where(.is-invalid, [aria-invalid="true"], :user-invalid));
+@custom-variant bronto-busy (&:where(.is-busy, [aria-busy="true"]));

@@ -21,6 +21,7 @@ import { resolve } from 'node:path';
 import { cssVars } from '../tokens/index.js';
 
 import { repoRoot as root, isMain } from './lib/emit.mjs';
+import { log } from './lib/stdio.mjs';
 
 const isHex = (v) => /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(v);
 const isRgb = (v) => /^rgba?\(/i.test(v);
@@ -93,5 +94,5 @@ export const dtcgJson = () => JSON.stringify(buildDtcg(), null, 2) + '\n';
 
 if (isMain(import.meta.url)) {
   writeFileSync(DTCG_PATH, dtcgJson());
-  console.log('✓ wrote tokens/tokens.dtcg.json');
+  log('✓ wrote tokens/tokens.dtcg.json');
 }

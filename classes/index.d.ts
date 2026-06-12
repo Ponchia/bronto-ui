@@ -546,6 +546,20 @@ export declare const cls: {
   readonly stateReviewed: 'ui-state--reviewed';
   readonly stateNeedsReview: 'ui-state--needs-review';
   readonly syncbar: 'ui-syncbar';
+  readonly job: 'ui-job';
+  readonly jobHead: 'ui-job__head';
+  readonly jobTitle: 'ui-job__title';
+  readonly jobMeta: 'ui-job__meta';
+  readonly jobBody: 'ui-job__body';
+  readonly jobProgress: 'ui-job__progress';
+  readonly jobBar: 'ui-job__bar';
+  readonly jobActions: 'ui-job__actions';
+  readonly jobCompact: 'ui-job--compact';
+  readonly jobQueued: 'ui-job--queued';
+  readonly jobRunning: 'ui-job--running';
+  readonly jobBlocked: 'ui-job--blocked';
+  readonly jobFailed: 'ui-job--failed';
+  readonly jobComplete: 'ui-job--complete';
   readonly generated: 'ui-generated';
   readonly generatedLabel: 'ui-generated__label';
   readonly originLabel: 'ui-origin-label';
@@ -566,6 +580,11 @@ export declare const cls: {
   readonly selectionbar: 'ui-selectionbar';
   readonly selectionbarCount: 'ui-selectionbar__count';
   readonly selectionbarActions: 'ui-selectionbar__actions';
+  readonly splitter: 'ui-splitter';
+  readonly splitterVertical: 'ui-splitter--vertical';
+  readonly splitterHorizontal: 'ui-splitter--horizontal';
+  readonly splitterPane: 'ui-splitter__pane';
+  readonly splitterHandle: 'ui-splitter__handle';
   readonly command: 'ui-command';
   readonly commandInput: 'ui-command__input';
   readonly commandList: 'ui-command__list';
@@ -721,7 +740,7 @@ export interface DotbarOpts {
 }
 export interface ModalOpts {
   drawer?: boolean;
-  /** Controlled non-dialog usage — adds the is-open state (focus-trap is yours). */
+  /** Controlled non-dialog usage — adds only the is-open state; pair with initModal for focus management. */
   open?: boolean;
 }
 export interface TabOpts {
@@ -832,6 +851,12 @@ export interface StateOpts {
   /** Pulse the indicator for an in-progress state (saving / syncing / retrying). Reduced-motion-safe. */
   busy?: boolean;
 }
+export type JobState = 'queued' | 'running' | 'blocked' | 'failed' | 'complete';
+export interface JobOpts {
+  /** Persistent background-job state. Pair with written status text; tone is only a scanning aid. */
+  state?: JobState;
+  compact?: boolean;
+}
 export interface OriginLabelOpts {
   /** Accent-tint the label for AI/model-generated origin (vs a neutral tag). */
   ai?: boolean;
@@ -914,6 +939,7 @@ export interface Ui {
   sparkBar(opts?: SparkBarOpts): string;
   bulletMeasure(opts?: BulletMeasureOpts): string;
   state(opts?: StateOpts): string;
+  job(opts?: JobOpts): string;
   originLabel(opts?: OriginLabelOpts): string;
 }
 

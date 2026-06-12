@@ -1,23 +1,63 @@
-# Workbench — inspector, properties, selection bar
+# Workbench — split panes, inspector, properties, selection bar
 
 `@ponchia/ui/css/workbench.css` is an opt-in set of primitives for **real
-tools**: an inspector panel, property rows for a selected object, and a bar of
-actions on the current selection. Generic kits stop at cards/tables/forms, so
-every app builds its own half-consistent workbench. This is the low-risk CSS
-core — layout and affordances only.
+tools**: resizable split panes, an inspector panel, property rows for a selected
+object, and a bar of actions on the current selection. Generic kits stop at
+cards/tables/forms, so every app builds its own half-consistent workbench. This
+is the low-risk core — layout, resize affordance, and ARIA value sync.
 
 ```css
 @import '@ponchia/ui';
 @import '@ponchia/ui/css/workbench.css';
 ```
 
-Resizable split panes (a focusable ARIA window-splitter behavior) and drag
-handles are deliberately deferred until a consumer needs them. Not in the core
-bundle.
+```js
+import { initSplitter } from '@ponchia/ui/behaviors';
+
+initSplitter();
+```
+
+Not in the core bundle. Import the CSS leaf where the workbench appears and run
+`initSplitter()` only if the page includes `[data-bronto-splitter]`.
+
+## Splitter — `.ui-splitter`
+
+Two panes separated by a focusable ARIA separator handle. The CSS owns the grid
+tracks and handle affordance; `initSplitter()` owns keyboard/pointer resizing,
+`--splitter-pos`, `aria-valuenow`, and the `bronto:splitter:resize` event. The
+host owns pane content, persistence, saved layout state, collapse policy, and any
+domain selection model.
+
+```html
+<div
+  class="ui-splitter ui-splitter--vertical"
+  data-bronto-splitter
+  style="--splitter-pos: 36%"
+>
+  <section class="ui-splitter__pane" id="files" aria-label="Files">...</section>
+  <div
+    class="ui-splitter__handle"
+    role="separator"
+    tabindex="0"
+    aria-controls="files"
+    aria-label="Resize files pane"
+    aria-orientation="vertical"
+    aria-valuemin="20"
+    aria-valuemax="72"
+    aria-valuenow="36"
+  ></div>
+  <section class="ui-splitter__pane" aria-label="Preview">...</section>
+</div>
+```
+
+Use `.ui-splitter--horizontal` for top/bottom panes. Arrow keys change the value
+by 2 percentage points, Shift+Arrow and PageUp/PageDown by 10, and Home/End jump
+to `aria-valuemin` / `aria-valuemax`. The handle needs a real accessible name
+and `aria-controls` pointing at the primary pane.
 
 ## Inspector — `.ui-inspector`
 
-A panel of details for the selected object: a `__header` (title + actions) over
+A panel of details for the selected object: a `__head` (title + actions) over
 a `__body` of property rows.
 
 ```html
@@ -72,7 +112,8 @@ A raised bar of actions on the current selection: a `__count` on one side,
 
 ## Scope
 
-CSS only, no recipes — these are structural containers and rows; apply the
-classes directly (or read them from `cls.inspector`, `cls.property`, …). Pair
-the selection bar with the cross-cutting [`ui-sel`](./selection.md) states on the
-selected items themselves; Bronto styles both, the host owns the hit-testing.
+No recipes — these are structural containers and rows; apply the classes
+directly (or read them from `cls.splitter`, `cls.inspector`, `cls.property`, …).
+Pair the selection bar with the cross-cutting [`ui-sel`](./selection.md) states
+on the selected items themselves. Bronto styles both and wires the splitter
+affordance; the host owns hit-testing, persistence, pane contents, and commands.

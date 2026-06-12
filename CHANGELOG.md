@@ -9,6 +9,22 @@
 
 ### Added
 
+- **Tailwind v4 bridge.** `@ponchia/ui/tailwind` / `@ponchia/ui/tailwind.css`
+  ships a CSS-first `@theme inline` bridge, `bronto-dark` and `bronto-oled`
+  custom variants, and source-registration guidance for Tailwind v4 projects.
+  `docs/interop/tailwind.md` documents `@reference` / `@source`, and
+  `examples/tailwind-vite` builds from the packed tarball and browser-smokes
+  the emitted Bronto utilities.
+- **Svelte and Vue lifecycle adapters.** `@ponchia/ui/svelte` exports
+  dependency-free actions over the delegated behavior layer, and
+  `@ponchia/ui/vue` exports directives, plugin helpers, and the shared
+  imperative `useToast()` helper.
+  The SvelteKit example now uses the Svelte adapter, and `examples/vue-vite`
+  covers Vue consumer install/build/runtime smoke from the packed package.
+- **Figma Variables handoff artifact.** `tokens/figma.variables.json` is
+  generated from the token source, exported as
+  `@ponchia/ui/tokens/figma.variables.json`, drift-checked in `check:fresh`,
+  and documented as a local import/sync handoff alongside the DTCG token export.
 - **Report-primitive batch** — four additive opt-in leaves for static reports
   and explanation surfaces: `ui-figure` (`css/figure.css`) for reusable
   chart/diagram/media stages with overlay, key and fallback-data slots;
@@ -18,6 +34,17 @@
   CSS Custom Highlight API paints (`bronto-evidence`, `bronto-search`,
   `bronto-current`). All stay out of `dist/bronto.css`; `figure.css` and
   `highlights.css` join the analytical roll-up.
+- **Background-job state primitive.** `state.css` now includes `ui-job` for
+  persistent asynchronous work: written status, determinate progress via
+  `--job-progress`, optional actions, compact mode, and queued/running/blocked/
+  failed/complete tones. The host still owns polling, retries, cancellation,
+  and announcements.
+- **Workbench splitter primitive.** `workbench.css` now includes
+  `ui-splitter` / `__pane` / `__handle` plus the optional `initSplitter`
+  behavior (`data-bronto-splitter`) for focusable ARIA separator handles,
+  keyboard and pointer resizing, `--splitter-pos` / `aria-valuenow` sync, and a
+  `bronto:splitter:resize` event. React, Solid, Qwik, Svelte, and Vue adapters
+  expose the matching hook/action/directive.
 
 ### Fixed
 
@@ -48,6 +75,16 @@
   (`.color-*` / `.background-color-*` rules, not just `fill`/`stroke`) and
   warns that `tooltip:`/`|md` shapes embed GitHub-Primer styling that
   survives tokenization. `docs/sidenote.md` documents the root-scoped knobs.
+- Local verification is now reproducible through named scripts:
+  `npm run test:e2e:nonpixel` runs every non-screenshot Playwright spec across
+  Chromium, Firefox, and WebKit, while `npm run test:examples` packs the real
+  tarball, builds all examples in temp directories, and browser-smokes the
+  runtime examples. `CONTRIBUTING.md`, `docs/release.md`, and
+  `docs/architecture.md` describe when to use those local gates versus the
+  pinned-container screenshot gate.
+- `check:examples` keeps the example inventory, CI matrix, browser-smoke list,
+  README rows, and preview ports aligned from one registry; `check:dead` now
+  runs in the aggregate `npm run check` chain.
 
 ## 0.6.6 — 2026-06-10
 
@@ -112,13 +149,13 @@ changes, no `MIGRATIONS.json` entry.
   post-0.6.0 leaves. The broadened scan immediately caught the demo/reference
   class defects above. `core.css` imports are now closed over an explicit
   CORE_BUNDLE allowlist in both directions.
-- `ROADMAP.md` / `docs/frontier-primitives.md` reconciled to 0.6.5: the
+- `ROADMAP.md` / `docs/frontier-primitives.md` reconciled to 0.6.7: the
   report/provenance/explanation lane is named the proven core; ui-job,
-  ui-conflict, ui-splitter, the tree roving-focus kernel, and
-  command/workbench follow-ons are explicitly dormant until a real app
-  consumer exists; the 2026-06-09 scout keeps (ui-interval, ui-clamp,
-  ui-highlights) are recorded as report-lane candidates gated behind the
-  routing hub. The adoption stance is stated in ROADMAP.
+  ui-conflict, drag/drop workbench follow-ons, the tree roving-focus kernel,
+  and command follow-ons are explicitly dormant until a real app consumer
+  exists; the 2026-06-09 scout keeps (ui-interval, ui-clamp, ui-highlights) are
+  recorded as report-lane candidates gated behind the routing hub. The adoption
+  stance is stated in ROADMAP.
 
 ## 0.6.5 — 2026-06-09
 

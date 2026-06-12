@@ -14,11 +14,13 @@
  *   → "✖ N d2 theme-map problem(s):"); `ok` is the success line printed after
  *   `✓ ` when there are no errors.
  */
+import { log } from './stdio.mjs';
+
 export function reportAndExit(errors, { label, ok }) {
   if (errors.length) {
     console.error(`✖ ${errors.length} ${label} problem(s):`);
     for (const e of errors) console.error(`  - ${e}`);
     process.exit(1);
   }
-  console.log(`✓ ${ok}`);
+  log(`✓ ${ok}`);
 }

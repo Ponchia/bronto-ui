@@ -45,6 +45,8 @@ export const useCrosshair: (opts?: BrontoBindingOptsResolver) => void;
 export const useCommand: (opts?: BrontoBindingOptsResolver) => void;
 /** @type {(opts?: BrontoBindingOptsResolver) => void} */
 export const useSources: (opts?: BrontoBindingOptsResolver) => void;
+/** @type {(opts?: BrontoBindingOptsResolver) => void} */
+export const useSplitter: (opts?: BrontoBindingOptsResolver) => void;
 /** The `toast()` imperative (no lifecycle of its own).
  * @type {() => (message: string, opts?: ToastOpts) => Cleanup} */
 export const useToast: () => (message: string, opts?: ToastOpts) => Cleanup;

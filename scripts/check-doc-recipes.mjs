@@ -20,6 +20,7 @@ import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { shippedDocs } from './lib/shipped-docs.mjs';
+import { log } from './lib/stdio.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
@@ -81,6 +82,6 @@ if (problems.length) {
   process.exit(1);
 }
 
-console.log(
+log(
   `✓ check:doc-recipes — CDN <script src> recipes pin a /build/ UMD bundle; no phantom --glyph-* masks`,
 );

@@ -28,6 +28,7 @@ import { resolve } from 'node:path';
 import { cls } from '../classes/index.js';
 
 import { repoRoot as root, isMain } from './lib/emit.mjs';
+import { log } from './lib/stdio.mjs';
 
 // Base = the class up to the first BEM separator (`--` modifier / `__` part).
 const baseOf = (v) => v.split('--')[0].split('__')[0];
@@ -86,7 +87,7 @@ const states = [
   {
     class: 'is-open',
     scope: 'controlled .ui-modal / .ui-popover',
-    effect: "open state (focus-trap is the host's)",
+    effect: 'open visibility state; focus management belongs to the matching behavior/host',
   },
   {
     class: 'is-active',
@@ -152,6 +153,13 @@ const customProperties = [
     type: 'number 0..100',
     example: '92',
     note: 'measured value as a UNITLESS number 0..100 (registered <number>, never a %). Set it on the meter/progress host — it inherits to the __fill/__bar. Prefer attrs.meter(value)/attrs.progress(value) from @ponchia/ui/classes, which sets it plus role + aria-valuenow/min/max together.',
+  },
+  {
+    name: '--job-progress',
+    on: '.ui-job',
+    type: 'percentage',
+    example: '64%',
+    note: 'determinate background-job progress. Set it on the .ui-job host; pair the .ui-job__progress element with role="progressbar" and matching aria-valuenow/min/max when the value is known.',
   },
   {
     name: '--icon-mask',
@@ -317,6 +325,27 @@ const customProperties = [
     type: 'color',
     example: 'color-mix(in srgb, var(--accent) 22%, transparent)',
     note: 'CSS Custom Highlight API wash for the host-registered bronto-current range.',
+  },
+  {
+    name: '--splitter-pos',
+    on: '.ui-splitter',
+    type: 'percentage',
+    example: '36%',
+    note: 'first pane size in the splitter axis. initSplitter keeps this and aria-valuenow in sync; the host may persist the last value.',
+  },
+  {
+    name: '--splitter-handle',
+    on: '.ui-splitter',
+    type: 'length',
+    example: '0.75rem',
+    note: 'fixed size of the separator handle track (default 0.75rem).',
+  },
+  {
+    name: '--splitter-pane-min',
+    on: '.ui-splitter',
+    type: 'length',
+    example: '12rem',
+    note: 'minimum first-pane size before the grid track clamps (default 0px); pair with matching aria-valuemin when the limit is user-visible.',
   },
 
   // Layout-primitive tuning knobs — the Every-Layout intrinsics + app-shell.
@@ -635,7 +664,7 @@ const behaviorAttributes = [
     name: 'data-bronto-modal',
     on: 'a controlled (non-<dialog>) .ui-modal overlay',
     behavior: 'initModal',
-    note: 'inert focus-trap + .is-open toggling for a modal that is not a native <dialog>; needs an accessible name',
+    note: 'inert focus-trap, focus-return, and Escape close signal for a consumer-owned .is-open modal; needs an accessible name',
   },
   {
     name: 'data-bronto-menu',
@@ -661,6 +690,14 @@ const behaviorAttributes = [
     on: 'a source/citation island',
     behavior: 'initSources',
     note: 'scopes citation preview metadata and source-card focus/highlight behavior; the host still owns numbering, fetching, and trust decisions.',
+  },
+  {
+    name: 'data-bronto-splitter',
+    on: 'a .ui-splitter host',
+    value:
+      "optional 'vertical' | 'horizontal' (otherwise inferred from .ui-splitter--horizontal / aria-orientation)",
+    behavior: 'initSplitter',
+    note: 'keyboard + pointer ARIA window-splitter behavior; updates --splitter-pos and aria-valuenow, then emits bronto:splitter:resize. The host owns persistence and pane state.',
   },
   {
     name: 'data-bronto-source-ref',
@@ -886,6 +923,13 @@ const requiredAria = [
     helper:
       'initFormValidation wires this for the dynamic summary; a static summary needs it hand-set',
   },
+  {
+    on: '.ui-splitter__handle',
+    require:
+      'role="separator" + tabindex="0" + aria-controls="<first-pane-id>" + an accessible name + aria-orientation + aria-valuemin/max/now. The aria-valuenow value mirrors --splitter-pos.',
+    helper:
+      'initSplitter fills missing role/tabindex/orientation/value defaults and updates aria-valuenow; author the accessible name, aria-controls, and meaningful min/max.',
+  },
 ];
 
 export function buildClassesJson() {
@@ -908,7 +952,7 @@ export const classesJson = () => JSON.stringify(buildClassesJson(), null, 2) + '
 
 if (isMain(import.meta.url)) {
   writeFileSync(CLASSES_JSON_PATH, classesJson());
-  console.log(
+  log(
     `✓ wrote classes/classes.json (${all.length} classes, ${Object.keys(sortedGroups).length} groups)`,
   );
 }

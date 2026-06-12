@@ -23,6 +23,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildClassesJson } from './gen-classes-json.mjs';
 import { stripCssComments } from './lib/patterns.mjs';
+import { log } from './lib/stdio.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
@@ -185,7 +186,7 @@ if (errors.length) {
 }
 
 const basesChecked = Object.values(manifest.groups).filter((g) => g.base).length;
-console.log(
+log(
   `✓ check:contract — ${manifest.customProperties.length} customProperties examples resolve, ` +
     `${WIRING.length} wiring attrs in reference.md, ${seen.size} documented init*() all exported, ` +
     `${basesChecked} group bases resolve to a CSS selector, ` +

@@ -184,5 +184,6 @@ document.addEventListener('bronto:legend:toggle', (e) => {
 Convention: `aria-pressed="true"` means the series is **shown** (the default).
 The entry's label never changes on toggle — only `aria-pressed` and
 `.is-inactive` flip, so a screen reader reads a stable name with a clear
-pressed state. React/Solid/Qwik consumers can use `useLegend()` instead of
-calling `initLegend` directly.
+pressed state. React/Solid/Qwik/Svelte consumers can use `useLegend()` (or the
+`legend` Svelte action) instead of calling `initLegend` directly; Vue consumers
+can use `vLegend`.

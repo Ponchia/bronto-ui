@@ -10,6 +10,7 @@ import { resolve } from 'node:path';
 import { cssVars, tokens } from '../tokens/index.js';
 
 import { repoRoot as root, isMain } from './lib/emit.mjs';
+import { log } from './lib/stdio.mjs';
 
 // A self-describing banner so the file can't be mistaken for hand-authored
 // source. The $comment key is data (ignored by JSON consumers) and is part of
@@ -22,5 +23,5 @@ export const tokensJson = JSON.stringify({ $comment, cssVars, tokens }, null, 2)
 
 if (isMain(import.meta.url)) {
   writeFileSync(TOKENS_JSON_PATH, tokensJson);
-  console.log('✓ wrote tokens/index.json');
+  log('✓ wrote tokens/index.json');
 }

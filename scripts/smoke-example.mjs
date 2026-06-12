@@ -5,14 +5,15 @@
  *
  * Run: node scripts/smoke-example.mjs <example-name> [dist-dir]
  */
-import { createServer } from 'node:http';
-import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { dirname, extname, normalize, resolve, sep } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 // @playwright/test is the installed devDependency; the bare 'playwright'
 // specifier only resolved through npm hoisting and broke under pnpm/yarn-pnp.
 import { chromium } from '@playwright/test';
+import { defaultDistDirFor } from './lib/examples.mjs';
+import { createStaticServer } from './lib/static-server.mjs';
+import { log } from './lib/stdio.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const example = process.argv[2];
@@ -23,48 +24,10 @@ if (!example) {
   process.exit(1);
 }
 
-const defaultDistDir =
-  example === 'sveltekit' ? `examples/${example}/build` : `examples/${example}/dist`;
-const distDir = resolve(root, distArg ?? defaultDistDir);
+const distDir = resolve(root, distArg ?? defaultDistDirFor(example));
 if (!existsSync(distDir)) {
   console.error(`Missing built example directory: ${distDir}`);
   process.exit(1);
-}
-
-const TYPES = {
-  '.html': 'text/html; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.mjs': 'text/javascript; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-  '.svg': 'image/svg+xml',
-  '.woff2': 'font/woff2',
-};
-
-function safePath(pathname) {
-  let p = pathname;
-  if (p.endsWith('/')) p += 'index.html';
-  const abs = normalize(resolve(distDir, `.${p}`));
-  if (abs !== distDir && !abs.startsWith(distDir + sep)) return null;
-  return abs;
-}
-
-function server() {
-  return createServer(async (req, res) => {
-    try {
-      const pathname = decodeURIComponent(new URL(req.url, 'http://example.test').pathname);
-      const abs = safePath(pathname);
-      if (!abs) {
-        res.writeHead(403).end('forbidden');
-        return;
-      }
-      const body = await readFile(abs);
-      res.writeHead(200, { 'content-type': TYPES[extname(abs)] || 'application/octet-stream' });
-      res.end(body);
-    } catch {
-      res.writeHead(404).end('not found');
-    }
-  });
 }
 
 async function listen(app) {
@@ -74,33 +37,61 @@ async function listen(app) {
 }
 
 async function assertExample(page, name) {
-  if (name === 'vanilla-vite') {
-    await page.getByRole('heading', { name: 'Vanilla + Vite' }).waitFor();
+  const assertThemeToggle = async () => {
+    const before = await page.locator('html').getAttribute('data-theme');
+    await page.getByRole('button', { name: 'Toggle theme' }).click();
+    await page.waitForFunction((prev) => {
+      const current = document.documentElement.getAttribute('data-theme');
+      return Boolean(current) && current !== prev;
+    }, before);
+  };
+  const assertToast = async () => {
     await page.getByRole('button', { name: 'Toast' }).click();
     await page.locator('.ui-toast').waitFor();
+  };
+  const assertDialog = async () => {
+    await page.getByRole('button', { name: 'Open dialog' }).click();
+    await page.locator('dialog[open]').waitFor();
+  };
+
+  if (name === 'vanilla-vite') {
+    await page.getByRole('heading', { name: 'Vanilla + Vite' }).waitFor();
+    await assertToast();
     return;
   }
   if (name === 'react-vite') {
     await page.getByRole('heading', { name: 'React + Vite' }).waitFor();
     await page.getByText(/chart colours/).waitFor();
-    await page.getByRole('button', { name: 'Open dialog' }).click();
-    await page.locator('dialog[open]').waitFor();
+    await assertDialog();
     return;
   }
   if (name === 'solid-vite') {
     await page.getByRole('heading', { name: 'Solid + Vite' }).waitFor();
     await page.getByText(/chart colours/).waitFor();
-    await page.getByRole('button', { name: 'Toast' }).click();
-    await page.locator('.ui-toast').waitFor();
-    await page.getByRole('button', { name: 'Open dialog' }).click();
-    await page.locator('dialog[open]').waitFor();
+    await assertToast();
+    await assertDialog();
     return;
   }
   if (name === 'sveltekit') {
     await page.getByRole('heading', { name: 'SvelteKit' }).waitFor();
-    const before = await page.locator('html').getAttribute('data-theme');
-    await page.getByRole('button', { name: 'Toggle theme' }).click();
-    await page.waitForFunction((prev) => document.documentElement.dataset.theme !== prev, before);
+    await assertThemeToggle();
+    return;
+  }
+  if (name === 'vue-vite') {
+    await page.getByRole('heading', { name: 'Vue + Vite' }).waitFor();
+    await assertThemeToggle();
+    await assertToast();
+    await assertDialog();
+    return;
+  }
+  if (name === 'tailwind-vite') {
+    await page.getByRole('heading', { name: 'Tailwind + Vite' }).waitFor();
+    await assertThemeToggle();
+    await assertToast();
+    const hasBridgeCss = await page
+      .locator('.bg-bronto-surface, .bronto-dark\\:bg-bronto-surface-raised')
+      .count();
+    if (!hasBridgeCss) throw new Error('Tailwind bridge utilities were not emitted');
     return;
   }
   if (name === 'report-static') {
@@ -112,7 +103,7 @@ async function assertExample(page, name) {
   await page.locator('body').waitFor();
 }
 
-const app = server();
+const app = createStaticServer(distDir, { baseUrl: 'http://example.test' });
 let browser;
 try {
   const url = await listen(app);
@@ -146,7 +137,7 @@ try {
     for (const error of errors) console.error(`  - ${error}`);
     process.exit(1);
   }
-  console.log(`✓ ${example} browser smoke passed`);
+  log(`✓ ${example} browser smoke passed`);
 } finally {
   if (browser) await browser.close();
   await new Promise((resolveClose) => app.close(resolveClose));

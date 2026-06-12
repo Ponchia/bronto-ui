@@ -64,6 +64,13 @@ function exportClass(key) {
       'Source fan-out file for consumers that want the authored leaf graph through a bundler.',
     ];
   }
+  if (key === './tailwind' || key === './tailwind.css') {
+    return [
+      'Tailwind CSS bridge',
+      'Stable additive',
+      'CSS-only Tailwind v4 theme/variant bridge. It maps Bronto tokens into Tailwind namespaces; it does not import component CSS.',
+    ];
+  }
   if (key.startsWith('./css/unlayered/')) {
     return [
       'Unlayered CSS leaf',
@@ -111,7 +118,7 @@ function exportClass(key) {
       'ESM, SSR-safe, cleanup-returning behavior initializers. Behavior internals are not public.',
     ];
   }
-  if (['./react', './solid', './qwik'].includes(key)) {
+  if (['./react', './solid', './qwik', './svelte', './vue'].includes(key)) {
     return [
       'Framework binding JS',
       'Stable thin adapter',
@@ -174,6 +181,12 @@ function fileClass(path) {
       'Public source leaves. Mostly hand-authored; generated exceptions are called out in the provenance table.',
     ];
   }
+  if (path === 'tailwind.css') {
+    return [
+      'Tailwind CSS bridge',
+      'CSS-only Tailwind v4 theme/variant bridge; hand-authored and not part of the default Bronto bundle.',
+    ];
+  }
   if (path === 'dist') {
     return ['Generated CSS directory', 'Prebuilt layered bundle and leaves. Never hand-edit.'];
   }
@@ -192,7 +205,11 @@ function fileClass(path) {
       'Class recipe source plus generated JSON/declarations/custom-data.',
     ];
   }
-  if (['behaviors', 'annotations', 'connectors', 'react', 'solid', 'qwik'].includes(path)) {
+  if (
+    ['behaviors', 'annotations', 'connectors', 'react', 'solid', 'qwik', 'svelte', 'vue'].includes(
+      path,
+    )
+  ) {
     return [
       'Authored public JS directory',
       'ESM source shipped as-is; adjacent declarations/maps are generated.',
@@ -256,10 +273,10 @@ function provenanceRows() {
     [
       'Token model',
       'tokens/index.js',
-      'css/tokens.css; tokens/index.json; tokens/tokens.dtcg.json; tokens/resolved.json; tokens/index.d.ts',
-      'tokens:css:build; tokens:build; dtcg:build; resolved:build; dts:build',
+      'css/tokens.css; tokens/index.json; tokens/tokens.dtcg.json; tokens/resolved.json; tokens/figma.variables.json; tokens/index.d.ts',
+      'tokens:css:build; tokens:build; dtcg:build; resolved:build; figma:variables:build; dts:build',
       'check:fresh; check:contrast',
-      'Token names/roles are public. Resolved values are visual tuning before 1.0.',
+      'Token names/roles are public. Resolved and Figma handoff values are visual tuning before 1.0.',
     ],
     [
       'Class registry',

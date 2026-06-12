@@ -20,6 +20,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { log } from './lib/stdio.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const js = readFileSync(resolve(root, 'classes/index.js'), 'utf8');
@@ -157,7 +158,7 @@ if (problems.length) {
   process.exit(1);
 }
 
-console.log(
+log(
   `✓ check:recipe-types — ${checked} factory/helper option set(s) match their .d.ts unions` +
     (skipped.length ? ` (${skipped.length} helper/typeless keys skipped)` : ''),
 );

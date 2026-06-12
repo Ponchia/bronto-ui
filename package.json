@@ -44,6 +44,7 @@
   "files": [
     "css",
     "dist",
+    "tailwind.css",
     "fonts",
     "tokens",
     "classes",
@@ -54,6 +55,8 @@
     "react",
     "solid",
     "qwik",
+    "svelte",
+    "vue",
     "shiki",
     "llms.txt",
     "CHANGELOG.md",
@@ -97,6 +100,7 @@
     "docs/generated.md",
     "docs/workbench.md",
     "docs/command.md",
+    "docs/interop/tailwind.md",
     "docs/migrations/0.2-to-0.3.md",
     "docs/migrations/0.3-to-0.4.md",
     "docs/migrations/0.4-to-0.5.md",
@@ -122,6 +126,7 @@
     "tokens:css:build": "node scripts/gen-tokens-css.mjs",
     "dtcg:build": "node scripts/gen-dtcg.mjs",
     "resolved:build": "node scripts/gen-resolved.mjs",
+    "figma:variables:build": "node scripts/gen-figma-variables.mjs",
     "dts:build": "node scripts/gen-dts.mjs",
     "dts:emit": "node scripts/emit-dts.mjs",
     "glyphs:build": "node scripts/gen-glyphs.mjs",
@@ -140,6 +145,7 @@
     "check:fresh": "node scripts/check-fresh.mjs",
     "check:classes": "node scripts/check-classes.mjs",
     "check:recipe-types": "node scripts/check-recipe-types.mjs",
+    "check:dead": "knip",
     "check:chain": "node scripts/check-chain.mjs",
     "check:dts-emit": "node scripts/check-dts-emit.mjs",
     "check:glyphs": "node scripts/check-glyphs.mjs",
@@ -155,6 +161,7 @@
     "check:shiki": "node scripts/check-shiki.mjs",
     "check:dist": "node scripts/check-dist.mjs",
     "check:pack": "node scripts/check-pack.mjs",
+    "check:examples": "node scripts/check-examples.mjs",
     "check:release": "node scripts/check-release.mjs",
     "check:versions": "node scripts/check-versions.mjs",
     "check:public-metadata": "node scripts/check-public-metadata.mjs",
@@ -163,9 +170,13 @@
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:publint": "publint --strict",
     "check:attw": "attw --pack --ignore-rules no-resolution cjs-resolves-to-esm",
-    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:fresh && npm run check:classes && npm run check:recipe-types && npm run check:types && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:publint && npm run check:attw && npm run check:release && npm run check:versions && npm run check:public-metadata && npm run check:doc-recipes && npm run check:contract && npm run check:contrast && npm run check:dts-emit && npm run check:glyphs && npm run check:color-policy && npm run check:skins && npm run check:charts && npm run check:mermaid && npm run check:d2 && npm run check:vega && npm run check:report && npm run check:legend && npm run check:chain",
+    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:fresh && npm run check:classes && npm run check:recipe-types && npm run check:dead && npm run check:types && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:examples && npm run check:publint && npm run check:attw && npm run check:release && npm run check:versions && npm run check:public-metadata && npm run check:doc-recipes && npm run check:contract && npm run check:contrast && npm run check:dts-emit && npm run check:glyphs && npm run check:color-policy && npm run check:skins && npm run check:charts && npm run check:mermaid && npm run check:d2 && npm run check:vega && npm run check:report && npm run check:legend && npm run check:chain",
     "test": "node --test \"test/*.test.mjs\"",
-    "build:artifacts": "npm run tokens:css:build && npm run tokens:build && npm run dtcg:build && npm run resolved:build && npm run dts:build && npm run dts:emit && npm run reference:build && npm run package-contract:build && npm run classes:json:build && npm run contrast:build && npm run vscode:build && npm run skins:build && npm run charts:build && npm run mermaid:build && npm run d2:build && npm run vega:build && npm run dist:build && npm run glyphs:build",
+    "test:e2e": "playwright test",
+    "test:e2e:chromium": "playwright test --project=chromium",
+    "test:e2e:nonpixel": "node scripts/test-e2e-nonpixel.mjs",
+    "test:examples": "node scripts/test-examples.mjs",
+    "build:artifacts": "npm run tokens:css:build && npm run tokens:build && npm run dtcg:build && npm run resolved:build && npm run figma:variables:build && npm run dts:build && npm run dts:emit && npm run reference:build && npm run package-contract:build && npm run classes:json:build && npm run contrast:build && npm run vscode:build && npm run skins:build && npm run charts:build && npm run mermaid:build && npm run d2:build && npm run vega:build && npm run dist:build && npm run glyphs:build",
     "verify:artifacts": "npm run check:fresh && npm run check:dist && npm run check:dts-emit && npm run check:glyphs && npm run check:skins && npm run check:charts && npm run check:mermaid && npm run check:d2 && npm run check:vega && npm run check:pack",
     "prepack": "npm run build:artifacts && npm run verify:artifacts",
     "prepublishOnly": "npm run build:artifacts && npm run check && npm test"
@@ -176,6 +187,7 @@
     "@builder.io/qwik": "^1.20.0",
     "@playwright/test": "1.60.0",
     "jsdom": "^29.1.1",
+    "knip": "^6.16.1",
     "pdfjs-dist": "^6.0.227",
     "prettier": "^3.8.3",
     "publint": "^0.3.21",
@@ -211,6 +223,8 @@
       "default": "./dist/bronto.css"
     },
     "./dist/bronto.css": "./dist/bronto.css",
+    "./tailwind": "./tailwind.css",
+    "./tailwind.css": "./tailwind.css",
     "./css": "./css/core.css",
     "./css/core.css": "./css/core.css",
     "./css/tokens.css": "./dist/css/tokens.css",
@@ -308,6 +322,7 @@
     "./tokens.json": "./tokens/index.json",
     "./tokens.dtcg.json": "./tokens/tokens.dtcg.json",
     "./tokens/resolved.json": "./tokens/resolved.json",
+    "./tokens/figma.variables.json": "./tokens/figma.variables.json",
     "./shiki/nothing.json": "./shiki/nothing.json",
     "./llms.txt": "./llms.txt",
     "./MIGRATIONS.json": "./MIGRATIONS.json",
@@ -350,6 +365,7 @@
     "./docs/generated.md": "./docs/generated.md",
     "./docs/workbench.md": "./docs/workbench.md",
     "./docs/command.md": "./docs/command.md",
+    "./docs/interop/tailwind.md": "./docs/interop/tailwind.md",
     "./docs/migrations/0.2-to-0.3.md": "./docs/migrations/0.2-to-0.3.md",
     "./docs/migrations/0.3-to-0.4.md": "./docs/migrations/0.3-to-0.4.md",
     "./docs/migrations/0.4-to-0.5.md": "./docs/migrations/0.4-to-0.5.md",
@@ -389,6 +405,14 @@
     "./qwik": {
       "types": "./qwik/index.d.ts",
       "default": "./qwik/index.js"
+    },
+    "./svelte": {
+      "types": "./svelte/index.d.ts",
+      "default": "./svelte/index.js"
+    },
+    "./vue": {
+      "types": "./vue/index.d.ts",
+      "default": "./vue/index.js"
     },
     "./skins": {
       "types": "./tokens/skins.d.ts",

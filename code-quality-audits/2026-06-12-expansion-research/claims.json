@@ -1,0 +1,260 @@
+{
+  "schemaVersion": "bronto-report-claims.v1",
+  "report": {
+    "title": "Bronto UI Expansion Audit",
+    "type": "decision"
+  },
+  "generatedAt": "2026-06-12T20:23:35Z",
+  "claims": [
+    {
+      "id": "claim-tailwind-v4",
+      "status": "supported",
+      "risk": "high",
+      "statement": "Bronto now ships a Tailwind v4 CSS bridge before adding more components.",
+      "scope": "`@ponchia/ui` package exports, Tailwind interop docs, and packed examples as of 2026-06-12 after this pass.",
+      "sourceIds": ["source-repo-inventory", "source-tailwind-v4", "source-tailwind-directives"]
+    },
+    {
+      "id": "claim-svelte-vue",
+      "status": "supported",
+      "risk": "high",
+      "statement": "Thin Svelte and Vue lifecycle adapters fit Bronto's architecture better than per-framework components or Web Components, and now ship locally.",
+      "scope": "Behavior-layer adoption surfaces and examples, not new component markup.",
+      "sourceIds": ["source-repo-inventory", "source-roadmap-architecture", "source-competitors"]
+    },
+    {
+      "id": "claim-token-handoff",
+      "status": "supported",
+      "risk": "medium",
+      "statement": "The token-system improvement is now a local Figma Variables handoff, not a bundled Style Dictionary dependency.",
+      "scope": "Token exports, docs, and offline handoff artifacts.",
+      "sourceIds": [
+        "source-repo-inventory",
+        "source-roadmap-architecture",
+        "source-token-standards"
+      ]
+    },
+    {
+      "id": "claim-scope",
+      "status": "supported",
+      "risk": "low",
+      "statement": "Bronto should not chase a broad shadcn/Radix-style catalog as the next SOTA move.",
+      "scope": "Roadmap prioritization and public package surface.",
+      "sourceIds": ["source-roadmap-architecture", "source-competitors"]
+    },
+    {
+      "id": "claim-background-job",
+      "status": "supported",
+      "risk": "medium",
+      "statement": "Bronto now covers persistent background-job status as a CSS-first state primitive instead of leaving async work hidden in transient toasts.",
+      "scope": "`@ponchia/ui/css/state.css`, generated class/type metadata, state docs, state demo, and cross-browser non-pixel tests.",
+      "sourceIds": ["source-repo-inventory", "source-progress-patterns", "source-quality-gates"]
+    },
+    {
+      "id": "claim-workbench-splitter",
+      "status": "supported",
+      "risk": "medium",
+      "statement": "Bronto now covers accessible workbench split panes without becoming a drag-and-drop or layout-persistence framework.",
+      "scope": "`@ponchia/ui/css/workbench.css`, delegated behavior exports, framework bindings, generated class/metadata artifacts, workbench docs/demo, and cross-browser non-pixel tests.",
+      "sourceIds": [
+        "source-repo-inventory",
+        "source-quality-gates",
+        "source-splitter-accessibility"
+      ]
+    },
+    {
+      "id": "claim-quality",
+      "status": "supported",
+      "risk": "low",
+      "statement": "The current local quality gate found no confirmed AI-slop or dead-code defects, and the unit, non-pixel Playwright, plus packed-example browser suites passed.",
+      "scope": "Local deterministic scans, unit/contract tests, real-browser non-pixel suite, and packed-example suite run on 2026-06-12.",
+      "sourceIds": ["source-quality-gates"]
+    },
+    {
+      "id": "claim-doc-fix",
+      "status": "supported",
+      "risk": "low",
+      "statement": "The confirmed documentation, changelog, and roadmap drifts found in this pass were fixed locally.",
+      "scope": "`docs/theming.md` accent-strength wording; controlled-modal usage/reference, type-comment, and classes-metadata wording; adapter-contract docs; `CHANGELOG.md` unreleased notes; and `ROADMAP.md` reconciliation status.",
+      "sourceIds": ["source-repo-inventory"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "source-repo-inventory",
+      "state": "verified",
+      "title": "Local repository/package inventory",
+      "origin": "Local `package.json`, exported paths, docs, examples, bindings, token artifacts, size report, theming-doc patch, controlled-modal documentation/generator patches, adapter-doc cleanup, Vue derived directive-surface test, background-job primitive/docs/demo/tests, workbench splitter primitive/docs/demo/tests, splitter declaration freshness, shared static-server helper cleanup, smoke assertion helper cleanup, changelog/roadmap reconciliation, and local browser-gate script docs.",
+      "retrievedAt": "2026-06-12T20:23:35Z",
+      "supports": [
+        "claim-tailwind-v4",
+        "claim-svelte-vue",
+        "claim-token-handoff",
+        "claim-background-job",
+        "claim-workbench-splitter",
+        "claim-doc-fix"
+      ]
+    },
+    {
+      "id": "source-roadmap-architecture",
+      "state": "verified",
+      "title": "Local architecture and roadmap doctrine",
+      "origin": "`CONTRIBUTING.md`, `docs/architecture.md`, and `ROADMAP.md` read locally.",
+      "retrievedAt": "2026-06-12T17:02:57Z",
+      "supports": ["claim-svelte-vue", "claim-token-handoff", "claim-scope"]
+    },
+    {
+      "id": "source-quality-gates",
+      "state": "verified",
+      "title": "Local deterministic quality scans",
+      "origin": "Repo-local dead-code and AI-slop reports under `code-quality-audits/2026-06-12-expansion-research/`, plus latest follow-up reports under `code-quality-audits/2026-06-12-ai-slop-followup-3/` and `code-quality-audits/2026-06-12-dead-code-followup-3/`; `npm run check` passed; `npm test` (245 passed), `npm run test:e2e:nonpixel` (597 passed, 9 intentional skips), `npm run test:examples` (9 packed builds, 7 browser smokes), source-scoped Trivy was clean, and jscpd script clones were reduced from 13 to 11 after static-server/smoke-helper cleanup.",
+      "retrievedAt": "2026-06-12T20:23:35Z",
+      "supports": ["claim-background-job", "claim-workbench-splitter", "claim-quality"]
+    },
+    {
+      "id": "source-tailwind-v4",
+      "state": "verified",
+      "title": "Tailwind CSS v4 official announcement",
+      "origin": "https://tailwindcss.com/blog/tailwindcss-v4",
+      "retrievedAt": "2026-06-12T17:02:57Z",
+      "supports": ["claim-tailwind-v4"]
+    },
+    {
+      "id": "source-tailwind-directives",
+      "state": "verified",
+      "title": "Tailwind CSS theme/directive/source docs",
+      "origin": "https://tailwindcss.com/docs/theme, https://tailwindcss.com/docs/functions-and-directives, https://tailwindcss.com/docs/detecting-classes-in-source-files, https://tailwindcss.com/docs/upgrade-guide",
+      "retrievedAt": "2026-06-12T17:02:57Z",
+      "supports": ["claim-tailwind-v4"]
+    },
+    {
+      "id": "source-competitors",
+      "state": "verified",
+      "title": "Comparable design-system adoption surfaces",
+      "origin": "Radix Themes, shadcn/ui, Ark UI, Shoelace, and React Aria public docs.",
+      "retrievedAt": "2026-06-12T17:02:57Z",
+      "supports": ["claim-svelte-vue", "claim-scope"]
+    },
+    {
+      "id": "source-token-standards",
+      "state": "verified",
+      "title": "Token exchange and Figma Variables standards",
+      "origin": "https://www.designtokens.org/TR/2025.10/format/ and https://developers.figma.com/docs/rest-api/variables/",
+      "retrievedAt": "2026-06-12T17:02:57Z",
+      "supports": ["claim-token-handoff"]
+    },
+    {
+      "id": "source-progress-patterns",
+      "state": "verified",
+      "title": "Progress and status pattern references",
+      "origin": "Atlassian Progress indicator, Carbon Progress indicator/status patterns, Material Design 3 progress indicators, Material Web progress, and recent background-work UX pattern research.",
+      "retrievedAt": "2026-06-12T19:36:06Z",
+      "supports": ["claim-background-job"]
+    },
+    {
+      "id": "source-splitter-accessibility",
+      "state": "verified",
+      "title": "Accessible splitter and resize-pane references",
+      "origin": "WAI-ARIA APG Window Splitter, MDN separator role, React Resizable Panels, Salt Splitter accessibility, Radix Vue Splitter, and shadcn Resizable public references.",
+      "retrievedAt": "2026-06-12T20:06:03Z",
+      "supports": ["claim-workbench-splitter"]
+    }
+  ],
+  "relations": [
+    {
+      "claimId": "claim-tailwind-v4",
+      "sourceId": "source-repo-inventory",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-tailwind-v4",
+      "sourceId": "source-tailwind-v4",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-tailwind-v4",
+      "sourceId": "source-tailwind-directives",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-svelte-vue",
+      "sourceId": "source-repo-inventory",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-svelte-vue",
+      "sourceId": "source-roadmap-architecture",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-svelte-vue",
+      "sourceId": "source-competitors",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-token-handoff",
+      "sourceId": "source-repo-inventory",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-token-handoff",
+      "sourceId": "source-roadmap-architecture",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-token-handoff",
+      "sourceId": "source-token-standards",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-scope",
+      "sourceId": "source-roadmap-architecture",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-scope",
+      "sourceId": "source-competitors",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-background-job",
+      "sourceId": "source-repo-inventory",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-background-job",
+      "sourceId": "source-progress-patterns",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-background-job",
+      "sourceId": "source-quality-gates",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-workbench-splitter",
+      "sourceId": "source-repo-inventory",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-workbench-splitter",
+      "sourceId": "source-quality-gates",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-workbench-splitter",
+      "sourceId": "source-splitter-accessibility",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-quality",
+      "sourceId": "source-quality-gates",
+      "relation": "supports"
+    },
+    {
+      "claimId": "claim-doc-fix",
+      "sourceId": "source-repo-inventory",
+      "relation": "supports"
+    }
+  ]
+}
