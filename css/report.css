@@ -510,13 +510,20 @@
   padding-block: var(--space-sm);
 }
 
+.ui-report__action > :not(.ui-report__action-status) {
+  grid-column: 1;
+}
+
 .ui-report__action-status {
-  align-self: start;
   color: var(--text-dim);
   font-family: var(--mono);
   font-size: var(--text-2xs);
+  grid-column: 2;
+  grid-row: 1;
   letter-spacing: var(--tracking-wide);
+  place-self: start end;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .ui-report__action-title,
@@ -555,6 +562,12 @@
   .ui-report__decision-item,
   .ui-report__action {
     grid-template-columns: 1fr;
+  }
+
+  .ui-report__action-status {
+    grid-column: 1;
+    grid-row: auto;
+    place-self: auto start;
   }
 }
 

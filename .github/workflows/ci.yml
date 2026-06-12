@@ -15,15 +15,10 @@ on:
   push:
     branches: [main]
   pull_request:
-  # Manual full run: dispatch on any branch to also exercise firefox +
-  # webkit (e.g. before merging a change that touches an engine-sensitive
-  # CSS primitive). PRs/main otherwise run chromium-only for speed.
+  # Manual full run: dispatch on any branch to exercise firefox + webkit
+  # before merging an engine-sensitive CSS/behavior change. Keep this
+  # input-free so the build graph cannot be altered by user parameters.
   workflow_dispatch:
-    inputs:
-      cross_engine:
-        description: 'Also run firefox + webkit (full cross-engine e2e)'
-        type: boolean
-        default: true
 
 # Least privilege: this workflow only reads the repo.
 permissions:
@@ -43,7 +38,7 @@ env:
 
 jobs:
   # Detect docs-only changes so the expensive cross-browser e2e (~8 min)
-  # and the 7-leg consumer-tarball matrix are skipped when nothing but
+  # and the consumer-tarball example matrix are skipped when nothing but
   # Markdown/docs changed. `check` ALWAYS runs — it has doc-scanning gates
   # (check:report validates docs use real classes; check:release validates
   # the CHANGELOG). Self-contained git diff (no third-party action, in
@@ -134,13 +129,13 @@ jobs:
   # surface (css/dist/behaviors/fonts/tokens/e2e) — cross-engine-only-at-
   # tag-time is how a deterministic WebKit defect merged green and then
   # burned two release attempts (v0.6.1/v0.6.2). Manual workflow_dispatch
-  # keeps the any-branch escape hatch.
+  # always runs the cross-engine pass as the any-branch escape hatch.
   e2e:
     needs: changes
     if: needs.changes.outputs.heavy == 'true'
     uses: ./.github/workflows/e2e.yml
     with:
-      cross_engine: ${{ (github.event_name == 'workflow_dispatch' && inputs.cross_engine) || (github.event_name == 'push' && needs.changes.outputs.engine_sensitive == 'true') }}
+      cross_engine: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && needs.changes.outputs.engine_sensitive == 'true') }}
 
   # Single aggregating gate — the ONLY required status check on `main`.
   # Requiring individual matrix legs by name (`examples (qwik-vite)` …) is

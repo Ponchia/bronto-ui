@@ -22,6 +22,7 @@ import {
   initCommand,
   initDisabledGuard,
   initSources,
+  initSplitter,
   toast,
 } from '../behaviors/index.js';
 
@@ -865,6 +866,7 @@ const SSR_INITS = {
   initCrosshair,
   initCommand,
   initSources,
+  initSplitter,
   initModal,
 };
 for (const [name, init] of Object.entries(SSR_INITS)) {
@@ -1608,6 +1610,148 @@ test('initSources: supports button refs, scoped duplicate ids, idempotence, clea
   stop();
   button.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   assert.equal(count, 1, 'cleanup removes listener');
+});
+
+test('initSplitter: keyboard keeps CSS value, ARIA value, and resize event in sync', () => {
+  const d = mount(`
+    <div class="ui-splitter ui-splitter--vertical" data-bronto-splitter style="--splitter-pos: 40%">
+      <section id="primary" class="ui-splitter__pane">Files</section>
+      <div class="ui-splitter__handle" aria-controls="primary" aria-label="Resize file pane"></div>
+      <section class="ui-splitter__pane">Editor</section>
+    </div>`);
+  const splitter = d.querySelector('[data-bronto-splitter]');
+  const handle = d.querySelector('.ui-splitter__handle');
+  const values = [];
+  splitter.addEventListener('bronto:splitter:resize', (e) => values.push(e.detail));
+
+  const stop = initSplitter();
+  assert.equal(handle.getAttribute('role'), 'separator');
+  assert.equal(handle.tabIndex, 0);
+  assert.equal(handle.getAttribute('aria-orientation'), 'vertical');
+  assert.equal(handle.getAttribute('aria-valuemin'), '20');
+  assert.equal(handle.getAttribute('aria-valuemax'), '80');
+  assert.equal(handle.getAttribute('aria-valuenow'), '40');
+  assert.equal(splitter.style.getPropertyValue('--splitter-pos'), '40%');
+
+  handle.dispatchEvent(
+    new dom.window.KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }),
+  );
+  assert.equal(handle.getAttribute('aria-valuenow'), '42');
+  assert.equal(splitter.style.getPropertyValue('--splitter-pos'), '42%');
+  handle.dispatchEvent(
+    new dom.window.KeyboardEvent('keydown', { key: 'ArrowLeft', shiftKey: true, bubbles: true }),
+  );
+  assert.equal(handle.getAttribute('aria-valuenow'), '32');
+  handle.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Home', bubbles: true }));
+  assert.equal(handle.getAttribute('aria-valuenow'), '20');
+  handle.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'End', bubbles: true }));
+  assert.equal(handle.getAttribute('aria-valuenow'), '80');
+  assert.deepEqual(
+    values.map((v) => [v.value, v.orientation]),
+    [
+      [42, 'vertical'],
+      [32, 'vertical'],
+      [20, 'vertical'],
+      [80, 'vertical'],
+    ],
+  );
+
+  stop();
+  handle.dispatchEvent(
+    new dom.window.KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }),
+  );
+  assert.equal(handle.getAttribute('aria-valuenow'), '80', 'cleanup removes keyboard handler');
+});
+
+test('initSplitter: pointer drag calculates percentages and detaches on cleanup', () => {
+  const d = mount(`
+    <div class="ui-splitter ui-splitter--horizontal" data-bronto-splitter="horizontal" style="--splitter-pos: 30%">
+      <section id="top-pane" class="ui-splitter__pane">Top</section>
+      <div
+        class="ui-splitter__handle"
+        aria-controls="top-pane"
+        aria-label="Resize top pane"
+        aria-valuemin="10"
+        aria-valuemax="90"
+      ></div>
+      <section class="ui-splitter__pane">Bottom</section>
+    </div>`);
+  const splitter = d.querySelector('[data-bronto-splitter]');
+  const handle = d.querySelector('.ui-splitter__handle');
+  splitter.getBoundingClientRect = () => ({
+    left: 0,
+    top: 0,
+    right: 200,
+    bottom: 200,
+    width: 200,
+    height: 200,
+  });
+  const events = [];
+  splitter.addEventListener('bronto:splitter:resize', (e) => events.push(e.detail));
+
+  const stop = initSplitter({ root: splitter });
+  handle.dispatchEvent(
+    new dom.window.MouseEvent('pointerdown', { bubbles: true, button: 0, clientY: 50 }),
+  );
+  assert.equal(handle.classList.contains('is-active'), true, 'drag state set on pointerdown');
+  d.dispatchEvent(new dom.window.MouseEvent('pointermove', { bubbles: true, clientY: 120 }));
+  assert.equal(handle.getAttribute('aria-valuenow'), '60');
+  assert.equal(splitter.style.getPropertyValue('--splitter-pos'), '60%');
+  d.dispatchEvent(new dom.window.MouseEvent('pointerup', { bubbles: true, clientY: 120 }));
+  assert.equal(handle.classList.contains('is-active'), false, 'drag state cleared on pointerup');
+  assert.deepEqual(
+    events.map((v) => [v.value, v.orientation]),
+    [
+      [25, 'horizontal'],
+      [60, 'horizontal'],
+    ],
+  );
+
+  stop();
+  d.dispatchEvent(new dom.window.MouseEvent('pointermove', { bubbles: true, clientY: 20 }));
+  assert.equal(handle.getAttribute('aria-valuenow'), '60', 'cleanup removes document drag handler');
+});
+
+test('initSplitter: cleanup releases active pointer capture during a drag', () => {
+  const d = mount(`
+    <div class="ui-splitter" data-bronto-splitter style="--splitter-pos: 40%">
+      <section id="left-pane" class="ui-splitter__pane">Left</section>
+      <div class="ui-splitter__handle" aria-controls="left-pane" aria-label="Resize left pane"></div>
+      <section class="ui-splitter__pane">Right</section>
+    </div>`);
+  const splitter = d.querySelector('[data-bronto-splitter]');
+  const handle = d.querySelector('.ui-splitter__handle');
+  splitter.getBoundingClientRect = () => ({
+    left: 0,
+    top: 0,
+    right: 200,
+    bottom: 200,
+    width: 200,
+    height: 200,
+  });
+
+  const captured = [];
+  const released = [];
+  handle.setPointerCapture = (id) => captured.push(id);
+  handle.hasPointerCapture = (id) => captured.includes(id) && !released.includes(id);
+  handle.releasePointerCapture = (id) => released.push(id);
+
+  const stop = initSplitter({ root: splitter });
+  const down = new dom.window.MouseEvent('pointerdown', {
+    bubbles: true,
+    button: 0,
+    clientX: 90,
+  });
+  Object.defineProperty(down, 'pointerId', { value: 7 });
+  handle.dispatchEvent(down);
+  assert.deepEqual(captured, [7], 'pointer capture started');
+  assert.equal(handle.classList.contains('is-active'), true, 'drag state is active');
+
+  stop();
+  assert.deepEqual(released, [7], 'cleanup released active pointer capture');
+  assert.equal(handle.classList.contains('is-active'), false, 'cleanup clears drag state');
+  d.dispatchEvent(new dom.window.MouseEvent('pointermove', { bubbles: true, clientX: 120 }));
+  assert.equal(handle.getAttribute('aria-valuenow'), '45', 'document drag handler removed');
 });
 
 const CMD = `

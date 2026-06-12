@@ -1652,14 +1652,43 @@ ui.originLabel({ ai: true });</code></pre>
 
         <article class="spec" id="spec-workbench">
           <div>
-            <h3 class="spec__name">Workbench — inspector, properties, selection</h3>
+            <h3 class="spec__name">Workbench — panes, inspector, properties, selection</h3>
             <p class="spec__one">
-              The low-risk CSS core for real tools: a selected-object inspector, denser property
-              rows, and a raised selection action bar. Resizable splitters and drag handles are
-              deferred.
+              The low-risk core for real tools: resizable panes, a selected-object inspector,
+              denser property rows, and a raised selection action bar.
             </p>
           </div>
           <div class="spec__demo">
+            <div
+              class="ui-splitter ui-splitter--vertical"
+              data-bronto-splitter
+              style="--splitter-pos: 42%; min-block-size: 12rem"
+            >
+              <section
+                class="ui-splitter__pane"
+                id="showcase-workbench-files"
+                aria-label="Workbench files"
+              >
+                <h4 class="ui-eyebrow">Files</h4>
+                <p class="ui-muted">report.html</p>
+                <p class="ui-muted">claims.json</p>
+              </section>
+              <div
+                class="ui-splitter__handle"
+                role="separator"
+                tabindex="0"
+                aria-controls="showcase-workbench-files"
+                aria-label="Resize workbench files pane"
+                aria-orientation="vertical"
+                aria-valuemin="24"
+                aria-valuemax="72"
+                aria-valuenow="42"
+              ></div>
+              <section class="ui-splitter__pane" aria-label="Workbench preview">
+                <h4 class="ui-eyebrow">Preview</h4>
+                <p class="ui-muted">Current selection preview and editor surface.</p>
+              </section>
+            </div>
             <aside class="ui-inspector" aria-label="Inspector">
               <div class="ui-inspector__head">
                 <h4 class="ui-eyebrow">Rectangle</h4>
@@ -1692,12 +1721,18 @@ ui.originLabel({ ai: true });</code></pre>
     &lt;div class="ui-property"&gt;&lt;span class="ui-property__label"&gt;Width&lt;/span&gt;&lt;span class="ui-property__value"&gt;…&lt;/span&gt;&lt;/div&gt;
   &lt;/div&gt;
 &lt;/aside&gt;
+&lt;div class="ui-splitter" data-bronto-splitter style="--splitter-pos: 42%"&gt;
+  &lt;section id="files" class="ui-splitter__pane"&gt;…&lt;/section&gt;
+  &lt;div class="ui-splitter__handle" role="separator" tabindex="0" aria-controls="files" aria-label="Resize files pane" aria-valuenow="42"&gt;&lt;/div&gt;
+  &lt;section class="ui-splitter__pane"&gt;…&lt;/section&gt;
+&lt;/div&gt;
 &lt;div class="ui-selectionbar"&gt;&lt;span class="ui-selectionbar__count"&gt;3 selected&lt;/span&gt;…&lt;/div&gt;</code></pre>
           </details>
           <p class="spec__meta">
-            <span class="ui-badge ui-badge--muted">opt-in · CSS only</span>
+            <span class="ui-badge ui-badge--muted">opt-in · CSS + behavior</span>
             <span class="spec__boundary"
-              >Layout + affordances; pair the bar with ui-sel states (host owns hit-testing).</span
+              >Layout + resize affordance; the host owns panes, persistence, selection and
+              hit-testing.</span
             >
             <a class="ui-link ui-link--arrow" href="./workbench.html">Full specimen</a>
             <a class="ui-link ui-link--arrow" href="../docs/#workbench.md">Docs</a>
@@ -1783,8 +1818,8 @@ useCommand();  // react/solid/qwik</code></pre>
         </div>
         <div class="frontier">
           <div class="frontier__card">
-            <h3>Resizable panes</h3>
-            <p>An accessible ARIA window-splitter and drag/resize handles, on top of the shipped workbench inspector.</p>
+            <h3>Conflict resolution</h3>
+            <p>Side-by-side choice, merge and accept/reject states for generated or concurrent edits.</p>
           </div>
           <div class="frontier__card">
             <h3>Relationships</h3>

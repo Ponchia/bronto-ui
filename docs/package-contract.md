@@ -27,6 +27,8 @@ semantic versioning contract for the surfaces listed here.
 | --- | --- | --- | --- | --- |
 | `.` | style: `./dist/bronto.css`<br>default: `./dist/bronto.css` | CSS root bundle | Stable | CSS-only package root. Supported as a CSS side-effect import in CSS-aware bundlers; not a Node/runtime JS entrypoint. |
 | `./dist/bronto.css` | `./dist/bronto.css` | Flattened CSS bundle | Stable path | The prebuilt default stylesheet. Generated from css/core.css and byte-checked by check:dist. |
+| `./tailwind` | `./tailwind.css` | Tailwind CSS bridge | Stable additive | CSS-only Tailwind v4 theme/variant bridge. It maps Bronto tokens into Tailwind namespaces; it does not import component CSS. |
+| `./tailwind.css` | `./tailwind.css` | Tailwind CSS bridge | Stable additive | CSS-only Tailwind v4 theme/variant bridge. It maps Bronto tokens into Tailwind namespaces; it does not import component CSS. |
 | `./css` | `./css/core.css` | CSS source fan-out | Stable path | Bundler entrypoint for css/core.css. It preserves source @import boundaries and layer behavior. |
 | `./css/core.css` | `./css/core.css` | CSS source fan-out | Stable path | Source fan-out file for consumers that want the authored leaf graph through a bundler. |
 | `./css/tokens.css` | `./dist/css/tokens.css` | Bundled layered CSS leaf | Stable additive | Generated layered direct-import leaf. Also included in dist/bronto.css. |
@@ -121,6 +123,7 @@ semantic versioning contract for the surfaces listed here.
 | `./tokens.json` | `./tokens/index.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
 | `./tokens.dtcg.json` | `./tokens/tokens.dtcg.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
 | `./tokens/resolved.json` | `./tokens/resolved.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
+| `./tokens/figma.variables.json` | `./tokens/figma.variables.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
 | `./shiki/nothing.json` | `./shiki/nothing.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
 | `./llms.txt` | `./llms.txt` | Agent entrypoint | Stable path | Plain-text orientation file shipped for offline agents and tooling. |
 | `./MIGRATIONS.json` | `./MIGRATIONS.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
@@ -163,6 +166,7 @@ semantic versioning contract for the surfaces listed here.
 | `./docs/generated.md` | `./docs/generated.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/workbench.md` | `./docs/workbench.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/command.md` | `./docs/command.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/interop/tailwind.md` | `./docs/interop/tailwind.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/migrations/0.2-to-0.3.md` | `./docs/migrations/0.2-to-0.3.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/migrations/0.3-to-0.4.md` | `./docs/migrations/0.3-to-0.4.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/migrations/0.4-to-0.5.md` | `./docs/migrations/0.4-to-0.5.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
@@ -179,6 +183,8 @@ semantic versioning contract for the surfaces listed here.
 | `./react` | types: `./react/index.d.ts`<br>default: `./react/index.js` | Framework binding JS | Stable thin adapter | Optional peer wrapper over vanilla behaviors. It owns lifecycle hookup, not markup or component state. |
 | `./solid` | types: `./solid/index.d.ts`<br>default: `./solid/index.js` | Framework binding JS | Stable thin adapter | Optional peer wrapper over vanilla behaviors. It owns lifecycle hookup, not markup or component state. |
 | `./qwik` | types: `./qwik/index.d.ts`<br>default: `./qwik/index.js` | Framework binding JS | Stable thin adapter | Optional peer wrapper over vanilla behaviors. It owns lifecycle hookup, not markup or component state. |
+| `./svelte` | types: `./svelte/index.d.ts`<br>default: `./svelte/index.js` | Framework binding JS | Stable thin adapter | Optional peer wrapper over vanilla behaviors. It owns lifecycle hookup, not markup or component state. |
+| `./vue` | types: `./vue/index.d.ts`<br>default: `./vue/index.js` | Framework binding JS | Stable thin adapter | Optional peer wrapper over vanilla behaviors. It owns lifecycle hookup, not markup or component state. |
 | `./skins` | types: `./tokens/skins.d.ts`<br>default: `./tokens/skins.js` | Renderer/theme helper JS | Stable additive | ESM theme data/helpers for opt-in skins, chart palettes, and external renderers. |
 | `./charts` | types: `./tokens/charts.d.ts`<br>default: `./tokens/charts.js` | Renderer/theme helper JS | Stable additive | ESM theme data/helpers for opt-in skins, chart palettes, and external renderers. |
 | `./charts.json` | `./tokens/charts.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
@@ -200,6 +206,7 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | --- | --- | --- |
 | `css` | Source CSS directory | Public source leaves. Mostly hand-authored; generated exceptions are called out in the provenance table. |
 | `dist` | Generated CSS directory | Prebuilt layered bundle and leaves. Never hand-edit. |
+| `tailwind.css` | Tailwind CSS bridge | CSS-only Tailwind v4 theme/variant bridge; hand-authored and not part of the default Bronto bundle. |
 | `fonts` | Vendored assets | Doto woff2 files plus OFL license. |
 | `tokens` | Mixed source/generated data | Token source plus generated JSON, declarations, and renderer theme data. |
 | `classes` | Mixed source/generated data | Class recipe source plus generated JSON/declarations/custom-data. |
@@ -210,6 +217,8 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `react` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
 | `solid` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
 | `qwik` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
+| `svelte` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
+| `vue` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
 | `shiki` | Theme data | Shiki theme JSON on the governed palette. |
 | `llms.txt` | Agent entrypoint | Shipped plain-text orientation for offline LLM/agent consumers. |
 | `CHANGELOG.md` | Release record | Shipped historical release notes. |
@@ -253,6 +262,7 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `docs/generated.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/workbench.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/command.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/interop/tailwind.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/migrations/0.2-to-0.3.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/migrations/0.3-to-0.4.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/migrations/0.4-to-0.5.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
@@ -270,7 +280,7 @@ result. The listed gates are part of `npm run check`.
 | Surface | Source of truth | Generated outputs | Generator | Gate | Note |
 | --- | --- | --- | --- | --- | --- |
 | Package manifest | `package.json` | docs/package-contract.md | `npm run package-contract:build` | check:fresh | The complete export/file matrix in this document is generated from the manifest. |
-| Token model | `tokens/index.js` | css/tokens.css; tokens/index.json; tokens/tokens.dtcg.json; tokens/resolved.json; tokens/index.d.ts | `npm run tokens:css:build; tokens:build; dtcg:build; resolved:build; dts:build` | check:fresh; check:contrast | Token names/roles are public. Resolved values are visual tuning before 1.0. |
+| Token model | `tokens/index.js` | css/tokens.css; tokens/index.json; tokens/tokens.dtcg.json; tokens/resolved.json; tokens/figma.variables.json; tokens/index.d.ts | `npm run tokens:css:build; tokens:build; dtcg:build; resolved:build; figma:variables:build; dts:build` | check:fresh; check:contrast | Token names/roles are public. Resolved and Figma handoff values are visual tuning before 1.0. |
 | Class registry | `classes/index.js plus css/*.css selectors` | classes/classes.json; classes/index.d.ts; classes/vscode.css-custom-data.json; docs/reference.md | `npm run classes:json:build; dts:build; vscode:build; reference:build` | check:fresh; check:classes; check:contract | The typed registry, JSON vocabulary, and generated reference stay aligned with real selectors. |
 | Authored CSS graph | `css/core.css plus css/*.css leaves` | dist/bronto.css; dist/css/*.css (44 layered outputs) | `npm run dist:build` | check:dist; check:exports | Default bundle and direct layered leaf imports are generated from authored CSS and size-gated. |
 | JSDoc-authored public JS | `behaviors/; annotations/; connectors/; react/; solid/; qwik/` | adjacent *.d.ts and *.d.ts.map files | `npm run dts:emit` | check:dts-emit; check:types; check:attw; check:publint | Declarations are emitted from the shipped JS, not separately maintained. |

@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bronto UI Expansion Audit</title>
+    <link rel="stylesheet" href="../../dist/bronto.css" />
+    <link rel="stylesheet" href="../../dist/css/report.css" />
+    <link rel="stylesheet" href="../../dist/css/sources.css" />
+  </head>
+  <body>
+    <!-- VERIFIER CONTRACT (report.py verify) — these scaffold blocks already
+         satisfy it. EDIT THEM IN PLACE; if you rewrite the file, carry every
+         block AND these comments along:
+           - exactly one <main class="ui-report"> and one <h1>
+           - an above-fold ui-report__decision stating basis, next action,
+             recheck timing, and evidence state IN TEXT
+           - every source card: a ui-src--* class AND its trust word
+             (verified/reviewed/…) repeated in the card text
+           - every titled action row: owner, due/recheck date, status,
+             success criteria
+           - every claim in claims.json must render as a ui-claim here, and
+             every ui-claim needs an id, a ui-claim--* state repeated in
+             text, and a source citation
+           - never hand-write claims.json — copy the scaffold sidecar's
+             schema (bronto-report-claims.v1) and keep ids in sync
+           - tables need <caption> + header cells; figures need figcaption;
+             SVGs need <title> + <desc>
+           - a deliberately interactive report is verified with --dynamic;
+             without it, any script element is an error -->
+    <main class="ui-report ui-report--numbered">
+      <header class="ui-report__cover ui-report__cover--compact">
+        <p class="ui-eyebrow">Decision report</p>
+        <h1 class="ui-report__title">Bronto UI Expansion Audit</h1>
+        <p class="ui-report__subtitle">
+          Local audit of every shipped surface, example, package contract, quality gate, and current
+          design-system market signal. Focus: what to add next without breaking the CSS-first,
+          zero-runtime contract.
+        </p>
+        <ul class="ui-report__meta">
+          <li>Generated: <time datetime="2026-06-12T20:23:35Z">2026-06-12</time></li>
+          <li>Profile: Decision report</li>
+          <li>Evidence state: supported</li>
+        </ul>
+      </header>
+
+      <nav class="ui-report__toc" aria-label="Report contents">
+        <ol>
+          <li><a href="#summary">Summary</a></li>
+          <li><a href="#findings">Findings</a></li>
+          <li><a href="#evidence">Evidence ledger</a></li>
+          <li><a href="#actions">Actions</a></li>
+        </ol>
+      </nav>
+
+      <section id="summary" class="ui-report__section">
+        <h2 class="ui-report__section-head">Summary</h2>
+        <div class="ui-report__summary">
+          <p>
+            Bronto UI is already unusually strong for a solo-maintained CSS-first system: the
+            package exports a broad leaf CSS surface, machine-readable tokens/classes, renderer
+            themes, thin framework bindings, packed consumer examples, visual/e2e gates, dead-code
+            checks, and local security scans. This audit's adoption-infrastructure findings have now
+            been implemented locally: a Tailwind v4 CSS theme bridge, Svelte and Vue lifecycle
+            adapters over existing behaviors, a packed Vue example, a packed Tailwind example, and a
+            local Figma Variables handoff built from the existing DTCG token export. Later passes
+            also added durable background-job state and an accessible workbench splitter, so
+            long-running async work and real tool panes now have shared primitives instead of
+            one-off local patterns. The local browser verification paths are now named npm scripts,
+            so the audited evidence is repeatable without translating CI YAML by hand.
+          </p>
+        </div>
+
+        <!-- verifier: keep this decision block above the fold; its text must
+             state basis, next action, recheck timing, and evidence state -->
+        <aside class="ui-report__decision ui-keep" aria-labelledby="decision-title">
+          <p class="ui-report__decision-kicker">Reader outcome</p>
+          <h3 class="ui-report__decision-title" id="decision-title">
+            Adoption bridges, durable async status, and splitter panes are implemented
+          </h3>
+          <p class="ui-report__decision-body">
+            Basis: local package inventory, roadmap/architecture review, deterministic quality
+            gates, verified 2026 Tailwind/design-system references, the current implementation diff,
+            `npm run test:e2e:nonpixel` browser run, a full `npm run test:examples` packed
+            tarball/example run, cross-browser `ui-job` checks, and cross-browser `ui-splitter`
+            keyboard/pointer/forced-colors checks. Next action: keep the new
+            bridge/adapters/handoff, background-job primitive, and splitter behavior covered by
+            package, example, and browser-smoke gates while resisting a broad component catalog
+            sprint. Recheck: <time datetime="2026-06-26">2026-06-26</time>. Evidence state:
+            supported.
+          </p>
+          <dl class="ui-report__decision-grid">
+            <div class="ui-report__decision-item">
+              <dt class="ui-report__decision-label">Basis</dt>
+              <dd class="ui-report__decision-value">
+                45 CSS leaves, 21 delegated behaviors, 634 classes, 9 packed examples,
+                Tailwind/Svelte/Vue exports, Figma Variables artifact, clean local dead-code/AI-slop
+                scans, 245 unit/contract passes, 597 non-pixel Playwright passes, and 9 packed
+                example builds.
+              </dd>
+            </div>
+            <div class="ui-report__decision-item">
+              <dt class="ui-report__decision-label">Next action</dt>
+              <dd class="ui-report__decision-value">
+                Run `npm run test:e2e:nonpixel` and `npm run test:examples` before release-sensitive
+                adoption changes.
+              </dd>
+            </div>
+            <div class="ui-report__decision-item">
+              <dt class="ui-report__decision-label">Recheck</dt>
+              <dd class="ui-report__decision-value">
+                <time datetime="2026-06-26">2026-06-26</time>
+              </dd>
+            </div>
+          </dl>
+          <p class="ui-report__decision-meta">
+            Evidence state: supported · Sources:
+            <a class="ui-citation" href="#source-repo-inventory">S1</a>,
+            <a class="ui-citation" href="#source-tailwind-v4">S4</a>,
+            <a class="ui-citation" href="#source-tailwind-directives">S5</a>
+          </p>
+        </aside>
+      </section>
+
+      <section id="findings" class="ui-report__section">
+        <h2 class="ui-report__section-head">Findings</h2>
+        <!-- verifier: each finding needs a claim, citation, evidence packet,
+             or explicit assumption label; severity modifiers (--major …)
+             must repeat the severity word in readable text -->
+        <article
+          class="ui-report__finding ui-report__finding--resolved"
+          aria-labelledby="finding-tailwind"
+        >
+          <h3 class="ui-report__finding-title" id="finding-tailwind">
+            Resolved finding: Tailwind v4 support now has a CSS bridge
+          </h3>
+          <p class="ui-report__finding-claim">
+            Claim: Bronto had Tailwind layer-order documentation, but no Tailwind v4 `@theme`
+            export, custom variants, or packed Tailwind consumer example; the current tree now ships
+            all three.
+          </p>
+          <p class="ui-report__finding-impact">
+            Impact: Tailwind v4 made CSS-first theme variables, `@custom-variant`, `@reference`, and
+            `@source` central adoption primitives. Bronto now exposes those adoption affordances
+            without adding a component runtime.
+          </p>
+          <p class="ui-report__finding-remediation">
+            Remediation: the CSS-only `@ponchia/ui/tailwind` export uses `@theme inline`, documents
+            `@reference`/`@source`, and is covered by the packed `examples/tailwind-vite` smoke.
+          </p>
+          <article
+            class="ui-claim ui-claim--supported"
+            id="claim-tailwind-v4"
+            data-risk="high"
+            data-source-ids="source-repo-inventory source-tailwind-v4 source-tailwind-directives"
+          >
+            <p class="ui-claim__statement">
+              Bronto now ships a Tailwind v4 CSS bridge before adding more components.
+            </p>
+            <p class="ui-claim__scope">
+              Scope: `@ponchia/ui` package exports, Tailwind interop docs, and packed examples as of
+              2026-06-12 after this pass.
+            </p>
+            <p class="ui-claim__status">Evidence state: supported.</p>
+            <p class="ui-claim__basis">
+              Basis: local export/doc inventory now includes the bridge; Tailwind's current docs
+              center CSS theme variables, source registration, and reference-only imports.
+            </p>
+            <p class="ui-claim__refs">
+              Sources: <a class="ui-citation" href="#source-repo-inventory">S1</a>,
+              <a class="ui-citation" href="#source-tailwind-v4">S4</a>,
+              <a class="ui-citation" href="#source-tailwind-directives">S5</a>
+            </p>
+          </article>
+        </article>
+
+        <article
+          class="ui-report__finding ui-report__finding--resolved"
+          aria-labelledby="finding-adapters"
+        >
+          <h3 class="ui-report__finding-title" id="finding-adapters">
+            Resolved finding: behavior adapters now cover Svelte and Vue
+          </h3>
+          <p class="ui-report__finding-claim">
+            Claim: Bronto already shipped React, Solid, and Qwik lifecycle bindings; the current
+            tree now adds Svelte lifecycle actions, Vue directives/plugin helpers, and a packed Vue
+            example.
+          </p>
+          <p class="ui-report__finding-impact">
+            Impact: cross-framework consumers can now adopt the delegated behavior layer in the same
+            CSS-first style without Bronto becoming a component library.
+          </p>
+          <p class="ui-report__finding-remediation">
+            Remediation: `@ponchia/ui/svelte` actions and `@ponchia/ui/vue` directives/plugin
+            helpers call the existing delegated behavior initializers and return cleanup; markup,
+            state, and styling stay in consumer land.
+          </p>
+          <article
+            class="ui-claim ui-claim--supported"
+            id="claim-svelte-vue"
+            data-risk="high"
+            data-source-ids="source-repo-inventory source-roadmap-architecture source-competitors"
+          >
+            <p class="ui-claim__statement">
+              Thin Svelte and Vue lifecycle adapters fit Bronto's architecture better than
+              per-framework components or Web Components, and now ship locally.
+            </p>
+            <p class="ui-claim__scope">
+              Scope: behavior-layer adoption surfaces and examples, not new component markup.
+            </p>
+            <p class="ui-claim__status">Evidence state: supported.</p>
+            <p class="ui-claim__basis">
+              Basis: architecture explicitly favors SSR-safe delegated behaviors and optional thin
+              bindings; the local example matrix now includes Vue and the SvelteKit example uses the
+              Svelte adapter.
+            </p>
+            <p class="ui-claim__refs">
+              Sources: <a class="ui-citation" href="#source-repo-inventory">S1</a>,
+              <a class="ui-citation" href="#source-roadmap-architecture">S2</a>,
+              <a class="ui-citation" href="#source-competitors">S6</a>
+            </p>
+          </article>
+        </article>
+
+        <article
+          class="ui-report__finding ui-report__finding--resolved"
+          aria-labelledby="finding-tokens"
+        >
+          <h3 class="ui-report__finding-title" id="finding-tokens">
+            Resolved finding: token export now has a local Figma handoff
+          </h3>
+          <p class="ui-report__finding-claim">
+            Claim: Bronto already emitted DTCG and resolved token artifacts; the current tree now
+            adds a local Figma Variables mapping artifact, docs, and a freshness gate.
+          </p>
+          <p class="ui-report__finding-impact">
+            Impact: the standards direction is token interoperability. The local Figma Variables
+            export makes the existing source-of-truth story credible without adding bundled Style
+            Dictionary or a design-tool runtime dependency.
+          </p>
+          <p class="ui-report__finding-remediation">
+            Remediation: `tokens/figma.variables.json` is generated from the token source, exported,
+            drift-checked, and documented with permission limits and manual import/export flow.
+          </p>
+          <article
+            class="ui-claim ui-claim--supported"
+            id="claim-token-handoff"
+            data-risk="medium"
+            data-source-ids="source-repo-inventory source-roadmap-architecture source-token-standards"
+          >
+            <p class="ui-claim__statement">
+              The token-system improvement is now a local Figma Variables handoff, not a bundled
+              Style Dictionary dependency.
+            </p>
+            <p class="ui-claim__scope">
+              Scope: token exports, docs, and offline handoff artifacts.
+            </p>
+            <p class="ui-claim__status">Evidence state: supported.</p>
+            <p class="ui-claim__basis">
+              Basis: Bronto already ships DTCG tokens; DTCG describes cross-tool exchange, and
+              Figma's Variables API supports CI and source-of-truth sync.
+            </p>
+            <p class="ui-claim__refs">
+              Sources: <a class="ui-citation" href="#source-repo-inventory">S1</a>,
+              <a class="ui-citation" href="#source-roadmap-architecture">S2</a>,
+              <a class="ui-citation" href="#source-token-standards">S7</a>
+            </p>
+          </article>
+        </article>
+
+        <article
+          class="ui-report__finding ui-report__finding--minor"
+          aria-labelledby="finding-scope"
+        >
+          <h3 class="ui-report__finding-title" id="finding-scope">
+            Minor finding: component-catalog pressure should stay demand-gated
+          </h3>
+          <p class="ui-report__finding-claim">
+            Claim: competing UI kits list much broader component catalogs, but Bronto's local
+            roadmap deliberately centers generated reports, explanation, provenance, and CSS
+            primitives.
+          </p>
+          <p class="ui-report__finding-impact">
+            Impact: copying shadcn/Radix breadth would dilute the package and conflict with explicit
+            out-of-scope items such as per-framework component packages, Storybook dependency, chart
+            engine, virtualized data-grid, and second accent.
+          </p>
+          <p class="ui-report__finding-remediation">
+            Remediation: keep date/time picker and richer data-table work as recipes until a real
+            app consumer proves demand; do not add a generic catalog sprint.
+          </p>
+          <article
+            class="ui-claim ui-claim--supported"
+            id="claim-scope"
+            data-risk="low"
+            data-source-ids="source-roadmap-architecture source-competitors"
+          >
+            <p class="ui-claim__statement">
+              Bronto should not chase a broad shadcn/Radix-style catalog as the next SOTA move.
+            </p>
+            <p class="ui-claim__scope">Scope: roadmap prioritization and public package surface.</p>
+            <p class="ui-claim__status">Evidence state: supported.</p>
+            <p class="ui-claim__basis">
+              Basis: external catalogs show the breadth available elsewhere, while Bronto's roadmap
+              explicitly preserves a narrower report/provenance lane.
+            </p>
+            <p class="ui-claim__refs">
+              Sources: <a class="ui-citation" href="#source-roadmap-architecture">S2</a>,
+              <a class="ui-citation" href="#source-competitors">S6</a>
+            </p>
+          </article>
+        </article>
+
+        <article
+          class="ui-report__finding ui-report__finding--resolved"
+          aria-labelledby="finding-background-job"
+        >
+          <h3 class="ui-report__finding-title" id="finding-background-job">
+            Resolved finding: background jobs now have a persistent state row
+          </h3>
+          <p class="ui-report__finding-claim">
+            Claim: current progress/status guidance across comparable systems covers progress
+            indicators and status semantics, but Bronto's state lane still lacked a persistent row
+            for imports, exports, sync runs, and report generation that continue after the
+            initiating interaction is gone.
+          </p>
+          <p class="ui-report__finding-impact">
+            Impact: without a durable state object, hosts would keep inventing local progress rows
+            or hiding long-running work in toasts, creating inconsistent async UX across report and
+            app surfaces.
+          </p>
+          <p class="ui-report__finding-remediation">
+            Remediation: `css/state.css` now ships `.ui-job`, state modifiers, compact layout,
+            `--job-progress`, forced-colors handling, and reduced-motion-safe progress updates. The
+            class recipe, generated metadata, docs, demo, changelog, roadmap, and cross-browser
+            Playwright checks were updated with explicit host-owned polling, retry, cancellation,
+            and queue semantics.
+          </p>
+          <article
+            class="ui-claim ui-claim--supported"
+            id="claim-background-job"
+            data-risk="medium"
+            data-source-ids="source-repo-inventory source-progress-patterns source-quality-gates"
+          >
+            <p class="ui-claim__statement">
+              Bronto now covers persistent background-job status as a CSS-first state primitive
+              instead of leaving async work hidden in transient toasts.
+            </p>
+            <p class="ui-claim__scope">
+              Scope: `@ponchia/ui/css/state.css`, generated class/type metadata, state docs, state
+              demo, and cross-browser non-pixel tests.
+            </p>
+            <p class="ui-claim__status">Evidence state: supported.</p>
+            <p class="ui-claim__basis">
+              Basis: `.ui-job` is in source and dist CSS, the class registry exposes `ui.job()`,
+              docs and demo show determinate/progressbar usage, and Chromium/Firefox/WebKit each
+              passed progress-width, ARIA, and forced-colors checks.
+            </p>
+            <p class="ui-claim__refs">
+              Sources: <a class="ui-citation" href="#source-repo-inventory">S1</a>,
+              <a class="ui-citation" href="#source-quality-gates">S3</a>,
+              <a class="ui-citation" href="#source-progress-patterns">S8</a>
+            </p>
+          </article>
+        </article>
+
+        <article
+          class="ui-report__finding ui-report__finding--resolved"
+          aria-labelledby="finding-workbench-splitter"
+        >
+          <h3 class="ui-report__finding-title" id="finding-workbench-splitter">
+            Resolved finding: workbench panes now have an accessible splitter
+          </h3>
+          <p class="ui-report__finding-claim">
+            Claim: Bronto's workbench lane shipped inspector, property, and selection-bar
+            primitives, but still left accessible split panes to each app. Current ARIA references
+            and comparable libraries converge on a focusable separator with keyboard resizing and
+            value semantics.
+          </p>
+          <p class="ui-report__finding-impact">
+            Impact: without a shared splitter, every real editor/workbench surface would improvise
+            pane layout, pointer drag, keyboard resize, and `aria-valuenow` handling.
+          </p>
+          <p class="ui-report__finding-remediation">
+            Remediation: `css/workbench.css` now ships `.ui-splitter`, pane and handle parts,
+            vertical/horizontal modifiers, and documented sizing knobs. `initSplitter()` wires
+            `data-bronto-splitter` hosts with SSR-safe keyboard and pointer resizing, ARIA value
+            sync, cleanup, and `bronto:splitter:resize`; React, Solid, Qwik, Svelte, and Vue
+            adapters expose the matching lifecycle wrapper.
+          </p>
+          <article
+            class="ui-claim ui-claim--supported"
+            id="claim-workbench-splitter"
+            data-risk="medium"
+            data-source-ids="source-repo-inventory source-quality-gates source-splitter-accessibility"
+          >
+            <p class="ui-claim__statement">
+              Bronto now covers accessible workbench split panes without becoming a drag-and-drop or
+              layout-persistence framework.
+            </p>
+            <p class="ui-claim__scope">
+              Scope: `@ponchia/ui/css/workbench.css`, `@ponchia/ui/behaviors`, generated class/type
+              metadata, workbench docs/demo, framework bindings, and cross-browser non-pixel tests.
+            </p>
+            <p class="ui-claim__status">Evidence state: supported.</p>
+            <p class="ui-claim__basis">
+              Basis: `.ui-splitter` is in source and dist CSS, `initSplitter` exports through the
+              behavior barrel and every binding adapter, docs and demos include separator ARIA, and
+              Chromium/Firefox/WebKit each passed keyboard, pointer, and forced-colors splitter
+              checks.
+            </p>
+            <p class="ui-claim__refs">
+              Sources: <a class="ui-citation" href="#source-repo-inventory">S1</a>,
+              <a class="ui-citation" href="#source-quality-gates">S3</a>,
+              <a class="ui-citation" href="#source-splitter-accessibility">S9</a>
+            </p>
+          </article>
+        </article>
+
+        <article
+          class="ui-report__finding ui-report__finding--minor"
+          aria-labelledby="finding-quality"
+        >
+          <h3 class="ui-report__finding-title" id="finding-quality">
+            Minor finding: local deterministic quality gates are currently clean
+          </h3>
+          <p class="ui-report__finding-claim">
+            Claim: native dead-code, lint, unit tests, type check, Semgrep deep, gitleaks,
+            TruffleHog, Trivy, Checkov, clone scanning, and the non-pixel Playwright browser suite
+            all passed locally in this audit; the packed-example browser-smoke matrix also passed
+            through the new local runner.
+          </p>
+          <p class="ui-report__finding-impact">
+            Impact: the audit did not find confirmed dead code, dependency waste, secret leakage, or
+            AI-slop failures that should block the adoption-roadmap work.
+          </p>
+          <p class="ui-report__finding-remediation">
+            Remediation: keep the existing `check:dead` and declaration-freshness gates in `npm run
+            check`; for new adapters add packed examples, behavior tests, and the named
+            `test:e2e:nonpixel` / `test:examples` local gates rather than relying on static type
+            declarations alone.
+          </p>
+          <article
+            class="ui-claim ui-claim--supported"
+            id="claim-quality"
+            data-risk="low"
+            data-source-ids="source-quality-gates"
+          >
+            <p class="ui-claim__statement">
+              The current local quality gate found no confirmed AI-slop or dead-code defects, and
+              the unit, non-pixel Playwright, plus packed-example browser suites passed.
+            </p>
+            <p class="ui-claim__scope">
+              Scope: local deterministic scans, unit/contract tests, real-browser non-pixel suite,
+              and packed-example suite run on 2026-06-12.
+            </p>
+            <p class="ui-claim__status">Evidence state: supported.</p>
+            <p class="ui-claim__basis">
+              Basis: the fresh AI-slop follow-up reported 12 helper checks passed, 0 failed; the
+              native `knip` dead-code check passed; `npm test` passed 245 tests; 597 non-pixel
+              Playwright tests passed with 9 intentional browser-feature skips; 9 packed example
+              builds and 7 example browser smokes passed via `npm run test:examples`. Follow-up
+              cleanup added splitter declaration freshness and reduced repeated script server/smoke
+              helpers without introducing new failures.
+            </p>
+            <p class="ui-claim__refs">
+              Source: <a class="ui-citation" href="#source-quality-gates">S3</a>
+            </p>
+          </article>
+        </article>
+
+        <article
+          class="ui-report__finding ui-report__finding--minor"
+          aria-labelledby="finding-docs"
+        >
+          <h3 class="ui-report__finding-title" id="finding-docs">
+            Minor finding: documentation drift found during the audit was fixed
+          </h3>
+          <p class="ui-report__finding-claim">
+            Claim: `docs/theming.md` still described the dark `--accent-strong` mix as 84% white,
+            and controlled-modal docs/generated metadata still described focus management as
+            host-owned or absent even though `initModal()` now owns the inert trap, focus-return,
+            and Escape signal. Later in the same audit, `CHANGELOG.md` also missed the unreleased
+            adoption/gate work, `ROADMAP.md` still claimed reconciliation against `0.6.5`, and
+            adapter-contract docs still described parts of the surface as React/Solid/Qwik-only.
+          </p>
+          <p class="ui-report__finding-impact">
+            Impact: both issues were small but public, because theming and modal behavior are
+            shipped contract surfaces.
+          </p>
+          <p class="ui-report__finding-remediation">
+            Remediation: the theming doc now says 83% black / 80% white; the generated reference,
+            type comments, classes metadata, and usage table now state that `ui.modal({ open: true
+            })` is visual state only and `initModal()` provides controlled-modal focus management
+            while the host still owns visibility, backdrop, and top-layer stacking. The unreleased
+            changelog and roadmap now record the adoption bridges and local verification gates; the
+            adapter docs now include Svelte/Vue where those adapters are part of today's contract,
+            and the Vue adapter has a derived directive-surface regression test.
+          </p>
+          <article
+            class="ui-claim ui-claim--supported"
+            id="claim-doc-fix"
+            data-risk="low"
+            data-source-ids="source-repo-inventory"
+          >
+            <p class="ui-claim__statement">
+              The confirmed documentation, changelog, and roadmap drifts found in this pass were
+              fixed locally.
+            </p>
+            <p class="ui-claim__scope">
+              Scope: `docs/theming.md` accent-strength wording; controlled-modal usage/reference,
+              type-comment, and classes-metadata wording; adapter-contract docs; `CHANGELOG.md`
+              unreleased notes; and `ROADMAP.md` reconciliation status.
+            </p>
+            <p class="ui-claim__status">Evidence state: supported.</p>
+            <p class="ui-claim__basis">
+              Basis: local generated token artifacts, behavior docs, generated metadata, adapter
+              docs, changelog, and roadmap were compared; the affected docs, generator sources, and
+              derived adapter tests were patched, then regenerated where applicable.
+            </p>
+            <p class="ui-claim__refs">
+              Source: <a class="ui-citation" href="#source-repo-inventory">S1</a>
+            </p>
+          </article>
+        </article>
+      </section>
+
+      <section id="evidence" class="ui-report__section">
+        <h2 class="ui-report__section-head">Evidence ledger</h2>
+        <div class="ui-evidence-ledger">
+          <div class="ui-table-wrap">
+            <table class="ui-table ui-table--dense ui-table--break-anywhere">
+              <caption>
+                Claim, evidence, source, and caveat ledger
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Claim</th>
+                  <th scope="col">Evidence</th>
+                  <th scope="col">Source</th>
+                  <th scope="col">Caveat</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="#claim-tailwind-v4">C1</a></td>
+                  <td>
+                    Exports/docs now include a Tailwind v4 bridge; Tailwind v4 docs center CSS theme
+                    variables.
+                  </td>
+                  <td>
+                    <a class="ui-citation" href="#source-repo-inventory">S1</a>,
+                    <a class="ui-citation" href="#source-tailwind-v4">S4</a>
+                  </td>
+                  <td>Implementation should keep the bridge CSS-only and optional.</td>
+                </tr>
+                <tr>
+                  <td><a href="#claim-svelte-vue">C2</a></td>
+                  <td>
+                    React/Solid/Qwik/Svelte/Vue adapters exist; Vue has derived directive-surface
+                    coverage; Vue and SvelteKit examples smoke through packed consumers.
+                  </td>
+                  <td>
+                    <a class="ui-citation" href="#source-repo-inventory">S1</a>,
+                    <a class="ui-citation" href="#source-roadmap-architecture">S2</a>
+                  </td>
+                  <td>Adapters must not become component packages.</td>
+                </tr>
+                <tr>
+                  <td><a href="#claim-token-handoff">C3</a></td>
+                  <td>
+                    DTCG and Figma Variables exports exist locally; token standards and Figma APIs
+                    support cross-tool handoff.
+                  </td>
+                  <td>
+                    <a class="ui-citation" href="#source-repo-inventory">S1</a>,
+                    <a class="ui-citation" href="#source-token-standards">S7</a>
+                  </td>
+                  <td>
+                    Figma API write access requires Enterprise permissions; ship local artifacts and
+                    docs first.
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#claim-scope">C4</a></td>
+                  <td>
+                    Roadmap says the report/provenance lane is strategic and rejects several
+                    broad-kit dependencies.
+                  </td>
+                  <td>
+                    <a class="ui-citation" href="#source-roadmap-architecture">S2</a>,
+                    <a class="ui-citation" href="#source-competitors">S6</a>
+                  </td>
+                  <td>Real app demand can still promote recipes into primitives later.</td>
+                </tr>
+                <tr>
+                  <td><a href="#claim-background-job">C5</a></td>
+                  <td>
+                    The state CSS, generated classes/types, docs, demo, and Playwright spec now
+                    cover durable background-job rows.
+                  </td>
+                  <td>
+                    <a class="ui-citation" href="#source-repo-inventory">S1</a>,
+                    <a class="ui-citation" href="#source-quality-gates">S3</a>,
+                    <a class="ui-citation" href="#source-progress-patterns">S8</a>
+                  </td>
+                  <td>
+                    The host still owns polling, retries, queue position, cancellation, and partial
+                    failure semantics.
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#claim-workbench-splitter">C6</a></td>
+                  <td>
+                    Workbench CSS, behavior exports, generated metadata, docs, demo, framework
+                    bindings, and browser specs now cover accessible split panes.
+                  </td>
+                  <td>
+                    <a class="ui-citation" href="#source-repo-inventory">S1</a>,
+                    <a class="ui-citation" href="#source-quality-gates">S3</a>,
+                    <a class="ui-citation" href="#source-splitter-accessibility">S9</a>
+                  </td>
+                  <td>
+                    The host still owns pane content, persistence, collapse policy, saved layout
+                    state, and any drag/drop semantics.
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#claim-quality">C7</a></td>
+                  <td>
+                    Dead-code and deep deterministic AI-slop helper reports show passes and no
+                    failures; `npm test`, `npm run test:e2e:nonpixel`, and `npm run test:examples`
+                    passed.
+                  </td>
+                  <td><a class="ui-citation" href="#source-quality-gates">S3</a></td>
+                  <td>
+                    Mutation and external reviewer were intentionally not run in this local-only
+                    pass; CodeQL was triaged separately in the AI-slop pass.
+                  </td>
+                </tr>
+                <tr>
+                  <td><a href="#claim-doc-fix">C8</a></td>
+                  <td>
+                    The theming doc, controlled-modal docs/generated metadata, adapter docs,
+                    changelog, and roadmap now match the audited implementation.
+                  </td>
+                  <td><a class="ui-citation" href="#source-repo-inventory">S1</a></td>
+                  <td>
+                    Final `npm run check`, focused generation gates, `npm test`, `npm run
+                    test:e2e:nonpixel`, and `npm run test:examples` passed after the edits.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="actions" class="ui-report__section">
+        <h2 class="ui-report__section-head">Actions</h2>
+        <div class="ui-report__actions">
+          <!-- verifier: a titled action row needs owner, due/recheck date,
+               status, and success criteria — keep all parts when you copy
+               this row for more actions -->
+          <article class="ui-report__action">
+            <p class="ui-report__action-title">
+              Implement Tailwind v4 CSS bridge and packed example.
+            </p>
+            <p class="ui-report__action-owner">Owner: maintainer</p>
+            <p class="ui-report__action-due">
+              Due/recheck: <time datetime="2026-06-19">2026-06-19</time>
+            </p>
+            <p class="ui-report__action-status">Status: complete</p>
+            <p class="ui-report__action-priority">Priority: high</p>
+            <p class="ui-report__action-criteria">
+              Success criteria: `@ponchia/ui/tailwind` exports a CSS-first `@theme inline` bridge;
+              docs cover layer order, variants, `@reference`, and `@source`;
+              `examples/tailwind-vite` builds from `npm pack` and browser-smokes in CI.
+            </p>
+            <p class="ui-report__action-source">
+              Source: <a class="ui-citation" href="#claim-tailwind-v4">C1</a>
+            </p>
+          </article>
+
+          <article class="ui-report__action">
+            <p class="ui-report__action-title">
+              Add Svelte and Vue lifecycle adapters over behaviors.
+            </p>
+            <p class="ui-report__action-owner">Owner: maintainer</p>
+            <p class="ui-report__action-due">
+              Due/recheck: <time datetime="2026-07-03">2026-07-03</time>
+            </p>
+            <p class="ui-report__action-status">Status: complete</p>
+            <p class="ui-report__action-priority">Priority: high</p>
+            <p class="ui-report__action-criteria">
+              Success criteria: `@ponchia/ui/svelte` and `@ponchia/ui/vue` expose lifecycle glue
+              only; the SvelteKit example stops manual behavior wiring; a Vue Vite example builds
+              from the tarball and has a browser smoke path.
+            </p>
+            <p class="ui-report__action-source">
+              Source: <a class="ui-citation" href="#claim-svelte-vue">C2</a>
+            </p>
+          </article>
+
+          <article class="ui-report__action">
+            <p class="ui-report__action-title">
+              Create local Figma Variables handoff docs and artifact.
+            </p>
+            <p class="ui-report__action-owner">Owner: maintainer</p>
+            <p class="ui-report__action-due">
+              Due/recheck: <time datetime="2026-07-10">2026-07-10</time>
+            </p>
+            <p class="ui-report__action-status">Status: complete</p>
+            <p class="ui-report__action-priority">Priority: medium</p>
+            <p class="ui-report__action-criteria">
+              Success criteria: generated Figma Variables mapping derives from
+              `tokens/tokens.dtcg.json`, is drift-checked, and docs explain permission limits and
+              manual import/export flow.
+            </p>
+            <p class="ui-report__action-source">
+              Source: <a class="ui-citation" href="#claim-token-handoff">C3</a>
+            </p>
+          </article>
+
+          <article class="ui-report__action">
+            <p class="ui-report__action-title">Add persistent background-job state primitive.</p>
+            <p class="ui-report__action-owner">Owner: maintainer</p>
+            <p class="ui-report__action-due">
+              Due/recheck: <time datetime="2026-06-26">2026-06-26</time>
+            </p>
+            <p class="ui-report__action-status">Status: complete</p>
+            <p class="ui-report__action-priority">Priority: medium</p>
+            <p class="ui-report__action-criteria">
+              Success criteria: `.ui-job` provides queued/running/blocked/failed/complete state
+              rows, determinate progress via `--job-progress`, forced-colors visibility,
+              documentation, demo markup, generated class metadata, and browser tests.
+            </p>
+            <p class="ui-report__action-source">
+              Source: <a class="ui-citation" href="#claim-background-job">C5</a>
+            </p>
+          </article>
+
+          <article class="ui-report__action">
+            <p class="ui-report__action-title">
+              Add accessible workbench splitter primitive and behavior.
+            </p>
+            <p class="ui-report__action-owner">Owner: maintainer</p>
+            <p class="ui-report__action-due">
+              Due/recheck: <time datetime="2026-06-26">2026-06-26</time>
+            </p>
+            <p class="ui-report__action-status">Status: complete</p>
+            <p class="ui-report__action-priority">Priority: medium</p>
+            <p class="ui-report__action-criteria">
+              Success criteria: `.ui-splitter` provides vertical/horizontal split panes, documented
+              separator ARIA, keyboard and pointer resizing through `initSplitter`, framework
+              binding parity, generated class/contract metadata, demo coverage, and
+              Chromium/Firefox/WebKit non-pixel tests.
+            </p>
+            <p class="ui-report__action-source">
+              Source: <a class="ui-citation" href="#claim-workbench-splitter">C6</a>
+            </p>
+          </article>
+
+          <article class="ui-report__action">
+            <p class="ui-report__action-title">Keep broad components recipe-only until demanded.</p>
+            <p class="ui-report__action-owner">Owner: maintainer</p>
+            <p class="ui-report__action-due">
+              Due/recheck: <time datetime="2026-07-10">2026-07-10</time>
+            </p>
+            <p class="ui-report__action-status">Status: open</p>
+            <p class="ui-report__action-priority">Priority: medium</p>
+            <p class="ui-report__action-criteria">
+              Success criteria: no Storybook dependency, no per-framework component package, no
+              chart engine, no virtualized data-grid, and no second accent are introduced while
+              completing the adoption bridge work.
+            </p>
+            <p class="ui-report__action-source">
+              Source: <a class="ui-citation" href="#claim-scope">C4</a>
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="sources" class="ui-report__section ui-report__section--unnumbered">
+        <h2 class="ui-report__section-head">Sources</h2>
+        <p class="ui-provenance">
+          <span class="ui-provenance__item ui-src--verified">S1 verified</span>
+          <span class="ui-provenance__item ui-src--verified">S2 verified</span>
+          <span class="ui-provenance__item ui-src--verified">S3 verified</span>
+          <span class="ui-provenance__item ui-src--verified">S4-S9 verified</span>
+          <span class="ui-provenance__item">8 claims mapped</span>
+        </p>
+        <!-- verifier: every source card needs a stable id, a ui-src--* trust
+             class, AND that trust word (verified/reviewed/…) repeated in the
+             card's text -->
+        <article class="ui-source-card ui-src--verified" id="source-repo-inventory">
+          <h3 class="ui-source-card__title">Local repository/package inventory</h3>
+          <p class="ui-source-card__origin">
+            Verified: `package.json`, exported paths, `docs/interop/tailwind.md`, examples,
+            framework bindings, token artifacts, size report, the local theming-doc patch,
+            controlled-modal documentation/generator patches, adapter-doc cleanup, the derived Vue
+            directive-surface test, background-job state primitive/docs/demo/tests, workbench
+            splitter primitive/docs/demo/tests, splitter declaration freshness, shared static-server
+            helper cleanup, smoke assertion helper cleanup, changelog/roadmap reconciliation, and
+            local browser-gate script docs.
+          </p>
+          <time class="ui-source-card__time" datetime="2026-06-12T20:23:35Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            Observed 45 CSS leaf files, 21 delegated behavior exports, 634 generated classes, 62 CSS
+            custom properties, 39 behavior attributes, 9 consumer examples, Tailwind/Svelte/Vue
+            adapter exports, and a Figma Variables artifact. The state lane now includes `.ui-job`
+            with durable async status modifiers; the workbench lane now includes `.ui-splitter` with
+            an ARIA separator behavior.
+          </p>
+        </article>
+
+        <article class="ui-source-card ui-src--verified" id="source-roadmap-architecture">
+          <h3 class="ui-source-card__title">Local architecture and roadmap doctrine</h3>
+          <p class="ui-source-card__origin">
+            Verified: `CONTRIBUTING.md`, `docs/architecture.md`, and `ROADMAP.md` read locally.
+          </p>
+          <time class="ui-source-card__time" datetime="2026-06-12T17:02:57Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            The project is CSS-first, framework-agnostic, zero-runtime by default, and explicitly
+            avoids Storybook dependency, per-framework component packages, bundled Style Dictionary,
+            chart engine, virtualized data-grid, and second accent.
+          </p>
+        </article>
+
+        <article class="ui-source-card ui-src--verified" id="source-quality-gates">
+          <h3 class="ui-source-card__title">Local deterministic quality scans</h3>
+          <p class="ui-source-card__origin">
+            Verified: repo-local reports at
+            `code-quality-audits/2026-06-12-expansion-research/dead-code/report.md`,
+            `code-quality-audits/2026-06-12-expansion-research/ai-slop/report.md`, latest follow-up
+            reports under `code-quality-audits/2026-06-12-ai-slop-followup-3/` and
+            `code-quality-audits/2026-06-12-dead-code-followup-3/`, plus the named unit, non-pixel
+            Playwright, and packed-example runs on 2026-06-12.
+          </p>
+          <time class="ui-source-card__time" datetime="2026-06-12T20:23:35Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            Native `knip` dead-code passed. Deep deterministic AI-slop pass reported 12 passes, 0
+            failures, and 4 skipped checks; skips were no typecheck script, no raw knip after native
+            coverage, no dependency-cruiser config, and no OpenAPI/Spectral path. `npm run check`
+            passed. `npm test` passed 245 tests. Non-pixel Playwright coverage passed 597 tests with
+            9 intentional skips; the packed tarball example gate built 9 examples and browser-smoked
+            7. Source-scoped Trivy was clean; jscpd script clones were reduced from 13 to 11 after
+            extracting shared static-server and smoke assertion helpers.
+          </p>
+        </article>
+
+        <article class="ui-source-card ui-src--verified" id="source-tailwind-v4">
+          <h3 class="ui-source-card__title">Tailwind CSS v4 official announcement</h3>
+          <p class="ui-source-card__origin">
+            Verified: official Tailwind blog, retrieved 2026-06-12.
+            <a href="https://tailwindcss.com/blog/tailwindcss-v4">Tailwind CSS v4.0</a>
+          </p>
+          <time class="ui-source-card__time" datetime="2026-06-12T17:02:57Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            Tailwind v4 emphasizes modern CSS, first-party Vite integration, automatic content
+            detection, built-in imports, CSS-first configuration, and CSS theme variables.
+          </p>
+        </article>
+
+        <article class="ui-source-card ui-src--verified" id="source-tailwind-directives">
+          <h3 class="ui-source-card__title">Tailwind CSS theme/directive/source docs</h3>
+          <p class="ui-source-card__origin">
+            Verified: official Tailwind docs for theme variables, directives, source detection, and
+            upgrade requirements, retrieved 2026-06-12.
+            <a href="https://tailwindcss.com/docs/theme">Theme</a> ·
+            <a href="https://tailwindcss.com/docs/functions-and-directives">Directives</a> ·
+            <a href="https://tailwindcss.com/docs/detecting-classes-in-source-files"
+              >Source detection</a
+            >
+            ·
+            <a href="https://tailwindcss.com/docs/upgrade-guide">Upgrade guide</a>
+          </p>
+          <time class="ui-source-card__time" datetime="2026-06-12T17:02:57Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            The docs map `@theme` namespaces to utilities, recommend `@theme inline` for variables
+            that reference other variables, document `@custom-variant` and `@reference`, and define
+            modern browser requirements.
+          </p>
+        </article>
+
+        <article class="ui-source-card ui-src--verified" id="source-competitors">
+          <h3 class="ui-source-card__title">Comparable design-system adoption surfaces</h3>
+          <p class="ui-source-card__origin">
+            Verified: public docs for Radix Themes, shadcn/ui, Ark UI, Shoelace, and React Aria,
+            retrieved 2026-06-12.
+            <a href="https://www.radix-ui.com/themes/docs/overview/styling">Radix Themes</a> ·
+            <a href="https://ui.shadcn.com/docs/theming">shadcn/ui</a> ·
+            <a href="https://ark-ui.com/">Ark UI</a> ·
+            <a href="https://shoelace.style/">Shoelace</a> ·
+            <a href="https://react-aria.adobe.com/styling">React Aria</a>
+          </p>
+          <time class="ui-source-card__time" datetime="2026-06-12T17:02:57Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            The market pattern is clear: token variables, Tailwind-aware states, and cross-framework
+            adoption paths matter. Bronto should copy those adoption affordances without copying the
+            large component-catalog strategy.
+          </p>
+        </article>
+
+        <article class="ui-source-card ui-src--verified" id="source-token-standards">
+          <h3 class="ui-source-card__title">Token exchange and Figma Variables standards</h3>
+          <p class="ui-source-card__origin">
+            Verified: DTCG 2025.10 format report and Figma Variables REST API docs, retrieved
+            2026-06-12.
+            <a href="https://www.designtokens.org/TR/2025.10/format/">DTCG format</a> ·
+            <a href="https://developers.figma.com/docs/rest-api/variables/">Figma Variables API</a>
+          </p>
+          <time class="ui-source-card__time" datetime="2026-06-12T17:02:57Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            DTCG is a stable exchange format for design-token data. Figma Variables API
+            documentation says variables can integrate with CI and sync a design-system source of
+            truth, subject to enterprise seat and token-scope requirements.
+          </p>
+        </article>
+
+        <article class="ui-source-card ui-src--verified" id="source-progress-patterns">
+          <h3 class="ui-source-card__title">Progress and status pattern references</h3>
+          <p class="ui-source-card__origin">
+            Verified: Atlassian, Carbon, Material Design 3, Material Web, and background-work UX
+            references retrieved 2026-06-12.
+            <a href="https://atlassian.design/components/progress-indicator">Atlassian progress</a>
+            ·
+            <a href="https://carbondesignsystem.com/components/progress-indicator/usage/"
+              >Carbon progress</a
+            >
+            ·
+            <a href="https://carbondesignsystem.com/patterns/status-indicator-pattern/"
+              >Carbon status</a
+            >
+            ·
+            <a href="https://m3.material.io/components/progress-indicators/overview"
+              >Material progress</a
+            >
+            ·
+            <a href="https://material-web.dev/components/progress/">Material Web progress</a>
+          </p>
+          <time class="ui-source-card__time" datetime="2026-06-12T19:36:06Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            The common pattern is explicit progress/status feedback with accessible semantics.
+            Bronto's local implementation adapts that into a persistent CSS state row while keeping
+            the async state machine in the host.
+          </p>
+        </article>
+
+        <article class="ui-source-card ui-src--verified" id="source-splitter-accessibility">
+          <h3 class="ui-source-card__title">Accessible splitter and resize-pane references</h3>
+          <p class="ui-source-card__origin">
+            Verified: WAI-ARIA APG Window Splitter, MDN separator role, React Resizable Panels, Salt
+            Splitter accessibility, Radix Vue Splitter, and shadcn Resizable docs retrieved
+            2026-06-12.
+            <a href="https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/">WAI-ARIA APG</a>
+            ·
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/separator_role"
+              >MDN separator</a
+            >
+            ·
+            <a href="https://github.com/bvaughn/react-resizable-panels">React Resizable Panels</a>
+            ·
+            <a href="https://www.saltdesignsystem.com/salt/components/splitter/accessibility"
+              >Salt Splitter</a
+            >
+          </p>
+          <time class="ui-source-card__time" datetime="2026-06-12T20:06:03Z">2026-06-12</time>
+          <p class="ui-source-card__excerpt">
+            The shared shape is a focusable separator that exposes orientation, value bounds and
+            current value, supports keyboard resizing, and leaves persistence/content state to the
+            host application.
+          </p>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

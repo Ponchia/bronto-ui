@@ -26,6 +26,7 @@ import { existsSync, mkdirSync } from 'node:fs';
 import { basename, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createDemoServer, root } from './serve.mjs';
+import { log } from './lib/stdio.mjs';
 
 // How long to wait for a report's own `data-report-ready` readiness signal
 // (set by module-script reports when their figures finish rendering).
@@ -147,7 +148,7 @@ async function main(argv) {
         printBackground: true, // required, or chart fills/swatches drop out
         margin: { top: '14mm', bottom: '14mm', left: '14mm', right: '14mm' },
       });
-      console.log(`✓ ${out}`);
+      log(`✓ ${out}`);
     }
   } finally {
     await browser.close();

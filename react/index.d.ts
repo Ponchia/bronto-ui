@@ -25,6 +25,7 @@ export function useSpotlight(opts?: BrontoBindingOptsResolver): void;
 export function useCrosshair(opts?: BrontoBindingOptsResolver): void;
 export function useCommand(opts?: BrontoBindingOptsResolver): void;
 export function useSources(opts?: BrontoBindingOptsResolver): void;
+export function useSplitter(opts?: BrontoBindingOptsResolver): void;
 export function useToast(): (message: string, opts?: ToastOpts) => Cleanup;
 export { applyStoredTheme };
 export type Cleanup = import("../behaviors/index.js").Cleanup;

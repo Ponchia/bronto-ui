@@ -39,6 +39,7 @@ client navigation.
 
 - [Astro](getting-started/astro.md)
 - [SvelteKit](getting-started/sveltekit.md)
+- [Vue](getting-started/vue.md)
 - [Vanilla / Vite / plain HTML](getting-started/vanilla.md)
 - [React / Solid / Qwik](getting-started/react-solid.md) (optional thin bindings,
   not component packages)

@@ -138,7 +138,7 @@ export interface DotbarOpts {
 }
 export interface ModalOpts {
   drawer?: boolean;
-  /** Controlled non-dialog usage — adds the is-open state (focus-trap is yours). */
+  /** Controlled non-dialog usage — adds only the is-open state; pair with initModal for focus management. */
   open?: boolean;
 }
 export interface TabOpts {
@@ -249,6 +249,12 @@ export interface StateOpts {
   /** Pulse the indicator for an in-progress state (saving / syncing / retrying). Reduced-motion-safe. */
   busy?: boolean;
 }
+export type JobState = 'queued' | 'running' | 'blocked' | 'failed' | 'complete';
+export interface JobOpts {
+  /** Persistent background-job state. Pair with written status text; tone is only a scanning aid. */
+  state?: JobState;
+  compact?: boolean;
+}
 export interface OriginLabelOpts {
   /** Accent-tint the label for AI/model-generated origin (vs a neutral tag). */
   ai?: boolean;
@@ -331,6 +337,7 @@ export interface Ui {
   sparkBar(opts?: SparkBarOpts): string;
   bulletMeasure(opts?: BulletMeasureOpts): string;
   state(opts?: StateOpts): string;
+  job(opts?: JobOpts): string;
   originLabel(opts?: OriginLabelOpts): string;
 }
 

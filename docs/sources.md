@@ -44,7 +44,7 @@ host and add a tone. It draws a small pill with a leading trust dot:
 
 ```html
 <span class="ui-src ui-src--verified">Verified</span>
-<span class="ui-src ui-src--generated">AI-generated</span>
+<span class="ui-src ui-src--generated">Machine-generated</span>
 <span class="ui-src ui-src--stale">Stale · 14d</span>
 ```
 

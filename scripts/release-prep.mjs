@@ -24,6 +24,7 @@ import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { shippedDocs } from './lib/shipped-docs.mjs';
+import { log } from './lib/stdio.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -67,7 +68,7 @@ function main(argv) {
     cwd: root,
     stdio: 'inherit',
   });
-  console.log(`✓ package.json + lock: ${from} → ${version}`);
+  log(`✓ package.json + lock: ${from} → ${version}`);
 
   // 2. CHANGELOG heading (stable releases only)
   const clPath = resolve(root, 'CHANGELOG.md');
@@ -76,9 +77,9 @@ function main(argv) {
   const dated = isPrerelease ? cl : dateChangelogHeading(cl, version, isoDate);
   if (dated !== cl) {
     writeFileSync(clPath, dated);
-    console.log(`✓ CHANGELOG.md: "## Unreleased — ${version}" → "## ${version} — ${isoDate}"`);
+    log(`✓ CHANGELOG.md: "## Unreleased — ${version}" → "## ${version} — ${isoDate}"`);
   } else {
-    console.log(
+    log(
       isPrerelease
         ? '· CHANGELOG.md: prerelease — base heading left undated (check:release allows it)'
         : `· CHANGELOG.md: no "## Unreleased — ${version}" heading found — verify it is already dated`,
@@ -102,10 +103,10 @@ function main(argv) {
     if (next !== text) {
       writeFileSync(resolve(root, rel), next);
       repinned++;
-      console.log(`✓ re-pinned literals in ${rel}`);
+      log(`✓ re-pinned literals in ${rel}`);
     }
   }
-  if (!repinned) console.log('· no stale @ponchia/ui@X.Y.Z literals found');
+  if (!repinned) log('· no stale @ponchia/ui@X.Y.Z literals found');
 
   // 4. Issue-template version placeholder (check:public-metadata gates it).
   const bugPath = resolve(root, '.github/ISSUE_TEMPLATE/bug_report.yml');
@@ -113,12 +114,10 @@ function main(argv) {
   const bumped = bug.replace(`placeholder: '${from}'`, `placeholder: '${version}'`);
   if (bumped !== bug) {
     writeFileSync(bugPath, bumped);
-    console.log('✓ bumped the bug-report version placeholder');
+    log('✓ bumped the bug-report version placeholder');
   }
 
-  console.log(
-    '\nNext: review the diff, run `npm run check && npm test`, then follow docs/release.md.',
-  );
+  log('\nNext: review the diff, run `npm run check && npm test`, then follow docs/release.md.');
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

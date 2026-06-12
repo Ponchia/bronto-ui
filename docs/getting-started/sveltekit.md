@@ -35,7 +35,26 @@ there, not in a component:
 </script>
 ```
 
-## 3. Behaviors in `onMount` (with cleanup)
+## 3. Behaviors as Svelte actions
+
+The optional `@ponchia/ui/svelte` entrypoint exports Svelte actions over the
+same vanilla behavior layer. Attach the action to the subtree that owns the
+markup:
+
+```svelte
+<script>
+  import { themeToggle, dialog } from '@ponchia/ui/svelte';
+</script>
+
+<main use:themeToggle use:dialog>
+  <button class="ui-button" data-bronto-theme-toggle>Toggle theme</button>
+</main>
+```
+
+Actions scope delegated behavior to their node and clean up automatically when
+the component is destroyed or the action parameter changes.
+
+## 4. Behaviors in `onMount` (with cleanup)
 
 `init*` returns a cleanup; SvelteKit re-runs components on client-side
 navigation, so always return it from `onMount`:

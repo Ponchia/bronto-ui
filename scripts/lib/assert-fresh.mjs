@@ -12,6 +12,7 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { log } from './stdio.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -51,5 +52,5 @@ export function assertFresh(artifacts, { label, buildHint }) {
     for (const e of errors) console.error(`  - ${e}`);
     process.exit(1);
   }
-  console.log(`✓ ${label}`);
+  log(`✓ ${label}`);
 }

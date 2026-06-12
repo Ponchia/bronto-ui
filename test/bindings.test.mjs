@@ -197,18 +197,128 @@ test('Solid useDisclosure wires the real behavior end-to-end', () => {
   });
 });
 
+test('Svelte action resolves node roots and cleans up on destroy/update', async () => {
+  const host = mount();
+  host.id = 'scoped-svelte';
+  const { createBrontoAction } = await import('../svelte/index.js');
+  const calls = [];
+  const action = createBrontoAction((opts) => {
+    calls.push(opts?.root?.id);
+    return () => calls.push('cleanup');
+  });
+
+  const instance = action(host);
+  assert.deepEqual(calls, ['scoped-svelte']);
+  instance.update({ root: host });
+  assert.deepEqual(calls, ['scoped-svelte', 'cleanup', 'scoped-svelte']);
+  instance.destroy();
+  assert.deepEqual(calls, ['scoped-svelte', 'cleanup', 'scoped-svelte', 'cleanup']);
+});
+
+test('Svelte useDisclosure action wires the real behavior end-to-end', async () => {
+  const host = mount();
+  host.innerHTML =
+    '<button type="button" id="trig" data-bronto-disclosure aria-controls="panel" aria-expanded="false">Toggle</button><div id="panel" hidden>Panel</div>';
+  const { useDisclosure } = await import('../svelte/index.js');
+  const action = useDisclosure(host);
+
+  assert.equal(document.getElementById('panel').hidden, true, 'panel starts hidden');
+  document
+    .getElementById('trig')
+    .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(document.getElementById('trig').getAttribute('aria-expanded'), 'true');
+  assert.equal(document.getElementById('panel').hidden, false, 'useDisclosure opened the panel');
+  action.destroy();
+});
+
+test('Vue directive resolves element roots and cleans up on beforeUnmount/update', async () => {
+  const host = mount();
+  host.id = 'scoped-vue';
+  const { createBrontoDirective } = await import('../vue/index.js');
+  const calls = [];
+  const directive = createBrontoDirective((opts) => {
+    calls.push(opts?.root?.id);
+    return () => calls.push('cleanup');
+  });
+
+  directive.mounted(host, { value: undefined });
+  assert.deepEqual(calls, ['scoped-vue']);
+  directive.updated(host, { value: { root: host }, oldValue: undefined });
+  assert.deepEqual(calls, ['scoped-vue', 'cleanup', 'scoped-vue']);
+  directive.beforeUnmount(host);
+  assert.deepEqual(calls, ['scoped-vue', 'cleanup', 'scoped-vue', 'cleanup']);
+});
+
+test('Vue directives on the same element keep independent cleanups', async () => {
+  const host = mount();
+  const { createBrontoDirective } = await import('../vue/index.js');
+  const calls = [];
+  const one = createBrontoDirective(() => {
+    calls.push('one:start');
+    return () => calls.push('one:cleanup');
+  });
+  const two = createBrontoDirective(() => {
+    calls.push('two:start');
+    return () => calls.push('two:cleanup');
+  });
+
+  one.mounted(host, { value: undefined });
+  two.mounted(host, { value: undefined });
+  assert.deepEqual(calls, ['one:start', 'two:start']);
+
+  one.updated(host, { value: { marker: true }, oldValue: undefined });
+  assert.deepEqual(calls, ['one:start', 'two:start', 'one:cleanup', 'one:start']);
+
+  two.beforeUnmount(host);
+  assert.deepEqual(calls, ['one:start', 'two:start', 'one:cleanup', 'one:start', 'two:cleanup']);
+
+  one.beforeUnmount(host);
+  assert.deepEqual(calls, [
+    'one:start',
+    'two:start',
+    'one:cleanup',
+    'one:start',
+    'two:cleanup',
+    'one:cleanup',
+  ]);
+});
+
+test('Vue vDisclosure directive wires the real behavior end-to-end', async () => {
+  const host = mount();
+  host.innerHTML =
+    '<button type="button" id="trig" data-bronto-disclosure aria-controls="panel" aria-expanded="false">Toggle</button><div id="panel" hidden>Panel</div>';
+  const { vDisclosure } = await import('../vue/index.js');
+  vDisclosure.mounted(host, { value: undefined });
+
+  assert.equal(document.getElementById('panel').hidden, true, 'panel starts hidden');
+  document
+    .getElementById('trig')
+    .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(document.getElementById('trig').getAttribute('aria-expanded'), 'true');
+  assert.equal(document.getElementById('panel').hidden, false, 'vDisclosure opened the panel');
+  vDisclosure.beforeUnmount(host);
+});
+
+function expectedLifecycleSurface(barrel) {
+  return Object.keys(barrel)
+    .filter((k) => /^init[A-Z]/.test(k) || k === 'dismissible')
+    .map((k) => (k === 'dismissible' ? 'Dismissible' : k.slice(4)))
+    .sort();
+}
+
 // Qwik binding. A full render-through-Qwik is proven by building
 // examples/qwik-vite through the real optimizer (CI examples job); here we
 // assert the module surface and that the hooks are genuinely wired to Qwik's
 // client lifecycle (not silent no-ops) — deterministic, no optimizer needed.
-test('binding hook surface is identical across react/solid/qwik (derived, cannot go stale)', async () => {
-  const [react, solid, qwik] = await Promise.all([
+test('binding hook surface is identical across react/solid/qwik/svelte (derived, cannot go stale)', async () => {
+  const [react, solid, qwik, svelte] = await Promise.all([
     import('../react/index.js'),
     import('../solid/index.js'),
     import('../qwik/index.js'),
+    import('../svelte/index.js'),
   ]);
   // Derive the hook set from each module rather than hard-coding it — a new
-  // behavior gets a `use*` hook in all three or this fails (moa caught the old
+  // behavior gets a `use*` hook in every hook-style binding or this fails (moa caught the old
   // hard-coded list silently missing the five analytical hooks).
   const surface = (m) =>
     Object.keys(m)
@@ -218,22 +328,21 @@ test('binding hook surface is identical across react/solid/qwik (derived, cannot
   assert.ok(reactHooks.length >= 18, `expected the full hook surface, got ${reactHooks.length}`);
   assert.deepEqual(surface(solid), reactHooks, 'solid hook surface matches react');
   assert.deepEqual(surface(qwik), reactHooks, 'qwik hook surface matches react');
+  assert.deepEqual(surface(svelte), reactHooks, 'svelte hook surface matches react');
 
-  // COVERAGE, not just agreement: the three agreeing with each other can't catch
-  // a NEW behavior that none of them wrapped. Derive the expected hooks from the
-  // behaviors barrel itself — every `initX` export must have a `useX` in all
-  // three bindings — so a 19th behavior with no binding hook fails here. (The
-  // imperative `toast` / one-shot `applyStoredTheme` are not `init*` and so are
-  // intentionally not required as lifecycle hooks; `useToast` is asserted above.)
+  // COVERAGE, not just agreement: the hook-style bindings agreeing with each
+  // other can't catch a NEW behavior that none of them wrapped. Derive the
+  // expected hooks from the behaviors barrel itself — every delegated behavior
+  // initializer must have a `use*` hook in every hook-style binding. (The
+  // imperative `toast` / one-shot `applyStoredTheme` are intentionally not
+  // lifecycle hooks; `useToast` is asserted above.)
   const barrel = await import('../behaviors/index.js');
-  const expectedHooks = Object.keys(barrel)
-    .filter((k) => /^init[A-Z]/.test(k))
-    .map((k) => `use${k.slice(4)}`)
-    .sort();
+  const expectedHooks = expectedLifecycleSurface(barrel).map((name) => `use${name}`);
   for (const [name, m] of [
     ['react', react],
     ['solid', solid],
     ['qwik', qwik],
+    ['svelte', svelte],
   ]) {
     const have = new Set(surface(m));
     const missing = expectedHooks.filter((h) => !have.has(h));
@@ -244,8 +353,8 @@ test('binding hook surface is identical across react/solid/qwik (derived, cannot
     );
   }
 
-  // Every hook is a real function and the convenience exports are present in all three.
-  for (const m of [react, solid, qwik]) {
+  // Every hook is a real function and the convenience exports are present in every hook-style binding.
+  for (const m of [react, solid, qwik, svelte]) {
     for (const name of reactHooks) assert.equal(typeof m[name], 'function', `${name} exported`);
     for (const name of ['applyStoredTheme', 'cls', 'ui', 'cx', 'useToast'])
       assert.ok(m[name], `convenience export ${name} present`);
@@ -258,12 +367,58 @@ test('binding hook surface is identical across react/solid/qwik (derived, cannot
   assert.equal(typeof toast('hi'), 'function');
 });
 
+test('Vue directive surface covers every delegated behavior (derived, cannot go stale)', async () => {
+  const [vue, barrel] = await Promise.all([
+    import('../vue/index.js'),
+    import('../behaviors/index.js'),
+  ]);
+  const expectedNames = expectedLifecycleSurface(barrel);
+  const expectedExports = expectedNames.map((name) => `v${name}`).sort();
+  const expectedKeys = expectedNames
+    .map((name) => `${name[0].toLowerCase()}${name.slice(1)}`)
+    .sort();
+
+  assert.deepEqual(
+    Object.keys(vue.directives).sort(),
+    expectedKeys,
+    'directive registry is complete',
+  );
+  for (const name of expectedNames) {
+    const exportName = `v${name}`;
+    const registryKey = `${name[0].toLowerCase()}${name.slice(1)}`;
+    const directive = vue[exportName];
+    assert.ok(directive, `${exportName} exported`);
+    assert.equal(typeof directive.mounted, 'function', `${exportName}.mounted`);
+    assert.equal(typeof directive.updated, 'function', `${exportName}.updated`);
+    assert.equal(typeof directive.beforeUnmount, 'function', `${exportName}.beforeUnmount`);
+    assert.equal(
+      vue.directives[registryKey],
+      directive,
+      `${registryKey} registry entry matches export`,
+    );
+  }
+
+  const actualExports = Object.keys(vue)
+    .filter((k) => /^v[A-Z]/.test(k))
+    .sort();
+  assert.deepEqual(actualExports, expectedExports, 'no extra or missing v* directive exports');
+  assert.equal(typeof vue.brontoVue.install, 'function', 'plugin install helper');
+  assert.equal(vue.default, vue.brontoVue, 'default export is the plugin');
+});
+
 test('Qwik lifecycle hooks are real useVisibleTask$ wirings (throw outside a component)', async () => {
-  const { useDialog } = await import('../qwik/index.js');
-  // useVisibleTask$ asserts it runs inside a component invocation context;
-  // calling the hook bare must throw Qwik's context error — proof the hook
-  // delegates to Qwik's lifecycle rather than no-op'ing.
-  assert.throws(() => useDialog(), /./);
+  const script = `
+    import assert from 'node:assert/strict';
+    const { useDialog } = await import('./qwik/index.js');
+    assert.throws(() => useDialog(), /./);
+  `;
+  // useVisibleTask$ asserts it runs inside a component invocation context. Run
+  // this negative-path check in a child process so Qwik's expected diagnostic
+  // does not pollute this file's TAP stream.
+  execFileSync(process.execPath, ['--conditions=browser', '--input-type=module', '-e', script], {
+    cwd: process.cwd(),
+    stdio: 'pipe',
+  });
 });
 
 // Extract a top-level `function NAME(...) {...}` body as source text by brace

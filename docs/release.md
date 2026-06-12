@@ -8,11 +8,13 @@
    ungated `demo/*.html` pages (the surface that drifted when this was manual).
 1. Reconcile `README.md`, `CHANGELOG.md`, `ROADMAP.md`, `.github/SECURITY.md`, and
    `docs/adr/*` against the version being released.
-2. Run `npm run check`, `npm test`, and the Playwright suite in the pinned
-   container when visual baselines changed.
+2. Run `npm run check`, `npm test`, and `npm run test:e2e:nonpixel` locally.
+   Run `npm run test:e2e` in the pinned Playwright container when visual
+   baselines changed.
 3. Run `npm run size:report` and call out any intentional payload increase in
    the changelog.
-4. Build the packed example matrix from the tarball, not a workspace link.
+4. Run `npm run test:examples` to build the packed example matrix from the
+   tarball, not a workspace link.
 
 ## Publish
 
