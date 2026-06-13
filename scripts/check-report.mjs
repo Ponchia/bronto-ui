@@ -11,6 +11,7 @@
  * Run: node scripts/check-report.mjs
  */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
@@ -54,6 +55,7 @@ const groupNames = new Set(Object.keys(classesJson.groups ?? {}));
 
 // Standard CSS generic font families that happen to share the ui- prefix.
 const CSS_FONT_KEYWORDS = new Set(['ui-monospace', 'ui-sans-serif', 'ui-serif', 'ui-rounded']);
+const PUBLIC_BOUNDARY_FILE = /\.(?:md|html|css|js|json|mjs|ts|tsx|jsx|d\.ts|ya?ml|txt)$/;
 
 // Pedagogical anti-examples: classes the docs name precisely BECAUSE they do
 // not exist ("…silently no-ops", "there is deliberately no …"). Anything
@@ -162,10 +164,18 @@ for (const rel of [
 }
 
 const forbiddenTerms = loadForbiddenTerms();
+const publicBoundarySources = trackedPublicBoundarySources();
+for (const rel of publicBoundarySources) {
+  const src = read(rel);
+  if (/\/Users\/zeno\/bronto(?:\/[^\s`"')<]*)?/.test(src)) {
+    errors.push(`${rel}: public-boundary check found local workspace path`);
+  }
+  if (/\/var\/folders\/[^\s`"')<]*/.test(src)) {
+    errors.push(`${rel}: public-boundary check found local temp path`);
+  }
+}
+
 if (forbiddenTerms.length) {
-  const publicBoundarySources = walk('.').filter(
-    (p) => /\.(md|html|css|js|json|mjs|ts|tsx|jsx|d\.ts)$/.test(p) && p !== 'package-lock.json',
-  );
   for (const rel of publicBoundarySources) {
     const src = read(rel).toLowerCase();
     for (const term of forbiddenTerms) {
@@ -192,6 +202,16 @@ function loadForbiddenTerms() {
   return [
     ...new Set(terms.map((term) => term.replace(/#.*/, '').trim().toLowerCase()).filter(Boolean)),
   ];
+}
+
+function trackedPublicBoundarySources() {
+  let files;
+  try {
+    files = execFileSync('git', ['ls-files'], { cwd: root, encoding: 'utf8' }).split(/\n/);
+  } catch {
+    files = walk('.');
+  }
+  return files.filter((p) => PUBLIC_BOUNDARY_FILE.test(p) && p !== 'package-lock.json');
 }
 
 function checkReportShape(rel, src) {

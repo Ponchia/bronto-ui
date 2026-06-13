@@ -1,6 +1,6 @@
 # Dead-Code Report
 
-- Project: `/Users/zeno/bronto/bronto-ui`
+- Project: `<repo>`
 - Output: `code-quality-audits/2026-06-12-expansion-research/dead-code`
 - Languages: `auto`
 - Aggressive Python fallback: `false`
