@@ -1,6 +1,6 @@
 # AI Slop Risk
 
-- Project: `/Users/zeno/bronto/bronto-ui`
+- Project: `<repo>`
 - Output: `code-quality-audits/2026-06-12-ai-slop-pass`
 - Base: `none`
 - Deep: `true`
@@ -62,7 +62,7 @@
 
 ## Security Regression
 - RUN: semgrep deep
-  - Command: `/Users/zeno/bronto/llm-config/tools/semgrep/scan.sh --preset deep --output code-quality-audits/2026-06-12-ai-slop-pass/semgrep .`
+  - Command: `<local-llm-config>/tools/semgrep/scan.sh --preset deep --output code-quality-audits/2026-06-12-ai-slop-pass/semgrep .`
   - Result: PASS
   - Log: `code-quality-audits/2026-06-12-ai-slop-pass/logs/security-regression-semgrep-deep.log`
 
@@ -87,7 +87,7 @@
   - Log: `code-quality-audits/2026-06-12-ai-slop-pass/logs/security-regression-checkov.log`
 
 - RUN: CodeQL
-  - Command: `/Users/zeno/bronto/llm-config/tools/codeql/scan.sh .`
+  - Command: `<local-llm-config>/tools/codeql/scan.sh .`
   - Result: PASS
   - Log: `code-quality-audits/2026-06-12-ai-slop-pass/logs/security-regression-codeql.log`
 

@@ -108,22 +108,6 @@ export const RANGES = {
 /** A leaf path is a font slot (non-colour) iff its last segment is font-ish. */
 export const isFontPath = (path) => /(?:^|\.)font$|Font$/.test(path);
 
-/** Keys that would mutate the prototype chain rather than the config object. */
-const UNSAFE_KEY = new Set(['__proto__', 'constructor', 'prototype']);
-
-/** Set a dotted path on a nested object (creating intermediate objects). The
- *  paths here are authored literals (CHROME/FONTS/RANGES), never user input, but
- *  guard against prototype-polluting segments so the writer is safe by
- *  construction (and not a latent sink if the map is ever data-driven). */
-function setPath(obj, path, value) {
-  const keys = path.split('.');
-  if (keys.some((k) => UNSAFE_KEY.has(k)))
-    throw new Error(`gen-vega: refusing prototype-polluting path "${path}"`);
-  let node = obj;
-  for (let i = 0; i < keys.length - 1; i++) node = node[keys[i]] ??= {};
-  node[keys[keys.length - 1]] = value;
-}
-
 /** The flat path set the config commits to (used by the coverage gate). */
 export const REQUIRED_PATHS = [
   ...Object.keys(CHROME),
@@ -133,14 +117,59 @@ export const REQUIRED_PATHS = [
 
 /** Build the resolved Vega-Lite `config` object for one theme. */
 export function themeConfig(theme) {
-  const out = {};
-  for (const [path, ref] of Object.entries(CHROME)) setPath(out, path, resolveRef(ref, theme));
-  for (const [path, font] of Object.entries(FONTS)) setPath(out, path, font);
-  for (const [path, ramp] of Object.entries(RANGES)) {
-    const colors = charts[theme][ramp].map((v) => resolveColor(v, theme));
-    setPath(out, path, colors);
-  }
-  return out;
+  const chrome = (path) => resolveRef(CHROME[path], theme);
+  const range = (path) => charts[theme][RANGES[path]].map((v) => resolveColor(v, theme));
+
+  return {
+    background: chrome('background'),
+    view: {
+      stroke: chrome('view.stroke'),
+    },
+    mark: {
+      color: chrome('mark.color'),
+    },
+    rule: {
+      color: chrome('rule.color'),
+    },
+    text: {
+      color: chrome('text.color'),
+      font: FONTS['text.font'],
+    },
+    title: {
+      color: chrome('title.color'),
+      subtitleColor: chrome('title.subtitleColor'),
+      font: FONTS['title.font'],
+      subtitleFont: FONTS['title.subtitleFont'],
+    },
+    axis: {
+      domainColor: chrome('axis.domainColor'),
+      gridColor: chrome('axis.gridColor'),
+      tickColor: chrome('axis.tickColor'),
+      labelColor: chrome('axis.labelColor'),
+      titleColor: chrome('axis.titleColor'),
+      labelFont: FONTS['axis.labelFont'],
+      titleFont: FONTS['axis.titleFont'],
+    },
+    legend: {
+      labelColor: chrome('legend.labelColor'),
+      titleColor: chrome('legend.titleColor'),
+      labelFont: FONTS['legend.labelFont'],
+      titleFont: FONTS['legend.titleFont'],
+    },
+    header: {
+      labelColor: chrome('header.labelColor'),
+      titleColor: chrome('header.titleColor'),
+      labelFont: FONTS['header.labelFont'],
+      titleFont: FONTS['header.titleFont'],
+    },
+    range: {
+      category: range('range.category'),
+      ordinal: range('range.ordinal'),
+      ramp: range('range.ramp'),
+      heatmap: range('range.heatmap'),
+      diverging: range('range.diverging'),
+    },
+  };
 }
 
 const themes = { light: themeConfig('light'), dark: themeConfig('dark') };

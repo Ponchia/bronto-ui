@@ -1172,6 +1172,21 @@ test('initTableSort: cycles aria-sort and reorders rows (string + numeric)', () 
   stop();
 });
 
+test('initTableSort: invalid root no-ops instead of widening or traversing text', () => {
+  const d = mount(TBL);
+  const table = d.querySelector('table');
+  const names = () => [...table.tBodies[0].rows].map((r) => r.children[1].textContent);
+  const stop = initTableSort({ root: 'not-a-dom-root' });
+
+  table
+    .querySelector('.ui-table__sort')
+    .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+
+  assert.deepEqual(names(), ['Bob', 'Ann', 'Cy'], 'invalid root leaves the table unwired');
+  assert.equal(typeof stop, 'function');
+  stop();
+});
+
 test('initTableSort: numeric sort keeps the sign on U+2212, accounting parens, and data-sort-value (C3)', () => {
   // P/L column mixing a Unicode minus (−), accounting parentheses, a thousands
   // separator, and a data-sort-value escape hatch. The losses must sort below

@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "ignore": ["**/*.d.ts", "demo/**", "examples/**"],
+  "ignore": ["**/*.d.ts", "demo/**", "examples/**", "scripts/smoke-example.mjs"],
   "rules": {
     "duplicates": "off"
   }

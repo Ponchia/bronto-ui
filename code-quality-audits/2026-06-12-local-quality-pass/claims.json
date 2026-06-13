@@ -60,7 +60,7 @@
       "id": "source-native-check",
       "state": "verified",
       "title": "Native check and unit-test run",
-      "origin": "Local terminal commands in /Users/zeno/bronto/bronto-ui.",
+      "origin": "Local terminal commands in <repo>.",
       "retrievedAt": "2026-06-12T15:55:01Z",
       "supports": ["claim-dead-code-gated", "claim-dark-accent-apca"]
     },

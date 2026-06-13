@@ -439,5 +439,8 @@
     },
     "./vega.json": "./tokens/vega.json",
     "./fonts/*": "./fonts/*"
+  },
+  "overrides": {
+    "esbuild": "0.28.1"
   }
 }
