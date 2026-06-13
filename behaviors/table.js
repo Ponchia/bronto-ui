@@ -111,9 +111,8 @@ export function initTableSort({ root } = {}) {
         return cmp * sign;
       });
       // Re-parent in document order: sorted data rows, then any empty/sentinel
-      // row last. A single appendChild pass over the existing <tr> nodes (no
-      // markup is created — these are trusted DOM elements being moved).
-      for (const r of [...rows, ...emptyRows]) tbody.appendChild(r);
+      // row last. These are existing <tr> nodes being moved; no markup is parsed.
+      tbody.append(...rows, ...emptyRows);
     };
 
     const allBox = table.querySelector('[data-bronto-select-all]');

@@ -18,8 +18,25 @@ export const noop = () => {};
 
 export const hasDom = () => typeof document !== 'undefined';
 
+function isDelegationHost(value) {
+  if (!value || typeof value !== 'object') return false;
+  if (value.nodeType === 9) {
+    return (
+      typeof value.addEventListener === 'function' && typeof value.querySelectorAll === 'function'
+    );
+  }
+  if (value.nodeType === 1) {
+    return (
+      typeof value.addEventListener === 'function' &&
+      typeof value.matches === 'function' &&
+      typeof value.querySelectorAll === 'function'
+    );
+  }
+  return false;
+}
+
 // Resolve the delegation host from an init call's `root` option, distinguishing
-// three cases so an unattached/null root never silently widens to whole-document
+// cases so an unattached/null root never silently widens to whole-document
 // delegation (the "scoped island hijacks every control" foot-gun):
 //   • root absent/undefined → no scope requested → delegate from `fallback`
 //     (default `document`). This is the intended global-wiring path.
@@ -27,11 +44,13 @@ export const hasDom = () => typeof document !== 'undefined';
 //     framework ref still null at mount). Return null so the caller no-ops
 //     instead of hijacking the whole document.
 //   • root is an element    → use it.
+//   • root is anything else → no-op; the public contract is Document | Element.
 // The bindings (@ponchia/ui/{react,solid,qwik}) emit `root: null` for the
 // not-ready case precisely so this distinction survives across the boundary.
 export function resolveHost(root, fallback = document) {
   if (root === null) return null;
-  return root || fallback;
+  if (root === undefined) return isDelegationHost(fallback) ? fallback : null;
+  return isDelegationHost(root) ? root : null;
 }
 
 // Monotonic counter for auto-minted field / list ids, shared across
