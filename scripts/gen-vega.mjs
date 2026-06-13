@@ -40,6 +40,23 @@ const prettierCfg = await resolveConfig(JS_PATH);
 const SANS = cssVars.global['--sans'];
 if (!SANS) throw new Error('gen-vega: tokens/index.js no longer exports global --sans');
 
+const BACKGROUND = 'var(--bg)';
+const VIEW_STROKE = 'var(--line)';
+const MARK_COLOR = 'var(--accent)';
+const RULE_COLOR = 'var(--line-strong)';
+const TEXT_COLOR = 'var(--text)';
+const TITLE_COLOR = 'var(--text)';
+const TITLE_SUBTITLE_COLOR = 'var(--text-dim)';
+const AXIS_DOMAIN_COLOR = 'var(--line-strong)';
+const AXIS_GRID_COLOR = 'var(--line)';
+const AXIS_TICK_COLOR = 'var(--line-strong)';
+const AXIS_LABEL_COLOR = 'var(--text-soft)';
+const AXIS_TITLE_COLOR = 'var(--text)';
+const LEGEND_LABEL_COLOR = 'var(--text-soft)';
+const LEGEND_TITLE_COLOR = 'var(--text)';
+const HEADER_LABEL_COLOR = 'var(--text-soft)';
+const HEADER_TITLE_COLOR = 'var(--text)';
+
 /**
  * The chrome mapping: a dotted Vega-Lite `config` path → a bronto token
  * reference (`var(--token)`) or a literal (the font stack). Theme-independent;
@@ -49,35 +66,35 @@ if (!SANS) throw new Error('gen-vega: tokens/index.js no longer exports global -
  * data-viz Tier-4 set, layered on as `range.*` below.
  */
 export const CHROME = {
-  background: 'var(--bg)',
+  background: BACKGROUND,
 
   // The plotting frame.
-  'view.stroke': 'var(--line)',
+  'view.stroke': VIEW_STROKE,
 
   // Default mark — series 1 is the live brand accent (re-skins for free).
-  'mark.color': 'var(--accent)',
+  'mark.color': MARK_COLOR,
   // Reference rules / annotations stay neutral, never the accent.
-  'rule.color': 'var(--line-strong)',
-  'text.color': 'var(--text)',
+  'rule.color': RULE_COLOR,
+  'text.color': TEXT_COLOR,
 
   // Title + subtitle.
-  'title.color': 'var(--text)',
-  'title.subtitleColor': 'var(--text-dim)',
+  'title.color': TITLE_COLOR,
+  'title.subtitleColor': TITLE_SUBTITLE_COLOR,
 
   // Axes — domain/ticks are the stronger line, the grid is the soft line.
-  'axis.domainColor': 'var(--line-strong)',
-  'axis.gridColor': 'var(--line)',
-  'axis.tickColor': 'var(--line-strong)',
-  'axis.labelColor': 'var(--text-soft)',
-  'axis.titleColor': 'var(--text)',
+  'axis.domainColor': AXIS_DOMAIN_COLOR,
+  'axis.gridColor': AXIS_GRID_COLOR,
+  'axis.tickColor': AXIS_TICK_COLOR,
+  'axis.labelColor': AXIS_LABEL_COLOR,
+  'axis.titleColor': AXIS_TITLE_COLOR,
 
   // Legend.
-  'legend.labelColor': 'var(--text-soft)',
-  'legend.titleColor': 'var(--text)',
+  'legend.labelColor': LEGEND_LABEL_COLOR,
+  'legend.titleColor': LEGEND_TITLE_COLOR,
 
   // Facet headers.
-  'header.labelColor': 'var(--text-soft)',
-  'header.titleColor': 'var(--text)',
+  'header.labelColor': HEADER_LABEL_COLOR,
+  'header.titleColor': HEADER_TITLE_COLOR,
 };
 
 /** Font slots — every text-bearing component gets the bronto sans stack. Keys
@@ -117,57 +134,59 @@ export const REQUIRED_PATHS = [
 
 /** Build the resolved Vega-Lite `config` object for one theme. */
 export function themeConfig(theme) {
-  const chrome = (path) => resolveRef(CHROME[path], theme);
-  const range = (path) => charts[theme][RANGES[path]].map((v) => resolveColor(v, theme));
+  const themeName = theme === 'dark' ? 'dark' : 'light';
+  const chartTheme = charts[themeName];
+  const resolveThemeRef = (ref) => resolveRef(ref, themeName);
+  const resolveRange = (values) => values.map((v) => resolveColor(v, themeName));
 
   return {
-    background: chrome('background'),
+    background: resolveThemeRef(BACKGROUND),
     view: {
-      stroke: chrome('view.stroke'),
+      stroke: resolveThemeRef(VIEW_STROKE),
     },
     mark: {
-      color: chrome('mark.color'),
+      color: resolveThemeRef(MARK_COLOR),
     },
     rule: {
-      color: chrome('rule.color'),
+      color: resolveThemeRef(RULE_COLOR),
     },
     text: {
-      color: chrome('text.color'),
+      color: resolveThemeRef(TEXT_COLOR),
       font: FONTS['text.font'],
     },
     title: {
-      color: chrome('title.color'),
-      subtitleColor: chrome('title.subtitleColor'),
+      color: resolveThemeRef(TITLE_COLOR),
+      subtitleColor: resolveThemeRef(TITLE_SUBTITLE_COLOR),
       font: FONTS['title.font'],
       subtitleFont: FONTS['title.subtitleFont'],
     },
     axis: {
-      domainColor: chrome('axis.domainColor'),
-      gridColor: chrome('axis.gridColor'),
-      tickColor: chrome('axis.tickColor'),
-      labelColor: chrome('axis.labelColor'),
-      titleColor: chrome('axis.titleColor'),
+      domainColor: resolveThemeRef(AXIS_DOMAIN_COLOR),
+      gridColor: resolveThemeRef(AXIS_GRID_COLOR),
+      tickColor: resolveThemeRef(AXIS_TICK_COLOR),
+      labelColor: resolveThemeRef(AXIS_LABEL_COLOR),
+      titleColor: resolveThemeRef(AXIS_TITLE_COLOR),
       labelFont: FONTS['axis.labelFont'],
       titleFont: FONTS['axis.titleFont'],
     },
     legend: {
-      labelColor: chrome('legend.labelColor'),
-      titleColor: chrome('legend.titleColor'),
+      labelColor: resolveThemeRef(LEGEND_LABEL_COLOR),
+      titleColor: resolveThemeRef(LEGEND_TITLE_COLOR),
       labelFont: FONTS['legend.labelFont'],
       titleFont: FONTS['legend.titleFont'],
     },
     header: {
-      labelColor: chrome('header.labelColor'),
-      titleColor: chrome('header.titleColor'),
+      labelColor: resolveThemeRef(HEADER_LABEL_COLOR),
+      titleColor: resolveThemeRef(HEADER_TITLE_COLOR),
       labelFont: FONTS['header.labelFont'],
       titleFont: FONTS['header.titleFont'],
     },
     range: {
-      category: range('range.category'),
-      ordinal: range('range.ordinal'),
-      ramp: range('range.ramp'),
-      heatmap: range('range.heatmap'),
-      diverging: range('range.diverging'),
+      category: resolveRange(chartTheme.categorical),
+      ordinal: resolveRange(chartTheme.sequential),
+      ramp: resolveRange(chartTheme.sequential),
+      heatmap: resolveRange(chartTheme.sequential),
+      diverging: resolveRange(chartTheme.diverging),
     },
   };
 }
