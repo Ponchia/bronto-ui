@@ -54,6 +54,7 @@ const MOBILE_CLEAN_DEMOS = [
   'marks',
   'command',
   'workbench',
+  'service',
   'sources',
   'state',
 ];
@@ -75,15 +76,13 @@ for (const width of [360, 320]) {
 }
 
 // ---------------------------------------------------------------------------
-// 2. APP-SHELL COLLAPSE — css/app.css ~239. No served demo/docs page mounts
-//    the admin shell, so this drives a minimal fixture (test/e2e/
-//    _app-shell.fixture.html) built from the REAL shell markup + the REAL
-//    bundled stylesheet. Wide: a 2-column grid with rail and content
-//    side-by-side. Below 880px: a single column, rail goes horizontal (its
-//    own row above the content).
+// 2. APP-SHELL COLLAPSE — css/app.css ~239. The public service demo mounts the
+//    real cross-service shell. Wide: a 2-column grid with rail and content
+//    side-by-side. Below 880px: a single column, rail goes horizontal (its own
+//    row above the content).
 // ---------------------------------------------------------------------------
 test.describe('app-shell collapse', () => {
-  const FIXTURE = '/test/e2e/_app-shell.fixture.html';
+  const FIXTURE = '/demo/service.html';
 
   async function shellMetrics(page) {
     return page.evaluate(() => {

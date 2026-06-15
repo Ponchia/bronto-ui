@@ -39,6 +39,7 @@ on top of the CSS, none of which require a framework commitment**:
 ├── connectors/  pure SVG leader-line geometry kernel (no DOM)        [optional]
 ├── annotations/ pure SVG callout geometry (builds on connectors)     [optional]
 ├── glyphs/      dot-matrix glyph registry/renderers                 [optional]
+├── schemas/     declarative JSON contracts for report/tooling data   [optional]
 ├── react/       thin React hooks over behaviors                     [optional peer]
 ├── solid/       thin Solid primitives over behaviors                [optional peer]
 ├── qwik/        thin Qwik hooks over behaviors (useVisibleTask$)     [optional peer]
@@ -115,6 +116,7 @@ generator overwrites them and a drift gate fails CI).
 | `css/` | source | yes | The framework. Hand-authored `@layer bronto` CSS. (`css/tokens.css` palette blocks and `css/generated.css` are generated — see below.) |
 | `tokens/index.js` | source | yes | The single source of truth for token **values** (`cssVars`). |
 | `classes/index.js`, `behaviors/`, `annotations/`, `connectors/`, `react/`, `solid/`, `qwik/`, `svelte/`, `vue/`, `glyphs/`, `shiki/` | source · published-subpath (path-frozen) | yes — but **do not move** | Authored ESM shipped as-is; the dir name is the public import path. The `.d.ts` beside them are generated/drift-checked: `connectors`/`annotations`/`react`/`solid`/`qwik`/`svelte`/`vue`/`behaviors` are emitted from JSDoc by `tsc` (`npm run dts:emit`), `classes`/`tokens`/`glyphs` from the runtime. No leaf `.d.ts` is hand-maintained. |
+| `schemas/*.schema.json` | source · published schema files (path-frozen) | yes — but **do not move exported files** | Declarative JSON Schema contracts for sidecars/tooling data. Each exported schema file path is public; the directory itself is not a wildcard import. No validator runtime ships. |
 | `dist/` | generated | no | Build of `css/` (`npm run dist:build`); byte-checked by `check:dist`. |
 | `tokens/index.json`, `tokens/resolved.json`, `tokens/tokens.dtcg.json`, `tokens/figma.variables.json`, `tokens/charts.json`, `classes/index.d.ts`, `tokens/index.d.ts`, `tokens/{skins,charts}.d.ts`, `glyphs/glyphs.d.ts`, `classes/vscode.css-custom-data.json`, `docs/reference.md` | generated | no | Committed build artifacts; regenerate with `npm run prepack`, never hand-edit. Drift-checked in `npm run check`. |
 | `fonts/` | vendored | — | The Doto webfont (woff2) + its OFL license. |
@@ -151,6 +153,9 @@ gating" below), so a version that fails any invariant never reaches npm.
 | `shiki/nothing.json` valid + on rationed palette | `check-shiki.mjs`  |
 | `dist/*.css` == fresh build of `css/` + budget  | `check-dist.mjs`    |
 | published tarball == intended `files` only      | `check-pack.mjs`    |
+| packed public text contains no private terms, local paths, or secret-looking assignments | `check-public-hygiene.mjs` |
+| CSS custom-property references resolve or carry an explicit fallback/host boundary | `check-variables.mjs` |
+| `MIGRATIONS.json` edges have structured rules and matching docs | `check-migrations.mjs` |
 | example inventory ⇄ CI matrix ⇄ browser-smoke list ⇄ README rows ⇄ preview ports | `check-examples.mjs` |
 | published `.d.ts` compile + reject typos        | `tsc` (`check:types`) |
 | CSS style/correctness                           | Stylelint           |

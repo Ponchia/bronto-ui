@@ -274,7 +274,7 @@
 
 .ui-report__finding-title {
   color: var(--text);
-  font-size: var(--text-md);
+  font-size: var(--text-base);
   font-weight: 650;
   line-height: 1.25;
 }
@@ -480,7 +480,7 @@
 
 .ui-evidence-item__value {
   color: var(--text);
-  font-size: var(--text-md);
+  font-size: var(--text-base);
   font-weight: 650;
 }
 
