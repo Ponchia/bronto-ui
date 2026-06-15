@@ -62,9 +62,11 @@
           <section class="ui-splitter__pane" id="workbench-files" aria-label="Files">
             <h2 class="ui-eyebrow">Files</h2>
             <ul class="wb-file-list">
-              <li><span>report.html</span><span class="ui-badge ui-badge--success">clean</span></li>
-              <li><span>claims.json</span><span class="ui-badge ui-badge--warning">draft</span></li>
-              <li><span>index.pdf</span><span class="ui-badge ui-badge--muted">ready</span></li>
+              <li><span>jobs.yaml</span><span class="ui-badge ui-badge--success">clean</span></li>
+              <li>
+                <span>sync-run.json</span><span class="ui-badge ui-badge--warning">draft</span>
+              </li>
+              <li><span>deploy.log</span><span class="ui-badge ui-badge--muted">ready</span></li>
             </ul>
           </section>
           <div
@@ -89,27 +91,27 @@
 
         <aside class="ui-inspector" aria-label="Inspector">
           <div class="ui-inspector__head">
-            <h2 class="ui-eyebrow">Rectangle</h2>
+            <h2 class="ui-eyebrow">Sync job</h2>
             <button class="ui-button ui-button--subtle ui-button--sm" type="button">Reset</button>
           </div>
           <div class="ui-inspector__body">
             <div class="ui-property">
-              <span class="ui-property__label">Width</span>
-              <span class="ui-property__value">240 px</span>
+              <span class="ui-property__label">Owner</span>
+              <span class="ui-property__value">Platform</span>
             </div>
             <div class="ui-property">
-              <span class="ui-property__label">Height</span>
-              <span class="ui-property__value">96 px</span>
+              <span class="ui-property__label">Timeout</span>
+              <span class="ui-property__value">30 min</span>
             </div>
             <div class="ui-property">
-              <span class="ui-property__label">Fill</span>
+              <span class="ui-property__label">Retries</span>
               <span class="ui-property__value">
-                <input class="ui-input" aria-label="Fill" value="#121212" />
+                <input class="ui-input" aria-label="Retries" value="3" />
               </span>
             </div>
             <div class="ui-property">
-              <span class="ui-property__label">Opacity</span>
-              <span class="ui-property__value">100%</span>
+              <span class="ui-property__label">Region</span>
+              <span class="ui-property__value">eu-west</span>
             </div>
           </div>
         </aside>

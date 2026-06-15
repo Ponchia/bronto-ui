@@ -696,9 +696,12 @@ Report rules for agents:
   conflicting, unverified, or generated inputs should be surfaced near affected
   claims, not only in the source appendix.
 - For important reports, emit a sidecar `claims.json` / source archive manifest
-  with stable claim IDs, source IDs, status, risk, retrieval time, and
-  claim-source relations. The visible HTML remains the primary artifact, but the
-  sidecar lets tools prove IDs and high-risk evidence still resolve.
+  with `schemaVersion: "bronto-report-claims.v1"` and, when validating,
+  `@ponchia/ui/schemas/report-claims.v1.schema.json`. Include stable claim IDs,
+  source IDs, status, risk, retrieval time, and explicit `relations`
+  (`supports`, `limits`, `contradicts`, or `informs`). The visible HTML remains
+  the primary artifact, but the sidecar lets tools prove IDs and high-risk
+  evidence still resolve.
 - Use `ui-delta` (`--up`/`--down`/`--flat`, `--invert` when up is bad) for a
   trend figure and `ui-compare` (`--2up`) for an A/B / before-after section.
 - Use `ui-report__section--unnumbered` for appendices in numbered reports.
@@ -739,6 +742,8 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
 - `docs/reporting.md` — static/PDF-first report cookbook for LLM-authored
   reports, including report skeletons, decision/finding/evidence patterns,
   chart rules, print utilities, and safety boundaries.
+- `schemas/report-claims.v1.schema.json` — declarative JSON Schema for
+  `claims.json` sidecars that map report claims to source IDs and relations.
 - `docs/annotations.md` — SVG annotation recipes and helper guidance for
   analytical figures.
 - `docs/mermaid.md` — theme Mermaid diagrams from bronto tokens (resolved

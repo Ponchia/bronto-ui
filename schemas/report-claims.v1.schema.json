@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cdn.jsdelivr.net/npm/@ponchia/ui/schemas/report-claims.v1.schema.json",
+  "title": "@ponchia/ui report claim/source sidecar v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "report", "claims", "sources"],
+  "properties": {
+    "$schema": {
+      "$ref": "#/$defs/uri"
+    },
+    "schemaVersion": {
+      "const": "bronto-report-claims.v1"
+    },
+    "report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "type"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "type": "string", "minLength": 1 },
+        "type": {
+          "enum": ["executive", "decision", "research", "primer", "incident", "audit", "status"]
+        },
+        "generatedAt": { "$ref": "#/$defs/dateTime" },
+        "url": { "$ref": "#/$defs/uri" }
+      }
+    },
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/claim" }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/source" }
+    },
+    "relations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/relation" }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$"
+    },
+    "dateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "uri": {
+      "type": "string",
+      "format": "uri"
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^(sha256|sha384|sha512):[A-Fa-f0-9]+$"
+    },
+    "claimStatus": {
+      "enum": ["supported", "partial", "disputed", "unsupported", "unknown"]
+    },
+    "risk": {
+      "enum": ["low", "medium", "high", "critical"]
+    },
+    "sourceState": {
+      "enum": ["verified", "reviewed", "generated", "unverified", "stale", "conflict"]
+    },
+    "relationKind": {
+      "enum": ["supports", "limits", "contradicts", "informs"]
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "statement"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "status": { "$ref": "#/$defs/claimStatus" },
+        "risk": { "$ref": "#/$defs/risk" },
+        "statement": { "type": "string", "minLength": 1 },
+        "scope": { "type": "string" },
+        "sourceIds": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        },
+        "htmlId": { "$ref": "#/$defs/id" },
+        "caveat": { "type": "string" },
+        "reviewedAt": { "$ref": "#/$defs/dateTime" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "state", "title", "origin"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "state": { "$ref": "#/$defs/sourceState" },
+        "title": { "type": "string", "minLength": 1 },
+        "origin": { "type": "string", "minLength": 1 },
+        "url": { "$ref": "#/$defs/uri" },
+        "artifactPath": { "type": "string" },
+        "contentHash": { "$ref": "#/$defs/hash" },
+        "retrievedAt": { "$ref": "#/$defs/dateTime" },
+        "method": { "type": "string" },
+        "caveat": { "type": "string" },
+        "supports": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        },
+        "limits": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        },
+        "contradicts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        }
+      }
+    },
+    "relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claimId", "sourceId", "kind"],
+      "properties": {
+        "claimId": { "$ref": "#/$defs/id" },
+        "sourceId": { "$ref": "#/$defs/id" },
+        "kind": { "$ref": "#/$defs/relationKind" },
+        "note": { "type": "string" }
+      }
+    }
+  }
+}

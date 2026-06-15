@@ -75,6 +75,7 @@ semantic versioning contract for the surfaces listed here.
 | `./css/workbench.css` | `./dist/css/workbench.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
 | `./css/command.css` | `./dist/css/command.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
 | `./css/analytical.css` | `./dist/css/analytical.css` | Opt-in CSS roll-up | Stable additive | Generated layered roll-up of the analytical leaves. Not included in the default bundle. |
+| `./css/report-kit.css` | `./dist/css/report-kit.css` | Opt-in CSS roll-up | Stable additive | Generated layered roll-up for complete static reports. Not included in the default bundle. |
 | `./css/unlayered/tokens.css` | `./css/tokens.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
 | `./css/unlayered/fonts.css` | `./css/fonts.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
 | `./css/unlayered/base.css` | `./css/base.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
@@ -127,6 +128,7 @@ semantic versioning contract for the surfaces listed here.
 | `./shiki/nothing.json` | `./shiki/nothing.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
 | `./llms.txt` | `./llms.txt` | Agent entrypoint | Stable path | Plain-text orientation file shipped for offline agents and tooling. |
 | `./MIGRATIONS.json` | `./MIGRATIONS.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
+| `./schemas/report-claims.v1.schema.json` | `./schemas/report-claims.v1.schema.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
 | `./docs/architecture.md` | `./docs/architecture.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/reference.md` | `./docs/reference.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/theming.md` | `./docs/theming.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
@@ -212,6 +214,7 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `classes` | Mixed source/generated data | Class recipe source plus generated JSON/declarations/custom-data. |
 | `behaviors` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
 | `glyphs` | Authored public JS directory | Glyph registry/renderers shipped as JS; declarations are generated. |
+| `schemas` | Machine-readable schemas | Declarative JSON schemas for package-adjacent report/tooling contracts. |
 | `annotations` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
 | `connectors` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
 | `react` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
@@ -282,7 +285,7 @@ result. The listed gates are part of `npm run check`.
 | Package manifest | `package.json` | docs/package-contract.md | `npm run package-contract:build` | check:fresh | The complete export/file matrix in this document is generated from the manifest. |
 | Token model | `tokens/index.js` | css/tokens.css; tokens/index.json; tokens/tokens.dtcg.json; tokens/resolved.json; tokens/figma.variables.json; tokens/index.d.ts | `npm run tokens:css:build; tokens:build; dtcg:build; resolved:build; figma:variables:build; dts:build` | check:fresh; check:contrast | Token names/roles are public. Resolved and Figma handoff values are visual tuning before 1.0. |
 | Class registry | `classes/index.js plus css/*.css selectors` | classes/classes.json; classes/index.d.ts; classes/vscode.css-custom-data.json; docs/reference.md | `npm run classes:json:build; dts:build; vscode:build; reference:build` | check:fresh; check:classes; check:contract | The typed registry, JSON vocabulary, and generated reference stay aligned with real selectors. |
-| Authored CSS graph | `css/core.css plus css/*.css leaves` | dist/bronto.css; dist/css/*.css (44 layered outputs) | `npm run dist:build` | check:dist; check:exports | Default bundle and direct layered leaf imports are generated from authored CSS and size-gated. |
+| Authored CSS graph | `css/core.css plus css/*.css leaves` | dist/bronto.css; dist/css/*.css (46 layered outputs) | `npm run dist:build` | check:dist; check:exports | Default bundle and direct layered leaf imports are generated from authored CSS and size-gated. |
 | JSDoc-authored public JS | `behaviors/; annotations/; connectors/; react/; solid/; qwik/` | adjacent *.d.ts and *.d.ts.map files | `npm run dts:emit` | check:dts-emit; check:types; check:attw; check:publint | Declarations are emitted from the shipped JS, not separately maintained. |
 | Glyph registry | `glyphs/glyphs.js` | glyphs/glyphs.d.ts | `npm run glyphs:build` | check:glyphs; npm test | Glyph names and render options are public. The registry stays sorted and type-covered. |
 | Display colorways | `tokens/skins.js` | css/skins.css; tokens/skins.d.ts | `npm run skins:build` | check:skins; check:contrast | Skins are opt-in root-level choices and never part of dist/bronto.css. |

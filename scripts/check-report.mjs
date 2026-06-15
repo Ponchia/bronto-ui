@@ -127,6 +127,7 @@ for (const rel of htmlSources) {
 const reportHtmlSources = [
   'demo/report.html',
   'demo/report-standalone.html',
+  'test/e2e/_report-print.fixture.html',
   ...walk('examples/report-static').filter((p) => /\.html$/.test(p)),
 ];
 for (const rel of reportHtmlSources) {

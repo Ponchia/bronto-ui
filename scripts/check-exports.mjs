@@ -33,7 +33,7 @@ for (const [key, target] of exportTargets(pkg)) {
 
 // 2. @import graph of the entrypoints. Use the same parser as build-dist so a
 // valid import form cannot build differently from what this gate checks.
-for (const entry of ['css/core.css', 'css/analytical.css']) {
+for (const entry of ['css/core.css', 'css/analytical.css', 'css/report-kit.css']) {
   const abs = resolve(root, entry);
   if (!existsSync(abs)) {
     errors.push(`entrypoint ${entry} missing`);

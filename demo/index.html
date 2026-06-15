@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="@ponchia/ui (Bronto) — a CSS-first design system for interfaces that explain themselves. Live showcase + documentation: foundations, the standard component center, and the analytical communication primitives that are its differentiator."
+      content="@ponchia/ui (Bronto) — a CSS-first identity and UI layer for services, tools, sites and reports. Live showcase + documentation: foundations, the shared service center, and the analytical communication primitives."
     />
     <title>@ponchia/ui — design system showcase</title>
     <!-- Establish a cascade layer ORDERED BEFORE `bronto` so the motion-preview
@@ -76,11 +76,12 @@
       </header>
 
       <p class="lede">
-        Bronto is a CSS-first design system. It does not try to out-catalog the generic UI kits on
-        the standard component center — it owns the layer that makes complex work legible:
-        explanation, provenance, relationships, generated reports, and durable state. This page is
-        the showcase <em>and</em> the documentation: every block is a live specimen with its class
-        grammar, recipe, and the one rule that keeps the system honest.
+        Bronto is a CSS-first identity and UI layer for services, tools, sites, and reports. The
+        standard app center is load-bearing: it gives every service the same navigation, forms,
+        tables, workflow chrome, state language, and token rhythm. The opt-in layers then make
+        complex work legible: explanation, provenance, relationships, generated reports, and durable
+        state. This page is the showcase <em>and</em> the documentation: every block is a live
+        specimen with its class grammar, recipe, and the one rule that keeps the system honest.
       </p>
 
       <dl class="boundary">
@@ -102,9 +103,10 @@
 
       <ul class="toc" aria-label="Sections">
         <li><a href="#foundations">01 · Foundations</a></li>
-        <li><a href="#standard">02 · Standard center</a></li>
+        <li><a href="#standard">02 · Shared service center</a></li>
         <li><a href="#analytical">03 · Explain-themselves ★</a></li>
         <li><a href="#frontier">04 · On the frontier</a></li>
+        <li><a href="./service.html">Service shell →</a></li>
         <li><a href="../docs/#frontier-primitives.md">The thesis →</a></li>
       </ul>
 
@@ -279,11 +281,12 @@
       <!-- ============================================================ -->
       <div class="tier" id="standard">
         <div class="tier__head">
-          <p class="tier__n">02 — The standard center</p>
-          <h2 class="tier__title">The components every kit has</h2>
+          <p class="tier__n">02 — Shared service center</p>
+          <h2 class="tier__title">The app surface every service shares</h2>
           <p class="tier__blurb">
-            Buttons, forms, tables, overlays, navigation. Bronto ships a complete, accessible set —
-            but this is not where it competes. Present and solid, kept compact on purpose.
+            Buttons, forms, tables, overlays, navigation, shell chrome and workflow states. This is
+            the cross-service identity layer; the analytical/report surfaces build on it instead of
+            replacing it.
           </p>
         </div>
 
@@ -1670,8 +1673,8 @@ ui.originLabel({ ai: true });</code></pre>
                 aria-label="Workbench files"
               >
                 <h4 class="ui-eyebrow">Files</h4>
-                <p class="ui-muted">report.html</p>
-                <p class="ui-muted">claims.json</p>
+                <p class="ui-muted">jobs.yaml</p>
+                <p class="ui-muted">sync-run.json</p>
               </section>
               <div
                 class="ui-splitter__handle"
@@ -1691,17 +1694,17 @@ ui.originLabel({ ai: true });</code></pre>
             </div>
             <aside class="ui-inspector" aria-label="Inspector">
               <div class="ui-inspector__head">
-                <h4 class="ui-eyebrow">Rectangle</h4>
+                <h4 class="ui-eyebrow">Sync job</h4>
                 <button class="ui-button ui-button--subtle ui-button--sm" type="button">Reset</button>
               </div>
               <div class="ui-inspector__body">
                 <div class="ui-property">
-                  <span class="ui-property__label">Width</span>
-                  <span class="ui-property__value">240 px</span>
+                  <span class="ui-property__label">Owner</span>
+                  <span class="ui-property__value">Platform</span>
                 </div>
                 <div class="ui-property">
-                  <span class="ui-property__label">Fill</span>
-                  <span class="ui-property__value">#121212</span>
+                  <span class="ui-property__label">Timeout</span>
+                  <span class="ui-property__value">30 min</span>
                 </div>
               </div>
             </aside>

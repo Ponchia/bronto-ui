@@ -14,9 +14,10 @@ npm run check   # the full integrity suite: lint, format, exports; the
                 #   consolidated generated-artifact freshness gate (check:fresh
                 #   — tokens.css/json, dtcg, resolved, .d.ts, reference, vscode
                 #   data); class contract; types, shiki, dist budget, pack
-                #   allowlist, publint + arethetypeswrong, release stamp,
-                #   contrast; behaviors / bindings / glyphs parity;
-                #   color-policy, skins, charts, report
+                #   allowlist, public hygiene, undefined CSS var refs,
+                #   publint + arethetypeswrong, release stamp, migration map, contrast;
+                #   behaviors / bindings / glyphs parity; color-policy,
+                #   skins, charts, report
 npm test        # node:test unit + type-d + contract tests
 npm run test:e2e:nonpixel
                 # local-safe Playwright: chromium + firefox + webkit for every

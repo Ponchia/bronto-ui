@@ -1,6 +1,12 @@
 import { test, expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { applyTheme } from './_theme.mjs';
 import { blocking, ignored, scan } from './_demo-guards.mjs';
+
+const root = fileURLToPath(new URL('../..', import.meta.url));
+const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 
 /**
  * The canonical no-build, no-JS static report (demo/report-standalone.html).
@@ -37,6 +43,17 @@ function pageOverflow() {
   return document.documentElement.scrollWidth - window.innerWidth;
 }
 
+async function routeLocalCdn(page) {
+  const base = `https://cdn.jsdelivr.net/npm/@ponchia/ui@${pkg.version}/`;
+  await page.route(`${base}**/*`, async (route) => {
+    const rel = route.request().url().slice(base.length);
+    const ext = rel.split('.').pop();
+    const contentType =
+      ext === 'css' ? 'text/css' : ext === 'woff2' ? 'font/woff2' : 'application/octet-stream';
+    await route.fulfill({ path: resolve(root, rel), contentType });
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Zero-JS proof: nothing throws, no console error, no 404 asset. A static page
 // that needed a behavior init (or whose relative CSS links missed) would trip
@@ -63,6 +80,52 @@ for (const theme of ['dark', 'light']) {
     expect(badResponses, badResponses.join('\n')).toEqual([]);
   });
 }
+
+test('CDN starter uses two built CSS files for complete report styling', async ({ page }) => {
+  await routeLocalCdn(page);
+  await page.setContent(
+    `<!doctype html>
+    <html data-theme="light">
+      <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@${pkg.version}/dist/bronto.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@${pkg.version}/dist/css/report-kit.css" />
+      </head>
+      <body>
+        <main class="ui-report">
+          <h1 class="ui-report__title">CDN report</h1>
+          <figure class="ui-report__figure ui-figure">
+            <div class="ui-figure__stage"><svg viewBox="0 0 10 10"><title>Dot</title><desc>One dot.</desc><circle cx="5" cy="5" r="4" /></svg></div>
+            <figcaption class="ui-report__caption">Figure styled by report-kit.</figcaption>
+          </figure>
+          <article class="ui-source-card ui-src--verified" id="source-1">
+            <h2 class="ui-source-card__title">Source</h2>
+            <p class="ui-source-card__origin">Verified export</p>
+            <p class="ui-source-card__time">2026-06-15</p>
+          </article>
+          <section class="ui-generated"><p class="ui-generated__label"><span class="ui-origin-label ui-origin-label--ai">AI generated</span></p></section>
+        </main>
+      </body>
+    </html>`,
+    { waitUntil: 'networkidle' },
+  );
+
+  const styled = await page.evaluate(() => {
+    const css = (sel, prop) => getComputedStyle(document.querySelector(sel)).getPropertyValue(prop);
+    return {
+      reportDisplay: css('.ui-report', 'display'),
+      reportPadding: css('.ui-report', 'padding-block-start'),
+      figureDisplay: css('.ui-figure', 'display'),
+      sourceBorder: css('.ui-source-card', 'border-inline-start-width'),
+      generatedBorder: css('.ui-generated', 'border-inline-start-width'),
+    };
+  });
+
+  expect(styled.reportDisplay).toBe('grid');
+  expect(styled.reportPadding).not.toBe('0px');
+  expect(styled.figureDisplay).toBe('grid');
+  expect(styled.sourceBorder).not.toBe('0px');
+  expect(styled.generatedBorder).not.toBe('0px');
+});
 
 // ---------------------------------------------------------------------------
 // axe in BOTH themes (contrast is theme-dependent) + the report shape the

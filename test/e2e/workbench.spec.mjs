@@ -16,6 +16,11 @@ test('splitter exposes separator ARIA and resizes with the keyboard', async ({ p
   await expect(handle).toHaveAttribute('aria-valuemax', '72');
   await expect(handle).toHaveAttribute('aria-valuenow', '36');
 
+  await handle.focus();
+  await expect(handle).toHaveCSS('outline-style', 'solid');
+  const outlineColor = await handle.evaluate((el) => getComputedStyle(el).outlineColor);
+  expect(outlineColor).not.toBe('rgba(0, 0, 0, 0)');
+
   await handle.press('ArrowRight');
   await expect(handle).toHaveAttribute('aria-valuenow', '38');
   await expect

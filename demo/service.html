@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ponchia/ui — service app shell</title>
+    <meta
+      name="description"
+      content="A cross-service app shell specimen for @ponchia/ui: navigation, metrics, workflow table, filters and account identity."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/state.css" />
+  </head>
+  <body>
+    <div class="ui-app-shell" data-app-shell>
+      <aside class="ui-app-rail" data-app-rail>
+        <span class="ui-app-rail__brand">Bronto Ops</span>
+        <nav class="ui-app-nav" aria-label="Primary">
+          <span class="ui-app-nav__section">Workspace</span>
+          <a href="#overview" aria-current="page">Overview</a>
+          <a href="#jobs">Jobs</a>
+          <a href="#integrations">Integrations</a>
+          <a href="#settings">Settings</a>
+        </nav>
+        <div class="ui-app-rail__account">
+          <span class="ui-avatar" aria-hidden="true">P</span>
+          <span>
+            <span class="ui-label" style="text-transform: none">Operator</span>
+            <span class="ui-muted">owner@example.test</span>
+          </span>
+        </div>
+      </aside>
+
+      <main class="ui-app-main" data-app-content>
+        <header class="ui-app-topbar">
+          <h1 class="ui-app-topbar__title">Service Overview</h1>
+          <div class="ui-cluster" style="--cluster-gap: var(--space-xs)">
+            <button class="ui-button ui-button--subtle ui-button--sm" type="button">Sync</button>
+            <button class="ui-button ui-button--sm" type="button">New Job</button>
+          </div>
+        </header>
+
+        <div class="ui-app-content" id="overview">
+          <section class="ui-app-toolbar" aria-label="Service filters">
+            <div class="ui-app-toolbar__group">
+              <label class="ui-field">
+                <span class="ui-label">Environment</span>
+                <select class="ui-select">
+                  <option>Production</option>
+                  <option>Staging</option>
+                </select>
+              </label>
+              <div class="ui-search">
+                <input type="search" placeholder="Search jobs…" aria-label="Search jobs" />
+              </div>
+            </div>
+            <span class="ui-state ui-state--reviewed">Reviewed 12 min ago</span>
+          </section>
+
+          <section class="ui-app-panel" aria-labelledby="health-title">
+            <div class="ui-app-panel__head">
+              <div>
+                <h2 class="ui-app-panel__title" id="health-title">Health</h2>
+                <p>Current service posture across jobs, integrations and queue state.</p>
+              </div>
+              <span class="ui-badge ui-badge--success">Operational</span>
+            </div>
+            <div class="ui-statgrid">
+              <div class="ui-stat">
+                <span class="ui-stat__label">Active jobs</span>
+                <span class="ui-stat__value">18</span>
+                <span class="ui-delta ui-delta--up">+3 today</span>
+              </div>
+              <div class="ui-stat">
+                <span class="ui-stat__label">Queue delay</span>
+                <span class="ui-stat__value">42s</span>
+                <span class="ui-delta ui-delta--down">-11s</span>
+              </div>
+              <div class="ui-stat">
+                <span class="ui-stat__label">Integrations</span>
+                <span class="ui-stat__value">7</span>
+                <span class="ui-delta ui-delta--flat">stable</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="ui-app-panel" aria-labelledby="jobs-title" id="jobs">
+            <div class="ui-app-panel__head">
+              <div>
+                <h2 class="ui-app-panel__title" id="jobs-title">Recent Jobs</h2>
+                <p>Dense operational table using the default app surface.</p>
+              </div>
+              <button class="ui-button ui-button--ghost ui-button--sm" type="button">Export</button>
+            </div>
+            <div class="ui-table-wrap">
+              <table class="ui-table ui-table--dense">
+                <caption>
+                  Recent service jobs
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Job</th>
+                    <th scope="col">Owner</th>
+                    <th scope="col">State</th>
+                    <th scope="col" class="is-num">Runtime</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="is-key">sync-daily</td>
+                    <td>Platform</td>
+                    <td>
+                      <span class="ui-status"
+                        ><span class="ui-dot ui-dot--live"></span> Running</span
+                      >
+                    </td>
+                    <td class="is-num">03:18</td>
+                  </tr>
+                  <tr>
+                    <td class="is-key">index-refresh</td>
+                    <td>Search</td>
+                    <td>
+                      <span class="ui-status"
+                        ><span class="ui-dot ui-dot--warning"></span> Queued</span
+                      >
+                    </td>
+                    <td class="is-num">00:00</td>
+                  </tr>
+                  <tr>
+                    <td class="is-key">invoice-export</td>
+                    <td>Finance</td>
+                    <td>
+                      <span class="ui-status"
+                        ><span class="ui-dot ui-dot--success"></span> Complete</span
+                      >
+                    </td>
+                    <td class="is-num">01:44</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

@@ -8,26 +8,27 @@
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Ponchia/bronto-ui/badge)](https://scorecard.dev/viewer/?uri=github.com/Ponchia/bronto-ui)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE)
 
-**A CSS-first design system for interfaces that explain themselves.** It works in
-plain HTML, every modern framework, and print/PDF, with no component runtime to
-adopt and zero runtime dependencies.
+**A CSS-first identity and UI layer for services, tools, sites, and reports.** It
+works in plain HTML, every modern framework, and print/PDF, with no component
+runtime to adopt and zero runtime dependencies.
 
 The look is a deliberate stance: a neutral monochrome canvas with one rationed
 accent (colour signals, it never decorates), dot-matrix display type, and
 hairline borders — all re-skinnable from a single `--accent` knob (opt-in
 amber-CRT, phosphor-green, and e-ink colorways).
 
-Beyond the standard component set it ships an opt-in analytical & report layer —
-figure stages, SVG annotations, legends, leader-line connectors, a guided-focus
-spotlight, text marks, evidence highlights, bounded excerpts, low/high intervals,
-a colourblind-safe data-viz palette, and a static/PDF report grammar — for
-dashboards and LLM-authored reports.
+The default bundle is the shared service identity: app shells, navigation,
+forms, tables, feedback, overlays, workflow surfaces, prose, motion and the
+token system that lets each app feel related without sharing a component
+runtime. On top of that it ships opt-in tooling/report layers — workbench panes,
+commands, system state, provenance, figure stages, annotations, legends,
+evidence highlights, intervals, data-viz tokens and a static/PDF report grammar.
 
-### [Live demo →](https://ponchia.github.io/bronto-ui/) &nbsp;·&nbsp; [Static report →](https://ponchia.github.io/bronto-ui/demo/report-standalone.html) &nbsp;·&nbsp; [Theme playground →](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)
+### [Live demo →](https://ponchia.github.io/bronto-ui/) &nbsp;·&nbsp; [Service shell →](https://ponchia.github.io/bronto-ui/demo/service.html) &nbsp;·&nbsp; [Static report →](https://ponchia.github.io/bronto-ui/demo/report-standalone.html) &nbsp;·&nbsp; [Theme playground →](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)
 
 The demo is the kitchen sink — every component, light/dark, RTL, live theming.
-The static report is the differentiator in one file: a complete, no-build,
-no-JS, Chromium-PDF-ready report built from the report grammar.
+The service shell shows the shared app identity; the static report shows the
+same system under a no-build, no-JS, Chromium-PDF-ready constraint.
 
 <p>
   <img alt="A research report built with the @ponchia/ui report layer" src="https://raw.githubusercontent.com/Ponchia/bronto-ui/main/demo/_preview-report-research.png" width="49%" />
@@ -49,7 +50,13 @@ and the accent is a spotlight, not a paint bucket. Because everything lives in a
 single `@layer bronto`, your own un-layered CSS overrides the framework with no
 specificity fight and no `!important`.
 
-It ships a complete, accessible **standard component set**, but that's not where it competes — its differentiator is the opt-in **analytical & communication layer** sketched above. The line that holds it together: each primitive owns only its visual grammar and pure geometry — no chart engine, no state, no hit-testing. See **[docs/frontier-primitives.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/frontier-primitives.md)** for the thesis.
+It ships a complete, accessible **standard component set** because that is the
+identity layer every service consumes. Its sharper edge is the opt-in **tooling,
+analytical, and communication layer** sketched above. The line that holds it
+together: each primitive owns only its visual grammar and pure geometry — no
+chart engine, no domain state, no hit-testing. See
+**[docs/frontier-primitives.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/frontier-primitives.md)**
+for the thesis.
 
 ## Install
 
@@ -131,10 +138,10 @@ Arrows, chevrons, check/close/plus/minus, search/menu/gear, info/warning/bell/lo
 - **Feedback** — alert/callout, toast, tooltip, `ui-progress` (task) and `ui-meter` (measured value).
 - **Overlay** — modal + drawer on native `<dialog>`, dropdown menu, `ui-carousel` + `ui-lightbox` (gallery, user-driven — not an auto-slider).
 - **Disclosure & nav** — tabs, accordion, segmented, breadcrumb, pagination, `ui-steps`, `ui-timeline`, `ui-pagehead`, `ui-kbd`.
-- **Shells** — an admin dashboard shell (`ui-app-*`) and a content/marketing site shell (`ui-site*`, `ui-container`).
+- **Shells** — a service/app shell (`ui-app-*`) and a content/marketing site shell (`ui-site*`, `ui-container`).
 - **Prose** — `.ui-prose` styles raw, unclassed semantic HTML (Markdown / CMS / LLM output) with zero classes.
 - **Analytical & communication primitives** _(opt-in)_ — `@ponchia/ui/css/analytical.css`: **figure** stages, SVG **annotations** (subject/connector/note), standalone **legends**/data-keys, text/evidence **marks**, leader-line **connectors** (+ a pure `@ponchia/ui/connectors` geometry kernel), a guided-focus **spotlight**, a **crosshair**/readout, a cross-cutting **selection** vocabulary, and CSS Custom Highlight API **highlights**. Each owns its visual grammar + pure geometry and refuses scales/state/hit-testing — figures that explain themselves, not a chart engine. Plus standalone **`source`/provenance** (trust), **interval**, **clamp**, and **lifecycle `state`** leaves.
-- **Reports** _(opt-in)_ — `@ponchia/ui/css/report.css`, a static/PDF-first report grammar for LLM-authored HTML: covers, decisions, claims, sections, severity-labelled findings, evidence packets, evidence ledgers, action registers, source-card bindings, `ui-figure` composition, intervals, bounded excerpts, chart wrappers and print utilities.
+- **Reports** _(opt-in)_ — `@ponchia/ui/css/report-kit.css` for a complete static/PDF report vocabulary, or `@ponchia/ui/css/report.css` plus only the leaves a narrow report uses. Covers, decisions, claims, sections, severity-labelled findings, evidence packets, evidence ledgers, action registers, source-card bindings, `ui-figure` composition, intervals, bounded excerpts, chart wrappers and print utilities.
 - **Motion & dots** — the dot-matrix motif kit: dot grid, status dots, dot loaders, the orbital spinner, matrix reveal — all reduced-motion aware.
 - **Glyphs** — `@ponchia/ui/glyphs`, a 71-glyph dot-matrix icon set on the `.ui-dotmatrix` primitive (display marks + crisp `solid` inline icons + one-node `.ui-icon` mask rendering).
 - **Colorways** _(opt-in)_ — `data-bronto-skin="amber-crt | phosphor-green | e-ink"`: a root-level recolour of the one accent (OKLCH, per-theme, contrast-gated), never in the default bundle.
@@ -186,7 +193,7 @@ Per-framework getting-started guides + runnable example apps live in the repo:
 
 - **Tokens as data** — `import tokens, { themeColor, cssVars } from '@ponchia/ui/tokens'` (plus `tokens.json`, W3C DTCG `tokens.dtcg.json`, `tokens/resolved.json` for concrete values in canvas/SVG/MapLibre, and `tokens/figma.variables.json` for local Figma Variables import/sync scripts).
 - **Chart colours for dashboards** — `import charts from '@ponchia/ui/charts.json' with { type: 'json' }` in Node ESM, or the same path through a bundler JSON import (resolved hex per theme; series 1 = your accent) plus the opt-in `@ponchia/ui/css/dataviz.css`.
-- **Static reports for LLMs** — add `@ponchia/ui/css/report.css` for report structure, claim/evidence/action grammar, source-card bindings, and print utilities; pair with `@ponchia/ui/css/figure.css`, `dataviz.css`, `interval.css`, `clamp.css`, or `highlights.css` only when the report uses those primitives. Full cookbook: `docs/reporting.md`.
+- **Static reports for LLMs** — add `@ponchia/ui/css/report-kit.css` for the complete report vocabulary, or `@ponchia/ui/css/report.css` plus the specific leaves a smaller report needs. Sidecar claim/source contracts can validate against `@ponchia/ui/schemas/report-claims.v1.schema.json`. Full cookbook: `docs/reporting.md`.
 - **Modern-platform motion** — overlays (modal/drawer/popover), toasts and the `<details>` accordion animate **in and out** with zero JS (`@starting-style` + `allow-discrete`, `::details-content` + `interpolate-size`). Progressive-enhancement extras: `.ui-scroll-progress` / `.ui-scroll-reveal` (scroll-driven, no JS) and `.ui-vt` for View Transitions. All degrade to a static end-state and respect `prefers-reduced-motion`. For smooth **cross-document** navigations, add the document-global one-liner to your own top-level (unlayered) CSS: `@view-transition { navigation: auto; }`.
 - **Editor IntelliSense** — point VS Code at the shipped custom-data file so every token autocompletes in `var(--…)`:
   ```json

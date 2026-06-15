@@ -120,6 +120,8 @@ export function buildBundles() {
   for (const f of EXTRA_LEAVES) out[`dist/css/${f}`] = layeredLeaf(f);
   // Convenience roll-up of the analytical leaves into one flattened bundle.
   out['dist/css/analytical.css'] = bundle('analytical.css');
+  // Convenience roll-up for static reports: default bundle + one opt-in leaf.
+  out['dist/css/report-kit.css'] = bundle('report-kit.css');
   return out;
 }
 

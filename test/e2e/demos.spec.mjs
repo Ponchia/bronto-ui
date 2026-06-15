@@ -38,6 +38,7 @@ const SHOWCASE = [
   'generated',
   'workbench',
   'command',
+  'service',
   'dots',
   'report',
   'version-history-report',

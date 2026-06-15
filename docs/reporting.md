@@ -1,11 +1,18 @@
 # Static reports
 
 `@ponchia/ui` can dress static, LLM-authored HTML reports without a component
-runtime. Load the normal bundle, then opt in to the report layer, chart palette,
-and annotation layer only when the report needs them.
+runtime. Load the normal bundle, then either opt in to the complete report kit
+or import only the leaves a narrow report actually uses.
 
 In a bundled app, package specifiers are fine because Vite or another bundler
 rewrites them:
+
+```css
+@import '@ponchia/ui';
+@import '@ponchia/ui/css/report-kit.css';
+```
+
+For tighter payload control, import leaves one by one:
 
 ```css
 @import '@ponchia/ui';
@@ -16,9 +23,11 @@ rewrites them:
 ```
 
 **`dist/bronto.css` is the standard component set only — it does NOT contain
-the report, chart, annotation, or legend layers.** Those are opt-in leaves
-under `dist/css/`; a report links the default bundle *and* each leaf it uses.
-Forgetting them is the most common way an LLM-emitted report renders unstyled.
+the report, chart, annotation, source, trust, or code/diff layers.**
+`report-kit.css` is the one-file opt-in path for complete static reports; the
+individual leaves remain available under `dist/css/` when a report uses only a
+small subset. Forgetting the opt-in CSS is the most common way an LLM-emitted
+report renders unstyled.
 
 For standalone browser HTML, use real stylesheet URLs. Package specifiers like
 `@ponchia/ui/css/report.css` do not resolve in a saved `.html` file — and note
@@ -26,6 +35,14 @@ the path is `dist/css/`, the built leaf, not the source `css/`:
 
 ```html
 <!-- installed locally -->
+<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/bronto.css" />
+<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/report-kit.css" />
+```
+
+Or, if you are intentionally keeping a report minimal, link only the leaves it
+uses:
+
+```html
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/bronto.css" />
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/report.css" />
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/dataviz.css" />
@@ -35,6 +52,13 @@ the path is `dist/css/`, the built leaf, not the source `css/`:
 
 No install? Link the same files from a CDN. Pin the version — pre-1.0, breaking
 changes ship in the minor (see [stability.md](./stability.md)):
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.6/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.6/dist/css/report-kit.css" />
+```
+
+Leaf-by-leaf CDN imports use the same `dist/css/` paths:
 
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.6/dist/bronto.css" />
@@ -837,8 +861,14 @@ important reports. The HTML stays the readable artifact; the sidecar lets a
 checker prove that claim IDs, source IDs, trust states, retrieval dates and
 high-risk decisions still line up after editing.
 
+The declarative contract ships as
+`@ponchia/ui/schemas/report-claims.v1.schema.json` for validators in any
+language. It is a schema only — `@ponchia/ui` does not ship a report generator
+or validation runtime.
+
 ```json
 {
+  "$schema": "https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.6/schemas/report-claims.v1.schema.json",
   "schemaVersion": "bronto-report-claims.v1",
   "report": { "title": "Decision readiness", "type": "decision" },
   "claims": [
@@ -859,6 +889,14 @@ high-risk decisions still line up after editing.
       "origin": "Verified operational export",
       "retrievedAt": "2026-06-08T10:00:00Z",
       "supports": ["claim-primary"]
+    }
+  ],
+  "relations": [
+    {
+      "claimId": "claim-primary",
+      "sourceId": "source-primary",
+      "kind": "supports",
+      "note": "The metrics export supports the operational-risk conclusion."
     }
   ]
 }

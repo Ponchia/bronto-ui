@@ -63,7 +63,7 @@ a `__body` of property rows.
 ```html
 <aside class="ui-inspector">
   <div class="ui-inspector__head">
-    <h2 class="ui-eyebrow">Rectangle</h2>
+    <h2 class="ui-eyebrow">Sync job</h2>
     <button class="ui-button ui-button--subtle ui-button--sm" type="button">Reset</button>
   </div>
   <div class="ui-inspector__body">
@@ -79,12 +79,12 @@ A label/value pair, denser than `ui-key-value` and tuned for an inspector. The
 
 ```html
 <div class="ui-property">
-  <span class="ui-property__label">Width</span>
-  <span class="ui-property__value">240 px</span>
+  <span class="ui-property__label">Owner</span>
+  <span class="ui-property__value">Platform</span>
 </div>
 <div class="ui-property">
-  <span class="ui-property__label">Fill</span>
-  <span class="ui-property__value"><input class="ui-input" value="#121212" /></span>
+  <span class="ui-property__label">Retries</span>
+  <span class="ui-property__value"><input class="ui-input" value="3" /></span>
 </div>
 ```
 

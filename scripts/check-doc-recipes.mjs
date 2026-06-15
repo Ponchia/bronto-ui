@@ -1,19 +1,15 @@
-// Gate: a copy-paste `<script src>` CDN recipe in a SHIPPED doc must pin a
-// jsDelivr `/build/*.min.js` UMD bundle, never a bare `cdn.jsdelivr.net/npm/
-// <pkg>@N` redirect. The bare redirect resolves to an ES-module bundle that does
-// NOT register the library's global (`window.vega` etc.), so a `<script src>`
-// consumer's `vegaEmbed(...)` throws and nothing renders — and an autonomous LLM
-// author copying the doc cannot self-correct it. This is exactly the class of
-// bug the dogfood review found shipped dead in the Vega recipe; it can never be
-// caught by the artifact-drift gates because docs are an UNTESTED surface, so it
-// gets its own structural check.
+// Gate: copy-paste CDN recipes in SHIPPED docs must resolve to the intended
+// browser assets.
 //
-// Scope, deliberately narrow to avoid false positives:
-//   - Only `<script ... src="…">` tags. A `<link href>` to jsDelivr CSS (the
-//     `dist/css/*` leaves) is fine — CSS has no global-registration problem.
-//   - Only jsDelivr `/npm/<pkg>@<numeric-version>` URLs. A `@VERSION` placeholder
-//     or a partial `@5` mentioned in prose/inline-code is not a `<script src>`.
-//   - The URL must contain a `/build/` path segment (the UMD bundle path).
+// For `<script src>`, a pinned jsDelivr `/build/*.min.js` UMD bundle is required,
+// never a bare `cdn.jsdelivr.net/npm/<pkg>@N` redirect. The bare redirect
+// resolves to an ES-module bundle that does NOT register the library's global
+// (`window.vega` etc.), so a `<script src>` consumer's `vegaEmbed(...)` throws
+// and nothing renders — exactly the dogfood bug this gate was born from.
+//
+// For `<link rel="stylesheet">`, pinned @ponchia/ui jsDelivr URLs must point at
+// built `dist/` files. Source `css/*.css` paths rely on package exports/bundlers
+// and do not work as raw browser URLs.
 //
 // Run: node scripts/check-doc-recipes.mjs
 import { readFileSync } from 'node:fs';
@@ -31,8 +27,13 @@ const shipped = shippedDocs(pkg);
 
 // `<script … src="…">` — capture the src URL. `[^>]*?` stays within the one tag.
 const SCRIPT_SRC = /<script\b[^>]*?\ssrc=["']([^"']+)["']/gi;
+const LINK_TAG = /<link\b[^>]*>/gi;
+const HREF = /\bhref=["']([^"']+)["']/i;
 // A jsDelivr npm URL pinned to a concrete X(.Y(.Z)) version.
 const JSDELIVR_PINNED = /cdn\.jsdelivr\.net\/npm\/[^"'@\s]+@\d[\w.-]*/i;
+const PONCHIA_CDN = new RegExp(
+  `cdn\\.jsdelivr\\.net/npm/@ponchia/ui@${pkg.version.replaceAll('.', '\\.')}/`,
+);
 // There is NO `--glyph-*` design token. A `var(--glyph-foo)` in `--icon-mask`
 // (or anywhere) resolves to nothing and the masked icon paints a solid square —
 // the exact legends.md C10 trap. The mask value comes from
@@ -60,6 +61,19 @@ for (const rel of shipped) {
         );
       }
     }
+    for (const m of line.matchAll(LINK_TAG)) {
+      const tag = m[0];
+      if (!/\brel=["']stylesheet["']/i.test(tag)) continue;
+      const url = HREF.exec(tag)?.[1];
+      if (!url || !PONCHIA_CDN.test(url)) continue;
+      if (!/\/dist\/(?:bronto\.css|css\/[a-z-]+\.css)$/.test(url)) {
+        problems.push(
+          `${rel}:${i + 1}  <link href="${url}"> — browser stylesheet CDN ` +
+            `recipes must point at built dist assets, e.g. dist/bronto.css or ` +
+            `dist/css/report-kit.css`,
+        );
+      }
+    }
     for (const m of line.matchAll(GLYPH_TOKEN)) {
       problems.push(
         `${rel}:${i + 1}  references ${m[1]} — there is NO --glyph-* token; it ` +
@@ -68,6 +82,16 @@ for (const rel of shipped) {
       );
     }
   });
+}
+
+const reporting = readFileSync(resolve(root, 'docs/reporting.md'), 'utf8');
+for (const required of [
+  `https://cdn.jsdelivr.net/npm/@ponchia/ui@${pkg.version}/dist/bronto.css`,
+  `https://cdn.jsdelivr.net/npm/@ponchia/ui@${pkg.version}/dist/css/report-kit.css`,
+]) {
+  if (!reporting.includes(required)) {
+    problems.push(`docs/reporting.md: CDN starter is missing ${required}`);
+  }
 }
 
 if (problems.length) {
@@ -83,5 +107,5 @@ if (problems.length) {
 }
 
 log(
-  `✓ check:doc-recipes — CDN <script src> recipes pin a /build/ UMD bundle; no phantom --glyph-* masks`,
+  `✓ check:doc-recipes — CDN script/link recipes target browser assets; no phantom --glyph-* masks`,
 );

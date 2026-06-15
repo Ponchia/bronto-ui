@@ -45,9 +45,23 @@
   keyboard and pointer resizing, `--splitter-pos` / `aria-valuenow` sync, and a
   `bronto:splitter:resize` event. React, Solid, Qwik, Svelte, and Vue adapters
   expose the matching hook/action/directive.
+- **Service identity demo and report kit.** The public demo set now includes
+  `demo/service.html`, a cross-service `ui-app-shell` specimen that keeps the
+  default bundle centered on shared app identity. Static reports get the new
+  opt-in `@ponchia/ui/css/report-kit.css` roll-up for the complete report
+  vocabulary, plus `@ponchia/ui/schemas/report-claims.v1.schema.json` for
+  claim/source sidecar validation.
+- **Public-package hardening gates.** `check:public-hygiene`,
+  `check:variables`, and `check:migrations` are now part of the aggregate
+  `npm run check` chain, covering packed public text leaks, undefined CSS
+  custom-property references, and migration-map/doc alignment.
 
 ### Fixed
 
+- **Silent CSS token typos.** `css/workbench.css` now uses the real
+  `--focus-ring` token for splitter focus outlines, and `css/report.css` uses
+  `--text-base` for finding/evidence value text. The new variable-reference
+  gate prevents the same class of no-op declaration from shipping again.
 - **Print: stat tiles and table rows no longer slice across PDF page
   boundaries** — the report-layer `@media print` break-inside guard covered
   the report shell (`.ui-report__*`, `.ui-claim`, `.ui-evidence-item`) but
@@ -85,6 +99,10 @@
 - `check:examples` keeps the example inventory, CI matrix, browser-smoke list,
   README rows, and preview ports aligned from one registry; `check:dead` now
   runs in the aggregate `npm run check` chain.
+- README, package metadata, usage docs, workbench examples, and the docs index
+  now frame `@ponchia/ui` as the shared UI identity layer for services, tools,
+  sites, and reports, with reports as an opt-in consumer rather than the center
+  of the package.
 
 ## 0.6.6 — 2026-06-10
 
