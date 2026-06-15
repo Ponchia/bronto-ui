@@ -1,0 +1,38 @@
+/* ==========================================================================
+   report-kit — convenience roll-up for static/PDF report consumers.
+
+   Import the default bundle first, then this opt-in kit:
+
+     @import '@ponchia/ui';
+     @import '@ponchia/ui/css/report-kit.css';
+
+   This file deliberately excludes app workbench/command surfaces. Reports can
+   still import narrower leaves one by one; this roll-up is the no-build,
+   copy-paste path for complete static reports.
+   ========================================================================== */
+
+@import url('./report.css') layer(bronto);
+@import url('./dataviz.css') layer(bronto);
+@import url('./figure.css') layer(bronto);
+@import url('./annotations.css') layer(bronto);
+@import url('./legend.css') layer(bronto);
+@import url('./marks.css') layer(bronto);
+@import url('./connectors.css') layer(bronto);
+@import url('./spotlight.css') layer(bronto);
+@import url('./crosshair.css') layer(bronto);
+@import url('./selection.css') layer(bronto);
+@import url('./sources.css') layer(bronto);
+@import url('./generated.css') layer(bronto);
+@import url('./state.css') layer(bronto);
+@import url('./interval.css') layer(bronto);
+@import url('./clamp.css') layer(bronto);
+@import url('./highlights.css') layer(bronto);
+@import url('./diff.css') layer(bronto);
+@import url('./code.css') layer(bronto);
+@import url('./spark.css') layer(bronto);
+@import url('./bullet.css') layer(bronto);
+@import url('./sidenote.css') layer(bronto);
+@import url('./textref.css') layer(bronto);
+@import url('./term.css') layer(bronto);
+@import url('./toc.css') layer(bronto);
+@import url('./tree.css') layer(bronto);

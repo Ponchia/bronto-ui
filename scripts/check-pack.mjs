@@ -58,7 +58,21 @@ for (const p of files) {
 const shippedDocs = new Set((pkg.files ?? []).filter((f) => f.endsWith('.md')));
 
 // Belt-and-braces: these must never ship (except the curated docs above).
-const forbidden = ['scripts/', 'docs/', 'demo/', 'test/', '.github/', 'node_modules/'];
+const forbidden = [
+  'scripts/',
+  'docs/',
+  'demo/',
+  'test/',
+  'examples/',
+  '.github/',
+  '.claude/',
+  '.codeql/',
+  '.semgrep/',
+  '.scannerwork/',
+  'code-quality-audits/',
+  'node_modules/',
+  'reports-lab/',
+];
 for (const p of files) {
   if (shippedDocs.has(p)) continue;
   if (forbidden.some((d) => p.startsWith(d)) || /^\./.test(p)) {

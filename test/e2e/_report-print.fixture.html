@@ -185,7 +185,7 @@
         </div>
 
         <div class="ui-alert ui-alert--warning" role="note">
-          <p>
+          <p class="ui-alert__body">
             <strong>Ship with a caveat.</strong> The headline accuracy is a clear win, but Cat↔Dog
             recall regressed. Gate deployment on a targeted evaluation of that pair before promoting
             v4.2 to production.
@@ -721,6 +721,7 @@
               aria-label="Retry amplification"
             >
               <title>Retry amplification</title>
+              <desc>Two horizontal bars comparing baseline and fault delivery attempts.</desc>
               <rect
                 x="8"
                 y="16"
@@ -776,6 +777,7 @@
               aria-label="Cold-start latency"
             >
               <title>Cold-start latency</title>
+              <desc>Two horizontal bars comparing cold-start latency before and after.</desc>
               <rect
                 x="8"
                 y="16"
@@ -807,6 +809,7 @@
       mount.innerHTML =
         '<svg viewBox="0 0 560 128" width="560" height="128" role="img" aria-label="Partition throughput">' +
         '<title>Partition throughput</title>' +
+        '<desc>Three bars with a threshold line showing partition throughput.</desc>' +
         '<rect x="8" y="40" width="120" height="72" fill="var(--panel-soft)" stroke="var(--line)"></rect>' +
         '<rect x="148" y="24" width="120" height="88" fill="var(--panel-soft)" stroke="var(--line)"></rect>' +
         '<rect x="288" y="12" width="120" height="100" fill="var(--panel-soft)" stroke="var(--line)"></rect>' +

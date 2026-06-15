@@ -24,7 +24,7 @@ const bundles = buildBundles();
 // roll-up entrypoint. A new leaf that is none of these produces no dist copy
 // and no export: it ships *nothing* while reading as "covered". This is the
 // inverse of the stale-dist check below and closes the silent-orphan hole.
-const ROLLUPS = new Set(['core.css', 'analytical.css']);
+const ROLLUPS = new Set(['core.css', 'analytical.css', 'report-kit.css']);
 const coveredLeaves = new Set([...leafFiles(), ...EXTRA_LEAVES, ...ROLLUPS]);
 for (const e of readdirSync(resolve(root, 'css'), { withFileTypes: true })) {
   if (!e.isFile() || !e.name.endsWith('.css')) continue;

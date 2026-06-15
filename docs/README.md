@@ -23,7 +23,14 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 - [theming.md](./theming.md) — the one-knob `--accent` model and a full re-skin recipe.
 - [contrast.md](./contrast.md) — the CI-gated WCAG contrast matrix (+ APCA advisory).
 
-## Reporting & analytical primitives
+## App/service primitives
+
+- [state.md](./state.md) — lifecycle / system-state vocabulary and sync bar.
+- [generated.md](./generated.md) — trust surfaces for AI / system-generated content.
+- [command.md](./command.md) — the command-palette shell + behavior.
+- [workbench.md](./workbench.md) — tool-UI core (inspector, property rows, selection bar).
+
+## Reports & analytical primitives
 
 - [reporting.md](./reporting.md) — the static, PDF-first report grammar **and the analytical toolbox available to a report**.
 - [figure.md](./figure.md) — reusable chart/diagram/media figure stage with overlay, key, and fallback-data slots.
@@ -50,10 +57,6 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 - [spotlight.md](./spotlight.md) — guided-focus overlay.
 - [crosshair.md](./crosshair.md) — plot ruler + pinned readout.
 - [selection.md](./selection.md) — cross-cutting selection-emphasis vocabulary.
-- [state.md](./state.md) — lifecycle / system-state vocabulary and sync bar.
-- [generated.md](./generated.md) — trust surfaces for AI / system-generated content.
-- [command.md](./command.md) — the command-palette shell + behavior.
-- [workbench.md](./workbench.md) — tool-UI core (inspector, property rows, selection bar).
 
 ## Getting started (frameworks)
 

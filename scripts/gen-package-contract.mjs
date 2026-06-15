@@ -12,7 +12,7 @@
  */
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { EXTRA_LEAVES, leafFiles } from './build-dist.mjs';
+import { EXTRA_LEAVES, buildBundles, leafFiles } from './build-dist.mjs';
 import { isMain, repoRoot as root, writeGenerated } from './lib/emit.mjs';
 
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
@@ -87,6 +87,13 @@ function exportClass(key) {
         'Opt-in CSS roll-up',
         'Stable additive',
         'Generated layered roll-up of the analytical leaves. Not included in the default bundle.',
+      ];
+    }
+    if (key === './css/report-kit.css') {
+      return [
+        'Opt-in CSS roll-up',
+        'Stable additive',
+        'Generated layered roll-up for complete static reports. Not included in the default bundle.',
       ];
     }
     return [
@@ -221,6 +228,12 @@ function fileClass(path) {
       'Glyph registry/renderers shipped as JS; declarations are generated.',
     ];
   }
+  if (path === 'schemas') {
+    return [
+      'Machine-readable schemas',
+      'Declarative JSON schemas for package-adjacent report/tooling contracts.',
+    ];
+  }
   if (path === 'shiki') {
     return ['Theme data', 'Shiki theme JSON on the governed palette.'];
   }
@@ -289,7 +302,7 @@ function provenanceRows() {
     [
       'Authored CSS graph',
       'css/core.css plus css/*.css leaves',
-      `dist/bronto.css; dist/css/*.css (${coreLeaves.size + optInLeaves.size + 1} layered outputs)`,
+      `dist/bronto.css; dist/css/*.css (${Object.keys(buildBundles()).length} layered outputs)`,
       'dist:build',
       'check:dist; check:exports',
       'Default bundle and direct layered leaf imports are generated from authored CSS and size-gated.',

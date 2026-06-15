@@ -1,6 +1,6 @@
 /* ==========================================================================
-   app — admin shell (sidebar + topbar + panels + metrics)
-   For admin / operator dashboards.
+   app — service shell (sidebar + topbar + panels + metrics)
+   For app, service, admin, and operator dashboards.
    ========================================================================== */
 
 .ui-app-shell {
@@ -257,7 +257,7 @@
 /* --- Metric tiles ---
    The metric primitive itself is shell-agnostic and now lives in
    primitives.css as `.ui-stat` / `.ui-statgrid`; `.ui-app-metric*` and
-   `.ui-app-metrics` remain as permanent admin-shell aliases (grouped on
+   `.ui-app-metrics` remain as permanent app-shell aliases (grouped on
    the canonical rules there — identical output). Nothing app-specific
    left to define here. */
 

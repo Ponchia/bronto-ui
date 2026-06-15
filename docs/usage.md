@@ -276,12 +276,14 @@ without it these widgets are unlabelled or unannounced:
 - **`ui-skiplink`** — keep it the first focusable element and point its `href`
   at the `id` of your main landmark.
 
-## App shell: the admin dashboard frame
+## App shell: the service frame
 
-`ui-app-shell` is a CSS-only two-column admin frame (sidebar rail + main
-column) that collapses to a single column with a horizontal rail below 880px —
-no behavior required. The nesting matters; the rail is `ui-app-rail` and the
-content side is `ui-app-main`:
+`ui-app-shell` is the default cross-service identity frame: a CSS-only
+two-column app shell (sidebar rail + main column) that collapses to a single
+column with a horizontal rail below 880px — no behavior required. Use it for
+ops tools, admin apps, internal services, generated dashboards, and any workflow
+surface that should feel like part of the same system. The nesting matters; the
+rail is `ui-app-rail` and the content side is `ui-app-main`:
 
 ```html
 <div class="ui-app-shell">
@@ -290,7 +292,9 @@ content side is `ui-app-main`:
     <nav class="ui-app-nav" aria-label="Primary">
       <span class="ui-app-nav__section">Main</span>
       <a href="/overview" aria-current="page">Overview</a>
-      <a href="/reports">Reports</a>
+      <a href="/jobs">Jobs</a>
+      <a href="/integrations">Integrations</a>
+      <a href="/settings">Settings</a>
     </nav>
     <div class="ui-app-rail__account">…</div>
   </aside>
@@ -309,6 +313,21 @@ content side is `ui-app-main`:
 Knobs: `--app-rail` sets the rail width (default 14rem); `ui-app-shell--full`
 drops the rail for a single-column app. `ui-app-nav` honours `aria-current="page"`
 (preferred) and the visual-only `.is-active`.
+
+Service composition checklist:
+
+- Start with `ui-app-shell`, `ui-app-rail`, `ui-app-nav`, `ui-app-main`,
+  `ui-app-topbar`, and `ui-app-content`.
+- Put brand and account identity in the rail; do not rebuild that frame per app.
+- Use `ui-app-toolbar` for filters/actions above a workflow surface.
+- Use `ui-app-panel` for grouped operational sections, not nested cards.
+- Use `ui-statgrid`/`ui-stat`, `ui-table`, `ui-field`, `ui-alert`, and
+  `ui-progress` inside panels; add opt-in `state.css` for `ui-state` lifecycle
+  labels.
+- Keep nav current state on `aria-current="page"` so the visual cue and AT cue
+  match.
+- Reach for opt-in `workbench.css` only when the service needs panes,
+  inspectors, or selected-object bulk actions.
 
 ## Menus: `data-bronto-menu` + `initMenu`
 
