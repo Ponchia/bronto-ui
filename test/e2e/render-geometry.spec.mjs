@@ -37,6 +37,24 @@ test('report value-fills and the trust pill paint a non-zero box', async ({ page
   const progressBox = await progressFill.boundingBox();
   expect(progressBox, 'progress bar has a layout box').not.toBeNull();
   expect(progressBox.width, 'progress bar paints a non-zero width').toBeGreaterThan(0);
+
+  const determinateDotbar = page.locator('.ui-dotbar:not(.ui-dotbar--indeterminate)').first();
+  await expect(determinateDotbar).toHaveAttribute('role', 'progressbar');
+  await expect(determinateDotbar).toHaveAttribute('aria-valuenow', '4');
+  await expect(determinateDotbar).toHaveAttribute('aria-valuemin', '0');
+  await expect(determinateDotbar).toHaveAttribute('aria-valuemax', '8');
+  expect(await determinateDotbar.locator('i').count(), 'dotbar has eight segments').toBe(8);
+  expect(await determinateDotbar.locator('i.is-on').count(), 'dotbar lights its value').toBe(4);
+
+  for (const [label, locator] of [
+    ['indeterminate progress', page.locator('.ui-progress.ui-progress--indeterminate').first()],
+    ['indeterminate dotbar', page.locator('.ui-dotbar.ui-dotbar--indeterminate').first()],
+  ]) {
+    await expect(locator, `${label} is busy`).toHaveAttribute('aria-busy', 'true');
+    expect(await locator.getAttribute('aria-valuenow'), `${label} omits aria-valuenow`).toBeNull();
+    expect(await locator.getAttribute('aria-valuemin'), `${label} omits aria-valuemin`).toBeNull();
+    expect(await locator.getAttribute('aria-valuemax'), `${label} omits aria-valuemax`).toBeNull();
+  }
 });
 
 test('standalone .ui-src pill renders a non-zero box', async ({ page }) => {
@@ -90,4 +108,61 @@ test('dot data surfaces paint non-zero boxes with lit cells', async ({ page }) =
   const readoutBox = await readout.boundingBox();
   expect(readoutBox, 'readout has a layout box').not.toBeNull();
   expect(readoutBox.width, 'readout paints a non-zero width').toBeGreaterThan(0);
+});
+
+test('multiple CSS tooltips stay positioned on their own trigger', async ({ page }) => {
+  await page.goto('/demo/', { waitUntil: 'domcontentloaded' });
+  await page.setContent(`
+    <main style="padding: 40px; display: flex; justify-content: space-between; inline-size: 560px">
+      <span id="left" class="ui-tooltip">
+        <button type="button">Left</button>
+        <span class="ui-tooltip__bubble" role="tooltip">Left tip</span>
+      </span>
+      <span id="right" class="ui-tooltip">
+        <button type="button">Right</button>
+        <span class="ui-tooltip__bubble" role="tooltip">Right tip</span>
+      </span>
+    </main>`);
+  await page.addStyleTag({ url: '/dist/bronto.css' });
+
+  const geometry = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('.ui-tooltip')).map((host) => {
+      const bubble = host.querySelector('.ui-tooltip__bubble');
+      const h = host.getBoundingClientRect();
+      const b = bubble.getBoundingClientRect();
+      return {
+        id: host.id,
+        delta: Math.abs((b.left + b.right) / 2 - (h.left + h.right) / 2),
+        bubbleWidth: b.width,
+      };
+    }),
+  );
+
+  expect(geometry).toHaveLength(2);
+  for (const item of geometry) {
+    expect(item.bubbleWidth, `${item.id} tooltip has a layout box`).toBeGreaterThan(0);
+    expect(item.delta, `${item.id} tooltip should be centered on its own trigger`).toBeLessThan(2);
+  }
+});
+
+test('report-kit does not turn standalone dot readouts into crosshair chips', async ({ page }) => {
+  await page.goto('/demo/', { waitUntil: 'domcontentloaded' });
+  await page.setContent(`
+    <link rel="stylesheet" href="/dist/bronto.css" />
+    <link rel="stylesheet" href="/dist/css/report-kit.css" />
+    <span id="standalone" class="ui-readout" role="img" aria-label="12">
+      <span class="ui-dotmatrix" aria-hidden="true"><span class="ui-dotmatrix__cell"></span></span>
+    </span>
+    <figure data-bronto-crosshair style="position: relative; width: 200px; height: 100px">
+      <div class="ui-crosshair is-active" style="--crosshair-x: 40px; --crosshair-y: 30px">
+        <div id="pinned" class="ui-readout">40%</div>
+      </div>
+    </figure>`);
+
+  await expect
+    .poll(() => page.locator('#standalone').evaluate((el) => getComputedStyle(el).position))
+    .toBe('static');
+  await expect
+    .poll(() => page.locator('#pinned').evaluate((el) => getComputedStyle(el).position))
+    .toBe('absolute');
 });

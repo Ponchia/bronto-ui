@@ -28,20 +28,32 @@ export function initDialog({ root } = {}) {
 
   const openFrom = (opener) => {
     const dlg = byIdInHost(host, opener.getAttribute('data-bronto-open'));
-    if (!dlg || typeof dlg.showModal !== 'function' || dlg.open) return;
-    managedDialogs.add(dlg);
+    if (!dlg || typeof dlg.showModal !== 'function' || dlg.open) return false;
+    const previous = focusRestorers.get(dlg);
+    if (previous) {
+      dlg.removeEventListener('close', previous);
+      focusRestorers.delete(dlg);
+    }
     const restoreFocus = () => {
       focusRestorers.delete(dlg);
       if (opener.isConnected && typeof opener.focus === 'function') opener.focus();
     };
+    try {
+      dlg.showModal();
+    } catch {
+      return false;
+    }
+    managedDialogs.add(dlg);
     focusRestorers.set(dlg, restoreFocus);
     dlg.addEventListener('close', restoreFocus, { once: true });
-    dlg.showModal();
+    return true;
   };
 
   const closeFrom = (closer) => {
     const dlg = closer.closest('dialog');
-    if (dlg && dlg.open && canManageDialog(dlg, closer)) dlg.close();
+    if (!dlg || !dlg.open || !canManageDialog(dlg, closer)) return false;
+    dlg.close();
+    return true;
   };
 
   const lightDismiss = (dlg) => {
@@ -52,23 +64,26 @@ export function initDialog({ root } = {}) {
       canManageDialog(dlg, dlg)
     ) {
       dlg.close();
+      return true;
     }
+    return false;
   };
 
   const onClick = (e) => {
-    const opener = e.target.closest('[data-bronto-open]');
+    const target = e.target;
+    const opener = target?.closest?.('[data-bronto-open]');
     if (opener && host.contains(opener)) {
-      openFrom(opener);
+      if (openFrom(opener)) e.preventDefault();
       return;
     }
-    const closer = e.target.closest('[data-bronto-close]');
+    const closer = target?.closest?.('[data-bronto-close]');
     if (closer) {
-      closeFrom(closer);
+      if (closeFrom(closer)) e.preventDefault();
       return;
     }
     // Light-dismiss: a click whose target is the <dialog> itself is the
     // backdrop (content sits in child elements).
-    lightDismiss(e.target);
+    if (lightDismiss(target)) e.preventDefault();
   };
   return bindOnce(host, 'dialog', () => {
     document.addEventListener('click', onClick);

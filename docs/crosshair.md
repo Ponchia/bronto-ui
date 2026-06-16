@@ -48,7 +48,7 @@ document.querySelector('[data-bronto-crosshair]').addEventListener(
 | `ui-crosshair` | The overlay. Hidden until `.is-active` (set on the first pointer move over the plot). |
 | `ui-crosshair__line` + `--x` / `--y` | Vertical / horizontal rule, positioned by `--crosshair-x` / `--crosshair-y`. |
 | `ui-crosshair__badge` | An axis value chip (you set its text + edge). |
-| `ui-readout` | A pinned readout chip; follows the crosshair point. |
+| `ui-readout` inside `.ui-crosshair` | A pinned readout chip; follows the crosshair point and flips before/above near plot edges via `data-readout-inline` / `data-readout-block`. Standalone `.ui-readout` remains the dot-matrix numeric row from `dots.css`. |
 
 `ui-crosshair--muted` is a subtler neutral crosshair. `ui.crosshair({ muted })`
 builds the class string. Include only the lines you need (just `--x` for a

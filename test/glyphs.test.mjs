@@ -186,6 +186,73 @@ test('initDotGlyph expands a placeholder and cleans up', async () => {
   }
 });
 
+test('initDotGlyph leaves unknown placeholders untouched in cell and mask modes', async () => {
+  const dom = new JSDOM('<!doctype html><body></body>');
+  const prevDocument = globalThis.document;
+  globalThis.document = dom.window.document;
+  try {
+    const { initDotGlyph } = await import('../behaviors/index.js');
+    const cell = dom.window.document.createElement('span');
+    cell.setAttribute('data-bronto-glyph', 'definitely-not-a-glyph');
+    const mask = dom.window.document.createElement('span');
+    mask.setAttribute('data-bronto-glyph', 'definitely-not-a-glyph');
+    mask.setAttribute('data-bronto-glyph-render', 'mask');
+    mask.setAttribute('data-bronto-glyph-label', 'Missing icon');
+    mask.setAttribute('data-bronto-glyph-size', '1.5rem');
+    dom.window.document.body.append(cell, mask);
+    const before = [cell.outerHTML, mask.outerHTML];
+
+    const stop = initDotGlyph({ root: dom.window.document });
+    assert.deepEqual([cell.outerHTML, mask.outerHTML], before);
+    assert.equal(cell.querySelectorAll('.ui-dotmatrix__cell').length, 0);
+    assert.equal(mask.querySelectorAll('.ui-dotmatrix__cell').length, 0);
+    assert.equal(cell.getAttribute('class'), null);
+    assert.equal(mask.getAttribute('class'), null);
+    assert.equal(mask.getAttribute('style'), null);
+    assert.equal(mask.getAttribute('role'), null);
+    assert.equal(mask.getAttribute('aria-label'), null);
+
+    stop();
+    assert.deepEqual([cell.outerHTML, mask.outerHTML], before);
+  } finally {
+    if (prevDocument === undefined) delete globalThis.document;
+    else globalThis.document = prevDocument;
+  }
+});
+
+test('initDotGlyph re-init replaces the active cell expansion cleanup', async () => {
+  const dom = new JSDOM('<!doctype html><body></body>');
+  const prevDocument = globalThis.document;
+  globalThis.document = dom.window.document;
+  try {
+    const { initDotGlyph } = await import('../behaviors/index.js');
+    const el = dom.window.document.createElement('span');
+    el.setAttribute('data-bronto-glyph', GLYPH_NAMES[0]);
+    dom.window.document.body.appendChild(el);
+
+    const stop1 = initDotGlyph({ root: dom.window.document });
+    assert.equal(
+      el.querySelectorAll(':scope > .ui-dotmatrix__cell').length,
+      GLYPH_SIZE * GLYPH_SIZE,
+    );
+    const stop2 = initDotGlyph({ root: dom.window.document });
+    assert.equal(
+      el.querySelectorAll(':scope > .ui-dotmatrix__cell').length,
+      GLYPH_SIZE * GLYPH_SIZE,
+      're-init refreshes instead of doubling cells',
+    );
+
+    stop2();
+    assert.equal(el.querySelectorAll(':scope > .ui-dotmatrix__cell').length, 0);
+    assert.ok(!el.classList.contains('ui-dotmatrix'));
+    stop1();
+    assert.equal(el.querySelectorAll(':scope > .ui-dotmatrix__cell').length, 0);
+  } finally {
+    if (prevDocument === undefined) delete globalThis.document;
+    else globalThis.document = prevDocument;
+  }
+});
+
 test('initDotGlyph cleanup only removes the cells it appended', async () => {
   const dom = new JSDOM('<!doctype html><body></body>');
   const prevDocument = globalThis.document;
@@ -383,6 +450,37 @@ test("initDotGlyph render='mask' makes one .ui-icon node, no cells, and cleans u
     assert.equal(el.getAttribute('class'), null);
     assert.equal(el.getAttribute('style'), null);
     assert.equal(el.getAttribute('role'), null);
+  } finally {
+    if (prevDocument === undefined) delete globalThis.document;
+    else globalThis.document = prevDocument;
+  }
+});
+
+test("initDotGlyph render='mask' re-init replaces the active cleanup", async () => {
+  const dom = new JSDOM('<!doctype html><body></body>');
+  const prevDocument = globalThis.document;
+  globalThis.document = dom.window.document;
+  try {
+    const { initDotGlyph } = await import('../behaviors/index.js');
+    const el = dom.window.document.createElement('span');
+    el.setAttribute('data-bronto-glyph', 'gear');
+    el.setAttribute('data-bronto-glyph-render', 'mask');
+    el.setAttribute('data-bronto-glyph-label', 'Settings');
+    dom.window.document.body.appendChild(el);
+
+    const stop1 = initDotGlyph({ root: dom.window.document });
+    assert.ok(el.classList.contains('ui-icon'));
+    const firstMask = el.style.getPropertyValue('--icon-mask');
+    const stop2 = initDotGlyph({ root: dom.window.document });
+    assert.ok(el.classList.contains('ui-icon'));
+    assert.equal(el.style.getPropertyValue('--icon-mask'), firstMask);
+
+    stop2();
+    assert.ok(!el.classList.contains('ui-icon'));
+    assert.equal(el.getAttribute('style'), null);
+    assert.equal(el.getAttribute('role'), null);
+    stop1();
+    assert.ok(!el.classList.contains('ui-icon'));
   } finally {
     if (prevDocument === undefined) delete globalThis.document;
     else globalThis.document = prevDocument;

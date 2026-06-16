@@ -52,9 +52,44 @@
   vocabulary, plus `@ponchia/ui/schemas/report-claims.v1.schema.json` for
   claim/source sidecar validation.
 - **Public-package hardening gates.** `check:public-hygiene`,
-  `check:variables`, and `check:migrations` are now part of the aggregate
-  `npm run check` chain, covering packed public text leaks, undefined CSS
-  custom-property references, and migration-map/doc alignment.
+  `check:variables`, `check:migrations`, and `check:consumer-surface` are now
+  part of the aggregate `npm run check` chain, covering packed public text
+  leaks, undefined CSS custom-property references, migration-map/doc alignment,
+  tarball-level JS/JSON subpath imports, and concrete CSS/doc/font subpath
+  resolution without DOM globals.
+- **Demo structural browser smoke.** The per-demo Playwright sweep now checks
+  every public demo page at desktop and mobile widths for broken ARIA ID
+  references, duplicate IDs, broken images, nameless visible buttons, and
+  non-finite SVG/CSS geometry values that axe and console guards do not cover.
+  Demo/example HTML entrypoints also declare a no-op favicon, so the browser
+  smoke gates no longer hide implicit `/favicon.ico` 404s.
+- **Shipped HTML snippet integrity.** `check:report` now parses fenced `html`
+  examples across shipped docs, `llms.txt`, and README-linked authoring docs,
+  failing on duplicate IDs, broken ARIA references, broken `label[for]` /
+  `input[list]` links, and missing `data-bronto-*` / `data-source-ids` snippet
+  targets before consumers copy stale markup.
+- **Public documentation link integrity.** `check:doc-links` now validates
+  local links and heading anchors across shipped docs, GitHub-only authoring
+  docs, and the docs viewer route list. Shipped-doc links still must resolve
+  inside the tarball, and `llms.txt` offline package references are checked, so
+  renamed sections or repo-only paths cannot leave stale public guidance behind.
+- **Public version-literal hygiene.** `check:versions` and `release:prep` now
+  share the same public docs/demo surface list, covering README-linked
+  getting-started docs and demo pages as well as shipped docs.
+- **Public import-snippet hygiene.** `check:contract` now parses named
+  `import { ... } from '@ponchia/ui/...'` snippets across README, shipped docs,
+  and README-linked getting-started docs, failing if a documented named import
+  is not exported.
+- **Behavior contract coverage.** Unit/browser tests now pin the crosshair
+  event payload, connector cleanup, connector geometry options, and the native
+  Popover API branch.
+- **Report toolbox routing coverage.** `check:report` now gates dataviz and
+  Vega toolbox rows and derives report-shape checks from demo pages that
+  actually contain `main.ui-report`.
+- **Visual baseline inventory coverage.** `check:visual-baselines` now keeps
+  `demo/index.html` `data-shot` / `data-shot-rtl` declarations aligned with
+  the committed Chromium screenshot baselines, so local checks catch missing
+  or orphaned baseline files before the pinned-container pixel job runs.
 
 ### Fixed
 
@@ -62,6 +97,20 @@
   `--focus-ring` token for splitter focus outlines, and `css/report.css` uses
   `--text-base` for finding/evidence value text. The new variable-reference
   gate prevents the same class of no-op declaration from shipping again.
+- **Standalone dot readouts survive `report-kit.css`.** `crosshair.css` now
+  scopes pinned readout-chip styling to `.ui-crosshair .ui-readout`, so the
+  core dot-matrix `.ui-readout` keeps its normal inline layout when a report
+  imports the full report kit.
+- **Command adapter docs match the shipped matrix.** `docs/command.md` and the
+  stability matrix now name the Svelte action and Vue directive/plugin paths
+  alongside the React/Solid/Qwik hooks, and the generated package-contract
+  provenance plus `llms.txt`/support guidance now include the Svelte/Vue
+  adapter sources.
+- **Rendered docs deep links work.** `docs/index.html` now preserves
+  `doc.md#section` routes, generates deterministic heading IDs after Markdown
+  sanitization, keeps same-page anchors inside the current doc route, and drops
+  the invalid meta-CSP `frame-ancestors` directive that browsers reported as a
+  console error. A cross-browser Playwright spec pins the behavior.
 - **Print: stat tiles and table rows no longer slice across PDF page
   boundaries** — the report-layer `@media print` break-inside guard covered
   the report shell (`.ui-report__*`, `.ui-claim`, `.ui-evidence-item`) but
@@ -97,8 +146,31 @@
   `docs/architecture.md` describe when to use those local gates versus the
   pinned-container screenshot gate.
 - `check:examples` keeps the example inventory, CI matrix, browser-smoke list,
-  README rows, and preview ports aligned from one registry; `check:dead` now
-  runs in the aggregate `npm run check` chain.
+  README rows, and preview ports aligned from one registry; the Astro example
+  now joins the packed-tarball Chromium smoke set. `check:dead` now runs in the
+  aggregate `npm run check` chain and fails future Knip configuration hints
+  instead of letting stale ignores fade into check noise.
+- Type-only coverage now instantiates the Svelte action and Vue directive
+  declarations from consumer-shaped code, including invalid root-shape
+  assertions, instead of only compiling those `.d.ts` files in isolation.
+- `check:exports` now also pins package-level CSS metadata: the top-level
+  `style` field, root export targets, and `sideEffects` CSS preservation must
+  stay aligned with the shipped `dist/bronto.css` entrypoint.
+- `check:consumer-types` now installs the packed tarball into a clean
+  TypeScript consumer and compiles imports through every typed
+  `@ponchia/ui/...` package subpath, so `exports.types` and package-internal
+  declaration references are proven through real consumer resolution.
+- `check:component-matrix` now classifies every shipped CSS leaf as either a
+  foundation layer or a component surface with explicit docs, demo, and e2e
+  ownership, so new framework primitives cannot silently ship without a
+  coverage owner.
+- `check:behavior-matrix` now derives the public `@ponchia/ui/behaviors`
+  exports and requires each behavior to have shipped docs, unit proof, and
+  browser proof. The pass also adds real-browser coverage for theme toggling,
+  dismissible alerts, native menus, carousel controls, and source focusing.
+- The default bundle budget was recalibrated to 91 kB raw / 15.65 kB gzip after
+  the theme-runtime and print-token cleanup pushed the fresh bundle just over
+  the prior ceiling while preserving the same payload shape.
 - README, package metadata, usage docs, workbench examples, and the docs index
   now frame `@ponchia/ui` as the shared UI identity layer for services, tools,
   sites, and reports, with reports as an opt-in consumer rather than the center

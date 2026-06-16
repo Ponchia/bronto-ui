@@ -40,6 +40,8 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 - [d2.md](./d2.md) — theme D2 diagrams from bronto tokens (theme-override slots), and annotate the rendered SVG.
 - [vega.md](./vega.md) — theme Vega-Lite charts from bronto tokens (resolved `config`) — the recommended path when a report needs a chart, since bronto ships no chart component.
 - [marks.md](./marks.md) — text/evidence emphasis for running prose (`ui-mark`, `ui-bracket-note`).
+- [dots.md](./dots.md) — the dot-matrix surface family: backgrounds, loaders, readouts, and data-bound dot primitives.
+- [glyphs.md](./glyphs.md) — the display glyph API built on the dot-matrix primitive.
 - [sources.md](./sources.md) — the citations / provenance trust layer.
 - [interval.md](./interval.md) — host-normalised low/high uncertainty spans for estimates and evidence windows.
 - [clamp.md](./clamp.md) — bounded excerpts with optional CSS-only show-more / show-less reveal.
@@ -60,7 +62,7 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 
 ## Getting started (frameworks)
 
-- [getting-started/vanilla.md](./getting-started/vanilla.md) · [getting-started/react-solid.md](./getting-started/react-solid.md) · [getting-started/astro.md](./getting-started/astro.md) · [getting-started/sveltekit.md](./getting-started/sveltekit.md)
+- [getting-started/vanilla.md](./getting-started/vanilla.md) · [getting-started/react-solid.md](./getting-started/react-solid.md) · [getting-started/astro.md](./getting-started/astro.md) · [getting-started/sveltekit.md](./getting-started/sveltekit.md) · [getting-started/vue.md](./getting-started/vue.md)
 - [integration.md](./integration.md) — framework integration overview.
 - [interop/tailwind.md](./interop/tailwind.md) — Tailwind interop recipe.
 

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { awaitDemoReady } from './_demo.mjs';
-import { blocking, scan } from './_demo-guards.mjs';
+import { blocking, scan, settleVisualState } from './_demo-guards.mjs';
 
 // axe-core scans the whole kitchen-sink demo (×themes ×RTL ×interaction
 // states); on a loaded CI runner that legitimately approaches the default 30s
@@ -27,10 +27,7 @@ test.beforeEach(() => test.setTimeout(60_000));
  */
 async function settle(page) {
   await awaitDemoReady(page); // don't let axe scan a half-built (JS-wired) demo
-  await page.evaluate(async () => {
-    await document.fonts.ready;
-    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-  });
+  await settleVisualState(page);
 }
 
 for (const theme of ['dark', 'light']) {

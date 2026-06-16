@@ -223,7 +223,7 @@ you have, so the one-accent discipline holds.
   colorways". (Your _own_ `--accent` re-brand is still your obligation; the
   guarantee covers the shipped palettes and skins.)
 
-## Data-viz palette (`@ponchia/ui/css/dataviz.css`)
+## Data-viz palette
 
 Opt-in Tier-4 chart colours for dashboards — **charts only, never UI chrome**
 (a build gate fails on `var(--chart-*)` in component CSS), and never in the
@@ -275,7 +275,7 @@ semantics — the CSS can't add ARIA for you:
   content use `.ui-popover` + `initPopover()` (collision-aware).
 
 > **Verify a rebrand:** open
-> [`demo/theme-playground.html`](../demo/theme-playground.html) — paste
+> [the theme playground](https://ponchia.github.io/bronto-ui/demo/theme-playground.html) — paste
 > your `--accent`, see the derived family and the computed WCAG ratios
 > for `--accent-text` / `--accent` against the surface, and copy the CSS
 > + DTCG override. This is the instrument for the "verify your hue"

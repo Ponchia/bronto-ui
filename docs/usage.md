@@ -191,6 +191,12 @@ destructive action).
 | toast    | transient, out-of-flow, system-initiated. Danger toasts route to an assertive live region; everything else polite. |
 | tooltip  | supplemental, hover/focus, never essential info (it's not announced reliably; don't hide required content in it). |
 
+For dismissible in-flow alerts, mark the host with `data-bronto-dismissible`,
+put `data-bronto-dismiss` on the close button, and wire `dismissible()` from
+`@ponchia/ui/behaviors`. With no attribute value, the button removes the nearest
+dismissible host; with a selector value, it removes the nearest matching
+ancestor and dispatches a cancelable `bronto:dismiss` event first.
+
 The CSS `ui-tooltip` is hover/focus-only and CSS can't wire it to assistive
 tech for you — associate the bubble with its trigger yourself, or it conveys
 nothing to a screen reader: give `.ui-tooltip__bubble` an `id`, point the
@@ -222,6 +228,8 @@ Both are a thin horizontal bar; they mean different things.
   zero bar — so the helper returns just `role="progressbar"` + `aria-busy="true"`
   (no `aria-valuenow`, no `--value`). Pair it with the class:
   `<div class={ui.progress({ indeterminate: true })} {...attrs.progress()}>`.
+  The segmented `.ui-dotbar` uses the same accessibility contract through
+  `attrs.dotbar(value)` or `attrs.dotbar()` for the indeterminate sweep.
 
 Rule of thumb: *something is happening* → progress; *something measures
 this much* → meter.
@@ -589,7 +597,9 @@ one of these a screen reader announces nothing while the user waits.
 carries the native `popover` attribute (never clipped by `overflow`/stacking);
 without it, it falls back to an `is-open` class that a clipping ancestor can cut
 off. Add `popover` to the panel for the robust path — the `is-open` form is a
-fallback, not the default to copy.
+fallback, not the default to copy. Placement flips to the roomier vertical side,
+keeps the panel on-screen, and scrolls tall content inside the available viewport
+space.
 
 It is a **non-modal** dialog by design: the panel gets `role="dialog"` and focus
 moves into it, but there is **no focus trap** and the rest of the page stays
@@ -610,7 +620,7 @@ HTML, print/PDF, and before any hydration:
 
 | Component | How it works without JS |
 | --- | --- |
-| Tooltip (`ui-tooltip`) | `:hover` / `:focus-within` (+ anchor positioning where supported) |
+| Tooltip (`ui-tooltip`) | `:hover` / `:focus-within` for short local labels |
 | Accordion | native `<details>` / `<summary>` |
 | Segmented control (`ui-segmented`) | `:has(input:checked)` over a radio group |
 | Scroll-reveal (`ui-scroll-reveal`) | scroll-driven animation, zero JS |
@@ -622,6 +632,7 @@ These are JS widgets wearing the Bronto look; without the behavior they are iner
 
 | Component | Behavior | With the behavior absent |
 | --- | --- | --- |
+| Disclosure trigger (`[data-bronto-disclosure]`) | `initDisclosure` | a button with stale `aria-expanded`; the controlled panel never toggles |
 | Tabs (`ui-tabs`) | `initTabs` | **author panels visible** — ship `hidden` panels and if `initTabs` never runs the content is unreachable |
 | Combobox (`ui-combobox`) | `initCombobox` | a plain text input beside an unfiltered list |
 | Command palette (`ui-command`) | `initCommand` | a static, unfiltered list |
@@ -631,12 +642,15 @@ These are JS widgets wearing the Bronto look; without the behavior they are iner
 | Carousel (`ui-carousel`) | `initCarousel` | a native scroll-snap track (usable, no controls) |
 | Controlled modal (`ui-modal.is-open`) | `initModal` | open skin only — no inert trap, focus-return, or Escape close signal |
 | Menu (`data-bronto-menu`) | `initMenu` | a button next to a list with no open/close, outside-click, or Escape |
+| Dismissible alert/callout (`data-bronto-dismissible`) | `dismissible` | the close affordance is just a button; nothing is removed |
 | Toast | `toast()` | nothing — it is imperative-only |
 
 One cross-cutting guard, not tied to a single component:
 
 | Concern | Behavior | With the behavior absent |
 | --- | --- | --- |
+| Theme persistence before first paint | `applyStoredTheme` | the token layer follows OS preference until client code sets `data-theme`, so a stored preference can flash |
+| Theme toggle controls | `initThemeToggle` | the button is inert and does not persist `data-theme` |
 | `aria-disabled="true"` controls | `initDisabledGuard` | dimmed + pointer-inert via CSS, but still **keyboard**-activatable on Enter/Space (native `disabled` is already fully inert) |
 
 Rule of thumb: if a component needs ARIA-state sync, focus management, a keyboard

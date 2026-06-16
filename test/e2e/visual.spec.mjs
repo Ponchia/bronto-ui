@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { JSDOM } from 'jsdom';
+import { settleVisualState } from './_demo-guards.mjs';
 import { awaitDemoReady } from './_demo.mjs';
 
 /**
@@ -22,8 +24,11 @@ const demoHtml = readFileSync(
   fileURLToPath(new URL('../../demo/index.html', import.meta.url)),
   'utf8',
 );
-const shots = [...demoHtml.matchAll(/data-shot="([^"]+)"/g)].map((m) => m[1]);
-const rtlShots = [...demoHtml.matchAll(/data-shot="([^"]+)"\s+data-shot-rtl/g)].map((m) => m[1]);
+const shotNodes = [...new JSDOM(demoHtml).window.document.querySelectorAll('[data-shot]')];
+const shots = shotNodes.map((node) => node.getAttribute('data-shot'));
+const rtlShots = shotNodes
+  .filter((node) => node.hasAttribute('data-shot-rtl'))
+  .map((node) => node.getAttribute('data-shot'));
 
 /** Set the persisted theme before the demo's modules read localStorage,
  *  so the first paint is already the theme under test (no flash/race). */
@@ -40,7 +45,7 @@ async function open(page, theme) {
   // the bundled Doto webfont to load — deterministic, vs the old fixed 150ms
   // that raced the glyphs shot to "element not stable".
   await awaitDemoReady(page);
-  await page.evaluate(() => document.fonts.ready);
+  await settleVisualState(page);
 }
 
 for (const theme of ['dark', 'light']) {
@@ -64,7 +69,7 @@ test.describe('components — RTL mirrors (logical-properties sweep)', () => {
     test(shot, async ({ page }) => {
       await open(page, 'dark');
       await page.evaluate(() => document.documentElement.setAttribute('dir', 'rtl'));
-      await page.waitForTimeout(50);
+      await settleVisualState(page);
       await expect(page.locator(`[data-shot="${shot}"]`)).toHaveScreenshot(`${shot}-rtl.png`);
     });
   }
@@ -75,6 +80,7 @@ test('modal opens centred with a backdrop', async ({ page }) => {
   await page.getByRole('button', { name: 'Open modal' }).click();
   const dialog = page.locator('dialog.ui-modal#demoModal');
   await expect(dialog).toBeVisible();
+  await settleVisualState(page);
   await expect(dialog).toHaveScreenshot('modal-open.png');
 });
 
@@ -83,5 +89,6 @@ test('lightbox opens as a full-screen carousel dialog', async ({ page }) => {
   await page.getByRole('button', { name: 'Open gallery' }).click();
   const dialog = page.locator('dialog.ui-lightbox#lbDemo');
   await expect(dialog).toBeVisible();
+  await settleVisualState(page);
   await expect(dialog).toHaveScreenshot('lightbox-open.png');
 });

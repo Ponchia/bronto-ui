@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from 'vue';
 import {
   toast,
   vDialog as vBrontoDialog,
@@ -7,20 +8,33 @@ import {
   vThemeToggle as vBrontoThemeToggle,
 } from '@ponchia/ui/vue';
 
+const bindingsEnabled = ref(true);
+const bindingsDisabled = { root: null };
+
 function notify() {
   toast('Hello from @ponchia/ui/vue', { tone: 'success' });
 }
 </script>
 
 <template>
+  <button hidden data-smoke-outside-scope data-bronto-theme-toggle>
+    Outside scoped theme toggle
+  </button>
+
   <main
     class="ui-center ui-stack"
     style="padding-block: 3rem"
-    v-bronto-theme-toggle
-    v-bronto-dialog
-    v-bronto-tabs
-    v-bronto-dot-glyph
+    v-bronto-theme-toggle="bindingsEnabled ? undefined : bindingsDisabled"
+    v-bronto-dialog="bindingsEnabled ? undefined : bindingsDisabled"
+    v-bronto-tabs="bindingsEnabled ? undefined : bindingsDisabled"
+    v-bronto-dot-glyph="bindingsEnabled ? undefined : bindingsDisabled"
   >
+    <button hidden data-bindings-disable type="button" @click="bindingsEnabled = false">
+      Disable bindings
+    </button>
+    <span hidden data-bindings-state>
+      {{ bindingsEnabled ? 'enabled' : 'disabled' }}
+    </span>
     <p class="ui-eyebrow">@ponchia/ui</p>
     <h1>Vue + Vite</h1>
     <div class="ui-cluster">

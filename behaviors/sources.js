@@ -6,6 +6,7 @@ import {
   byIdInHost,
   collectHosts,
   scrollIntoViewSafe,
+  closestSafe,
 } from './internal.js';
 
 /**
@@ -64,6 +65,7 @@ export function initSources({ root } = {}) {
   for (const island of islands) {
     const timers = new Set();
     const seeded = [];
+    const activeSources = new Set();
 
     const targetFor = (ref) => {
       const id = sourceId(ref);
@@ -101,17 +103,25 @@ export function initSources({ root } = {}) {
       }
     };
 
+    const clearGeneratedActive = () => {
+      for (const source of activeSources) source.classList.remove(ACTIVE);
+      activeSources.clear();
+    };
+
     const focusSource = (ref, source) => {
       for (const card of island.querySelectorAll(`.${ACTIVE}`)) card.classList.remove(ACTIVE);
+      clearGeneratedActive();
       for (const timer of timers) clearTimeout(timer);
       timers.clear();
 
       source.classList.add(ACTIVE);
+      activeSources.add(source);
       source.focus?.({ preventScroll: true });
       scrollIntoViewSafe(source);
 
       const timer = setTimeout(() => {
         source.classList.remove(ACTIVE);
+        activeSources.delete(source);
         timers.delete(timer);
       }, 1600);
       timers.add(timer);
@@ -125,7 +135,7 @@ export function initSources({ root } = {}) {
     };
 
     const onClick = (e) => {
-      const ref = e.target.closest?.(REF_SELECTOR);
+      const ref = closestSafe(e.target, REF_SELECTOR);
       if (!ref || !island.contains(ref)) return;
       const source = targetFor(ref);
       if (!source) return;
@@ -134,12 +144,14 @@ export function initSources({ root } = {}) {
     };
 
     const cleanup = bindOnce(island, 'sources', () => {
+      const activeState = Array.from(island.querySelectorAll(`.${ACTIVE}`));
       seed();
       island.addEventListener('click', onClick);
       return () => {
         island.removeEventListener('click', onClick);
         for (const timer of timers) clearTimeout(timer);
         timers.clear();
+        clearGeneratedActive();
         for (const item of seeded.splice(0)) {
           if (item.hadDescribedBy) item.ref.setAttribute('aria-describedby', item.describedBy);
           else item.ref.removeAttribute('aria-describedby');
@@ -147,7 +159,7 @@ export function initSources({ root } = {}) {
           else item.ref.removeAttribute('title');
           if (item.source && item.hadTabindex === false) item.source.removeAttribute('tabindex');
         }
-        for (const card of island.querySelectorAll(`.${ACTIVE}`)) card.classList.remove(ACTIVE);
+        for (const source of activeState) source.classList.add(ACTIVE);
       };
     });
 

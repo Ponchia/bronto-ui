@@ -4,9 +4,40 @@ import { test, expect } from '@playwright/test';
  * Locks in the accessibility/print CSS that has no other coverage:
  * forced-colors (Windows High Contrast), prefers-reduced-motion, and
  * the print stylesheet. Computed-style assertions only — no snapshots,
- * so zero baseline maintenance. Chromium-only (uses Chromium media
- * emulation), hence excluded from the cross-engine NON_PIXEL set.
+ * so zero baseline maintenance. The project matrix runs this non-pixel spec in
+ * Chromium, Firefox, and WebKit; the assertions avoid engine-specific system
+ * colour values and check durable layout/state signals instead.
  */
+
+function rgbChannels(value) {
+  return value
+    .match(/[\d.]+/g)
+    .slice(0, 3)
+    .map(Number);
+}
+
+function luminance(value) {
+  return rgbChannels(value)
+    .map((channel) => channel / 255)
+    .map((channel) => (channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4))
+    .reduce((total, channel, index) => total + channel * [0.2126, 0.7152, 0.0722][index], 0);
+}
+
+function contrastRatio(foreground, background) {
+  const fg = luminance(foreground) + 0.05;
+  const bg = luminance(background) + 0.05;
+  return Math.max(fg, bg) / Math.min(fg, bg);
+}
+
+function translateX(transform) {
+  if (!transform || transform === 'none') return 0;
+  const values = transform
+    .match(/matrix(?:3d)?\(([^)]+)\)/)?.[1]
+    .split(',')
+    .map(Number);
+  if (!values) return 0;
+  return values.length === 16 ? values[12] : values[4];
+}
 
 test('forced-colors: the keyboard focus ring is re-asserted', async ({ page }) => {
   await page.emulateMedia({ forcedColors: 'active' });
@@ -114,6 +145,51 @@ test('print under the dark theme: the panel/card surface flips to white paper, n
   expect(oled.panelStrong).toBe('#fff'); // and its dark --panel-strong is neutralised
 });
 
+test('print under the dark theme: accent text and primary button ink use the light-safe print family', async ({
+  page,
+}) => {
+  // Regression: the print block remapped --accent but left the dark-theme
+  // derived family in place. That made CTA accent text resolve to a pale
+  // red on white paper and left dark-mode primary buttons with black text on
+  // the light print accent.
+  await page.goto('/demo/', { waitUntil: 'networkidle' });
+  await page.emulateMedia({ media: 'print' });
+
+  const colors = await page.evaluate(() => {
+    document.documentElement.dataset.theme = 'dark';
+    document.documentElement.dataset.surface = 'oled';
+
+    const cta = document.createElement('a');
+    cta.className = 'ui-link ui-link--cta';
+    cta.href = '#';
+    cta.textContent = 'Print CTA';
+
+    const button = document.createElement('button');
+    button.className = 'ui-button';
+    button.textContent = 'Print action';
+
+    document.body.append(cta, button);
+    const ctaStyle = getComputedStyle(cta);
+    const buttonStyle = getComputedStyle(button);
+    const rootStyle = getComputedStyle(document.documentElement);
+    const result = {
+      paper: rootStyle.getPropertyValue('--bg').trim(),
+      buttonTextToken: rootStyle.getPropertyValue('--button-text').trim(),
+      ctaColor: ctaStyle.color,
+      buttonColor: buttonStyle.color,
+      buttonBg: buttonStyle.backgroundColor,
+    };
+    cta.remove();
+    button.remove();
+    return result;
+  });
+
+  expect(colors.paper).toBe('#fff');
+  expect(colors.buttonTextToken).toBe('#ffffff');
+  expect(contrastRatio(colors.ctaColor, 'rgb(255, 255, 255)')).toBeGreaterThanOrEqual(4.5);
+  expect(contrastRatio(colors.buttonColor, colors.buttonBg)).toBeGreaterThanOrEqual(4.5);
+});
+
 test('surface=oled: dark surfaces flip to true black; the readable text token is untouched', async ({
   page,
 }) => {
@@ -138,6 +214,63 @@ test('surface=oled: dark surfaces flip to true black; the readable text token is
   expect(v.base.bg).toBe('#121212'); // elevated near-black dark base
   expect(v.oled.bg).toBe('#000000'); // OLED preset flips --bg to true black
   expect(v.oled.text).toBe('#e6e6e6'); // text untouched — stays the readable token
+});
+
+test('theme toggle thumb reflects OS dark when data-theme is absent', async ({ page }) => {
+  // `applyStoredTheme()` intentionally leaves data-theme absent when there is
+  // no stored preference so the token layer follows prefers-color-scheme. The
+  // toggle chrome must reflect that same dark state, not only explicit
+  // data-theme="dark".
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto('/test/e2e/_app-shell.fixture.html', { waitUntil: 'networkidle' });
+  await page.evaluate(() => {
+    document.documentElement.removeAttribute('data-theme');
+    document.body.innerHTML = `
+      <button class="ui-themetoggle__button" type="button" data-bronto-theme-toggle>
+        <span class="ui-themetoggle__prefix">Theme</span>
+        <span class="ui-themetoggle__label">Dark</span>
+        <span class="ui-themetoggle__track"><span class="ui-themetoggle__thumb"></span></span>
+      </button>
+    `;
+  });
+
+  const states = await page.evaluate(() => {
+    const root = document.documentElement;
+    const thumb = document.querySelector('.ui-themetoggle__thumb');
+    thumb.style.transition = 'none';
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--accent)';
+    document.body.append(probe);
+
+    const read = () => {
+      const thumbStyle = getComputedStyle(thumb);
+      return {
+        thumbBg: thumbStyle.backgroundColor,
+        accent: getComputedStyle(probe).color,
+        transform: thumbStyle.transform,
+      };
+    };
+
+    root.removeAttribute('data-theme');
+    root.removeAttribute('dir');
+    const osDark = read();
+
+    root.setAttribute('dir', 'rtl');
+    const osDarkRtl = read();
+
+    root.setAttribute('data-theme', 'light');
+    root.removeAttribute('dir');
+    const explicitLight = read();
+
+    probe.remove();
+    return { osDark, osDarkRtl, explicitLight };
+  });
+
+  expect(states.osDark.thumbBg).toBe(states.osDark.accent);
+  expect(translateX(states.osDark.transform)).toBeGreaterThan(1);
+  expect(translateX(states.osDarkRtl.transform)).toBeLessThan(-1);
+  expect(states.explicitLight.thumbBg).not.toBe(states.explicitLight.accent);
+  expect(Math.abs(translateX(states.explicitLight.transform))).toBeLessThan(1);
 });
 
 test('density presets: compact and comfortable move only the spacing scale', async ({ page }) => {

@@ -278,7 +278,19 @@
     animation: none !important;
     opacity: 1;
     stroke-dashoffset: 0;
+  }
+
+  .ui-annotation__subject,
+  .ui-annotation__connector,
+  .ui-annotation__note-line,
+  .ui-annotation__badge {
     transform: none;
+  }
+
+  .ui-annotation--draw .ui-annotation__connector,
+  .ui-annotation--draw .ui-annotation__note-line {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
   }
 }
 

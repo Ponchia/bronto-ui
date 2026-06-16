@@ -62,7 +62,7 @@ container MUST carry a host-written `role="img"` + `aria-label` with the exact
 value — rounding to whole cells is presentation-only, so keep the figure in the
 label (WCAG 1.4.1).
 
-### `.ui-matrix` cell grid
+### `.ui-dotmatrix` cell grid
 
 `.ui-dotmatrix` is the raw data-bound grid (the one the glyphs render on): a grid
 of `.ui-dotmatrix__cell` (with `--hot` / `--accent` tones) plus the `--reveal` /
@@ -125,6 +125,9 @@ Knobs: `--v`, `--gauge-size`, `--gauge-sweep` (default 270deg), `--gauge-from`,
 The row wrapper produced by `renderReadout` (see `docs/glyphs.md`) — a Nothing-style
 hero numeric composed from digit glyphs. Tune character spacing with
 `--readout-gap`; spaces render as a `.ui-readout__spacer` of width `--readout-space`.
+Large multi-character readouts are intentionally intrinsic; on narrow report or
+demo pages, either tune the glyph dot size or wrap the readout in a local
+keyboard-focusable horizontal scroller so it does not widen the page.
 
 ### `.ui-spark--dots`
 

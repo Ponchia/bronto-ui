@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { applyTheme } from './_theme.mjs';
-import { blocking, ignored, scan } from './_demo-guards.mjs';
+import { blocking, scan } from './_demo-guards.mjs';
 
 async function openReport(page, theme = 'dark') {
   await page.goto('/demo/report.html', { waitUntil: 'networkidle' });
@@ -21,7 +21,7 @@ for (const theme of ['dark', 'light']) {
     });
     page.on('pageerror', (e) => pageErrors.push(String(e)));
     page.on('response', (r) => {
-      if (r.status() >= 400 && !ignored(r.url())) badResponses.push(`${r.status()} ${r.url()}`);
+      if (r.status() >= 400) badResponses.push(`${r.status()} ${r.url()}`);
     });
 
     await openReport(page, theme);

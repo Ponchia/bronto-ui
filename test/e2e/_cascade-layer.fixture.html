@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cascade layer fixture</title>
+    <style>
+      .consumer-bundle-button {
+        background: rgb(1 2 3);
+        border-color: rgb(4 5 6);
+        border-radius: 19px;
+        color: rgb(250 251 252);
+        display: block;
+      }
+
+      .consumer-leaf-button {
+        background: rgb(11 12 13);
+        border-color: rgb(14 15 16);
+        border-radius: 23px;
+        color: rgb(240 241 242);
+        display: block;
+      }
+    </style>
+    <link rel="stylesheet" href="../../dist/bronto.css" />
+    <link rel="stylesheet" href="../../dist/css/primitives.css" />
+  </head>
+  <body>
+    <main>
+      <button id="bundle-probe" class="ui-button consumer-bundle-button" type="button">
+        Bundle override
+      </button>
+      <button id="leaf-probe" class="ui-button consumer-leaf-button" type="button">
+        Leaf override
+      </button>
+    </main>
+  </body>
+</html>

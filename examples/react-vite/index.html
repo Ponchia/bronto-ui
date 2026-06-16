@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:," />
     <title>@ponchia/ui — React + Vite</title>
     <script>
       try {
@@ -12,6 +13,9 @@
     </script>
   </head>
   <body>
+    <button hidden data-smoke-outside-scope data-bronto-theme-toggle>
+      Outside scoped theme toggle
+    </button>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

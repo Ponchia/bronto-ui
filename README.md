@@ -3,7 +3,7 @@
 [![npm](https://img.shields.io/npm/v/@ponchia/ui?logo=npm)](https://www.npmjs.com/package/@ponchia/ui)
 [![npm provenance](https://img.shields.io/badge/npm-provenance-blue?logo=npm)](https://www.npmjs.com/package/@ponchia/ui#provenance)
 [![runtime deps](https://img.shields.io/badge/runtime%20deps-0-brightgreen)](https://github.com/Ponchia/bronto-ui/blob/main/package.json)
-[![dist](https://img.shields.io/badge/dist-~87kB%20%2F%20~15kB%20gzip-informational)](https://github.com/Ponchia/bronto-ui/blob/main/scripts/check-dist.mjs)
+[![dist](https://img.shields.io/badge/dist-~88kB%20%2F%20~15kB%20gzip-informational)](https://github.com/Ponchia/bronto-ui/blob/main/scripts/check-dist.mjs)
 [![CI](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Ponchia/bronto-ui/badge)](https://scorecard.dev/viewer/?uri=github.com/Ponchia/bronto-ui)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE)
@@ -72,7 +72,7 @@ Or drop it in with no build step, straight from a CDN:
 
 ## Quick start
 
-**1. Load the CSS.** One flattened, minified bundle — the whole standard component set, one request (~87 kB raw / ~15 kB gzip):
+**1. Load the CSS.** One flattened, minified bundle — the whole standard component set, one request (~88 kB raw / ~15 kB gzip):
 
 ```css
 @import '@ponchia/ui';            /* via a bundler */

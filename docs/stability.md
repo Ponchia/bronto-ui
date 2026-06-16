@@ -16,7 +16,7 @@ shipped `files` entry, and the generated artifact provenance map — see
 | CSS package root (`@ponchia/ui`) | Stable | CSS-only entrypoint. CSS side-effect imports are supported in CSS-aware bundlers; Node/runtime JS root imports are not. |
 | JS module format | Stable | JS subpaths are ESM-only. CommonJS consumers use dynamic `import()`. |
 | CSS class names (`.ui-*`) | Stable | Names and documented modifier semantics are public. Internal selector structure and leaf-file boundaries may change. |
-| Class recipes (`@ponchia/ui/classes`) | Stable | Exported `cls`, `ui`, `cx`, recipe names, and option unions are public. |
+| Class recipes (`@ponchia/ui/classes`) | Stable | Exported `cls`, `ui`, `cx`, `attrs`, recipe names, ARIA attribute helper names, and option unions are public. |
 | Class vocabulary as data (`@ponchia/ui/classes.json`) | Stable additive | The JSON shape (`groups`/`classes`/`states`/`customProperties`) and its entries are public — for validating markup from a non-JS/non-TS host. Generated from `cls` (the `classes` list cannot drift from the CSS); `states`/`customProperties` are gated against the stylesheet. New classes/hooks are additive. |
 | Design tokens | Stable names/roles | Token names and documented roles are public. Exact values and generated colour math outputs may change for visual tuning before 1.0. |
 | `--accent-1..6` | Stable names/roles | A subtle-to-bold accent ramp derived from `--accent`. Exact resolved values are visual tuning; algorithm changes require release-note visibility and resolver/browser checks. |
@@ -44,11 +44,27 @@ shipped `files` entry, and the generated artifact provenance map — see
 | Lifecycle state (`css/state.css`, `.ui-state*`, `.ui-syncbar`) | Stable additive | The `.ui-state`/`__label`/`__detail`/`--busy` classes, the canonical lifecycle state modifiers, `.ui-syncbar`, and the `ui.state` recipe are public. Opt-in, not in the default bundle. |
 | Generated / AI-trust (`css/generated.css`, `.ui-generated*`, `.ui-origin-label*`, `.ui-reasoning*`, `.ui-tool-log`, `.ui-tool-call*`) | Stable additive | The generated-content, origin-label (incl. `--ai`), reasoning-trace and tool-log/tool-call class names and the `ui.originLabel` recipe are public. Opt-in, not in the default bundle. Not a chat kit; no confidence widget. |
 | Workbench (`css/workbench.css`, `.ui-splitter*`, `.ui-inspector*`, `.ui-property*`, `.ui-selectionbar*`, `initSplitter`) | Stable additive | Splitter, inspector, property-row and selection-bar class + BEM part names are public (no recipe). `data-bronto-splitter`, `--splitter-pos`, `bronto:splitter:resize`, and the `initSplitter` cleanup contract are public. Opt-in, not in the default bundle. The host owns pane content, persistence, collapse policy, and selection state. |
-| Command palette (`css/command.css`, `.ui-command*`, `initCommand`, `useCommand`) | Stable additive | Command class/part names, the `data-bronto-command` attribute, and the event contract — `bronto:command:select` (`detail: { value, label }`) and `bronto:command:close` — are public, plus the `useCommand` binding hook. Bronto filters + navigates (APG combobox/listbox); the host owns the action registry/execution. Opt-in, not in the default bundle, no global hotkey. |
+| Command palette (`css/command.css`, `.ui-command*`, `initCommand`, `useCommand` / `command` / `vCommand`) | Stable additive | Command class/part names, the `data-bronto-command` attribute, and the event contract — `bronto:command:select` (`detail: { value, label }`) and `bronto:command:close` — are public, plus the framework binding adapters. Bronto filters + navigates (APG combobox/listbox); the host owns the action registry/execution. Opt-in, not in the default bundle, no global hotkey. |
 | Controlled-modal focus trap (`initModal`, `useModal`, `data-bronto-modal`) | Stable additive | For the `.ui-modal.is-open` (non-`<dialog>`) path: the `data-bronto-modal` opt-in marker, the `inert`-based focus trap + focus-return, and the cancelable `bronto:modal:close` (`detail: { reason }`) event are public. The consumer still owns the `is-open` class; the behavior never changes visibility. The native `<dialog>` path (`initDialog`) is the default and gets the trap for free. |
 | Keyboard-shortcut hint (`.ui-shortcut`, `.ui-shortcut__sep`) | Stable additive | Class names for the chord/sequence hint over `.ui-kbd` are public. Ships in the core layer (class-only, no recipe). |
 | Generated docs shipped in npm | Stable paths | `llms.txt` and exported docs paths stay shipped and resolvable within a compatible minor. Markdown/text assets are for reading unless your runtime has a loader. Generated content may change with the source contract. |
 | Demo, examples, tests, scripts | Internal | Useful for learning and verification, but not shipped runtime API unless a path is explicitly exported in `package.json`. |
+
+## Deprecation Policy
+
+Public surface (`.ui-*` classes, `data-bronto-*` attributes, `cls`/token keys,
+behavior signatures, and exported schema values) is removed on a
+**deprecate-one-minor** cycle:
+
+1. **Deprecate** in minor _N_: the surface keeps working unchanged, is marked
+   deprecated in `CHANGELOG.md`, and, for renames, gets an entry in
+   [`MIGRATIONS.json`](../MIGRATIONS.json).
+2. **Remove** no earlier than minor _N+1_, with a **BREAKING** changelog entry
+   and migration note.
+
+A token/class/attribute that is provably referenced by no shipped CSS,
+component, behavior, or doc may skip that window and be removed with a BREAKING
+entry plus migration note; there is no working call-site to keep alive.
 
 ## Trust Boundary
 

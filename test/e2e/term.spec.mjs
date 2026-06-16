@@ -20,6 +20,19 @@ test('term is a keyboard/touch-reachable button wired to a native popover', asyn
   await expect(def).toBeVisible();
 });
 
+test('term popover opens from the keyboard and closes on Escape', async ({ page }) => {
+  await open(page);
+  const term = page.locator('.ui-term').first();
+  const target = await term.getAttribute('popovertarget');
+  const def = page.locator(`#${target}`);
+
+  await term.focus();
+  await page.keyboard.press('Enter');
+  await expect(def).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(def).toBeHidden();
+});
+
 test('the glossary collects terms as a <dl>', async ({ page }) => {
   await open(page);
   const glossary = page.locator('.ui-glossary');

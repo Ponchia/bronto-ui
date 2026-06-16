@@ -1,6 +1,12 @@
 import { test, expect } from '@playwright/test';
 import { applyTheme } from './_theme.mjs';
 
+function expectVisibleColor(color, background) {
+  expect(color).not.toBe('rgba(0, 0, 0, 0)');
+  expect(color).not.toBe('transparent');
+  expect(color).not.toBe(background);
+}
+
 async function openDemo(page, name, theme = 'light') {
   await page.goto(`/demo/${name}.html`, { waitUntil: 'networkidle' });
   await applyTheme(page, theme);
@@ -93,6 +99,55 @@ test('ui-interval paints range and point from host-normalised values', async ({ 
   expect(measured.pointStart).toBeGreaterThan(0.48);
   expect(measured.pointStart).toBeLessThan(0.56);
   await expect(intervals.nth(1).locator('.ui-interval__point')).toHaveCount(0);
+});
+
+test('ui-interval remains visible in forced-colors', async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active' });
+  await openDemo(page, 'interval');
+
+  const colors = await page
+    .locator('.ui-interval')
+    .first()
+    .evaluate((el) => {
+      const range = el.querySelector('.ui-interval__range');
+      const point = el.querySelector('.ui-interval__point');
+      const track = el.querySelector('.ui-interval__track');
+      const canvasBackground = getComputedStyle(document.body).backgroundColor;
+      return {
+        canvasBackground,
+        rangeBackground: getComputedStyle(range).backgroundColor,
+        rangeBorder: getComputedStyle(range).borderTopColor,
+        pointBackground: getComputedStyle(point).backgroundColor,
+        trackBorder: getComputedStyle(track).borderTopColor,
+      };
+    });
+  expectVisibleColor(colors.rangeBackground, colors.canvasBackground);
+  expectVisibleColor(colors.rangeBorder, colors.canvasBackground);
+  expectVisibleColor(colors.pointBackground, colors.canvasBackground);
+  expectVisibleColor(colors.trackBorder, colors.canvasBackground);
+});
+
+test('source trust marks stay visible in forced-colors', async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active' });
+  await openDemo(page, 'sources');
+
+  const colors = await page.evaluate(() => {
+    const canvasBackground = getComputedStyle(document.body).backgroundColor;
+    return {
+      canvasBackground,
+      srcDot: getComputedStyle(document.querySelector('.ui-src'), '::before').backgroundColor,
+      chipDot: getComputedStyle(document.querySelector('.ui-citation--chip'), '::before')
+        .backgroundColor,
+      provenanceDot: getComputedStyle(document.querySelector('.ui-provenance__item'), '::before')
+        .backgroundColor,
+      sourceBorder: getComputedStyle(document.querySelector('.ui-source-card'))
+        .borderInlineStartColor,
+    };
+  });
+  expectVisibleColor(colors.srcDot, colors.canvasBackground);
+  expectVisibleColor(colors.chipDot, colors.canvasBackground);
+  expectVisibleColor(colors.provenanceDot, colors.canvasBackground);
+  expectVisibleColor(colors.sourceBorder, colors.canvasBackground);
 });
 
 test('ui-clamp toggles closed/open and expands for print', async ({ page }) => {

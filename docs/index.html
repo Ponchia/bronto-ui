@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:," />
     <title>@ponchia/ui — docs</title>
     <meta
       name="description"
@@ -10,7 +11,7 @@
     />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'none'; img-src 'self' data:; font-src 'self'; connect-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net"
+      content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'none'; img-src 'self' data:; font-src 'self'; connect-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net"
     />
     <!-- Dogfood: the docs site is styled by the framework it documents. -->
     <link rel="stylesheet" href="../dist/bronto.css" />
@@ -26,12 +27,21 @@
         margin: 0 auto;
         padding: 2rem 1.25rem 5rem;
       }
-      .nav {
+      #content {
+        min-inline-size: 0;
+      }
+      .nav-shell {
         position: sticky;
         top: 1rem;
         align-self: start;
         font-family: var(--mono);
         font-size: var(--text-sm);
+      }
+      .nav-shell > summary {
+        display: none;
+      }
+      .nav {
+        position: relative;
       }
       .nav a {
         display: block;
@@ -47,18 +57,80 @@
       @media (max-width: 48rem) {
         .layout {
           grid-template-columns: 1fr;
+          gap: 1rem;
+          padding-block-start: 0.75rem;
+        }
+        #content {
+          scroll-margin-block-start: 4rem;
+        }
+        .nav-shell {
+          background: color-mix(in srgb, var(--bg) 94%, transparent);
+          border: 1px solid var(--line);
+          border-radius: var(--radius-md);
+          box-shadow: var(--shadow-raised);
+          overflow: hidden;
+          position: sticky;
+          top: 0.5rem;
+          z-index: var(--z-sticky);
+        }
+        .nav-shell > summary {
+          align-items: center;
+          color: var(--text);
+          cursor: pointer;
+          display: flex;
+          gap: 0.75rem;
+          justify-content: space-between;
+          min-block-size: 2.9rem;
+          padding: 0.6rem 0.7rem;
+        }
+        .nav-shell > summary::-webkit-details-marker {
+          display: none;
+        }
+        .nav-shell > summary::after {
+          border-block-end: 1.5px solid currentcolor;
+          border-inline-end: 1.5px solid currentcolor;
+          content: '';
+          display: inline-block;
+          block-size: 0.45rem;
+          transform: rotate(45deg);
+          transition: transform var(--duration-fast) var(--ease-spring);
+          inline-size: 0.45rem;
+        }
+        .nav-shell[open] > summary {
+          border-block-end: 1px solid var(--line);
+        }
+        .nav-shell[open] > summary::after {
+          transform: rotate(-135deg);
         }
         .nav {
-          position: static;
+          max-block-size: min(18rem, 42svh);
+          overflow-y: auto;
+          overscroll-behavior: contain;
+          padding: 0.45rem;
+          scrollbar-gutter: stable;
+        }
+        .nav > strong {
+          display: none;
+        }
+        .nav a {
+          align-items: center;
+          display: flex;
+          min-block-size: 2.45rem;
         }
       }
     </style>
   </head>
   <body>
     <div class="layout">
-      <nav class="nav ui-stack" aria-label="Documentation" id="nav" style="--stack-gap: 0.1rem">
-        <strong class="ui-eyebrow" style="padding: 0.3rem 0.5rem">@ponchia/ui</strong>
-      </nav>
+      <details class="nav-shell" id="nav-shell" open>
+        <summary>
+          <span>@ponchia/ui</span>
+          <span id="nav-current">Getting started</span>
+        </summary>
+        <nav class="nav ui-stack" aria-label="Documentation" id="nav" style="--stack-gap: 0.1rem">
+          <strong class="ui-eyebrow" style="padding: 0.3rem 0.5rem">@ponchia/ui</strong>
+        </nav>
+      </details>
       <main class="ui-prose" id="content" aria-live="polite">Loading…</main>
     </div>
 
@@ -66,40 +138,73 @@
       import { marked } from 'https://cdn.jsdelivr.net/npm/marked@18.0.4/lib/marked.esm.js';
       import DOMPurify from 'https://cdn.jsdelivr.net/npm/dompurify@3.4.7/dist/purify.es.mjs';
 
-      // The docs that ship + matter to a reader, in reading order.
+      // The docs tree in reading order. check:doc-links keeps this route list
+      // aligned with docs/README.md and every docs/**/*.md authoring page.
       const DOCS = [
         ['getting-started/vanilla.md', 'Getting started'],
+        ['getting-started/react-solid.md', 'React / Solid'],
+        ['getting-started/astro.md', 'Astro'],
+        ['getting-started/sveltekit.md', 'SvelteKit'],
+        ['getting-started/vue.md', 'Vue'],
+        ['integration.md', 'Integration'],
+        ['interop/tailwind.md', 'Tailwind interop'],
         ['theming.md', 'Theming & colorways'],
+        ['contrast.md', 'Contrast & a11y'],
         ['usage.md', 'Usage guide'],
+        ['architecture.md', 'Architecture'],
+        ['stability.md', 'Public API stability'],
+        ['package-contract.md', 'Package contract'],
+        ['reference.md', 'Class reference'],
+        ['release.md', 'Release runbook'],
+        ['frontier-primitives.md', 'Frontier primitives'],
         ['reporting.md', 'Static reports'],
+        ['figure.md', 'Figure stage'],
         ['annotations.md', 'SVG annotations'],
         ['legends.md', 'Legends & data keys'],
+        ['mermaid.md', 'Mermaid themes'],
+        ['d2.md', 'D2 themes'],
+        ['vega.md', 'Vega themes'],
         ['marks.md', 'Text marks & evidence'],
+        ['dots.md', 'Dot surfaces'],
+        ['glyphs.md', 'Display glyphs'],
+        ['sources.md', 'Sources & provenance'],
+        ['interval.md', 'Intervals'],
+        ['clamp.md', 'Clamped excerpts'],
+        ['highlights.md', 'Highlights'],
+        ['diff.md', 'Diff rows'],
+        ['code.md', 'Code evidence'],
+        ['spark.md', 'Sparks'],
+        ['sidenote.md', 'Sidenotes'],
+        ['textref.md', 'Text references'],
+        ['bullet.md', 'Bullet graphs'],
+        ['term.md', 'Glossary terms'],
+        ['toc.md', 'Table of contents'],
+        ['tree.md', 'Tree outlines'],
         ['connectors.md', 'Connectors'],
         ['spotlight.md', 'Spotlight'],
         ['crosshair.md', 'Crosshair & readout'],
         ['selection.md', 'Selection states'],
-        ['sources.md', 'Sources & provenance'],
         ['state.md', 'Lifecycle & state'],
         ['generated.md', 'Generated & AI trust'],
         ['workbench.md', 'Workbench'],
         ['command.md', 'Command palette'],
-        ['stability.md', 'Public API stability'],
         ['migrations/0.2-to-0.3.md', 'Migration 0.2 to 0.3'],
         ['migrations/0.3-to-0.4.md', 'Migration 0.3 to 0.4'],
         ['migrations/0.4-to-0.5.md', 'Migration 0.4 to 0.5'],
         ['migrations/0.5-to-0.6.md', 'Migration 0.5 to 0.6'],
-        ['reference.md', 'Class reference'],
-        ['contrast.md', 'Contrast & a11y'],
         ['adr/0001-color-system.md', 'Color system (ADR-0001)'],
-        ['architecture.md', 'Architecture'],
-        ['frontier-primitives.md', 'Frontier primitives'],
-        ['integration.md', 'Integration'],
+        ['adr/0002-scope-and-2026-baseline.md', 'Scope and browser baseline (ADR-0002)'],
+        ['adr/0003-theme-model.md', 'Theme model (ADR-0003)'],
       ];
 
       const nav = document.getElementById('nav');
+      const navShell = document.getElementById('nav-shell');
+      const navCurrent = document.getElementById('nav-current');
       const content = document.getElementById('content');
+      const mobileNav = matchMedia('(max-width: 48rem)');
       const links = new Map();
+      let currentPath = DOCS[0][0];
+      let navRevealFrame = 0;
       for (const [path, label] of DOCS) {
         const a = document.createElement('a');
         a.href = `#${path}`;
@@ -108,39 +213,157 @@
         links.set(path, a);
       }
 
-      async function render(path) {
+      function syncNavShell() {
+        navShell.open = !mobileNav.matches;
+      }
+
+      syncNavShell();
+      if (mobileNav.addEventListener) mobileNav.addEventListener('change', syncNavShell);
+      else mobileNav.addListener(syncNavShell);
+
+      function slugFor(text, seen) {
+        let base = text
+          .trim()
+          .replace(/<[^>]+>/g, '')
+          .replace(/`([^`]+)`/g, '$1')
+          .replace(/[*_~]/g, '')
+          .replace(/&[a-z0-9#]+;/gi, '')
+          .toLowerCase()
+          .replace(/[^\p{L}\p{N}\s-]/gu, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '');
+        if (!base) base = 'section';
+        const count = seen.get(base) ?? 0;
+        seen.set(base, count + 1);
+        return count === 0 ? base : `${base}-${count}`;
+      }
+
+      function addHeadingIds(root) {
+        const seen = new Map();
+        for (const heading of root.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
+          if (!heading.id) heading.id = slugFor(heading.textContent || '', seen);
+        }
+      }
+
+      function parseRoute(raw, basePath = DOCS[0][0]) {
+        const value = String(raw || '').trim();
+        const hashAt = value.indexOf('#');
+        const rawPath = hashAt === -1 ? value : value.slice(0, hashAt);
+        const anchor = hashAt === -1 ? '' : value.slice(hashAt + 1);
+        let path = rawPath || basePath;
+
+        if (path.startsWith('./') || path.startsWith('../')) {
+          const baseDir = basePath.includes('/')
+            ? basePath.slice(0, basePath.lastIndexOf('/') + 1)
+            : '';
+          path = new URL(path, `https://docs.local/${baseDir}`).pathname.replace(/^\/+/, '');
+        }
+        path = path.replace(/^docs\//, '').replace(/^\/+/, '');
+        return { path, anchor };
+      }
+
+      function routeHash(route) {
+        return `#${route.path}${route.anchor ? `#${route.anchor}` : ''}`;
+      }
+
+      function navigate(route) {
+        const next = routeHash(route);
+        if (location.hash === next) render(route);
+        else location.hash = next;
+      }
+
+      function revealCurrentNavLink(link) {
+        if (!link || !navShell.open || nav.scrollHeight <= nav.clientHeight + 1) return;
+        const linkTop = link.offsetTop;
+        const linkBottom = linkTop + link.offsetHeight;
+        const visibleBottom = nav.scrollTop + nav.clientHeight;
+        if (linkTop < nav.scrollTop) {
+          nav.scrollTop = Math.max(0, linkTop - 8);
+        } else if (linkBottom > visibleBottom) {
+          nav.scrollTop = linkBottom - nav.clientHeight + 8;
+        }
+      }
+
+      function scheduleCurrentNavReveal() {
+        cancelAnimationFrame(navRevealFrame);
+        navRevealFrame = requestAnimationFrame(() => {
+          navRevealFrame = requestAnimationFrame(() => {
+            revealCurrentNavLink(links.get(currentPath));
+          });
+        });
+      }
+
+      function scrollToAnchor(anchor) {
+        if (anchor) {
+          const target = document.getElementById(anchor);
+          if (target) {
+            target.scrollIntoView({ block: 'start' });
+            return;
+          }
+        }
+        content.scrollIntoView({ block: 'start' });
+      }
+
+      async function render(route) {
+        let { path, anchor } = typeof route === 'string' ? parseRoute(route) : route;
         // Only ever fetch/show an allow-listed doc path (never a raw hash value).
-        if (!links.has(path)) path = DOCS[0][0];
-        for (const [p, a] of links) a.setAttribute('aria-current', p === path ? 'page' : 'false');
+        if (!links.has(path)) {
+          path = DOCS[0][0];
+          anchor = '';
+        }
+        currentPath = path;
+        let currentLink = null;
+        for (const [p, a] of links) {
+          const current = p === path;
+          a.setAttribute('aria-current', current ? 'page' : 'false');
+          if (current) currentLink = a;
+        }
+        navCurrent.textContent = currentLink?.textContent || DOCS[0][1];
+        revealCurrentNavLink(currentLink);
+        scheduleCurrentNavReveal();
         try {
           const res = await fetch(path, { cache: 'no-cache' });
           if (!res.ok) throw new Error(res.status);
           // Sanitize the rendered markdown before it touches the DOM — the docs
           // are trusted, but never pipe fetched text into innerHTML unsanitized.
           content.innerHTML = DOMPurify.sanitize(marked.parse(await res.text()));
-          content.scrollIntoView({ block: 'start' });
+          addHeadingIds(content);
+          scrollToAnchor(anchor);
         } catch {
           // Build the fallback with the DOM API (no innerHTML / interpolation).
           const p = document.createElement('p');
           p.append("Couldn't load this doc. View it on ");
           const a = document.createElement('a');
-          a.href = `https://github.com/Ponchia/bronto-ui/blob/main/docs/${encodeURI(path)}`;
+          a.href = `https://github.com/Ponchia/bronto-ui/blob/main/docs/${encodeURI(path)}${
+            anchor ? `#${encodeURIComponent(anchor)}` : ''
+          }`;
           a.textContent = 'GitHub';
           p.append(a, '.');
           content.replaceChildren(p);
         }
       }
 
-      const fromHash = () => render(decodeURIComponent(location.hash.slice(1)) || DOCS[0][0]);
+      const fromHash = () =>
+        render(parseRoute(decodeURIComponent(location.hash.slice(1)), DOCS[0][0]));
       addEventListener('hashchange', fromHash);
+      navShell.addEventListener('toggle', scheduleCurrentNavReveal);
+      nav.addEventListener('click', (e) => {
+        if (mobileNav.matches && e.target.closest('a')) navShell.open = false;
+      });
       // Intercept in-doc links to other .md files so they route in the viewer.
       content.addEventListener('click', (e) => {
         const a = e.target.closest('a');
         if (!a) return;
         const href = a.getAttribute('href') || '';
+        if (href.startsWith('#')) {
+          e.preventDefault();
+          navigate(parseRoute(href, currentPath));
+          return;
+        }
         if (/\.md(#|$)/.test(href) && !href.startsWith('http')) {
           e.preventDefault();
-          location.hash = href.replace(/^\.?\//, '').replace(/^(\.\.\/)+/, '');
+          navigate(parseRoute(href, currentPath));
         }
       });
       fromHash();

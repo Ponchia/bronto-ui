@@ -40,6 +40,31 @@ test('typing filters the list, hides empty groups, and shows the empty state', a
   await expect(page.locator('.ui-command__empty')).toBeVisible();
 });
 
+test('cleanup restores a filtered command list in a real browser', async ({ page }) => {
+  await open(page);
+  await page.evaluate(async () => {
+    const behaviorPath = `/behaviors/${'index.js'}`;
+    const { initCommand } = await import(behaviorPath);
+    window.__commandCleanupStop = initCommand();
+  });
+
+  const input = page.locator('.ui-command__input');
+  const empty = page.locator('.ui-command__empty');
+  await input.fill('zzzznomatch');
+  await expect(visibleItems(page)).toHaveCount(0);
+  await expect(page.locator('.ui-command__group:visible')).toHaveCount(0);
+  await expect(empty).toBeVisible();
+
+  await page.evaluate(() => window.__commandCleanupStop());
+  await expect(visibleItems(page)).toHaveCount(5);
+  await expect(page.locator('.ui-command__group:visible')).toHaveCount(2);
+  await expect(empty).toBeHidden();
+  await expect(page.locator('.ui-command__item.is-active')).toHaveCount(0);
+  await expect(input).not.toHaveAttribute('role', /.+/);
+  await expect(input).not.toHaveAttribute('aria-activedescendant', /.+/);
+  await expect(page.locator('.ui-command__list')).not.toHaveAttribute('role', /.+/);
+});
+
 test('keyboard: ArrowDown + Enter selects and emits bronto:command:select', async ({ page }) => {
   await open(page);
   const input = page.locator('.ui-command__input');
@@ -74,4 +99,25 @@ test('Escape emits bronto:command:close', async ({ page }) => {
   await page.locator('.ui-command__input').click();
   await page.keyboard.press('Escape');
   expect(await closed).toBe(true);
+});
+
+test('forced-colors: active command item keeps selected system colors', async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active' });
+  await open(page);
+  const input = page.locator('.ui-command__input');
+  await input.click();
+  await page.keyboard.press('ArrowDown');
+
+  const active = await page.locator('.ui-command__item.is-active').evaluate((el) => {
+    const host = getComputedStyle(el.closest('.ui-command'));
+    const style = getComputedStyle(el);
+    return {
+      hostBackground: host.backgroundColor,
+      background: style.backgroundColor,
+      color: style.color,
+    };
+  });
+  expect(active.background).not.toBe('rgba(0, 0, 0, 0)');
+  expect(active.background).not.toBe(active.hostBackground);
+  expect(active.color).not.toBe(active.background);
 });

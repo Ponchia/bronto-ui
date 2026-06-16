@@ -1,21 +1,33 @@
 import '@ponchia/ui';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { cls, useDialog, useDotGlyph, useTabs, useThemeToggle, useToast } from '@ponchia/ui/react';
 import { renderGlyph } from '@ponchia/ui/glyphs';
 import { charts } from '@ponchia/ui/charts';
 import { skins } from '@ponchia/ui/skins';
 
-function App() {
-  const rootRef = useRef(null);
+function BrontoBindings({ rootRef }) {
   useThemeToggle({ root: rootRef });
   useDialog({ root: rootRef });
   useTabs({ root: rootRef });
   useDotGlyph({ root: rootRef });
+  return null;
+}
+
+function App() {
+  const rootRef = useRef(null);
+  const [bindingsEnabled, setBindingsEnabled] = useState(true);
   const toast = useToast();
 
   return (
     <main ref={rootRef} className="ui-center ui-stack" style={{ paddingBlock: '3rem' }}>
+      {bindingsEnabled ? <BrontoBindings rootRef={rootRef} /> : null}
+      <button hidden data-bindings-disable type="button" onClick={() => setBindingsEnabled(false)}>
+        Disable bindings
+      </button>
+      <span hidden data-bindings-state>
+        {bindingsEnabled ? 'enabled' : 'disabled'}
+      </span>
       <p className="ui-eyebrow">@ponchia/ui</p>
       <h1>React + Vite</h1>
       <div className="ui-cluster">

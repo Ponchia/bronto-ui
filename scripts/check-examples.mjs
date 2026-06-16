@@ -2,10 +2,11 @@
  * Keep consumer examples and browser-smoke coverage aligned.
  *
  * The expensive work (packing the tarball, installing examples, building them,
- * running Chromium) lives in .github/workflows/examples.yml and
- * scripts/test-examples.mjs. This lightweight gate prevents coverage metadata drift:
- * examples on disk, CI matrix entries, README rows, smoke-script branches, and
- * preview ports must all agree with scripts/lib/examples.mjs.
+ * and running browser smokes) lives in .github/workflows/examples.yml and
+ * scripts/test-examples.mjs. This lightweight gate prevents coverage metadata
+ * drift: examples on disk, CI matrix entries, README rows, smoke-script
+ * branches, preview ports, and the deeper cross-browser smoke command must all
+ * agree with scripts/lib/examples.mjs.
  *
  * Run: node scripts/check-examples.mjs
  */
@@ -79,13 +80,79 @@ if (!smokeLists.length) {
 for (const [index, list] of smokeLists.entries()) {
   sameSet(`examples workflow browser-smoke list #${index + 1}`, list, BROWSER_SMOKE_EXAMPLE_NAMES);
 }
+if (!workflow.includes('cross_browser:')) {
+  errors.push('examples workflow has no cross_browser input for the deeper packed smoke');
+}
+if (!workflow.includes('visual_smoke:')) {
+  errors.push('examples workflow has no visual_smoke input for packed example visual smoke');
+}
+if (!workflow.includes('npx playwright install --with-deps chromium firefox webkit')) {
+  errors.push('examples workflow does not install chromium, firefox, and webkit for cross_browser');
+}
+if (!workflow.includes('npm run test:examples:cross-browser -- "${args[@]}"')) {
+  errors.push(
+    'examples workflow does not run test:examples:cross-browser when cross_browser is true',
+  );
+}
+if (!workflow.includes('npm run test:examples -- "${args[@]}"')) {
+  errors.push('examples workflow does not run test:examples with shared smoke args');
+}
+if (!workflow.includes('args+=(--visual)')) {
+  errors.push('examples workflow does not pass --visual when visual_smoke is true');
+}
 sameSet(
   'browser-smoke examples subset',
   BROWSER_SMOKE_EXAMPLE_NAMES.filter((name) => EXAMPLE_NAMES.includes(name)),
   BROWSER_SMOKE_EXAMPLE_NAMES,
 );
 
+const ciWorkflow = readFileSync(resolve(root, '.github/workflows/ci.yml'), 'utf8');
+if (!ciWorkflow.includes('cross_browser: ${{ github.event_name ==')) {
+  errors.push('CI workflow does not opt manual workflow_dispatch runs into cross-browser examples');
+}
+if (!ciWorkflow.includes('visual_smoke: ${{ github.event_name ==')) {
+  errors.push(
+    'CI workflow does not opt manual workflow_dispatch runs into packed example visual smoke',
+  );
+}
+
+const releaseWorkflow = readFileSync(resolve(root, '.github/workflows/release.yml'), 'utf8');
+if (
+  !/examples:\s*[\s\S]*?uses:\s*\.\/\.github\/workflows\/examples\.yml[\s\S]*?with:\s*[\s\S]*?cross_browser:\s*true[\s\S]*?visual_smoke:\s*true/.test(
+    releaseWorkflow,
+  )
+) {
+  errors.push(
+    'release workflow must gate publish on cross-browser packed examples and desktop+mobile visual smoke',
+  );
+}
+
 const smokeScript = readFileSync(resolve(root, 'scripts/smoke-example.mjs'), 'utf8');
+if (!smokeScript.includes('VISUAL_VIEWPORTS')) {
+  errors.push('scripts/smoke-example.mjs visual smoke has no explicit viewport inventory');
+}
+if (!smokeScript.includes("name: 'mobile'")) {
+  errors.push('scripts/smoke-example.mjs visual smoke does not include a mobile viewport');
+}
+if (!smokeScript.includes('documentWidth > layout.viewportWidth')) {
+  errors.push('scripts/smoke-example.mjs visual smoke does not fail horizontal overflow');
+}
+for (const [label, needle] of [
+  ['records bronto:themechange events', 'window.__brontoThemeEvents'],
+  ['checks theme-toggle aria reflection', "ariaPressed !== String(after === 'dark')"],
+  ['checks theme-toggle persistence', "localStorage.getItem('bronto-theme')"],
+]) {
+  if (!smokeScript.includes(needle)) {
+    errors.push(`scripts/smoke-example.mjs ${label}`);
+  }
+}
+if (
+  !/if \(name === 'vanilla-vite'\) \{[\s\S]*?await assertThemeToggle\(\);[\s\S]*?await assertToast\(\);/.test(
+    smokeScript,
+  )
+) {
+  errors.push('scripts/smoke-example.mjs vanilla-vite branch must exercise theme toggle and toast');
+}
 for (const name of BROWSER_SMOKE_EXAMPLE_NAMES) {
   if (!smokeScript.includes(`name === '${name}'`)) {
     errors.push(`scripts/smoke-example.mjs has no explicit assertion branch for ${name}`);
@@ -99,6 +166,17 @@ for (const name of EXAMPLE_NAMES) {
   }
 }
 
+const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
+const crossBrowserScript = pkg.scripts?.['test:examples:cross-browser'];
+if (crossBrowserScript !== 'node scripts/test-examples.mjs --browsers=chromium,firefox,webkit') {
+  errors.push(
+    'package.json test:examples:cross-browser must run packed examples in chromium, firefox, and webkit',
+  );
+}
+if (pkg.scripts?.['test:examples:visual'] !== 'node scripts/test-examples.mjs --visual') {
+  errors.push('package.json test:examples:visual must run packed examples with --visual');
+}
+
 const ports = new Map();
 for (const name of EXAMPLE_NAMES) {
   const port = previewPort(name);
@@ -110,5 +188,5 @@ for (const name of EXAMPLE_NAMES) {
 
 reportAndExit(errors, {
   label: 'examples',
-  ok: `${EXAMPLE_NAMES.length} examples and ${BROWSER_SMOKE_EXAMPLE_NAMES.length} browser-smoke entries are aligned`,
+  ok: `${EXAMPLE_NAMES.length} examples, ${BROWSER_SMOKE_EXAMPLE_NAMES.length} browser-smoke entries, cross-browser smoke, and desktop+mobile visual smoke are aligned`,
 });

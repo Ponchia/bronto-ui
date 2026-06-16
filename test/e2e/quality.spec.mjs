@@ -9,10 +9,6 @@ import { test, expect } from '@playwright/test';
  * Lighthouse checks, without the dependency.
  */
 
-// The browser implicitly requests /favicon.ico; the demo intentionally
-// ships none. That 404 is not a framework defect.
-const ignored = (url) => url.endsWith('/favicon.ico');
-
 for (const theme of ['dark', 'light']) {
   test(`quality — demo runs clean (${theme})`, async ({ page }) => {
     const consoleErrors = [];
@@ -24,9 +20,7 @@ for (const theme of ['dark', 'light']) {
     });
     page.on('pageerror', (e) => pageErrors.push(String(e)));
     page.on('response', (r) => {
-      if (r.status() >= 400 && !ignored(r.url())) {
-        badResponses.push(`${r.status()} ${r.url()}`);
-      }
+      if (r.status() >= 400) badResponses.push(`${r.status()} ${r.url()}`);
     });
 
     await page.addInitScript((t) => {
