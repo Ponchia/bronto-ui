@@ -218,8 +218,9 @@ Hard acceptance criteria for every step below:
 
 ## Verification plan
 
-- Existing `npm run check`, `npm test`, token/DTCG/resolved/dist/visual/a11y
-  gates stay green and **unchanged** for the default build.
+- Existing `npm run check`, token/DTCG/resolved/dist/visual/a11y gates stay
+  green and **unchanged** for the default build. `npm run check` includes the
+  node:test unit and contract suite.
 - New `check:color-policy` (raw color, status misuse, chart leakage, untiered
   hue).
 - Contrast matrices extended to: default light/dark, `prefers-contrast`,

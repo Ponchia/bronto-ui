@@ -90,7 +90,8 @@ export function byIdInHost(host, id) {
 
 export function closestSafe(el, selector) {
   try {
-    return el.closest(selector);
+    const start = el?.nodeType === 1 ? el : el?.parentElement;
+    return start?.closest?.(selector) ?? null;
   } catch {
     return null;
   }

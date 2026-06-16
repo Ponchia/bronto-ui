@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { attachGuards, blocking, scan, settle } from './_demo-guards.mjs';
+import { readdirSync } from 'node:fs';
+import { attachGuards, blocking, scan, settle, structuralIssues } from './_demo-guards.mjs';
 
 /**
  * Coverage for the per-feature demo pages. The main `/demo/` kitchen sink is
@@ -41,6 +42,7 @@ const SHOWCASE = [
   'service',
   'dots',
   'report',
+  'report-standalone',
   'version-history-report',
 ];
 
@@ -49,6 +51,10 @@ const SHOWCASE = [
 // evaluate (it would read white-on-swatch and false-fail). Guard it for
 // errors/404s, but don't axe-scan it.
 const GUARD_ONLY = ['theme-playground'];
+const ALL_DEMOS = readdirSync(new URL('../../demo/', import.meta.url))
+  .filter((name) => name.endsWith('.html'))
+  .map((name) => name.replace(/\.html$/, ''))
+  .sort();
 
 for (const theme of ['dark', 'light']) {
   for (const demo of SHOWCASE) {
@@ -99,4 +105,23 @@ for (const theme of ['dark', 'light']) {
       expect(badResponses, badResponses.join('\n')).toEqual([]);
     });
   }
+}
+
+for (const viewport of [
+  { name: 'desktop', width: 1280, height: 720 },
+  { name: 'mobile', width: 390, height: 844 },
+]) {
+  test(`all demos have intact DOM/SVG structure (${viewport.name})`, async ({ page }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    const failures = [];
+
+    for (const demo of ALL_DEMOS) {
+      await page.goto(`/demo/${demo}.html`, { waitUntil: 'networkidle' });
+      await settle(page);
+      const issues = await structuralIssues(page);
+      if (issues.length) failures.push(`${demo}.html:\n- ${issues.join('\n- ')}`);
+    }
+
+    expect(failures, failures.join('\n\n')).toEqual([]);
+  });
 }

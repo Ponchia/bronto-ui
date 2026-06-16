@@ -3,6 +3,7 @@
  *
  * Keeps the LLM/static-report docs and fixtures honest:
  *  - every mentioned ui-* class is in the public cls registry
+ *  - public authoring fenced HTML snippets keep local id/ARIA/behavior references intact
  *  - report.css / annotations.css stay opt-in, never imported by core.css
  *  - static report examples do not depend on remote executable/media assets
  *  - report examples do not use raw chromatic inline colors
@@ -24,6 +25,40 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const errors = [];
 const valid = new Set(Object.values(cls));
+
+const REPORTING_TOOLBOX_LEAVES = [
+  ['dataviz', 'theming.md#data-viz-palette'],
+  ['figure', 'figure.md'],
+  ['marks', 'marks.md'],
+  ['sources', 'sources.md'],
+  ['interval', 'interval.md'],
+  ['clamp', 'clamp.md'],
+  ['highlights', 'highlights.md'],
+  ['annotations', 'annotations.md'],
+  ['connectors', 'connectors.md'],
+  ['legend', 'legends.md'],
+  ['spotlight', 'spotlight.md'],
+  ['crosshair', 'crosshair.md'],
+  ['selection', 'selection.md'],
+  ['generated', 'generated.md'],
+  ['state', 'state.md'],
+  ['workbench', 'workbench.md'],
+  ['command', 'command.md'],
+  ['spark', 'spark.md'],
+  ['bullet', 'bullet.md'],
+  ['diff', 'diff.md'],
+  ['code', 'code.md'],
+  ['sidenote', 'sidenote.md'],
+  ['textref', 'textref.md'],
+  ['term', 'term.md'],
+  ['toc', 'toc.md'],
+  ['tree', 'tree.md'],
+];
+const REPORTING_TOOLBOX_JS = [
+  ['@ponchia/ui/mermaid', 'mermaid.md'],
+  ['@ponchia/ui/d2', 'd2.md'],
+  ['@ponchia/ui/vega', 'vega.md'],
+];
 
 const read = (rel) => readFileSync(resolve(root, rel), 'utf8');
 
@@ -88,6 +123,15 @@ for (const rel of classSources) {
   }
 }
 
+const htmlSnippetDocs = [
+  ...new Set([
+    ...shippedDocs(pkg),
+    ...walk('docs').filter((rel) => rel.endsWith('.md')),
+    'examples/README.md',
+  ]),
+];
+const htmlSnippetCount = checkHtmlSnippets(htmlSnippetDocs);
+
 const core = read('css/core.css');
 // The default bundle is a closed set: every @import in core.css must be in
 // CORE_BUNDLE (growing the default bundle is a deliberate registry edit), and
@@ -108,6 +152,8 @@ for (const leaf of optInLeaves(pkg)) {
   }
 }
 
+checkReportingToolbox(read('docs/reporting.md'));
+
 // No demo page or report example may depend on remote executable/media assets.
 const htmlSources = [
   ...allDemos,
@@ -127,9 +173,10 @@ for (const rel of htmlSources) {
 const reportHtmlSources = [
   'demo/report.html',
   'demo/report-standalone.html',
+  ...allDemos.filter((rel) => /<main\b[^>]*class=["'][^"']*\bui-report\b/i.test(read(rel))),
   'test/e2e/_report-print.fixture.html',
   ...walk('examples/report-static').filter((p) => /\.html$/.test(p)),
-];
+].filter((rel, index, all) => all.indexOf(rel) === index);
 for (const rel of reportHtmlSources) {
   checkReportShape(rel, read(rel));
 }
@@ -189,7 +236,9 @@ if (forbiddenTerms.length) {
 
 reportAndExit(errors, {
   label: 'report-kit',
-  ok: `report kit: ${classSources.length} docs/fixtures use valid ui-* classes`,
+  ok:
+    `report kit: ${classSources.length} docs/fixtures use valid ui-* classes; ` +
+    `${htmlSnippetCount} public authoring HTML snippet(s) keep local references intact`,
 });
 
 function loadForbiddenTerms() {
@@ -213,6 +262,97 @@ function trackedPublicBoundarySources() {
     files = walk('.');
   }
   return files.filter((p) => PUBLIC_BOUNDARY_FILE.test(p) && p !== 'package-lock.json');
+}
+
+function checkHtmlSnippets(docs) {
+  let count = 0;
+  for (const rel of docs) {
+    let src;
+    try {
+      src = read(rel);
+    } catch {
+      continue; // missing shipped docs are check:pack's responsibility
+    }
+
+    for (const match of src.matchAll(/```html[^\n]*\n([\s\S]*?)\n```/g)) {
+      count += 1;
+      const line = src.slice(0, match.index).split('\n').length;
+      const where = `${rel}:${line}`;
+      const fragment = JSDOM.fragment(match[1]);
+      const ids = new Map();
+      for (const node of fragment.querySelectorAll('[id]')) {
+        ids.set(node.id, (ids.get(node.id) || 0) + 1);
+      }
+
+      for (const [id, seen] of ids) {
+        if (seen > 1) errors.push(`${where}: fenced HTML snippet repeats id="${id}" ${seen}x`);
+      }
+
+      for (const node of fragment.querySelectorAll(
+        '[aria-controls], [aria-labelledby], [aria-describedby]',
+      )) {
+        for (const attr of ['aria-controls', 'aria-labelledby', 'aria-describedby']) {
+          const value = node.getAttribute(attr);
+          if (!value) continue;
+          for (const id of value.trim().split(/\s+/)) {
+            if (id && !ids.has(id)) {
+              errors.push(
+                `${where}: fenced HTML snippet has ${attr}="${id}" on ` +
+                  `<${node.tagName.toLowerCase()}> but no matching id="${id}"`,
+              );
+            }
+          }
+        }
+      }
+
+      for (const label of fragment.querySelectorAll('label[for]')) {
+        const id = label.getAttribute('for');
+        if (id && !ids.has(id)) {
+          errors.push(`${where}: fenced HTML snippet has label[for="${id}"] with no matching id`);
+        }
+      }
+
+      for (const input of fragment.querySelectorAll('input[list]')) {
+        const id = input.getAttribute('list');
+        if (id && !ids.has(id)) {
+          errors.push(`${where}: fenced HTML snippet has input[list="${id}"] with no datalist id`);
+        }
+      }
+
+      for (const node of fragment.querySelectorAll(
+        '[data-bronto-open], [data-bronto-close], [data-bronto-target], [data-target]',
+      )) {
+        for (const attr of [
+          'data-bronto-open',
+          'data-bronto-close',
+          'data-bronto-target',
+          'data-target',
+        ]) {
+          const value = node.getAttribute(attr);
+          if (!value) continue;
+          for (const part of value.trim().split(/\s+/)) {
+            if (part.startsWith('#') && !ids.has(part.slice(1))) {
+              errors.push(
+                `${where}: fenced HTML snippet has ${attr}="${part}" but no matching target id`,
+              );
+            }
+          }
+        }
+      }
+
+      for (const node of fragment.querySelectorAll('[data-source-ids]')) {
+        const value = node.getAttribute('data-source-ids') || '';
+        for (const id of value.trim().split(/\s+/)) {
+          if (id && !ids.has(id)) {
+            errors.push(
+              `${where}: fenced HTML snippet has data-source-ids="${id}" but no source id`,
+            );
+          }
+        }
+      }
+    }
+  }
+  return count;
 }
 
 function checkReportShape(rel, src) {
@@ -351,6 +491,41 @@ function checkReportShape(rel, src) {
           errors.push(`${rel}: action-register row with a title needs .${required}`);
         }
       }
+    }
+  }
+}
+
+function checkReportingToolbox(src) {
+  const start = src.indexOf('## The analytical toolbox in a report');
+  const end = src.indexOf('## Canonical skeleton', start);
+  if (start === -1 || end === -1) {
+    errors.push('docs/reporting.md: expected analytical toolbox section before canonical skeleton');
+    return;
+  }
+  const toolbox = src.slice(start, end);
+  for (const [leaf, doc] of REPORTING_TOOLBOX_LEAVES) {
+    if (!toolbox.includes(`css/${leaf}.css`)) {
+      errors.push(`docs/reporting.md: analytical toolbox missing css/${leaf}.css routing row`);
+    }
+    if (!toolbox.includes(`./${doc}`)) {
+      errors.push(`docs/reporting.md: analytical toolbox missing link to ${doc}`);
+    }
+  }
+  for (const [specifier, doc] of REPORTING_TOOLBOX_JS) {
+    if (!toolbox.includes(specifier)) {
+      errors.push(`docs/reporting.md: analytical toolbox missing ${specifier} routing row`);
+    }
+    if (!toolbox.includes(`./${doc}`)) {
+      errors.push(`docs/reporting.md: analytical toolbox missing link to ${doc}`);
+    }
+  }
+
+  const reportKit = read('css/report-kit.css');
+  for (const screenLeaf of ['workbench', 'command']) {
+    if (new RegExp(`@import\\s+url\\('\\./${screenLeaf}\\.css'\\)`).test(reportKit)) {
+      errors.push(
+        `css/report-kit.css imports ${screenLeaf}.css — screen-tool leaves stay explicit`,
+      );
     }
   }
 }

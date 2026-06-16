@@ -9,7 +9,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { cls, ui } from '../classes/index.js';
+import { attrs, cls, ui } from '../classes/index.js';
 import { buildClassesJson } from './gen-classes-json.mjs';
 import { reportAndExit } from './lib/gate-report.mjs';
 import { stripCssComments } from './lib/patterns.mjs';
@@ -36,6 +36,24 @@ for (const f of readdirSync(cssDir)) {
 
 const inManifest = new Set(Object.values(cls));
 const errors = [];
+
+// Object literals silently keep the last duplicate key. In a class registry,
+// that hides namespace collisions in review and generated docs, so fail before
+// runtime normalisation erases the evidence.
+const classSource = readFileSync(resolve(root, 'classes/index.js'), 'utf8');
+const clsStart = classSource.indexOf('export const cls = Object.freeze({');
+const clsEnd = classSource.indexOf('\n});', clsStart);
+if (clsStart === -1 || clsEnd === -1) {
+  errors.push('could not find the cls object literal in classes/index.js');
+} else {
+  const body = stripCssComments(classSource.slice(clsStart, clsEnd));
+  const keys = new Map();
+  for (const m of body.matchAll(/^\s*([A-Za-z_$][\w$]*)\s*:/gm)) {
+    const prev = keys.get(m[1]);
+    if (prev) errors.push(`classes/index.js duplicates cls.${m[1]} at source line ${prev}`);
+    else keys.set(m[1], body.slice(0, m.index).split('\n').length);
+  }
+}
 
 // The classes.json manifest carries two hand-curated sections that `cls`
 // cannot generate — `states` (the `is-*` hooks) and `customProperties` (the
@@ -80,9 +98,26 @@ for (const name of Object.keys(ui)) {
   }
 }
 
+const attrsInterface = dts.match(/export interface Attrs \{([\s\S]*?)\n\}/);
+if (!attrsInterface) {
+  errors.push('classes/index.d.ts is missing the Attrs interface');
+} else {
+  const declaredAttrs = new Set(
+    [...attrsInterface[1].matchAll(/^\s*(\w+)\s*\(/gm)].map((m) => m[1]),
+  );
+  for (const name of Object.keys(attrs)) {
+    if (!declaredAttrs.has(name)) {
+      errors.push(
+        `attrs.${name}() exists in classes/index.js but is not declared on Attrs in classes/index.d.ts`,
+      );
+    }
+  }
+}
+
 reportAndExit(errors, {
   label: 'class-contract',
   ok:
     `class contract: ${inManifest.size} classes match the stylesheet ` +
-    `(+ ${manifest.states.length} is-* states, ${manifest.customProperties.length} custom props verified in classes.json)`,
+    `(+ ${manifest.states.length} is-* states, ${manifest.customProperties.length} custom props verified in classes.json; ` +
+    `${Object.keys(attrs).length} attrs helper${Object.keys(attrs).length === 1 ? '' : 's'} typed)`,
 });

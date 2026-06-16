@@ -4,6 +4,9 @@
  * local verification does not rewrite example lockfiles or build outputs.
  *
  * Run: node scripts/test-examples.mjs [example-name ...] [--keep-temp]
+ *      node scripts/test-examples.mjs --browsers=chromium,firefox,webkit [example-name ...]
+ *      node scripts/test-examples.mjs --visual [example-name ...]
+ *        (desktop + mobile screenshot/layout health)
  */
 import { spawnSync } from 'node:child_process';
 import { cpSync, mkdtempSync, readdirSync, rmSync } from 'node:fs';
@@ -16,7 +19,40 @@ import { log } from './lib/stdio.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const keepTemp = args.includes('--keep-temp');
-const selected = args.filter((arg) => arg !== '--keep-temp');
+let browserNames;
+let visual = false;
+const selected = [];
+
+for (let index = 0; index < args.length; index += 1) {
+  const arg = args[index];
+  if (arg === '--keep-temp') continue;
+  if (arg === '--visual') {
+    visual = true;
+    continue;
+  }
+  if (arg === '--browser' || arg === '--browsers') {
+    browserNames = args[index + 1];
+    if (!browserNames || browserNames.startsWith('--')) {
+      console.error(`${arg} requires a comma-separated browser list`);
+      process.exit(1);
+    }
+    index += 1;
+    continue;
+  }
+  if (arg.startsWith('--browser=')) {
+    browserNames = arg.slice('--browser='.length);
+    continue;
+  }
+  if (arg.startsWith('--browsers=')) {
+    browserNames = arg.slice('--browsers='.length);
+    continue;
+  }
+  if (arg.startsWith('--')) {
+    console.error(`Unknown option: ${arg}`);
+    process.exit(1);
+  }
+  selected.push(arg);
+}
 const examples = selected.length ? selected : EXAMPLE_NAMES;
 
 const unknown = examples.filter((name) => !EXAMPLE_NAMES.includes(name));
@@ -76,7 +112,10 @@ try {
 
     if (BROWSER_SMOKE_EXAMPLE_NAMES.includes(name)) {
       const distDir = resolve(tempRoot, defaultDistDirFor(name));
-      run(process.execPath, [resolve(root, 'scripts/smoke-example.mjs'), name, distDir]);
+      const smokeArgs = [resolve(root, 'scripts/smoke-example.mjs'), name, distDir];
+      if (browserNames) smokeArgs.push(`--browsers=${browserNames}`);
+      if (visual) smokeArgs.push('--visual');
+      run(process.execPath, smokeArgs);
     }
   }
 

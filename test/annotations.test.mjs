@@ -315,6 +315,15 @@ test('helpers reject invalid geometry', () => {
   assert.throws(() => connectorLine({ dx: Number.NaN, dy: 0 }), TypeError);
   assert.throws(() => connectorLine({ dx: 10, dy: 10, subject: { type: 'point' } }), TypeError);
   assert.throws(() => annotationParts({ subject: { type: 'point' } }), TypeError);
+  assert.throws(() => annotationParts({ type: 'zigzag' }), TypeError);
+  assert.throws(
+    () => directLabels([{ anchor: { x: 0, y: 0 }, size: 10 }], { axis: 'z' }),
+    TypeError,
+  );
+  assert.throws(
+    () => directLabels([{ anchor: { x: 0, y: 0 }, size: 10 }], { shape: 'zigzag' }),
+    TypeError,
+  );
 });
 
 test('declutterLabels leaves non-overlapping labels in place', () => {

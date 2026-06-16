@@ -1,3 +1,4 @@
+/** @jsxImportSource @builder.io/qwik */
 import '@ponchia/ui';
 import { component$, render, useSignal } from '@builder.io/qwik';
 import { cls, useDialog, useDotGlyph, useTabs, useThemeToggle, useToast } from '@ponchia/ui/qwik';
@@ -5,18 +6,37 @@ import { renderGlyph } from '@ponchia/ui/glyphs';
 import { charts } from '@ponchia/ui/charts';
 import { skins } from '@ponchia/ui/skins';
 
-const App = component$(() => {
-  // A Qwik signal scopes the delegated behaviors to this subtree; the hooks
-  // read it inside useVisibleTask$, after the ref is assigned.
-  const root = useSignal();
+const BrontoBindings = component$(({ root }) => {
   useThemeToggle({ root });
   useDialog({ root });
   useTabs({ root });
   useDotGlyph({ root });
+  return null;
+});
+
+const App = component$(() => {
+  // A Qwik signal scopes the delegated behaviors to this subtree; the hooks
+  // read it inside useVisibleTask$, after the ref is assigned.
+  const root = useSignal();
+  const bindingsEnabled = useSignal(true);
   const toast = useToast();
 
   return (
     <main ref={root} class="ui-center ui-stack" style={{ paddingBlock: '3rem' }}>
+      {bindingsEnabled.value ? <BrontoBindings root={root} /> : null}
+      <button
+        hidden
+        data-bindings-disable
+        type="button"
+        onClick$={() => {
+          bindingsEnabled.value = false;
+        }}
+      >
+        Disable bindings
+      </button>
+      <span hidden data-bindings-state>
+        {bindingsEnabled.value ? 'enabled' : 'disabled'}
+      </span>
       <p class="ui-eyebrow">@ponchia/ui</p>
       <h1>Qwik + Vite</h1>
       <div class="ui-cluster">

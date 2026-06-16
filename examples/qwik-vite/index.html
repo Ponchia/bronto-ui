@@ -3,15 +3,22 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:," />
     <title>@ponchia/ui — Qwik + Vite</title>
     <script>
-      try {
-        var t = localStorage.getItem('bronto-theme');
-        if (t) document.documentElement.dataset.theme = t;
-      } catch (e) {}
+      (() => {
+        try {
+          const theme = localStorage.getItem('bronto-theme');
+          if (theme) document.documentElement.dataset.theme = theme;
+        } catch (e) {}
+      })();
     </script>
+    <script type="module" src="/src/qwik-loader.js"></script>
   </head>
   <body>
+    <button hidden data-smoke-outside-scope data-bronto-theme-toggle>
+      Outside scoped theme toggle
+    </button>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

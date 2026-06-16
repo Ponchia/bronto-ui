@@ -237,6 +237,24 @@ function validateOffset(opts) {
   };
 }
 
+function annotationConnectorType(value) {
+  const type = value ?? 'callout';
+  if (type === 'callout' || type === 'elbow' || type === 'curve') return type;
+  throw new TypeError('type must be "callout", "elbow" or "curve"');
+}
+
+function directLabelAxis(value) {
+  const axis = value ?? 'y';
+  if (axis === 'x' || axis === 'y') return axis;
+  throw new TypeError('axis must be "x" or "y"');
+}
+
+function directLabelShape(value) {
+  const shape = value ?? 'straight';
+  if (shape === 'straight' || shape === 'elbow' || shape === 'curve') return shape;
+  throw new TypeError('shape must be "straight", "elbow" or "curve"');
+}
+
 function trimForCircle(dx, dy, subject) {
   const len = Math.hypot(dx, dy);
   const radius = dimension('subject.radius', subject.radius);
@@ -673,7 +691,7 @@ const SUBJECT_BUILDERS = {
  * @returns {AnnotationParts}
  */
 export function annotationParts(opts = {}) {
-  const type = opts.type ?? 'callout';
+  const type = annotationConnectorType(opts.type);
   const transform = annotationTransform({ x: opts.x ?? 0, y: opts.y ?? 0 });
   const dx = finite('dx', opts.dx, 0);
   const dy = finite('dy', opts.dy, 0);
@@ -764,9 +782,9 @@ export function declutterLabels(items, opts = {}) {
  */
 export function directLabels(items, opts = {}) {
   if (!Array.isArray(items)) throw new TypeError('items must be an array');
-  const axis = opts.axis === 'x' ? 'x' : 'y';
+  const axis = directLabelAxis(opts.axis);
   const cross = finite('cross', opts.cross, 0);
-  const shape = opts.shape === 'elbow' || opts.shape === 'curve' ? opts.shape : 'straight';
+  const shape = directLabelShape(opts.shape);
 
   const anchors = items.map((it) => ({
     anchor: { x: finite('anchor.x', it?.anchor?.x), y: finite('anchor.y', it?.anchor?.y) },

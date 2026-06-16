@@ -1,4 +1,4 @@
-import { hasDom, resolveHost, noop, bindOnce, collectHosts } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, collectHosts, closestSafe } from './internal.js';
 
 const THEMES = ['light', 'dark'];
 
@@ -53,7 +53,18 @@ export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
   if (!hasDom()) return noop;
   const host = resolveHost(root);
   if (!host) return noop;
-  const docEl = document.documentElement;
+  const doc = host.nodeType === 9 ? host : host.ownerDocument || document;
+  const docEl = doc.documentElement;
+  const toggleStates = new Map();
+
+  const rememberToggle = (el) => {
+    if (!toggleStates.has(el)) {
+      toggleStates.set(el, {
+        had: el.hasAttribute('aria-pressed'),
+        value: el.getAttribute('aria-pressed'),
+      });
+    }
+  };
 
   const prefersDark = () =>
     typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme: dark)').matches;
@@ -67,6 +78,7 @@ export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
   const reflect = () => {
     const c = current();
     collectHosts(host, '[data-bronto-theme-toggle]').forEach((el) => {
+      rememberToggle(el);
       const forced = el.getAttribute('data-bronto-theme-toggle');
       // A forced control is "pressed" when its theme is the active one;
       // a plain toggle reflects whether dark is active.
@@ -76,8 +88,9 @@ export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
   };
 
   const onClick = (e) => {
-    const trigger = e.target.closest('[data-bronto-theme-toggle]');
+    const trigger = closestSafe(e.target, '[data-bronto-theme-toggle]');
     if (!trigger || !host.contains(trigger)) return;
+    e.preventDefault();
     const forced = trigger.getAttribute('data-bronto-theme-toggle');
     const next = THEMES.includes(forced) ? forced : current() === 'dark' ? 'light' : 'dark';
     docEl.setAttribute('data-theme', next);
@@ -92,10 +105,17 @@ export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
     );
   };
 
-  applyStoredTheme({ storageKey });
+  applyStoredTheme({ storageKey, root: docEl });
   reflect();
   return bindOnce(host, 'themeToggle', () => {
     host.addEventListener('click', onClick);
-    return () => host.removeEventListener('click', onClick);
+    return () => {
+      host.removeEventListener('click', onClick);
+      for (const [el, state] of toggleStates) {
+        if (state.had) el.setAttribute('aria-pressed', state.value);
+        else el.removeAttribute('aria-pressed');
+      }
+      toggleStates.clear();
+    };
   });
 }

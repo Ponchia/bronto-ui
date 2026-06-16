@@ -1,6 +1,6 @@
 import { test, expect, devices } from '@playwright/test';
+import { readdirSync } from 'node:fs';
 import { awaitDemoReady } from './_demo.mjs';
-import { applyTheme } from './_theme.mjs';
 
 /**
  * Mobile / responsive coverage. The shipped CSS carries real responsive
@@ -32,6 +32,13 @@ function pageOverflow() {
   return document.documentElement.scrollWidth - window.innerWidth;
 }
 
+async function applyLayoutTheme(page, theme) {
+  await page.emulateMedia({ colorScheme: theme });
+  await page.evaluate((t) => {
+    document.documentElement.setAttribute('data-theme', t);
+  }, theme);
+}
+
 // ---------------------------------------------------------------------------
 // 1. PAGE-OVERFLOW SWEEP — highest-value assertion: a component-heavy page
 //    must not introduce a horizontal page scrollbar on a phone. Each leaf
@@ -39,34 +46,26 @@ function pageOverflow() {
 //    320–360px, so this is a true regression gate — a future component or
 //    figure that breaks small-screen layout fails CI.
 //
-//    NOTE (pre-existing, not covered here): the kitchen-sink `/demo/` and
-//    `/demo/version-history-report.html` DO overflow at ≤454px. The cause is
-//    demo-page content, not the library's responsive CSS — `/demo/`'s hero is
-//    a `.ui-cluster--between` flex row whose actions group won't shrink below
-//    the heading, and the version-history report has a wide static figure.
-//    Both live in demo/ (out of scope for this test file); gating them would
-//    fail on the current build, so they're documented rather than asserted.
+//    Every public demo is expected to keep page overflow at zero and scope any
+//    unavoidable specimen overflow to an inner scroller. This deliberately
+//    includes low-density docs/demos, not only the known dense component pages:
+//    a newly added public page should not escape the mobile layout invariant
+//    because it was omitted from a hand-maintained shortlist.
 // ---------------------------------------------------------------------------
-const MOBILE_CLEAN_DEMOS = [
-  'annotations',
-  'report',
-  'legends',
-  'marks',
-  'command',
-  'workbench',
-  'service',
-  'sources',
-  'state',
-];
+const MOBILE_CLEAN_DEMOS = readdirSync(new URL('../../demo/', import.meta.url))
+  .filter((name) => name.endsWith('.html'))
+  .map((name) => name.replace(/\.html$/, ''))
+  .sort();
 
 for (const width of [360, 320]) {
   for (const theme of ['light', 'dark']) {
     test(`no horizontal page overflow at ${width}px (${theme})`, async ({ page }) => {
+      test.setTimeout(60_000);
       await page.setViewportSize({ width, height: 844 });
       const worst = [];
       for (const demo of MOBILE_CLEAN_DEMOS) {
         await page.goto(`/demo/${demo}.html`, { waitUntil: 'networkidle' });
-        await applyTheme(page, theme);
+        await applyLayoutTheme(page, theme);
         const overflow = await page.evaluate(pageOverflow);
         if (overflow > 0) worst.push(`${demo}.html overflows by ${overflow}px`);
       }
@@ -74,6 +73,38 @@ for (const width of [360, 320]) {
     });
   }
 }
+
+test('dot readout scopes its wide matrix to the specimen scroller on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.goto('/demo/dots.html', { waitUntil: 'networkidle' });
+  await page.waitForSelector('html[data-demo-ready]');
+
+  const overflow = await page.evaluate(() => {
+    const scroller = document.querySelector('.dots-demo__readout-scroll');
+    const readout = scroller?.querySelector('.ui-readout');
+    const s = scroller?.getBoundingClientRect();
+    const r = readout?.getBoundingClientRect();
+    return {
+      pageOverflow: document.documentElement.scrollWidth - window.innerWidth,
+      scrollerOverflow: scroller ? scroller.scrollWidth - scroller.clientWidth : 0,
+      scrollerInlineSize: s?.width ?? 0,
+      readoutInlineSize: r?.width ?? 0,
+      scrollerOverflowX: scroller ? getComputedStyle(scroller).overflowX : '',
+      scrollerTabIndex: scroller?.getAttribute('tabindex') ?? '',
+      scrollerLabel: scroller?.getAttribute('aria-label') ?? '',
+    };
+  });
+
+  expect(
+    overflow.pageOverflow,
+    `page overflowed by ${overflow.pageOverflow}px`,
+  ).toBeLessThanOrEqual(0);
+  expect(overflow.scrollerOverflow).toBeGreaterThan(100);
+  expect(overflow.readoutInlineSize).toBeGreaterThan(overflow.scrollerInlineSize);
+  expect(overflow.scrollerOverflowX).toBe('auto');
+  expect(overflow.scrollerTabIndex).toBe('0');
+  expect(overflow.scrollerLabel).toMatch(/\S/);
+});
 
 // ---------------------------------------------------------------------------
 // 2. APP-SHELL COLLAPSE — css/app.css ~239. The public service demo mounts the

@@ -1,9 +1,23 @@
 import { hasDom, resolveHost, noop, collectHosts } from './internal.js';
 import { GLYPH_SIZE, glyphCells, glyphMask } from '../glyphs/glyphs.js';
 
+const GLYPH_CLEANUP = Symbol('bronto-glyph-cleanup');
+
 function restoreAttr(el, name, prev) {
   if (prev === null) el.removeAttribute(name);
   else el.setAttribute(name, prev);
+}
+
+function rememberCleanup(el, cleanups, cleanup) {
+  let done = false;
+  const wrapped = () => {
+    if (done) return;
+    done = true;
+    cleanup();
+    if (el[GLYPH_CLEANUP] === wrapped) delete el[GLYPH_CLEANUP];
+  };
+  el[GLYPH_CLEANUP] = wrapped;
+  cleanups.push(wrapped);
 }
 
 // `dot`/`gap`/`size` land in inline CSS, so allow only length/calc syntax —
@@ -40,6 +54,7 @@ export function initDotGlyph({ root } = {}) {
   const cleanups = [];
 
   for (const el of els) {
+    el[GLYPH_CLEANUP]?.();
     const name = el.getAttribute('data-bronto-glyph');
     const label = el.getAttribute('data-bronto-glyph-label');
 
@@ -67,7 +82,7 @@ export function initDotGlyph({ root } = {}) {
         el.setAttribute('aria-hidden', 'true');
       }
 
-      cleanups.push(() => {
+      rememberCleanup(el, cleanups, () => {
         if (!hadIcon) el.classList.remove('ui-icon');
         if (hadMask) el.style.setProperty('--icon-mask', hadMask);
         else el.style.removeProperty('--icon-mask');
@@ -159,7 +174,7 @@ export function initDotGlyph({ root } = {}) {
     });
     el.appendChild(frag);
 
-    cleanups.push(() => {
+    rememberCleanup(el, cleanups, () => {
       el.querySelectorAll(':scope > .ui-dotmatrix__cell').forEach((n) => n.remove());
       if (!hadMatrix) el.classList.remove('ui-dotmatrix');
       if (animClass && !hadAnimClass) el.classList.remove(animClass);

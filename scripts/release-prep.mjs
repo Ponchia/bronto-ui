@@ -12,18 +12,18 @@
  *      `## <new-version> — YYYY-MM-DD` heading check:release requires.
  *      (Prereleases keep the undated base heading; nothing to rewrite.)
  *   3. Re-pins every exact `@ponchia/ui@X.Y.Z[-prerelease]` literal to
- *      <new-version> in ALL surfaces that carry them: the README/shipped docs
- *      check:versions gates AND the ungated demo/*.html pages (GH-Pages copies).
+ *      <new-version> in the same public docs/demo surfaces that check:versions
+ *      gates.
  *
  * It does NOT commit, tag, or publish — see docs/release.md for the runbook.
  * Run `npm run check` afterwards; check:release + check:versions verify the
  * result.
  */
 import { execFileSync } from 'node:child_process';
-import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { shippedDocs } from './lib/shipped-docs.mjs';
+import { versionLiteralSurfaces } from './lib/version-surfaces.mjs';
 import { log } from './lib/stdio.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -86,11 +86,8 @@ function main(argv) {
     );
   }
 
-  // 3. Version literals: gated README/shipped docs + UNGATED demo pages.
-  const demoPages = readdirSync(resolve(root, 'demo'))
-    .filter((f) => f.endsWith('.html'))
-    .map((f) => `demo/${f}`);
-  const targets = [...new Set([...shippedDocs(pkg), ...demoPages])];
+  // 3. Version literals: the exact same public doc/demo surface check:versions gates.
+  const targets = versionLiteralSurfaces(pkg, root);
   let repinned = 0;
   for (const rel of targets) {
     let text;

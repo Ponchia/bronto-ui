@@ -41,6 +41,17 @@ import { initConnectors } from '@ponchia/ui/behaviors';
 const stop = initConnectors(); // redraws on resize/scroll; returns a cleanup
 ```
 
+For static SVG output, author the same parts directly: `.ui-connector__path`
+holds the line path, and `.ui-connector__end` holds an optional arrowhead/dot
+path from `arrowHead()` or `dotMark()`.
+
+```html
+<svg class="ui-connector ui-connector--accent" aria-hidden="true">
+  <path class="ui-connector__path" d="M20,10C48,10 72,50 100,50" />
+  <path class="ui-connector__end" d="M100,50L92,46L92,54Z" />
+</svg>
+```
+
 A connector is decorative — mark it `aria-hidden="true"` and make sure the
 relationship it depicts is also clear from the content/DOM order.
 
@@ -81,6 +92,11 @@ const head = arrowHead(to, angle); // place at the endpoint
 - `endTangentAngle(from, to, shape)` — the angle the path *arrives* at `to`
   (chord for `straight`, axis-aligned for `elbow`/`curve`); rotate an end marker
   by this so it points along the path. `connectRects().angle` already uses it.
+- Low-level scalar/SVG kernel helpers are exported for hosts that need the same
+  rounding and guard semantics as the path builders: `PRECISION`,
+  `roundNumber(value)`, `fmt(value)`, `point(x, y)`, `finite(name, value,
+  fallback)`, `dimension(name, value, fallback)`, `clamp(value, min, max)`, and
+  `rectPath(left, top, right, bottom)`.
 
 ## Coordinate model
 

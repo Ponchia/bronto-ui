@@ -8,16 +8,12 @@
  * Run: node scripts/test-e2e-nonpixel.mjs [playwright args...]
  */
 import { spawnSync } from 'node:child_process';
-import { readdirSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { discoverNonPixelE2eSpecs } from './lib/e2e-specs.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const e2eDir = resolve(root, 'test/e2e');
-const specs = readdirSync(e2eDir)
-  .filter((name) => name.endsWith('.spec.mjs') && name !== 'visual.spec.mjs')
-  .sort((a, b) => a.localeCompare(b))
-  .map((name) => join('test/e2e', name));
+const specs = discoverNonPixelE2eSpecs(root);
 
 if (!specs.length) {
   console.error('No non-pixel Playwright specs found in test/e2e.');

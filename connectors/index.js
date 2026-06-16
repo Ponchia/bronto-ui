@@ -48,12 +48,26 @@
 // builders below.
 export const PRECISION = 1000;
 
+/**
+ * Resolve a numeric option with an optional fallback.
+ * @param {string} name
+ * @param {number | null | undefined} value
+ * @param {number | null | undefined} [fallback]
+ * @returns {number}
+ */
 export function finite(name, value, fallback) {
   const v = value ?? fallback;
   if (!Number.isFinite(v)) throw new TypeError(`${name} must be a finite number`);
   return v;
 }
 
+/**
+ * Resolve a non-negative numeric option with an optional fallback.
+ * @param {string} name
+ * @param {number | null | undefined} value
+ * @param {number | null | undefined} [fallback]
+ * @returns {number}
+ */
 export function dimension(name, value, fallback) {
   const v = finite(name, value, fallback);
   if (v < 0) throw new RangeError(`${name} must be greater than or equal to 0`);
@@ -63,24 +77,62 @@ export function dimension(name, value, fallback) {
 // Round to PRECISION, normalising -0 → 0, and return the NUMBER (the numeric
 // core `fmt` stringifies). Shared with the annotations layer for the rounded
 // coordinates it echoes back to the host. (code-quality audit Q5.)
+/**
+ * @param {number} value
+ * @returns {number}
+ */
 export function roundNumber(value) {
   const rounded = Math.round((Object.is(value, -0) ? 0 : value) * PRECISION) / PRECISION;
   return Object.is(rounded, -0) ? 0 : rounded;
 }
 
+/**
+ * @param {number} value
+ * @returns {string}
+ */
 export function fmt(value) {
   return String(roundNumber(value));
 }
 
+/**
+ * @param {number} x
+ * @param {number} y
+ * @returns {string}
+ */
 export function point(x, y) {
   return `${fmt(x)},${fmt(y)}`;
 }
 
 // Guarded form (returns min when the range is inverted) — the reconciled body;
 // connectors only ever calls clamp(v, 0, 1) so this is output-identical here.
+/**
+ * @param {number} value
+ * @param {number} min
+ * @param {number} max
+ * @returns {number}
+ */
 export function clamp(value, min, max) {
   if (max < min) return min;
   return Math.min(max, Math.max(min, value));
+}
+
+function connectorShape(value) {
+  const shape = value ?? 'straight';
+  if (shape === 'straight' || shape === 'elbow' || shape === 'curve') return shape;
+  throw new TypeError('shape must be "straight", "elbow" or "curve"');
+}
+
+function sideValue(value) {
+  const side = value ?? 'center';
+  if (
+    side === 'top' ||
+    side === 'right' ||
+    side === 'bottom' ||
+    side === 'left' ||
+    side === 'center'
+  )
+    return side;
+  throw new TypeError('side must be "top", "right", "bottom", "left" or "center"');
 }
 
 /**
@@ -90,11 +142,11 @@ export function clamp(value, min, max) {
  * @returns {Point}
  */
 export function anchorPoint(rect, side = 'center') {
-  const x = finite('rect.x', rect?.x, 0);
-  const y = finite('rect.y', rect?.y, 0);
-  const w = dimension('rect.width', rect?.width, 0);
-  const h = dimension('rect.height', rect?.height, 0);
-  switch (side) {
+  const x = finite('rect.x', rect?.x);
+  const y = finite('rect.y', rect?.y);
+  const w = dimension('rect.width', rect?.width);
+  const h = dimension('rect.height', rect?.height);
+  switch (sideValue(side)) {
     case 'top':
       return { x: x + w / 2, y };
     case 'bottom':
@@ -185,7 +237,8 @@ export function curvePath(from, to, opts = {}) {
  * @returns {string}
  */
 export function connectorPath(opts = {}) {
-  const { from, to, shape = 'straight' } = opts;
+  const { from, to } = opts;
+  const shape = connectorShape(opts.shape);
   if (shape === 'elbow') return elbowPath(from, to, opts);
   if (shape === 'curve') return curvePath(from, to, opts);
   return straightPath(from, to);
@@ -270,7 +323,8 @@ export function autoSides(fromRect, toRect) {
  * @returns {number}
  */
 export function endTangentAngle(from, to, shape = 'straight') {
-  if (shape === 'straight') return angleBetween(from, to);
+  const resolved = connectorShape(shape);
+  if (resolved === 'straight') return angleBetween(from, to);
   const dx = finite('to.x', to?.x) - finite('from.x', from?.x);
   const dy = finite('to.y', to?.y) - finite('from.y', from?.y);
   if (Math.abs(dx) >= Math.abs(dy)) return dx >= 0 ? 0 : Math.PI;
@@ -285,10 +339,14 @@ export function endTangentAngle(from, to, shape = 'straight') {
  * @returns {ConnectRectsResult}
  */
 export function connectRects(opts = {}) {
-  const { fromRect, toRect, shape = 'straight', curvature, mid } = opts;
+  const { fromRect, toRect, curvature, mid } = opts;
+  const shape = connectorShape(opts.shape);
   // Honor each side override independently; auto-pick whichever is unset.
   const auto = autoSides(fromRect, toRect);
-  const sides = { from: opts.fromSide || auto.from, to: opts.toSide || auto.to };
+  const sides = {
+    from: opts.fromSide == null ? auto.from : sideValue(opts.fromSide),
+    to: opts.toSide == null ? auto.to : sideValue(opts.toSide),
+  };
   const from = anchorPoint(fromRect, sides.from);
   const to = anchorPoint(toRect, sides.to);
   const d = connectorPath({ from, to, shape, curvature, mid });

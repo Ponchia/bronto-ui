@@ -44,7 +44,7 @@ the path changes from source `css/` to built `dist/css/`:
 <!-- installed locally -->
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/<leaf>.css" />
 <!-- or from a CDN; pin the version (pre-1.0, breaking changes ship in the minor) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.7/dist/css/<leaf>.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.8/dist/css/<leaf>.css" />
 ```
 
 The flattened default bundle is `dist/bronto.css` (bundler shorthand
@@ -84,13 +84,17 @@ matching `.ui-source-card`, seed lightweight preview metadata, and emit
 `bronto:source:focus`; the host still owns numbering, fetching, trust decisions,
 and any rich preview popover.
 
-For React/Solid/Qwik, optional thin hook bindings over those behaviors (peer
-deps `react` / `solid-js` / `@builder.io/qwik`, optional — core stays zero-dep):
+Optional lifecycle adapters wrap those behaviors without owning markup or state.
+React/Solid/Qwik use hook bindings (peer deps `react` / `solid-js` /
+`@builder.io/qwik`, optional — core stays zero-dep); Svelte uses dependency-free
+actions, and Vue uses dependency-free directives/plugin helpers:
 
 ```js
 import { useDialog, useToast } from '@ponchia/ui/react'; // or '@ponchia/ui/solid' or '@ponchia/ui/qwik'
 // React: scope with { root: reactRef } or a resolver, not { root: ref.current } during render.
 // Qwik: hooks run in useVisibleTask$; scope with a Qwik signal — useDialog({ root: useSignal() }).
+// Svelte: import { dialog, toast } from '@ponchia/ui/svelte'.
+// Vue: import { vDialog, useToast } from '@ponchia/ui/vue', or app.use(brontoVue).
 ```
 
 Optional display glyphs — dot-matrix bitmaps on the `.ui-dotmatrix` primitive
@@ -618,7 +622,8 @@ behavior. Filter + keyboard-navigate a DOM-authored command list:
 Enter→`bronto:command:select` ({value,label}) and Escape→`bronto:command:close`.
 The HOST owns the action registry + execution; NO global Cmd/Ctrl+K (open it
 yourself, e.g. a <dialog> via initDialog). Pairs with `ui-shortcut`. Binding:
-`useCommand()` (react/solid/qwik). Details: `docs/command.md`.
+`useCommand()` (React/Solid/Qwik), `command` / `useCommand` (Svelte), and
+`vCommand` / `brontoVue` (Vue). Details: `docs/command.md`.
 
 Optional static report layer for LLM-authored HTML reports — opt-in, never in
 the default bundle. Pair it with the normal bundle, and add data-viz only when
@@ -777,7 +782,7 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
 
 - Live kitchen-sink demo (every component, light/dark, RTL): https://ponchia.github.io/bronto-ui/
 - Architecture & the CSS-first decision: https://github.com/Ponchia/bronto-ui/blob/main/docs/architecture.md
-- Framework integration guides (Astro / SvelteKit / React-Solid-Qwik / vanilla):
+- Framework integration guides (Astro / SvelteKit / Vue / React-Solid-Qwik / vanilla):
   https://github.com/Ponchia/bronto-ui/tree/main/docs/getting-started
 
 ## Rules an agent should respect

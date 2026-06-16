@@ -142,3 +142,64 @@ test('annotation specimen renders a non-empty visual surface', async ({ page }) 
   const shot = await page.locator('[data-annotation-specimen]').screenshot();
   expect(shot.length).toBeGreaterThan(30_000);
 });
+
+test('annotation motion branches respect reduced-motion preference', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await openSpecimen(page, 'light');
+
+  const reduced = await page.evaluate(() => {
+    const connector = document.querySelector('.ui-annotation--draw .ui-annotation__connector');
+    const pulse = document.querySelector(
+      '.ui-annotation--pulse :is(.ui-annotation__subject, .ui-annotation__badge)',
+    );
+    return {
+      connector: getComputedStyle(connector).animationName,
+      pulse: getComputedStyle(pulse).animationName,
+    };
+  });
+  expect(reduced).toEqual({ connector: 'none', pulse: 'none' });
+
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'light'));
+
+  const animated = await page.evaluate(() => {
+    const connector = document.querySelector('.ui-annotation--draw .ui-annotation__connector');
+    const pulse = document.querySelector(
+      '.ui-annotation--pulse :is(.ui-annotation__subject, .ui-annotation__badge)',
+    );
+    return {
+      connector: getComputedStyle(connector).animationName,
+      pulse: getComputedStyle(pulse).animationName,
+    };
+  });
+  expect(animated.connector).toContain('uiAnnotationDraw');
+  expect(animated.pulse).toContain('uiAnnotationPulse');
+});
+
+test('print keeps SVG note placement transforms while disabling animation', async ({ page }) => {
+  await openSpecimen(page, 'light');
+  await page.emulateMedia({ media: 'print' });
+
+  const printState = await page.evaluate(() => {
+    const root = document.querySelector('[data-annotation-specimen]');
+    const note = root.querySelector('.ui-annotation--circle .ui-annotation__note');
+    const subject = root.querySelector('.ui-annotation--circle .ui-annotation__subject');
+    const connector = root.querySelector('.ui-annotation--draw .ui-annotation__connector');
+    const noteBox = note.getBoundingClientRect();
+    const subjectBox = subject.getBoundingClientRect();
+    return {
+      noteTransform: note.getAttribute('transform'),
+      connectorAnimation: getComputedStyle(connector).animationName,
+      connectorDashoffset: getComputedStyle(connector).strokeDashoffset,
+      noteRightOfSubject: noteBox.left > subjectBox.left + subjectBox.width,
+      noteAboveSubject: noteBox.top + noteBox.height < subjectBox.top,
+    };
+  });
+
+  expect(printState.noteTransform).toMatch(/^translate\(/);
+  expect(printState.connectorAnimation).toBe('none');
+  expect(printState.connectorDashoffset).toBe('0px');
+  expect(printState.noteRightOfSubject).toBe(true);
+  expect(printState.noteAboveSubject).toBe(true);
+});

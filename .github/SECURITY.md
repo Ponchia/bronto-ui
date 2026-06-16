@@ -28,8 +28,9 @@ The package ships **zero runtime dependencies** — it is CSS plus
 optional dependency-free, side-effect-free-on-import, SSR-safe vanilla
 JS (`tokens` / `classes` / `behaviors` / `glyphs` / `skins` /
 `charts`). The `react`, `solid`, and `qwik` subpaths are optional
-lifecycle bindings over the same behavior layer and require their
-matching optional peer only when imported.
+lifecycle hook bindings over the same behavior layer and require their
+matching optional peer only when imported; `svelte` and `vue` are
+dependency-free action/directive adapters.
 
 Behaviors assume trusted application markup. Do not initialize them over
 untrusted user/CMS HTML unless you have sanitized that markup and are

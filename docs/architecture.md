@@ -99,8 +99,8 @@ on top of the CSS, none of which require a framework commitment**:
   the package root — Node/runtime JS imports of `.` are not supported. All JS
   entrypoints are explicit subpaths (`/behaviors`, `/classes`, `/tokens`,
   `/glyphs`, `/annotations`, `/connectors`, `/react`, `/solid`, `/qwik`,
-  `/skins`, `/charts`, `/mermaid`, `/d2`, `/vega`). This is a permanent,
-  intentional contract.
+  `/svelte`, `/vue`, `/skins`, `/charts`, `/mermaid`, `/d2`, `/vega`). This is
+  a permanent, intentional contract.
 
 ## Repository layout
 
@@ -135,13 +135,20 @@ the result.
 
 ## Drift control
 
-Every data mirror is backed by a check wired into `npm run check`, run by CI
-on every push/PR and again by `release.yml` before publish (see "Release
-gating" below), so a version that fails any invariant never reaches npm.
+Every data mirror and public documentation contract is backed by a check wired
+into `npm run check`, run by CI on every push/PR and again by `release.yml`
+before publish (see "Release gating" below), so a version that fails any
+invariant never reaches npm. Public authoring docs are treated as public surface
+too: `check:doc-links` fails stale local paths/anchors across shipped docs,
+GitHub-only docs, and the docs viewer route list, while shipped-doc links must
+also point at files present in the npm tarball. `check:contract` verifies
+documented named imports, `check:doc-recipes` fails copy-paste CDN recipes that
+silently no-op, and `check:report` validates fenced HTML snippets before they
+are copied into consumer reports.
 
 | Invariant                                       | Enforced by         |
 | ----------------------------------------------- | ------------------- |
-| exports / import graph / `files` consistent     | `check-exports.mjs` |
+| exports / import graph / source CSS `layer(bronto)` imports / layered-vs-unlayered CSS target map / `files` consistent | `check-exports.mjs` |
 | pure generated mirrors fresh — `tokens.css`/`index.json`, `dtcg.json`, `resolved.json`, `figma.variables.json`, `classes`/`tokens` `.d.ts`, `reference.md`, vscode data — each byte-equal to its generator (registry: `scripts/lib/artifacts.mjs`) | `check-fresh.mjs` |
 | `classes` `cls` ⇄ `.ui-*` selectors             | `check-classes.mjs` |
 | `connectors`/`annotations`/`react`/`solid`/`qwik`/`svelte`/`vue`/`behaviors` `.d.ts` (+ maps) == fresh `tsc` emit of their JSDoc | `check-dts-emit.mjs` |
@@ -151,12 +158,24 @@ gating" below), so a version that fails any invariant never reaches npm.
 | every shipped colorway accent meets its WCAG floor | `check-contrast.mjs` |
 | `dataviz.css`/`charts.json`/`charts.d.ts` ⇄ `tokens/charts.js` · CVD-distinguishable · opt-in | `check-charts.mjs` |
 | `shiki/nothing.json` valid + on rationed palette | `check-shiki.mjs`  |
-| `dist/*.css` == fresh build of `css/` + budget  | `check-dist.mjs`    |
+| `dist/*.css` == fresh single-`@layer bronto` build of `css/` + budget | `check-dist.mjs`    |
 | published tarball == intended `files` only      | `check-pack.mjs`    |
+| packed core JS/JSON public subpaths import without optional framework peers, packed JS named exports exactly match source modules, peer-backed adapters import after peers are linked, concrete CSS/doc/font subpaths resolve, and packed behavior initializers/toast no-op in a clean consumer with no DOM globals | `check-consumer-surface.mjs` |
+| packed typed public subpaths compile through package exports in a clean TypeScript consumer | `check-consumer-types.mjs` |
+| GitHub Actions workflow syntax and embedded shell snippets lint | `check:workflows` (`github-actionlint`) |
+| every shipped CSS leaf is classified as foundation or has explicit docs/demo/e2e ownership | `check-component-matrix.mjs` |
+| every public behavior export has explicit docs, unit-test, and browser-test ownership | `check-behavior-matrix.mjs` |
+| every public helper export in `classes`/`annotations`/`connectors`/`glyphs` has explicit docs, unit-test, and type-test ownership | `check-helper-matrix.mjs` |
+| every delegated behavior has React/Solid/Qwik hook, Svelte action, Vue directive, docs, example, unit, and type ownership | `check-binding-matrix.mjs` |
+| `@playwright/test` version ⇄ pinned Playwright container image ⇄ visual workflows/docs/local runner | `check-playwright-container.mjs` |
+| every shipped JSON schema is exported, documented, validates its public cookbook example, and rejects malformed sidecars | `check-schemas.mjs` |
 | packed public text contains no private terms, local paths, or secret-looking assignments | `check-public-hygiene.mjs` |
 | CSS custom-property references resolve or carry an explicit fallback/host boundary | `check-variables.mjs` |
 | `MIGRATIONS.json` edges have structured rules and matching docs | `check-migrations.mjs` |
 | example inventory ⇄ CI matrix ⇄ browser-smoke list ⇄ README rows ⇄ preview ports | `check-examples.mjs` |
+| demo visual snapshot declarations ⇄ committed Chromium baseline inventory | `check-visual-baselines.mjs` |
+| public authoring docs keep valid local paths/anchors; shipped-doc links resolve inside the tarball; docs viewer routes resolve | `check-doc-links.mjs` |
+| report/docs snippets use valid `ui-*` classes and public authoring snippets keep intact local id/ARIA/behavior references | `check-report.mjs` |
 | published `.d.ts` compile + reject typos        | `tsc` (`check:types`) |
 | CSS style/correctness                           | Stylelint           |
 | non-CSS source style                            | Prettier (`check:format`) |
@@ -172,6 +191,9 @@ payload contract, raised only intentionally with a CHANGELOG note.
 if the generated literal `cls`/token types stopped rejecting typos —
 so the *value* of the generated `.d.ts` is itself gated, not just their
 freshness (`check-fresh`).
+`check:consumer-types` then installs the packed tarball in a clean temp
+project and compiles package-subpath imports, so `exports.types` and
+internal declaration references are proven through consumer resolution.
 
 ## Release gating
 
@@ -180,16 +202,20 @@ freshness (`check-fresh`).
 pointer:
 
 - `validate` — read-only: verifies the tag commit is reachable from `main`,
-  then runs `npm run check`, `npm test`, and the tag↔version match. `check`
-  includes `check:release`; for a prerelease tag the base version's CHANGELOG
+  then runs `npm run check` and the tag↔version match. `check`
+  includes the node:test unit and contract suite, plus `check:release`;
+  for a prerelease tag the base version's CHANGELOG
   section need only exist (`## Unreleased — x.y.z` is fine) — only a stable
   release must carry a dated heading.
 - `e2e` — `needs: validate`: Playwright (visual + axe a11y, both themes,
-  cross-engine) in the pinned `mcr.microsoft.com/playwright` container. Local
-  cross-engine reproduction without screenshot rasterisation is
+  demo structural integrity, both themes, cross-engine) in the pinned
+  `mcr.microsoft.com/playwright` container. Local cross-engine reproduction
+  without screenshot rasterisation is
   `npm run test:e2e:nonpixel`; use `npm run test:e2e` or
   `npm run test:e2e:chromium` only in the pinned container when the pixel
-  baseline gate itself is in scope.
+  baseline gate itself is in scope. With Docker running,
+  `npm run test:e2e:visual:container` is the local shortcut for the same
+  Chromium screenshot environment.
 - `examples` — `needs: validate`: builds the downstream example
   apps against the **packed tarball**, mirroring CI. Catches a broken
   published surface (exports map / missing file / unresolved subpath)
@@ -262,7 +288,14 @@ explained, not surprising.
   intended file count/payload.
 - Build the packed examples matrix from the tarball, not a workspace link:
   `npm run test:examples` covers vanilla, Astro, SvelteKit, Vue, React, Solid,
-  Qwik, Tailwind, and report-static, with browser smokes for runtime examples.
+  Qwik, Tailwind, and report-static, with Chromium browser smokes for runtime
+  examples. For a deeper consumer pass, `npm run test:examples:cross-browser`
+  runs the same packed smokes in Chromium, Firefox, and WebKit; manual CI
+  dispatches pass the same cross-browser flag to the reusable examples workflow.
+  `npm run test:examples:visual` adds local-safe desktop + mobile
+  screenshot/layout health smokes for packed examples; it detects blank,
+  under-painted, or horizontally overflowing output but intentionally does not
+  author OS-sensitive committed PNG baselines.
 - Confirm the GitHub Release body matches the curated changelog section.
 - If a bad package is published, deprecate that exact version on npm, publish a
   patched version, and link the deprecation note to the changelog/security

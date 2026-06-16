@@ -54,18 +54,18 @@ No install? Link the same files from a CDN. Pin the version — pre-1.0, breakin
 changes ship in the minor (see [stability.md](./stability.md)):
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.7/dist/bronto.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.7/dist/css/report-kit.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.8/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.8/dist/css/report-kit.css" />
 ```
 
 Leaf-by-leaf CDN imports use the same `dist/css/` paths:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.7/dist/bronto.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.7/dist/css/report.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.7/dist/css/dataviz.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.7/dist/css/annotations.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.7/dist/css/legend.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.8/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.8/dist/css/report.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.8/dist/css/dataviz.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.8/dist/css/annotations.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.8/dist/css/legend.css" />
 ```
 
 The CDN serves the package's own `fonts/` next to the CSS, so font URLs resolve
@@ -87,8 +87,8 @@ the default bundle — add the leaves a given report actually needs.
 `@ponchia/ui/css/analytical.css` is a convenience roll-up of the **nine
 figure/evidence-layer leaves only** (figure, annotations, legends, marks,
 connectors, spotlight, crosshair, selection, highlights) — sources, generated,
-state, interval, clamp, and the prose/evidence leaves below are NOT in it and
-must be linked individually. Reach for:
+state, interval, clamp, workbench, command, and the prose/evidence leaves below
+are NOT in it and must be linked individually. Reach for:
 
 | Layer | Import | Reach for it when… |
 | --- | --- | --- |
@@ -98,12 +98,20 @@ must be linked individually. Reach for:
 | **Interval** (`.ui-interval*`) | `css/interval.css` | Evidence is a low/high estimate, confidence window, target band, or uncertain reading. The host normalises `--lo`, `--hi`, and optional `--v`; Bronto only paints the range and point. See [interval.md](./interval.md). |
 | **Clamp** (`.ui-clamp*`) | `css/clamp.css` | A source excerpt, claim basis, or caveat should scan as a bounded text block but remain reachable through explicit "Show more" / "Show less" labels and print expansion. See [clamp.md](./clamp.md). |
 | **Highlights** (`.ui-highlights`) | `css/highlights.css` | The host registers CSS Custom Highlight API ranges for cited evidence, search hits, or the current match without wrapping DOM text nodes. See [highlights.md](./highlights.md). |
+| **Chart palette** (`--chart-*`) | `css/dataviz.css` | A figure needs categorical, sequential, or diverging chart colours. The palette is opt-in, CVD-gated, and never UI chrome. See [theming.md](./theming.md#data-viz-palette). |
 | **Annotations** (`.ui-annotation*`) | `css/annotations.css` | A figure needs an explicit callout — a peak, a limit, a watched region — or a small decorative margin mark. SVG only. See [annotations.md](./annotations.md) and the [off-chart + scaling notes](./annotations.md#using-annotations-off-chart) before you size one. |
+| **Connectors** (`.ui-connector*`) | `css/connectors.css` | A note, card, or region needs a leader line to another DOM element. Bronto supplies overlay styling plus pure SVG path geometry; the host owns layout and meaning. See [connectors.md](./connectors.md). |
 | **Legends / data keys** (`.ui-legend*`) | `css/legend.css` | A chart figure needs a colour key. WCAG 1.4.1 by construction. See [legends.md](./legends.md). |
+| **Spotlight** (`.ui-spotlight*`, `.ui-tour-note*`) | `css/spotlight.css` | A screen report or guided workflow needs a visual focus cutout and callout note. It is not a tour engine; the host owns step order, persistence, and focus movement. See [spotlight.md](./spotlight.md). |
+| **Crosshair / readout** (`.ui-crosshair*`, `.ui-readout`) | `css/crosshair.css` | A plot needs pointer-tracking ruler lines and a readout chip. Bronto reports pixels/fractions; the host maps those to data values with its own scales. See [crosshair.md](./crosshair.md). |
+| **Selection emphasis** (`.ui-sel*`) | `css/selection.css` | Host-owned brush, filter, or selection logic needs a shared visual state vocabulary for selected / excluded / candidate items. See [selection.md](./selection.md). |
 | **Mermaid theme** (`@ponchia/ui/mermaid`) | _(JS/JSON, no CSS)_ | The report embeds a [Mermaid](https://mermaid.js.org) diagram (flowchart, sequence, pie…) and you want it on-brand instead of generic. A resolved `base` theme projected from the same tokens as `charts.json`; annotate the rendered SVG with the annotation layer. See [mermaid.md](./mermaid.md). |
 | **D2 theme** (`@ponchia/ui/d2`) | _(JS/JSON, no CSS)_ | The report embeds a [D2](https://d2lang.com) diagram and you want it on-brand. Resolved theme-override slots (monochrome base + one rationed accent) projected from the same tokens; annotate the rendered SVG. See [d2.md](./d2.md). |
+| **Vega theme** (`@ponchia/ui/vega`) | _(JS/JSON, no CSS)_ | The report embeds a live or generated Vega-Lite chart and you want token-matched axes, text, legends, and ramps. See [vega.md](./vega.md). |
 | **Generated-content trust** (`.ui-generated`, `.ui-origin-label`, `.ui-reasoning`, `.ui-tool-log`) | `css/generated.css` | The report (or a section of it) is AI/system-authored and should _say so_ — an origin label plus quiet, collapsible reasoning / tool-call logs. Pairs with the sources layer. See [generated.md](./generated.md). |
 | **Lifecycle / system state** (`.ui-state`, `.ui-syncbar`) | `css/state.css` | A status report needs to show the state a thing is in — saving / queued / stale / conflict / reviewed — as a labelled object, not a bare coloured dot. See [state.md](./state.md). |
+| **Workbench surfaces** (`.ui-inspector`, `.ui-property`, `.ui-selectionbar`, `.ui-splitter`) | `css/workbench.css` | A screen report or analytical tool needs an inspector, property rows, selected-item actions, or resizable panes. Not in `report-kit.css`; pair splitters with `initSplitter`. See [workbench.md](./workbench.md). |
+| **Command palette** (`.ui-command*`) | `css/command.css` | A screen report or analytical tool needs a searchable command shell. Not in `report-kit.css`; pair with `initCommand` and a host-owned opener/action registry. See [command.md](./command.md). |
 | **Spark** (`.ui-spark*`) | `css/spark.css` | A trend belongs _inside a sentence or table cell_ — a word-sized inline microchart, the inline counterpart to `ui-delta`/`ui-num`/`ui-stat`. See [spark.md](./spark.md). |
 | **Bullet graph** (`.ui-bullet*`) | `css/bullet.css` | A measure needs "inside budget? vs target?" at a glance — the canonical SLO / error-budget figure that `ui-meter` structurally cannot express. See [bullet.md](./bullet.md). |
 | **Diff** (`.ui-diff*`) | `css/diff.css` | The report shows what _changed_ — code review, changelogs, version history, config diffs. Marks call out a sentence; diff calls out a line. See [diff.md](./diff.md). |
@@ -117,8 +125,11 @@ must be linked individually. Reach for:
 
 These compose with the report-native primitives already called out in
 [Composition rules](#composition-rules): `ui-statgrid`, `ui-alert`, `ui-table`,
-`ui-timeline`, `ui-meter`, and `ui-num`. None of them require behavior JS, so
-they are all safe in the static, PDF-first report path.
+`ui-timeline`, `ui-meter`, and `ui-num`. The static leaves do not require
+behavior JS, so they are safe in the PDF-first report path. `workbench.css` and
+`command.css` are deliberately screen-tool leaves: they stay out of
+`report-kit.css` and only become interactive when the host imports the matching
+behavior JS.
 
 ## Canonical skeleton
 
@@ -868,7 +879,7 @@ or validation runtime.
 
 ```json
 {
-  "$schema": "https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.7/schemas/report-claims.v1.schema.json",
+  "$schema": "https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.8/schemas/report-claims.v1.schema.json",
   "schemaVersion": "bronto-report-claims.v1",
   "report": { "title": "Decision readiness", "type": "decision" },
   "claims": [

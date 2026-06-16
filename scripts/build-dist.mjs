@@ -171,8 +171,12 @@ export function buildBundles() {
  *  The dot-matrix expansion nudged it 86→90 kB (raw) / 14.85→15.5 kB (gzip):
  *  the reporting dot family (waffle, activity, level, dotgauge, halftone,
  *  readout, dotfit) + their forced-colors/print blocks, all in the core dots
- *  leaf — small base rules plus the usual repetitive FC/print blocks. */
-export const BUDGET = { raw: 90_000, gzip: 15_500 };
+ *  leaf — small base rules plus the usual repetitive FC/print blocks. The
+ *  theme-runtime/print-token cleanup nudged it 90→91 kB (raw) / 15.5→15.65 kB
+ *  (gzip): system dark-mode theme-toggle parity plus the print remap of derived
+ *  accent, status-soft, code, and dot tokens. Gzip was effectively flat (1 byte
+ *  over the old ceiling); the new cap restores intentional headroom. */
+export const BUDGET = { raw: 91_000, gzip: 15_650 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };

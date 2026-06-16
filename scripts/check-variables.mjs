@@ -26,17 +26,22 @@ const stripCommentsKeepLines = (css) =>
 
 const lineAt = (src, index) => src.slice(0, index).split('\n').length;
 
-const files = readdirSync(cssDir)
-  .filter((file) => file.endsWith('.css'))
-  .sort();
+const files = [
+  ...readdirSync(cssDir)
+    .filter((file) => file.endsWith('.css'))
+    .map((file) => `css/${file}`),
+  // Public Tailwind bridge. It is not a Bronto component leaf, but its @theme
+  // variables are copied into consumer utility names, so typoed var() refs here
+  // are just as public as typoed component refs.
+  'tailwind.css',
+].sort();
 
 const defined = new Set();
 const sources = new Map();
 
 for (const file of files) {
-  const rel = `css/${file}`;
-  const src = stripCommentsKeepLines(readFileSync(resolve(cssDir, file), 'utf8'));
-  sources.set(rel, src);
+  const src = stripCommentsKeepLines(readFileSync(resolve(root, file), 'utf8'));
+  sources.set(file, src);
   for (const match of src.matchAll(/(?:^|[;{\s])(--[\w-]+)\s*:/g)) {
     defined.add(match[1]);
   }
@@ -55,5 +60,5 @@ for (const [rel, src] of sources) {
 
 reportAndExit(errors, {
   label: 'css variable reference',
-  ok: `${files.length} authored CSS files reference only defined variables, fallbacks, or intentional host props`,
+  ok: `${files.length} authored CSS files, including tailwind.css, reference only defined variables, fallbacks, or intentional host props`,
 });

@@ -14,17 +14,30 @@ npm run check   # the full integrity suite: lint, format, exports; the
                 #   consolidated generated-artifact freshness gate (check:fresh
                 #   — tokens.css/json, dtcg, resolved, .d.ts, reference, vscode
                 #   data); class contract; types, shiki, dist budget, pack
-                #   allowlist, public hygiene, undefined CSS var refs,
-                #   publint + arethetypeswrong, release stamp, migration map, contrast;
-                #   behaviors / bindings / glyphs parity; color-policy,
-                #   skins, charts, report
-npm test        # node:test unit + type-d + contract tests
+                #   allowlist, packed no-peer/full-peer consumer-surface
+                #   import + behavior no-DOM + asset/doc resolution smoke, packed consumer type-resolution smoke,
+                #   node:test unit + contract suite,
+                #   CSS component docs/demo/spec ownership, behavior
+                #   docs/unit/browser ownership, public hygiene, undefined CSS var refs,
+                #   publint + arethetypeswrong, workflow syntax/shell lint,
+                #   release stamp, migration map, pack-aware shipped-doc links,
+                #   public import snippets, contrast; behaviors / bindings /
+                #   glyphs parity; color-policy, skins, charts, visual-baseline
+                #   inventory, report + shipped HTML snippet integrity
+npm test        # faster unit-only loop; already included in npm run check
 npm run test:e2e:nonpixel
                 # local-safe Playwright: chromium + firefox + webkit for every
-                #   non-screenshot behavior/a11y/print/motion spec
+                #   non-screenshot behavior/a11y/structural/print/motion spec
 npm run test:examples
                 # packs the real tarball, builds every example in a temp dir,
-                #   then browser-smokes the runtime examples
+                #   then browser-smokes the runtime examples in Chromium
+npm run test:examples:cross-browser
+                # deeper packed smoke: every example in Chromium, Firefox,
+                #   and WebKit; add `-- react-vite ...` to narrow locally
+npm run test:examples:visual
+                # local-safe desktop + mobile screenshot/layout health smoke
+                #   for packed examples; this is not the committed
+                #   Linux/Chromium baseline gate
 ```
 
 `main` is protected: changes land via PR, squash-merged, with `check`
@@ -123,7 +136,13 @@ container and opens a PR with the new baselines.
 For local browser regression work, use `npm run test:e2e:nonpixel`.
 `npm run test:e2e` and `npm run test:e2e:chromium` include
 `visual.spec.mjs`, so run them only in the pinned Playwright container
-when the screenshot gate itself is the target.
+when the screenshot gate itself is the target. For a local authoritative
+pixel check with Docker running, use `npm run test:e2e:visual:container`;
+it mounts the current worktree into
+`mcr.microsoft.com/playwright:v1.60.0-jammy` and runs the Chromium visual
+spec there. Packed examples also have `npm run test:examples:visual`, which is
+a local-safe desktop + mobile screenshot/layout health smoke; it does not
+author or compare committed PNG baselines.
 
 ## Dependencies
 

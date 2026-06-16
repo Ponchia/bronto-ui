@@ -14,9 +14,10 @@
 #
 # The e2e + examples gates are the SAME reusable workflows ci.yml runs
 # (.github/workflows/{e2e,examples}.yml) — one definition, never a drifted
-# copy. The release runs them at full strength: examples is identical, and
-# e2e adds the firefox/webkit cross-engine pass that PRs skip for speed —
-# so the publish is gated on cross-engine green even though merges aren't.
+# copy. The release runs them at full strength: examples adds the packed
+# chromium/firefox/webkit smoke plus desktop/mobile visual health, and e2e adds
+# the firefox/webkit cross-engine pass that PRs skip for speed — so the publish
+# is gated on cross-engine + packed-example health even though merges aren't.
 #
 # DIST-TAG ROUTING: a stable tag (`v0.4.0`) publishes to `latest`, so
 # `npm i @ponchia/ui` resolves it. A SemVer prerelease tag (`v0.4.0-rc.1`,
@@ -78,8 +79,6 @@ jobs:
 
       - run: npm run check
 
-      - run: npm test
-
       - name: Verify tag matches package.json version
         run: |
           tag="${GITHUB_REF_NAME#v}"
@@ -104,6 +103,9 @@ jobs:
   examples:
     needs: validate
     uses: ./.github/workflows/examples.yml
+    with:
+      cross_browser: true
+      visual_smoke: true
 
   publish-preflight:
     needs: [validate, e2e, examples]
@@ -171,7 +173,7 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       # Publish with --ignore-scripts so NODE_AUTH_TOKEN is never exposed
-      # to the prepack/prepublishOnly lifecycle (the whole check+test+build
+      # to the prepack/prepublishOnly lifecycle (the whole check+build
       # surface + devDeps). Safe because the committed artifacts were
       # already byte-verified by `validate` and summarized by
       # `publish-preflight` on this exact commit — so we ship exactly what
@@ -202,11 +204,13 @@ jobs:
           set -uo pipefail
           version="${GITHUB_REF_NAME#v}"
           view_ok=false
-          for i in 1 2 3 4 5; do
+          attempts_remaining=5
+          while [ "$attempts_remaining" -gt 0 ]; do
             if npm view "@ponchia/ui@$version" version dist.integrity dist.tarball --json > "${RUNNER_TEMP}/npm-view.json"; then
               view_ok=true
               break
             fi
+            attempts_remaining=$((attempts_remaining - 1))
             sleep 5
           done
           tags_ok=false
@@ -235,7 +239,7 @@ jobs:
               echo "- package lookup: $view_ok"
               echo "- dist-tag lookup: $tags_ok"
               echo ''
-              echo 'Verify manually with `npm view @ponchia/ui version dist-tags --json`.'
+              echo "Verify manually with \`npm view @ponchia/ui version dist-tags --json\`."
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 

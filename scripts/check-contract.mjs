@@ -18,11 +18,12 @@
 //       behaviors/index.js.
 //
 // Run: node scripts/check-contract.mjs
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildClassesJson } from './gen-classes-json.mjs';
 import { stripCssComments } from './lib/patterns.mjs';
+import { shippedDocs } from './lib/shipped-docs.mjs';
 import { log } from './lib/stdio.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -96,14 +97,27 @@ for (const m of barrel.matchAll(/export\s+(?:async\s+)?function\s+([A-Za-z_$][\w
   exported.add(m[1]);
 }
 
-// Shipped docs only (same surface as check:doc-recipes), minus the CHANGELOG,
-// which is a historical record that may name removed APIs by design.
-const shippedDocs = [
-  'llms.txt',
-  ...pkg.files.filter((f) => f.endsWith('.md') && f !== 'CHANGELOG.md'),
+function dirDocs(dir) {
+  const abs = resolve(root, dir);
+  if (!existsSync(abs)) return [];
+  return readdirSync(abs)
+    .filter((name) => name.endsWith('.md'))
+    .sort()
+    .map((name) => `${dir}/${name}`);
+}
+
+// Docs an LLM/user is expected to author from: shipped tarball docs plus the
+// GitHub-only docs index and getting-started pages that README links.
+const contractDocs = [
+  ...new Set([
+    ...shippedDocs(pkg).filter((f) => f !== 'CHANGELOG.md'),
+    'docs/README.md',
+    'docs/integration.md',
+    ...dirDocs('docs/getting-started'),
+  ]),
 ];
 const seen = new Map(); // initName -> "rel:line"
-for (const rel of shippedDocs) {
+for (const rel of contractDocs) {
   let text;
   try {
     text = readFileSync(resolve(root, rel), 'utf8');
@@ -122,6 +136,54 @@ for (const [name, where] of seen) {
       `(c) ${where}: doc names "${name}()" but it is not exported from behaviors/index.js ` +
         `(initForms→initFormValidation class of drift)`,
     );
+  }
+}
+
+// ---- (f) named imports in public docs resolve to real public exports --------
+const namedImport =
+  /import\s+(?:[\w$]+\s*,\s*)?\{([^}]+)\}\s+from\s+['"](@ponchia\/ui(?:\/[^'"]*)?)['"]/g;
+const moduleCache = new Map();
+async function publicModule(specifier) {
+  if (!moduleCache.has(specifier)) {
+    moduleCache.set(
+      specifier,
+      import(specifier).catch((error) => ({ __importError: error })),
+    );
+  }
+  return moduleCache.get(specifier);
+}
+
+for (const rel of contractDocs) {
+  let text;
+  try {
+    text = readFileSync(resolve(root, rel), 'utf8');
+  } catch {
+    continue;
+  }
+  for (const m of text.matchAll(namedImport)) {
+    const names = m[1]
+      .split(',')
+      .map((name) =>
+        name
+          .trim()
+          .split(/\s+as\s+/)[0]
+          .trim(),
+      )
+      .filter(Boolean);
+    const specifier = m[2];
+    const mod = await publicModule(specifier);
+    const line = text.slice(0, m.index).split('\n').length;
+    if (mod.__importError) {
+      errors.push(`(f) ${rel}:${line}: import from "${specifier}" fails: ${mod.__importError}`);
+      continue;
+    }
+    for (const name of names) {
+      if (!(name in mod)) {
+        errors.push(
+          `(f) ${rel}:${line}: imports { ${name} } from "${specifier}", but that name is not exported`,
+        );
+      }
+    }
   }
 }
 
@@ -190,5 +252,6 @@ log(
   `✓ check:contract — ${manifest.customProperties.length} customProperties examples resolve, ` +
     `${WIRING.length} wiring attrs in reference.md, ${seen.size} documented init*() all exported, ` +
     `${basesChecked} group bases resolve to a CSS selector, ` +
-    `${manifest.behaviorAttributes.length} behaviorAttributes cover all ${consumed.size} consumed data-bronto-* hooks`,
+    `${manifest.behaviorAttributes.length} behaviorAttributes cover all ${consumed.size} consumed data-bronto-* hooks, ` +
+    `and public named imports resolve`,
 );

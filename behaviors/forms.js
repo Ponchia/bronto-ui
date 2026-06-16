@@ -30,10 +30,57 @@ export function initFormValidation({ root } = {}) {
   const host = resolveHost(root);
   if (!host) return noop;
   let priorNoValidate = new Map();
+  let controlState = new Map();
+  let slotState = new Map();
+  let summaryState = new Map();
 
   const suppressNativeValidation = (form) => {
     if (!priorNoValidate.has(form)) priorNoValidate.set(form, form.noValidate);
     form.noValidate = true;
+  };
+
+  const snapshotAttrs = (el, names) => {
+    const out = {};
+    for (const name of names) {
+      out[name] = {
+        had: el.hasAttribute(name),
+        value: el.getAttribute(name),
+      };
+    }
+    return out;
+  };
+
+  const restoreAttrs = (el, attrs) => {
+    for (const [name, attr] of Object.entries(attrs)) {
+      if (attr.had) el.setAttribute(name, attr.value);
+      else el.removeAttribute(name);
+    }
+  };
+
+  const rememberControl = (control) => {
+    if (!controlState.has(control)) {
+      controlState.set(control, snapshotAttrs(control, ['aria-invalid', 'aria-describedby', 'id']));
+    }
+  };
+
+  const rememberSlot = (slot) => {
+    if (!slotState.has(slot)) {
+      slotState.set(slot, {
+        attrs: snapshotAttrs(slot, ['id']),
+        text: slot.textContent,
+        hadErrorClass: slot.classList.contains('ui-hint--error'),
+      });
+    }
+  };
+
+  const rememberSummary = (summary) => {
+    if (!summaryState.has(summary)) {
+      summaryState.set(summary, {
+        attrs: snapshotAttrs(summary, ['role', 'tabindex']),
+        children: [...summary.childNodes],
+        hidden: summary.hidden,
+      });
+    }
   };
 
   const ensureId = (el, prefix) => {
@@ -75,8 +122,10 @@ export function initFormValidation({ root } = {}) {
 
   const validateField = (control) => {
     if (!control.willValidate) return true;
+    rememberControl(control);
     const ok = control.validity.valid;
     const slot = slotFor(control);
+    if (slot) rememberSlot(slot);
     // Decide the slot TYPE by the `[data-bronto-error]` attribute, NOT the
     // `.ui-hint` class: the canonical markup is `<p class="ui-hint"
     // data-bronto-error>`, which carries BOTH. Keying off `.ui-hint` sent that
@@ -124,6 +173,7 @@ export function initFormValidation({ root } = {}) {
   const refreshSummary = (form, invalid) => {
     const summary = form.querySelector('[data-bronto-error-summary]');
     if (!summary) return;
+    rememberSummary(summary);
     if (!invalid.length) {
       summary.hidden = true;
       summary.replaceChildren();
@@ -190,6 +240,9 @@ export function initFormValidation({ root } = {}) {
     // after init are still covered by the in-handler set.)
     const forms = collectHosts(host, '[data-bronto-validate]');
     priorNoValidate = new Map();
+    controlState = new Map();
+    slotState = new Map();
+    summaryState = new Map();
     for (const f of forms) {
       suppressNativeValidation(f);
     }
@@ -200,6 +253,20 @@ export function initFormValidation({ root } = {}) {
       host.removeEventListener('focusout', onBlur);
       for (const [f, v] of priorNoValidate) f.noValidate = v;
       priorNoValidate.clear();
+      for (const [summary, state] of summaryState) {
+        summary.replaceChildren(...state.children);
+        summary.hidden = state.hidden;
+        restoreAttrs(summary, state.attrs);
+      }
+      summaryState.clear();
+      for (const [slot, state] of slotState) {
+        slot.textContent = state.text;
+        slot.classList.toggle('ui-hint--error', state.hadErrorClass);
+        restoreAttrs(slot, state.attrs);
+      }
+      slotState.clear();
+      for (const [control, attrs] of controlState) restoreAttrs(control, attrs);
+      controlState.clear();
     };
   });
 }

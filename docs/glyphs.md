@@ -49,6 +49,17 @@ the same as a hot `#` cell (both become opaque mask regions).
 | `render` | `'mask'` | — | the one-node `.ui-icon` path |
 | `size` | CSS length | `1em` | with `render: 'mask'`, the icon size (`--icon-size`) |
 
+## Registry and lower-level helpers
+
+The public registry is intentionally plain data:
+
+- `GLYPH_SIZE` is the grid edge length.
+- `GLYPHS` is the frozen name → bitmap registry.
+- `GLYPH_NAMES` is the sorted, frozen name list.
+- `glyph(name)` returns the raw bitmap rows or `undefined`.
+- `glyphCells(name)` returns the 256 row-major cell descriptors.
+- `glyphMask(name)` returns the CSS `url(...)` value used by the mask renderer.
+
 ## Big numeric readout — `renderReadout`
 
 Compose digits and punctuation into a row of dot-matrix glyphs — the
