@@ -137,10 +137,26 @@ function resolveLocal(sourceRel, linkPath) {
   return { abs: target, rel: normalize(rel) };
 }
 
+function stripInlineHtmlTags(text) {
+  let out = '';
+  let inTag = false;
+  for (const char of text) {
+    if (char === '<') {
+      inTag = true;
+      continue;
+    }
+    if (inTag) {
+      if (char === '>') inTag = false;
+      continue;
+    }
+    out += char;
+  }
+  return out;
+}
+
 function slugFor(text, seen) {
-  let base = text
+  let base = stripInlineHtmlTags(text)
     .trim()
-    .replace(/<[^>]+>/g, '')
     .replace(/`([^`]+)`/g, '$1')
     .replace(/[*_~]/g, '')
     .replace(/&[a-z0-9#]+;/gi, '')

@@ -123,7 +123,7 @@ function expandWildcardEntry(installedRoot, subpath, targetPattern) {
     if (!target.startsWith(prefix) || !target.endsWith(suffix)) continue;
     const wildcard = target.slice(prefix.length, target.length - suffix.length);
     if (!wildcard) continue;
-    const concreteSubpath = subpath.replace('*', wildcard);
+    const concreteSubpath = subpath.split('*').join(wildcard);
     out.push({
       specifier: `${pkg.name}${concreteSubpath.slice(1)}`,
       target: `./${target}`,
