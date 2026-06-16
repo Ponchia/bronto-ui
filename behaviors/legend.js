@@ -1,10 +1,12 @@
-import { hasDom, resolveHost, noop, bindOnce } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, collectHosts, closestSafe } from './internal.js';
 
 /**
  * @typedef {object} LegendToggleDetail
  * @property {string | number} series The entry's `data-series`, or its 0-based index when unset.
  * @property {boolean} active The new state (`true` ⇒ series shown).
  */
+
+const handledEvents = new WeakSet();
 
 /**
  * Wire `[data-bronto-legend]` interactive legends. Each entry is a
@@ -28,6 +30,26 @@ export function initLegend({ root } = {}) {
   if (!hasDom()) return noop;
   const host = resolveHost(root);
   if (!host) return noop;
+  const snapshotAttrs = (el, names) => {
+    const attrs = {};
+    for (const name of names) {
+      attrs[name] = {
+        had: el.hasAttribute(name),
+        value: el.getAttribute(name),
+      };
+    }
+    return attrs;
+  };
+  const restoreAttrs = (el, attrs) => {
+    for (const [name, state] of Object.entries(attrs)) {
+      if (state.had) el.setAttribute(name, state.value);
+      else el.removeAttribute(name);
+    }
+  };
+  const directItems = (legend) =>
+    [...legend.querySelectorAll('.ui-legend__item')].filter(
+      (el) => el.closest('[data-bronto-legend]') === legend,
+    );
   const isButton = (el) => el.tagName === 'BUTTON' || el.getAttribute('role') === 'button';
   const legendFor = (item) => {
     if (!item || !host.contains(item)) return;
@@ -37,11 +59,11 @@ export function initLegend({ root } = {}) {
   };
   const toggle = (item) => {
     const legend = legendFor(item);
-    if (!legend) return;
+    if (!legend) return false;
     // The contract requires a real `<button>` (keyboard-operable, focusable). A
     // non-button item is mouse-only unless role=button is keyboard-normalized
     // below — refuse anything else rather than ship a pointer-only control.
-    if (!isButton(item)) return;
+    if (!isButton(item)) return false;
     const active = item.getAttribute('aria-pressed') !== 'false';
     const next = !active;
     item.setAttribute('aria-pressed', String(next));
@@ -57,25 +79,33 @@ export function initLegend({ root } = {}) {
         detail: { series: item.dataset.series ?? items.indexOf(item), active: next },
       }),
     );
+    return true;
   };
   const onClick = (e) => {
-    toggle(e.target.closest('.ui-legend__item'));
+    if (handledEvents.has(e)) return;
+    if (toggle(closestSafe(e.target, '.ui-legend__item'))) handledEvents.add(e);
   };
   const onKey = (e) => {
+    if (handledEvents.has(e)) return;
     if (e.key !== 'Enter' && e.key !== ' ') return;
-    const item = e.target.closest('.ui-legend__item');
+    const item = closestSafe(e.target, '.ui-legend__item');
     if (!item || item.tagName === 'BUTTON' || item.getAttribute('role') !== 'button') return;
     e.preventDefault();
-    toggle(item);
+    if (toggle(item)) handledEvents.add(e);
   };
   return bindOnce(host, 'legend', () => {
     // Normalize role=button entries and warn once per unsupported non-button
     // item present at bind. A real <button> remains the recommended markup.
-    const legends = [...(host.querySelectorAll?.('[data-bronto-legend]') ?? [])];
+    const legends = collectHosts(host, '[data-bronto-legend]');
+    const itemStates = [];
     for (const legend of legends) {
-      for (const el of legend.querySelectorAll('.ui-legend__item')) {
-        if (el.closest('[data-bronto-legend]') !== legend) continue;
-        if (el.tagName === 'BUTTON' && !el.hasAttribute('type')) el.type = 'button';
+      for (const el of directItems(legend)) {
+        itemStates.push({
+          el,
+          attrs: snapshotAttrs(el, ['type', 'tabindex', 'aria-pressed']),
+          inactive: el.classList.contains('is-inactive'),
+        });
+        if (el.tagName === 'BUTTON' && !el.hasAttribute('type')) el.setAttribute('type', 'button');
         if (
           el.tagName !== 'BUTTON' &&
           el.getAttribute('role') === 'button' &&
@@ -87,9 +117,7 @@ export function initLegend({ root } = {}) {
     }
     if (typeof console !== 'undefined') {
       for (const legend of legends) {
-        const stray = [...legend.querySelectorAll('.ui-legend__item')].some(
-          (el) => el.closest('[data-bronto-legend]') === legend && !isButton(el),
-        );
+        const stray = directItems(legend).some((el) => !isButton(el));
         if (stray) {
           console.warn(
             '[bronto] initLegend(): interactive legend entries must be <button> or role="button" — unsupported .ui-legend__item controls are ignored.',
@@ -103,6 +131,10 @@ export function initLegend({ root } = {}) {
     return () => {
       host.removeEventListener('click', onClick);
       host.removeEventListener('keydown', onKey);
+      for (const state of itemStates) {
+        restoreAttrs(state.el, state.attrs);
+        state.el.classList.toggle('is-inactive', state.inactive);
+      }
     };
   });
 }

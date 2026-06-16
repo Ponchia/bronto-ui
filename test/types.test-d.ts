@@ -5,7 +5,7 @@
  * making the declarations generated-from-source. A regression here is a
  * consumer-facing break, so it blocks `npm run check`.
  */
-import { cls, ui, cx, type ClassValue } from '../classes/index.js';
+import { attrs, cls, ui, cx, type ClassValue } from '../classes/index.js';
 import tokens, { themeColor, cssVars, type ThemeName } from '../tokens/index.js';
 import {
   initThemeToggle,
@@ -15,22 +15,66 @@ import {
   type Cleanup,
 } from '../behaviors/index.js';
 import {
+  GLYPHS,
   renderGlyph,
+  renderReadout,
   glyphCells,
+  glyphMask,
   glyph,
+  findGlyphs,
   GLYPH_SIZE,
   GLYPH_NAMES,
+  GLYPH_TAGS,
   type GlyphName,
   type GlyphCell,
 } from '../glyphs/glyphs.js';
 import { skins, SKIN_NAMES, type SkinName } from '../tokens/skins.js';
-import { charts, type ChartTokenName } from '../tokens/charts.js';
-import { brontoVegaConfig, type VegaConfig } from '../tokens/vega.js';
+import chartPalette, {
+  ACCENT,
+  charts,
+  CHART_CATEGORICAL,
+  CHART_PATTERN_COUNT,
+  type ChartTheme,
+  type ChartTokenName,
+} from '../tokens/charts.js';
+import mermaidTheme, {
+  brontoMermaidTheme,
+  mermaid,
+  type MermaidThemeVariables,
+} from '../tokens/mermaid.js';
+import d2Vars, {
+  brontoD2Overrides,
+  brontoD2Vars,
+  d2,
+  type D2ThemeOverrides,
+} from '../tokens/d2.js';
+import vegaConfig, {
+  brontoVegaAccent,
+  brontoVegaConfig,
+  brontoVegaNeutral,
+  vega,
+  type VegaConfig,
+} from '../tokens/vega.js';
 import {
+  PRECISION,
   connectRects,
   connectorPath,
+  straightPath,
+  elbowPath,
+  curvePath,
   arrowHead,
+  dotMark,
   anchorPoint,
+  angleBetween,
+  endTangentAngle,
+  autoSides,
+  finite,
+  dimension,
+  roundNumber,
+  fmt,
+  point,
+  clamp,
+  rectPath as connectorRectPath,
   type ConnectRectsResult,
   type Side,
 } from '../connectors/index.js';
@@ -138,6 +182,20 @@ const origin: string = ui.originLabel({ ai: true });
 void origin;
 
 // Connectors geometry: object-shaped options, string/coordinate returns.
+const connectorPrecision: 1000 = PRECISION;
+const finiteNumber: number = finite('x', undefined, 2);
+const dimensionNumber: number = dimension('width', null, 3);
+const roundedNumber: number = roundNumber(1.23456);
+const formattedNumber: string = fmt(1.23456);
+const svgPoint: string = point(1, 2);
+const clampedNumber: number = clamp(4, 0, 1);
+const connectorRectD: string = connectorRectPath(0, 1, 10, 11);
+// @ts-expect-error — finite returns number, not string; catches an `any` return leak.
+const finiteNotString: string = finite('x', 1);
+// @ts-expect-error — scalar helper values are numeric/nullish, not strings.
+finite('x', '1');
+// @ts-expect-error — point coordinates are numeric.
+point('x', 1);
 const connOut: ConnectRectsResult = connectRects({
   fromRect: { x: 0, y: 0, width: 20, height: 20 },
   toRect: { x: 80, y: 40, width: 20, height: 20 },
@@ -146,6 +204,12 @@ const connOut: ConnectRectsResult = connectRects({
 const connD: string = connOut.d;
 const connAngle: number = connOut.angle;
 const head: string = arrowHead(connOut.to, connOut.angle);
+const dot: string = dotMark(connOut.to, 2);
+const angle: number = angleBetween(connOut.from, connOut.to);
+const tangent: number = endTangentAngle(connOut.from, connOut.to, 'curve');
+const straightD: string = straightPath(connOut.from, connOut.to);
+const elbowD: string = elbowPath(connOut.from, connOut.to, { mid: 0.25 });
+const curveD: string = curvePath(connOut.from, connOut.to, { curvature: 0.25 });
 const pathStr: string = connectorPath({
   from: { x: 0, y: 0 },
   to: { x: 10, y: 10 },
@@ -154,9 +218,35 @@ const pathStr: string = connectorPath({
 const side: Side = 'right';
 const anchor = anchorPoint({ x: 0, y: 0, width: 10, height: 10 }, side);
 const anchorX: number = anchor.x;
+const sides: { from: Side; to: Side } = autoSides(
+  { x: 0, y: 0, width: 10, height: 10 },
+  { x: 100, y: 0, width: 10, height: 10 },
+);
 // @ts-expect-error — shape is a closed union.
 connectorPath({ from: { x: 0, y: 0 }, to: { x: 1, y: 1 }, shape: 'zigzag' });
-void [connD, connAngle, head, pathStr, anchorX];
+void [
+  connectorPrecision,
+  finiteNumber,
+  dimensionNumber,
+  roundedNumber,
+  formattedNumber,
+  svgPoint,
+  clampedNumber,
+  connectorRectD,
+  finiteNotString,
+  connD,
+  connAngle,
+  head,
+  dot,
+  angle,
+  tangent,
+  straightD,
+  elbowD,
+  curveD,
+  pathStr,
+  anchorX,
+  sides,
+];
 
 const labelPositions: number[] = declutterLabels(
   [
@@ -181,6 +271,29 @@ void placedY;
 
 const parts: ClassValue = ['a', false, ['b'], null];
 const joined: string = cx(parts, 'extra', undefined);
+const meterAttrs = attrs.meter(72, { min: 0, max: 100 });
+const meterRole: 'meter' = meterAttrs.role;
+const progressAttrs = attrs.progress(64);
+const progressRole: 'progressbar' = progressAttrs.role;
+const progressNow: number = progressAttrs['aria-valuenow'];
+const indeterminateProgress = attrs.progress();
+const progressBusy: 'true' = indeterminateProgress['aria-busy'];
+// @ts-expect-error — indeterminate progress omits aria-valuenow.
+indeterminateProgress['aria-valuenow'];
+const dotbarAttrs = attrs.dotbar(4, { min: 0, max: 8 });
+const dotbarRole: 'progressbar' = dotbarAttrs.role;
+const indeterminateDotbar = attrs.dotbar();
+const dotbarBusy: 'true' = indeterminateDotbar['aria-busy'];
+void [
+  meterRole,
+  progressRole,
+  progressNow,
+  progressBusy,
+  dotbarRole,
+  dotbarBusy,
+  meterAttrs,
+  dotbarAttrs,
+];
 
 // themeColor is ThemeName-typed; keys stay kebab-case.
 const dark = themeColor('dark');
@@ -224,13 +337,32 @@ const gname: GlyphName = 'heart';
 const rows = glyph(gname); // readonly string[] | undefined
 const size: 16 = GLYPH_SIZE; // narrows to the literal
 const firstName: GlyphName = GLYPH_NAMES[0];
+const registryRows = GLYPHS[gname];
+const tags = GLYPH_TAGS.trash;
+const matches: GlyphName[] = findGlyphs('delete');
+const mask: string = glyphMask('check');
+const readout: string = renderReadout('12:48', { label: 'Time', render: 'mask', size: '1em' });
 // Dynamic dispatch: an arbitrary string is accepted (returns the '' fallback),
 // so a CMS/config-supplied name needs no cast.
 const dyn: string = renderGlyph('icon-from-config');
 // …but the GlyphName union itself still rejects typo'd literals.
 // @ts-expect-error — not a registered glyph name.
 const bad: GlyphName = 'definitely-not-a-glyph';
-void [dyn, bad];
+void [
+  dyn,
+  bad,
+  registryRows,
+  tags,
+  matches,
+  mask,
+  readout,
+  stopGlyph,
+  glyphHtml,
+  cellOn,
+  rows,
+  size,
+  firstName,
+];
 
 // Colorways: the ./skins subpath types are sound and SkinName rejects typos.
 const skinName: SkinName = 'phosphor-green';
@@ -240,21 +372,69 @@ const skinLabel: string = skins[skinName].label;
 const badSkin: SkinName = 'neon-pink';
 void [skinName, firstSkin, skinLabel, badSkin];
 
-// Data-viz: the ./charts subpath types are sound and ChartTokenName is literal.
+// Data-viz: the ./charts subpath types are sound; constants/default exports
+// keep literal types, and ChartTokenName is literal.
 const chartTok: ChartTokenName = '--chart-1';
 const series1: string = charts.light.categorical[0];
+const chartLight: ChartTheme = charts.light;
+const chartDark: ChartTheme = chartPalette.dark;
+const chartAccent: 'var(--accent)' = ACCENT;
+const chartCount: 8 = CHART_CATEGORICAL;
+const chartPatternCount: 8 = CHART_PATTERN_COUNT;
 // @ts-expect-error — not a categorical chart token.
 const badChart: ChartTokenName = '--chart-99';
-void [chartTok, series1, badChart];
+void [
+  chartTok,
+  series1,
+  chartLight,
+  chartDark,
+  chartAccent,
+  chartCount,
+  chartPatternCount,
+  badChart,
+];
+
+// Renderer themes: Mermaid/D2/Vega helpers expose typed light/dark selectors,
+// named maps, and default helpers for package consumers.
+const mermaidVars: MermaidThemeVariables = mermaid.dark;
+const mermaidCfg = brontoMermaidTheme('dark');
+const mermaidBaseTheme: 'base' = mermaidCfg.theme;
+const mermaidCfgDefault = mermaidTheme('light');
+// @ts-expect-error — theme is 'light' | 'dark', not arbitrary.
+brontoMermaidTheme('midnight');
+const d2Light: D2ThemeOverrides = d2.light;
+const d2Source: string = brontoD2Vars();
+const d2SourceDefault: string = d2Vars();
+const d2Dark: D2ThemeOverrides = brontoD2Overrides('dark');
+// @ts-expect-error — theme is 'light' | 'dark', not arbitrary.
+brontoD2Overrides('midnight');
+void [
+  mermaidVars,
+  mermaidCfg,
+  mermaidBaseTheme,
+  mermaidCfgDefault,
+  d2Light,
+  d2Source,
+  d2SourceDefault,
+  d2Dark,
+];
 
 // Vega: the ./vega subpath types are sound — VegaConfig has the range ramps,
 // brontoVegaConfig takes the theme literal, and an unknown theme is rejected.
+const vegaNamed: VegaConfig = vega.dark;
 const vegaCfg: VegaConfig = brontoVegaConfig('dark');
+const vegaDefault: VegaConfig = vegaConfig('light');
 const vegaCat: string[] = vegaCfg.range.category;
 const vegaBg: string = vegaCfg.background;
+const vegaAccent: string = brontoVegaAccent('dark');
+const vegaNeutral: string = brontoVegaNeutral('light');
 // @ts-expect-error — theme is 'light' | 'dark', not arbitrary.
 brontoVegaConfig('midnight');
-void [vegaCfg, vegaCat, vegaBg];
+// @ts-expect-error — theme is 'light' | 'dark', not arbitrary.
+brontoVegaAccent('midnight');
+// @ts-expect-error — theme is 'light' | 'dark', not arbitrary.
+brontoVegaNeutral('midnight');
+void [vegaNamed, vegaCfg, vegaDefault, vegaCat, vegaBg, vegaAccent, vegaNeutral];
 
 // Annotations: helper subpath types are object-shaped and finite geometry stays
 // a runtime concern.
@@ -344,27 +524,109 @@ void [
 // Framework bindings: the ./react + ./solid hook types resolve from the .d.ts
 // (no react/solid-js needed to type-check), take the behaviors' opts, and the
 // toast hook returns the imperative.
-import { useDialog as useDialogR, useToast as useToastR } from '../react/index.js';
-import { useTabs as useTabsS } from '../solid/index.js';
+import {
+  useDialog as useDialogR,
+  useThemeToggle as useThemeToggleR,
+  useToast as useToastR,
+} from '../react/index.js';
+import { useTabs as useTabsS, useThemeToggle as useThemeToggleS } from '../solid/index.js';
 const rDialog: void = useDialogR({ root: document });
 const rDialogRef: void = useDialogR({ root: { current: document } });
 const rDialogResolver: void = useDialogR(() => ({ root: document }));
+const rTheme: void = useThemeToggleR({ root: document, storageKey: 'react-theme' });
 const rToast = useToastR();
 const rDismiss = rToast('hi', { tone: 'success' }); // Cleanup
 const sTabs: void = useTabsS({ root: () => document });
-void [rDialog, rDialogRef, rDialogResolver, rDismiss, sTabs];
+const sTheme: void = useThemeToggleS(() => ({ root: document, storageKey: 'solid-theme' }));
+// @ts-expect-error — theme storage keys are strings.
+useThemeToggleR({ storageKey: 123 });
+void [rDialog, rDialogRef, rDialogResolver, rTheme, rDismiss, sTabs, sTheme];
 
 // Qwik bindings: same opts surface, and the root additionally accepts a Qwik
 // signal ({ value }) — a shape the React/Solid bindings deliberately don't.
-import { useDialog as useDialogQ, useToast as useToastQ } from '../qwik/index.js';
+import {
+  useDialog as useDialogQ,
+  useThemeToggle as useThemeToggleQ,
+  useToast as useToastQ,
+} from '../qwik/index.js';
 const qDialog: void = useDialogQ({ root: document });
 const qDialogSignal: void = useDialogQ({ root: { value: document } }); // Qwik useSignal()
 const qDialogResolver: void = useDialogQ(() => ({ root: { current: document } }));
+const qTheme: void = useThemeToggleQ({ root: { value: document }, storageKey: 'qwik-theme' });
 const qToast = useToastQ();
 const qDismiss = qToast('hi', { tone: 'success' }); // Cleanup
 // @ts-expect-error — the React binding root does not accept a Qwik signal ({ value }) shape.
 const rRejectsSignal: void = useDialogR({ root: { value: document } });
-void [qDialog, qDialogSignal, qDialogResolver, qToast, qDismiss, rRejectsSignal];
+void [qDialog, qDialogSignal, qDialogResolver, qTheme, qToast, qDismiss, rRejectsSignal];
+
+// Svelte actions: action functions take an Element and return the action
+// lifecycle object; they deliberately use element roots, not React/Solid ref
+// objects or Qwik signals.
+import {
+  disclosure as sDisclosure,
+  themeToggle as sThemeToggle,
+  createBrontoAction,
+  useToast as useToastSv,
+  type SvelteActionReturn,
+} from '../svelte/index.js';
+const sAction: SvelteActionReturn = sDisclosure(document.body, { root: document });
+sThemeToggle(document.body, { root: document, storageKey: 'svelte-theme' });
+sAction.update?.({ root: document.body });
+sAction.destroy();
+const sCustomAction = createBrontoAction((opts) => {
+  const maybeRoot: Document | Element | null | undefined = opts?.root;
+  void maybeRoot;
+  return () => {};
+});
+const sCustomReturn: SvelteActionReturn = sCustomAction(document.body);
+const sToast = useToastSv();
+const sDismiss = sToast('hi', { tone: 'success' });
+// @ts-expect-error — Svelte action roots are nodes, not React-style refs.
+sDisclosure(document.body, { root: { current: document } });
+// @ts-expect-error — Svelte theme storage keys are strings.
+sThemeToggle(document.body, { storageKey: 123 });
+void [sCustomReturn, sDismiss];
+
+// Vue directives: directive objects and registry entries are directly usable
+// without importing Vue, and the plugin shape can register kebab/camel aliases.
+import {
+  vDisclosure,
+  vThemeToggle,
+  directives as vueDirectives,
+  brontoVue,
+  useToast as useToastV,
+  type BrontoDirective,
+  type BrontoVueApp,
+  type BrontoVuePlugin,
+} from '../vue/index.js';
+const vueDirective: BrontoDirective = vDisclosure;
+vueDirective.mounted(document.body, { value: { root: document } });
+vThemeToggle.mounted(document.body, { value: { root: document, storageKey: 'vue-theme' } });
+vueDirective.updated(document.body, {
+  value: { root: document.body },
+  oldValue: { root: document },
+});
+vueDirective.beforeUnmount(document.body);
+vueDirectives.disclosure.mounted(document.body);
+const registeredVueDirectives: string[] = [];
+const vuePlugin: BrontoVuePlugin = brontoVue;
+const vueApp: BrontoVueApp = {
+  directive(name: string, directive: BrontoDirective) {
+    registeredVueDirectives.push(name);
+    void directive;
+  },
+};
+brontoVue.install(vueApp);
+vuePlugin.install(vueApp);
+const vToast = useToastV();
+const vDismiss = vToast('hi', { tone: 'info' });
+// @ts-expect-error — Vue plugin install requires a directive registrar, not any object.
+brontoVue.install({});
+// @ts-expect-error — Vue directive roots are nodes, not Qwik signals.
+vDisclosure.mounted(document.body, { value: { root: { value: document } } });
+// @ts-expect-error — Vue theme storage keys are strings.
+vThemeToggle.mounted(document.body, { value: { storageKey: 123 } });
+void [registeredVueDirectives, vuePlugin, vDismiss];
 
 void [
   btn,

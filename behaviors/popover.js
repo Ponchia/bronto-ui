@@ -1,12 +1,50 @@
-import { hasDom, resolveHost, noop, bindOnce, byIdInHost, focusInto } from './internal.js';
+import {
+  hasDom,
+  resolveHost,
+  noop,
+  bindOnce,
+  byIdInHost,
+  focusInto,
+  collectHosts,
+  closestSafe,
+} from './internal.js';
+
+const snapshotAttrs = (el, names) => {
+  const attrs = {};
+  for (const name of names) {
+    attrs[name] = {
+      had: el.hasAttribute(name),
+      value: el.getAttribute(name),
+    };
+  }
+  return attrs;
+};
+
+const restoreAttrs = (el, attrs) => {
+  for (const [name, state] of Object.entries(attrs)) {
+    if (state.had) el.setAttribute(name, state.value);
+    else el.removeAttribute(name);
+  }
+};
+
+const snapshotStyle = (el, names) => {
+  const styles = {};
+  for (const name of names) styles[name] = el.style[name];
+  return styles;
+};
+
+const restoreStyle = (el, styles) => {
+  for (const [name, value] of Object.entries(styles)) el.style[name] = value;
+};
 
 /**
  * Collision-aware popover, dependency-free. A `[data-bronto-popover]`
  * trigger toggles the `.ui-popover` panel whose id it names. The panel
  * is placed under the trigger and **flips above** when it would
- * overflow the viewport, with its inline edge clamped on-screen — the
- * thing the CSS-only tooltip can't do near edges / inside scroll
- * containers. If the panel has the native `popover` attribute and the
+ * overflow the viewport, with its inline edge clamped on-screen and tall
+ * panels constrained to scroll inside the viewport — the thing the CSS-only
+ * tooltip can't do near edges / inside scroll containers. If the panel has
+ * the native `popover` attribute and the
  * Popover API is available it is shown in the top layer (never
  * clipped); otherwise an `.is-open` class is toggled. Manages
  * `aria-expanded` / `aria-controls`, closes on Escape and outside
@@ -34,6 +72,27 @@ export function initPopover({ root } = {}) {
   const GAP = 8;
   let openPanel = null;
   let openTrigger = null;
+  const triggerStates = new Map();
+  const panelStates = new Map();
+
+  const rememberTrigger = (trigger) => {
+    if (!triggerStates.has(trigger)) {
+      triggerStates.set(
+        trigger,
+        snapshotAttrs(trigger, ['aria-haspopup', 'aria-controls', 'aria-expanded']),
+      );
+    }
+  };
+
+  const rememberPanel = (panel) => {
+    if (!panelStates.has(panel)) {
+      panelStates.set(panel, {
+        attrs: snapshotAttrs(panel, ['role', 'tabindex']),
+        open: panel.classList.contains('is-open'),
+        style: snapshotStyle(panel, ['maxBlockSize', 'top', 'left']),
+      });
+    }
+  };
 
   // The trigger advertises `aria-haspopup="dialog"`, so the open panel must BE a
   // dialog: a role, an accessible name, and focus moved into it (C6) — see the
@@ -41,12 +100,20 @@ export function initPopover({ root } = {}) {
 
   const place = (trigger, panel) => {
     const r = trigger.getBoundingClientRect();
+    panel.style.maxBlockSize = 'none';
     const pw = panel.offsetWidth;
-    const ph = panel.offsetHeight;
+    const ph = Math.max(panel.offsetHeight, panel.scrollHeight);
     const vw = view?.innerWidth ?? 0;
     const vh = view?.innerHeight ?? 0;
-    let top = r.bottom + GAP;
-    if (top + ph > vh && r.top - GAP - ph >= 0) top = r.top - GAP - ph;
+    const maxHeight = Math.max(0, vh - GAP * 2);
+    const below = Math.max(0, vh - r.bottom - GAP * 2);
+    const above = Math.max(0, r.top - GAP * 2);
+    const placeAbove = ph > below && above > below;
+    const available = placeAbove ? above : below;
+    const height = Math.min(ph, available || maxHeight);
+    panel.style.maxBlockSize = `${height}px`;
+    let top = placeAbove ? r.top - GAP - height : r.bottom + GAP;
+    if (vh) top = Math.max(GAP, Math.min(top, vh - height - GAP));
     let left = r.left;
     if (vw) left = Math.max(GAP, Math.min(left, vw - pw - GAP));
     panel.style.top = `${Math.max(GAP, top)}px`;
@@ -77,6 +144,8 @@ export function initPopover({ root } = {}) {
 
   const open = (trigger, panel) => {
     close();
+    rememberTrigger(trigger);
+    rememberPanel(panel);
     // Live up to the advertised `aria-haspopup="dialog"`: give the panel a
     // dialog role (unless the author set one) so AT announces it as the promised
     // dialog rather than a generic group (C6).
@@ -99,7 +168,7 @@ export function initPopover({ root } = {}) {
   };
 
   const onClick = (e) => {
-    const trigger = e.target.closest?.('[data-bronto-popover]');
+    const trigger = closestSafe(e.target, '[data-bronto-popover]');
     if (trigger && host.contains(trigger)) {
       const panel = byIdInHost(host, trigger.getAttribute('data-bronto-popover'));
       if (!panel) return;
@@ -133,9 +202,11 @@ export function initPopover({ root } = {}) {
   // never routes through close(), so aria-expanded would otherwise go stale).
   const seedTeardowns = [];
   const seed = () => {
-    for (const trigger of host.querySelectorAll('[data-bronto-popover]')) {
+    for (const trigger of collectHosts(host, '[data-bronto-popover]')) {
       const panel = byIdInHost(host, trigger.getAttribute('data-bronto-popover'));
       if (!panel) continue;
+      rememberTrigger(trigger);
+      rememberPanel(panel);
       if (!trigger.hasAttribute('aria-haspopup')) trigger.setAttribute('aria-haspopup', 'dialog');
       trigger.setAttribute('aria-controls', panel.id);
       if (!trigger.hasAttribute('aria-expanded')) trigger.setAttribute('aria-expanded', 'false');
@@ -169,7 +240,16 @@ export function initPopover({ root } = {}) {
     view?.addEventListener('scroll', onReflow, true);
     view?.addEventListener('resize', onReflow);
     return () => {
+      close();
       for (const t of seedTeardowns.splice(0)) t();
+      for (const [trigger, attrs] of triggerStates) restoreAttrs(trigger, attrs);
+      triggerStates.clear();
+      for (const [panel, state] of panelStates) {
+        restoreAttrs(panel, state.attrs);
+        panel.classList.toggle('is-open', state.open);
+        restoreStyle(panel, state.style);
+      }
+      panelStates.clear();
       document.removeEventListener('click', onClick);
       document.removeEventListener('keydown', onKey);
       view?.removeEventListener('scroll', onReflow, true);

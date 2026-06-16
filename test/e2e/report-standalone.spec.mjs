@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { applyTheme } from './_theme.mjs';
-import { blocking, ignored, scan } from './_demo-guards.mjs';
+import { blocking, scan } from './_demo-guards.mjs';
 
 const root = fileURLToPath(new URL('../..', import.meta.url));
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
@@ -70,7 +70,7 @@ for (const theme of ['dark', 'light']) {
     });
     page.on('pageerror', (e) => pageErrors.push(String(e)));
     page.on('response', (r) => {
-      if (r.status() >= 400 && !ignored(r.url())) badResponses.push(`${r.status()} ${r.url()}`);
+      if (r.status() >= 400) badResponses.push(`${r.status()} ${r.url()}`);
     });
 
     await openReport(page, theme);

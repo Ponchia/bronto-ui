@@ -13,6 +13,11 @@ test('attrs.meter/progress bundle the painted value with its announced value', (
   const m = attrs.meter(30, { min: 0, max: 60 });
   assert.equal(m['aria-valuenow'], 30);
   assert.equal(m.style['--value'], 50);
+
+  const d = attrs.dotbar(4, { min: 0, max: 8 });
+  assert.equal(d.role, 'progressbar');
+  assert.equal(d['aria-valuenow'], 4);
+  assert.equal(d.style['--value'], 50);
 });
 
 test('attrs.progress() with no value is indeterminate — omits aria-valuenow (C9)', () => {
@@ -23,6 +28,12 @@ test('attrs.progress() with no value is indeterminate — omits aria-valuenow (C
   // and no --value (the .ui-progress--indeterminate class drives the sweep).
   assert.ok(!('aria-valuenow' in ind));
   assert.ok(!('style' in ind));
+
+  const dotbar = attrs.dotbar();
+  assert.equal(dotbar.role, 'progressbar');
+  assert.equal(dotbar['aria-busy'], 'true');
+  assert.ok(!('aria-valuenow' in dotbar));
+  assert.ok(!('style' in dotbar));
 });
 
 test('cx flattens nested arrays at any depth and skips falsy', () => {

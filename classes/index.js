@@ -467,7 +467,6 @@ export const cls = Object.freeze({
   crosshairLineX: 'ui-crosshair__line--x',
   crosshairLineY: 'ui-crosshair__line--y',
   crosshairBadge: 'ui-crosshair__badge',
-  readout: 'ui-readout',
   // selection-state vocabulary (cross-cutting — css/selection.css)
   sel: 'ui-sel',
   selOn: 'ui-sel--on',

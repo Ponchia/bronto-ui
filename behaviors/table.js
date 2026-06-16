@@ -1,4 +1,4 @@
-import { hasDom, resolveHost, noop, bindOnce, collectHosts } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, collectHosts, closestSafe } from './internal.js';
 
 /**
  * Client-side sortable + selectable data table. Wires
@@ -41,18 +41,97 @@ export function initTableSort({ root } = {}) {
   const tables = collectHosts(host, '[data-bronto-sortable]');
   const cleanups = [];
 
+  const snapshotAttrs = (el, names) => {
+    const out = {};
+    for (const name of names) {
+      out[name] = {
+        had: el.hasAttribute(name),
+        value: el.getAttribute(name),
+      };
+    }
+    return out;
+  };
+
+  const restoreAttrs = (el, attrs) => {
+    for (const [name, attr] of Object.entries(attrs)) {
+      if (attr.had) el.setAttribute(name, attr.value);
+      else el.removeAttribute(name);
+    }
+  };
+
   for (const table of tables) {
     const tbody = table.tBodies[0];
     if (!tbody) continue;
 
-    // Seed the resting `aria-sort="none"` on every sortable header so AT
-    // announces the column as sortable from the start (it was unset until the
-    // first click — C10).
-    for (const sort of table.querySelectorAll('.ui-table__sort')) {
-      if (sort.tagName === 'BUTTON' && !sort.hasAttribute('type')) sort.type = 'button';
-      const th = sort.closest('th');
-      if (th && !th.hasAttribute('aria-sort')) th.setAttribute('aria-sort', 'none');
-    }
+    const headerStates = new WeakMap();
+    const headers = [];
+    const sortStates = new WeakMap();
+    const sorters = [];
+    const rowStates = new WeakMap();
+    const rows = [];
+    const checkboxStates = new WeakMap();
+    const checkboxes = [];
+
+    const rememberHeaderState = (th) => {
+      if (!th || headerStates.has(th)) return;
+      headerStates.set(th, snapshotAttrs(th, ['aria-sort']));
+      headers.push(th);
+    };
+    const rememberSorterState = (sorter) => {
+      if (!sorter || sortStates.has(sorter)) return;
+      sortStates.set(sorter, snapshotAttrs(sorter, ['type']));
+      sorters.push(sorter);
+    };
+    const rememberRowState = (row) => {
+      if (!row || rowStates.has(row)) return;
+      rowStates.set(row, snapshotAttrs(row, ['aria-selected']));
+      rows.push(row);
+    };
+    const rememberCheckboxState = (box) => {
+      if (!box || checkboxStates.has(box)) return;
+      checkboxStates.set(box, {
+        checked: box.checked,
+        indeterminate: box.indeterminate,
+      });
+      checkboxes.push(box);
+      rememberRowState(box.closest?.('tr'));
+    };
+    const seedSorters = () => {
+      // Seed the resting `aria-sort="none"` on every sortable header so AT
+      // announces the column as sortable from the start (it was unset until the
+      // first click — C10).
+      for (const sort of table.querySelectorAll('.ui-table__sort')) {
+        rememberSorterState(sort);
+        if (sort.tagName === 'BUTTON' && !sort.hasAttribute('type')) sort.type = 'button';
+        const th = sort.closest('th');
+        rememberHeaderState(th);
+        if (th && !th.hasAttribute('aria-sort')) th.setAttribute('aria-sort', 'none');
+      }
+    };
+    const rememberTableState = () => {
+      const rowOrder = [...tbody.rows];
+      rowOrder.forEach(rememberRowState);
+      seedSorters();
+      const allBox = table.querySelector('[data-bronto-select-all]');
+      rememberCheckboxState(allBox);
+      table.querySelectorAll('[data-bronto-select]').forEach(rememberCheckboxState);
+      return { rowOrder };
+    };
+    const restoreTableState = (state) => {
+      for (const sorter of sorters) restoreAttrs(sorter, sortStates.get(sorter));
+      for (const th of headers) restoreAttrs(th, headerStates.get(th));
+      for (const row of rows) restoreAttrs(row, rowStates.get(row));
+      for (const box of checkboxes) {
+        const boxState = checkboxStates.get(box);
+        if (!boxState) continue;
+        box.checked = boxState.checked;
+        box.indeterminate = boxState.indeterminate;
+      }
+      const ordered = state.rowOrder.filter((row) => row.parentElement === tbody);
+      const orderedSet = new Set(ordered);
+      const extras = [...tbody.rows].filter((row) => !orderedSet.has(row));
+      tbody.append(...ordered, ...extras);
+    };
 
     const colIndex = (th) => [...th.parentElement.children].indexOf(th);
     const cellText = (row, i) => row.children[i]?.textContent.trim() ?? '';
@@ -95,8 +174,10 @@ export function initTableSort({ root } = {}) {
       // Reset the OTHER sortable headers to `none` (not removed) so they keep
       // announcing sortability; only previously-sortable headers carry aria-sort.
       headers.forEach((h) => {
+        rememberHeaderState(h);
         if (h !== th && h.hasAttribute('aria-sort')) h.setAttribute('aria-sort', 'none');
       });
+      rememberHeaderState(th);
       th.setAttribute('aria-sort', dir);
       const i = colIndex(th);
       const sign = dir === 'ascending' ? 1 : -1;
@@ -121,6 +202,7 @@ export function initTableSort({ root } = {}) {
       const boxes = rowBoxes();
       const on = boxes.filter((b) => b.checked).length;
       if (allBox) {
+        rememberCheckboxState(allBox);
         allBox.checked = on > 0 && on === boxes.length;
         allBox.indeterminate = on > 0 && on < boxes.length;
       }
@@ -129,8 +211,12 @@ export function initTableSort({ root } = {}) {
       );
     };
     const markRow = (box) => {
+      rememberCheckboxState(box);
       const tr = box.closest('tr');
-      if (tr) tr.setAttribute('aria-selected', String(box.checked));
+      if (tr) {
+        rememberRowState(tr);
+        tr.setAttribute('aria-selected', String(box.checked));
+      }
     };
 
     const onClick = (e) => {
@@ -138,8 +224,9 @@ export function initTableSort({ root } = {}) {
       // keyboard-operable and carries the `::after` sort glyph. The bare
       // `th[data-sort]` path was mouse-only with no affordance, so it is gone
       // (C10); `data-sort="num"` is still read from the button or its th.
-      const sorter = e.target.closest('.ui-table__sort');
+      const sorter = closestSafe(e.target, '.ui-table__sort');
       if (sorter && table.contains(sorter)) {
+        rememberSorterState(sorter);
         const th = sorter.closest('th');
         const numeric =
           (sorter.getAttribute('data-sort') || th.getAttribute('data-sort')) === 'num' ||
@@ -150,23 +237,28 @@ export function initTableSort({ root } = {}) {
     const onChange = (e) => {
       const t = e.target;
       if (t.matches?.('[data-bronto-select-all]')) {
+        rememberCheckboxState(t);
         rowBoxes().forEach((b) => {
+          rememberCheckboxState(b);
           b.checked = t.checked;
           markRow(b);
         });
         syncAll();
       } else if (t.matches?.('[data-bronto-select]')) {
+        rememberCheckboxState(t);
         markRow(t);
         syncAll();
       }
     };
 
     const bound = bindOnce(table, 'tableSort', () => {
+      const state = rememberTableState();
       table.addEventListener('click', onClick);
       table.addEventListener('change', onChange);
       return () => {
         table.removeEventListener('click', onClick);
         table.removeEventListener('change', onChange);
+        restoreTableState(state);
       };
     });
     cleanups.push(bound);

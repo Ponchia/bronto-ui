@@ -1,4 +1,4 @@
-import { hasDom, resolveHost, noop, bindOnce } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, closestSafe } from './internal.js';
 
 const DISABLED = '[aria-disabled="true"]';
 
@@ -25,9 +25,10 @@ export function initDisabledGuard({ root } = {}) {
   const host = resolveHost(root);
   if (!host) return noop;
   const block = (e) => {
-    const el = e.target.closest?.(DISABLED);
+    const el = closestSafe(e.target, DISABLED);
     if (el && host.contains(el)) {
       e.preventDefault();
+      e.stopImmediatePropagation?.();
       e.stopPropagation();
     }
   };

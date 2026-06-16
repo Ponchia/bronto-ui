@@ -7,6 +7,7 @@ import {
   collectHosts,
   scrollIntoViewSafe,
   wrapIndex,
+  closestSafe,
 } from './internal.js';
 
 /**
@@ -46,6 +47,24 @@ export function initCommand({ root } = {}) {
   const palettes = collectHosts(host, '[data-bronto-command]');
   const cleanups = [];
 
+  const snapshotAttrs = (el, names) => {
+    const out = {};
+    for (const name of names) {
+      out[name] = {
+        had: el.hasAttribute(name),
+        value: el.getAttribute(name),
+      };
+    }
+    return out;
+  };
+
+  const restoreAttrs = (el, attrs) => {
+    for (const [name, attr] of Object.entries(attrs)) {
+      if (attr.had) el.setAttribute(name, attr.value);
+      else el.removeAttribute(name);
+    }
+  };
+
   for (const box of palettes) {
     const input = box.querySelector('.ui-command__input, input');
     const list = box.querySelector('.ui-command__list, [role="listbox"]');
@@ -54,18 +73,44 @@ export function initCommand({ root } = {}) {
     const items = [...list.querySelectorAll('.ui-command__item, [role="option"]')];
     const groups = [...list.querySelectorAll('.ui-command__group')];
 
-    const listId = list.id || (list.id = `bronto-cmd-${nextFieldUid()}`);
-    items.forEach((it, i) => {
-      if (!it.id) it.id = `${listId}-opt-${i}`;
-      it.setAttribute('role', 'option');
+    const rememberState = () => ({
+      input: snapshotAttrs(input, [
+        'role',
+        'aria-controls',
+        'aria-autocomplete',
+        'aria-expanded',
+        'aria-activedescendant',
+        'autocomplete',
+      ]),
+      list: snapshotAttrs(list, ['id', 'role']),
+      empty: empty ? { hidden: empty.hidden } : null,
+      groups: groups.map((g) => ({
+        el: g,
+        hidden: g.hidden,
+        attrs: snapshotAttrs(g, ['role']),
+      })),
+      items: items.map((it) => ({
+        el: it,
+        hidden: it.hidden,
+        active: it.classList.contains('is-active'),
+        attrs: snapshotAttrs(it, ['id', 'role', 'aria-selected']),
+      })),
     });
-    groups.forEach((g) => g.setAttribute('role', 'presentation'));
-    list.setAttribute('role', 'listbox');
-    input.setAttribute('role', 'combobox');
-    input.setAttribute('aria-controls', listId);
-    input.setAttribute('aria-autocomplete', 'list');
-    input.setAttribute('aria-expanded', 'true');
-    input.setAttribute('autocomplete', 'off');
+
+    const restoreState = (state) => {
+      restoreAttrs(input, state.input);
+      restoreAttrs(list, state.list);
+      if (empty && state.empty) empty.hidden = state.empty.hidden;
+      for (const group of state.groups) {
+        group.el.hidden = group.hidden;
+        restoreAttrs(group.el, group.attrs);
+      }
+      for (const item of state.items) {
+        item.el.hidden = item.hidden;
+        item.el.classList.toggle('is-active', item.active);
+        restoreAttrs(item.el, item.attrs);
+      }
+    };
 
     let active = -1;
     const visible = () => items.filter((it) => !it.hidden);
@@ -176,22 +221,37 @@ export function initCommand({ root } = {}) {
       }
     };
     const onClick = (e) => {
-      const item = e.target.closest('.ui-command__item, [role="option"]');
+      const item = closestSafe(e.target, '.ui-command__item, [role="option"]');
       if (item && list.contains(item)) choose(item);
     };
 
     const bound = bindOnce(box, 'command', () => {
+      const state = rememberState();
+      const listId = list.id || (list.id = `bronto-cmd-${nextFieldUid()}`);
+      items.forEach((it, i) => {
+        if (!it.id) it.id = `${listId}-opt-${i}`;
+        it.setAttribute('role', 'option');
+      });
+      groups.forEach((g) => g.setAttribute('role', 'presentation'));
+      list.setAttribute('role', 'listbox');
+      input.setAttribute('role', 'combobox');
+      input.setAttribute('aria-controls', listId);
+      input.setAttribute('aria-autocomplete', 'list');
+      input.setAttribute('aria-expanded', 'true');
+      input.setAttribute('autocomplete', 'off');
       input.addEventListener('input', onInput);
       input.addEventListener('keydown', onKey);
       list.addEventListener('click', onClick);
+      // Seed the initial active item (first visible).
+      filter();
       return () => {
         input.removeEventListener('input', onInput);
         input.removeEventListener('keydown', onKey);
         list.removeEventListener('click', onClick);
+        restoreState(state);
+        active = -1;
       };
     });
-    // Seed the initial active item (first visible).
-    filter();
     cleanups.push(bound);
   }
 

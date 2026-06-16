@@ -1,6 +1,7 @@
 import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
+import * as behaviorSurface from '../behaviors/index.js';
 import {
   applyStoredTheme,
   initThemeToggle,
@@ -28,6 +29,30 @@ import {
 
 let dom;
 
+const DOM_GLOBALS = [
+  'document',
+  'window',
+  'localStorage',
+  'matchMedia',
+  'CustomEvent',
+  'HTMLElement',
+  'Node',
+  'MutationObserver',
+  'ResizeObserver',
+  'requestAnimationFrame',
+  'getComputedStyle',
+];
+
+const ssrSafeBehaviorNames = Object.keys(behaviorSurface)
+  .filter(
+    (name) =>
+      name === 'applyStoredTheme' ||
+      name === 'dismissible' ||
+      name === 'toast' ||
+      /^init[A-Z]/.test(name),
+  )
+  .sort();
+
 /** Fresh DOM + globals per test. matchMedia is left undefined on purpose
  *  so the prefers-color-scheme guard is exercised by default. */
 function mount(html) {
@@ -50,17 +75,27 @@ const tick = () => new Promise((r) => setTimeout(r, 0));
 
 beforeEach(() => dom?.window?.localStorage?.clear());
 afterEach(() => {
-  for (const k of ['document', 'localStorage', 'CustomEvent', 'matchMedia', 'MutationObserver'])
-    delete globalThis[k];
+  for (const k of DOM_GLOBALS) delete globalThis[k];
   dom = undefined;
 });
 
-test('SSR-safe: no DOM → no-op and a usable cleanup', () => {
-  for (const k of ['document', 'localStorage', 'CustomEvent']) delete globalThis[k];
-  assert.doesNotThrow(() => applyStoredTheme());
-  const stop = initThemeToggle();
-  assert.equal(typeof stop, 'function');
-  assert.doesNotThrow(stop);
+test('SSR-safe: public behavior initializers and toast no-op without DOM', () => {
+  for (const k of DOM_GLOBALS) delete globalThis[k];
+  assert.ok(ssrSafeBehaviorNames.length >= 20, 'expected the full behavior lifecycle surface');
+
+  for (const name of ssrSafeBehaviorNames) {
+    const result = name === 'toast' ? behaviorSurface[name]('SSR smoke') : behaviorSurface[name]();
+    if (name === 'applyStoredTheme') {
+      assert.equal(result, undefined, `${name} is a one-shot no-op`);
+    } else {
+      assert.equal(typeof result, 'function', `${name} returns a cleanup no-op`);
+      assert.doesNotThrow(result, `${name} cleanup no-op is callable`);
+    }
+  }
+
+  for (const k of DOM_GLOBALS) {
+    assert.equal(globalThis[k], undefined, `${k} was not created by no-DOM behavior calls`);
+  }
 });
 
 test('applyStoredTheme applies a valid persisted theme only', () => {
@@ -122,6 +157,28 @@ test('forced toggle sets a fixed theme and reflects pressed = forced===current',
   assert.equal(btn.getAttribute('aria-pressed'), 'true');
 });
 
+test('initThemeToggle cancels handled defaults, resolves text-node targets, and cleans up aria', () => {
+  const d = mount(
+    '<a href="#native" data-bronto-theme-toggle id="t" aria-pressed="mixed">theme</a>',
+  );
+  const stop = initThemeToggle();
+  const toggle = d.getElementById('t');
+
+  assert.equal(toggle.getAttribute('aria-pressed'), 'false', 'init reflected current theme');
+  assert.doesNotThrow(() =>
+    d.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true, cancelable: true })),
+  );
+
+  const click = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+  assert.equal(toggle.firstChild.dispatchEvent(click), false);
+  assert.equal(click.defaultPrevented, true, 'handled link toggle cancelled native default');
+  assert.equal(d.documentElement.getAttribute('data-theme'), 'dark');
+  assert.equal(toggle.getAttribute('aria-pressed'), 'true');
+
+  stop();
+  assert.equal(toggle.getAttribute('aria-pressed'), 'mixed', 'authored aria-pressed restored');
+});
+
 test('dismissible removes target and is cancelable', () => {
   const d = mount(
     '<div data-bronto-dismissible id="box"><button data-bronto-dismiss>x</button></div>',
@@ -156,6 +213,44 @@ test('dismissible ignores malformed custom selectors instead of throwing', () =>
       .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true })),
   );
   assert.ok(d.getElementById('box'), 'malformed selector did not remove anything');
+  stop();
+});
+
+test('dismissible cancels native defaults only for handled controls', () => {
+  const d = mount(
+    '<div data-bronto-dismissible id="box"><a id="dismiss" href="#gone" data-bronto-dismiss>x</a></div>' +
+      '<a id="noop" href="#noop" data-bronto-dismiss="[[bad">noop</a>',
+  );
+  const stop = dismissible();
+
+  const dismissClick = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+  assert.equal(d.getElementById('dismiss').dispatchEvent(dismissClick), false);
+  assert.equal(dismissClick.defaultPrevented, true, 'handled dismissal cancelled link default');
+  assert.equal(d.getElementById('box'), null, 'handled target removed');
+
+  const noopClick = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+  assert.equal(d.getElementById('noop').dispatchEvent(noopClick), true);
+  assert.equal(
+    noopClick.defaultPrevented,
+    false,
+    'unhandled malformed selector left default alone',
+  );
+  stop();
+});
+
+test('dismissible resolves text-node click targets and ignores document clicks', () => {
+  const d = mount(
+    '<div data-bronto-dismissible id="box"><button data-bronto-dismiss>close</button></div>',
+  );
+  const stop = dismissible();
+  assert.doesNotThrow(() =>
+    d.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true, cancelable: true })),
+  );
+  assert.ok(d.getElementById('box'), 'document click did not dismiss anything');
+
+  const label = d.querySelector('[data-bronto-dismiss]').firstChild;
+  label.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true, cancelable: true }));
+  assert.equal(d.getElementById('box'), null, 'text-node click still resolved the button');
   stop();
 });
 
@@ -229,6 +324,46 @@ test('explicit root:null no-ops instead of widening to document (scope-not-ready
   assert.equal(btn.getAttribute('aria-expanded'), 'true', 'absent root still wires document');
 });
 
+test('initDisclosure cancels native defaults and cleanup restores authored state', () => {
+  const d = mount(
+    '<a id="trigger" href="#native" data-bronto-disclosure aria-controls="p" aria-expanded="true">m</a>' +
+      '<div id="p">panel</div>',
+  );
+  const stop = initDisclosure();
+  const trigger = d.getElementById('trigger');
+  const panel = d.getElementById('p');
+
+  const click = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+  assert.equal(trigger.dispatchEvent(click), false);
+  assert.equal(click.defaultPrevented, true, 'handled disclosure cancelled link default');
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+  assert.equal(panel.hidden, true);
+
+  stop();
+  assert.equal(trigger.getAttribute('aria-expanded'), 'true', 'trigger state restored');
+  assert.equal(panel.hasAttribute('hidden'), false, 'panel hidden attr restored');
+});
+
+test('initDisclosure resolves text-node click targets and ignores document clicks', () => {
+  const d = mount(
+    '<button data-bronto-disclosure aria-controls="p" aria-expanded="false">toggle</button>' +
+      '<div id="p" hidden>panel</div>',
+  );
+  const stop = initDisclosure();
+  const trigger = d.querySelector('[data-bronto-disclosure]');
+  assert.doesNotThrow(() =>
+    d.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true, cancelable: true })),
+  );
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false', 'document click was ignored');
+
+  trigger.firstChild.dispatchEvent(
+    new dom.window.MouseEvent('click', { bubbles: true, cancelable: true }),
+  );
+  assert.equal(trigger.getAttribute('aria-expanded'), 'true', 'text-node click toggled');
+  assert.equal(d.getElementById('p').hidden, false);
+  stop();
+});
+
 test('initMenu closes the <details> on Escape, outside-click, and item activation', () => {
   const d = mount(
     '<details data-bronto-menu open><summary>Menu</summary>' +
@@ -261,6 +396,47 @@ test('initMenu closes the <details> on Escape, outside-click, and item activatio
   menu.open = true;
   d.getElementById('outside').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   assert.equal(menu.open, true, 'no-op after cleanup');
+});
+
+test('initMenu supports root-self outside click and text-node item activation', () => {
+  const d = mount(
+    '<details id="menu" data-bronto-menu open><summary>Menu</summary>' +
+      '<div class="ui-menu"><button class="ui-menu__item" id="it">Go</button></div>' +
+      '</details><button id="outside">x</button>',
+  );
+  const menu = d.getElementById('menu');
+  const stop = initMenu({ root: menu });
+
+  d.getElementById('outside').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(menu.open, false, 'document-level outside click closed a root-scoped menu');
+
+  menu.open = true;
+  d.getElementById('it').firstChild.dispatchEvent(
+    new dom.window.MouseEvent('click', { bubbles: true }),
+  );
+  assert.equal(menu.open, false, 'text-node item click still closed the menu');
+  stop();
+});
+
+test('initMenu owns Escape for an open menu', () => {
+  const d = mount(
+    '<details data-bronto-menu open><summary>Menu</summary>' +
+      '<div class="ui-menu"><button class="ui-menu__item" id="it">Go</button></div>' +
+      '</details>',
+  );
+  const stop = initMenu();
+  const menu = d.querySelector('[data-bronto-menu]');
+  const key = new dom.window.KeyboardEvent('keydown', {
+    key: 'Escape',
+    bubbles: true,
+    cancelable: true,
+  });
+
+  assert.equal(d.getElementById('it').dispatchEvent(key), false);
+  assert.equal(key.defaultPrevented, true, 'Escape default was cancelled when menu handled it');
+  assert.equal(menu.open, false);
+  assert.equal(d.activeElement, d.querySelector('summary'), 'focus returned to summary');
+  stop();
 });
 
 /** jsdom 25 has no <dialog> showModal/close — polyfill the platform API
@@ -361,6 +537,80 @@ test('initDialog light-dismiss closes only when opted in via attribute', () => {
   assert.equal(b.open, true, 'plain dialog ignores backdrop click');
 });
 
+test('initDialog cancels native defaults only for handled controls', () => {
+  const d = mount(
+    '<a id="missing" href="#missing" data-bronto-open="missing">missing</a>' +
+      '<a id="open" href="#jump" data-bronto-open="dlg">open</a>' +
+      '<dialog id="dlg" data-bronto-dialog-light><a id="close" href="#close" data-bronto-close>close</a></dialog>',
+  );
+  const dlg = stubDialog(d.getElementById('dlg'));
+  initDialog();
+
+  const missingEvent = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+  assert.equal(d.getElementById('missing').dispatchEvent(missingEvent), true);
+  assert.equal(missingEvent.defaultPrevented, false, 'unknown targets keep their native default');
+
+  const openEvent = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+  assert.equal(d.getElementById('open').dispatchEvent(openEvent), false);
+  assert.equal(openEvent.defaultPrevented, true, 'handled opener default canceled');
+  assert.equal(dlg.open, true, 'dialog opened');
+
+  const closeEvent = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+  assert.equal(d.getElementById('close').dispatchEvent(closeEvent), false);
+  assert.equal(closeEvent.defaultPrevented, true, 'handled closer default canceled');
+  assert.equal(dlg.open, false, 'dialog closed');
+
+  d.getElementById('open').dispatchEvent(
+    new dom.window.MouseEvent('click', { bubbles: true, cancelable: true }),
+  );
+  const lightEvent = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+  assert.equal(dlg.dispatchEvent(lightEvent), false);
+  assert.equal(lightEvent.defaultPrevented, true, 'handled backdrop default canceled');
+  assert.equal(dlg.open, false, 'light-dismiss closed the dialog');
+});
+
+test('initDialog ignores click targets without Element.closest()', () => {
+  const d = mount('<span id="text">text</span>');
+  const errors = [];
+  dom.window.addEventListener('error', (event) => errors.push(event.message));
+  const stop = initDialog();
+
+  d.getElementById('text').firstChild.dispatchEvent(
+    new dom.window.MouseEvent('click', { bubbles: true, cancelable: true }),
+  );
+  d.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true, cancelable: true }));
+
+  assert.deepEqual(errors, []);
+  stop();
+});
+
+test('initDialog failed showModal leaves no pending focus-return listener', () => {
+  const d = mount(
+    '<a id="open" href="#jump" data-bronto-open="dlg">open</a>' +
+      '<button id="other">other</button>' +
+      '<dialog id="dlg"><button data-bronto-close>x</button></dialog>',
+  );
+  const opener = d.getElementById('open');
+  const other = d.getElementById('other');
+  const dlg = d.getElementById('dlg');
+  dlg.showModal = () => {
+    throw new Error('showModal failed');
+  };
+  const errors = [];
+  dom.window.addEventListener('error', (event) => errors.push(event.message));
+  initDialog();
+
+  opener.focus();
+  const event = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+  assert.equal(opener.dispatchEvent(event), true);
+  assert.equal(event.defaultPrevented, false, 'failed open keeps native default available');
+  assert.deepEqual(errors, [], 'showModal failure is contained');
+
+  other.focus();
+  dlg.dispatchEvent(new dom.window.Event('close'));
+  assert.equal(d.activeElement, other);
+});
+
 test('toast mounts a shared stack, applies tone/title, and dismisses', () => {
   const d = mount('');
   const dismiss = toast('saved', { tone: 'success', title: 'OK', duration: 0 });
@@ -430,8 +680,50 @@ test('initTabs: roving tabindex, click + Arrow/Home/End, panel sync', () => {
   assert.equal(c.getAttribute('aria-selected'), 'true');
 
   stop();
-  a.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
-  assert.equal(c.getAttribute('aria-selected'), 'true', 'no-op after cleanup');
+  assert.equal(a.classList.contains('is-active'), true, 'authored active tab restored');
+  assert.equal(b.classList.contains('is-active'), false, 'runtime active tab cleared');
+  assert.equal(c.classList.contains('is-active'), false, 'runtime active tab cleared');
+  assert.equal(d.querySelector('.ui-tabs__list').hasAttribute('role'), false, 'list role restored');
+  for (const tab of [a, b, c]) {
+    assert.equal(tab.hasAttribute('id'), false, 'generated tab id restored');
+    assert.equal(tab.hasAttribute('role'), false, 'tab role restored');
+    assert.equal(tab.hasAttribute('aria-selected'), false, 'selection state restored');
+    assert.equal(tab.hasAttribute('aria-controls'), false, 'control relation restored');
+    assert.equal(tab.hasAttribute('tabindex'), false, 'roving tabindex restored');
+  }
+  for (const key of ['a', 'b', 'c']) {
+    const p = panel(key);
+    assert.equal(p.hidden, false, 'authored panel visibility restored');
+    assert.equal(p.hasAttribute('id'), false, 'generated panel id restored');
+    assert.equal(p.hasAttribute('role'), false, 'panel role restored');
+    assert.equal(p.hasAttribute('aria-labelledby'), false, 'label relation restored');
+    assert.equal(p.hasAttribute('tabindex'), false, 'panel tabindex restored');
+  }
+  b.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(a.classList.contains('is-active'), true, 'click is no-op after cleanup');
+  assert.equal(b.classList.contains('is-active'), false, 'listener removed after cleanup');
+});
+
+test('initTabs cancels handled native defaults and resolves text-node tab clicks', () => {
+  const d = mount(
+    '<div data-bronto-tabs><div class="ui-tabs__list">' +
+      '<a class="ui-tab is-active" href="#native-a" data-tab="a">Alpha</a>' +
+      '<a class="ui-tab" href="#native-b" data-tab="b">Beta</a></div>' +
+      '<div class="ui-tabs__panel" data-panel="a">A</div>' +
+      '<div class="ui-tabs__panel" data-panel="b">B</div></div>',
+  );
+  const stop = initTabs();
+  const beta = d.querySelector('[data-tab="b"]');
+  const alphaPanel = d.querySelector('[data-panel="a"]');
+  const betaPanel = d.querySelector('[data-panel="b"]');
+
+  const click = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+  assert.equal(beta.firstChild.dispatchEvent(click), false);
+  assert.equal(click.defaultPrevented, true, 'handled tab link default was cancelled');
+  assert.equal(beta.getAttribute('aria-selected'), 'true');
+  assert.equal(alphaPanel.hidden, true);
+  assert.equal(betaPanel.hidden, false);
+  stop();
 });
 
 test('initTabs: nested groups are isolated (own [data-bronto-tabs] only)', () => {
@@ -836,6 +1128,43 @@ test('initFormValidation: noValidate is set at init, restored on cleanup', () =>
   assert.equal(form.noValidate, false, 'prior noValidate restored on cleanup');
 });
 
+test('initFormValidation: cleanup restores invalid UI, summary, and generated ids', () => {
+  const d = mount(`
+    <form data-bronto-validate>
+      <div class="ui-field">
+        <label class="ui-label">Email <input class="ui-input" name="em" type="email" required /></label>
+        <p class="ui-hint" data-bronto-error></p>
+      </div>
+      <div class="ui-error-summary" data-bronto-error-summary hidden></div>
+      <button type="submit">Go</button>
+    </form>`);
+  const form = d.querySelector('form');
+  const input = d.querySelector('input');
+  const slot = d.querySelector('[data-bronto-error]');
+  const summary = d.querySelector('[data-bronto-error-summary]');
+  const stop = initFormValidation();
+
+  form.dispatchEvent(new dom.window.Event('submit', { bubbles: true, cancelable: true }));
+  assert.equal(input.getAttribute('aria-invalid'), 'true');
+  assert.ok(input.id, 'summary path minted a field id');
+  assert.ok(slot.id, 'error slot path minted a slot id');
+  assert.equal(summary.hidden, false);
+  assert.equal(summary.querySelectorAll('a').length, 1);
+
+  stop();
+  assert.equal(input.hasAttribute('aria-invalid'), false, 'invalid marker restored');
+  assert.equal(input.hasAttribute('aria-describedby'), false, 'describedby restored');
+  assert.equal(input.hasAttribute('id'), false, 'generated field id restored');
+  assert.equal(slot.hasAttribute('id'), false, 'generated error slot id restored');
+  assert.equal(slot.textContent, '', 'error text restored');
+  assert.equal(slot.classList.contains('ui-hint--error'), false, 'error class restored');
+  assert.equal(summary.hidden, true, 'summary visibility restored');
+  assert.equal(summary.querySelectorAll('a').length, 0, 'generated summary links removed');
+  assert.equal(summary.textContent, '', 'summary content restored');
+  assert.equal(summary.hasAttribute('role'), false, 'summary role restored');
+  assert.equal(summary.hasAttribute('tabindex'), false, 'summary tabindex restored');
+});
+
 test('initFormValidation: dynamically handled forms restore noValidate on cleanup', () => {
   const d = mount('<section id="root"></section>');
   const stop = initFormValidation();
@@ -928,24 +1257,54 @@ test('initCombobox: wires ARIA, filters, keyboard-selects, emits change', () => 
   stop();
 });
 
-test('initCombobox: empty state, Escape closes, cleanup detaches', () => {
+test('initCombobox: empty state, Escape closes, cleanup restores DOM and detaches', () => {
   const d = mount(CB);
   const stop = initCombobox();
   const input = d.querySelector('.ui-combobox__input');
   const list = d.querySelector('.ui-combobox__list');
   const empty = d.querySelector('.ui-combobox__empty');
+  const options = [...d.querySelectorAll('.ui-combobox__option')];
 
   input.value = 'zzz';
   input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
   assert.equal(empty.hidden, false, 'empty state shown when nothing matches');
+  assert.deepEqual(
+    options.filter((o) => !o.hidden).map((o) => o.dataset.value),
+    [],
+    'filter hides every option',
+  );
 
   input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
   assert.equal(list.hidden, true, 'Escape closes');
 
   stop();
-  input.value = 'a';
+  assert.equal(list.hidden, false, 'authored list visibility restored');
+  assert.equal(empty.hidden, true, 'authored empty-state visibility restored');
+  assert.equal(input.hasAttribute('role'), false, 'input role restored');
+  assert.equal(input.hasAttribute('aria-controls'), false, 'aria-controls restored');
+  assert.equal(input.hasAttribute('aria-expanded'), false, 'expanded state restored');
+  assert.equal(list.hasAttribute('id'), false, 'generated list id restored');
+  assert.equal(list.hasAttribute('role'), false, 'list role restored');
+  assert.deepEqual(
+    options.filter((o) => !o.hidden).map((o) => o.dataset.value),
+    ['apple', 'banana', 'cherry'],
+    'cleanup restores option visibility',
+  );
+  assert.equal(
+    options.some(
+      (o) => o.hasAttribute('id') || o.hasAttribute('role') || o.hasAttribute('aria-selected'),
+    ),
+    false,
+    'generated option ARIA restored',
+  );
+
+  input.value = 'ap';
   input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
-  assert.equal(list.hidden, true, 'no-op after cleanup');
+  assert.deepEqual(
+    options.filter((o) => !o.hidden).map((o) => o.dataset.value),
+    ['apple', 'banana', 'cherry'],
+    'input listener removed after cleanup',
+  );
 });
 
 test('initCombobox: data-bronto-combobox-live re-reads async-added options', async () => {
@@ -978,6 +1337,11 @@ test('initCombobox: data-bronto-combobox-live re-reads async-added options', asy
   input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
   assert.equal(input.value, 'Mango', 'async option is keyboard-selectable (label shown)');
   stop();
+  assert.equal(list.hasAttribute('id'), false, 'generated live-list id restored');
+  assert.equal(list.hasAttribute('role'), false, 'generated live-list role restored');
+  assert.equal(li.hasAttribute('id'), false, 'generated async option id restored');
+  assert.equal(li.hasAttribute('role'), false, 'generated async option role restored');
+  assert.equal(li.hasAttribute('aria-selected'), false, 'generated async selection state restored');
 });
 
 test('initCombobox: without the live opt-in, async options stay stale', async () => {
@@ -1053,6 +1417,56 @@ test('initCombobox: ArrowUp wraps to last, Home/End jump to edges, Tab closes', 
   stop();
 });
 
+test('initCombobox: re-init clears stale active descendant while preserving the binding', () => {
+  const d = mount(CB);
+  const input = d.querySelector('.ui-combobox__input');
+  const list = d.querySelector('.ui-combobox__list');
+  initCombobox();
+
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+  assert.ok(d.querySelector('.ui-combobox__option.is-active'), 'first binding activated an option');
+  assert.ok(input.hasAttribute('aria-activedescendant'), 'first binding set activedescendant');
+
+  const stop = initCombobox();
+  assert.equal(list.hidden, true, 're-init leaves the popup closed');
+  assert.equal(input.getAttribute('aria-expanded'), 'false');
+  assert.equal(
+    input.hasAttribute('aria-activedescendant'),
+    false,
+    're-init clears stale activedescendant',
+  );
+  assert.equal(d.querySelectorAll('.ui-combobox__option.is-active').length, 0);
+
+  input.value = 'ban';
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+  assert.equal(
+    d.querySelector('.ui-combobox__option.is-active')?.textContent,
+    'Banana',
+    'new binding still activates matching options',
+  );
+  stop();
+});
+
+test('initCombobox resolves text-node option clicks', () => {
+  const d = mount(CB);
+  const changes = [];
+  d.querySelector('[data-bronto-combobox]').addEventListener('bronto:change', (e) =>
+    changes.push(e.detail),
+  );
+  const stop = initCombobox();
+  const input = d.querySelector('.ui-combobox__input');
+  const banana = [...d.querySelectorAll('.ui-combobox__option')].find((o) =>
+    o.textContent.includes('Banana'),
+  );
+
+  banana.firstChild.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(input.value, 'Banana');
+  assert.deepEqual(changes, [{ value: 'banana', label: 'Banana' }]);
+  stop();
+});
+
 test('initPopover: toggles panel, manages aria, Escape + outside close', () => {
   const d = mount(
     '<button id="t" data-bronto-popover="pop">Info</button>' +
@@ -1086,6 +1500,99 @@ test('initPopover: toggles panel, manages aria, Escape + outside close', () => {
   stop();
   trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   assert.equal(panel.classList.contains('is-open'), false, 'no-op after cleanup');
+});
+
+test('initPopover resolves text-node trigger clicks', () => {
+  const d = mount(
+    '<button id="t" data-bronto-popover="pop">Info</button>' +
+      '<div class="ui-popover" id="pop" aria-label="Details">Details</div>',
+  );
+  const stop = initPopover();
+  const trigger = d.getElementById('t');
+  const panel = d.getElementById('pop');
+
+  trigger.firstChild.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), true);
+  assert.equal(trigger.getAttribute('aria-expanded'), 'true');
+  stop();
+});
+
+test('initPopover re-init closes stale open state before rebinding', () => {
+  const d = mount(
+    '<button id="t" data-bronto-popover="pop">Info</button>' +
+      '<div class="ui-popover" id="pop" aria-label="Details">Details</div>',
+  );
+  const trigger = d.getElementById('t');
+  const panel = d.getElementById('pop');
+  initPopover();
+
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), true, 'first binding opens');
+  assert.equal(trigger.getAttribute('aria-expanded'), 'true');
+
+  const stop = initPopover();
+  assert.equal(panel.classList.contains('is-open'), false, 're-init cleanup closes');
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), true, 'new binding still opens');
+  d.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), false, 'new binding closes on Escape');
+  stop();
+});
+
+test('initPopover cleanup restores generated trigger and detached panel state', () => {
+  const d = mount(
+    '<button id="t" data-bronto-popover="pop">Info</button>' +
+      '<div class="ui-popover" id="pop" aria-label="Details">Details</div>',
+  );
+  const trigger = d.getElementById('t');
+  const panel = d.getElementById('pop');
+  const stop = initPopover();
+
+  assert.equal(trigger.getAttribute('aria-haspopup'), 'dialog', 'resting popup relation seeded');
+  assert.equal(trigger.getAttribute('aria-controls'), 'pop');
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), true, 'opened');
+  assert.equal(panel.getAttribute('role'), 'dialog', 'panel role generated');
+  assert.equal(panel.getAttribute('tabindex'), '-1', 'content-only panel is focusable');
+  assert.notEqual(panel.style.maxBlockSize, '', 'placement style generated');
+
+  panel.remove();
+  stop();
+  assert.equal(trigger.hasAttribute('aria-haspopup'), false, 'generated haspopup restored');
+  assert.equal(trigger.hasAttribute('aria-controls'), false, 'generated controls restored');
+  assert.equal(trigger.hasAttribute('aria-expanded'), false, 'generated expanded restored');
+  assert.equal(panel.classList.contains('is-open'), false, 'generated open class restored');
+  assert.equal(panel.hasAttribute('role'), false, 'generated role restored');
+  assert.equal(panel.hasAttribute('tabindex'), false, 'generated tabindex restored');
+  assert.equal(panel.style.maxBlockSize, '', 'placement max size restored');
+  assert.equal(panel.style.top, '', 'placement top restored');
+  assert.equal(panel.style.left, '', 'placement left restored');
+});
+
+test('initPopover seeds and cleans up when root is the trigger itself', () => {
+  const d = mount(
+    '<button id="t" data-bronto-popover="pop">Info</button>' +
+      '<div class="ui-popover" id="pop" aria-label="Details"><button>Focus</button></div>',
+  );
+  const trigger = d.getElementById('t');
+  const panel = d.getElementById('pop');
+  const stop = initPopover({ root: trigger });
+
+  assert.equal(trigger.getAttribute('aria-haspopup'), 'dialog');
+  assert.equal(trigger.getAttribute('aria-controls'), 'pop');
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), true, 'root trigger still opens');
+  stop();
+  assert.equal(trigger.hasAttribute('aria-haspopup'), false);
+  assert.equal(trigger.hasAttribute('aria-controls'), false);
+  assert.equal(trigger.hasAttribute('aria-expanded'), false);
+  assert.equal(panel.classList.contains('is-open'), false);
 });
 
 test('initPopover scoped root can target document-wide portal panels', () => {
@@ -1169,6 +1676,19 @@ test('initTableSort: cycles aria-sort and reorders rows (string + numeric)', () 
     'ascending',
     'active header sorted',
   );
+  stop();
+});
+
+test('initTableSort resolves text-node sort clicks', () => {
+  const d = mount(TBL);
+  const stop = initTableSort();
+  const table = d.querySelector('table');
+  const names = () => [...table.tBodies[0].rows].map((r) => r.children[1].textContent);
+  const nameBtn = table.querySelector('.ui-table__sort');
+
+  nameBtn.firstChild.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.deepEqual(names(), ['Ann', 'Bob', 'Cy']);
+  assert.equal(nameBtn.closest('th').getAttribute('aria-sort'), 'ascending');
   stop();
 });
 
@@ -1267,6 +1787,55 @@ test('initTableSort: select-all + row selection stay in sync', () => {
   stop();
 });
 
+test('initTableSort: cleanup restores sort order, selection state, and generated attrs', () => {
+  const d = mount(TBL);
+  const stop = initTableSort();
+  const table = d.querySelector('table');
+  const names = () => [...table.tBodies[0].rows].map((r) => r.children[1].textContent);
+  const [nameBtn, scoreBtn] = [...table.querySelectorAll('.ui-table__sort')];
+  const all = table.querySelector('[data-bronto-select-all]');
+  const rowBoxes = [...table.querySelectorAll('[data-bronto-select]')];
+
+  nameBtn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.deepEqual(names(), ['Ann', 'Bob', 'Cy'], 'sort mutates row order');
+  all.checked = true;
+  all.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+  assert.ok(
+    rowBoxes.every((box) => box.checked),
+    'selection mutates row checkboxes',
+  );
+  assert.ok(
+    [...table.tBodies[0].rows].every((row) => row.getAttribute('aria-selected') === 'true'),
+    'selection mutates row aria-selected',
+  );
+
+  stop();
+  assert.deepEqual(names(), ['Bob', 'Ann', 'Cy'], 'authored row order restored');
+  for (const btn of [nameBtn, scoreBtn]) {
+    assert.equal(btn.hasAttribute('type'), false, 'generated sorter type restored');
+    assert.equal(btn.closest('th').hasAttribute('aria-sort'), false, 'header aria-sort restored');
+  }
+  assert.equal(all.checked, false, 'select-all checked state restored');
+  assert.equal(all.indeterminate, false, 'select-all indeterminate state restored');
+  assert.ok(
+    rowBoxes.every((box) => !box.checked),
+    'row checked state restored',
+  );
+  assert.ok(
+    [...table.tBodies[0].rows].every((row) => !row.hasAttribute('aria-selected')),
+    'row aria-selected restored',
+  );
+
+  nameBtn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.deepEqual(names(), ['Bob', 'Ann', 'Cy'], 'sort listener removed after cleanup');
+  all.checked = true;
+  all.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+  assert.ok(
+    rowBoxes.every((box) => !box.checked),
+    'selection listener removed after cleanup',
+  );
+});
+
 const CAR = `
   <div class="ui-carousel" data-bronto-carousel data-bronto-carousel-label="Photos">
     <div class="ui-carousel__stage">
@@ -1338,6 +1907,30 @@ test('initCarousel: thumb click jumps; next clamps at the end (no loop)', () => 
   assert.equal(status.textContent, '3 / 3', 'clamped — no wrap without loop');
 });
 
+test('initCarousel resolves text-node control clicks', () => {
+  const d = mount(
+    CAR.replace('data-bronto-carousel-next></button>', 'data-bronto-carousel-next>Next</button>')
+      .replace(
+        '<button class="ui-carousel__thumb"><img src="b" alt="" /></button>',
+        '<button class="ui-carousel__thumb">Two</button>',
+      )
+      .replace(
+        '<button class="ui-carousel__thumb"><img src="c" alt="" /></button>',
+        '<button class="ui-carousel__thumb">Three</button>',
+      ),
+  );
+  const stop = initCarousel();
+  const status = d.querySelector('.ui-carousel__status');
+  const next = d.querySelector('[data-bronto-carousel-next]');
+  const thumbs = [...d.querySelectorAll('.ui-carousel__thumb')];
+
+  next.firstChild.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(status.textContent, '2 / 3');
+  thumbs[2].firstChild.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(status.textContent, '3 / 3');
+  stop();
+});
+
 test('initCarousel: keyboard Arrow/Home/End navigate the focused viewport', () => {
   const d = mount(CAR);
   initCarousel();
@@ -1372,7 +1965,7 @@ test('initCarousel: data-bronto-carousel-loop wraps at both ends', () => {
   assert.equal(status.textContent, '1 / 3', 'next from the last wraps to the first');
 });
 
-test('initCarousel: idempotent re-init does not stack, cleanup detaches', () => {
+test('initCarousel: idempotent re-init does not stack, cleanup restores and detaches', () => {
   const d = mount(CAR);
   initCarousel();
   const stop = initCarousel(); // must replace, not add a 2nd handler
@@ -1383,8 +1976,81 @@ test('initCarousel: idempotent re-init does not stack, cleanup detaches', () => 
   assert.equal(status.textContent, '2 / 3', 'advanced exactly once');
 
   stop();
+  assert.equal(status.textContent, '', 'cleanup restores authored empty status');
   next.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
-  assert.equal(status.textContent, '2 / 3', 'no-op after cleanup');
+  assert.equal(status.textContent, '', 'no-op after cleanup');
+});
+
+test('initCarousel: cleanup restores generated ARIA, controls, status, and active thumb', () => {
+  const d = mount(`
+    <div class="ui-carousel" data-bronto-carousel data-bronto-carousel-label="Photos">
+      <div class="ui-carousel__viewport" role="region" aria-label="Authored carousel" tabindex="-1">
+        <div class="ui-carousel__slide" role="listitem" aria-label="Authored slide"><img src="a" alt="A" /></div>
+        <div class="ui-carousel__slide"><img src="b" alt="B" /></div>
+      </div>
+      <button data-bronto-carousel-prev></button>
+      <button data-bronto-carousel-next></button>
+      <p class="ui-carousel__status" aria-live="off"><span>authored</span></p>
+      <button class="ui-carousel__thumb">A</button>
+      <button class="ui-carousel__thumb" aria-current="page">B</button>
+    </div>`);
+  const stop = initCarousel();
+  const vp = d.querySelector('.ui-carousel__viewport');
+  const slides = [...d.querySelectorAll('.ui-carousel__slide')];
+  const prev = d.querySelector('[data-bronto-carousel-prev]');
+  const next = d.querySelector('[data-bronto-carousel-next]');
+  const status = d.querySelector('.ui-carousel__status');
+  const thumbs = [...d.querySelectorAll('.ui-carousel__thumb')];
+
+  assert.equal(vp.getAttribute('role'), 'group');
+  assert.equal(slides[1].getAttribute('role'), 'group');
+  assert.equal(prev.getAttribute('type'), 'button');
+  assert.equal(prev.disabled, true);
+  assert.equal(next.getAttribute('aria-label'), 'Next');
+  assert.equal(status.getAttribute('aria-live'), 'polite');
+  assert.equal(status.textContent, '1 / 2');
+  assert.equal(thumbs[0].getAttribute('aria-current'), 'true');
+  assert.equal(thumbs[1].hasAttribute('aria-current'), false);
+
+  stop();
+  assert.equal(vp.getAttribute('role'), 'region');
+  assert.equal(vp.getAttribute('aria-label'), 'Authored carousel');
+  assert.equal(vp.getAttribute('tabindex'), '-1');
+  assert.equal(slides[0].getAttribute('role'), 'listitem');
+  assert.equal(slides[0].getAttribute('aria-label'), 'Authored slide');
+  assert.equal(slides[1].hasAttribute('role'), false);
+  assert.equal(slides[1].hasAttribute('aria-label'), false);
+  assert.equal(prev.hasAttribute('type'), false);
+  assert.equal(prev.disabled, false);
+  assert.equal(next.hasAttribute('aria-label'), false);
+  assert.equal(status.getAttribute('aria-live'), 'off');
+  assert.equal(status.innerHTML, '<span>authored</span>');
+  assert.equal(thumbs[0].hasAttribute('aria-current'), false);
+  assert.equal(thumbs[1].getAttribute('aria-current'), 'page');
+});
+
+test('initCarousel: re-init preserves the live current slide after navigation', () => {
+  const d = mount(CAR);
+  initCarousel();
+  const status = d.querySelector('.ui-carousel__status');
+  const prev = d.querySelector('[data-bronto-carousel-prev]');
+  const next = d.querySelector('[data-bronto-carousel-next]');
+  const thumbs = [...d.querySelectorAll('.ui-carousel__thumb')];
+
+  next.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(status.textContent, '2 / 3');
+  assert.equal(thumbs[1].getAttribute('aria-current'), 'true');
+
+  const stop = initCarousel();
+  assert.equal(status.textContent, '2 / 3', 're-init keeps the rendered index');
+  assert.equal(thumbs[1].getAttribute('aria-current'), 'true');
+  assert.equal(prev.disabled, false);
+  assert.equal(next.disabled, false);
+
+  next.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(status.textContent, '3 / 3', 'new binding still advances once');
+  assert.equal(thumbs[2].getAttribute('aria-current'), 'true');
+  stop();
 });
 
 const legendMarkup = `
@@ -1416,6 +2082,18 @@ test('initLegend: click toggles aria-pressed + is-inactive and emits bronto:lege
   assert.equal(btn.getAttribute('aria-pressed'), 'true');
   assert.ok(!btn.classList.contains('is-inactive'));
   assert.deepEqual(events.at(-1), { series: 'a', active: true });
+});
+
+test('initLegend resolves text-node item clicks', () => {
+  const d = mount(legendMarkup);
+  const stop = initLegend();
+  const btn = d.querySelectorAll('.ui-legend__item')[1];
+  const labelText = btn.querySelector('.ui-legend__label').firstChild;
+
+  labelText.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(btn.getAttribute('aria-pressed'), 'false');
+  assert.equal(btn.classList.contains('is-inactive'), true);
+  stop();
 });
 
 test('initLegend: falls back to the 0-based index when data-series is absent', () => {
@@ -1454,6 +2132,60 @@ test('initLegend: role=button entries get tabindex and keyboard activation', () 
   assert.deepEqual(events.at(-1), { series: 'a', active: true });
 });
 
+test('initLegend: a root that is the legend normalizes and cleans up role=button entries', () => {
+  const d = mount(`
+    <ul id="legend-root" class="ui-legend ui-legend--interactive" data-bronto-legend>
+      <li><span class="ui-legend__item" role="button" aria-pressed="true" data-series="a">
+        <span class="ui-legend__label">A</span>
+      </span></li>
+    </ul>`);
+  const legend = d.getElementById('legend-root');
+  const item = d.querySelector('.ui-legend__item');
+  const events = [];
+  legend.addEventListener('bronto:legend:toggle', (e) => events.push(e.detail));
+
+  const stop = initLegend({ root: legend });
+  assert.equal(item.getAttribute('tabindex'), '0', 'scoped legend root is normalized');
+
+  item.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+  assert.equal(item.getAttribute('aria-pressed'), 'false');
+  assert.equal(item.classList.contains('is-inactive'), true);
+  assert.deepEqual(events.at(-1), { series: 'a', active: false });
+
+  stop();
+  assert.equal(item.hasAttribute('tabindex'), false, 'generated tabindex restored');
+  assert.equal(item.getAttribute('aria-pressed'), 'true', 'pressed state restored');
+  assert.equal(item.classList.contains('is-inactive'), false, 'inactive state restored');
+
+  item.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+  assert.equal(events.length, 1, 'cleanup removes listener');
+});
+
+test('initLegend: cleanup restores detached generated button type and toggle state', () => {
+  const d = mount(`
+    <form>
+      <ul class="ui-legend ui-legend--interactive" data-bronto-legend>
+        <li><button class="ui-legend__item" aria-pressed="true" data-series="a">
+          <span class="ui-legend__label">A</span>
+        </button></li>
+      </ul>
+    </form>`);
+  const item = d.querySelector('.ui-legend__item');
+
+  const stop = initLegend();
+  assert.equal(item.getAttribute('type'), 'button', 'button type is generated');
+
+  item.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(item.getAttribute('aria-pressed'), 'false');
+  assert.equal(item.classList.contains('is-inactive'), true);
+
+  item.remove();
+  stop();
+  assert.equal(item.hasAttribute('type'), false, 'detached generated type restored');
+  assert.equal(item.getAttribute('aria-pressed'), 'true', 'detached pressed state restored');
+  assert.equal(item.classList.contains('is-inactive'), false, 'detached inactive state restored');
+});
+
 test('initLegend: idempotent (re-init replaces, never stacks) and cleanup stops it', () => {
   const d = mount(legendMarkup);
   initLegend();
@@ -1470,6 +2202,30 @@ test('initLegend: idempotent (re-init replaces, never stacks) and cleanup stops 
   assert.equal(count, 1, 'no-op after cleanup');
 });
 
+test('initLegend: nested scoped and global bindings do not double-toggle one event', () => {
+  const d = mount(`
+    <section>
+      <ul id="scoped-legend" class="ui-legend ui-legend--interactive" data-bronto-legend>
+        <li><button class="ui-legend__item" aria-pressed="true" data-series="a">
+          <span class="ui-legend__label">A</span>
+        </button></li>
+      </ul>
+    </section>`);
+  const legend = d.getElementById('scoped-legend');
+  const item = legend.querySelector('.ui-legend__item');
+  let count = 0;
+  d.addEventListener('bronto:legend:toggle', () => count++);
+
+  const stopGlobal = initLegend();
+  const stopScoped = initLegend({ root: legend });
+  item.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(item.getAttribute('aria-pressed'), 'false', 'event toggles exactly once');
+  assert.equal(count, 1, 'one toggle event emitted');
+
+  stopScoped();
+  stopGlobal();
+});
+
 test('initConnectors: draws a path with d and an end marker', () => {
   const d = mount(
     '<div style="position:relative"><span id="a">a</span><span id="b">b</span>' +
@@ -1484,7 +2240,9 @@ test('initConnectors: draws a path with d and an end marker', () => {
   assert.equal(path.hasAttribute('pathLength'), false);
   assert.ok(svg.querySelector('.ui-connector__end'), 'arrow end created');
   assert.equal(typeof stop, 'function');
-  assert.doesNotThrow(stop);
+  stop();
+  assert.equal(svg.querySelector('.ui-connector__path'), null, 'generated path removed on cleanup');
+  assert.equal(svg.querySelector('.ui-connector__end'), null, 'generated end removed on cleanup');
 });
 
 test('initConnectors: data-end="none" draws no end marker; missing target is skipped', () => {
@@ -1512,6 +2270,138 @@ test('initConnectors: pathLength is set only for draw connectors (dashed keeps i
   assert.equal(draw.querySelector('.ui-connector__path').getAttribute('pathLength'), '1');
 });
 
+test('initConnectors: cleanup restores authored path and end nodes', () => {
+  const d = mount(
+    '<div style="position:relative"><span id="a">a</span><span id="b">b</span>' +
+      '<svg class="ui-connector ui-connector--draw" data-bronto-connector data-from="a" data-to="b">' +
+      '<path class="ui-connector__path" d="M1,1L2,2" pathLength="7" data-authored="path"></path>' +
+      '<path class="ui-connector__end" d="M2,2L3,3" data-authored="end"></path>' +
+      '</svg></div>',
+  );
+  const svg = d.querySelector('.ui-connector');
+  const path = svg.querySelector('.ui-connector__path');
+  const end = svg.querySelector('.ui-connector__end');
+
+  const stop = initConnectors();
+  assert.notEqual(path.getAttribute('d'), 'M1,1L2,2', 'path d is generated while active');
+  assert.equal(path.getAttribute('pathLength'), '1', 'draw pathLength generated while active');
+  assert.notEqual(end.getAttribute('d'), 'M2,2L3,3', 'end d is generated while active');
+
+  stop();
+  assert.equal(svg.querySelector('.ui-connector__path'), path, 'authored path node preserved');
+  assert.equal(svg.querySelector('.ui-connector__end'), end, 'authored end node preserved');
+  assert.equal(path.getAttribute('d'), 'M1,1L2,2');
+  assert.equal(path.getAttribute('pathLength'), '7');
+  assert.equal(path.getAttribute('data-authored'), 'path');
+  assert.equal(end.getAttribute('d'), 'M2,2L3,3');
+  assert.equal(end.getAttribute('data-authored'), 'end');
+});
+
+test('initConnectors: cleanup disconnects observers/listeners and stops redraws', () => {
+  const d = mount(
+    '<div id="wrap" style="position:relative"><span id="a">a</span><span id="b">b</span>' +
+      '<svg class="ui-connector" data-bronto-connector data-from="a" data-to="b"></svg></div>',
+  );
+  const view = d.defaultView;
+  const observed = [];
+  const instances = [];
+  view.ResizeObserver = class {
+    constructor(callback) {
+      this.callback = callback;
+      this.disconnected = false;
+      instances.push(this);
+    }
+    observe(el) {
+      observed.push(el.id || el.className || el.tagName);
+    }
+    disconnect() {
+      this.disconnected = true;
+    }
+  };
+
+  const added = [];
+  const removed = [];
+  const add = view.addEventListener.bind(view);
+  const remove = view.removeEventListener.bind(view);
+  view.addEventListener = (type, listener, options) => {
+    added.push({ type, options });
+    return add(type, listener, options);
+  };
+  view.removeEventListener = (type, listener, options) => {
+    removed.push({ type, options });
+    return remove(type, listener, options);
+  };
+
+  const svg = d.querySelector('.ui-connector');
+  const a = d.getElementById('a');
+  const b = d.getElementById('b');
+  svg.getBoundingClientRect = () => ({ left: 0, top: 0, width: 200, height: 100 });
+  a.getBoundingClientRect = () => ({ left: 10, top: 20, width: 20, height: 10 });
+  let bLeft = 100;
+  b.getBoundingClientRect = () => ({ left: bLeft, top: 20, width: 20, height: 10 });
+
+  const stop = initConnectors();
+  const path = svg.querySelector('.ui-connector__path');
+  assert.equal(path.getAttribute('d'), 'M30,25L100,25');
+  assert.deepEqual(observed, ['wrap', 'a', 'b']);
+  assert.equal(instances.length, 1, 'ResizeObserver installed');
+  assert.ok(added.some((e) => e.type === 'resize'));
+  assert.ok(added.some((e) => e.type === 'scroll' && e.options === true));
+
+  stop();
+  assert.equal(instances[0].disconnected, true, 'ResizeObserver disconnected');
+  assert.ok(removed.some((e) => e.type === 'resize'));
+  assert.ok(removed.some((e) => e.type === 'scroll' && e.options === true));
+  assert.equal(path.isConnected, false, 'cleanup removes generated path from the SVG');
+  assert.equal(svg.querySelector('.ui-connector__end'), null, 'cleanup removes generated end');
+
+  bLeft = 150;
+  view.dispatchEvent(new dom.window.Event('resize'));
+  view.dispatchEvent(new dom.window.Event('scroll'));
+  assert.equal(path.getAttribute('d'), 'M30,25L100,25', 'cleanup stops redraws');
+});
+
+test('initConnectors: re-run after all connectors are removed cleans the previous binding', () => {
+  const d = mount(
+    '<div id="wrap" style="position:relative"><span id="a">a</span><span id="b">b</span>' +
+      '<svg class="ui-connector" data-bronto-connector data-from="a" data-to="b"></svg></div>',
+  );
+  const view = d.defaultView;
+  const instances = [];
+  view.ResizeObserver = class {
+    constructor() {
+      this.disconnected = false;
+      instances.push(this);
+    }
+    observe() {}
+    disconnect() {
+      this.disconnected = true;
+    }
+  };
+
+  const svg = d.querySelector('.ui-connector');
+  const a = d.getElementById('a');
+  const b = d.getElementById('b');
+  svg.getBoundingClientRect = () => ({ left: 0, top: 0, width: 200, height: 100 });
+  a.getBoundingClientRect = () => ({ left: 10, top: 20, width: 20, height: 10 });
+  let bLeft = 100;
+  b.getBoundingClientRect = () => ({ left: bLeft, top: 20, width: 20, height: 10 });
+
+  initConnectors({ root: d.getElementById('wrap') });
+  const path = svg.querySelector('.ui-connector__path');
+  assert.equal(path.getAttribute('d'), 'M30,25L100,25');
+
+  svg.remove();
+  const stop = initConnectors({ root: d.getElementById('wrap') });
+  assert.equal(instances[0].disconnected, true, 'previous ResizeObserver disconnected');
+
+  bLeft = 150;
+  view.dispatchEvent(new dom.window.Event('resize'));
+  view.dispatchEvent(new dom.window.Event('scroll'));
+  assert.equal(path.getAttribute('d'), 'M30,25L100,25', 'detached connector no longer redraws');
+  assert.doesNotThrow(stop);
+});
+
 test('initSpotlight: sets the cutout custom properties from the target', () => {
   const d = mount(
     '<button id="t">t</button>' +
@@ -1523,6 +2413,81 @@ test('initSpotlight: sets the cutout custom properties from the target', () => {
   assert.match(spot.style.getPropertyValue('--spot-w'), /px$/);
   assert.match(spot.style.getPropertyValue('--spot-x'), /px$/);
   assert.equal(typeof stop, 'function');
+  stop();
+  assert.equal(spot.style.getPropertyValue('--spot-x'), '');
+  assert.equal(spot.style.getPropertyValue('--spot-y'), '');
+  assert.equal(spot.style.getPropertyValue('--spot-w'), '');
+  assert.equal(spot.style.getPropertyValue('--spot-h'), '');
+});
+
+test('initSpotlight: cleanup restores authored cutout custom properties', () => {
+  const d = mount(
+    '<button id="t">t</button>' +
+      '<div class="ui-spotlight" data-bronto-spotlight data-target="t" style="--spot-x: 1px; --spot-y: 2px; --spot-w: 3px; --spot-h: 4px"><div class="ui-spotlight__hole"></div></div>',
+  );
+  const target = d.getElementById('t');
+  target.getBoundingClientRect = () => ({
+    left: 20,
+    top: 30,
+    right: 80,
+    bottom: 90,
+    width: 60,
+    height: 60,
+  });
+  const spot = d.querySelector('.ui-spotlight');
+
+  const stop = initSpotlight();
+  assert.equal(spot.style.getPropertyValue('--spot-x'), '20px');
+  assert.equal(spot.style.getPropertyValue('--spot-w'), '60px');
+
+  stop();
+  assert.equal(spot.style.getPropertyValue('--spot-x'), '1px');
+  assert.equal(spot.style.getPropertyValue('--spot-y'), '2px');
+  assert.equal(spot.style.getPropertyValue('--spot-w'), '3px');
+  assert.equal(spot.style.getPropertyValue('--spot-h'), '4px');
+});
+
+test('initSpotlight: re-run after all spotlights are removed cleans the previous binding', () => {
+  const d = mount(
+    '<div id="wrap"><button id="t">t</button>' +
+      '<div class="ui-spotlight" data-bronto-spotlight data-target="t"><div class="ui-spotlight__hole"></div></div></div>',
+  );
+  const view = d.defaultView;
+  const instances = [];
+  view.MutationObserver = class {
+    constructor() {
+      this.disconnected = false;
+      instances.push(this);
+    }
+    observe() {}
+    disconnect() {
+      this.disconnected = true;
+    }
+  };
+
+  const spot = d.querySelector('.ui-spotlight');
+  const target = d.getElementById('t');
+  let left = 10;
+  target.getBoundingClientRect = () => ({
+    left,
+    top: 20,
+    right: left + 30,
+    bottom: 30,
+    width: 30,
+    height: 10,
+  });
+
+  initSpotlight({ root: d.getElementById('wrap') });
+  assert.equal(spot.style.getPropertyValue('--spot-x'), '10px');
+
+  spot.remove();
+  const stop = initSpotlight({ root: d.getElementById('wrap') });
+  assert.equal(instances[0].disconnected, true, 'previous MutationObserver disconnected');
+
+  left = 80;
+  view.dispatchEvent(new dom.window.Event('resize'));
+  view.dispatchEvent(new dom.window.Event('scroll'));
+  assert.equal(spot.style.getPropertyValue('--spot-x'), '', 'detached spotlight no longer moves');
   assert.doesNotThrow(stop);
 });
 
@@ -1539,6 +2504,92 @@ test('initCrosshair: wires a plot without throwing and cleans up', () => {
   );
   assert.equal(typeof stop, 'function');
   assert.doesNotThrow(stop);
+});
+
+test('initCrosshair: emits pixel/fraction details, leave, and detaches on cleanup', () => {
+  const d = mount(
+    '<figure data-bronto-crosshair><div class="ui-crosshair">' +
+      '<div class="ui-crosshair__line ui-crosshair__line--x"></div></div></figure>',
+  );
+  globalThis.getComputedStyle = dom.window.getComputedStyle.bind(dom.window);
+  const plot = d.querySelector('[data-bronto-crosshair]');
+  const overlay = d.querySelector('.ui-crosshair');
+  plot.getBoundingClientRect = () => ({
+    left: 10,
+    top: 20,
+    right: 210,
+    bottom: 120,
+    width: 200,
+    height: 100,
+  });
+
+  const moves = [];
+  const bubbledMoves = [];
+  let leaves = 0;
+  let bubbledLeaves = 0;
+  plot.addEventListener('bronto:crosshair:move', (e) => moves.push(e.detail));
+  d.body.addEventListener('bronto:crosshair:move', (e) => bubbledMoves.push(e.detail));
+  plot.addEventListener('bronto:crosshair:leave', () => leaves++);
+  d.body.addEventListener('bronto:crosshair:leave', () => bubbledLeaves++);
+
+  const stop = initCrosshair();
+  plot.dispatchEvent(new dom.window.MouseEvent('pointermove', { clientX: 60, clientY: 45 }));
+  assert.equal(overlay.style.getPropertyValue('--crosshair-x'), '50px');
+  assert.equal(overlay.style.getPropertyValue('--crosshair-y'), '25px');
+  assert.equal(overlay.dataset.readoutInline, 'after');
+  assert.equal(overlay.dataset.readoutBlock, 'below');
+  assert.equal(overlay.classList.contains('is-active'), true);
+  assert.deepEqual(moves, [{ x: 50, y: 25, fx: 0.25, fy: 0.25 }]);
+  assert.deepEqual(bubbledMoves, moves);
+
+  plot.dispatchEvent(new dom.window.MouseEvent('pointermove', { clientX: 190, clientY: 115 }));
+  assert.equal(overlay.dataset.readoutInline, 'before');
+  assert.equal(overlay.dataset.readoutBlock, 'above');
+  assert.deepEqual(moves.at(-1), { x: 180, y: 95, fx: 0.9, fy: 0.95 });
+
+  plot.dispatchEvent(new dom.window.MouseEvent('pointerleave'));
+  assert.equal(overlay.classList.contains('is-active'), false);
+  assert.equal(leaves, 1);
+  assert.equal(bubbledLeaves, 1);
+
+  stop();
+  plot.dispatchEvent(new dom.window.MouseEvent('pointermove', { clientX: 90, clientY: 70 }));
+  plot.dispatchEvent(new dom.window.MouseEvent('pointerleave'));
+  assert.equal(moves.length, 2, 'move listener removed');
+  assert.equal(leaves, 1, 'leave listener removed');
+});
+
+test('initCrosshair: cleanup restores active overlay state when stopped mid-hover', () => {
+  const d = mount(
+    '<figure data-bronto-crosshair><div class="ui-crosshair">' +
+      '<div class="ui-crosshair__line ui-crosshair__line--x"></div></div></figure>',
+  );
+  globalThis.getComputedStyle = dom.window.getComputedStyle.bind(dom.window);
+  const plot = d.querySelector('[data-bronto-crosshair]');
+  const overlay = d.querySelector('.ui-crosshair');
+  plot.getBoundingClientRect = () => ({
+    left: 10,
+    top: 20,
+    right: 210,
+    bottom: 120,
+    width: 200,
+    height: 100,
+  });
+
+  const stop = initCrosshair();
+  plot.dispatchEvent(new dom.window.MouseEvent('pointermove', { clientX: 60, clientY: 45 }));
+  assert.equal(overlay.classList.contains('is-active'), true);
+  assert.equal(overlay.style.getPropertyValue('--crosshair-x'), '50px');
+  assert.equal(overlay.style.getPropertyValue('--crosshair-y'), '25px');
+  assert.equal(overlay.dataset.readoutInline, 'after');
+  assert.equal(overlay.dataset.readoutBlock, 'below');
+
+  stop();
+  assert.equal(overlay.classList.contains('is-active'), false, 'active state restored');
+  assert.equal(overlay.style.getPropertyValue('--crosshair-x'), '', 'x position restored');
+  assert.equal(overlay.style.getPropertyValue('--crosshair-y'), '', 'y position restored');
+  assert.equal(overlay.hasAttribute('data-readout-inline'), false, 'inline flip restored');
+  assert.equal(overlay.hasAttribute('data-readout-block'), false, 'block flip restored');
 });
 
 const SOURCES = `
@@ -1594,6 +2645,31 @@ test('initSources: seeds source preview metadata and focuses the referenced card
   assert.equal(source.classList.contains('is-source-active'), false, 'cleanup clears highlight');
 });
 
+test('initSources resolves text-node citation and button clicks', () => {
+  const d = mount(SOURCES);
+  const island = d.querySelector('[data-bronto-sources]');
+  const citation = d.querySelector('.ui-citation');
+  const button = d.querySelector('[data-bronto-source-ref]');
+  const events = [];
+  island.addEventListener('bronto:source:focus', (e) => events.push(e.detail.id));
+  const click = (target) => {
+    const event = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+    const allowed = target.dispatchEvent(event);
+    return { allowed, defaultPrevented: event.defaultPrevented };
+  };
+
+  const stop = initSources();
+  const citationClick = click(citation.firstChild);
+  assert.equal(d.activeElement, d.getElementById('s1'));
+  assert.deepEqual(citationClick, { allowed: true, defaultPrevented: false });
+
+  const buttonClick = click(button.firstChild);
+  assert.equal(d.activeElement, d.getElementById('s2'));
+  assert.deepEqual(buttonClick, { allowed: false, defaultPrevented: true });
+  assert.deepEqual(events, ['s1', 's2']);
+  stop();
+});
+
 test('initSources: supports button refs, scoped duplicate ids, idempotence, cleanup, and root:null', () => {
   const d = mount(`
     <article id="dup" class="ui-source-card">outside</article>
@@ -1627,7 +2703,44 @@ test('initSources: supports button refs, scoped duplicate ids, idempotence, clea
   assert.equal(count, 1, 'cleanup removes listener');
 });
 
-test('initSplitter: keyboard keeps CSS value, ARIA value, and resize event in sync', () => {
+test('initSources: cleanup clears detached generated highlight and restores authored active source', () => {
+  const d = mount(`
+    <main data-bronto-sources>
+      <button type="button" data-bronto-source-ref="s2">Preview source 2</button>
+      <article id="s1" class="ui-source-card is-source-active">
+        <h3 class="ui-source-card__title">Authored active</h3>
+      </article>
+      <article id="s2" class="ui-source-card">
+        <h3 class="ui-source-card__title">Generated active</h3>
+      </article>
+    </main>`);
+  const button = d.querySelector('[data-bronto-source-ref]');
+  const authored = d.getElementById('s1');
+  const generated = d.getElementById('s2');
+
+  const stop = initSources();
+  button.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(authored.classList.contains('is-source-active'), false, 'active source moved');
+  assert.equal(generated.classList.contains('is-source-active'), true, 'new source highlighted');
+  assert.equal(generated.getAttribute('tabindex'), '-1', 'generated source made focusable');
+
+  generated.remove();
+  stop();
+  assert.equal(
+    generated.classList.contains('is-source-active'),
+    false,
+    'detached generated highlight cleared',
+  );
+  assert.equal(generated.hasAttribute('tabindex'), false, 'detached tabindex restored');
+  assert.equal(
+    authored.classList.contains('is-source-active'),
+    true,
+    'authored active source restored',
+  );
+  assert.equal(button.hasAttribute('aria-describedby'), false, 'metadata restored');
+});
+
+test('initSplitter: keyboard syncs CSS/ARIA and cleanup restores generated state', () => {
   const d = mount(`
     <div class="ui-splitter ui-splitter--vertical" data-bronto-splitter style="--splitter-pos: 40%">
       <section id="primary" class="ui-splitter__pane">Files</section>
@@ -1672,10 +2785,30 @@ test('initSplitter: keyboard keeps CSS value, ARIA value, and resize event in sy
   );
 
   stop();
+  assert.equal(handle.hasAttribute('role'), false, 'cleanup restores generated role');
+  assert.equal(handle.hasAttribute('tabindex'), false, 'cleanup restores generated tabindex');
+  assert.equal(
+    handle.hasAttribute('aria-orientation'),
+    false,
+    'cleanup restores generated orientation',
+  );
+  assert.equal(handle.hasAttribute('aria-valuemin'), false, 'cleanup restores generated min');
+  assert.equal(handle.hasAttribute('aria-valuemax'), false, 'cleanup restores generated max');
+  assert.equal(handle.hasAttribute('aria-valuenow'), false, 'cleanup restores generated value');
+  assert.equal(splitter.style.getPropertyValue('--splitter-pos'), '40%', 'authored CSS restored');
   handle.dispatchEvent(
     new dom.window.KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }),
   );
-  assert.equal(handle.getAttribute('aria-valuenow'), '80', 'cleanup removes keyboard handler');
+  assert.equal(
+    splitter.style.getPropertyValue('--splitter-pos'),
+    '40%',
+    'keyboard handler removed',
+  );
+  assert.equal(
+    handle.hasAttribute('aria-valuenow'),
+    false,
+    'cleanup leaves generated value absent',
+  );
 });
 
 test('initSplitter: pointer drag calculates percentages and detaches on cleanup', () => {
@@ -1723,8 +2856,24 @@ test('initSplitter: pointer drag calculates percentages and detaches on cleanup'
   );
 
   stop();
+  assert.equal(splitter.style.getPropertyValue('--splitter-pos'), '30%', 'authored CSS restored');
+  assert.equal(handle.hasAttribute('role'), false, 'cleanup restores generated role');
+  assert.equal(handle.hasAttribute('tabindex'), false, 'cleanup restores generated tabindex');
+  assert.equal(
+    handle.hasAttribute('aria-orientation'),
+    false,
+    'cleanup restores generated orientation',
+  );
+  assert.equal(handle.getAttribute('aria-valuemin'), '10', 'authored min preserved');
+  assert.equal(handle.getAttribute('aria-valuemax'), '90', 'authored max preserved');
+  assert.equal(handle.hasAttribute('aria-valuenow'), false, 'cleanup restores generated value');
   d.dispatchEvent(new dom.window.MouseEvent('pointermove', { bubbles: true, clientY: 20 }));
-  assert.equal(handle.getAttribute('aria-valuenow'), '60', 'cleanup removes document drag handler');
+  assert.equal(splitter.style.getPropertyValue('--splitter-pos'), '30%', 'drag handler removed');
+  assert.equal(
+    handle.hasAttribute('aria-valuenow'),
+    false,
+    'cleanup leaves generated value absent',
+  );
 });
 
 test('initSplitter: cleanup releases active pointer capture during a drag', () => {
@@ -1765,8 +2914,19 @@ test('initSplitter: cleanup releases active pointer capture during a drag', () =
   stop();
   assert.deepEqual(released, [7], 'cleanup released active pointer capture');
   assert.equal(handle.classList.contains('is-active'), false, 'cleanup clears drag state');
+  assert.equal(splitter.style.getPropertyValue('--splitter-pos'), '40%', 'authored CSS restored');
+  assert.equal(handle.hasAttribute('aria-valuenow'), false, 'cleanup restores generated value');
   d.dispatchEvent(new dom.window.MouseEvent('pointermove', { bubbles: true, clientX: 120 }));
-  assert.equal(handle.getAttribute('aria-valuenow'), '45', 'document drag handler removed');
+  assert.equal(
+    splitter.style.getPropertyValue('--splitter-pos'),
+    '40%',
+    'document drag handler removed',
+  );
+  assert.equal(
+    handle.hasAttribute('aria-valuenow'),
+    false,
+    'cleanup leaves generated value absent',
+  );
 });
 
 const CMD = `
@@ -1837,6 +2997,73 @@ test('initCommand: ARIA, filter (with group hide), roving nav, select + close ev
   stop();
 });
 
+test('initCommand: cleanup restores filtering, active state, and generated ARIA', () => {
+  const d = mount(CMD);
+  const input = d.querySelector('.ui-command__input');
+  const list = d.querySelector('.ui-command__list');
+  const items = [...d.querySelectorAll('.ui-command__item')];
+  const groups = [...d.querySelectorAll('.ui-command__group')];
+  const empty = d.querySelector('.ui-command__empty');
+  const stop = initCommand();
+
+  assert.ok(list.id, 'list id generated');
+  assert.ok(items[0].id, 'item id generated');
+  assert.equal(input.getAttribute('role'), 'combobox');
+  assert.ok(items[0].classList.contains('is-active'), 'first item seeded active');
+
+  input.value = 'zzzz';
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  assert.deepEqual(
+    items.filter((it) => !it.hidden).map((it) => it.dataset.value),
+    [],
+    'filter hides every command',
+  );
+  assert.deepEqual(
+    groups.map((g) => g.hidden),
+    [true, true],
+    'filter hides empty groups',
+  );
+  assert.equal(empty.hidden, false, 'empty state shown');
+
+  stop();
+  assert.deepEqual(
+    items.filter((it) => !it.hidden).map((it) => it.dataset.value),
+    ['home', 'settings', 'new'],
+    'cleanup restores command visibility',
+  );
+  assert.deepEqual(
+    groups.map((g) => g.hidden),
+    [false, false],
+    'cleanup restores group visibility',
+  );
+  assert.equal(empty.hidden, true, 'cleanup restores empty state');
+  assert.equal(input.hasAttribute('role'), false, 'input role restored');
+  assert.equal(input.hasAttribute('aria-controls'), false, 'aria-controls restored');
+  assert.equal(input.hasAttribute('aria-activedescendant'), false, 'active descendant restored');
+  assert.equal(list.hasAttribute('id'), false, 'generated list id restored');
+  assert.equal(list.hasAttribute('role'), false, 'list role restored');
+  assert.equal(
+    items.some((it) => it.classList.contains('is-active')),
+    false,
+    'active class restored',
+  );
+  assert.equal(
+    items.some((it) => it.hasAttribute('id')),
+    false,
+    'generated item ids restored',
+  );
+  assert.equal(
+    items.some((it) => it.hasAttribute('role')),
+    false,
+    'item roles restored',
+  );
+  assert.equal(
+    groups.some((g) => g.hasAttribute('role')),
+    false,
+    'group roles restored',
+  );
+});
+
 test('initCommand: ArrowUp wraps to last, Home/End jump to edges', () => {
   const d = mount(CMD);
   const stop = initCommand();
@@ -1857,6 +3084,21 @@ test('initCommand: ArrowUp wraps to last, Home/End jump to edges', () => {
   input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'End', bubbles: true }));
   assert.ok(items[2].classList.contains('is-active'), 'End → last');
 
+  stop();
+});
+
+test('initCommand resolves text-node item clicks', () => {
+  const d = mount(CMD);
+  const box = d.querySelector('[data-bronto-command]');
+  const items = [...d.querySelectorAll('.ui-command__item')];
+  let picked;
+  box.addEventListener('bronto:command:select', (e) => (picked = e.detail));
+
+  const stop = initCommand();
+  items[1]
+    .querySelector('span')
+    .firstChild.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.deepEqual(picked, { value: 'settings', label: 'Open settings' });
   stop();
 });
 
@@ -1900,6 +3142,104 @@ test('initModal: inert traps focus, returns it on close, Escape only signals', a
   await tick();
   stop();
   assert.equal(d.getElementById('bg').inert, false, 'cleanup un-inerts');
+});
+
+test('initModal: cleanup restores generated attrs on a detached content-only modal', () => {
+  const d = mount(`
+    <button id="opener">Open</button>
+    <aside id="bg"><a href="#">background link</a></aside>
+    <div id="content-modal" class="ui-modal is-open" data-bronto-modal aria-label="Content modal"></div>`);
+  globalThis.MutationObserver = dom.window.MutationObserver;
+  const opener = d.getElementById('opener');
+  const bg = d.getElementById('bg');
+  const modal = d.getElementById('content-modal');
+  opener.focus();
+
+  const stop = initModal();
+  assert.equal(modal.getAttribute('role'), 'dialog', 'dialog role generated');
+  assert.equal(modal.getAttribute('aria-modal'), 'true', 'modal state generated');
+  assert.equal(modal.getAttribute('tabindex'), '-1', 'content-only modal made focusable');
+  assert.equal(bg.inert, true, 'background inerted');
+
+  modal.remove();
+  stop();
+  assert.equal(bg.inert, false, 'detached cleanup releases inert background');
+  assert.equal(modal.hasAttribute('role'), false, 'generated role restored');
+  assert.equal(modal.hasAttribute('aria-modal'), false, 'generated aria-modal restored');
+  assert.equal(modal.hasAttribute('tabindex'), false, 'generated tabindex restored');
+});
+
+test('initModal: Escape is owned by the topmost active controlled modal', async () => {
+  const d = mount(`
+    <button id="opener">Open</button>
+    <div id="outer" class="ui-modal is-open" data-bronto-modal aria-label="Outer">
+      <button id="outer-ok">Outer ok</button>
+      <div id="inner" class="ui-modal is-open" data-bronto-modal aria-label="Inner">
+        <button id="inner-ok">Inner ok</button>
+      </div>
+    </div>`);
+  globalThis.MutationObserver = dom.window.MutationObserver;
+  const opener = d.getElementById('opener');
+  const outer = d.getElementById('outer');
+  const inner = d.getElementById('inner');
+  let outerCount = 0;
+  let innerCount = 0;
+  outer.addEventListener('bronto:modal:close', (e) => {
+    if (e.target === outer) outerCount++;
+  });
+  inner.addEventListener('bronto:modal:close', (e) => {
+    if (e.target === inner) innerCount++;
+  });
+  opener.focus();
+
+  const stop = initModal();
+  await tick();
+  d.getElementById('inner-ok').dispatchEvent(
+    new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
+  );
+  assert.equal(innerCount, 1, 'top modal receives Escape');
+  assert.equal(outerCount, 0, 'outer modal does not double-handle inner Escape');
+
+  inner.classList.remove('is-open');
+  await tick();
+  d.getElementById('outer-ok').dispatchEvent(
+    new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
+  );
+  assert.equal(outerCount, 1, 'outer becomes topmost after inner closes');
+  stop();
+});
+
+test('initModal lets an open nested popover own Escape', async () => {
+  const d = mount(`
+    <button id="opener">Open</button>
+    <div class="ui-modal is-open" data-bronto-modal aria-label="Settings">
+      <button id="t" data-bronto-popover="pop">More</button>
+      <div class="ui-popover" id="pop" aria-label="More details"><button id="inner">Inner</button></div>
+    </div>`);
+  globalThis.MutationObserver = dom.window.MutationObserver;
+  const opener = d.getElementById('opener');
+  const modal = d.querySelector('.ui-modal');
+  const trigger = d.getElementById('t');
+  const panel = d.getElementById('pop');
+  opener.focus();
+  let reason = null;
+  modal.addEventListener('bronto:modal:close', (e) => (reason = e.detail.reason));
+
+  const stopModal = initModal();
+  const stopPopover = initPopover();
+  await tick();
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(panel.classList.contains('is-open'), true, 'nested popover opened');
+
+  d.getElementById('inner').dispatchEvent(
+    new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
+  );
+  assert.equal(reason, null, 'modal close was not requested');
+  assert.equal(modal.classList.contains('is-open'), true, 'modal remains open');
+  assert.equal(panel.classList.contains('is-open'), false, 'popover closes');
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+  stopPopover();
+  stopModal();
 });
 
 // ---------------------------------------------------------------------------
@@ -1969,4 +3309,26 @@ test('disabled guard scopes to its root and cleans up', () => {
   const afterCleanup = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
   d.getElementById('inside').dispatchEvent(afterCleanup);
   assert.equal(afterCleanup.defaultPrevented, false, 'cleanup detaches the guard');
+});
+
+test('disabled guard resolves text-node targets and stops activation handlers', () => {
+  const d = mount(
+    '<div id="scope"><button id="dead" aria-disabled="true"><span>Dead</span></button></div>',
+  );
+  const scope = d.getElementById('scope');
+  const dead = d.getElementById('dead');
+  let targetFired = 0;
+  let bubbleFired = 0;
+  dead.addEventListener('click', () => targetFired++);
+  scope.addEventListener('click', () => bubbleFired++);
+
+  const stop = initDisabledGuard({ root: scope });
+  const click = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+  const allowed = dead.querySelector('span').firstChild.dispatchEvent(click);
+  assert.equal(allowed, false, 'disabled text-node click is canceled');
+  assert.equal(click.defaultPrevented, true, 'text-node click default is prevented');
+  assert.equal(targetFired, 0, 'target activation listener is skipped');
+  assert.equal(bubbleFired, 0, 'bubbling handlers are skipped');
+
+  stop();
 });

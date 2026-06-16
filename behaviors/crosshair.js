@@ -33,8 +33,49 @@ export function initCrosshair({ root } = {}) {
   const cleanups = [];
   for (const plot of plots) {
     const overlay = plot.querySelector('.ui-crosshair');
-    if (!overlay) continue;
+    let overlayState = null;
+    const rememberOverlay = () => {
+      if (!overlay || overlayState) return;
+      overlayState = {
+        active: overlay.classList.contains('is-active'),
+        x: {
+          value: overlay.style.getPropertyValue('--crosshair-x'),
+          priority: overlay.style.getPropertyPriority('--crosshair-x'),
+        },
+        y: {
+          value: overlay.style.getPropertyValue('--crosshair-y'),
+          priority: overlay.style.getPropertyPriority('--crosshair-y'),
+        },
+        inline: {
+          had: overlay.hasAttribute('data-readout-inline'),
+          value: overlay.getAttribute('data-readout-inline'),
+        },
+        block: {
+          had: overlay.hasAttribute('data-readout-block'),
+          value: overlay.getAttribute('data-readout-block'),
+        },
+      };
+    };
+    const restoreData = (name, state) => {
+      if (state.had) overlay.setAttribute(name, state.value);
+      else overlay.removeAttribute(name);
+    };
+    const restoreOverlay = () => {
+      if (!overlay || !overlayState) return;
+      overlay.classList.toggle('is-active', overlayState.active);
+      if (overlayState.x.value)
+        overlay.style.setProperty('--crosshair-x', overlayState.x.value, overlayState.x.priority);
+      else overlay.style.removeProperty('--crosshair-x');
+      if (overlayState.y.value)
+        overlay.style.setProperty('--crosshair-y', overlayState.y.value, overlayState.y.priority);
+      else overlay.style.removeProperty('--crosshair-y');
+      restoreData('data-readout-inline', overlayState.inline);
+      restoreData('data-readout-block', overlayState.block);
+      overlayState = null;
+    };
     const onMove = (e) => {
+      if (!overlay) return;
+      rememberOverlay();
       const r = plot.getBoundingClientRect();
       if (!r.width || !r.height) return;
       const x = e.clientX - r.left;
@@ -48,6 +89,8 @@ export function initCrosshair({ root } = {}) {
       const rtl = getComputedStyle(plot).direction === 'rtl';
       overlay.style.setProperty('--crosshair-x', `${rtl ? r.right - e.clientX : x}px`);
       overlay.style.setProperty('--crosshair-y', `${y}px`);
+      overlay.dataset.readoutInline = x / r.width > 0.5 ? 'before' : 'after';
+      overlay.dataset.readoutBlock = y / r.height > 0.5 ? 'above' : 'below';
       overlay.classList.add('is-active');
       plot.dispatchEvent(
         new CustomEvent('bronto:crosshair:move', {
@@ -57,16 +100,19 @@ export function initCrosshair({ root } = {}) {
       );
     };
     const onLeave = () => {
+      if (!overlay) return;
       overlay.classList.remove('is-active');
       plot.dispatchEvent(new CustomEvent('bronto:crosshair:leave', { bubbles: true }));
     };
     cleanups.push(
       bindOnce(plot, 'crosshair', () => {
+        if (!overlay) return noop;
         plot.addEventListener('pointermove', onMove);
         plot.addEventListener('pointerleave', onLeave);
         return () => {
           plot.removeEventListener('pointermove', onMove);
           plot.removeEventListener('pointerleave', onLeave);
+          restoreOverlay();
         };
       }),
     );

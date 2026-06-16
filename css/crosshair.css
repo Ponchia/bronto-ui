@@ -13,6 +13,9 @@
   --crosshair-x: 0;
   --crosshair-y: 0;
   --crosshair-color: var(--accent);
+  --crosshair-readout-gap: 0.35rem;
+  --crosshair-readout-x: var(--crosshair-readout-gap);
+  --crosshair-readout-y: var(--crosshair-readout-gap);
 
   inset: 0;
   opacity: 0;
@@ -23,6 +26,22 @@
 
 .ui-crosshair.is-active {
   opacity: 1;
+}
+
+.ui-crosshair[data-readout-inline='before'] {
+  --crosshair-readout-x: calc(-100% - var(--crosshair-readout-gap));
+}
+
+.ui-crosshair[data-readout-block='above'] {
+  --crosshair-readout-y: calc(-100% - var(--crosshair-readout-gap));
+}
+
+.ui-crosshair:dir(rtl) {
+  --crosshair-readout-x: calc(100% + var(--crosshair-readout-gap));
+}
+
+.ui-crosshair:dir(rtl)[data-readout-inline='before'] {
+  --crosshair-readout-x: calc(-1 * var(--crosshair-readout-gap));
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -76,8 +95,9 @@
   color: var(--text);
 }
 
-/* A pinned readout chip — host fills the content; it follows the crosshair. */
-.ui-readout {
+/* A pinned readout chip — host fills the content; it follows the crosshair.
+   Scoped so report-kit/crosshair imports do not restyle standalone dot readouts. */
+.ui-crosshair .ui-readout {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
@@ -87,10 +107,15 @@
   font-size: var(--text-xs);
   inset-block-start: var(--crosshair-y);
   inset-inline-start: var(--crosshair-x);
+  max-inline-size: calc(100% - var(--crosshair-readout-gap) * 2);
+  overflow: hidden;
   padding-block: 0.2rem;
   padding-inline: 0.4rem;
   pointer-events: none;
   position: absolute;
+  text-overflow: ellipsis;
+  transform: translate(var(--crosshair-readout-x), var(--crosshair-readout-y));
+  white-space: nowrap;
 }
 
 @media (forced-colors: active) {

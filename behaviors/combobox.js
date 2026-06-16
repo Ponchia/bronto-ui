@@ -7,6 +7,7 @@ import {
   scrollIntoViewSafe,
   wrapIndex,
   collectHosts,
+  closestSafe,
 } from './internal.js';
 
 /**
@@ -54,12 +55,80 @@ export function initCombobox({ root } = {}) {
   const boxes = collectHosts(host, '[data-bronto-combobox]');
   const cleanups = [];
 
+  const snapshotAttrs = (el, names) => {
+    const out = {};
+    for (const name of names) {
+      out[name] = {
+        had: el.hasAttribute(name),
+        value: el.getAttribute(name),
+      };
+    }
+    return out;
+  };
+
+  const restoreAttrs = (el, attrs) => {
+    for (const [name, attr] of Object.entries(attrs)) {
+      if (attr.had) el.setAttribute(name, attr.value);
+      else el.removeAttribute(name);
+    }
+  };
+
   for (const box of boxes) {
     const input = box.querySelector('[role="combobox"], .ui-combobox__input');
     const list = box.querySelector('[role="listbox"], .ui-combobox__list');
     if (!input || !list) continue;
     const empty = box.querySelector('.ui-combobox__empty');
-    const listId = list.id || (list.id = `bronto-cb-list-${nextFieldUid()}`);
+    const optionStates = new WeakMap();
+    let listId = '';
+
+    const rememberOptionState = (option) => {
+      if (optionStates.has(option)) return;
+      optionStates.set(option, {
+        hidden: option.hidden,
+        active: option.classList.contains('is-active'),
+        attrs: snapshotAttrs(option, ['id', 'role', 'aria-selected']),
+      });
+    };
+
+    const rememberState = () => ({
+      input: snapshotAttrs(input, [
+        'role',
+        'aria-controls',
+        'aria-autocomplete',
+        'aria-expanded',
+        'aria-activedescendant',
+        'autocomplete',
+      ]),
+      list: {
+        hidden: list.hidden,
+        attrs: snapshotAttrs(list, ['id', 'role', 'aria-label']),
+      },
+      empty: empty
+        ? {
+            hidden: empty.hidden,
+            attrs: snapshotAttrs(empty, ['role']),
+          }
+        : null,
+      options: optionStates,
+    });
+
+    const restoreState = (state) => {
+      restoreAttrs(input, state.input);
+      list.hidden = state.list.hidden;
+      restoreAttrs(list, state.list.attrs);
+      if (empty && state.empty) {
+        empty.hidden = state.empty.hidden;
+        restoreAttrs(empty, state.empty.attrs);
+      }
+      for (const option of options) {
+        const optionState = state.options.get(option);
+        if (!optionState) continue;
+        option.hidden = optionState.hidden;
+        option.classList.toggle('is-active', optionState.active);
+        restoreAttrs(option, optionState.attrs);
+      }
+    };
+
     // Re-readable so the opt-in MutationObserver (`data-bronto-combobox-live`)
     // can pick up async/replaced option nodes without a full re-init. `visible`,
     // `filter`, `move`, etc. close over this binding, so reassigning it is enough.
@@ -67,51 +136,11 @@ export function initCombobox({ root } = {}) {
     const syncOptions = () => {
       options = [...list.querySelectorAll('[role="option"], .ui-combobox__option')];
       options.forEach((o, i) => {
+        rememberOptionState(o);
         if (!o.id) o.id = `${listId}-opt-${i}`;
         o.setAttribute('role', 'option');
       });
     };
-    syncOptions();
-    list.setAttribute('role', 'listbox');
-    // Give the listbox its own accessible name (a bare role=listbox is unnamed
-    // to a screen reader) by mirroring the input's REAL name. (a11y review C30.)
-    // The placeholder is deliberately NOT in this chain: the input warning below
-    // already rejects a placeholder as an inadequate name, so papering the
-    // listbox over with it would contradict that — if there's no real name the
-    // listbox stays unnamed and the warning is the signal. (component audit C28.)
-    if (!list.hasAttribute('aria-label') && !list.hasAttribute('aria-labelledby')) {
-      const name = input.getAttribute('aria-label') || input.labels?.[0]?.textContent?.trim();
-      if (name) list.setAttribute('aria-label', name);
-    }
-    // A `role="combobox"` with no accessible name is a silent AT failure. A
-    // placeholder is not a robust name (it can vanish and is ignored by some
-    // AT), so warn unless there is a real label/aria-label/aria-labelledby/title
-    // (C7). We can't invent a good name, hence a dev-time warning, not a guess.
-    const inputNamed =
-      input.hasAttribute('aria-label') ||
-      input.hasAttribute('aria-labelledby') ||
-      !!input.labels?.length ||
-      input.hasAttribute('title');
-    if (!inputNamed && typeof console !== 'undefined') {
-      console.warn(
-        '[bronto] initCombobox(): the combobox input has no accessible name — add a <label>, aria-label, or aria-labelledby (a placeholder is not enough).',
-      );
-    }
-    input.setAttribute('role', 'combobox');
-    input.setAttribute('aria-controls', listId);
-    input.setAttribute('aria-autocomplete', 'list');
-    input.setAttribute('aria-expanded', 'false');
-    input.setAttribute('autocomplete', 'off');
-    list.hidden = true;
-    // Hide the empty-state at rest: it must only appear once a filter yields no
-    // matches, never on an idle combobox. Without this an author who omits
-    // `hidden` on `.ui-combobox__empty` ships a box that reads "No matches"
-    // before the user has typed anything. (component audit C10.) Make it a
-    // status live region so its appearance is announced. (component audit C38.)
-    if (empty) {
-      empty.hidden = true;
-      if (!empty.hasAttribute('role')) empty.setAttribute('role', 'status');
-    }
 
     let active = -1;
     const visible = () => options.filter((o) => !o.hidden);
@@ -243,7 +272,7 @@ export function initCombobox({ root } = {}) {
       }
     };
     const onOptionClick = (e) => {
-      const opt = e.target.closest('[role="option"], .ui-combobox__option');
+      const opt = closestSafe(e.target, '[role="option"], .ui-combobox__option');
       if (opt) select(opt);
     };
     const onDocClick = (e) => {
@@ -251,6 +280,49 @@ export function initCombobox({ root } = {}) {
     };
 
     const bound = bindOnce(box, 'combobox', () => {
+      const state = rememberState();
+      listId = list.id || (list.id = `bronto-cb-list-${nextFieldUid()}`);
+      syncOptions();
+      list.setAttribute('role', 'listbox');
+      // Give the listbox its own accessible name (a bare role=listbox is unnamed
+      // to a screen reader) by mirroring the input's REAL name. (a11y review C30.)
+      // The placeholder is deliberately NOT in this chain: the input warning below
+      // already rejects a placeholder as an inadequate name, so papering the
+      // listbox over with it would contradict that — if there's no real name the
+      // listbox stays unnamed and the warning is the signal. (component audit C28.)
+      if (!list.hasAttribute('aria-label') && !list.hasAttribute('aria-labelledby')) {
+        const name = input.getAttribute('aria-label') || input.labels?.[0]?.textContent?.trim();
+        if (name) list.setAttribute('aria-label', name);
+      }
+      // A `role="combobox"` with no accessible name is a silent AT failure. A
+      // placeholder is not a robust name (it can vanish and is ignored by some
+      // AT), so warn unless there is a real label/aria-label/aria-labelledby/title
+      // (C7). We can't invent a good name, hence a dev-time warning, not a guess.
+      const inputNamed =
+        input.hasAttribute('aria-label') ||
+        input.hasAttribute('aria-labelledby') ||
+        !!input.labels?.length ||
+        input.hasAttribute('title');
+      if (!inputNamed && typeof console !== 'undefined') {
+        console.warn(
+          '[bronto] initCombobox(): the combobox input has no accessible name — add a <label>, aria-label, or aria-labelledby (a placeholder is not enough).',
+        );
+      }
+      input.setAttribute('role', 'combobox');
+      input.setAttribute('aria-controls', listId);
+      input.setAttribute('aria-autocomplete', 'list');
+      input.setAttribute('aria-expanded', 'false');
+      input.setAttribute('autocomplete', 'off');
+      // Hide the empty-state at rest: it must only appear once a filter yields no
+      // matches, never on an idle combobox. Without this an author who omits
+      // `hidden` on `.ui-combobox__empty` ships a box that reads "No matches"
+      // before the user has typed anything. (component audit C10.) Make it a
+      // status live region so its appearance is announced. (component audit C38.)
+      if (empty) {
+        empty.hidden = true;
+        if (!empty.hasAttribute('role')) empty.setAttribute('role', 'status');
+      }
+      close();
       input.addEventListener('input', onInput);
       input.addEventListener('keydown', onKey);
       list.addEventListener('click', onOptionClick);
@@ -268,6 +340,8 @@ export function initCombobox({ root } = {}) {
         input.removeEventListener('keydown', onKey);
         list.removeEventListener('click', onOptionClick);
         document.removeEventListener('click', onDocClick);
+        restoreState(state);
+        active = -1;
       };
     });
     cleanups.push(bound);

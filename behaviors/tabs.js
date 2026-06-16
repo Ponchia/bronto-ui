@@ -1,4 +1,12 @@
-import { hasDom, resolveHost, noop, bindOnce, nextFieldUid, collectHosts } from './internal.js';
+import {
+  hasDom,
+  resolveHost,
+  noop,
+  bindOnce,
+  nextFieldUid,
+  collectHosts,
+  closestSafe,
+} from './internal.js';
 
 /**
  * Wire `[data-bronto-tabs]` groups for full keyboard a11y. The framework
@@ -24,6 +32,23 @@ export function initTabs({ root } = {}) {
   if (!host) return noop;
   const cleanups = [];
   const groups = collectHosts(host, '[data-bronto-tabs]');
+  const snapshotAttrs = (el, names) => {
+    const out = {};
+    for (const name of names) {
+      out[name] = {
+        had: el.hasAttribute(name),
+        value: el.getAttribute(name),
+      };
+    }
+    return out;
+  };
+  const restoreAttrs = (el, attrs) => {
+    for (const [name, attr] of Object.entries(attrs)) {
+      if (attr.had) el.setAttribute(name, attr.value);
+      else el.removeAttribute(name);
+    }
+  };
+
   for (const group of groups) {
     // Own group only — a tab/panel inside a nested [data-bronto-tabs]
     // belongs to that inner group, not this one.
@@ -31,20 +56,43 @@ export function initTabs({ root } = {}) {
     const tabs = [...group.querySelectorAll('.ui-tab')].filter(owned);
     const panels = [...group.querySelectorAll('.ui-tabs__panel')].filter(owned);
     if (!tabs.length) continue;
-    const list = group.querySelector('.ui-tabs__list');
-    if (list) list.setAttribute('role', 'tablist');
-
-    // APG: bind each tab to its panel (aria-controls) and back
-    // (aria-labelledby), minting stable ids only where absent.
-    for (const t of tabs) {
-      const p = panels.find((x) => x.dataset.panel === t.dataset.tab);
-      if (!p) continue;
-      const n = nextFieldUid();
-      if (!t.id) t.id = `bronto-tab-${n}`;
-      if (!p.id) p.id = `bronto-tabpanel-${n}`;
-      t.setAttribute('aria-controls', p.id);
-      p.setAttribute('aria-labelledby', t.id);
-    }
+    const list = [...group.querySelectorAll('.ui-tabs__list')].find(owned);
+    const rememberState = () => ({
+      list: list ? snapshotAttrs(list, ['role']) : null,
+      tabs: new Map(
+        tabs.map((tab) => [
+          tab,
+          {
+            active: tab.classList.contains('is-active'),
+            attrs: snapshotAttrs(tab, ['id', 'role', 'aria-selected', 'aria-controls', 'tabindex']),
+          },
+        ]),
+      ),
+      panels: new Map(
+        panels.map((panel) => [
+          panel,
+          {
+            hidden: panel.hidden,
+            attrs: snapshotAttrs(panel, ['id', 'role', 'aria-labelledby', 'tabindex']),
+          },
+        ]),
+      ),
+    });
+    const restoreState = (state) => {
+      if (list && state.list) restoreAttrs(list, state.list);
+      for (const tab of tabs) {
+        const tabState = state.tabs.get(tab);
+        if (!tabState) continue;
+        tab.classList.toggle('is-active', tabState.active);
+        restoreAttrs(tab, tabState.attrs);
+      }
+      for (const panel of panels) {
+        const panelState = state.panels.get(panel);
+        if (!panelState) continue;
+        panel.hidden = panelState.hidden;
+        restoreAttrs(panel, panelState.attrs);
+      }
+    };
 
     const select = (tab) => {
       for (const t of tabs) {
@@ -70,14 +118,15 @@ export function initTabs({ root } = {}) {
     const onClick = (e) => {
       // `tabs` is filtered to this group, so membership (not mere DOM
       // containment) is what isolates nested [data-bronto-tabs] groups.
-      const tab = e.target.closest('.ui-tab');
+      const tab = closestSafe(e.target, '.ui-tab');
       if (tab && tabs.includes(tab)) {
+        e.preventDefault();
         select(tab);
         tab.focus();
       }
     };
     const onKey = (e) => {
-      const i = tabs.indexOf(e.target.closest('.ui-tab'));
+      const i = tabs.indexOf(closestSafe(e.target, '.ui-tab'));
       if (i < 0) return;
       let n = i;
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown') n = (i + 1) % tabs.length;
@@ -90,14 +139,29 @@ export function initTabs({ root } = {}) {
       select(tabs[n]);
       tabs[n].focus();
     };
-    select(tabs.find((t) => t.classList.contains('is-active')) || tabs[0]);
     cleanups.push(
       bindOnce(group, 'tabs', () => {
+        const state = rememberState();
+        if (list) list.setAttribute('role', 'tablist');
+
+        // APG: bind each tab to its panel (aria-controls) and back
+        // (aria-labelledby), minting stable ids only where absent.
+        for (const t of tabs) {
+          const p = panels.find((x) => x.dataset.panel === t.dataset.tab);
+          if (!p) continue;
+          const n = nextFieldUid();
+          if (!t.id) t.id = `bronto-tab-${n}`;
+          if (!p.id) p.id = `bronto-tabpanel-${n}`;
+          t.setAttribute('aria-controls', p.id);
+          p.setAttribute('aria-labelledby', t.id);
+        }
+        select(tabs.find((t) => t.classList.contains('is-active')) || tabs[0]);
         group.addEventListener('click', onClick);
         group.addEventListener('keydown', onKey);
         return () => {
           group.removeEventListener('click', onClick);
           group.removeEventListener('keydown', onKey);
+          restoreState(state);
         };
       }),
     );

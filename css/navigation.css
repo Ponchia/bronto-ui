@@ -70,6 +70,18 @@
   transform: translateX(0.6rem);
 }
 
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .ui-themetoggle__thumb {
+    background: var(--accent);
+    transform: translateX(0.6rem);
+  }
+
+  :root[dir='rtl']:not([data-theme='light']) .ui-themetoggle__thumb,
+  :root:not([data-theme='light']) [dir='rtl'] .ui-themetoggle__thumb {
+    transform: translateX(-0.6rem);
+  }
+}
+
 [dir='rtl'][data-theme='dark'] .ui-themetoggle__thumb,
 [dir='rtl'] [data-theme='dark'] .ui-themetoggle__thumb {
   transform: translateX(-0.6rem);

@@ -19,6 +19,19 @@ test('branches are native <details> that toggle, leaves are static rows', async 
   await expect(page.locator('.ui-tree__leaf').first()).toBeVisible();
 });
 
+test('branch summaries toggle from the keyboard', async ({ page }) => {
+  await open(page);
+  const branch = page.locator('.ui-tree__branch').first();
+  const summary = branch.locator('> .ui-tree__summary');
+
+  await expect(branch).toHaveJSProperty('open', true);
+  await summary.focus();
+  await page.keyboard.press('Enter');
+  await expect(branch).toHaveJSProperty('open', false);
+  await page.keyboard.press('Space');
+  await expect(branch).toHaveJSProperty('open', true);
+});
+
 test('nested rows are indented with a guide rail', async ({ page }) => {
   await open(page);
   // A row nested inside a branch carries the inline-start indent + rail border

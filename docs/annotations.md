@@ -65,7 +65,7 @@ offset, matching d3-annotation's mental model.
     transform="translate(180, 72)"
   >
     <path class="ui-annotation__subject" d="M0,-18A18,18 0 1 1 0,18A18,18 0 1 1 0,-18Z" />
-    <path class="ui-annotation__connector" d="M15.556,-7.424L88,-42" />
+    <path class="ui-annotation__connector" d="M19.855,-9.476L88,-42" />
     <g class="ui-annotation__note" transform="translate(88, -42)">
       <path class="ui-annotation__note-line" d="M0,0H76" />
       <text class="ui-annotation__title" y="-8">Peak</text>
@@ -160,6 +160,17 @@ selections, DOM nodes, or frameworks.
 | `connectorEndDot({ x, y, radius })` | Dot marker path. |
 | `connectorEndArrow({ x1, y1, x2, y2, size, spread })` | Arrow marker path. `x1,y1`→`x2,y2` sets the direction (the head sits at `x2,y2`); `spread` is the half-angle (default 0.32 ≈ a crisp 37° head). |
 | `annotationParts(options)` | Convenience object with `transform`, `subject`, `connector`, and `note`. |
+
+Static SVG authors can place connector end markers explicitly with
+`.ui-annotation__connector-end`; it shares the annotation tone and non-scaling
+stroke behavior with `.ui-annotation__connector`.
+
+```html
+<g class="ui-annotation ui-annotation--accent">
+  <path class="ui-annotation__connector" d="M0,0L60,-28" />
+  <path class="ui-annotation__connector-end" d="M60,-28L51,-31L54,-22Z" />
+</g>
+```
 
 `declutterLabels` is a deliberately small, deterministic **1-D** declutter for
 direct labels or axis ticks — sort, push overlaps apart by `size + gap`, slide

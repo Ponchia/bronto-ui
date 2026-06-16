@@ -21,9 +21,19 @@
  *
  * @typedef {Omit<DelegateOpts, 'root'> & { root?: BrontoDirectiveRoot }} BrontoDirectiveOpts
  *
+ * @typedef {Omit<ThemeStorageOpts & DelegateOpts, 'root'> & { root?: BrontoDirectiveRoot }} BrontoThemeDirectiveOpts
+ *
  * @typedef {{ value?: BrontoDirectiveOpts | null | undefined, oldValue?: BrontoDirectiveOpts | null | undefined }} BrontoDirectiveBinding
  *
+ * @typedef {{ value?: BrontoThemeDirectiveOpts | null | undefined, oldValue?: BrontoThemeDirectiveOpts | null | undefined }} BrontoThemeDirectiveBinding
+ *
  * @typedef {{ mounted: (el: Element, binding?: BrontoDirectiveBinding) => void, updated: (el: Element, binding?: BrontoDirectiveBinding) => void, beforeUnmount: (el: Element) => void }} BrontoDirective
+ *
+ * @typedef {{ mounted: (el: Element, binding?: BrontoThemeDirectiveBinding) => void, updated: (el: Element, binding?: BrontoThemeDirectiveBinding) => void, beforeUnmount: (el: Element) => void }} BrontoThemeDirective
+ *
+ * @typedef {{ directive: (name: string, directive: BrontoDirective | BrontoThemeDirective) => unknown }} BrontoVueApp
+ *
+ * @typedef {{ install: (app: BrontoVueApp) => void }} BrontoVuePlugin
  */
 import {
   applyStoredTheme,
@@ -104,27 +114,47 @@ export function createBrontoDirective(init) {
   };
 }
 
-/** @type {BrontoDirective} */
+/** @type {BrontoThemeDirective} */
 export const vThemeToggle = createBrontoDirective(initThemeToggle);
+/** @type {BrontoDirective} */
 export const vDismissible = createBrontoDirective(initDismissible);
+/** @type {BrontoDirective} */
 export const vDisabledGuard = createBrontoDirective(initDisabledGuard);
+/** @type {BrontoDirective} */
 export const vDisclosure = createBrontoDirective(initDisclosure);
+/** @type {BrontoDirective} */
 export const vMenu = createBrontoDirective(initMenu);
+/** @type {BrontoDirective} */
 export const vFormValidation = createBrontoDirective(initFormValidation);
+/** @type {BrontoDirective} */
 export const vCombobox = createBrontoDirective(initCombobox);
+/** @type {BrontoDirective} */
 export const vPopover = createBrontoDirective(initPopover);
+/** @type {BrontoDirective} */
 export const vTableSort = createBrontoDirective(initTableSort);
+/** @type {BrontoDirective} */
 export const vTabs = createBrontoDirective(initTabs);
+/** @type {BrontoDirective} */
 export const vDialog = createBrontoDirective(initDialog);
+/** @type {BrontoDirective} */
 export const vModal = createBrontoDirective(initModal);
+/** @type {BrontoDirective} */
 export const vCarousel = createBrontoDirective(initCarousel);
+/** @type {BrontoDirective} */
 export const vDotGlyph = createBrontoDirective(initDotGlyph);
+/** @type {BrontoDirective} */
 export const vLegend = createBrontoDirective(initLegend);
+/** @type {BrontoDirective} */
 export const vConnectors = createBrontoDirective(initConnectors);
+/** @type {BrontoDirective} */
 export const vSpotlight = createBrontoDirective(initSpotlight);
+/** @type {BrontoDirective} */
 export const vCrosshair = createBrontoDirective(initCrosshair);
+/** @type {BrontoDirective} */
 export const vCommand = createBrontoDirective(initCommand);
+/** @type {BrontoDirective} */
 export const vSources = createBrontoDirective(initSources);
+/** @type {BrontoDirective} */
 export const vSplitter = createBrontoDirective(initSplitter);
 
 export const directives = Object.freeze({
@@ -177,6 +207,7 @@ const directiveNames = {
 
 const camelizeDirectiveName = (name) => name.replace(/-([a-z])/g, (_m, ch) => ch.toUpperCase());
 
+/** @type {BrontoVuePlugin} */
 export const brontoVue = Object.freeze({
   install(app) {
     for (const [key, directive] of Object.entries(directives)) {

@@ -39,6 +39,15 @@ The directives are thin wrappers over `@ponchia/ui/behaviors`: they run on
 mount, clean up before unmount, and restart when their binding value changes.
 They do not define markup or component state.
 
+The directive exports map one-for-one to delegated behaviors: `vThemeToggle`,
+`vDismissible`, `vDisabledGuard`, `vDisclosure`, `vMenu`, `vFormValidation`,
+`vCombobox`, `vPopover`, `vTableSort`, `vTabs`, `vDialog`, `vModal`,
+`vCarousel`, `vDotGlyph`, `vLegend`, `vConnectors`, `vSpotlight`,
+`vCrosshair`, `vCommand`, `vSources`, and `vSplitter`. `brontoVue` registers
+that full set as both kebab-case (`v-bronto-theme-toggle`) and camel-case
+directive names. `toast()` and `useToast()` expose the same imperative toast
+helper for event handlers.
+
 You can also register individual directives globally:
 
 ```js

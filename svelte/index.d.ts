@@ -2,9 +2,9 @@
  * Create a Svelte action from any Bronto delegated behavior initializer.
  *
  * @param {(opts?: DelegateOpts) => Cleanup | void} init
- * @returns {(node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn}
+ * @returns {BrontoAction}
  */
-export function createBrontoAction(init: (opts?: DelegateOpts) => Cleanup | void): (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
+export function createBrontoAction(init: (opts?: DelegateOpts) => Cleanup | void): BrontoAction;
 /**
  * Generic escape hatch for custom behavior initializers.
  *
@@ -21,49 +21,70 @@ export function brontoBehavior(node: Element, params: BrontoBehaviorParams | nul
  * @returns {SvelteActionReturn}
  */
 export function useBrontoBehavior(node: Element, params: BrontoBehaviorParams | null | undefined): SvelteActionReturn;
-/** @type {(node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn} */
-export const themeToggle: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const dismissible: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const disabledGuard: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const disclosure: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const menu: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const formValidation: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const combobox: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const popover: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const tableSort: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const tabs: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const dialog: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const modal: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const carousel: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const dotGlyph: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const legend: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const connectors: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const spotlight: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const crosshair: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const command: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const sources: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const splitter: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useThemeToggle: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useDismissible: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useDisabledGuard: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useDisclosure: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useMenu: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useFormValidation: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useCombobox: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const usePopover: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useTableSort: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useTabs: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useDialog: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useModal: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useCarousel: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useDotGlyph: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useLegend: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useConnectors: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useSpotlight: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useCrosshair: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useCommand: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useSources: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
-export const useSplitter: (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
+/** @type {BrontoThemeAction} */
+export const themeToggle: BrontoThemeAction;
+/** @type {BrontoAction} */
+export const dismissible: BrontoAction;
+/** @type {BrontoAction} */
+export const disabledGuard: BrontoAction;
+/** @type {BrontoAction} */
+export const disclosure: BrontoAction;
+/** @type {BrontoAction} */
+export const menu: BrontoAction;
+/** @type {BrontoAction} */
+export const formValidation: BrontoAction;
+/** @type {BrontoAction} */
+export const combobox: BrontoAction;
+/** @type {BrontoAction} */
+export const popover: BrontoAction;
+/** @type {BrontoAction} */
+export const tableSort: BrontoAction;
+/** @type {BrontoAction} */
+export const tabs: BrontoAction;
+/** @type {BrontoAction} */
+export const dialog: BrontoAction;
+/** @type {BrontoAction} */
+export const modal: BrontoAction;
+/** @type {BrontoAction} */
+export const carousel: BrontoAction;
+/** @type {BrontoAction} */
+export const dotGlyph: BrontoAction;
+/** @type {BrontoAction} */
+export const legend: BrontoAction;
+/** @type {BrontoAction} */
+export const connectors: BrontoAction;
+/** @type {BrontoAction} */
+export const spotlight: BrontoAction;
+/** @type {BrontoAction} */
+export const crosshair: BrontoAction;
+/** @type {BrontoAction} */
+export const command: BrontoAction;
+/** @type {BrontoAction} */
+export const sources: BrontoAction;
+/** @type {BrontoAction} */
+export const splitter: BrontoAction;
+/** @type {BrontoThemeAction} */
+export const useThemeToggle: BrontoThemeAction;
+export const useDismissible: BrontoAction;
+export const useDisabledGuard: BrontoAction;
+export const useDisclosure: BrontoAction;
+export const useMenu: BrontoAction;
+export const useFormValidation: BrontoAction;
+export const useCombobox: BrontoAction;
+export const usePopover: BrontoAction;
+export const useTableSort: BrontoAction;
+export const useTabs: BrontoAction;
+export const useDialog: BrontoAction;
+export const useModal: BrontoAction;
+export const useCarousel: BrontoAction;
+export const useDotGlyph: BrontoAction;
+export const useLegend: BrontoAction;
+export const useConnectors: BrontoAction;
+export const useSpotlight: BrontoAction;
+export const useCrosshair: BrontoAction;
+export const useCommand: BrontoAction;
+export const useSources: BrontoAction;
+export const useSplitter: BrontoAction;
 export function useToast(): (message: string, opts?: ToastOpts) => Cleanup;
 export type Cleanup = import("../behaviors/index.js").Cleanup;
 export type DelegateOpts = import("../behaviors/index.js").DelegateOpts;
@@ -73,10 +94,15 @@ export type BrontoActionRoot = Document | Element | null | undefined;
 export type BrontoActionOpts = Omit<DelegateOpts, "root"> & {
     root?: BrontoActionRoot;
 };
+export type BrontoThemeActionOpts = Omit<ThemeStorageOpts & DelegateOpts, "root"> & {
+    root?: BrontoActionRoot;
+};
 export type BrontoBehaviorParams = {
     init: (opts?: DelegateOpts) => Cleanup | void;
     opts?: BrontoActionOpts | null | undefined;
 };
+export type BrontoAction = (node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn;
+export type BrontoThemeAction = (node: Element, opts?: BrontoThemeActionOpts | null | undefined) => SvelteActionReturn;
 export type SvelteActionReturn = {
     update?: (next?: unknown) => void;
     destroy: () => void;

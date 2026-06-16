@@ -1,9 +1,18 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { charts, ACCENT, CHART_CATEGORICAL, CHART_PATTERN_COUNT } from '../tokens/charts.js';
+import chartPalette, {
+  charts,
+  ACCENT,
+  CHART_CATEGORICAL,
+  CHART_PATTERN_COUNT,
+} from '../tokens/charts.js';
 import { generated, resolveColor, PATTERNS } from '../scripts/gen-charts.mjs';
 import { deltaOklab, srgbToLinear, linearToSrgb, hexToRgb } from '../scripts/lib/oklch.mjs';
 import { buildResolved } from '../scripts/gen-resolved.mjs';
+
+test('default export is the public chart palette map', () => {
+  assert.equal(chartPalette, charts);
+});
 
 test('categorical has 8 series and series 1 is the live accent, both themes', () => {
   for (const theme of ['light', 'dark']) {

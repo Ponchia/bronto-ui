@@ -23,7 +23,13 @@
  *
  * @typedef {Omit<DelegateOpts, 'root'> & { root?: BrontoActionRoot }} BrontoActionOpts
  *
+ * @typedef {Omit<ThemeStorageOpts & DelegateOpts, 'root'> & { root?: BrontoActionRoot }} BrontoThemeActionOpts
+ *
  * @typedef {{ init: (opts?: DelegateOpts) => Cleanup | void, opts?: BrontoActionOpts | null | undefined }} BrontoBehaviorParams
+ *
+ * @typedef {(node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn} BrontoAction
+ *
+ * @typedef {(node: Element, opts?: BrontoThemeActionOpts | null | undefined) => SvelteActionReturn} BrontoThemeAction
  *
  * @typedef {{ update?: (next?: unknown) => void, destroy: () => void }} SvelteActionReturn
  */
@@ -73,7 +79,7 @@ function run(node, init, opts) {
  * Create a Svelte action from any Bronto delegated behavior initializer.
  *
  * @param {(opts?: DelegateOpts) => Cleanup | void} init
- * @returns {(node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn}
+ * @returns {BrontoAction}
  */
 export function createBrontoAction(init) {
   return (node, opts) => {
@@ -112,30 +118,51 @@ export function brontoBehavior(node, params) {
 
 export const useBrontoBehavior = brontoBehavior;
 
-/** @type {(node: Element, opts?: BrontoActionOpts | null | undefined) => SvelteActionReturn} */
+/** @type {BrontoThemeAction} */
 export const themeToggle = createBrontoAction(initThemeToggle);
+/** @type {BrontoAction} */
 export const dismissible = createBrontoAction(initDismissible);
+/** @type {BrontoAction} */
 export const disabledGuard = createBrontoAction(initDisabledGuard);
+/** @type {BrontoAction} */
 export const disclosure = createBrontoAction(initDisclosure);
+/** @type {BrontoAction} */
 export const menu = createBrontoAction(initMenu);
+/** @type {BrontoAction} */
 export const formValidation = createBrontoAction(initFormValidation);
+/** @type {BrontoAction} */
 export const combobox = createBrontoAction(initCombobox);
+/** @type {BrontoAction} */
 export const popover = createBrontoAction(initPopover);
+/** @type {BrontoAction} */
 export const tableSort = createBrontoAction(initTableSort);
+/** @type {BrontoAction} */
 export const tabs = createBrontoAction(initTabs);
+/** @type {BrontoAction} */
 export const dialog = createBrontoAction(initDialog);
+/** @type {BrontoAction} */
 export const modal = createBrontoAction(initModal);
+/** @type {BrontoAction} */
 export const carousel = createBrontoAction(initCarousel);
+/** @type {BrontoAction} */
 export const dotGlyph = createBrontoAction(initDotGlyph);
+/** @type {BrontoAction} */
 export const legend = createBrontoAction(initLegend);
+/** @type {BrontoAction} */
 export const connectors = createBrontoAction(initConnectors);
+/** @type {BrontoAction} */
 export const spotlight = createBrontoAction(initSpotlight);
+/** @type {BrontoAction} */
 export const crosshair = createBrontoAction(initCrosshair);
+/** @type {BrontoAction} */
 export const command = createBrontoAction(initCommand);
+/** @type {BrontoAction} */
 export const sources = createBrontoAction(initSources);
+/** @type {BrontoAction} */
 export const splitter = createBrontoAction(initSplitter);
 
 // Hook-style aliases keep this action surface parallel with React/Solid/Qwik.
+/** @type {BrontoThemeAction} */
 export const useThemeToggle = themeToggle;
 export const useDismissible = dismissible;
 export const useDisabledGuard = disabledGuard;

@@ -1,4 +1,4 @@
-import { hasDom, resolveHost, noop, bindOnce } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, closestSafe, collectHosts } from './internal.js';
 
 /**
  * Dropdown-menu close affordances for a native `<details data-bronto-menu>`
@@ -18,32 +18,37 @@ export function initMenu({ root } = {}) {
   if (!hasDom()) return noop;
   const host = resolveHost(root);
   if (!host) return noop;
-  const openMenus = () => host.querySelectorAll?.('[data-bronto-menu][open]') ?? [];
+  const doc = host.nodeType === 9 ? host : host.ownerDocument || document;
+  const openMenus = () => collectHosts(host, '[data-bronto-menu][open]');
   const shut = (menu) => {
     if (!menu || !menu.open) return;
     menu.open = false;
     menu.querySelector('summary')?.focus();
   };
   const onClick = (e) => {
-    const menu = e.target.closest('[data-bronto-menu]');
+    const target = e.target;
+    const menu = closestSafe(target, '[data-bronto-menu]');
     // Activate an item → close its menu (and return focus to summary).
-    if (menu && e.target.closest('.ui-menu__item')) {
+    if (menu && host.contains(menu) && closestSafe(target, '.ui-menu__item')) {
       shut(menu);
       return;
     }
     // Click outside any open menu → close them all (no focus move).
-    for (const m of openMenus()) if (!m.contains(e.target)) m.open = false;
+    for (const m of openMenus()) if (!m.contains(target)) m.open = false;
   };
   const onKey = (e) => {
     if (e.key !== 'Escape') return;
-    const menu = e.target.closest?.('[data-bronto-menu][open]') || openMenus()[0];
+    const menu = closestSafe(e.target, '[data-bronto-menu][open]') || openMenus()[0];
+    if (!menu) return;
+    e.preventDefault();
+    e.stopPropagation();
     shut(menu);
   };
   return bindOnce(host, 'menu', () => {
-    host.addEventListener('click', onClick);
+    doc.addEventListener('click', onClick);
     host.addEventListener('keydown', onKey);
     return () => {
-      host.removeEventListener('click', onClick);
+      doc.removeEventListener('click', onClick);
       host.removeEventListener('keydown', onKey);
     };
   });

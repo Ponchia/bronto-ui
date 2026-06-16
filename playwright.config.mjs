@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { NON_PIXEL_E2E_TEST_MATCH } from './scripts/lib/e2e-specs.mjs';
 
 /**
  * Visual + a11y + cross-engine regression. Runs ONLY in the pinned
@@ -19,7 +20,6 @@ import { defineConfig, devices } from '@playwright/test';
  * here. Genuinely Chromium-only assertions (e.g. `page.pdf()`) guard
  * themselves with `test.skip(browserName !== 'chromium', …)`.
  */
-const NON_PIXEL = /[/\\](?!visual\.spec\.mjs)[^/\\]+\.spec\.mjs$/;
 export default defineConfig({
   testDir: './test/e2e',
   fullyParallel: true,
@@ -46,8 +46,12 @@ export default defineConfig({
     // chromium runs everything, including the pixel snapshots + baselines.
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
     // firefox/webkit run only the engine-agnostic specs.
-    { name: 'firefox', use: { ...devices['Desktop Firefox'] }, testMatch: NON_PIXEL },
-    { name: 'webkit', use: { ...devices['Desktop Safari'] }, testMatch: NON_PIXEL },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+      testMatch: NON_PIXEL_E2E_TEST_MATCH,
+    },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] }, testMatch: NON_PIXEL_E2E_TEST_MATCH },
   ],
   webServer: {
     command: 'node scripts/serve.mjs 8123',

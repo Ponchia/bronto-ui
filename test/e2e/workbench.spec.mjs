@@ -63,6 +63,63 @@ test('splitter pointer drag updates the pane percentage and emits resize detail'
   expect(details.at(-1).value).toBeLessThan(65);
 });
 
+test('splitter cleanup restores generated ARIA and CSS state in a real browser', async ({
+  page,
+}) => {
+  await open(page);
+  await page.evaluate(async () => {
+    const wrap = document.createElement('section');
+    wrap.innerHTML = `
+      <div id="splitter-cleanup" class="ui-splitter" data-bronto-splitter style="--splitter-pos: 40%">
+        <section class="ui-splitter__pane">Left</section>
+        <div class="ui-splitter__handle" aria-label="Resize cleanup pane"></div>
+        <section class="ui-splitter__pane">Right</section>
+      </div>`;
+    document.body.append(wrap);
+    const behaviorPath = `/behaviors/${'index.js'}`;
+    const { initSplitter } = await import(behaviorPath);
+    window.__splitterCleanupStop = initSplitter({
+      root: document.getElementById('splitter-cleanup'),
+    });
+  });
+
+  const splitter = page.locator('#splitter-cleanup');
+  const handle = splitter.locator('.ui-splitter__handle');
+
+  await expect(handle).toHaveAttribute('role', 'separator');
+  await expect(handle).toHaveAttribute('tabindex', '0');
+  await expect(handle).toHaveAttribute('aria-orientation', 'vertical');
+  await expect(handle).toHaveAttribute('aria-valuemin', '20');
+  await expect(handle).toHaveAttribute('aria-valuemax', '80');
+  await expect(handle).toHaveAttribute('aria-valuenow', '40');
+
+  await handle.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(handle).toHaveAttribute('aria-valuenow', '42');
+  await expect
+    .poll(() => splitter.evaluate((el) => el.style.getPropertyValue('--splitter-pos')))
+    .toBe('42%');
+
+  await page.evaluate(() => window.__splitterCleanupStop());
+  await expect(handle).not.toHaveAttribute('role', /.+/);
+  await expect(handle).not.toHaveAttribute('tabindex', /.+/);
+  await expect(handle).not.toHaveAttribute('aria-orientation', /.+/);
+  await expect(handle).not.toHaveAttribute('aria-valuemin', /.+/);
+  await expect(handle).not.toHaveAttribute('aria-valuemax', /.+/);
+  await expect(handle).not.toHaveAttribute('aria-valuenow', /.+/);
+  await expect
+    .poll(() => splitter.evaluate((el) => el.style.getPropertyValue('--splitter-pos')))
+    .toBe('40%');
+
+  await handle.evaluate((el) =>
+    el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })),
+  );
+  await expect(handle).not.toHaveAttribute('aria-valuenow', /.+/);
+  await expect
+    .poll(() => splitter.evaluate((el) => el.style.getPropertyValue('--splitter-pos')))
+    .toBe('40%');
+});
+
 test('forced-colors keeps the splitter handle visible', async ({ page }) => {
   await page.emulateMedia({ forcedColors: 'active' });
   await open(page);

@@ -67,6 +67,11 @@ for (const [rel, expected] of Object.entries(bundles)) {
     errors.push(`${rel} is stale — run: npm run dist:build`);
     continue;
   }
+  if (!expected.startsWith('@layer bronto{') || !expected.endsWith('}\n')) {
+    errors.push(`${rel} must be emitted as one @layer bronto block`);
+  } else if (/@layer\b/.test(expected.slice('@layer bronto{'.length, -2))) {
+    errors.push(`${rel} must not contain nested or stray @layer rules inside bronto`);
+  }
   const s = sizes(expected);
   if (s.raw > BUDGET.raw) errors.push(`${rel} raw ${s.raw}B over budget ${BUDGET.raw}B`);
   if (s.gzip > BUDGET.gzip) errors.push(`${rel} gzip ${s.gzip}B over budget ${BUDGET.gzip}B`);
@@ -84,4 +89,7 @@ for (const [rel, expected] of Object.entries(bundles)) {
   }
 }
 
-reportAndExit(errors, { label: 'dist', ok: 'dist/ is the fresh, in-budget build of css/' });
+reportAndExit(errors, {
+  label: 'dist',
+  ok: 'dist/ is the fresh, single-layered, in-budget build of css/',
+});

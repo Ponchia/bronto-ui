@@ -26,3 +26,29 @@ test('an excluded item is dimmed via opacity', async ({ page }) => {
   const opacity = await off.evaluate((el) => parseFloat(getComputedStyle(el).opacity));
   expect(opacity).toBeLessThan(1);
 });
+
+test('forced-colors: selected and candidate items keep nonzero outline cues', async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active' });
+  await open(page);
+  const cues = await page.evaluate(() => {
+    const read = (selector) => {
+      const style = getComputedStyle(document.querySelector(selector));
+      return {
+        style: style.outlineStyle,
+        width: parseFloat(style.outlineWidth),
+        color: style.outlineColor,
+      };
+    };
+    return {
+      selected: read('.ui-sel--on'),
+      candidate: read('.ui-sel--maybe'),
+      canvasText: getComputedStyle(document.body).color,
+    };
+  });
+  expect(cues.selected.style).toBe('solid');
+  expect(cues.selected.width).toBeGreaterThanOrEqual(2);
+  expect(cues.selected.color).not.toBe('rgba(0, 0, 0, 0)');
+  expect(cues.candidate.style).toBe('dashed');
+  expect(cues.candidate.width).toBeGreaterThanOrEqual(1);
+  expect(cues.candidate.color).not.toBe('rgba(0, 0, 0, 0)');
+});

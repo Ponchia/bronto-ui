@@ -17,8 +17,7 @@ version with a BREAKING note + migration if applicable.
 ## Checklist
 
 - [ ] `npm run check` green (lint, exports, tokens, classes, dts, dtcg,
-      shiki, dist, pack, types, format)
-- [ ] `npm test` green
+      shiki, dist, pack, types, unit tests, format)
 - [ ] Accessibility: keyboard + both themes considered; e2e/a11y updated
       if a component changed
 - [ ] Generated artifacts rebuilt and committed (`npm run prepack`)

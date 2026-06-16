@@ -1,4 +1,56 @@
-import { hasDom, resolveHost, noop, bindOnce, collectHosts, focusInto } from './internal.js';
+import {
+  hasDom,
+  resolveHost,
+  noop,
+  bindOnce,
+  collectHosts,
+  focusInto,
+  closestSafe,
+} from './internal.js';
+
+function insideOpenPopover(target, modal) {
+  const classPanel = closestSafe(target, '.ui-popover.is-open');
+  if (classPanel && modal.contains(classPanel)) return true;
+
+  const nativePanel = closestSafe(target, '[popover]');
+  if (!nativePanel || !modal.contains(nativePanel)) return false;
+  try {
+    return nativePanel.matches(':popover-open');
+  } catch {
+    return false;
+  }
+}
+
+const activeModals = [];
+
+const snapshotAttrs = (el, names) => {
+  const attrs = {};
+  for (const name of names) {
+    attrs[name] = {
+      had: el.hasAttribute(name),
+      value: el.getAttribute(name),
+    };
+  }
+  return attrs;
+};
+
+const restoreAttrs = (el, attrs) => {
+  for (const [name, state] of Object.entries(attrs)) {
+    if (state.had) el.setAttribute(name, state.value);
+    else el.removeAttribute(name);
+  }
+};
+
+const pushActiveModal = (modal) => {
+  const index = activeModals.indexOf(modal);
+  if (index !== -1) activeModals.splice(index, 1);
+  activeModals.push(modal);
+};
+
+const removeActiveModal = (modal) => {
+  const index = activeModals.indexOf(modal);
+  if (index !== -1) activeModals.splice(index, 1);
+};
 
 /**
  * @typedef {object} ModalCloseDetail
@@ -45,22 +97,6 @@ export function initModal({ root } = {}) {
     let opener = null;
     let inerted = [];
 
-    // A controlled modal must announce AS a modal dialog, not a generic group —
-    // parity with initPopover. Apply a dialog role + aria-modal (unless the
-    // author set a role), and dev-warn on a missing accessible name since we
-    // can't invent a good one. (component audit C13.)
-    if (!modal.hasAttribute('role')) modal.setAttribute('role', 'dialog');
-    if (!modal.hasAttribute('aria-modal')) modal.setAttribute('aria-modal', 'true');
-    const named =
-      modal.hasAttribute('aria-label') ||
-      modal.hasAttribute('aria-labelledby') ||
-      modal.hasAttribute('title');
-    if (!named && typeof console !== 'undefined') {
-      console.warn(
-        `[bronto] initModal(): a [data-bronto-modal] has no accessible name — add aria-label or aria-labelledby so it is announced as a named dialog.`,
-      );
-    }
-
     // Inert every sibling at each ancestor level up to <body>: the rest of the
     // page becomes non-focusable/non-interactive while the modal subtree stays
     // live. Skip already-inert nodes so release() can't un-inert something the
@@ -68,6 +104,7 @@ export function initModal({ root } = {}) {
     const trap = () => {
       if (opener) return; // already trapped
       opener = document.activeElement;
+      pushActiveModal(modal);
       let el = modal;
       while (el && el.parentElement && el !== document.body) {
         for (const sib of el.parentElement.children) {
@@ -83,6 +120,7 @@ export function initModal({ root } = {}) {
 
     const release = () => {
       if (!opener) return;
+      removeActiveModal(modal);
       for (const el of inerted) el.inert = false;
       inerted = [];
       const back = opener;
@@ -94,6 +132,8 @@ export function initModal({ root } = {}) {
 
     const onKey = (e) => {
       if (e.key === 'Escape' && opener) {
+        if (activeModals.at(-1) !== modal) return;
+        if (insideOpenPopover(e.target, modal)) return;
         modal.dispatchEvent(
           new CustomEvent('bronto:modal:close', {
             detail: { reason: 'escape' },
@@ -104,10 +144,27 @@ export function initModal({ root } = {}) {
       }
     };
 
-    const observer = typeof MutationObserver === 'function' ? new MutationObserver(sync) : null;
-
     cleanups.push(
       bindOnce(modal, 'modal', () => {
+        const attrs = snapshotAttrs(modal, ['role', 'aria-modal', 'tabindex']);
+
+        // A controlled modal must announce AS a modal dialog, not a generic group —
+        // parity with initPopover. Apply a dialog role + aria-modal (unless the
+        // author set a role), and dev-warn on a missing accessible name since we
+        // can't invent a good one. (component audit C13.)
+        if (!modal.hasAttribute('role')) modal.setAttribute('role', 'dialog');
+        if (!modal.hasAttribute('aria-modal')) modal.setAttribute('aria-modal', 'true');
+        const named =
+          modal.hasAttribute('aria-label') ||
+          modal.hasAttribute('aria-labelledby') ||
+          modal.hasAttribute('title');
+        if (!named && typeof console !== 'undefined') {
+          console.warn(
+            `[bronto] initModal(): a [data-bronto-modal] has no accessible name — add aria-label or aria-labelledby so it is announced as a named dialog.`,
+          );
+        }
+
+        const observer = typeof MutationObserver === 'function' ? new MutationObserver(sync) : null;
         observer?.observe(modal, { attributes: true, attributeFilter: ['class'] });
         document.addEventListener('keydown', onKey, true);
         if (modal.classList.contains('is-open')) trap(); // already open at init
@@ -115,6 +172,7 @@ export function initModal({ root } = {}) {
           observer?.disconnect();
           document.removeEventListener('keydown', onKey, true);
           release();
+          restoreAttrs(modal, attrs);
         };
       }),
     );

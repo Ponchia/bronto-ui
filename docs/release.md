@@ -4,17 +4,23 @@
 
 0. Run `npm run release:prep -- X.Y.Z` — bumps `package.json` + lock, dates the
    `## Unreleased — X.Y.Z` CHANGELOG heading, and re-pins every
-   `@ponchia/ui@X.Y.Z` literal across the gated README/shipped docs **and** the
-   ungated `demo/*.html` pages (the surface that drifted when this was manual).
+   `@ponchia/ui@X.Y.Z` literal across the same public docs/demo surfaces that
+   `check:versions` gates.
 1. Reconcile `README.md`, `CHANGELOG.md`, `ROADMAP.md`, `.github/SECURITY.md`, and
    `docs/adr/*` against the version being released.
-2. Run `npm run check`, `npm test`, and `npm run test:e2e:nonpixel` locally.
-   Run `npm run test:e2e` in the pinned Playwright container when visual
-   baselines changed.
+2. Run `npm run check` and `npm run test:e2e:nonpixel` locally. `npm run check`
+   already includes the node:test unit and contract suite. Run
+   `npm run test:e2e` in the pinned Playwright container when visual baselines
+   changed, or run `npm run test:e2e:visual:container` with Docker running for a
+   local dry-run of the Chromium screenshot gate.
 3. Run `npm run size:report` and call out any intentional payload increase in
    the changelog.
 4. Run `npm run test:examples` to build the packed example matrix from the
-   tarball, not a workspace link.
+   tarball, not a workspace link. When framework binding, browser behavior, or
+   smoke coverage changed, also run `npm run test:examples:cross-browser`.
+   When example visual composition changed, run `npm run test:examples:visual`
+   as the local-safe packed-example desktop + mobile screenshot/layout health
+   smoke.
 
 ## Publish
 

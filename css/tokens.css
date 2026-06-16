@@ -360,9 +360,25 @@
     --line: #d9d9d9;
     --line-strong: #b3b3b3;
     --success: #2f7d4f;
+    --success-soft: rgb(47, 125, 79, 0.12);
     --danger: #c01622;
+    --danger-soft: rgb(192, 22, 34, 0.1);
     --warning: #806414;
+    --warning-soft: rgb(128, 100, 20, 0.13);
     --info: #1f63c4;
+    --info-soft: rgb(31, 99, 196, 0.12);
     --accent: #d71921;
+    --bg-accent: color-mix(in srgb, var(--accent) 6%, transparent);
+    --accent-ramp-end: #ffffff;
+    --accent-strong: color-mix(in srgb, var(--accent) 83%, #000);
+    --accent-text: var(--accent-strong);
+    --accent-soft: color-mix(in srgb, var(--accent) 10%, transparent);
+    --button-text: #ffffff;
+    --on-accent: var(--button-text);
+    --field-dot: rgb(17, 17, 17, 0.16);
+    --field-dot-hot: rgb(17, 17, 17, 0.4);
+    --field-dot-accent: color-mix(in srgb, var(--accent) 78%, transparent);
+    --focus-ring: var(--accent);
+    --code-bg: rgb(17, 17, 17, 0.05);
   }
 }

@@ -5,7 +5,43 @@ import {
   bindOnce,
   scrollIntoViewSafe,
   collectHosts,
+  closestSafe,
 } from './internal.js';
+
+const snapshotAttrs = (el) =>
+  Array.from(el.attributes, ({ name, value }) => ({
+    name,
+    value,
+  }));
+
+const restoreAttrs = (el, attrs) => {
+  for (const { name } of Array.from(el.attributes)) el.removeAttribute(name);
+  for (const { name, value } of attrs) el.setAttribute(name, value);
+};
+
+const snapshotNode = (el, { html = false } = {}) =>
+  el
+    ? {
+        el,
+        attrs: snapshotAttrs(el),
+        ...(html ? { innerHTML: el.innerHTML } : {}),
+      }
+    : null;
+
+const restoreNode = (state) => {
+  if (!state) return;
+  restoreAttrs(state.el, state.attrs);
+  if ('innerHTML' in state) state.el.innerHTML = state.innerHTML;
+};
+
+const clampIndex = (value, max) => Math.max(0, Math.min(max, value));
+
+const renderedStatusIndex = (status) => {
+  const match = /^(\d+)\s*\/\s*\d+$/.exec(status?.textContent?.trim() ?? '');
+  if (!match) return -1;
+  const value = Number(match[1]);
+  return Number.isInteger(value) ? value - 1 : -1;
+};
 
 /**
  * Image carousel / gallery, built on CSS scroll-snap so touch + trackpad
@@ -54,36 +90,12 @@ export function initCarousel({ root } = {}) {
     const nextBtn = box.querySelector('[data-bronto-carousel-next]');
     const loop = box.hasAttribute('data-bronto-carousel-loop');
 
-    // ARIA scaffolding — pragmatic carousel semantics (not the full APG
-    // tablist), the same restraint initMenu takes.
-    viewport.setAttribute('role', 'group');
-    viewport.setAttribute('aria-roledescription', 'carousel');
-    if (!viewport.hasAttribute('aria-label'))
-      viewport.setAttribute(
-        'aria-label',
-        box.getAttribute('data-bronto-carousel-label') || 'Carousel',
-      );
-    if (!viewport.hasAttribute('tabindex')) viewport.tabIndex = 0;
-    slides.forEach((s, i) => {
-      s.setAttribute('role', 'group');
-      s.setAttribute('aria-roledescription', 'slide');
-      if (!s.hasAttribute('aria-label')) s.setAttribute('aria-label', `${i + 1} of ${n}`);
-    });
-    if (status) status.setAttribute('aria-live', 'polite');
-    for (const b of [prevBtn, nextBtn]) {
-      if (!b) continue;
-      if (b.tagName === 'BUTTON' && !b.hasAttribute('type')) b.type = 'button';
-    }
-    for (const b of thumbs) {
-      if (b.tagName === 'BUTTON' && !b.hasAttribute('type')) b.type = 'button';
-    }
-    if (prevBtn && !prevBtn.hasAttribute('aria-label'))
-      prevBtn.setAttribute('aria-label', 'Previous');
-    if (nextBtn && !nextBtn.hasAttribute('aria-label')) nextBtn.setAttribute('aria-label', 'Next');
-
-    let index = Math.max(
-      0,
-      slides.findIndex((s) => s.hasAttribute('data-bronto-carousel-current')),
+    const authoredIndex = slides.findIndex((s) => s.hasAttribute('data-bronto-carousel-current'));
+    const renderedThumbIndex = thumbs.findIndex((t) => t.getAttribute('aria-current') === 'true');
+    const statusIndex = renderedStatusIndex(status);
+    let index = clampIndex(
+      renderedThumbIndex >= 0 ? renderedThumbIndex : statusIndex >= 0 ? statusIndex : authoredIndex,
+      n - 1,
     );
 
     // While a button/keyboard nav is smooth-scrolling, the IntersectionObserver
@@ -139,15 +151,15 @@ export function initCarousel({ root } = {}) {
       goTo(target);
     };
     const onClick = (e) => {
-      if (prevBtn && e.target.closest('[data-bronto-carousel-prev]')) {
+      if (prevBtn && closestSafe(e.target, '[data-bronto-carousel-prev]')) {
         goTo(index - 1);
         return;
       }
-      if (nextBtn && e.target.closest('[data-bronto-carousel-next]')) {
+      if (nextBtn && closestSafe(e.target, '[data-bronto-carousel-next]')) {
         goTo(index + 1);
         return;
       }
-      const thumb = e.target.closest('.ui-carousel__thumb');
+      const thumb = closestSafe(e.target, '.ui-carousel__thumb');
       if (thumb) {
         const i = thumbs.indexOf(thumb);
         if (i >= 0) goTo(i);
@@ -181,20 +193,64 @@ export function initCarousel({ root } = {}) {
       );
     }
 
-    render();
     const bound = bindOnce(box, 'carousel', () => {
+      const state = {
+        viewport: snapshotNode(viewport),
+        slides: slides.map((slide) => snapshotNode(slide)),
+        status: snapshotNode(status, { html: true }),
+        controls: [prevBtn, nextBtn, ...thumbs]
+          .filter(Boolean)
+          .map((control) => snapshotNode(control)),
+      };
+
+      // ARIA scaffolding — pragmatic carousel semantics (not the full APG
+      // tablist), the same restraint initMenu takes.
+      viewport.setAttribute('role', 'group');
+      viewport.setAttribute('aria-roledescription', 'carousel');
+      if (!viewport.hasAttribute('aria-label'))
+        viewport.setAttribute(
+          'aria-label',
+          box.getAttribute('data-bronto-carousel-label') || 'Carousel',
+        );
+      if (!viewport.hasAttribute('tabindex')) viewport.tabIndex = 0;
+      slides.forEach((s, i) => {
+        s.setAttribute('role', 'group');
+        s.setAttribute('aria-roledescription', 'slide');
+        if (!s.hasAttribute('aria-label')) s.setAttribute('aria-label', `${i + 1} of ${n}`);
+      });
+      if (status) status.setAttribute('aria-live', 'polite');
+      for (const b of [prevBtn, nextBtn]) {
+        if (!b) continue;
+        if (b.tagName === 'BUTTON' && !b.hasAttribute('type')) b.type = 'button';
+      }
+      for (const b of thumbs) {
+        if (b.tagName === 'BUTTON' && !b.hasAttribute('type')) b.type = 'button';
+      }
+      if (prevBtn && !prevBtn.hasAttribute('aria-label'))
+        prevBtn.setAttribute('aria-label', 'Previous');
+      if (nextBtn && !nextBtn.hasAttribute('aria-label'))
+        nextBtn.setAttribute('aria-label', 'Next');
+
+      render();
       viewport.addEventListener('keydown', onKey);
       box.addEventListener('click', onClick);
       // Observe inside the add callback so observe/disconnect pair with the
       // binding lifecycle: a re-init tears down the prior binding (which
       // disconnects the old observer) before this starts, so two observers
       // never watch the same slides — even for one tick.
-      slides.forEach((s) => io?.observe(s));
+      if (io) {
+        holdProgrammatic();
+        slides.forEach((s) => io.observe(s));
+      }
       return () => {
         viewport.removeEventListener('keydown', onKey);
         box.removeEventListener('click', onClick);
         io?.disconnect();
         if (progTimer) clearTimeout(progTimer);
+        restoreNode(state.viewport);
+        state.slides.forEach(restoreNode);
+        restoreNode(state.status);
+        state.controls.forEach(restoreNode);
       };
     });
     cleanups.push(bound);

@@ -16,8 +16,9 @@ on:
     branches: [main]
   pull_request:
   # Manual full run: dispatch on any branch to exercise firefox + webkit
-  # before merging an engine-sensitive CSS/behavior change. Keep this
-  # input-free so the build graph cannot be altered by user parameters.
+  # and the cross-browser packed examples before merging an engine-sensitive
+  # CSS/behavior/consumer change. Keep this input-free so the build graph
+  # cannot be altered by user parameters.
   workflow_dispatch:
 
 # Least privilege: this workflow only reads the repo.
@@ -37,14 +38,15 @@ env:
   npm_config_fetch_retry_maxtimeout: '120000'
 
 jobs:
-  # Detect docs-only changes so the expensive cross-browser e2e (~8 min)
+  # Detect Markdown/docs-only changes so the expensive cross-browser e2e (~8 min)
   # and the consumer-tarball example matrix are skipped when nothing but
-  # Markdown/docs changed. `check` ALWAYS runs — it has doc-scanning gates
-  # (check:report validates docs use real classes; check:release validates
-  # the CHANGELOG). Self-contained git diff (no third-party action, in
-  # keeping with the repo's SHA-pinned/zero-extra-deps posture) and FAILS
-  # SAFE: any uncertainty (empty/unknown range, first push, force-push) →
-  # heavy=true → full pipeline.
+  # Markdown docs changed. The docs viewer shell (`docs/index.html`) is app
+  # code: it owns routing, sanitisation, and mobile nav, so it must still run
+  # browser e2e. `check` ALWAYS runs — it has doc-scanning gates (check:report
+  # validates docs use real classes; check:release validates the CHANGELOG).
+  # Self-contained git diff (no third-party action, in keeping with the repo's
+  # SHA-pinned/zero-extra-deps posture) and FAILS SAFE: any uncertainty
+  # (empty/unknown range, first push, force-push) → heavy=true → full pipeline.
   changes:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -70,26 +72,28 @@ jobs:
           else
             files=""   # unknown range → fail safe below
           fi
-          # Only declare a docs-only change when the diff is NON-EMPTY and
-          # EVERY path is a doc; empty/unknown → heavy=true (run everything).
-          # `nondoc` = the changed paths that are NOT docs; if that's empty
-          # while `files` isn't, the change is docs-only. (Uses string
-          # emptiness, not `grep -q` exit codes — those differ BSD vs GNU.)
+          # Only declare a Markdown/docs-only change when the diff is
+          # NON-EMPTY and EVERY path is Markdown or LICENSE; empty/unknown →
+          # heavy=true (run everything). `docs/index.html` is executable docs
+          # app code, not cheap prose, so it intentionally falls through to
+          # heavy=true. (Uses string emptiness, not `grep -q` exit codes —
+          # those differ BSD vs GNU.)
           heavy=true
           if [ -n "$files" ]; then
-            nondoc="$(printf '%s\n' "$files" | grep -vE '(\.md$|^docs/|^LICENSE$)' || true)"
+            nondoc="$(printf '%s\n' "$files" | grep -vE '(\.md$|^LICENSE$)' || true)"
             [ -z "$nondoc" ] && heavy=false
           fi
           # Engine-sensitive = the change touches rendered CSS, behaviors,
-          # fonts, or the e2e suite itself — the surfaces where firefox/webkit
-          # can break while chromium stays green (`:has()`, `color-mix()`,
-          # `-webkit-` prefixes …). Drives the cross-engine pass on pushes to
-          # main, so an engine-specific defect is caught at merge time instead
-          # of days later at the release tag (the exact failure mode that
-          # burned v0.6.1/v0.6.2). Same fail-safe stance: unknown diff → true.
+          # fonts, the docs viewer app shell, or the e2e suite itself — the
+          # surfaces where firefox/webkit can break while chromium stays green
+          # (`:has()`, `color-mix()`, `-webkit-` prefixes …). Drives the
+          # cross-engine pass on pushes to main, so an engine-specific defect
+          # is caught at merge time instead of days later at the release tag
+          # (the exact failure mode that burned v0.6.1/v0.6.2). Same fail-safe
+          # stance: unknown diff → true.
           engine_sensitive=true
           if [ -n "$files" ]; then
-            engine="$(printf '%s\n' "$files" | grep -E '^(css/|dist/|behaviors/|fonts/|tokens/|test/e2e/|playwright\.config\.mjs)' || true)"
+            engine="$(printf '%s\n' "$files" | grep -E '^(css/|dist/|behaviors/|fonts/|tokens/|test/e2e/|docs/index\.html|playwright\.config\.mjs)' || true)"
             [ -z "$engine" ] && engine_sensitive=false
           fi
           echo "Changed files:"; printf '%s\n' "$files"
@@ -110,11 +114,8 @@ jobs:
 
       - run: npm ci
 
-      # Stylelint + integrity checks (exports, tokens, classes, pack, …).
+      # Stylelint + integrity checks + node:test unit/contract suite.
       - run: npm run check
-
-      # node:test — pure modules + jsdom behavior tests.
-      - run: npm test
 
   # Consumer smoke + end-to-end regression, defined ONCE as reusable
   # workflows and shared with release.yml so the release path can't drift
@@ -123,6 +124,9 @@ jobs:
     needs: [check, changes]
     if: needs.changes.outputs.heavy == 'true'
     uses: ./.github/workflows/examples.yml
+    with:
+      cross_browser: ${{ github.event_name == 'workflow_dispatch' }}
+      visual_smoke: ${{ github.event_name == 'workflow_dispatch' }}
 
   # chromium-only on PRs for fast feedback. Pushes to main run the full
   # firefox/webkit pass too when the change touches an engine-sensitive

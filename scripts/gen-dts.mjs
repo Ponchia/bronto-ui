@@ -357,9 +357,22 @@ export interface ValueAttrs {
   'aria-valuemax': number;
   style: { '--value': number };
 }
+export interface MeterValueAttrs extends ValueAttrs {
+  role: 'meter';
+}
+export interface ProgressValueAttrs extends ValueAttrs {
+  role: 'progressbar';
+}
+export interface IndeterminateProgressAttrs {
+  role: 'progressbar';
+  'aria-busy': 'true';
+}
 export interface Attrs {
-  meter(value: number, opts?: ValueRangeOpts): ValueAttrs;
-  progress(value: number, opts?: ValueRangeOpts): ValueAttrs;
+  meter(value: number, opts?: ValueRangeOpts): MeterValueAttrs;
+  progress(value: number, opts?: ValueRangeOpts): ProgressValueAttrs;
+  progress(value?: undefined, opts?: ValueRangeOpts): IndeterminateProgressAttrs;
+  dotbar(value: number, opts?: ValueRangeOpts): ProgressValueAttrs;
+  dotbar(value?: undefined, opts?: ValueRangeOpts): IndeterminateProgressAttrs;
 }
 /** Set the painted value AND its ARIA together so they cannot drift. */
 export declare const attrs: Attrs;

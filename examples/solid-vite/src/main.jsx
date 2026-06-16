@@ -1,20 +1,35 @@
 import '@ponchia/ui';
+import { createSignal, Show } from 'solid-js';
 import { render } from 'solid-js/web';
 import { cls, useDialog, useDotGlyph, useTabs, useThemeToggle, useToast } from '@ponchia/ui/solid';
 import { renderGlyph } from '@ponchia/ui/glyphs';
 import { charts } from '@ponchia/ui/charts';
 import { skins } from '@ponchia/ui/skins';
 
+function BrontoBindings(props) {
+  useThemeToggle(() => ({ root: props.root() }));
+  useDialog(() => ({ root: props.root() }));
+  useTabs(() => ({ root: props.root() }));
+  useDotGlyph(() => ({ root: props.root() }));
+  return null;
+}
+
 function App() {
   let rootEl;
-  useThemeToggle(() => ({ root: rootEl }));
-  useDialog(() => ({ root: rootEl }));
-  useTabs(() => ({ root: rootEl }));
-  useDotGlyph(() => ({ root: rootEl }));
+  const [bindingsEnabled, setBindingsEnabled] = createSignal(true);
   const toast = useToast();
 
   return (
     <main ref={rootEl} class="ui-center ui-stack" style={{ 'padding-block': '3rem' }}>
+      <Show when={bindingsEnabled()}>
+        <BrontoBindings root={() => rootEl} />
+      </Show>
+      <button hidden data-bindings-disable type="button" onClick={() => setBindingsEnabled(false)}>
+        Disable bindings
+      </button>
+      <span hidden data-bindings-state>
+        {bindingsEnabled() ? 'enabled' : 'disabled'}
+      </span>
       <p class="ui-eyebrow">@ponchia/ui</p>
       <h1>Solid + Vite</h1>
       <div class="ui-cluster">

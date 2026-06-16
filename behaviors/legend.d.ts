@@ -1,9 +1,4 @@
 /**
- * @typedef {object} LegendToggleDetail
- * @property {string | number} series The entry's `data-series`, or its 0-based index when unset.
- * @property {boolean} active The new state (`true` ⇒ series shown).
- */
-/**
  * Wire `[data-bronto-legend]` interactive legends. Each entry is a
  * `.ui-legend__item` authored as a `<button aria-pressed>`; clicking it (or
  * Enter/Space, native to `<button>`) flips `aria-pressed`, toggles the

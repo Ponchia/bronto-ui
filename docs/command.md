@@ -84,7 +84,10 @@ document.querySelector('[data-bronto-command]').addEventListener('bronto:command
 );
 ```
 
-Framework hook: `useCommand()` in `@ponchia/ui/react` · `/solid` · `/qwik`.
+Framework adapters: `useCommand()` in `@ponchia/ui/react`, `/solid`, and
+`/qwik`; the `command` / `useCommand` action in `@ponchia/ui/svelte`; and
+`vCommand` (or the `v-bronto-command` directive from `brontoVue`) in
+`@ponchia/ui/vue`.
 
 ## Accessibility
 

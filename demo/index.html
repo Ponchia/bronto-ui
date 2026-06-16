@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:," />
     <meta
       name="description"
       content="@ponchia/ui (Bronto) — a CSS-first identity and UI layer for services, tools, sites and reports. Live showcase + documentation: foundations, the shared service center, and the analytical communication primitives."
@@ -44,7 +45,7 @@
       <header class="ui-cluster ui-cluster--between">
         <div>
           <p class="ui-eyebrow">@ponchia/ui · Bronto</p>
-          <h1>Interfaces that<br />explain themselves</h1>
+          <h1>Interfaces that <br />explain themselves</h1>
         </div>
         <span class="ui-cluster">
           <button class="ui-button ui-button--ghost" id="dirBtn" type="button">DIR: LTR</button>
@@ -420,7 +421,9 @@
                 <option>Live</option>
               </select></label
             >
-            <div class="ui-search"><input placeholder="Search decisions…" /></div>
+            <div class="ui-search">
+              <input aria-label="Search decisions" placeholder="Search decisions…" />
+            </div>
             <div class="ui-combobox" data-bronto-combobox>
               <label class="ui-label" for="cbx">Combobox (APG)</label>
               <input class="ui-input ui-combobox__input" id="cbx" />

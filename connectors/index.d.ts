@@ -1,9 +1,42 @@
-export function finite(name: any, value: any, fallback: any): any;
-export function dimension(name: any, value: any, fallback: any): any;
-export function roundNumber(value: any): number;
-export function fmt(value: any): string;
-export function point(x: any, y: any): string;
-export function clamp(value: any, min: any, max: any): any;
+/**
+ * Resolve a numeric option with an optional fallback.
+ * @param {string} name
+ * @param {number | null | undefined} value
+ * @param {number | null | undefined} [fallback]
+ * @returns {number}
+ */
+export function finite(name: string, value: number | null | undefined, fallback?: number | null | undefined): number;
+/**
+ * Resolve a non-negative numeric option with an optional fallback.
+ * @param {string} name
+ * @param {number | null | undefined} value
+ * @param {number | null | undefined} [fallback]
+ * @returns {number}
+ */
+export function dimension(name: string, value: number | null | undefined, fallback?: number | null | undefined): number;
+/**
+ * @param {number} value
+ * @returns {number}
+ */
+export function roundNumber(value: number): number;
+/**
+ * @param {number} value
+ * @returns {string}
+ */
+export function fmt(value: number): string;
+/**
+ * @param {number} x
+ * @param {number} y
+ * @returns {string}
+ */
+export function point(x: number, y: number): string;
+/**
+ * @param {number} value
+ * @param {number} min
+ * @param {number} max
+ * @returns {number}
+ */
+export function clamp(value: number, min: number, max: number): number;
 /**
  * A point on a rect's edge (or centre). `rect` is `{ x, y, width, height }`.
  * @param {Rect} rect

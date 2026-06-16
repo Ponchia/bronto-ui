@@ -10,7 +10,17 @@ These are **not** part of the published package (`files` allowlist
 excludes them).
 
 `npm run check:examples` keeps this inventory, the CI matrix, browser-smoke
-list, smoke-script branches, README rows, and preview ports aligned.
+list, smoke-script branches, README rows, preview ports, and the cross-browser
+packed-example smoke command aligned.
+
+The default packed-example gate (`npm run test:examples`) builds every example
+from the tarball and smokes runtime examples in Chromium. For a deeper local
+consumer pass, run `npm run test:examples:cross-browser` to exercise every
+packed example in Chromium, Firefox, and WebKit; pass example names after `--`
+to narrow the run. Manual CI dispatches opt into that same cross-browser packed
+example path. `npm run test:examples:visual` adds desktop + mobile
+screenshot/layout health smokes (blank, under-painted, and horizontal overflow
+detection) without committing platform-specific PNG baselines.
 
 | Example                          | Stack            | Guide                                     |
 | -------------------------------- | ---------------- | ----------------------------------------- |

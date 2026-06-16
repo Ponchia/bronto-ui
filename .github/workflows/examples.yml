@@ -5,11 +5,38 @@
 # allowlist; it does not build a consumer, so this is a distinct gate.
 #
 # Called by BOTH ci.yml and release.yml via `workflow_call` — one matrix
-# definition, no drift between the merge path and the release path.
+# definition, no drift between the merge path and the release path. Manual
+# runs can opt into the deeper chromium+firefox+webkit packed smoke without
+# tripling the default PR matrix.
 name: examples
 
 on:
   workflow_call:
+    inputs:
+      cross_browser:
+        description: >
+          Run packed browser smokes in chromium, firefox, and webkit. Default
+          false keeps the normal PR/release examples matrix Chromium-only;
+          manual CI/reusable callers can set true for the deeper consumer pass.
+        type: boolean
+        default: false
+      visual_smoke:
+        description: >
+          Add desktop + mobile screenshot/layout health smokes for each packed
+          example. This checks for blank, under-painted, or horizontally
+          overflowing output without committing platform-specific PNG baselines.
+        type: boolean
+        default: false
+  workflow_dispatch:
+    inputs:
+      cross_browser:
+        description: Run packed browser smokes in chromium, firefox, and webkit.
+        type: boolean
+        default: true
+      visual_smoke:
+        description: Add desktop + mobile screenshot/layout health smokes.
+        type: boolean
+        default: true
 
 # Least privilege: this workflow only reads the repo.
 permissions:
@@ -51,9 +78,26 @@ jobs:
 
       - run: npm ci
 
-      - name: Install Chromium for browser smoke
-        if: contains(fromJSON('["vanilla-vite","sveltekit","vue-vite","react-vite","solid-vite","tailwind-vite","report-static"]'), matrix.example)
+      - name: Install Playwright browsers for cross-browser smoke
+        if: contains(fromJSON('["vanilla-vite","astro","sveltekit","vue-vite","react-vite","solid-vite","qwik-vite","tailwind-vite","report-static"]'), matrix.example) && inputs.cross_browser
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Install Chromium for default browser smoke
+        if: contains(fromJSON('["vanilla-vite","astro","sveltekit","vue-vite","react-vite","solid-vite","qwik-vite","tailwind-vite","report-static"]'), matrix.example) && !inputs.cross_browser
         run: npx playwright install --with-deps chromium
 
       - name: Build and smoke the ${{ matrix.example }} packed example
-        run: npm run test:examples -- ${{ matrix.example }}
+        env:
+          CROSS_BROWSER: ${{ inputs.cross_browser }}
+          VISUAL_SMOKE: ${{ inputs.visual_smoke }}
+        run: |
+          args=()
+          if [ "$VISUAL_SMOKE" = "true" ]; then
+            args+=(--visual)
+          fi
+          args+=("${{ matrix.example }}")
+          if [ "$CROSS_BROWSER" = "true" ]; then
+            npm run test:examples:cross-browser -- "${args[@]}"
+          else
+            npm run test:examples -- "${args[@]}"
+          fi

@@ -13,11 +13,12 @@ export function dismissible({ root } = {}) {
   const host = resolveHost(root);
   if (!host) return noop;
   const onClick = (e) => {
-    const btn = e.target.closest('[data-bronto-dismiss]');
+    const btn = closestSafe(e.target, '[data-bronto-dismiss]');
     if (!btn || !host.contains(btn)) return;
     const sel = btn.getAttribute('data-bronto-dismiss');
-    const target = sel ? closestSafe(btn, sel) : btn.closest('[data-bronto-dismissible]');
+    const target = sel ? closestSafe(btn, sel) : closestSafe(btn, '[data-bronto-dismissible]');
     if (!target) return;
+    e.preventDefault();
     const ev = new CustomEvent('bronto:dismiss', { bubbles: true, cancelable: true });
     if (target.dispatchEvent(ev)) target.remove();
   };

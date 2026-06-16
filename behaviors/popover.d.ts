@@ -2,9 +2,10 @@
  * Collision-aware popover, dependency-free. A `[data-bronto-popover]`
  * trigger toggles the `.ui-popover` panel whose id it names. The panel
  * is placed under the trigger and **flips above** when it would
- * overflow the viewport, with its inline edge clamped on-screen — the
- * thing the CSS-only tooltip can't do near edges / inside scroll
- * containers. If the panel has the native `popover` attribute and the
+ * overflow the viewport, with its inline edge clamped on-screen and tall
+ * panels constrained to scroll inside the viewport — the thing the CSS-only
+ * tooltip can't do near edges / inside scroll containers. If the panel has
+ * the native `popover` attribute and the
  * Popover API is available it is shown in the top layer (never
  * clipped); otherwise an `.is-open` class is toggled. Manages
  * `aria-expanded` / `aria-controls`, closes on Escape and outside

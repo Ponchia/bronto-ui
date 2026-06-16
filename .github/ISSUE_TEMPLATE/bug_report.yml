@@ -6,7 +6,7 @@ body:
     id: version
     attributes:
       label: '@ponchia/ui version'
-      placeholder: '0.6.7'
+      placeholder: '0.6.8'
     validations:
       required: true
   - type: dropdown
@@ -25,7 +25,7 @@ body:
     id: consumer
     attributes:
       label: Consuming framework
-      description: Astro / SvelteKit / React / Solid / Qwik / plain HTML, + version. Do not include private project names or secrets in public issues.
+      description: Astro / SvelteKit / Vue / React / Solid / Qwik / plain HTML, + version. Do not include private project names or secrets in public issues.
       placeholder: 'Astro 4.x'
     validations:
       required: true

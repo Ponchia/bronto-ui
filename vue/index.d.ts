@@ -5,30 +5,50 @@
  * @returns {BrontoDirective}
  */
 export function createBrontoDirective(init: (opts?: DelegateOpts) => Cleanup | void): BrontoDirective;
+/** @type {BrontoThemeDirective} */
+export const vThemeToggle: BrontoThemeDirective;
 /** @type {BrontoDirective} */
-export const vThemeToggle: BrontoDirective;
 export const vDismissible: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vDisabledGuard: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vDisclosure: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vMenu: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vFormValidation: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vCombobox: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vPopover: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vTableSort: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vTabs: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vDialog: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vModal: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vCarousel: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vDotGlyph: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vLegend: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vConnectors: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vSpotlight: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vCrosshair: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vCommand: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vSources: BrontoDirective;
+/** @type {BrontoDirective} */
 export const vSplitter: BrontoDirective;
 export const directives: Readonly<{
-    themeToggle: BrontoDirective;
+    themeToggle: BrontoThemeDirective;
     dismissible: BrontoDirective;
     disabledGuard: BrontoDirective;
     disclosure: BrontoDirective;
@@ -50,9 +70,8 @@ export const directives: Readonly<{
     sources: BrontoDirective;
     splitter: BrontoDirective;
 }>;
-export const brontoVue: Readonly<{
-    install(app: any): void;
-}>;
+/** @type {BrontoVuePlugin} */
+export const brontoVue: BrontoVuePlugin;
 export default brontoVue;
 export function useToast(): (message: string, opts?: ToastOpts) => Cleanup;
 export type Cleanup = import("../behaviors/index.js").Cleanup;
@@ -63,14 +82,32 @@ export type BrontoDirectiveRoot = Document | Element | null | undefined;
 export type BrontoDirectiveOpts = Omit<DelegateOpts, "root"> & {
     root?: BrontoDirectiveRoot;
 };
+export type BrontoThemeDirectiveOpts = Omit<ThemeStorageOpts & DelegateOpts, "root"> & {
+    root?: BrontoDirectiveRoot;
+};
 export type BrontoDirectiveBinding = {
     value?: BrontoDirectiveOpts | null | undefined;
     oldValue?: BrontoDirectiveOpts | null | undefined;
+};
+export type BrontoThemeDirectiveBinding = {
+    value?: BrontoThemeDirectiveOpts | null | undefined;
+    oldValue?: BrontoThemeDirectiveOpts | null | undefined;
 };
 export type BrontoDirective = {
     mounted: (el: Element, binding?: BrontoDirectiveBinding) => void;
     updated: (el: Element, binding?: BrontoDirectiveBinding) => void;
     beforeUnmount: (el: Element) => void;
+};
+export type BrontoThemeDirective = {
+    mounted: (el: Element, binding?: BrontoThemeDirectiveBinding) => void;
+    updated: (el: Element, binding?: BrontoThemeDirectiveBinding) => void;
+    beforeUnmount: (el: Element) => void;
+};
+export type BrontoVueApp = {
+    directive: (name: string, directive: BrontoDirective | BrontoThemeDirective) => unknown;
+};
+export type BrontoVuePlugin = {
+    install: (app: BrontoVueApp) => void;
 };
 import { applyStoredTheme } from '../behaviors/index.js';
 import { toast } from '../behaviors/index.js';

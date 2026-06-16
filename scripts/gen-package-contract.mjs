@@ -18,6 +18,16 @@ import { isMain, repoRoot as root, writeGenerated } from './lib/emit.mjs';
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const coreLeaves = new Set(leafFiles());
 const optInLeaves = new Set(EXTRA_LEAVES);
+const jsDtsDirs = [
+  'behaviors',
+  'annotations',
+  'connectors',
+  'react',
+  'solid',
+  'qwik',
+  'svelte',
+  'vue',
+];
 
 const code = (value) => `\`${String(value).replaceAll('`', '\\`')}\``;
 const cell = (value) => String(value).replaceAll('|', '\\|').replaceAll('\n', '<br>');
@@ -212,11 +222,7 @@ function fileClass(path) {
       'Class recipe source plus generated JSON/declarations/custom-data.',
     ];
   }
-  if (
-    ['behaviors', 'annotations', 'connectors', 'react', 'solid', 'qwik', 'svelte', 'vue'].includes(
-      path,
-    )
-  ) {
+  if (jsDtsDirs.includes(path)) {
     return [
       'Authored public JS directory',
       'ESM source shipped as-is; adjacent declarations/maps are generated.',
@@ -280,8 +286,8 @@ function provenanceRows() {
       'package.json',
       'docs/package-contract.md',
       'package-contract:build',
-      'check:fresh',
-      'The complete export/file matrix in this document is generated from the manifest.',
+      'check:fresh; check:exports; check:pack; check:consumer-surface; check:consumer-types; check:publint; check:attw',
+      'The complete export/file matrix in this document is generated from the manifest; packed tarball imports, concrete file resolution, and package-level type resolution are smoke-tested in clean consumers.',
     ],
     [
       'Token model',
@@ -304,23 +310,23 @@ function provenanceRows() {
       'css/core.css plus css/*.css leaves',
       `dist/bronto.css; dist/css/*.css (${Object.keys(buildBundles()).length} layered outputs)`,
       'dist:build',
-      'check:dist; check:exports',
-      'Default bundle and direct layered leaf imports are generated from authored CSS and size-gated.',
+      'check:dist; check:exports; check:component-matrix',
+      'Default bundle and direct layered leaf imports are generated from authored CSS, size-gated, and coverage-owned as foundation or component leaves.',
     ],
     [
       'JSDoc-authored public JS',
-      'behaviors/; annotations/; connectors/; react/; solid/; qwik/',
+      jsDtsDirs.map((dir) => `${dir}/`).join('; '),
       'adjacent *.d.ts and *.d.ts.map files',
       'dts:emit',
-      'check:dts-emit; check:types; check:attw; check:publint',
-      'Declarations are emitted from the shipped JS, not separately maintained.',
+      'check:dts-emit; check:types; check:consumer-surface; check:consumer-types; check:behavior-matrix; check:attw; check:publint',
+      'Declarations are emitted from the shipped JS, package subpath imports are compiled from a packed clean consumer, and public behavior exports are docs/unit/browser owned.',
     ],
     [
       'Glyph registry',
       'glyphs/glyphs.js',
       'glyphs/glyphs.d.ts',
       'glyphs:build',
-      'check:glyphs; npm test',
+      'check:glyphs; check:unit',
       'Glyph names and render options are public. The registry stays sorted and type-covered.',
     ],
     [
@@ -344,8 +350,8 @@ function provenanceRows() {
       'tokens/mermaid.js; tokens/d2.js; tokens/vega.js',
       'tokens/{mermaid,d2,vega}.{js,json,d.ts}',
       'mermaid:build; d2:build; vega:build',
-      'check:mermaid; check:d2; check:vega',
-      'Renderer configs use resolved colors because the external renderers cannot consume CSS variables directly.',
+      'check:mermaid; check:d2; check:vega; check:unit',
+      'Renderer configs use resolved colors because the external renderers cannot consume CSS variables directly; unit tests prove helper defaults and Vega render landing.',
     ],
     [
       'Contrast report',
