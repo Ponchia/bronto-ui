@@ -6,8 +6,8 @@
 #
 # Called by BOTH ci.yml and release.yml via `workflow_call` — one matrix
 # definition, no drift between the merge path and the release path. Manual
-# runs can opt into the deeper chromium+firefox+webkit packed smoke without
-# tripling the default PR matrix.
+# runs always take the deeper chromium+firefox+webkit packed smoke without
+# exposing user-controlled build-shaping inputs.
 name: examples
 
 on:
@@ -28,15 +28,6 @@ on:
         type: boolean
         default: false
   workflow_dispatch:
-    inputs:
-      cross_browser:
-        description: Run packed browser smokes in chromium, firefox, and webkit.
-        type: boolean
-        default: true
-      visual_smoke:
-        description: Add desktop + mobile screenshot/layout health smokes.
-        type: boolean
-        default: true
 
 # Least privilege: this workflow only reads the repo.
 permissions:
@@ -79,17 +70,17 @@ jobs:
       - run: npm ci
 
       - name: Install Playwright browsers for cross-browser smoke
-        if: contains(fromJSON('["vanilla-vite","astro","sveltekit","vue-vite","react-vite","solid-vite","qwik-vite","tailwind-vite","report-static"]'), matrix.example) && inputs.cross_browser
+        if: contains(fromJSON('["vanilla-vite","astro","sveltekit","vue-vite","react-vite","solid-vite","qwik-vite","tailwind-vite","report-static"]'), matrix.example) && (github.event_name == 'workflow_dispatch' || inputs.cross_browser)
         run: npx playwright install --with-deps chromium firefox webkit
 
       - name: Install Chromium for default browser smoke
-        if: contains(fromJSON('["vanilla-vite","astro","sveltekit","vue-vite","react-vite","solid-vite","qwik-vite","tailwind-vite","report-static"]'), matrix.example) && !inputs.cross_browser
+        if: contains(fromJSON('["vanilla-vite","astro","sveltekit","vue-vite","react-vite","solid-vite","qwik-vite","tailwind-vite","report-static"]'), matrix.example) && github.event_name != 'workflow_dispatch' && !inputs.cross_browser
         run: npx playwright install --with-deps chromium
 
       - name: Build and smoke the ${{ matrix.example }} packed example
         env:
-          CROSS_BROWSER: ${{ inputs.cross_browser }}
-          VISUAL_SMOKE: ${{ inputs.visual_smoke }}
+          CROSS_BROWSER: ${{ github.event_name == 'workflow_dispatch' || inputs.cross_browser }}
+          VISUAL_SMOKE: ${{ github.event_name == 'workflow_dispatch' || inputs.visual_smoke }}
         run: |
           args=()
           if [ "$VISUAL_SMOKE" = "true" ]; then

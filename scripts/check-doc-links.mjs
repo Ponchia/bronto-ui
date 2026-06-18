@@ -207,18 +207,35 @@ function recordLink(sourceRel, line, rawTarget, { requirePackedTarget = false } 
   const parsed = parseUrl(rawTarget);
   if (!parsed || parsed.skip) return;
 
-  const local = resolveLocal(sourceRel, parsed.path);
-  if (!local) {
-    problems.push(`${sourceRel}:${line}  ${rawTarget} — local link escapes the repository`);
-    return;
-  }
+  const local = localLinkTarget(sourceRel, line, rawTarget, parsed.path);
+  if (!local) return;
 
   checkedLinks += 1;
+  if (!targetExists(sourceRel, line, rawTarget, local)) return;
+
+  const stat = statSync(local.abs);
+  if (!checkPackedTarget(sourceRel, line, rawTarget, local, stat, requirePackedTarget)) return;
+  if (stat.isFile()) checkAnchorTarget(sourceRel, line, rawTarget, local, parsed.hash);
+}
+
+function localLinkTarget(sourceRel, line, rawTarget, targetPath) {
+  const local = resolveLocal(sourceRel, targetPath);
+  if (!local) {
+    problems.push(`${sourceRel}:${line}  ${rawTarget} — local link escapes the repository`);
+    return null;
+  }
+  return local;
+}
+
+function targetExists(sourceRel, line, rawTarget, local) {
   if (!existsSync(local.abs)) {
     problems.push(`${sourceRel}:${line}  ${rawTarget} — missing local target ${local.rel}`);
-    return;
+    return false;
   }
-  const stat = statSync(local.abs);
+  return true;
+}
+
+function checkPackedTarget(sourceRel, line, rawTarget, local, stat, requirePackedTarget) {
   const packedRel = local.rel.replace(/\\/g, '/');
   if (stat.isFile() && requirePackedTarget) {
     checkedPackedTargets += 1;
@@ -227,12 +244,14 @@ function recordLink(sourceRel, line, rawTarget, { requirePackedTarget = false } 
     problems.push(
       `${sourceRel}:${line}  ${rawTarget} — target ${packedRel} is not shipped in the npm package`,
     );
-    return;
+    return false;
   }
-  if (!stat.isFile()) return;
+  return true;
+}
 
-  if (!parsed.hash) return;
-  const anchor = normalizeHash(parsed.hash);
+function checkAnchorTarget(sourceRel, line, rawTarget, local, hash) {
+  if (!hash) return;
+  const anchor = normalizeHash(hash);
   if (!anchor) return;
   checkedAnchors += 1;
   const anchors = anchorsFor(local.abs);
@@ -327,45 +346,46 @@ function requireSameDocsInventory(label, actual, expected) {
 function inlineMarkdownLinks(text) {
   const links = [];
   for (let i = 0; i < text.length; i += 1) {
-    if (text[i] !== '[') continue;
-    if (i > 0 && text[i - 1] === '\\') continue;
+    if (!isUnescapedLabelStart(text, i)) continue;
 
     const closeLabel = text.indexOf(']', i + 1);
     if (closeLabel === -1 || text[closeLabel + 1] !== '(') continue;
 
-    let j = closeLabel + 2;
-    let depth = 0;
-    let target = '';
-    let done = false;
-    for (; j < text.length; j += 1) {
-      const char = text[j];
-      if (char === '\\') {
-        target += char + (text[j + 1] ?? '');
-        j += 1;
-        continue;
-      }
-      if (char === '(') {
-        depth += 1;
-        target += char;
-        continue;
-      }
-      if (char === ')') {
-        if (depth === 0) {
-          done = true;
-          break;
-        }
-        depth -= 1;
-        target += char;
-        continue;
-      }
-      target += char;
-    }
-    if (done) {
-      links.push({ index: i, target: target.split(/\s+["'(]/, 1)[0] });
-      i = j;
+    const parsed = parseInlineTarget(text, closeLabel + 2);
+    if (parsed) {
+      links.push({ index: i, target: parsed.target.split(/\s+["'(]/, 1)[0] });
+      i = parsed.end;
     }
   }
   return links;
+}
+
+function isUnescapedLabelStart(text, index) {
+  return text[index] === '[' && (index === 0 || text[index - 1] !== '\\');
+}
+
+function parseInlineTarget(text, start) {
+  let depth = 0;
+  let target = '';
+  for (let index = start; index < text.length; index += 1) {
+    const next = readInlineTargetChar(text, index, depth);
+    if (next.done) return { target, end: index };
+    target += next.value;
+    depth = next.depth;
+    index = next.index;
+  }
+  return null;
+}
+
+function readInlineTargetChar(text, index, depth) {
+  const char = text[index];
+  if (char === '\\') {
+    return { value: char + (text[index + 1] ?? ''), depth, index: index + 1, done: false };
+  }
+  if (char === '(') return { value: char, depth: depth + 1, index, done: false };
+  if (char === ')' && depth === 0) return { value: '', depth, index, done: true };
+  if (char === ')') return { value: char, depth: depth - 1, index, done: false };
+  return { value: char, depth, index, done: false };
 }
 
 for (const rel of authoringSources) {

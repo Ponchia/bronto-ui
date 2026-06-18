@@ -182,6 +182,7 @@ are copied into consumer reports.
 | published tarball == intended `files` only      | `check-pack.mjs`    |
 | packed core JS/JSON public subpaths import without optional framework peers, packed JS named exports exactly match source modules, peer-backed adapters import after peers are linked, concrete CSS/doc/font subpaths resolve, and packed behavior initializers/toast no-op in a clean consumer with no DOM globals | `check-consumer-surface.mjs` |
 | packed typed public subpaths compile through package exports in a clean TypeScript consumer | `check-consumer-types.mjs` |
+| function-level cyclomatic complexity stays ≤12 and function NLOC stays within budget, with no per-function exception list | `check-complexity.mjs` |
 | GitHub Actions workflow syntax and embedded shell snippets lint | `check:workflows` (`github-actionlint`) |
 | every shipped CSS leaf is classified as foundation or has explicit docs/demo/e2e ownership | `check-component-matrix.mjs` |
 | every public behavior export has explicit docs, unit-test, and browser-test ownership | `check-behavior-matrix.mjs` |
