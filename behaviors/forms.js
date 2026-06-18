@@ -1,5 +1,196 @@
 import { hasDom, resolveHost, noop, bindOnce, nextFieldUid, collectHosts } from './internal.js';
 
+function snapshotAttrs(el, names) {
+  const out = {};
+  for (const name of names) {
+    out[name] = {
+      had: el.hasAttribute(name),
+      value: el.getAttribute(name),
+    };
+  }
+  return out;
+}
+
+function restoreAttrs(el, attrs) {
+  for (const [name, attr] of Object.entries(attrs)) {
+    if (attr.had) el.setAttribute(name, attr.value);
+    else el.removeAttribute(name);
+  }
+}
+
+function createValidationState() {
+  return {
+    priorNoValidate: new Map(),
+    controlState: new Map(),
+    slotState: new Map(),
+    summaryState: new Map(),
+    // Borrowed `.ui-hint` help text is restored after an invalid field becomes valid.
+    hintHelp: new WeakMap(),
+  };
+}
+
+function suppressNativeValidation(form, state) {
+  if (!state.priorNoValidate.has(form)) state.priorNoValidate.set(form, form.noValidate);
+  form.noValidate = true;
+}
+
+function rememberControl(control, state) {
+  if (!state.controlState.has(control)) {
+    state.controlState.set(
+      control,
+      snapshotAttrs(control, ['aria-invalid', 'aria-describedby', 'id']),
+    );
+  }
+}
+
+function rememberSlot(slot, state) {
+  if (!state.slotState.has(slot)) {
+    state.slotState.set(slot, {
+      attrs: snapshotAttrs(slot, ['id']),
+      text: slot.textContent,
+      hadErrorClass: slot.classList.contains('ui-hint--error'),
+    });
+  }
+}
+
+function rememberSummary(summary, state) {
+  if (!state.summaryState.has(summary)) {
+    state.summaryState.set(summary, {
+      attrs: snapshotAttrs(summary, ['role', 'tabindex']),
+      children: [...summary.childNodes],
+      hidden: summary.hidden,
+    });
+  }
+}
+
+function ensureId(el, prefix) {
+  if (!el.id) el.id = `${prefix}-${nextFieldUid()}`;
+  return el.id;
+}
+
+function slotFor(control) {
+  const field = control.closest('.ui-field');
+  if (!field) return null;
+  const dedicated = field.querySelector('[data-bronto-error]');
+  if (dedicated) return dedicated;
+  return field.querySelector('.ui-hint');
+}
+
+function link(control, slot) {
+  const slotId = ensureId(slot, 'bronto-err');
+  const ids = (control.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+  if (!ids.includes(slotId)) {
+    ids.push(slotId);
+    control.setAttribute('aria-describedby', ids.join(' '));
+  }
+}
+
+function unlink(control, slot) {
+  if (!slot.id) return;
+  const ids = (control.getAttribute('aria-describedby') || '')
+    .split(/\s+/)
+    .filter((id) => id && id !== slot.id);
+  if (ids.length) control.setAttribute('aria-describedby', ids.join(' '));
+  else control.removeAttribute('aria-describedby');
+}
+
+function slotKind(slot) {
+  // Decide the slot TYPE by `[data-bronto-error]`, not by `.ui-hint`: canonical
+  // dedicated error markup can carry both.
+  const dedicated = !!slot?.matches?.('[data-bronto-error]');
+  const hasHintClass = !!slot?.classList.contains('ui-hint');
+  return { hasHintClass, borrowedHint: hasHintClass && !dedicated };
+}
+
+function clearFieldError(control, slot, kind, state) {
+  control.removeAttribute('aria-invalid');
+  if (!slot) return;
+  if (kind.hasHintClass) slot.classList.remove('ui-hint--error');
+  if (kind.borrowedHint) {
+    slot.textContent = state.hintHelp.get(slot) ?? '';
+    return;
+  }
+  slot.textContent = '';
+  unlink(control, slot);
+}
+
+function showFieldError(control, slot, kind, state) {
+  control.setAttribute('aria-invalid', 'true');
+  if (!slot) return;
+  if (kind.borrowedHint && !state.hintHelp.has(slot)) state.hintHelp.set(slot, slot.textContent);
+  slot.textContent = control.validationMessage;
+  if (kind.hasHintClass) slot.classList.add('ui-hint--error');
+  link(control, slot);
+}
+
+function validateField(control, state) {
+  if (!control.willValidate) return true;
+  rememberControl(control, state);
+  const ok = control.validity.valid;
+  const slot = slotFor(control);
+  if (slot) rememberSlot(slot, state);
+  const kind = slotKind(slot);
+  if (ok) clearFieldError(control, slot, kind, state);
+  else showFieldError(control, slot, kind, state);
+  return ok;
+}
+
+function controlsOf(form) {
+  return [...form.elements].filter(
+    (el) => el.willValidate && el.type !== 'submit' && el.type !== 'button',
+  );
+}
+
+function summaryItem(control) {
+  const id = ensureId(control, 'bronto-field');
+  const li = document.createElement('li');
+  const a = document.createElement('a');
+  a.href = `#${id}`;
+  a.textContent = control.validationMessage;
+  a.addEventListener('click', (e) => {
+    e.preventDefault();
+    control.focus();
+  });
+  li.appendChild(a);
+  return li;
+}
+
+function refreshSummary(form, invalid, state) {
+  const summary = form.querySelector('[data-bronto-error-summary]');
+  if (!summary) return;
+  rememberSummary(summary, state);
+  if (!invalid.length) {
+    summary.hidden = true;
+    summary.replaceChildren();
+    return;
+  }
+  const title = document.createElement('p');
+  title.className = 'ui-error-summary__title';
+  title.textContent = 'There is a problem';
+  const list = document.createElement('ul');
+  list.className = 'ui-error-summary__list';
+  list.append(...invalid.map(summaryItem));
+  summary.replaceChildren(title, list);
+  summary.setAttribute('role', 'alert');
+  summary.tabIndex = -1;
+  summary.hidden = false;
+}
+
+function restoreValidationState(state) {
+  for (const [form, noValidate] of state.priorNoValidate) form.noValidate = noValidate;
+  for (const [summary, snapshot] of state.summaryState) {
+    summary.replaceChildren(...snapshot.children);
+    summary.hidden = snapshot.hidden;
+    restoreAttrs(summary, snapshot.attrs);
+  }
+  for (const [slot, snapshot] of state.slotState) {
+    slot.textContent = snapshot.text;
+    slot.classList.toggle('ui-hint--error', snapshot.hadErrorClass);
+    restoreAttrs(slot, snapshot.attrs);
+  }
+  for (const [control, attrs] of state.controlState) restoreAttrs(control, attrs);
+}
+
 /**
  * Accessible form validation glue for `<form data-bronto-validate>`.
  * Progressive enhancement over the native Constraint Validation API —
@@ -29,206 +220,36 @@ export function initFormValidation({ root } = {}) {
   if (!hasDom()) return noop;
   const host = resolveHost(root);
   if (!host) return noop;
-  let priorNoValidate = new Map();
-  let controlState = new Map();
-  let slotState = new Map();
-  let summaryState = new Map();
+  let state = createValidationState();
 
-  const suppressNativeValidation = (form) => {
-    if (!priorNoValidate.has(form)) priorNoValidate.set(form, form.noValidate);
-    form.noValidate = true;
-  };
-
-  const snapshotAttrs = (el, names) => {
-    const out = {};
-    for (const name of names) {
-      out[name] = {
-        had: el.hasAttribute(name),
-        value: el.getAttribute(name),
-      };
-    }
-    return out;
-  };
-
-  const restoreAttrs = (el, attrs) => {
-    for (const [name, attr] of Object.entries(attrs)) {
-      if (attr.had) el.setAttribute(name, attr.value);
-      else el.removeAttribute(name);
-    }
-  };
-
-  const rememberControl = (control) => {
-    if (!controlState.has(control)) {
-      controlState.set(control, snapshotAttrs(control, ['aria-invalid', 'aria-describedby', 'id']));
-    }
-  };
-
-  const rememberSlot = (slot) => {
-    if (!slotState.has(slot)) {
-      slotState.set(slot, {
-        attrs: snapshotAttrs(slot, ['id']),
-        text: slot.textContent,
-        hadErrorClass: slot.classList.contains('ui-hint--error'),
-      });
-    }
-  };
-
-  const rememberSummary = (summary) => {
-    if (!summaryState.has(summary)) {
-      summaryState.set(summary, {
-        attrs: snapshotAttrs(summary, ['role', 'tabindex']),
-        children: [...summary.childNodes],
-        hidden: summary.hidden,
-      });
-    }
-  };
-
-  const ensureId = (el, prefix) => {
-    if (!el.id) el.id = `${prefix}-${nextFieldUid()}`;
-    return el.id;
-  };
-
-  // When the field has no dedicated `[data-bronto-error]` node we fall back to
-  // the shared `.ui-hint` help slot. Snapshot its original help text the first
-  // time we overwrite it with an error, so the valid branch can RESTORE the help
-  // rather than blanking it permanently (component-audit C8).
-  const hintHelp = new WeakMap();
-
-  const slotFor = (control) => {
-    const field = control.closest('.ui-field');
-    if (!field) return null;
-    const dedicated = field.querySelector('[data-bronto-error]');
-    if (dedicated) return dedicated;
-    return field.querySelector('.ui-hint');
-  };
-
-  const link = (control, slot) => {
-    const slotId = ensureId(slot, 'bronto-err');
-    const ids = (control.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
-    if (!ids.includes(slotId)) {
-      ids.push(slotId);
-      control.setAttribute('aria-describedby', ids.join(' '));
-    }
-  };
-
-  const unlink = (control, slot) => {
-    if (!slot.id) return;
-    const ids = (control.getAttribute('aria-describedby') || '')
-      .split(/\s+/)
-      .filter((id) => id && id !== slot.id);
-    if (ids.length) control.setAttribute('aria-describedby', ids.join(' '));
-    else control.removeAttribute('aria-describedby');
-  };
-
-  const validateField = (control) => {
-    if (!control.willValidate) return true;
-    rememberControl(control);
-    const ok = control.validity.valid;
-    const slot = slotFor(control);
-    if (slot) rememberSlot(slot);
-    // Decide the slot TYPE by the `[data-bronto-error]` attribute, NOT the
-    // `.ui-hint` class: the canonical markup is `<p class="ui-hint"
-    // data-bronto-error>`, which carries BOTH. Keying off `.ui-hint` sent that
-    // dedicated error node down the help-hint branch, which never unlink()s — so
-    // the field kept a dangling aria-describedby to an empty error node after it
-    // was fixed (component-audit C6). Only a *borrowed* plain `.ui-hint` (a help
-    // slot with no dedicated error node) snapshots/restores its help text and
-    // stays linked in the valid state.
-    const dedicated = !!slot?.matches?.('[data-bronto-error]');
-    const hasHintClass = !!slot?.classList.contains('ui-hint');
-    const borrowedHint = hasHintClass && !dedicated;
-    if (ok) {
-      control.removeAttribute('aria-invalid');
-      if (slot) {
-        if (hasHintClass) slot.classList.remove('ui-hint--error');
-        if (borrowedHint) {
-          // Restore the snapshotted help text (or clear if there was none); a
-          // help-bearing hint stays linked via aria-describedby (it describes
-          // the field in the valid state too).
-          slot.textContent = hintHelp.get(slot) ?? '';
-        } else {
-          // Dedicated error node: clear it and drop the now-stale describedby
-          // so AT doesn't announce an empty error association.
-          slot.textContent = '';
-          unlink(control, slot);
-        }
-      }
-    } else {
-      control.setAttribute('aria-invalid', 'true');
-      if (slot) {
-        if (borrowedHint && !hintHelp.has(slot)) hintHelp.set(slot, slot.textContent);
-        slot.textContent = control.validationMessage;
-        if (hasHintClass) slot.classList.add('ui-hint--error');
-        link(control, slot);
-      }
-    }
-    return ok;
-  };
-
-  const controlsOf = (form) =>
-    [...form.elements].filter(
-      (el) => el.willValidate && el.type !== 'submit' && el.type !== 'button',
-    );
-
-  const refreshSummary = (form, invalid) => {
-    const summary = form.querySelector('[data-bronto-error-summary]');
-    if (!summary) return;
-    rememberSummary(summary);
-    if (!invalid.length) {
-      summary.hidden = true;
-      summary.replaceChildren();
-      return;
-    }
-    const title = document.createElement('p');
-    title.className = 'ui-error-summary__title';
-    title.textContent = 'There is a problem';
-    const list = document.createElement('ul');
-    list.className = 'ui-error-summary__list';
-    for (const c of invalid) {
-      const id = ensureId(c, 'bronto-field');
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-      a.href = `#${id}`;
-      a.textContent = c.validationMessage;
-      a.addEventListener('click', (e) => {
-        e.preventDefault();
-        c.focus();
-      });
-      li.appendChild(a);
-      list.appendChild(li);
-    }
-    summary.replaceChildren(title, list);
-    summary.setAttribute('role', 'alert');
-    summary.tabIndex = -1;
-    summary.hidden = false;
-  };
-
-  const onSubmit = (e) => {
-    const form = e.target.closest?.('[data-bronto-validate]');
+  const onSubmit = (event) => {
+    const form = event.target.closest?.('[data-bronto-validate]');
     if (!form) return;
-    suppressNativeValidation(form);
-    const invalid = controlsOf(form).filter((c) => !validateField(c));
-    refreshSummary(form, invalid);
+    suppressNativeValidation(form, state);
+    const invalid = controlsOf(form).filter((control) => !validateField(control, state));
+    refreshSummary(form, invalid, state);
     if (invalid.length) {
-      e.preventDefault();
+      event.preventDefault();
       const summary = form.querySelector('[data-bronto-error-summary]');
       (summary && !summary.hidden ? summary : invalid[0]).focus();
     }
   };
 
-  const onBlur = (e) => {
-    const control = e.target;
+  const onBlur = (event) => {
+    const control = event.target;
     if (!control.willValidate) return;
     const form = control.closest?.('[data-bronto-validate]');
     if (!form) return;
-    suppressNativeValidation(form);
-    validateField(control);
+    suppressNativeValidation(form, state);
+    validateField(control, state);
     const summary = form.querySelector('[data-bronto-error-summary]');
-    if (summary && !summary.hidden)
+    if (summary && !summary.hidden) {
       refreshSummary(
         form,
-        controlsOf(form).filter((c) => !c.validity.valid),
+        controlsOf(form).filter((candidate) => !candidate.validity.valid),
+        state,
       );
+    }
   };
 
   return bindOnce(host, 'formValidation', () => {
@@ -239,34 +260,17 @@ export function initFormValidation({ root } = {}) {
     // summary — contradicting the documented contract. (Forms added
     // after init are still covered by the in-handler set.)
     const forms = collectHosts(host, '[data-bronto-validate]');
-    priorNoValidate = new Map();
-    controlState = new Map();
-    slotState = new Map();
-    summaryState = new Map();
-    for (const f of forms) {
-      suppressNativeValidation(f);
+    state = createValidationState();
+    for (const form of forms) {
+      suppressNativeValidation(form, state);
     }
     host.addEventListener('submit', onSubmit, true);
     host.addEventListener('focusout', onBlur);
     return () => {
       host.removeEventListener('submit', onSubmit, true);
       host.removeEventListener('focusout', onBlur);
-      for (const [f, v] of priorNoValidate) f.noValidate = v;
-      priorNoValidate.clear();
-      for (const [summary, state] of summaryState) {
-        summary.replaceChildren(...state.children);
-        summary.hidden = state.hidden;
-        restoreAttrs(summary, state.attrs);
-      }
-      summaryState.clear();
-      for (const [slot, state] of slotState) {
-        slot.textContent = state.text;
-        slot.classList.toggle('ui-hint--error', state.hadErrorClass);
-        restoreAttrs(slot, state.attrs);
-      }
-      slotState.clear();
-      for (const [control, attrs] of controlState) restoreAttrs(control, attrs);
-      controlState.clear();
+      restoreValidationState(state);
+      state = createValidationState();
     };
   });
 }

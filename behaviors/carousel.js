@@ -43,6 +43,86 @@ const renderedStatusIndex = (status) => {
   return Number.isInteger(value) ? value - 1 : -1;
 };
 
+const snapshotCarouselState = ({ viewport, slides, status, prevBtn, nextBtn, thumbs }) => ({
+  viewport: snapshotNode(viewport),
+  slides: slides.map((slide) => snapshotNode(slide)),
+  status: snapshotNode(status, { html: true }),
+  controls: [prevBtn, nextBtn, ...thumbs].filter(Boolean).map((control) => snapshotNode(control)),
+});
+
+function restoreCarouselState(state) {
+  restoreNode(state.viewport);
+  state.slides.forEach(restoreNode);
+  restoreNode(state.status);
+  state.controls.forEach(restoreNode);
+}
+
+function setDefaultButtonType(button) {
+  if (button?.tagName === 'BUTTON' && !button.hasAttribute('type')) button.type = 'button';
+}
+
+function applyCarouselA11y({ box, viewport, slides, status, prevBtn, nextBtn, thumbs, n }) {
+  // ARIA scaffolding — pragmatic carousel semantics (not the full APG
+  // tablist), the same restraint initMenu takes.
+  viewport.setAttribute('role', 'group');
+  viewport.setAttribute('aria-roledescription', 'carousel');
+  if (!viewport.hasAttribute('aria-label')) {
+    viewport.setAttribute(
+      'aria-label',
+      box.getAttribute('data-bronto-carousel-label') || 'Carousel',
+    );
+  }
+  if (!viewport.hasAttribute('tabindex')) viewport.tabIndex = 0;
+  slides.forEach((slide, i) => {
+    slide.setAttribute('role', 'group');
+    slide.setAttribute('aria-roledescription', 'slide');
+    if (!slide.hasAttribute('aria-label')) slide.setAttribute('aria-label', `${i + 1} of ${n}`);
+  });
+  if (status) status.setAttribute('aria-live', 'polite');
+  [prevBtn, nextBtn, ...thumbs].forEach(setDefaultButtonType);
+  if (prevBtn && !prevBtn.hasAttribute('aria-label'))
+    prevBtn.setAttribute('aria-label', 'Previous');
+  if (nextBtn && !nextBtn.hasAttribute('aria-label')) nextBtn.setAttribute('aria-label', 'Next');
+}
+
+function bindCarouselLifecycle({
+  box,
+  viewport,
+  slides,
+  status,
+  prevBtn,
+  nextBtn,
+  thumbs,
+  n,
+  render,
+  onKey,
+  onClick,
+  io,
+  holdProgrammatic,
+  clearProgrammaticTimer,
+}) {
+  const state = snapshotCarouselState({ viewport, slides, status, prevBtn, nextBtn, thumbs });
+  applyCarouselA11y({ box, viewport, slides, status, prevBtn, nextBtn, thumbs, n });
+  render();
+  viewport.addEventListener('keydown', onKey);
+  box.addEventListener('click', onClick);
+  // Observe inside the add callback so observe/disconnect pair with the
+  // binding lifecycle: a re-init tears down the prior binding (which
+  // disconnects the old observer) before this starts, so two observers
+  // never watch the same slides — even for one tick.
+  if (io) {
+    holdProgrammatic();
+    slides.forEach((slide) => io.observe(slide));
+  }
+  return () => {
+    viewport.removeEventListener('keydown', onKey);
+    box.removeEventListener('click', onClick);
+    io?.disconnect();
+    clearProgrammaticTimer();
+    restoreCarouselState(state);
+  };
+}
+
 /**
  * Image carousel / gallery, built on CSS scroll-snap so touch + trackpad
  * swipe (and momentum) are the browser's, not hand-rolled. This wires the
@@ -193,66 +273,26 @@ export function initCarousel({ root } = {}) {
       );
     }
 
-    const bound = bindOnce(box, 'carousel', () => {
-      const state = {
-        viewport: snapshotNode(viewport),
-        slides: slides.map((slide) => snapshotNode(slide)),
-        status: snapshotNode(status, { html: true }),
-        controls: [prevBtn, nextBtn, ...thumbs]
-          .filter(Boolean)
-          .map((control) => snapshotNode(control)),
-      };
-
-      // ARIA scaffolding — pragmatic carousel semantics (not the full APG
-      // tablist), the same restraint initMenu takes.
-      viewport.setAttribute('role', 'group');
-      viewport.setAttribute('aria-roledescription', 'carousel');
-      if (!viewport.hasAttribute('aria-label'))
-        viewport.setAttribute(
-          'aria-label',
-          box.getAttribute('data-bronto-carousel-label') || 'Carousel',
-        );
-      if (!viewport.hasAttribute('tabindex')) viewport.tabIndex = 0;
-      slides.forEach((s, i) => {
-        s.setAttribute('role', 'group');
-        s.setAttribute('aria-roledescription', 'slide');
-        if (!s.hasAttribute('aria-label')) s.setAttribute('aria-label', `${i + 1} of ${n}`);
-      });
-      if (status) status.setAttribute('aria-live', 'polite');
-      for (const b of [prevBtn, nextBtn]) {
-        if (!b) continue;
-        if (b.tagName === 'BUTTON' && !b.hasAttribute('type')) b.type = 'button';
-      }
-      for (const b of thumbs) {
-        if (b.tagName === 'BUTTON' && !b.hasAttribute('type')) b.type = 'button';
-      }
-      if (prevBtn && !prevBtn.hasAttribute('aria-label'))
-        prevBtn.setAttribute('aria-label', 'Previous');
-      if (nextBtn && !nextBtn.hasAttribute('aria-label'))
-        nextBtn.setAttribute('aria-label', 'Next');
-
-      render();
-      viewport.addEventListener('keydown', onKey);
-      box.addEventListener('click', onClick);
-      // Observe inside the add callback so observe/disconnect pair with the
-      // binding lifecycle: a re-init tears down the prior binding (which
-      // disconnects the old observer) before this starts, so two observers
-      // never watch the same slides — even for one tick.
-      if (io) {
-        holdProgrammatic();
-        slides.forEach((s) => io.observe(s));
-      }
-      return () => {
-        viewport.removeEventListener('keydown', onKey);
-        box.removeEventListener('click', onClick);
-        io?.disconnect();
-        if (progTimer) clearTimeout(progTimer);
-        restoreNode(state.viewport);
-        state.slides.forEach(restoreNode);
-        restoreNode(state.status);
-        state.controls.forEach(restoreNode);
-      };
-    });
+    const bound = bindOnce(box, 'carousel', () =>
+      bindCarouselLifecycle({
+        box,
+        viewport,
+        slides,
+        status,
+        prevBtn,
+        nextBtn,
+        thumbs,
+        n,
+        render,
+        onKey,
+        onClick,
+        io,
+        holdProgrammatic,
+        clearProgrammaticTimer: () => {
+          if (progTimer) clearTimeout(progTimer);
+        },
+      }),
+    );
     cleanups.push(bound);
   }
 

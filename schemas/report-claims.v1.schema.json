@@ -56,7 +56,7 @@
     },
     "hash": {
       "type": "string",
-      "pattern": "^(sha256|sha384|sha512):[A-Fa-f0-9]+$"
+      "pattern": "^(sha256:[A-Fa-f0-9]{64}|sha384:[A-Fa-f0-9]{96}|sha512:[A-Fa-f0-9]{128})$"
     },
     "claimStatus": {
       "enum": ["supported", "partial", "disputed", "unsupported", "unknown"]

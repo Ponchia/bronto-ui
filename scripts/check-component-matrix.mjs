@@ -3,15 +3,18 @@
 // referenced Playwright/unit specs own the actual assertions.
 //
 // Run: node scripts/check-component-matrix.mjs
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { readdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { discoverNonPixelE2eSpecs } from './lib/e2e-specs.mjs';
 import { reportAndExit } from './lib/gate-report.mjs';
+import { cssLeaves } from './lib/css-leaves.mjs';
+import { checkOwnerProof, createTextReader, relExists } from './lib/ownership-proof.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const text = createTextReader(root);
+const pkg = JSON.parse(text('package.json'));
 const errors = [];
-const textCache = new Map();
 const nonPixelE2eSpecs = new Set(discoverNonPixelE2eSpecs(root));
 
 const FOUNDATIONS = [
@@ -306,34 +309,19 @@ function doc(file, includes) {
   return { file, includes };
 }
 
-function ownerEntry(item, fallbackIncludes = []) {
-  return typeof item === 'string' ? { file: item, includes: fallbackIncludes } : item;
-}
-
-function relExists(rel) {
-  return existsSync(resolve(root, rel));
-}
-
-function text(rel) {
-  if (!textCache.has(rel)) textCache.set(rel, readFileSync(resolve(root, rel), 'utf8'));
-  return textCache.get(rel);
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function jsStringArrayValues(rel, name) {
   const body = text(rel);
-  const match = new RegExp(`const\\s+${name}\\s*=\\s*\\[([\\s\\S]*?)\\];`).exec(body);
+  const pattern = 'const\\s+' + escapeRegExp(name) + '\\s*=\\s*\\[([\\s\\S]*?)\\];';
+  const match = new RegExp(pattern).exec(body);
   if (!match) {
     errors.push(`${rel} is missing ${name} array`);
     return [];
   }
   return [...match[1].matchAll(/['"]([^'"]+)['"]/g)].map((item) => item[1]);
-}
-
-function cssLeaves() {
-  return readdirSync(resolve(root, 'css'))
-    .filter((file) => file.endsWith('.css'))
-    .map((file) => file.replace(/\.css$/, ''))
-    .sort((a, b) => a.localeCompare(b));
 }
 
 const surfacesByCss = new Map();
@@ -350,7 +338,7 @@ for (const entry of FOUNDATIONS) {
   foundationsByCss.set(entry.css, entry.css);
 }
 
-const leaves = new Set(cssLeaves());
+const leaves = new Set(cssLeaves(pkg));
 const showcaseDemoNames = jsStringArrayValues('test/e2e/demos.spec.mjs', 'SHOWCASE');
 const guardOnlyDemoNames = jsStringArrayValues('test/e2e/demos.spec.mjs', 'GUARD_ONLY');
 const demoSweepNameList = [...showcaseDemoNames, ...guardOnlyDemoNames];
@@ -361,8 +349,18 @@ const publicLeafDemos = readdirSync(resolve(root, 'demo'))
   .filter((name) => name !== 'index')
   .sort((a, b) => a.localeCompare(b));
 
+function demoName(demoPath) {
+  return demoPath.replace(/^demo\//, '').replace(/\.html$/, '');
+}
+
+function demoCounts(names) {
+  const counts = new Map();
+  for (const name of names) counts.set(name, (counts.get(name) ?? 0) + 1);
+  return counts;
+}
+
 for (const name of demoSweepNameList) {
-  if (!relExists(`demo/${name}.html`)) {
+  if (!relExists(root, `demo/${name}.html`)) {
     errors.push(`test/e2e/demos.spec.mjs sweeps missing demo/${name}.html`);
   }
 }
@@ -373,19 +371,13 @@ for (const name of publicLeafDemos) {
     );
   }
 }
-const duplicateDemoSweepNames = new Set();
-for (const name of demoSweepNameList) {
-  const duplicateCount = demoSweepNameList.filter((candidate) => candidate === name).length;
+for (const [name, duplicateCount] of demoCounts(demoSweepNameList)) {
   if (duplicateCount > 1) {
-    duplicateDemoSweepNames.add(`${name}:${duplicateCount}`);
+    errors.push(`test/e2e/demos.spec.mjs classifies demo/${name}.html ${duplicateCount} times`);
   }
   if (name === 'index') {
     errors.push('demo/index.html is the kitchen-sink page and must not be a leaf demo sweep entry');
   }
-}
-for (const entry of duplicateDemoSweepNames) {
-  const [name, duplicateCount] = entry.split(':');
-  errors.push(`test/e2e/demos.spec.mjs classifies demo/${name}.html ${duplicateCount} times`);
 }
 
 for (const leaf of leaves) {
@@ -401,30 +393,28 @@ for (const leaf of foundationsByCss.keys()) {
 }
 for (const { css, docs, demos, specs, proofs, shots } of FOUNDATIONS) {
   if (!leaves.has(css)) errors.push(`foundation row names missing css/${css}.css`);
-  if (!docs?.length) errors.push(`css/${css}.css foundation row has no docs owner`);
   if (!specs?.length && !proofs?.length) {
     errors.push(`css/${css}.css foundation row has no executable proof owner`);
   }
 
-  for (const doc of docs ?? []) {
-    const owner = ownerEntry(doc, [`css/${css}.css`]);
-    if (!relExists(owner.file)) {
-      errors.push(`css/${css}.css foundation docs owner is missing: ${owner.file}`);
-      continue;
-    }
-    const body = text(owner.file);
-    for (const needle of owner.includes ?? [`css/${css}.css`]) {
-      if (!body.includes(needle)) {
-        errors.push(
-          `css/${css}.css foundation docs owner ${owner.file} does not contain "${needle}"`,
-        );
-      }
-    }
-  }
+  checkOwnerProof({
+    root,
+    errors,
+    text,
+    subject: `css/${css}.css foundation`,
+    kind: 'docs',
+    items: docs,
+    fallbackIncludes: [`css/${css}.css`],
+    missingOwnerMessage: `css/${css}.css foundation row has no docs owner`,
+    missingFileMessage: (owner) => `css/${css}.css foundation docs owner is missing: ${owner.file}`,
+    missingNeedleMessage: (owner, needle) =>
+      `css/${css}.css foundation docs owner ${owner.file} does not contain "${needle}"`,
+  });
   for (const demo of demos ?? []) {
-    if (!relExists(demo)) errors.push(`css/${css}.css foundation demo owner is missing: ${demo}`);
+    if (!relExists(root, demo))
+      errors.push(`css/${css}.css foundation demo owner is missing: ${demo}`);
     else if (demo !== 'demo/index.html') {
-      const name = demo.replace(/^demo\//, '').replace(/\.html$/, '');
+      const name = demoName(demo);
       if (!demoSweepNames.has(name)) {
         errors.push(
           `css/${css}.css foundation demo owner ${demo} is not swept by test/e2e/demos.spec.mjs SHOWCASE/GUARD_ONLY`,
@@ -432,34 +422,40 @@ for (const { css, docs, demos, specs, proofs, shots } of FOUNDATIONS) {
       }
     }
   }
-  for (const proof of specs ?? []) {
-    if (!nonPixelE2eSpecs.has(proof.file)) {
-      errors.push(
-        `css/${css}.css foundation proof ${proof.file} is not a non-pixel Playwright spec discovered by scripts/test-e2e-nonpixel.mjs`,
-      );
-    }
-    if (!relExists(proof.file)) {
-      errors.push(`css/${css}.css foundation spec owner is missing: ${proof.file}`);
-      continue;
-    }
-    const body = text(proof.file);
-    for (const needle of proof.includes ?? []) {
-      if (!body.includes(needle)) {
-        errors.push(`css/${css}.css foundation proof ${proof.file} does not contain "${needle}"`);
-      }
-    }
+  if (specs?.length) {
+    checkOwnerProof({
+      root,
+      errors,
+      text,
+      subject: `css/${css}.css foundation`,
+      kind: 'proof',
+      items: specs,
+      missingFileMessage: (owner) =>
+        `css/${css}.css foundation spec owner is missing: ${owner.file}`,
+      missingNeedleMessage: (owner, needle) =>
+        `css/${css}.css foundation proof ${owner.file} does not contain "${needle}"`,
+      validateItem(owner) {
+        if (!nonPixelE2eSpecs.has(owner.file)) {
+          errors.push(
+            `css/${css}.css foundation proof ${owner.file} is not a non-pixel Playwright spec discovered by scripts/test-e2e-nonpixel.mjs`,
+          );
+        }
+      },
+    });
   }
-  for (const proof of proofs ?? []) {
-    if (!relExists(proof.file)) {
-      errors.push(`css/${css}.css foundation proof owner is missing: ${proof.file}`);
-      continue;
-    }
-    const body = text(proof.file);
-    for (const needle of proof.includes ?? []) {
-      if (!body.includes(needle)) {
-        errors.push(`css/${css}.css foundation proof ${proof.file} does not contain "${needle}"`);
-      }
-    }
+  if (proofs?.length) {
+    checkOwnerProof({
+      root,
+      errors,
+      text,
+      subject: `css/${css}.css foundation`,
+      kind: 'proof',
+      items: proofs,
+      missingFileMessage: (owner) =>
+        `css/${css}.css foundation proof owner is missing: ${owner.file}`,
+      missingNeedleMessage: (owner, needle) =>
+        `css/${css}.css foundation proof ${owner.file} does not contain "${needle}"`,
+    });
   }
   for (const shot of shots ?? []) {
     const demoIndex = text('demo/index.html');
@@ -470,7 +466,7 @@ for (const { css, docs, demos, specs, proofs, shots } of FOUNDATIONS) {
     }
     for (const theme of ['dark', 'light']) {
       const screenshot = `test/e2e/__screenshots__/${shot}-${theme}.png`;
-      if (!relExists(screenshot)) {
+      if (!relExists(root, screenshot)) {
         errors.push(`css/${css}.css foundation visual owner is missing ${screenshot}`);
       }
     }
@@ -478,27 +474,22 @@ for (const { css, docs, demos, specs, proofs, shots } of FOUNDATIONS) {
 }
 for (const { css, docs, demos, specs, shots } of SURFACES) {
   if (!leaves.has(css)) errors.push(`component row names missing css/${css}.css`);
-  if (!docs?.length) errors.push(`css/${css}.css has no docs owner`);
   if (!demos?.length) errors.push(`css/${css}.css has no demo owner`);
-  if (!specs?.length) errors.push(`css/${css}.css has no executable spec owner`);
 
-  for (const doc of docs ?? []) {
-    const owner = ownerEntry(doc, [`css/${css}.css`]);
-    if (!relExists(owner.file)) {
-      errors.push(`css/${css}.css docs owner is missing: ${owner.file}`);
-      continue;
-    }
-    const body = text(owner.file);
-    for (const needle of owner.includes ?? [`css/${css}.css`]) {
-      if (!body.includes(needle)) {
-        errors.push(`css/${css}.css docs owner ${owner.file} does not contain "${needle}"`);
-      }
-    }
-  }
+  checkOwnerProof({
+    root,
+    errors,
+    text,
+    subject: `css/${css}.css`,
+    kind: 'docs',
+    items: docs,
+    fallbackIncludes: [`css/${css}.css`],
+    missingFileMessage: (owner) => `css/${css}.css docs owner is missing: ${owner.file}`,
+  });
   for (const demo of demos ?? []) {
-    if (!relExists(demo)) errors.push(`css/${css}.css demo owner is missing: ${demo}`);
+    if (!relExists(root, demo)) errors.push(`css/${css}.css demo owner is missing: ${demo}`);
     else if (demo !== 'demo/index.html') {
-      const name = demo.replace(/^demo\//, '').replace(/\.html$/, '');
+      const name = demoName(demo);
       if (!demoSweepNames.has(name)) {
         errors.push(
           `css/${css}.css demo owner ${demo} is not swept by test/e2e/demos.spec.mjs SHOWCASE/GUARD_ONLY`,
@@ -506,23 +497,25 @@ for (const { css, docs, demos, specs, shots } of SURFACES) {
       }
     }
   }
-  for (const proof of specs ?? []) {
-    if (!nonPixelE2eSpecs.has(proof.file)) {
-      errors.push(
-        `css/${css}.css proof ${proof.file} is not a non-pixel Playwright spec discovered by scripts/test-e2e-nonpixel.mjs`,
-      );
-    }
-    if (!relExists(proof.file)) {
-      errors.push(`css/${css}.css spec owner is missing: ${proof.file}`);
-      continue;
-    }
-    const body = text(proof.file);
-    for (const needle of proof.includes ?? []) {
-      if (!body.includes(needle)) {
-        errors.push(`css/${css}.css proof ${proof.file} does not contain "${needle}"`);
+  checkOwnerProof({
+    root,
+    errors,
+    text,
+    subject: `css/${css}.css`,
+    kind: 'executable spec',
+    items: specs,
+    missingOwnerMessage: `css/${css}.css has no executable spec owner`,
+    missingFileMessage: (owner) => `css/${css}.css spec owner is missing: ${owner.file}`,
+    missingNeedleMessage: (owner, needle) =>
+      `css/${css}.css proof ${owner.file} does not contain "${needle}"`,
+    validateItem(owner) {
+      if (!nonPixelE2eSpecs.has(owner.file)) {
+        errors.push(
+          `css/${css}.css proof ${owner.file} is not a non-pixel Playwright spec discovered by scripts/test-e2e-nonpixel.mjs`,
+        );
       }
-    }
-  }
+    },
+  });
   for (const shot of shots ?? []) {
     const demoIndex = text('demo/index.html');
     if (!demoIndex.includes(`data-shot="${shot}"`)) {
@@ -530,7 +523,7 @@ for (const { css, docs, demos, specs, shots } of SURFACES) {
     }
     for (const theme of ['dark', 'light']) {
       const screenshot = `test/e2e/__screenshots__/${shot}-${theme}.png`;
-      if (!relExists(screenshot)) {
+      if (!relExists(root, screenshot)) {
         errors.push(`css/${css}.css visual owner is missing ${screenshot}`);
       }
     }
@@ -539,5 +532,7 @@ for (const { css, docs, demos, specs, shots } of SURFACES) {
 
 reportAndExit(errors, {
   label: 'component matrix',
-  ok: `${FOUNDATIONS.length} foundation CSS leaves and ${SURFACES.length} component surface leaves have explicit ownership`,
+  ok:
+    `${FOUNDATIONS.length} foundation CSS leaves and ${SURFACES.length} ` +
+    'component surface leaves have explicit exported-surface ownership',
 });

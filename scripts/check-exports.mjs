@@ -27,6 +27,7 @@ import { fileURLToPath } from 'node:url';
 import { reportAndExit } from './lib/gate-report.mjs';
 import { leafFiles, EXTRA_LEAVES } from './build-dist.mjs';
 import { exportTargets } from './lib/package-targets.mjs';
+import { OPTIONAL_FRAMEWORK_PEERS, optionalFrameworkPeerNames } from './lib/framework-peers.mjs';
 import { cssImports, stripCssComments } from './lib/patterns.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -168,7 +169,7 @@ for (const field of [
   }
 }
 
-const optionalPeerDeps = ['@builder.io/qwik', 'react', 'solid-js'];
+const optionalPeerDeps = optionalFrameworkPeerNames();
 const peerDeps = Object.keys(pkg.peerDependencies ?? {}).sort((a, b) => a.localeCompare(b));
 if (JSON.stringify(peerDeps) !== JSON.stringify(optionalPeerDeps)) {
   errors.push(
@@ -183,6 +184,13 @@ for (const peer of optionalPeerDeps) {
 for (const peer of Object.keys(pkg.peerDependenciesMeta ?? {})) {
   if (!optionalPeerDeps.includes(peer)) {
     errors.push(`package.json peerDependenciesMeta contains undocumented peer "${peer}"`);
+  }
+}
+for (const { peer, subpath, target } of OPTIONAL_FRAMEWORK_PEERS) {
+  if (pkg.exports?.[subpath]?.default !== target) {
+    errors.push(
+      `optional framework peer "${peer}" must map ${subpath} default export to ${target}`,
+    );
   }
 }
 

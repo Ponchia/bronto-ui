@@ -5,6 +5,38 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased — 0.6.9
+
+### Changed
+
+- **Product doctrine and 1.0 readiness.** `CONTRIBUTING.md`, `ROADMAP.md`,
+  `docs/architecture.md`, and `docs/stability.md` now codify the
+  core-vs-opt-in surface boundary, the refusal list, registry-first gate
+  maintenance, packed-tarball proof, a gate-backed 1.0 readiness ledger, and
+  release evidence policy for public-safe downstream proof. The stability
+  matrix now includes explicit rows for every exported opt-in CSS leaf plus
+  the public machine-readable/theme subpath families.
+- **Registry-backed gate ownership.** `check:report`,
+  `check:component-matrix`, `check:exports`, and `check:consumer-surface` now
+  share internal registries for the reporting toolbox, exported CSS leaves, and
+  optional framework peers instead of carrying separate hand-maintained lists.
+  The matrix gates also share one proof-owner helper for cached file reads,
+  owner-file existence, word matching, and required text evidence.
+
+### Verified
+
+- **Downstream proof.** The packed current tarball installed into a disposable
+  copy of a real React/Vite app consumer that imports `@ponchia/ui/classes`,
+  `@ponchia/ui/behaviors`, `@ponchia/ui/tokens/resolved.json`, and
+  `@ponchia/ui/vega`; its `typecheck` and production `build` both passed.
+
+### Fixed
+
+- **Report sidecar hash validation.** `report-claims.v1` now requires
+  `contentHash` values to use exact SHA digest lengths (`sha256`, `sha384`, or
+  `sha512`) instead of accepting any hex payload after a supported algorithm
+  prefix.
+
 ## 0.6.8 — 2026-06-16
 
 Patch release for the deep UI-framework audit: broader browser/package gates,

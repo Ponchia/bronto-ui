@@ -27,6 +27,12 @@ const VISUAL_VIEWPORTS = Object.freeze([
   { name: 'desktop', width: 1280, height: 720 },
   { name: 'mobile', width: 390, height: 844 },
 ]);
+const PNG_SIGNATURE = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+const PNG_CHANNELS = new Map([
+  [0, 1],
+  [2, 3],
+  [6, 4],
+]);
 
 function parseCli(argv) {
   const positionals = [];
@@ -118,10 +124,8 @@ function paethPredictor(left, up, upLeft) {
   return pb <= pc ? up : upLeft;
 }
 
-function decodePng(buffer) {
-  const signature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
-  if (!buffer.subarray(0, 8).equals(signature)) throw new Error('screenshot is not a PNG');
-
+function parsePng(buffer) {
+  if (!buffer.subarray(0, 8).equals(PNG_SIGNATURE)) throw new Error('screenshot is not a PNG');
   let offset = 8;
   let width = 0;
   let height = 0;
@@ -149,26 +153,31 @@ function decodePng(buffer) {
     }
     offset = dataEnd + 4;
   }
+  return { width, height, bitDepth, colorType, interlace, idat };
+}
 
+function validatePngHeader({ width, height, bitDepth, colorType, interlace }) {
   if (!width || !height) throw new Error('PNG screenshot has no IHDR dimensions');
   if (bitDepth !== 8) throw new Error(`unsupported PNG bit depth ${bitDepth}`);
   if (interlace !== 0) throw new Error('interlaced PNG screenshots are not supported');
+  if (!PNG_CHANNELS.has(colorType)) throw new Error(`unsupported PNG color type ${colorType}`);
+}
 
-  const channelsByType = new Map([
-    [0, 1],
-    [2, 3],
-    [6, 4],
-  ]);
-  const channels = channelsByType.get(colorType);
-  if (!channels) throw new Error(`unsupported PNG color type ${colorType}`);
+function unfilterByte(filter, raw, left, up, upLeft) {
+  if (filter === 0) return raw;
+  if (filter === 1) return raw + left;
+  if (filter === 2) return raw + up;
+  if (filter === 3) return raw + Math.floor((left + up) / 2);
+  if (filter === 4) return raw + paethPredictor(left, up, upLeft);
+  throw new Error(`unsupported PNG filter ${filter}`);
+}
 
+function unfilterRows(inflated, { width, height, channels }) {
   const bpp = channels;
   const rowBytes = width * channels;
-  const inflated = inflateSync(Buffer.concat(idat));
-  const rgba = new Uint8Array(width * height * 4);
   let inOffset = 0;
-  let outOffset = 0;
   let previous = new Uint8Array(rowBytes);
+  const rows = [];
 
   for (let y = 0; y < height; y += 1) {
     const filter = inflated[inOffset];
@@ -180,34 +189,50 @@ function decodePng(buffer) {
       const left = x >= bpp ? row[x - bpp] : 0;
       const up = previous[x] ?? 0;
       const upLeft = x >= bpp ? previous[x - bpp] : 0;
-      let value;
-      if (filter === 0) value = raw;
-      else if (filter === 1) value = raw + left;
-      else if (filter === 2) value = raw + up;
-      else if (filter === 3) value = raw + Math.floor((left + up) / 2);
-      else if (filter === 4) value = raw + paethPredictor(left, up, upLeft);
-      else throw new Error(`unsupported PNG filter ${filter}`);
-      row[x] = value & 255;
+      row[x] = unfilterByte(filter, raw, left, up, upLeft) & 255;
     }
-
-    for (let x = 0; x < width; x += 1) {
-      const source = x * channels;
-      if (colorType === 0) {
-        const gray = row[source];
-        rgba[outOffset++] = gray;
-        rgba[outOffset++] = gray;
-        rgba[outOffset++] = gray;
-        rgba[outOffset++] = 255;
-      } else {
-        rgba[outOffset++] = row[source];
-        rgba[outOffset++] = row[source + 1];
-        rgba[outOffset++] = row[source + 2];
-        rgba[outOffset++] = colorType === 6 ? row[source + 3] : 255;
-      }
-    }
+    rows.push(row);
     previous = row;
   }
+  return rows;
+}
 
+function appendRgbaPixel(rgba, offset, row, source, colorType) {
+  if (colorType === 0) {
+    const gray = row[source];
+    rgba[offset++] = gray;
+    rgba[offset++] = gray;
+    rgba[offset++] = gray;
+    rgba[offset++] = 255;
+    return offset;
+  }
+  rgba[offset++] = row[source];
+  rgba[offset++] = row[source + 1];
+  rgba[offset++] = row[source + 2];
+  rgba[offset++] = colorType === 6 ? row[source + 3] : 255;
+  return offset;
+}
+
+function rowsToRgba(rows, { width, height, channels, colorType }) {
+  const rgba = new Uint8Array(width * height * 4);
+  let outOffset = 0;
+  for (const row of rows) {
+    for (let x = 0; x < width; x += 1) {
+      const source = x * channels;
+      outOffset = appendRgbaPixel(rgba, outOffset, row, source, colorType);
+    }
+  }
+  return rgba;
+}
+
+function decodePng(buffer) {
+  const header = parsePng(buffer);
+  validatePngHeader(header);
+  const channels = PNG_CHANNELS.get(header.colorType);
+  const inflated = inflateSync(Buffer.concat(header.idat));
+  const rows = unfilterRows(inflated, { ...header, channels });
+  const rgba = rowsToRgba(rows, { ...header, channels });
+  const { width, height } = header;
   return { width, height, rgba };
 }
 

@@ -52,6 +52,25 @@ specifier).
 
 ## Conventions
 
+- **Surface has to pay rent.** A public class, token, behavior, schema,
+  binding, CSS leaf, or docs path is accepted only when it makes the system
+  clearer, safer, smaller, or more stable. Prefer a documented recipe over a
+  new primitive until a real consumer proves the pattern repeats.
+- **Default bundle is identity, not inventory.** `dist/bronto.css` owns the
+  shared app/service identity: tokens, base, motion, navigation, site/content,
+  primitives, forms, feedback, overlay, disclosure, tables, and app shell.
+  Report, analytical, trust, renderer, workbench, and command surfaces stay
+  opt-in unless they are genuinely universal application chrome.
+- **Bronto owns visual grammar and narrow behavior, not product logic.** Do
+  not add chart scales, data fetching, persistence, routing, action registries,
+  workflow engines, virtualized grids, or framework component APIs. The host
+  application owns domain state; Bronto may provide tokens, class contracts,
+  pure geometry, and delegated accessibility glue.
+- **Registries before hand lists.** When a change touches exports, shipped
+  docs, CSS leaves, examples, behavior ownership, or generated artifacts,
+  extend the local shared registry first and let checks consume it. A second
+  bespoke list is a future drift bug unless there is a specific reason it
+  cannot share the registry.
 - **Conventional commits** for PR titles: `feat` / `fix` / `docs` /
   `ci` / `test` / `chore`, with `!` for breaking changes. Pre-1.0,
   breaking changes bump the **minor** (see README → Versioning).
@@ -164,6 +183,17 @@ npm run release:prep -- X.Y.Z
 # land on main, let CI go green, then:
 git tag vX.Y.Z && git push origin vX.Y.Z
 ```
+
+Before tagging a release candidate or stable release, leave a **Release
+evidence** note in the PR/release record. It should name the packed-tarball
+proof (`check:pack`, `check:consumer-surface`, `check:consumer-types`,
+`check:examples`, plus `check:publint`/`check:attw` for npm metadata), any
+default-bundle budget movement, and the downstream proof reached. For a 1.0
+candidate, downstream proof means at least one real app, report, or tool was
+upgraded against the packed tarball; record the consumer class, imported
+surface, and result in public-safe terms, not private repo or product names. If
+that downstream pass was not run, the release can still ship pre-1.0 but it is
+not 1.0-ready.
 
 **Prereleases (release candidates).** Tag a SemVer prerelease and it
 publishes to the `next` dist-tag instead of `latest`, so consumers only

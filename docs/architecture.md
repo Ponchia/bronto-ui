@@ -102,6 +102,26 @@ on top of the CSS, none of which require a framework commitment**:
   `/svelte`, `/vue`, `/skins`, `/charts`, `/mermaid`, `/d2`, `/vega`). This is
   a permanent, intentional contract.
 
+### Surface admission rule
+
+The default bundle is the shared app/service identity, not the complete Bronto
+catalog. A new public surface must choose one lane before it ships:
+
+- **core identity** — universal application chrome or accessibility/platform
+  glue that belongs in `dist/bronto.css`;
+- **opt-in toolbox** — report, analytical, provenance, generated-content,
+  renderer, workbench, or command vocabulary that ships as an explicit CSS/JS
+  subpath;
+- **recipe/docs only** — a pattern that can be taught without creating a new
+  class, token, behavior, export, or package path.
+
+When the answer is unclear, choose recipe/docs first. Promote to an opt-in leaf
+only after a real consumer repeats the pattern; promote to core only when it is
+clearly shared application identity. Bronto owns visual grammar, token handoff,
+pure geometry, and delegated accessibility behavior. It does not own chart
+scales, data fetching, persistence, routing, workflow execution, action
+registries, virtualized grids, or framework component APIs.
+
 ## Repository layout
 
 The repo root mixes five kinds of directory that look alike but follow very
