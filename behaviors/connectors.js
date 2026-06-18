@@ -2,6 +2,9 @@ import { hasDom, resolveHost, noop, bindOnce, byIdInHost, collectHosts } from '.
 import { connectRects, arrowHead, dotMark } from '../connectors/index.js';
 
 const SVGNS = 'http://www.w3.org/2000/svg';
+const NORMALIZED_PATH_LENGTH = '1';
+const END_DOT_RADIUS = 3;
+const END_ARROW_SIZE = 8;
 
 const snapshotAttrs = (el) =>
   Array.from(el.attributes, ({ name, value }) => ({
@@ -39,6 +42,39 @@ const restorePart = (svg, selector, state) => {
   }
   restoreAttrs(state.node, state.attrs);
   state.node.textContent = state.textContent;
+};
+
+const upsertConnectorPart = (svg, selector, className) => {
+  let part = svg.querySelector(selector);
+  if (part) return part;
+  part = document.createElementNS(SVGNS, 'path');
+  part.setAttribute('class', className);
+  svg.appendChild(part);
+  return part;
+};
+
+const syncDrawPathLength = (svg, path) => {
+  // pathLength normalises the draw animation, but it would also reframe a
+  // dashed line's user-unit dasharray — so only set it for draw connectors.
+  if (svg.classList.contains('ui-connector--draw')) {
+    path.setAttribute('pathLength', NORMALIZED_PATH_LENGTH);
+  } else {
+    path.removeAttribute('pathLength');
+  }
+};
+
+const syncConnectorEnd = (svg, end, angle) => {
+  const kind = svg.dataset.end || 'arrow';
+  const cap = svg.querySelector('.ui-connector__end');
+  if (kind === 'none') {
+    cap?.remove();
+    return;
+  }
+  const next = cap || upsertConnectorPart(svg, '.ui-connector__end', 'ui-connector__end');
+  next.setAttribute(
+    'd',
+    kind === 'dot' ? dotMark(end, END_DOT_RADIUS) : arrowHead(end, angle, END_ARROW_SIZE),
+  );
 };
 
 /**
@@ -118,30 +154,10 @@ export function initConnectors({ root } = {}) {
         fromSide: svg.dataset.fromSide || undefined,
         toSide: svg.dataset.toSide || undefined,
       });
-      let path = svg.querySelector('.ui-connector__path');
-      if (!path) {
-        path = document.createElementNS(SVGNS, 'path');
-        path.setAttribute('class', 'ui-connector__path');
-        svg.appendChild(path);
-      }
+      const path = upsertConnectorPart(svg, '.ui-connector__path', 'ui-connector__path');
       path.setAttribute('d', d);
-      // pathLength="1" normalises the draw animation, but it would also reframe
-      // a dashed line's user-unit dasharray — so only set it for draw connectors.
-      if (svg.classList.contains('ui-connector--draw')) path.setAttribute('pathLength', '1');
-      else path.removeAttribute('pathLength');
-
-      const kind = svg.dataset.end || 'arrow';
-      let cap = svg.querySelector('.ui-connector__end');
-      if (kind === 'none') {
-        cap?.remove();
-        continue;
-      }
-      if (!cap) {
-        cap = document.createElementNS(SVGNS, 'path');
-        cap.setAttribute('class', 'ui-connector__end');
-        svg.appendChild(cap);
-      }
-      cap.setAttribute('d', kind === 'dot' ? dotMark(end, 3) : arrowHead(end, angle, 8));
+      syncDrawPathLength(svg, path);
+      syncConnectorEnd(svg, end, angle);
     }
   };
 

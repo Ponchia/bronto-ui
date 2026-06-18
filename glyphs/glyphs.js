@@ -1518,17 +1518,34 @@ export function renderGlyph(name, options = {}) {
   if (!rows) return '';
   const { grid = true, solid = false, anim, label, dot, gap, render, size } = options;
 
+  if (render === 'mask') return renderMaskGlyph(rows, { label, size });
+
+  const cells = glyphCells(name);
+  const style = dotmatrixStyle({ solid, dot, gap });
+  const cls = dotmatrixClass(anim);
+  const stagger = anim === 'reveal';
+  const showPanel = grid && !solid;
+  const inner = cells
+    .map((cell, index) => renderGlyphCell(cell, index, { showPanel, stagger }))
+    .join('');
+
+  // A `<span>` (not `<div>`): it's phrasing content, so the glyph is valid
+  // inline and inside a `<button>` (its content model is phrasing-only) — the
+  // inline-icon use. `.ui-dotmatrix`'s `display: grid` works on a span.
+  return `<span class="${cls}" style="${style.join(';')}" ${a11yAttrs(label)}>${inner}</span>`;
+}
+
+function renderMaskGlyph(rows, { label, size }) {
   // One-node icon: a single `.ui-icon` span masked by the glyph's bitmap, so
   // it scales to any font-size and inherits `currentColor` — for icon-at-scale
   // (e.g. one in every table row) where the GLYPH_SIZE²-cell path is too heavy.
-  if (render === 'mask') {
-    const a11yM = label ? `role="img" aria-label="${esc(label)}"` : 'aria-hidden="true"';
-    const sz = size && cssLen(size) ? `--icon-size:${cssLen(size)};` : '';
-    return `<span class="ui-icon" style="${sz}--icon-mask:${maskUrl(rows)}" ${a11yM}></span>`;
-  }
+  const iconSize = size && cssLen(size) ? `--icon-size:${cssLen(size)};` : '';
+  return `<span class="ui-icon" style="${iconSize}--icon-mask:${maskUrl(rows)}" ${a11yAttrs(
+    label,
+  )}></span>`;
+}
 
-  const cells = glyphCells(name);
-
+function dotmatrixStyle({ solid, dot, gap }) {
   const style = [`--dotmatrix-cols:${GLYPH_SIZE}`];
   const dotLen = dot && cssLen(dot);
   const gapLen = gap && cssLen(gap);
@@ -1542,37 +1559,30 @@ export function renderGlyph(name, options = {}) {
   // Solid mode fuses the dots into a crisp pixel glyph: square cells, no gap.
   if (solid) style.push('--dotmatrix-dot-radius:0', '--dotmatrix-gap:0');
   else if (gapLen) style.push(`--dotmatrix-gap:${gapLen}`);
+  return style;
+}
 
-  const cls =
-    anim === 'reveal'
-      ? 'ui-dotmatrix ui-dotmatrix--reveal'
-      : anim === 'pulse'
-        ? 'ui-dotmatrix ui-dotmatrix--pulse'
-        : 'ui-dotmatrix';
-  // `reveal` staggers each cell by its row-major index via `--i`.
-  const stagger = anim === 'reveal';
+function dotmatrixClass(anim) {
+  if (anim === 'reveal') return 'ui-dotmatrix ui-dotmatrix--reveal';
+  if (anim === 'pulse') return 'ui-dotmatrix ui-dotmatrix--pulse';
+  return 'ui-dotmatrix';
+}
 
-  const a11y = label ? `role="img" aria-label="${esc(label)}"` : 'aria-hidden="true"';
-
+function renderGlyphCell(cell, index, { showPanel, stagger }) {
+  const cl = cell.on ? cellClass(cell) : 'ui-dotmatrix__cell';
+  const cellStyle = [];
   // Off cells keep the cell class (so they hold their grid track and 1:1
   // aspect-ratio); `grid: false` (implied by `solid`) only drops their lit
   // background, for the glyph-only look, without collapsing all-off rows.
-  const showPanel = grid && !solid;
-  const inner = cells
-    .map((c, i) => {
-      const cl = c.on ? cellClass(c) : 'ui-dotmatrix__cell';
-      const cellStyle = [];
-      if (!c.on && !showPanel) cellStyle.push('background:transparent');
-      if (stagger) cellStyle.push(`--i:${i}`);
-      const s = cellStyle.length ? ` style="${cellStyle.join(';')}"` : '';
-      return `<span class="${cl}"${s}></span>`;
-    })
-    .join('');
+  if (!cell.on && !showPanel) cellStyle.push('background:transparent');
+  // `reveal` staggers each cell by its row-major index via `--i`.
+  if (stagger) cellStyle.push(`--i:${index}`);
+  const style = cellStyle.length ? ` style="${cellStyle.join(';')}"` : '';
+  return `<span class="${cl}"${style}></span>`;
+}
 
-  // A `<span>` (not `<div>`): it's phrasing content, so the glyph is valid
-  // inline and inside a `<button>` (its content model is phrasing-only) — the
-  // inline-icon use. `.ui-dotmatrix`'s `display: grid` works on a span.
-  return `<span class="${cls}" style="${style.join(';')}" ${a11y}>${inner}</span>`;
+function a11yAttrs(label) {
+  return label ? `role="img" aria-label="${esc(label)}"` : 'aria-hidden="true"';
 }
 
 // Character → glyph name for renderReadout. Punctuation reuses the readout face

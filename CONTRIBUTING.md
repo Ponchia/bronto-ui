@@ -16,7 +16,7 @@ npm run check   # the full integrity suite: lint, format, exports; the
                 #   data); class contract; types, shiki, dist budget, pack
                 #   allowlist, packed no-peer/full-peer consumer-surface
                 #   import + behavior no-DOM + asset/doc resolution smoke, packed consumer type-resolution smoke,
-                #   node:test unit + contract suite,
+                #   node:test unit + contract suite, complexity budget,
                 #   CSS component docs/demo/spec ownership, behavior
                 #   docs/unit/browser ownership, public hygiene, undefined CSS var refs,
                 #   publint + arethetypeswrong, workflow syntax/shell lint,
