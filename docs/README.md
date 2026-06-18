@@ -65,6 +65,7 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 - [getting-started/vanilla.md](./getting-started/vanilla.md) · [getting-started/react-solid.md](./getting-started/react-solid.md) · [getting-started/astro.md](./getting-started/astro.md) · [getting-started/sveltekit.md](./getting-started/sveltekit.md) · [getting-started/vue.md](./getting-started/vue.md)
 - [integration.md](./integration.md) — framework integration overview.
 - [interop/tailwind.md](./interop/tailwind.md) — Tailwind interop recipe.
+- [interop/react-flow.md](./interop/react-flow.md) — React Flow / Xyflow canvas interop recipe.
 
 ## Architecture Decision Records
 
