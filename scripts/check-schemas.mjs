@@ -47,17 +47,18 @@ function resolvePointer(schema, ref) {
     .reduce((node, part) => node?.[part.replace(/~1/g, '/').replace(/~0/g, '~')], schema);
 }
 
-function validateValue(value, node, schema, path, problems) {
-  if (node.$ref) {
-    const resolved = resolvePointer(schema, node.$ref);
-    if (!resolved) {
-      problems.push(`${path}: unresolved $ref ${node.$ref}`);
-      return;
-    }
-    validateValue(value, resolved, schema, path, problems);
-    return;
+function validateReference(value, node, schema, path, problems) {
+  if (!node.$ref) return false;
+  const resolved = resolvePointer(schema, node.$ref);
+  if (!resolved) {
+    problems.push(`${path}: unresolved $ref ${node.$ref}`);
+    return true;
   }
+  validateValue(value, resolved, schema, path, problems);
+  return true;
+}
 
+function validateConstAndEnum(value, node, path, problems) {
   if (hasOwn(node, 'const') && value !== node.const) {
     problems.push(
       `${path}: expected const ${JSON.stringify(node.const)}, got ${JSON.stringify(value)}`,
@@ -68,68 +69,78 @@ function validateValue(value, node, schema, path, problems) {
       `${path}: expected one of [${node.enum.join(', ')}], got ${JSON.stringify(value)}`,
     );
   }
+}
 
-  if (node.type) {
-    const actual = typeName(value);
-    if (actual !== node.type) {
-      problems.push(`${path}: expected ${node.type}, got ${actual}`);
-      return;
+function validateType(value, node, path, problems) {
+  if (!node.type) return true;
+  const actual = typeName(value);
+  if (actual === node.type) return true;
+  problems.push(`${path}: expected ${node.type}, got ${actual}`);
+  return false;
+}
+
+function validateObject(value, node, schema, path, problems) {
+  const properties = node.properties ?? {};
+  for (const key of node.required ?? []) {
+    if (!hasOwn(value, key)) problems.push(`${path}: missing required property ${key}`);
+  }
+  if (node.additionalProperties === false) {
+    for (const key of Object.keys(value)) {
+      if (!hasOwn(properties, key)) problems.push(`${path}: unexpected property ${key}`);
     }
   }
-
-  if (node.type === 'object') {
-    const properties = node.properties ?? {};
-    for (const key of node.required ?? []) {
-      if (!hasOwn(value, key)) problems.push(`${path}: missing required property ${key}`);
-    }
-    if (node.additionalProperties === false) {
-      for (const key of Object.keys(value)) {
-        if (!hasOwn(properties, key)) problems.push(`${path}: unexpected property ${key}`);
-      }
-    }
-    for (const [key, propertySchema] of Object.entries(properties)) {
-      if (hasOwn(value, key))
-        validateValue(value[key], propertySchema, schema, formatPath(path, key), problems);
+  for (const [key, propertySchema] of Object.entries(properties)) {
+    if (hasOwn(value, key)) {
+      validateValue(value[key], propertySchema, schema, formatPath(path, key), problems);
     }
   }
+}
 
-  if (node.type === 'array') {
-    if (node.minItems != null && value.length < node.minItems) {
-      problems.push(`${path}: expected at least ${node.minItems} item(s), got ${value.length}`);
-    }
-    if (node.uniqueItems) {
-      const seen = new Set();
-      for (const item of value) {
-        const key = JSON.stringify(item);
-        if (seen.has(key)) problems.push(`${path}: duplicate array item ${key}`);
-        seen.add(key);
-      }
-    }
-    if (node.items) {
-      value.forEach((item, index) =>
-        validateValue(item, node.items, schema, path + `[${index}]`, problems),
-      );
+function validateArray(value, node, schema, path, problems) {
+  if (node.minItems != null && value.length < node.minItems) {
+    problems.push(`${path}: expected at least ${node.minItems} item(s), got ${value.length}`);
+  }
+  if (node.uniqueItems) {
+    const seen = new Set();
+    for (const item of value) {
+      const key = JSON.stringify(item);
+      if (seen.has(key)) problems.push(`${path}: duplicate array item ${key}`);
+      seen.add(key);
     }
   }
+  if (node.items) {
+    value.forEach((item, index) =>
+      validateValue(item, node.items, schema, path + `[${index}]`, problems),
+    );
+  }
+}
 
-  if (node.type === 'string') {
-    if (node.minLength != null && value.length < node.minLength) {
-      problems.push(`${path}: expected string length >= ${node.minLength}`);
-    }
-    if (node.pattern && !new RegExp(node.pattern).test(value)) {
-      problems.push(`${path}: does not match /${node.pattern}/`);
-    }
-    if (node.format === 'uri') {
-      try {
-        new URL(value);
-      } catch {
-        problems.push(`${path}: expected URI`);
-      }
-    }
-    if (node.format === 'date-time' && Number.isNaN(Date.parse(value))) {
-      problems.push(`${path}: expected date-time`);
+function validateString(value, node, path, problems) {
+  if (node.minLength != null && value.length < node.minLength) {
+    problems.push(`${path}: expected string length >= ${node.minLength}`);
+  }
+  if (node.pattern && !new RegExp(node.pattern).test(value)) {
+    problems.push(`${path}: does not match /${node.pattern}/`);
+  }
+  if (node.format === 'uri') {
+    try {
+      new URL(value);
+    } catch {
+      problems.push(`${path}: expected URI`);
     }
   }
+  if (node.format === 'date-time' && Number.isNaN(Date.parse(value))) {
+    problems.push(`${path}: expected date-time`);
+  }
+}
+
+function validateValue(value, node, schema, path, problems) {
+  if (validateReference(value, node, schema, path, problems)) return;
+  validateConstAndEnum(value, node, path, problems);
+  if (!validateType(value, node, path, problems)) return;
+  if (node.type === 'object') validateObject(value, node, schema, path, problems);
+  if (node.type === 'array') validateArray(value, node, schema, path, problems);
+  if (node.type === 'string') validateString(value, node, path, problems);
 }
 
 function validateAgainstSchema(value, schema) {
@@ -153,25 +164,34 @@ function expectInvalid(schema, name, sample, expectedNeedle) {
   }
 }
 
-function reportReferenceProblems(sidecar) {
-  const problems = [];
-  const claimIds = new Set((sidecar.claims ?? []).map((claim) => claim.id));
-  const sourceIds = new Set((sidecar.sources ?? []).map((source) => source.id));
+function missingReferences(ids, knownIds) {
+  return (ids ?? []).filter((id) => !knownIds.has(id));
+}
 
+function reportClaimSourceProblems(sidecar, sourceIds) {
+  const problems = [];
   for (const claim of sidecar.claims ?? []) {
-    for (const sourceId of claim.sourceIds ?? []) {
-      if (!sourceIds.has(sourceId))
-        problems.push(`claim ${claim.id} references unknown source ${sourceId}`);
+    for (const sourceId of missingReferences(claim.sourceIds, sourceIds)) {
+      problems.push(`claim ${claim.id} references unknown source ${sourceId}`);
     }
   }
+  return problems;
+}
+
+function reportSourceClaimProblems(sidecar, claimIds) {
+  const problems = [];
   for (const source of sidecar.sources ?? []) {
     for (const key of ['supports', 'limits', 'contradicts']) {
-      for (const claimId of source[key] ?? []) {
-        if (!claimIds.has(claimId))
-          problems.push(`source ${source.id}.${key} references unknown claim ${claimId}`);
+      for (const claimId of missingReferences(source[key], claimIds)) {
+        problems.push(`source ${source.id}.${key} references unknown claim ${claimId}`);
       }
     }
   }
+  return problems;
+}
+
+function reportRelationProblems(sidecar, claimIds, sourceIds) {
+  const problems = [];
   for (const relation of sidecar.relations ?? []) {
     if (!claimIds.has(relation.claimId)) {
       problems.push(`relation references unknown claim ${relation.claimId}`);
@@ -183,10 +203,24 @@ function reportReferenceProblems(sidecar) {
   return problems;
 }
 
+function reportReferenceProblems(sidecar) {
+  const claimIds = new Set((sidecar.claims ?? []).map((claim) => claim.id));
+  const sourceIds = new Set((sidecar.sources ?? []).map((source) => source.id));
+  return [
+    ...reportClaimSourceProblems(sidecar, sourceIds),
+    ...reportSourceClaimProblems(sidecar, claimIds),
+    ...reportRelationProblems(sidecar, claimIds, sourceIds),
+  ];
+}
+
+const JSON_FENCE_RE = new RegExp('```json\\n([\\s\\S]*?)\\n```', 'g');
+
+function jsonFenceBodies(markdown) {
+  return [...markdown.matchAll(JSON_FENCE_RE)].map((match) => match[1]);
+}
+
 function reportingExamples() {
-  const body = read('docs/reporting.md');
-  return [...body.matchAll(/```json\n([\s\S]*?)\n```/g)]
-    .map((match) => match[1])
+  return jsonFenceBodies(read('docs/reporting.md'))
     .filter((block) => block.includes('"schemaVersion": "bronto-report-claims.v1"'))
     .map((block) => JSON.parse(block));
 }
@@ -287,6 +321,19 @@ const valid = examples[0] ?? {
   const sample = clone(valid);
   sample.sources[0].contentHash = 'md5:abc123';
   expectInvalid(reportSchema, 'bad content hash', sample, 'does not match');
+}
+{
+  const sample = clone(valid);
+  sample.sources[0].contentHash = 'sha256:abc123';
+  expectInvalid(reportSchema, 'short sha256 content hash', sample, 'does not match');
+}
+{
+  const sample = clone(valid);
+  sample.sources[0].contentHash = `sha256:${'a'.repeat(64)}`;
+  const problems = validateAgainstSchema(sample, reportSchema);
+  if (problems.length) {
+    errors.push(`valid sha256 content hash should pass, got ${problems.join('; ')}`);
+  }
 }
 {
   const sample = clone(valid);

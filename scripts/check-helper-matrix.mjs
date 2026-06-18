@@ -5,14 +5,19 @@
 // an undocumented, untested, or untyped surface.
 //
 // Run: node scripts/check-helper-matrix.mjs
-import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { reportAndExit } from './lib/gate-report.mjs';
+import {
+  createTextReader,
+  hasWord,
+  relExists,
+  withoutImportDeclarations,
+} from './lib/ownership-proof.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
-const textCache = new Map();
+const text = createTextReader(root);
 
 const MODULES = [
   helperModule('classes', {
@@ -106,26 +111,13 @@ function helperModule(name, options) {
   return { name, ...options };
 }
 
-function text(rel) {
-  if (!textCache.has(rel)) textCache.set(rel, readFileSync(resolve(root, rel), 'utf8'));
-  return textCache.get(rel);
-}
-
-function withoutImportDeclarations(source) {
-  return source.replace(/^\s*import[\s\S]*?from\s+['"][^'"]+['"];\s*/gm, '');
-}
-
-function hasWord(haystack, needle) {
-  return new RegExp(`\\b${needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(haystack);
-}
-
 if (!text('docs/architecture.md').includes(ARCHITECTURE_ROW)) {
   errors.push('docs/architecture.md does not describe the helper matrix type-test invariant');
 }
 
 for (const entry of MODULES) {
   const abs = resolve(root, entry.source);
-  if (!existsSync(abs)) {
+  if (!relExists(root, entry.source)) {
     errors.push(`${entry.name} helper source is missing: ${entry.source}`);
     continue;
   }
@@ -146,15 +138,11 @@ for (const entry of MODULES) {
   }
 
   for (const owner of [entry.docs, entry.unit, entry.types]) {
-    if (!existsSync(resolve(root, owner))) {
+    if (!relExists(root, owner)) {
       errors.push(`${entry.name}: owner file is missing: ${owner}`);
     }
   }
-  if (
-    !existsSync(resolve(root, entry.docs)) ||
-    !existsSync(resolve(root, entry.unit)) ||
-    !existsSync(resolve(root, entry.types))
-  )
+  if (!relExists(root, entry.docs) || !relExists(root, entry.unit) || !relExists(root, entry.types))
     continue;
 
   const docs = text(entry.docs);

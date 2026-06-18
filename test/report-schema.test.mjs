@@ -36,4 +36,6 @@ test('report claims schema is exported and keeps the v1 contract vocabulary', ()
     'contradicts',
     'informs',
   ]);
+  assert.match(`sha256:${'a'.repeat(64)}`, new RegExp(schema.$defs.hash.pattern));
+  assert.doesNotMatch('sha256:abc123', new RegExp(schema.$defs.hash.pattern));
 });

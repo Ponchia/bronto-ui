@@ -111,71 +111,94 @@ export async function settle(page) {
  */
 export async function structuralIssues(page) {
   return page.evaluate(() => {
-    const issues = [];
-    const visible = (el) => {
+    function visible(el) {
       const box = el.getBoundingClientRect();
       if (box.width <= 0 || box.height <= 0) return false;
       const style = getComputedStyle(el);
       return (
         style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity) !== 0
       );
-    };
+    }
 
-    const brokenAria = [];
-    for (const el of document.querySelectorAll(
-      '[aria-controls], [aria-labelledby], [aria-describedby]',
-    )) {
-      for (const attr of ['aria-controls', 'aria-labelledby', 'aria-describedby']) {
-        const value = el.getAttribute(attr);
-        if (!value) continue;
-        for (const id of value.trim().split(/\s+/)) {
-          if (id && !document.getElementById(id)) {
-            brokenAria.push(`${attr}="${id}" on <${el.tagName.toLowerCase()}>`);
+    function shortHtml(el) {
+      return el.outerHTML.replace(/\s+/g, ' ').slice(0, 160);
+    }
+
+    function elementLabel(el) {
+      const id = el.id ? `#${el.id}` : '';
+      const classes = (el.getAttribute('class') || '')
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 3)
+        .map((name) => `.${name}`)
+        .join('');
+      return `<${el.tagName.toLowerCase()}${id}${classes}>`;
+    }
+
+    function brokenAriaIssues() {
+      const brokenAria = [];
+      for (const el of document.querySelectorAll(
+        '[aria-controls], [aria-labelledby], [aria-describedby]',
+      )) {
+        for (const attr of ['aria-controls', 'aria-labelledby', 'aria-describedby']) {
+          const value = el.getAttribute(attr);
+          if (!value) continue;
+          for (const id of value.trim().split(/\s+/)) {
+            if (id && !document.getElementById(id)) {
+              brokenAria.push(`${attr}="${id}" on <${el.tagName.toLowerCase()}>`);
+            }
           }
         }
       }
-    }
-    if (brokenAria.length) issues.push(`broken ARIA references: ${brokenAria.join('; ')}`);
-
-    const ids = new Map();
-    for (const el of document.querySelectorAll('[id]')) {
-      ids.set(el.id, (ids.get(el.id) || 0) + 1);
-    }
-    const duplicateIds = [...ids].filter(([, count]) => count > 1);
-    if (duplicateIds.length) {
-      issues.push(
-        `duplicate IDs: ${duplicateIds.map(([id, count]) => `${id}×${count}`).join(', ')}`,
-      );
+      return brokenAria.length ? [`broken ARIA references: ${brokenAria.join('; ')}`] : [];
     }
 
-    const badGeometry = [];
-    for (const el of document.querySelectorAll(
-      'svg, path, line, polyline, polygon, rect, circle, ellipse, text, [style], [transform]',
-    )) {
-      for (const attr of el.attributes || []) {
-        if (/\b(?:NaN|Infinity|-Infinity)\b/.test(attr.value)) {
-          badGeometry.push(`<${el.tagName.toLowerCase()}> ${attr.name}="${attr.value}"`);
+    function duplicateIdIssues() {
+      const ids = new Map();
+      for (const el of document.querySelectorAll('[id]')) {
+        ids.set(el.id, (ids.get(el.id) || 0) + 1);
+      }
+      const duplicateIds = [...ids].filter(([, count]) => count > 1);
+      return duplicateIds.length
+        ? [`duplicate IDs: ${duplicateIds.map(([id, count]) => `${id}×${count}`).join(', ')}`]
+        : [];
+    }
+
+    function nonFiniteGeometryIssues() {
+      const badGeometry = [];
+      for (const el of document.querySelectorAll(
+        'svg, path, line, polyline, polygon, rect, circle, ellipse, text, [style], [transform]',
+      )) {
+        for (const attr of el.attributes || []) {
+          if (/\b(?:NaN|Infinity|-Infinity)\b/.test(attr.value)) {
+            badGeometry.push(`<${el.tagName.toLowerCase()}> ${attr.name}="${attr.value}"`);
+          }
         }
       }
-    }
-    if (badGeometry.length) {
-      issues.push(`non-finite SVG/CSS geometry: ${badGeometry.slice(0, 8).join('; ')}`);
-    }
-
-    const brokenImages = [...document.images]
-      .filter((img) => img.complete && img.naturalWidth === 0)
-      .map((img) => img.currentSrc || img.src || img.getAttribute('src') || '<empty src>');
-    if (brokenImages.length) issues.push(`broken images: ${brokenImages.join(', ')}`);
-
-    const namelessButtons = [...document.querySelectorAll('button, [role="button"]')]
-      .filter(visible)
-      .filter((el) => !(el.getAttribute('aria-label') || el.title || el.textContent || '').trim())
-      .map((el) => el.outerHTML.replace(/\s+/g, ' ').slice(0, 160));
-    if (namelessButtons.length) {
-      issues.push(`visible nameless buttons: ${namelessButtons.join('; ')}`);
+      return badGeometry.length
+        ? [`non-finite SVG/CSS geometry: ${badGeometry.slice(0, 8).join('; ')}`]
+        : [];
     }
 
-    const controlHasName = (el) => {
+    function brokenImageIssues() {
+      const brokenImages = [...document.images]
+        .filter((img) => img.complete && img.naturalWidth === 0)
+        .map((img) => img.currentSrc || img.src || img.getAttribute('src') || '<empty src>');
+      return brokenImages.length ? [`broken images: ${brokenImages.join(', ')}`] : [];
+    }
+
+    function namelessButtonIssues() {
+      const namelessButtons = [...document.querySelectorAll('button, [role="button"]')]
+        .filter(visible)
+        .filter((el) => !(el.getAttribute('aria-label') || el.title || el.textContent || '').trim())
+        .map(shortHtml);
+      return namelessButtons.length
+        ? [`visible nameless buttons: ${namelessButtons.join('; ')}`]
+        : [];
+    }
+
+    function controlHasName(el) {
       if ((el.getAttribute('aria-label') || el.title || '').trim()) return true;
 
       const labelledBy = (el.getAttribute('aria-labelledby') || '')
@@ -212,59 +235,60 @@ export async function structuralIssues(page) {
       }
 
       return false;
-    };
-    const namelessControls = [...document.querySelectorAll('input, select, textarea')]
-      .filter((el) => (el.getAttribute('type') || '').toLowerCase() !== 'hidden')
-      .filter(visible)
-      .filter((el) => !controlHasName(el))
-      .map((el) => el.outerHTML.replace(/\s+/g, ' ').slice(0, 160));
-    if (namelessControls.length) {
-      issues.push(`visible nameless form controls: ${namelessControls.join('; ')}`);
     }
 
-    if (window.innerWidth <= 480) {
+    function namelessControlIssues() {
+      const namelessControls = [...document.querySelectorAll('input, select, textarea')]
+        .filter((el) => (el.getAttribute('type') || '').toLowerCase() !== 'hidden')
+        .filter(visible)
+        .filter((el) => !controlHasName(el))
+        .map(shortHtml);
+      return namelessControls.length
+        ? [`visible nameless form controls: ${namelessControls.join('; ')}`]
+        : [];
+    }
+
+    function clippedByAncestor(el) {
+      const rect = el.getBoundingClientRect();
+      for (let parent = el.parentElement; parent; parent = parent.parentElement) {
+        const { overflowX } = getComputedStyle(parent);
+        if (!/^(auto|scroll|hidden|clip)$/.test(overflowX)) continue;
+        const parentRect = parent.getBoundingClientRect();
+        if (rect.left < parentRect.left - 1 || rect.right > parentRect.right + 1) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function horizontalOverflowIssues() {
+      if (window.innerWidth > 480) return [];
       const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
       const overflow = Math.ceil(document.documentElement.scrollWidth - viewportWidth);
-      if (overflow > 2) {
-        const label = (el) => {
-          const id = el.id ? `#${el.id}` : '';
-          const classes = (el.getAttribute('class') || '')
-            .trim()
-            .split(/\s+/)
-            .filter(Boolean)
-            .slice(0, 3)
-            .map((name) => `.${name}`)
-            .join('');
-          return `<${el.tagName.toLowerCase()}${id}${classes}>`;
-        };
-        const clippedByAncestor = (el) => {
-          const rect = el.getBoundingClientRect();
-          for (let parent = el.parentElement; parent; parent = parent.parentElement) {
-            const { overflowX } = getComputedStyle(parent);
-            if (!/^(auto|scroll|hidden|clip)$/.test(overflowX)) continue;
-            const parentRect = parent.getBoundingClientRect();
-            if (rect.left < parentRect.left - 1 || rect.right > parentRect.right + 1) {
-              return true;
-            }
-          }
-          return false;
-        };
-        const offenders = [...document.querySelectorAll('body, body *')]
-          .filter(visible)
-          .map((el) => ({ el, rect: el.getBoundingClientRect() }))
-          .filter(({ el, rect }) => rect.right > viewportWidth + 2 && !clippedByAncestor(el))
-          .sort((a, b) => b.rect.right - a.rect.right)
-          .slice(0, 5)
-          .map(({ el, rect }) => `${label(el)} right=${Math.round(rect.right)}px`);
-        issues.push(
-          `horizontal page overflow at ${viewportWidth}px viewport: ${overflow}px${
-            offenders.length ? `; offenders: ${offenders.join(', ')}` : ''
-          }`,
-        );
-      }
+      if (overflow <= 2) return [];
+      const offenders = [...document.querySelectorAll('body, body *')]
+        .filter(visible)
+        .map((el) => ({ el, rect: el.getBoundingClientRect() }))
+        .filter(({ el, rect }) => rect.right > viewportWidth + 2 && !clippedByAncestor(el))
+        .sort((a, b) => b.rect.right - a.rect.right)
+        .slice(0, 5)
+        .map(({ el, rect }) => `${elementLabel(el)} right=${Math.round(rect.right)}px`);
+      return [
+        `horizontal page overflow at ${viewportWidth}px viewport: ${overflow}px${
+          offenders.length ? `; offenders: ${offenders.join(', ')}` : ''
+        }`,
+      ];
     }
 
-    return issues;
+    return [
+      ...brokenAriaIssues(),
+      ...duplicateIdIssues(),
+      ...nonFiniteGeometryIssues(),
+      ...brokenImageIssues(),
+      ...namelessButtonIssues(),
+      ...namelessControlIssues(),
+      ...horizontalOverflowIssues(),
+    ];
   });
 }
 

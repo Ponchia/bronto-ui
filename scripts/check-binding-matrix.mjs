@@ -5,26 +5,17 @@
 // or declaration-level consumer proof.
 //
 // Run: node scripts/check-binding-matrix.mjs
-import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { reportAndExit } from './lib/gate-report.mjs';
+import { createTextReader, hasWord, relExists } from './lib/ownership-proof.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
-const textCache = new Map();
+const text = createTextReader(root);
 
-function text(rel) {
-  if (!textCache.has(rel)) textCache.set(rel, readFileSync(resolve(root, rel), 'utf8'));
-  return textCache.get(rel);
-}
-
-function hasWord(haystack, needle) {
-  return new RegExp(`\\b${needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(haystack);
-}
-
-function relExists(rel) {
-  return existsSync(resolve(root, rel));
+function fileExists(rel) {
+  return relExists(root, rel);
 }
 
 function lowerFirst(value) {
@@ -39,7 +30,7 @@ function lifecycleNames(barrel) {
 }
 
 function requireFile(rel, owner) {
-  if (!relExists(rel)) {
+  if (!fileExists(rel)) {
     errors.push(`${owner} is missing ${rel}`);
     return false;
   }

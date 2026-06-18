@@ -20,45 +20,12 @@ import { cls } from '../classes/index.js';
 import { reportAndExit } from './lib/gate-report.mjs';
 import { shippedDocs } from './lib/shipped-docs.mjs';
 import { CORE_BUNDLE, optInLeaves } from './lib/css-leaves.mjs';
+import { REPORTING_TOOLBOX_JS, REPORTING_TOOLBOX_LEAVES } from './lib/reporting-toolbox.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const errors = [];
 const valid = new Set(Object.values(cls));
-
-const REPORTING_TOOLBOX_LEAVES = [
-  ['dataviz', 'theming.md#data-viz-palette'],
-  ['figure', 'figure.md'],
-  ['marks', 'marks.md'],
-  ['sources', 'sources.md'],
-  ['interval', 'interval.md'],
-  ['clamp', 'clamp.md'],
-  ['highlights', 'highlights.md'],
-  ['annotations', 'annotations.md'],
-  ['connectors', 'connectors.md'],
-  ['legend', 'legends.md'],
-  ['spotlight', 'spotlight.md'],
-  ['crosshair', 'crosshair.md'],
-  ['selection', 'selection.md'],
-  ['generated', 'generated.md'],
-  ['state', 'state.md'],
-  ['workbench', 'workbench.md'],
-  ['command', 'command.md'],
-  ['spark', 'spark.md'],
-  ['bullet', 'bullet.md'],
-  ['diff', 'diff.md'],
-  ['code', 'code.md'],
-  ['sidenote', 'sidenote.md'],
-  ['textref', 'textref.md'],
-  ['term', 'term.md'],
-  ['toc', 'toc.md'],
-  ['tree', 'tree.md'],
-];
-const REPORTING_TOOLBOX_JS = [
-  ['@ponchia/ui/mermaid', 'mermaid.md'],
-  ['@ponchia/ui/d2', 'd2.md'],
-  ['@ponchia/ui/vega', 'vega.md'],
-];
 
 const read = (rel) => readFileSync(resolve(root, rel), 'utf8');
 
@@ -496,6 +463,21 @@ function checkReportShape(rel, src) {
 }
 
 function checkReportingToolbox(src) {
+  const optIn = new Set(optInLeaves(pkg));
+  for (const [leaf] of REPORTING_TOOLBOX_LEAVES) {
+    if (!optIn.has(leaf)) {
+      errors.push(
+        `scripts/lib/reporting-toolbox.mjs: css/${leaf}.css is not an exported opt-in leaf`,
+      );
+    }
+  }
+  for (const [specifier] of REPORTING_TOOLBOX_JS) {
+    const exportKey = specifier.replace(/^@ponchia\/ui\//, './');
+    if (!Object.prototype.hasOwnProperty.call(pkg.exports ?? {}, exportKey)) {
+      errors.push(`scripts/lib/reporting-toolbox.mjs: ${specifier} is not a package export`);
+    }
+  }
+
   const start = src.indexOf('## The analytical toolbox in a report');
   const end = src.indexOf('## Canonical skeleton', start);
   if (start === -1 || end === -1) {

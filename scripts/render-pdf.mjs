@@ -31,6 +31,8 @@ import { log } from './lib/stdio.mjs';
 // How long to wait for a report's own `data-report-ready` readiness signal
 // (set by module-script reports when their figures finish rendering).
 const READY_TIMEOUT_MS = 15_000;
+const USAGE =
+  'usage: node scripts/render-pdf.mjs <report.html> [more.html ...] [--out <dir>] [--serve]';
 
 /**
  * Split argv into the `--out <dir>` value, the `--serve` flag, and the list of
@@ -69,86 +71,100 @@ function serveUrl(abs, port) {
   return `http://127.0.0.1:${port}/${rel.split(sep).join('/')}`;
 }
 
+async function startServer(serve) {
+  if (!serve) return { server: null, port: 0 };
+  const server = createDemoServer();
+  await new Promise((ok) => server.listen(0, '127.0.0.1', ok));
+  return { server, port: server.address().port };
+}
+
+function attachPageDiagnostics(page) {
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') console.error(`  [page] ${msg.text()}`);
+  });
+  page.on('pageerror', (err) => console.error(`  [page] ${err.message}`));
+  page.on('requestfailed', (req) =>
+    console.error(`  [page] request failed: ${req.url()} (${req.failure()?.errorText})`),
+  );
+}
+
+function pdfOutputPath(abs, outDir) {
+  return outDir
+    ? resolve(outDir, basename(abs).replace(/\.html?$/i, '.pdf'))
+    : abs.replace(/\.html?$/i, '.pdf');
+}
+
+function inputUrl(input, abs, serve, port) {
+  if (!serve) return pathToFileURL(abs).href;
+  const viaHttp = serveUrl(abs, port);
+  if (viaHttp) return viaHttp;
+  console.error(`✗ ${input} is outside ${root} — --serve cannot reach it`);
+  return null;
+}
+
+async function waitForReportReady(page, input, html) {
+  const hasModules = html.includes('type="module"');
+  if (hasModules && html.includes('data-report-ready')) {
+    await page
+      .waitForSelector('html[data-report-ready]', { timeout: READY_TIMEOUT_MS })
+      .catch(() =>
+        console.error(`  [warn] ${input}: data-report-ready never fired; rendering anyway`),
+      );
+  }
+  return hasModules;
+}
+
+async function renderInput(page, input, { outDir, serve, port }) {
+  const abs = resolve(input);
+  if (!existsSync(abs)) {
+    console.error(`✗ not found: ${input}`);
+    return;
+  }
+
+  const url = inputUrl(input, abs, serve, port);
+  if (!url) return;
+
+  await page.goto(url, { waitUntil: 'networkidle' });
+
+  const html = await page.content();
+  const hasModules = await waitForReportReady(page, input, html);
+  if (hasModules && !serve) {
+    console.error(
+      `  [warn] ${input} uses <script type="module"> over file:// — module imports are ` +
+        'blocked (CORS), so its figures will be missing. Re-run with --serve.',
+    );
+  }
+
+  const out = pdfOutputPath(abs, outDir);
+  await page.pdf({
+    path: out,
+    format: 'A4',
+    printBackground: true, // required, or chart fills/swatches drop out
+    margin: { top: '14mm', bottom: '14mm', left: '14mm', right: '14mm' },
+  });
+  log(`✓ ${out}`);
+}
+
 async function main(argv) {
   const { outDir, inputs, serve } = parseArgs(argv);
 
   if (!inputs.length) {
-    console.error(
-      'usage: node scripts/render-pdf.mjs <report.html> [more.html ...] [--out <dir>] [--serve]',
-    );
+    console.error(USAGE);
     process.exit(1);
   }
   if (outDir && !existsSync(outDir)) mkdirSync(outDir, { recursive: true });
 
-  let server = null;
-  let port = 0;
-  if (serve) {
-    server = createDemoServer();
-    await new Promise((ok) => server.listen(0, '127.0.0.1', ok));
-    port = server.address().port;
-  }
-
+  const { server, port } = await startServer(serve);
   const browser = await launch();
   // try/finally so a throwing goto/pdf can't leak the Chromium process.
   try {
     const page = await browser.newPage();
     // Surface what used to fail silently: module-import CORS errors, missing
     // assets, and page exceptions all land on stderr instead of vanishing.
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') console.error(`  [page] ${msg.text()}`);
-    });
-    page.on('pageerror', (err) => console.error(`  [page] ${err.message}`));
-    page.on('requestfailed', (req) =>
-      console.error(`  [page] request failed: ${req.url()} (${req.failure()?.errorText})`),
-    );
+    attachPageDiagnostics(page);
 
     for (const input of inputs) {
-      const abs = resolve(input);
-      if (!existsSync(abs)) {
-        console.error(`✗ not found: ${input}`);
-        continue;
-      }
-      const out = outDir
-        ? resolve(outDir, basename(abs).replace(/\.html?$/i, '.pdf'))
-        : abs.replace(/\.html?$/i, '.pdf');
-
-      let url = pathToFileURL(abs).href;
-      if (serve) {
-        const viaHttp = serveUrl(abs, port);
-        if (!viaHttp) {
-          console.error(`✗ ${input} is outside ${root} — --serve cannot reach it`);
-          continue;
-        }
-        url = viaHttp;
-      }
-
-      await page.goto(url, { waitUntil: 'networkidle' });
-
-      const html = await page.content();
-      const hasModules = html.includes('type="module"');
-      if (hasModules && !serve) {
-        console.error(
-          `  [warn] ${input} uses <script type="module"> over file:// — module imports are ` +
-            'blocked (CORS), so its figures will be missing. Re-run with --serve.',
-        );
-      }
-      // Reports that render figures from JS flag completion on the root
-      // element; wait for it so the PDF is not snapshotted mid-render.
-      if (hasModules && html.includes('data-report-ready')) {
-        await page
-          .waitForSelector('html[data-report-ready]', { timeout: READY_TIMEOUT_MS })
-          .catch(() =>
-            console.error(`  [warn] ${input}: data-report-ready never fired; rendering anyway`),
-          );
-      }
-
-      await page.pdf({
-        path: out,
-        format: 'A4',
-        printBackground: true, // required, or chart fills/swatches drop out
-        margin: { top: '14mm', bottom: '14mm', left: '14mm', right: '14mm' },
-      });
-      log(`✓ ${out}`);
+      await renderInput(page, input, { outDir, serve, port });
     }
   } finally {
     await browser.close();
