@@ -58,6 +58,46 @@ const groupNames = new Set(Object.keys(classesJson.groups ?? {}));
 // Standard CSS generic font families that happen to share the ui- prefix.
 const CSS_FONT_KEYWORDS = new Set(['ui-monospace', 'ui-sans-serif', 'ui-serif', 'ui-rounded']);
 const PUBLIC_BOUNDARY_FILE = /\.(?:md|html|css|js|json|mjs|ts|tsx|jsx|d\.ts|ya?ml|txt)$/;
+const HTML_SNIPPET = /```html[^\n]*\n([\s\S]*?)\n```/g;
+const ARIA_IDREF_ATTRIBUTES = Object.freeze([
+  'aria-controls',
+  'aria-labelledby',
+  'aria-describedby',
+]);
+const DATA_TARGET_ATTRIBUTES = Object.freeze([
+  'data-bronto-open',
+  'data-bronto-close',
+  'data-bronto-target',
+  'data-target',
+]);
+const SOURCE_TRUST_STATES = Object.freeze([
+  'verified',
+  'reviewed',
+  'generated',
+  'unverified',
+  'stale',
+  'conflict',
+]);
+const SOURCE_CARD_PARTS = Object.freeze([
+  'ui-source-card__title',
+  'ui-source-card__origin',
+  'ui-source-card__time',
+]);
+const FINDING_SEVERITIES = Object.freeze(['critical', 'major', 'minor', 'resolved']);
+const CLAIM_STATUSES = Object.freeze([
+  'supported',
+  'partial',
+  'disputed',
+  'unsupported',
+  'unknown',
+]);
+const UNLINKED_CLAIM_STATUSES = new Set(['unsupported', 'unknown']);
+const CLAIM_PARTS = Object.freeze(['ui-claim__statement', 'ui-claim__status']);
+const ACTION_REQUIRED_PARTS = Object.freeze([
+  'ui-report__action-owner',
+  'ui-report__action-due',
+  'ui-report__action-criteria',
+]);
 
 // Pedagogical anti-examples: classes the docs name precisely BECAUSE they do
 // not exist ("…silently no-ops", "there is deliberately no …"). Anything
@@ -233,107 +273,140 @@ function trackedPublicBoundarySources() {
 
 function checkHtmlSnippets(docs) {
   let count = 0;
-  for (const rel of docs) {
-    let src;
-    try {
-      src = read(rel);
-    } catch {
-      continue; // missing shipped docs are check:pack's responsibility
-    }
-
-    for (const match of src.matchAll(/```html[^\n]*\n([\s\S]*?)\n```/g)) {
+  for (const { rel, src } of readableDocs(docs)) {
+    for (const match of src.matchAll(HTML_SNIPPET)) {
       count += 1;
-      const line = src.slice(0, match.index).split('\n').length;
-      const where = `${rel}:${line}`;
+      const where = snippetLocation(rel, src, match);
       const fragment = JSDOM.fragment(match[1]);
-      const ids = new Map();
-      for (const node of fragment.querySelectorAll('[id]')) {
-        ids.set(node.id, (ids.get(node.id) || 0) + 1);
-      }
-
-      for (const [id, seen] of ids) {
-        if (seen > 1) errors.push(`${where}: fenced HTML snippet repeats id="${id}" ${seen}x`);
-      }
-
-      for (const node of fragment.querySelectorAll(
-        '[aria-controls], [aria-labelledby], [aria-describedby]',
-      )) {
-        for (const attr of ['aria-controls', 'aria-labelledby', 'aria-describedby']) {
-          const value = node.getAttribute(attr);
-          if (!value) continue;
-          for (const id of value.trim().split(/\s+/)) {
-            if (id && !ids.has(id)) {
-              errors.push(
-                `${where}: fenced HTML snippet has ${attr}="${id}" on ` +
-                  `<${node.tagName.toLowerCase()}> but no matching id="${id}"`,
-              );
-            }
-          }
-        }
-      }
-
-      for (const label of fragment.querySelectorAll('label[for]')) {
-        const id = label.getAttribute('for');
-        if (id && !ids.has(id)) {
-          errors.push(`${where}: fenced HTML snippet has label[for="${id}"] with no matching id`);
-        }
-      }
-
-      for (const input of fragment.querySelectorAll('input[list]')) {
-        const id = input.getAttribute('list');
-        if (id && !ids.has(id)) {
-          errors.push(`${where}: fenced HTML snippet has input[list="${id}"] with no datalist id`);
-        }
-      }
-
-      for (const node of fragment.querySelectorAll(
-        '[data-bronto-open], [data-bronto-close], [data-bronto-target], [data-target]',
-      )) {
-        for (const attr of [
-          'data-bronto-open',
-          'data-bronto-close',
-          'data-bronto-target',
-          'data-target',
-        ]) {
-          const value = node.getAttribute(attr);
-          if (!value) continue;
-          for (const part of value.trim().split(/\s+/)) {
-            if (part.startsWith('#') && !ids.has(part.slice(1))) {
-              errors.push(
-                `${where}: fenced HTML snippet has ${attr}="${part}" but no matching target id`,
-              );
-            }
-          }
-        }
-      }
-
-      for (const node of fragment.querySelectorAll('[data-source-ids]')) {
-        const value = node.getAttribute('data-source-ids') || '';
-        for (const id of value.trim().split(/\s+/)) {
-          if (id && !ids.has(id)) {
-            errors.push(
-              `${where}: fenced HTML snippet has data-source-ids="${id}" but no source id`,
-            );
-          }
-        }
-      }
+      checkSnippetReferences(where, fragment, collectIds(fragment));
     }
   }
   return count;
 }
 
+function* readableDocs(docs) {
+  for (const rel of docs) {
+    try {
+      yield { rel, src: read(rel) };
+    } catch {
+      // Missing shipped docs are check:pack's responsibility.
+    }
+  }
+}
+
+function snippetLocation(rel, src, match) {
+  const line = src.slice(0, match.index).split('\n').length;
+  return `${rel}:${line}`;
+}
+
+function collectIds(rootNode) {
+  const ids = new Map();
+  for (const node of rootNode.querySelectorAll('[id]')) {
+    ids.set(node.id, (ids.get(node.id) || 0) + 1);
+  }
+  return ids;
+}
+
+function checkSnippetReferences(where, fragment, ids) {
+  checkRepeatedSnippetIds(where, ids);
+  checkAriaIdRefs(where, fragment, ids);
+  checkLabelForRefs(where, fragment, ids);
+  checkInputListRefs(where, fragment, ids);
+  checkDataTargetRefs(where, fragment, ids);
+  checkDataSourceIds(where, fragment, ids);
+}
+
+function checkRepeatedSnippetIds(where, ids) {
+  for (const [id, seen] of ids) {
+    if (seen > 1) errors.push(`${where}: fenced HTML snippet repeats id="${id}" ${seen}x`);
+  }
+}
+
+function checkAriaIdRefs(where, fragment, ids) {
+  for (const node of fragment.querySelectorAll(idRefSelector(ARIA_IDREF_ATTRIBUTES))) {
+    for (const attr of ARIA_IDREF_ATTRIBUTES) {
+      for (const id of idTokens(node.getAttribute(attr))) {
+        if (!ids.has(id)) {
+          errors.push(
+            `${where}: fenced HTML snippet has ${attr}="${id}" on ` +
+              `<${node.tagName.toLowerCase()}> but no matching id="${id}"`,
+          );
+        }
+      }
+    }
+  }
+}
+
+function checkLabelForRefs(where, fragment, ids) {
+  for (const label of fragment.querySelectorAll('label[for]')) {
+    const id = label.getAttribute('for');
+    if (id && !ids.has(id)) {
+      errors.push(`${where}: fenced HTML snippet has label[for="${id}"] with no matching id`);
+    }
+  }
+}
+
+function checkInputListRefs(where, fragment, ids) {
+  for (const input of fragment.querySelectorAll('input[list]')) {
+    const id = input.getAttribute('list');
+    if (id && !ids.has(id)) {
+      errors.push(`${where}: fenced HTML snippet has input[list="${id}"] with no datalist id`);
+    }
+  }
+}
+
+function checkDataTargetRefs(where, fragment, ids) {
+  for (const node of fragment.querySelectorAll(idRefSelector(DATA_TARGET_ATTRIBUTES))) {
+    for (const attr of DATA_TARGET_ATTRIBUTES) {
+      for (const part of idTokens(node.getAttribute(attr))) {
+        if (part.startsWith('#') && !ids.has(part.slice(1))) {
+          errors.push(
+            `${where}: fenced HTML snippet has ${attr}="${part}" but no matching target id`,
+          );
+        }
+      }
+    }
+  }
+}
+
+function checkDataSourceIds(where, fragment, ids) {
+  for (const node of fragment.querySelectorAll('[data-source-ids]')) {
+    for (const id of idTokens(node.getAttribute('data-source-ids'))) {
+      if (!ids.has(id)) {
+        errors.push(`${where}: fenced HTML snippet has data-source-ids="${id}" but no source id`);
+      }
+    }
+  }
+}
+
+function idRefSelector(attributes) {
+  return attributes.map((attr) => `[${attr}]`).join(', ');
+}
+
+function idTokens(value) {
+  return (value || '').trim().split(/\s+/).filter(Boolean);
+}
+
 function checkReportShape(rel, src) {
   const doc = new JSDOM(src).window.document;
-  const h1s = [...doc.querySelectorAll('h1')];
-  if (h1s.length !== 1) errors.push(`${rel}: expected exactly one <h1>, found ${h1s.length}`);
+  checkSingleElement(rel, doc, 'h1', '<h1>');
+  checkSingleElement(rel, doc, 'main.ui-report', '<main class="ui-report">');
+  checkTablesAndFigures(rel, doc);
+  checkAccessibleSvgs(rel, doc);
+  checkAlerts(rel, doc);
+  checkSourceCards(rel, doc);
+  checkFindingSeverities(rel, doc);
+  checkCitations(rel, doc);
+  checkClaims(rel, doc);
+  checkActions(rel, doc);
+}
 
-  const reportMains = [...doc.querySelectorAll('main.ui-report')];
-  if (reportMains.length !== 1) {
-    errors.push(
-      `${rel}: expected exactly one <main class="ui-report">, found ${reportMains.length}`,
-    );
-  }
+function checkSingleElement(rel, doc, selector, label) {
+  const count = doc.querySelectorAll(selector).length;
+  if (count !== 1) errors.push(`${rel}: expected exactly one ${label}, found ${count}`);
+}
 
+function checkTablesAndFigures(rel, doc) {
   for (const table of doc.querySelectorAll('table')) {
     if (!table.querySelector('caption')) errors.push(`${rel}: table is missing a caption`);
     if (!table.querySelector('th')) errors.push(`${rel}: table is missing header cells`);
@@ -342,127 +415,170 @@ function checkReportShape(rel, src) {
   for (const figure of doc.querySelectorAll('figure')) {
     if (!figure.querySelector('figcaption')) errors.push(`${rel}: figure is missing a figcaption`);
   }
+}
 
+function checkAccessibleSvgs(rel, doc) {
   for (const svg of doc.querySelectorAll('svg')) {
-    if (
-      svg.hasAttribute('role') ||
-      svg.hasAttribute('aria-label') ||
-      svg.hasAttribute('aria-labelledby') ||
-      svg.closest('figure')
-    ) {
-      if (!svg.querySelector('title')) errors.push(`${rel}: report SVG is missing a <title>`);
-      if (!svg.querySelector('desc')) errors.push(`${rel}: report SVG is missing a <desc>`);
-    }
+    if (!svgNeedsTextAlternative(svg)) continue;
+    if (!svg.querySelector('title')) errors.push(`${rel}: report SVG is missing a <title>`);
+    if (!svg.querySelector('desc')) errors.push(`${rel}: report SVG is missing a <desc>`);
   }
+}
 
+function svgNeedsTextAlternative(svg) {
+  return (
+    svg.hasAttribute('role') ||
+    svg.hasAttribute('aria-label') ||
+    svg.hasAttribute('aria-labelledby') ||
+    svg.closest('figure')
+  );
+}
+
+function checkAlerts(rel, doc) {
   for (const alert of doc.querySelectorAll('.ui-alert')) {
     if (!alert.querySelector('.ui-alert__body')) {
       errors.push(`${rel}: ui-alert text must be wrapped in .ui-alert__body`);
     }
   }
+}
 
+function checkSourceCards(rel, doc) {
   for (const source of doc.querySelectorAll('.ui-source-card')) {
-    if (!source.id) {
-      errors.push(`${rel}: ui-source-card needs a stable id for claim/source links`);
-    }
-    if (
-      ![...source.classList].some((name) =>
-        /^ui-src--(?:verified|reviewed|generated|unverified|stale|conflict)$/.test(name),
-      )
-    ) {
+    if (!source.id) errors.push(`${rel}: ui-source-card needs a stable id for claim/source links`);
+    if (!hasSourceTrustState(source)) {
       errors.push(`${rel}: ui-source-card needs an explicit ui-src--* trust state`);
     }
-    for (const required of [
-      'ui-source-card__title',
-      'ui-source-card__origin',
-      'ui-source-card__time',
-    ]) {
+    for (const required of SOURCE_CARD_PARTS) {
       if (!source.querySelector(`.${required}`)) {
         errors.push(`${rel}: ui-source-card needs .${required}`);
       }
     }
   }
+}
 
+function hasSourceTrustState(source) {
+  return SOURCE_TRUST_STATES.some((state) => source.classList.contains(`ui-src--${state}`));
+}
+
+function checkFindingSeverities(rel, doc) {
   for (const finding of doc.querySelectorAll('.ui-report__finding')) {
-    for (const severity of ['critical', 'major', 'minor', 'resolved']) {
-      if (finding.classList.contains(`ui-report__finding--${severity}`)) {
-        const text = readableText(finding).toLowerCase();
-        if (!new RegExp(`\\b${severity}\\b`).test(text)) {
-          errors.push(
-            `${rel}: ui-report__finding--${severity} must repeat "${severity}" in readable text`,
-          );
-        }
-      }
+    for (const severity of FINDING_SEVERITIES) {
+      checkFindingSeverityText(rel, finding, severity);
     }
   }
+}
 
+function checkFindingSeverityText(rel, finding, severity) {
+  if (!finding.classList.contains(`ui-report__finding--${severity}`)) return;
+  if (!hasWord(readableText(finding), severity)) {
+    errors.push(
+      `${rel}: ui-report__finding--${severity} must repeat "${severity}" in readable text`,
+    );
+  }
+}
+
+function checkCitations(rel, doc) {
   for (const citation of doc.querySelectorAll('.ui-citation[href^="#"]')) {
     const id = citation.getAttribute('href')?.slice(1);
     if (id && !doc.getElementById(id)) {
       errors.push(`${rel}: ui-citation points to missing target #${id}`);
     }
   }
+}
 
+function checkClaims(rel, doc) {
   const sourceCardIds = new Set(
     [...doc.querySelectorAll('.ui-source-card[id]')].map((node) => node.id),
   );
   for (const claim of doc.querySelectorAll('.ui-claim')) {
-    if (!claim.id) {
-      errors.push(`${rel}: ui-claim needs a stable id for evidence ledgers`);
-    }
-    const status = ['supported', 'partial', 'disputed', 'unsupported', 'unknown'].find((name) =>
-      claim.classList.contains(`ui-claim--${name}`),
-    );
-    if (!status) {
-      errors.push(`${rel}: ui-claim needs an explicit ui-claim--* evidence state`);
-    } else if (!new RegExp(`\\b${status}\\b`, 'i').test(readableText(claim))) {
-      errors.push(`${rel}: ui-claim--${status} must repeat "${status}" in readable text`);
-    }
-    for (const required of ['ui-claim__statement', 'ui-claim__status']) {
-      if (!claim.querySelector(`.${required}`)) {
-        errors.push(`${rel}: ui-claim needs .${required}`);
-      }
-    }
-    const declaredSources = (claim.getAttribute('data-source-ids') || '')
-      .split(/\s+/)
-      .map((id) => id.trim())
-      .filter(Boolean);
-    for (const id of declaredSources) {
-      if (!sourceCardIds.has(id)) {
-        errors.push(`${rel}: ui-claim data-source-ids references missing source card #${id}`);
-      }
-    }
-    const linkedSourceIds = [...claim.querySelectorAll('a[href^="#"]')]
-      .map((link) => link.getAttribute('href')?.slice(1))
-      .filter((id) => id && sourceCardIds.has(id));
-    if (
-      !['unsupported', 'unknown'].includes(status) &&
-      !declaredSources.length &&
-      !linkedSourceIds.length
-    ) {
-      errors.push(`${rel}: ui-claim needs data-source-ids or a source-card citation`);
+    checkClaim(rel, claim, sourceCardIds);
+  }
+}
+
+function checkClaim(rel, claim, sourceCardIds) {
+  if (!claim.id) errors.push(`${rel}: ui-claim needs a stable id for evidence ledgers`);
+
+  const status = claimStatusFromClass(claim);
+  checkClaimStatus(rel, claim, status);
+  checkRequiredParts(rel, claim, CLAIM_PARTS, 'ui-claim needs');
+
+  const declaredSources = idTokens(claim.getAttribute('data-source-ids'));
+  checkDeclaredClaimSources(rel, declaredSources, sourceCardIds);
+  if (claimNeedsSourceLink(status, declaredSources, linkedSourceIds(claim, sourceCardIds))) {
+    errors.push(`${rel}: ui-claim needs data-source-ids or a source-card citation`);
+  }
+}
+
+function claimStatusFromClass(claim) {
+  return CLAIM_STATUSES.find((status) => claim.classList.contains(`ui-claim--${status}`));
+}
+
+function checkClaimStatus(rel, claim, status) {
+  if (!status) {
+    errors.push(`${rel}: ui-claim needs an explicit ui-claim--* evidence state`);
+  } else if (!hasWord(readableText(claim), status)) {
+    errors.push(`${rel}: ui-claim--${status} must repeat "${status}" in readable text`);
+  }
+}
+
+function checkDeclaredClaimSources(rel, declaredSources, sourceCardIds) {
+  for (const id of declaredSources) {
+    if (!sourceCardIds.has(id)) {
+      errors.push(`${rel}: ui-claim data-source-ids references missing source card #${id}`);
     }
   }
+}
 
+function linkedSourceIds(claim, sourceCardIds) {
+  return [...claim.querySelectorAll('a[href^="#"]')]
+    .map((link) => link.getAttribute('href')?.slice(1))
+    .filter((id) => id && sourceCardIds.has(id));
+}
+
+function claimNeedsSourceLink(status, declaredSources, linkedSources) {
+  return (
+    status &&
+    !UNLINKED_CLAIM_STATUSES.has(status) &&
+    !declaredSources.length &&
+    !linkedSources.length
+  );
+}
+
+function checkActions(rel, doc) {
   for (const action of doc.querySelectorAll('.ui-report__action')) {
     if (!action.querySelector('.ui-report__action-status')) {
       errors.push(`${rel}: ui-report__action needs .ui-report__action-status text`);
     }
     if (action.querySelector('.ui-report__action-title')) {
-      for (const required of [
-        'ui-report__action-owner',
-        'ui-report__action-due',
-        'ui-report__action-criteria',
-      ]) {
-        if (!action.querySelector(`.${required}`)) {
-          errors.push(`${rel}: action-register row with a title needs .${required}`);
-        }
-      }
+      checkRequiredParts(
+        rel,
+        action,
+        ACTION_REQUIRED_PARTS,
+        'action-register row with a title needs',
+      );
     }
   }
 }
 
+function checkRequiredParts(rel, rootNode, classNames, messagePrefix) {
+  for (const className of classNames) {
+    if (!rootNode.querySelector(`.${className}`)) {
+      errors.push(`${rel}: ${messagePrefix} .${className}`);
+    }
+  }
+}
+
+function hasWord(text, word) {
+  return new RegExp(`\\b${word}\\b`, 'i').test(text);
+}
+
 function checkReportingToolbox(src) {
+  checkToolboxPackageSurface();
+  checkToolboxDocs(src);
+  checkReportKitImports();
+}
+
+function checkToolboxPackageSurface() {
   const optIn = new Set(optInLeaves(pkg));
   for (const [leaf] of REPORTING_TOOLBOX_LEAVES) {
     if (!optIn.has(leaf)) {
@@ -477,7 +593,9 @@ function checkReportingToolbox(src) {
       errors.push(`scripts/lib/reporting-toolbox.mjs: ${specifier} is not a package export`);
     }
   }
+}
 
+function checkToolboxDocs(src) {
   const start = src.indexOf('## The analytical toolbox in a report');
   const end = src.indexOf('## Canonical skeleton', start);
   if (start === -1 || end === -1) {
@@ -501,7 +619,9 @@ function checkReportingToolbox(src) {
       errors.push(`docs/reporting.md: analytical toolbox missing link to ${doc}`);
     }
   }
+}
 
+function checkReportKitImports() {
   const reportKit = read('css/report-kit.css');
   for (const screenLeaf of ['workbench', 'command']) {
     if (new RegExp(`@import\\s+url\\('\\./${screenLeaf}\\.css'\\)`).test(reportKit)) {

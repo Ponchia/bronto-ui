@@ -325,60 +325,82 @@ const GRAPHICAL_SELECTOR =
 // arm because the `:` split only sees the first line of such a value.
 for (const file of readdirSync(cssDir).filter((f) => f.endsWith('.css') && !isDefinitionFile(f))) {
   const lines = stripCssComments(readFileSync(resolve(cssDir, file), 'utf8')).split('\n');
-  let selectorBuf = '';
-  let activeSelector = '';
-  lines.forEach((raw, i) => {
-    const line = stripUrls(raw);
+  const state = { selectorBuf: '', activeSelector: '' };
+  lines.forEach((raw, i) => scanCssPolicyLine(file, stripUrls(raw), i + 1, state));
+}
 
-    // Accent-as-text policy (uses the selector from the `{` line already seen above).
-    if (ACCENT_AS_TEXT.test(line) && !GRAPHICAL_SELECTOR.test(activeSelector)) {
+function scanCssPolicyLine(file, line, lineNumber, state) {
+  checkAccentAsText(file, line, lineNumber, state.activeSelector);
+  updateSelectorState(line, state);
+  checkRawHex(file, line, lineNumber);
+  checkRawColorFunction(file, line, lineNumber);
+  checkChartTokenLeak(file, line, lineNumber);
+  checkNamedColor(file, line, lineNumber);
+}
+
+function checkAccentAsText(file, line, lineNumber, activeSelector) {
+  // Accent-as-text policy uses the selector from the `{` line already seen above.
+  if (!ACCENT_AS_TEXT.test(line) || GRAPHICAL_SELECTOR.test(activeSelector)) return;
+  errors.push(
+    `css/${file}:${lineNumber} \`color: var(--accent)\` on text "${activeSelector.trim()}" — ` +
+      `use --accent-text (raw --accent fails WCAG AA after a paler re-brand; ADR-0001 / audit C6)`,
+  );
+}
+
+function updateSelectorState(line, state) {
+  // Track the active selector for the next declarations: accumulate comma-grouped
+  // selector lines, freeze on `{`, reset on `}`.
+  const trimmed = line.trim();
+  if (trimmed.includes('}')) state.selectorBuf = '';
+  if (trimmed.includes('{')) {
+    state.activeSelector = `${state.selectorBuf} ${trimmed.split('{')[0]}`.trim();
+    state.selectorBuf = '';
+  } else if (/,\s*$/.test(trimmed)) {
+    state.selectorBuf += ` ${trimmed}`;
+  }
+}
+
+function checkRawHex(file, line, lineNumber) {
+  for (const match of line.matchAll(/#([0-9a-fA-F]{3,8})\b/g)) {
+    if (!isGrayHex(match[1])) {
       errors.push(
-        `css/${file}:${i + 1} \`color: var(--accent)\` on text "${activeSelector.trim()}" — ` +
-          `use --accent-text (raw --accent fails WCAG AA after a paler re-brand; ADR-0001 / audit C6)`,
+        `css/${file}:${lineNumber} raw chromatic color "#${match[1]}" — use a tiered token (ADR-0001 rule 1)`,
       );
     }
-    // Track the active selector for the next declarations: accumulate comma-grouped
-    // selector lines, freeze on `{`, reset on `}`.
-    const t = line.trim();
-    if (t.includes('}')) selectorBuf = '';
-    if (t.includes('{')) {
-      activeSelector = `${selectorBuf} ${t.split('{')[0]}`.trim();
-      selectorBuf = '';
-    } else if (/,\s*$/.test(t)) {
-      selectorBuf += ` ${t}`;
-    }
-    for (const m of line.matchAll(/#([0-9a-fA-F]{3,8})\b/g)) {
-      if (!isGrayHex(m[1])) {
-        errors.push(
-          `css/${file}:${i + 1} raw chromatic color "#${m[1]}" — use a tiered token (ADR-0001 rule 1)`,
-        );
-      }
-    }
-    if (RAW_FN.test(line)) {
-      errors.push(
-        `css/${file}:${i + 1} raw color function "${line.match(RAW_FN)[1]}(…)" — use a tiered token (ADR-0001 rule 1)`,
-      );
-    }
-    // Tier-4 data-viz tokens are charts-only — never UI chrome (ADR-0001 rule 4).
-    // They live in the opt-in css/dataviz.css (a definition file, exempt here);
-    // a reference from any core component CSS is leakage. Chart-helper files
-    // (report.css) are allowed to consume them in their .ui-chart parts.
-    const leak = line.match(/var\(\s*(--(?:chart|cat|data)-[\w-]*)/);
-    if (leak && !consumesChartTokens(file)) {
-      errors.push(
-        `css/${file}:${i + 1} references "${leak[1]}" — Tier-4 data-viz tokens are charts-only, not UI chrome (ADR-0001)`,
-      );
-    }
-    // Named colors only count on the value side of a declaration (avoid
-    // matching selectors / at-rules / property fragments).
-    const value = line.includes(':') ? line.slice(line.indexOf(':') + 1) : '';
-    const named = value.match(NAMED_CHROMATIC);
-    if (named) {
-      errors.push(
-        `css/${file}:${i + 1} raw named color "${named[1]}" — use a tiered token (ADR-0001 rule 1)`,
-      );
-    }
-  });
+  }
+}
+
+function checkRawColorFunction(file, line, lineNumber) {
+  const raw = line.match(RAW_FN);
+  if (!raw) return;
+  errors.push(
+    `css/${file}:${lineNumber} raw color function "${raw[1]}(…)" — use a tiered token (ADR-0001 rule 1)`,
+  );
+}
+
+function checkChartTokenLeak(file, line, lineNumber) {
+  // Tier-4 data-viz tokens are charts-only — never UI chrome (ADR-0001 rule 4).
+  // They live in the opt-in css/dataviz.css (a definition file, exempt here);
+  // a reference from any core component CSS is leakage. Chart-helper files
+  // (report.css) are allowed to consume them in their .ui-chart parts.
+  const leak = line.match(/var\(\s*(--(?:chart|cat|data)-[\w-]*)/);
+  if (leak && !consumesChartTokens(file)) {
+    errors.push(
+      `css/${file}:${lineNumber} references "${leak[1]}" — Tier-4 data-viz tokens are charts-only, not UI chrome (ADR-0001)`,
+    );
+  }
+}
+
+function checkNamedColor(file, line, lineNumber) {
+  // Named colors only count on the value side of a declaration (avoid matching
+  // selectors / at-rules / property fragments).
+  const value = line.includes(':') ? line.slice(line.indexOf(':') + 1) : '';
+  const named = value.match(NAMED_CHROMATIC);
+  if (named) {
+    errors.push(
+      `css/${file}:${lineNumber} raw named color "${named[1]}" — use a tiered token (ADR-0001 rule 1)`,
+    );
+  }
 }
 
 reportAndExit(errors, {

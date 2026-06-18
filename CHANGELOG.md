@@ -22,6 +22,10 @@
   optional framework peers instead of carrying separate hand-maintained lists.
   The matrix gates also share one proof-owner helper for cached file reads,
   owner-file existence, word matching, and required text evidence.
+- **Native complexity budget.** `check:complexity` is now part of the
+  aggregate `npm run check` chain. It uses the existing TypeScript parser to
+  keep function-level cyclomatic complexity at 12 or lower and function size
+  under budget without carrying per-function exception baselines.
 
 ### Verified
 

@@ -199,42 +199,49 @@ export async function structuralIssues(page) {
     }
 
     function controlHasName(el) {
-      if ((el.getAttribute('aria-label') || el.title || '').trim()) return true;
+      if (hasExplicitName(el)) return true;
+      if (hasLabelledByText(el)) return true;
+      if (hasForLabelText(el)) return true;
+      if (hasParentLabelText(el)) return true;
+      return buttonInputHasValue(el);
+    }
 
+    function hasExplicitName(el) {
+      return Boolean((el.getAttribute('aria-label') || el.title || '').trim());
+    }
+
+    function hasLabelledByText(el) {
       const labelledBy = (el.getAttribute('aria-labelledby') || '')
         .trim()
         .split(/\s+/)
         .filter(Boolean);
-      if (
-        labelledBy.length &&
+      return Boolean(
         labelledBy
           .map((id) => document.getElementById(id)?.textContent || '')
           .join(' ')
-          .trim()
-      ) {
-        return true;
-      }
+          .trim(),
+      );
+    }
 
-      if (
-        el.id &&
-        [...document.querySelectorAll('label')].some(
-          (label) => label.htmlFor === el.id && label.textContent.trim(),
-        )
-      ) {
-        return true;
-      }
+    function hasForLabelText(el) {
+      if (!el.id) return false;
+      return [...document.querySelectorAll('label')].some(
+        (label) => label.htmlFor === el.id && label.textContent.trim(),
+      );
+    }
 
+    function hasParentLabelText(el) {
       const parentLabel = el.closest('label');
-      if (parentLabel?.textContent.trim()) return true;
+      return Boolean(parentLabel?.textContent.trim());
+    }
 
-      if (
-        el.tagName === 'INPUT' &&
-        ['button', 'submit', 'reset'].includes((el.getAttribute('type') || 'text').toLowerCase())
-      ) {
-        return Boolean((el.getAttribute('value') || '').trim());
-      }
-
-      return false;
+    function buttonInputHasValue(el) {
+      if (el.tagName !== 'INPUT') return false;
+      const type = (el.getAttribute('type') || 'text').toLowerCase();
+      return (
+        ['button', 'submit', 'reset'].includes(type) &&
+        Boolean((el.getAttribute('value') || '').trim())
+      );
     }
 
     function namelessControlIssues() {

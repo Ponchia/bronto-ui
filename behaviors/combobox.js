@@ -344,33 +344,27 @@ export function initCombobox({ root } = {}) {
 
     const onInput = () => filter();
     const onKey = (e) => {
-      switch (e.key) {
-        case 'ArrowDown':
-          e.preventDefault();
-          list.hidden ? filter() : move(1);
-          break;
-        case 'ArrowUp':
-          e.preventDefault();
-          move(-1);
-          break;
-        case 'Home':
-          if (activateEdge('first')) e.preventDefault();
-          break;
-        case 'End':
-          if (activateEdge('last')) e.preventDefault();
-          break;
-        case 'Enter':
-          if (selectActive()) e.preventDefault();
-          break;
-        case 'Escape':
-          if (closeIfOpen()) e.preventDefault();
-          break;
-        case 'Tab':
-          close();
-          break;
-        default:
-          break;
-      }
+      const handled = keyHandlers[e.key]?.();
+      if (handled) e.preventDefault();
+    };
+    const keyHandlers = {
+      ArrowDown: () => {
+        if (list.hidden) filter();
+        else move(1);
+        return true;
+      },
+      ArrowUp: () => {
+        move(-1);
+        return true;
+      },
+      Home: () => activateEdge('first'),
+      End: () => activateEdge('last'),
+      Enter: () => selectActive(),
+      Escape: () => closeIfOpen(),
+      Tab: () => {
+        close();
+        return false;
+      },
     };
     const onOptionClick = (e) => {
       const opt = closestSafe(e.target, COMBOBOX_OPTION_SELECTOR);

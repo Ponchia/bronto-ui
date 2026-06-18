@@ -19,68 +19,89 @@ import { fileURLToPath } from 'node:url';
 import { reportAndExit } from './lib/gate-report.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const errors = [];
 
 const TEXT_FILE = /\.(?:css|html|js|json|mjs|md|ts|tsx|jsx|d\.ts|map|ya?ml|txt|toml|svg)$/i;
 
 const EXCLUDE = new Set(['package-lock.json']);
+const TERM_SPLIT = /[\n,]/;
+const COMMENT_SUFFIX = /#.*/;
+const SECRET_ASSIGNMENT = secretAssignmentPattern();
+const LOCAL_PATH_PATTERNS = Object.freeze([
+  /\/Users\/zeno\/[^\s`"')<]+/g,
+  /\/home\/zeno\/[^\s`"')<]+/g,
+  /\/var\/folders\/[^\s`"')<]+/g,
+]);
+const PRIVATE_KEY_BLOCK = /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/;
 
 // Default private consumer terms are assembled from neutral fragments so the
 // hygiene checker does not itself trip older tracked-source boundary scans.
-const PRIVATE_TERMS = [
+const PRIVATE_TERMS = Object.freeze([
   ['home', 'to', 'lotto'].join(''),
   ['po', 'lpo'].join(''),
   ['personal', 'site'].join('-'),
   ['agent', 'world'].join('-'),
-];
+]);
 
-const EXTRA_TERMS = [
-  process.env.BRONTO_UI_FORBIDDEN_TERMS ?? '',
-  localTerms('.bronto-ui-forbidden-terms'),
-]
-  .join('\n')
-  .split(/[\n,]/)
-  .map((term) => term.replace(/#.*/, '').trim().toLowerCase())
-  .filter(Boolean);
+const { errors, fileCount } = scanPublicHygiene();
 
-const forbiddenTerms = [...new Set([...PRIVATE_TERMS, ...EXTRA_TERMS])];
+reportAndExit(errors, {
+  label: 'public hygiene',
+  ok: `${fileCount} packed public text files contain no private terms, local paths, or secret-looking assignments`,
+});
 
-const files = publicTextFiles();
-for (const rel of files) {
+function scanPublicHygiene() {
+  const files = publicTextFiles();
+  const forbiddenTerms = collectForbiddenTerms();
+  const scanErrors = [];
+  for (const rel of files) {
+    scanPublicFile(scanErrors, rel, forbiddenTerms);
+  }
+  return { errors: scanErrors, fileCount: files.length };
+}
+
+function collectForbiddenTerms() {
+  const extraTerms = [
+    process.env.BRONTO_UI_FORBIDDEN_TERMS ?? '',
+    localTerms('.bronto-ui-forbidden-terms'),
+  ]
+    .join('\n')
+    .split(TERM_SPLIT)
+    .map(normalizeTerm)
+    .filter(Boolean);
+
+  return [...new Set([...PRIVATE_TERMS, ...extraTerms])];
+}
+
+function normalizeTerm(term) {
+  return term.replace(COMMENT_SUFFIX, '').trim().toLowerCase();
+}
+
+function scanPublicFile(scanErrors, rel, forbiddenTerms) {
   const src = readFileSync(resolve(root, rel), 'utf8');
   const lower = src.toLowerCase();
 
   for (const term of forbiddenTerms) {
     if (lower.includes(term)) {
-      errors.push(`${rel}: contains private/local consumer term "${term}"`);
+      scanErrors.push(`${rel}: contains private/local consumer term "${term}"`);
     }
   }
 
-  for (const pattern of [
-    /\/Users\/zeno\/[^\s`"')<]+/g,
-    /\/home\/zeno\/[^\s`"')<]+/g,
-    /\/var\/folders\/[^\s`"')<]+/g,
-  ]) {
-    for (const m of src.matchAll(pattern)) {
-      errors.push(`${rel}: contains local path "${m[0]}"`);
+  for (const pattern of LOCAL_PATH_PATTERNS) {
+    for (const match of src.matchAll(pattern)) {
+      scanErrors.push(`${rel}: contains local path "${match[0]}"`);
     }
   }
 
-  for (const m of src.matchAll(secretAssignmentPattern())) {
-    errors.push(
-      `${rel}: looks like a secret assignment near "${m[1]}" — use placeholders in public files`,
+  for (const match of src.matchAll(SECRET_ASSIGNMENT)) {
+    scanErrors.push(
+      `${rel}: looks like a secret assignment near "${match[1]}" — use placeholders in public files`,
     );
   }
 
-  if (/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/.test(src)) {
-    errors.push(`${rel}: contains a private-key block`);
+  if (PRIVATE_KEY_BLOCK.test(src)) {
+    scanErrors.push(`${rel}: contains a private-key block`);
   }
 }
-
-reportAndExit(errors, {
-  label: 'public hygiene',
-  ok: `${files.length} packed public text files contain no private terms, local paths, or secret-looking assignments`,
-});
 
 function publicTextFiles() {
   try {

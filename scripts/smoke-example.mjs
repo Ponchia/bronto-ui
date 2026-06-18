@@ -23,6 +23,9 @@ import { log } from './lib/stdio.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const browserTypes = Object.freeze({ chromium, firefox, webkit });
+const DEFAULT_BROWSER_LIST = 'chromium';
+const BROWSER_VALUE_FLAGS = new Set(['--browser', '--browsers']);
+const BROWSER_VALUE_PREFIXES = Object.freeze(['--browser=', '--browsers=']);
 const VISUAL_VIEWPORTS = Object.freeze([
   { name: 'desktop', width: 1280, height: 720 },
   { name: 'mobile', width: 390, height: 844 },
@@ -35,37 +38,12 @@ const PNG_CHANNELS = new Map([
 ]);
 
 function parseCli(argv) {
-  const positionals = [];
-  let browsers = 'chromium';
-  let visual = false;
+  const state = { positionals: [], browsers: DEFAULT_BROWSER_LIST, visual: false };
   for (let index = 0; index < argv.length; index += 1) {
-    const arg = argv[index];
-    if (arg === '--visual') {
-      visual = true;
-      continue;
-    }
-    if (arg === '--browser' || arg === '--browsers') {
-      const value = argv[index + 1];
-      if (!value || value.startsWith('--')) {
-        throw new Error(`${arg} requires a comma-separated browser list`);
-      }
-      browsers = value;
-      index += 1;
-      continue;
-    }
-    if (arg.startsWith('--browser=')) {
-      browsers = arg.slice('--browser='.length);
-      continue;
-    }
-    if (arg.startsWith('--browsers=')) {
-      browsers = arg.slice('--browsers='.length);
-      continue;
-    }
-    if (arg.startsWith('--')) throw new Error(`Unknown option: ${arg}`);
-    positionals.push(arg);
+    index = readCliArg(argv, index, state);
   }
 
-  const browserNames = browsers
+  const browserNames = state.browsers
     .split(',')
     .map((name) => name.trim())
     .filter(Boolean);
@@ -76,11 +54,40 @@ function parseCli(argv) {
     }
   }
   return {
-    example: positionals[0],
-    distArg: positionals[1],
+    example: state.positionals[0],
+    distArg: state.positionals[1],
     browserNames: [...new Set(browserNames)],
-    visual,
+    visual: state.visual,
   };
+}
+
+function readCliArg(argv, index, state) {
+  const arg = argv[index];
+  if (arg === '--visual') {
+    state.visual = true;
+    return index;
+  }
+  if (BROWSER_VALUE_FLAGS.has(arg)) return readBrowserValueFlag(argv, index, state);
+  if (readBrowserPrefixFlag(arg, state)) return index;
+  if (arg.startsWith('--')) throw new Error(`Unknown option: ${arg}`);
+  state.positionals.push(arg);
+  return index;
+}
+
+function readBrowserValueFlag(argv, index, state) {
+  const value = argv[index + 1];
+  if (!value || value.startsWith('--')) {
+    throw new Error(`${argv[index]} requires a comma-separated browser list`);
+  }
+  state.browsers = value;
+  return index + 1;
+}
+
+function readBrowserPrefixFlag(arg, state) {
+  const prefix = BROWSER_VALUE_PREFIXES.find((candidate) => arg.startsWith(candidate));
+  if (!prefix) return false;
+  state.browsers = arg.slice(prefix.length);
+  return true;
 }
 
 let parsed;

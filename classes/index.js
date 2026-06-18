@@ -852,6 +852,43 @@ const claimStatus = (status) =>
     status,
   );
 
+const valueClass = (map, value) => (value == null ? '' : map[value] || '');
+
+const annotationVariants = Object.freeze({
+  label: cls.annotationLabelVariant,
+  callout: cls.annotationCallout,
+  elbow: cls.annotationElbow,
+  curve: cls.annotationCurve,
+  circle: cls.annotationCircle,
+  rect: cls.annotationRect,
+  threshold: cls.annotationThreshold,
+  badge: cls.annotationBadgeVariant,
+  bracket: cls.annotationBracket,
+  band: cls.annotationBand,
+  slope: cls.annotationSlope,
+  compare: cls.annotationCompare,
+  cluster: cls.annotationCluster,
+  axis: cls.annotationAxis,
+  timeline: cls.annotationTimeline,
+  evidence: cls.annotationEvidence,
+});
+
+const annotationTones = Object.freeze({
+  accent: cls.annotationAccent,
+  muted: cls.annotationMuted,
+  success: cls.annotationSuccess,
+  warning: cls.annotationWarning,
+  danger: cls.annotationDanger,
+  info: cls.annotationInfo,
+});
+
+const annotationMotions = Object.freeze({
+  draw: cls.annotationDraw,
+  pulse: cls.annotationPulse,
+  reveal: cls.annotationReveal,
+  focus: cls.annotationFocus,
+});
+
 export const ui = {
   button: ({ variant, icon, size } = {}) =>
     j(
@@ -935,32 +972,9 @@ export const ui = {
   annotation: ({ variant = 'callout', tone = 'accent', motion } = {}) =>
     j(
       cls.annotation,
-      variant === 'label' && cls.annotationLabelVariant,
-      variant === 'callout' && cls.annotationCallout,
-      variant === 'elbow' && cls.annotationElbow,
-      variant === 'curve' && cls.annotationCurve,
-      variant === 'circle' && cls.annotationCircle,
-      variant === 'rect' && cls.annotationRect,
-      variant === 'threshold' && cls.annotationThreshold,
-      variant === 'badge' && cls.annotationBadgeVariant,
-      variant === 'bracket' && cls.annotationBracket,
-      variant === 'band' && cls.annotationBand,
-      variant === 'slope' && cls.annotationSlope,
-      variant === 'compare' && cls.annotationCompare,
-      variant === 'cluster' && cls.annotationCluster,
-      variant === 'axis' && cls.annotationAxis,
-      variant === 'timeline' && cls.annotationTimeline,
-      variant === 'evidence' && cls.annotationEvidence,
-      tone === 'accent' && cls.annotationAccent,
-      tone === 'muted' && cls.annotationMuted,
-      tone === 'success' && cls.annotationSuccess,
-      tone === 'warning' && cls.annotationWarning,
-      tone === 'danger' && cls.annotationDanger,
-      tone === 'info' && cls.annotationInfo,
-      motion === 'draw' && cls.annotationDraw,
-      motion === 'pulse' && cls.annotationPulse,
-      motion === 'reveal' && cls.annotationReveal,
-      motion === 'focus' && cls.annotationFocus,
+      valueClass(annotationVariants, variant),
+      valueClass(annotationTones, tone),
+      valueClass(annotationMotions, motion),
     ),
   mark: ({ style, tone, motion } = {}) =>
     j(

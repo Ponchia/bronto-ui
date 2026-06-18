@@ -204,20 +204,37 @@ const LABEL = {
 export function auditTheme(palette, pairs = PAIRS) {
   const rows = [];
   for (const [fg, bg, role, level, base] of pairs) {
-    const fv = palette[fg];
-    const bv = palette[bg];
-    const basev = base ? palette[base] : undefined;
-    const r = fv != null && bv != null && (!base || basev != null) ? ratio(fv, bv, basev) : null;
-    const apca =
-      fv != null && bv != null && (!base || basev != null) ? apcaLc(fv, bv, basev) : null;
+    const values = contrastValues(palette, { fg, bg, base });
+    const { r, apca } = contrastMetrics(values);
     const floor = FLOOR[level];
     // Decorative (1.4.11-exempt) and advisory (translucent-tint, model can't
     // fairly flatten per-theme) rows are reported, never gated.
     const gated = level !== 'decorative' && level !== 'advisory';
     const pass = !gated || (r != null && r >= floor);
-    rows.push({ fg, bg, base, role, level, fv, bv, basev, ratio: r, apca, floor, gated, pass });
+    rows.push({ fg, bg, base, role, level, ...values, ratio: r, apca, floor, gated, pass });
   }
   return rows;
+}
+
+function contrastValues(palette, { fg, bg, base }) {
+  return {
+    fv: palette[fg],
+    bv: palette[bg],
+    basev: base ? palette[base] : undefined,
+    needsBase: Boolean(base),
+  };
+}
+
+function contrastInputsPresent({ fv, bv, basev, needsBase }) {
+  return fv != null && bv != null && (!needsBase || basev != null);
+}
+
+function contrastMetrics(values) {
+  if (!contrastInputsPresent(values)) return { r: null, apca: null };
+  return {
+    r: ratio(values.fv, values.bv, values.basev),
+    apca: apcaLc(values.fv, values.bv, values.basev),
+  };
 }
 
 // The accent-touching subset of PAIRS — what a colorway can move (it only

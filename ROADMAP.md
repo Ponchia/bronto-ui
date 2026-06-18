@@ -40,6 +40,11 @@ UI catalog.
   making exports, examples, docs, visual baselines, generated artifacts, and
   ownership matrices derive from shared registries. Continue collapsing hand
   lists into local source-of-truth modules before adding another checker.
+- **Make quality permanent, not episodic.** Audit findings should become
+  native gates when they protect a public contract. Complexity budgets,
+  docs-as-contract checks, packed-consumer proof, and public hygiene should
+  fail locally and in CI before they need another broad cleanup pass; gate
+  exceptions should be paid down into simpler code, not normalized as policy.
 - **Treat the packed tarball as the highest proof tier.** Unit tests and
   source-tree checks prove wiring. Packed examples, packed consumer imports,
   packed TypeScript resolution, and real downstream app upgrades prove the

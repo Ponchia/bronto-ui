@@ -133,6 +133,9 @@ if (pkg.exports?.['./docs/frontier-primitives.md'] !== './docs/frontier-primitiv
 }
 
 const contributing = read('CONTRIBUTING.md');
+if (!contributing.includes('complexity budget')) {
+  errors.push('CONTRIBUTING.md check summary must mention the complexity budget');
+}
 const releaseEvidencePatterns = [
   ['Release evidence', /Release\s+evidence/],
   ['check:consumer-surface', /check:consumer-surface/],
@@ -152,6 +155,17 @@ if (!stability.includes('public-safe Release evidence note')) {
 }
 if (!stability.includes('without leaking private repo or product names')) {
   errors.push('docs/stability.md 1.0 ledger must protect private downstream names');
+}
+
+const architecture = read('docs/architecture.md');
+if (!architecture.includes('check-complexity.mjs')) {
+  errors.push('docs/architecture.md gate table must include check-complexity.mjs');
+}
+if (!architecture.includes('cyclomatic complexity stays ≤12')) {
+  errors.push('docs/architecture.md complexity row must document the default complexity budget');
+}
+if (!architecture.includes('no per-function exception list')) {
+  errors.push('docs/architecture.md complexity row must reject per-function exceptions');
 }
 
 const changelog = read('CHANGELOG.md');
