@@ -169,6 +169,7 @@ semantic versioning contract for the surfaces listed here.
 | `./docs/workbench.md` | `./docs/workbench.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/command.md` | `./docs/command.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/interop/tailwind.md` | `./docs/interop/tailwind.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/interop/react-flow.md` | `./docs/interop/react-flow.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/migrations/0.2-to-0.3.md` | `./docs/migrations/0.2-to-0.3.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/migrations/0.3-to-0.4.md` | `./docs/migrations/0.3-to-0.4.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/migrations/0.4-to-0.5.md` | `./docs/migrations/0.4-to-0.5.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
@@ -266,6 +267,7 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `docs/workbench.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/command.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/interop/tailwind.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/interop/react-flow.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/migrations/0.2-to-0.3.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/migrations/0.3-to-0.4.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/migrations/0.4-to-0.5.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
