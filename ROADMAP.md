@@ -2,11 +2,12 @@
 
 `@ponchia/ui` is a CSS-first, framework-agnostic UI system. The engine stays
 small; roadmap work should close adoption, verification, and consumer-DX gaps
-without turning the project into a per-framework component suite.
+without turning the project into a per-framework component suite or a generic
+UI catalog.
 
 > **Source of truth is [`CHANGELOG.md`](CHANGELOG.md).** This file describes
 > direction; the changelog records what actually shipped. If they disagree, the
-> changelog wins. Last reconciled against the `0.6.7` unreleased working tree.
+> changelog wins. Last reconciled against `0.6.8`.
 >
 > **Strategic north star:** Bronto should not out-catalog generic UI kits. It
 > owns framework-agnostic primitives for interfaces that explain themselves —
@@ -22,25 +23,47 @@ without turning the project into a per-framework component suite.
 > Public-surface fixes are kept correct (README, docs site, llms.txt);
 > marketing pushes are not a goal.
 
-## In progress for 0.6.7
+## Current stewardship priorities
 
-- **Adoption bridges without component sprawl.** Tailwind v4 gets a CSS-only
-  `@theme inline` bridge plus a packed Vite example; Svelte and Vue get thin
-  lifecycle adapters over the existing delegated behaviors; token handoff gains
+- **Protect the default bundle.** `dist/bronto.css` is the shared service
+  identity, not a warehouse. New report, analytical, trust, renderer,
+  workbench, and command affordances default to opt-in leaves. A core addition
+  needs a stronger argument than "useful somewhere": it must be universal
+  application chrome, reduce duplicated core markup, or fix an accessibility /
+  platform contract in existing core.
+- **Codify refusal boundaries.** Bronto owns visual grammar, token handoff,
+  pure geometry, and narrow delegated behavior. It refuses chart scales,
+  fetching, persistence, routing, workflow execution, global command
+  registries, virtualized data grids, and framework component APIs. Consumers
+  own domain state and product policy.
+- **Prefer registries over bespoke gates.** The recent quality gains came from
+  making exports, examples, docs, visual baselines, generated artifacts, and
+  ownership matrices derive from shared registries. Continue collapsing hand
+  lists into local source-of-truth modules before adding another checker.
+- **Treat the packed tarball as the highest proof tier.** Unit tests and
+  source-tree checks prove wiring. Packed examples, packed consumer imports,
+  packed TypeScript resolution, and real downstream app upgrades prove the
+  public package. When evidence conflicts, the tarball consumer wins.
+- **Work toward 1.0 by freezing doctrine, not by adding catalog surface.** A
+  1.0 candidate should have stable core/opt-in boundaries, a documented
+  refusal list, reliable release gates, downstream upgrade proof, and bundle
+  headroom. It should not wait for one more component family.
+
+## Recently completed through 0.6.8
+
+- **Adoption bridges without component sprawl.** Tailwind v4 has a CSS-only
+  `@theme inline` bridge plus a packed Vite example; Svelte and Vue have thin
+  lifecycle adapters over the existing delegated behaviors; token handoff has
   a generated local Figma Variables artifact beside DTCG. These close consumer
   DX gaps while preserving the CSS-first, zero-runtime package contract.
 - **Report-lane primitives.** `ui-figure`, `ui-interval`, `ui-clamp`, and
   `ui-highlights` extend the static report/explanation lane. They stay
   opt-in, own visual grammar only, and avoid chart scales, fetch/state, or app
   workflow logic.
-- **Durable state primitive.** `ui-job` extends the lifecycle state layer for
-  persistent background work: progress and status are visible after the
-  initiating interaction ends, while the host still owns polling, retry/cancel,
-  and conflict-resolution workflow.
-- **Workbench splitter primitive.** `ui-splitter` and `initSplitter` close the
-  accessible pane-resize gap for workbench UIs: Bronto owns the separator
-  affordance, keyboard/pointer resizing, and ARIA value sync; the host owns
-  pane contents, persistence, collapse policy, and selection state.
+- **Durable state and workbench primitives.** `ui-job`, `ui-splitter`, and
+  `initSplitter` close specific persisted-state and pane-resize gaps while the
+  host still owns polling, retry/cancel, persistence, collapse policy, and
+  conflict-resolution workflow.
 - **Local reproduction of CI risk.** `npm run test:e2e:nonpixel` captures the
   cross-engine non-screenshot browser suite, and `npm run test:examples` packs
   the real tarball, builds every example in temp dirs, and browser-smokes the
@@ -172,12 +195,24 @@ without turning the project into a per-framework component suite.
 
 ## Active hardening
 
+- **Core/opt-in boundary audits.** Review new and existing CSS in terms of
+  identity vs toolbox. If a rule mostly serves reports, analysis, provenance,
+  generated-content disclosure, command access, or workbench ergonomics, keep
+  it out of the default bundle unless it also solves a universal app-shell
+  problem.
 - **Binding parity.** Keep React/Solid/Qwik/Svelte hooks/actions and Vue
   directives in parity with vanilla behaviors, with packed-example smoke tests
   building from the tarball in CI and runtime tests for scoped roots.
 - **Browser proof for new surfaces.** Maintain real-browser checks for glyph
   mask rendering, OKLCH computed colors, and behavior paths that jsdom cannot
   faithfully model.
+- **Registry consolidation.** Before adding a new check, ask whether it can
+  consume `scripts/lib/*` package, docs, examples, CSS-leaf, or artifact
+  registries. A new manual list is acceptable only when it represents a new
+  concept that should become a registry itself.
+- **1.0 readiness ledger.** Track whether each public surface is stable,
+  merely additive, or still pre-1.0-tunable in `docs/stability.md`. The path to
+  1.0 is evidence that the existing contract is mature, not a shopping list.
 - **Payload reporting.** Publish a per-entrypoint size report for CSS bundle,
   behavior JS, glyph JS, tarball size, and font weight. The existing budget gate
   remains the hard stop.
@@ -198,8 +233,10 @@ without turning the project into a per-framework component suite.
 
 No Storybook dependency, no per-framework component packages, no bundled
 Style Dictionary / Renovate / Lighthouse dependency, no chart engine, no
-virtualized data-grid, and no second UI accent. Native `<dialog>` / `<details>`
-remain deliberate platform choices.
+virtualized data-grid, no app router, no persistence/cache layer, no global
+command/action registry, no workflow engine, no theme marketplace, and no
+second UI accent. Native `<dialog>` / `<details>` remain deliberate platform
+choices.
 
 ## Support expectations
 

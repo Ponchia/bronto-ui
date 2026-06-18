@@ -30,6 +30,10 @@ import {
 import { tmpdir } from 'node:os';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import {
+  optionalFrameworkPeerNames,
+  optionalFrameworkPeerTargets,
+} from './lib/framework-peers.mjs';
 import { exportTargets } from './lib/package-targets.mjs';
 import { log } from './lib/stdio.mjs';
 
@@ -37,8 +41,8 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const tempRoot = mkdtempSync(resolve(tmpdir(), 'bronto-ui-consumer-surface-'));
-const peerLinks = ['react', 'solid-js', '@builder.io/qwik'];
-const peerBackedJsTargets = new Set(['./react/index.js', './solid/index.js', './qwik/index.js']);
+const peerLinks = optionalFrameworkPeerNames();
+const peerBackedJsTargets = new Set(optionalFrameworkPeerTargets());
 let failed = false;
 
 function run(command, args, options = {}) {

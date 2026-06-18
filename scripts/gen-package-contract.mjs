@@ -33,6 +33,160 @@ const code = (value) => `\`${String(value).replaceAll('`', '\\`')}\``;
 const cell = (value) => String(value).replaceAll('|', '\\|').replaceAll('\n', '<br>');
 const sentence = (value) => cell(value);
 
+const EXACT_EXPORT_CLASSES = new Map([
+  [
+    '.',
+    [
+      'CSS root bundle',
+      'Stable',
+      'CSS-only package root. Supported as a CSS side-effect import in CSS-aware bundlers; not a Node/runtime JS entrypoint.',
+    ],
+  ],
+  [
+    './dist/bronto.css',
+    [
+      'Flattened CSS bundle',
+      'Stable path',
+      'The prebuilt default stylesheet. Generated from css/core.css and byte-checked by check:dist.',
+    ],
+  ],
+  [
+    './css',
+    [
+      'CSS source fan-out',
+      'Stable path',
+      'Bundler entrypoint for css/core.css. It preserves source @import boundaries and layer behavior.',
+    ],
+  ],
+  [
+    './css/core.css',
+    [
+      'CSS source fan-out',
+      'Stable path',
+      'Source fan-out file for consumers that want the authored leaf graph through a bundler.',
+    ],
+  ],
+  [
+    './tailwind',
+    [
+      'Tailwind CSS bridge',
+      'Stable additive',
+      'CSS-only Tailwind v4 theme/variant bridge. It maps Bronto tokens into Tailwind namespaces; it does not import component CSS.',
+    ],
+  ],
+  [
+    './tailwind.css',
+    [
+      'Tailwind CSS bridge',
+      'Stable additive',
+      'CSS-only Tailwind v4 theme/variant bridge. It maps Bronto tokens into Tailwind namespaces; it does not import component CSS.',
+    ],
+  ],
+  [
+    './tokens',
+    [
+      'Design tokens JS',
+      'Stable names/roles',
+      'ESM token registry and helpers. Token names and documented roles are public; exact values may tune before 1.0.',
+    ],
+  ],
+  [
+    './classes',
+    [
+      'Class recipes JS',
+      'Stable',
+      'ESM class registry, recipes, attrs helpers, and cx joiner. The emitted class vocabulary is public.',
+    ],
+  ],
+  [
+    './behaviors',
+    [
+      'Vanilla behavior JS',
+      'Stable',
+      'ESM, SSR-safe, cleanup-returning behavior initializers. Behavior internals are not public.',
+    ],
+  ],
+  [
+    './llms.txt',
+    [
+      'Agent entrypoint',
+      'Stable path',
+      'Plain-text orientation file shipped for offline agents and tooling.',
+    ],
+  ],
+  [
+    './fonts/*',
+    [
+      'Vendored font asset glob',
+      'Stable path pattern',
+      'Doto font files and license. Font file names are shipped assets, not JS APIs.',
+    ],
+  ],
+]);
+
+const FRAMEWORK_EXPORTS = new Set(['./react', './solid', './qwik', './svelte', './vue']);
+const GEOMETRY_EXPORTS = new Set(['./glyphs', './annotations', './connectors']);
+const THEME_EXPORTS = new Set(['./skins', './charts', './mermaid', './d2', './vega']);
+
+const EXACT_FILE_CLASSES = new Map([
+  [
+    'css',
+    [
+      'Source CSS directory',
+      'Public source leaves. Mostly hand-authored; generated exceptions are called out in the provenance table.',
+    ],
+  ],
+  [
+    'tailwind.css',
+    [
+      'Tailwind CSS bridge',
+      'CSS-only Tailwind v4 theme/variant bridge; hand-authored and not part of the default Bronto bundle.',
+    ],
+  ],
+  ['dist', ['Generated CSS directory', 'Prebuilt layered bundle and leaves. Never hand-edit.']],
+  ['fonts', ['Vendored assets', 'Doto woff2 files plus OFL license.']],
+  [
+    'tokens',
+    [
+      'Mixed source/generated data',
+      'Token source plus generated JSON, declarations, and renderer theme data.',
+    ],
+  ],
+  [
+    'classes',
+    [
+      'Mixed source/generated data',
+      'Class recipe source plus generated JSON/declarations/custom-data.',
+    ],
+  ],
+  [
+    'glyphs',
+    [
+      'Authored public JS directory',
+      'Glyph registry/renderers shipped as JS; declarations are generated.',
+    ],
+  ],
+  [
+    'schemas',
+    [
+      'Machine-readable schemas',
+      'Declarative JSON schemas for package-adjacent report/tooling contracts.',
+    ],
+  ],
+  ['shiki', ['Theme data', 'Shiki theme JSON on the governed palette.']],
+  [
+    'llms.txt',
+    ['Agent entrypoint', 'Shipped plain-text orientation for offline LLM/agent consumers.'],
+  ],
+  ['CHANGELOG.md', ['Release record', 'Shipped historical release notes.']],
+  ['MIGRATIONS.json', ['Migration data', 'Shipped rename/migration map for tooling.']],
+  ['docs/reference.md', ['Generated documentation', 'Committed generated doc; never hand-edit.']],
+  [
+    'docs/package-contract.md',
+    ['Generated documentation', 'Committed generated doc; never hand-edit.'],
+  ],
+]);
+
 function targetCell(value) {
   if (typeof value === 'string') return code(value);
   return Object.entries(value)
@@ -45,42 +199,7 @@ function cssLeafName(key) {
   return m?.[1] ?? null;
 }
 
-function exportClass(key) {
-  if (key === '.') {
-    return [
-      'CSS root bundle',
-      'Stable',
-      'CSS-only package root. Supported as a CSS side-effect import in CSS-aware bundlers; not a Node/runtime JS entrypoint.',
-    ];
-  }
-  if (key === './dist/bronto.css') {
-    return [
-      'Flattened CSS bundle',
-      'Stable path',
-      'The prebuilt default stylesheet. Generated from css/core.css and byte-checked by check:dist.',
-    ];
-  }
-  if (key === './css') {
-    return [
-      'CSS source fan-out',
-      'Stable path',
-      'Bundler entrypoint for css/core.css. It preserves source @import boundaries and layer behavior.',
-    ];
-  }
-  if (key === './css/core.css') {
-    return [
-      'CSS source fan-out',
-      'Stable path',
-      'Source fan-out file for consumers that want the authored leaf graph through a bundler.',
-    ];
-  }
-  if (key === './tailwind' || key === './tailwind.css') {
-    return [
-      'Tailwind CSS bridge',
-      'Stable additive',
-      'CSS-only Tailwind v4 theme/variant bridge. It maps Bronto tokens into Tailwind namespaces; it does not import component CSS.',
-    ];
-  }
+function cssExportClass(key) {
   if (key.startsWith('./css/unlayered/')) {
     return [
       'Unlayered CSS leaf',
@@ -88,68 +207,49 @@ function exportClass(key) {
       'Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf.',
     ];
   }
-  if (key.startsWith('./css/')) {
-    const leaf = cssLeafName(key);
-    const bundled = leaf && coreLeaves.has(leaf);
-    const optIn = leaf && optInLeaves.has(leaf);
-    if (key === './css/analytical.css') {
-      return [
-        'Opt-in CSS roll-up',
-        'Stable additive',
-        'Generated layered roll-up of the analytical leaves. Not included in the default bundle.',
-      ];
-    }
-    if (key === './css/report-kit.css') {
-      return [
-        'Opt-in CSS roll-up',
-        'Stable additive',
-        'Generated layered roll-up for complete static reports. Not included in the default bundle.',
-      ];
-    }
+
+  const leaf = cssLeafName(key);
+  const bundled = leaf && coreLeaves.has(leaf);
+  const optIn = leaf && optInLeaves.has(leaf);
+  if (key === './css/analytical.css') {
     return [
-      bundled ? 'Bundled layered CSS leaf' : optIn ? 'Opt-in layered CSS leaf' : 'Layered CSS leaf',
+      'Opt-in CSS roll-up',
       'Stable additive',
-      bundled
-        ? 'Generated layered direct-import leaf. Also included in dist/bronto.css.'
-        : 'Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css.',
+      'Generated layered roll-up of the analytical leaves. Not included in the default bundle.',
     ];
   }
-  if (key === './tokens') {
+  if (key === './css/report-kit.css') {
     return [
-      'Design tokens JS',
-      'Stable names/roles',
-      'ESM token registry and helpers. Token names and documented roles are public; exact values may tune before 1.0.',
+      'Opt-in CSS roll-up',
+      'Stable additive',
+      'Generated layered roll-up for complete static reports. Not included in the default bundle.',
     ];
   }
-  if (key === './classes') {
-    return [
-      'Class recipes JS',
-      'Stable',
-      'ESM class registry, recipes, attrs helpers, and cx joiner. The emitted class vocabulary is public.',
-    ];
-  }
-  if (key === './behaviors') {
-    return [
-      'Vanilla behavior JS',
-      'Stable',
-      'ESM, SSR-safe, cleanup-returning behavior initializers. Behavior internals are not public.',
-    ];
-  }
-  if (['./react', './solid', './qwik', './svelte', './vue'].includes(key)) {
+  return [
+    bundled ? 'Bundled layered CSS leaf' : optIn ? 'Opt-in layered CSS leaf' : 'Layered CSS leaf',
+    'Stable additive',
+    bundled
+      ? 'Generated layered direct-import leaf. Also included in dist/bronto.css.'
+      : 'Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css.',
+  ];
+}
+
+function jsExportClass(key) {
+  if (FRAMEWORK_EXPORTS.has(key)) {
     return [
       'Framework binding JS',
       'Stable thin adapter',
       'Optional peer wrapper over vanilla behaviors. It owns lifecycle hookup, not markup or component state.',
     ];
   }
-  if (['./glyphs', './annotations', './connectors'].includes(key)) {
+  if (GEOMETRY_EXPORTS.has(key)) {
     return [
       'Geometry/render helper JS',
       'Stable additive',
       'ESM helper surface. Function names, options, and data shapes are public; rendering heuristics may tune.',
     ];
   }
-  if (['./skins', './charts', './mermaid', './d2', './vega'].includes(key)) {
+  if (THEME_EXPORTS.has(key)) {
     return [
       'Renderer/theme helper JS',
       'Stable additive',
@@ -163,25 +263,11 @@ function exportClass(key) {
       'JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal.',
     ];
   }
-  if (key === './llms.txt') {
-    return [
-      'Agent entrypoint',
-      'Stable path',
-      'Plain-text orientation file shipped for offline agents and tooling.',
-    ];
-  }
   if (key.startsWith('./docs/')) {
     return [
       'Shipped documentation',
       'Stable path',
       'Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor.',
-    ];
-  }
-  if (key === './fonts/*') {
-    return [
-      'Vendored font asset glob',
-      'Stable path pattern',
-      'Doto font files and license. Font file names are shipped assets, not JS APIs.',
     ];
   }
   return [
@@ -191,69 +277,21 @@ function exportClass(key) {
   ];
 }
 
+function exportClass(key) {
+  const exact = EXACT_EXPORT_CLASSES.get(key);
+  if (exact) return exact;
+  if (key.startsWith('./css/')) return cssExportClass(key);
+  return jsExportClass(key);
+}
+
 function fileClass(path) {
-  if (path === 'css') {
-    return [
-      'Source CSS directory',
-      'Public source leaves. Mostly hand-authored; generated exceptions are called out in the provenance table.',
-    ];
-  }
-  if (path === 'tailwind.css') {
-    return [
-      'Tailwind CSS bridge',
-      'CSS-only Tailwind v4 theme/variant bridge; hand-authored and not part of the default Bronto bundle.',
-    ];
-  }
-  if (path === 'dist') {
-    return ['Generated CSS directory', 'Prebuilt layered bundle and leaves. Never hand-edit.'];
-  }
-  if (path === 'fonts') {
-    return ['Vendored assets', 'Doto woff2 files plus OFL license.'];
-  }
-  if (path === 'tokens') {
-    return [
-      'Mixed source/generated data',
-      'Token source plus generated JSON, declarations, and renderer theme data.',
-    ];
-  }
-  if (path === 'classes') {
-    return [
-      'Mixed source/generated data',
-      'Class recipe source plus generated JSON/declarations/custom-data.',
-    ];
-  }
+  const exact = EXACT_FILE_CLASSES.get(path);
+  if (exact) return exact;
   if (jsDtsDirs.includes(path)) {
     return [
       'Authored public JS directory',
       'ESM source shipped as-is; adjacent declarations/maps are generated.',
     ];
-  }
-  if (path === 'glyphs') {
-    return [
-      'Authored public JS directory',
-      'Glyph registry/renderers shipped as JS; declarations are generated.',
-    ];
-  }
-  if (path === 'schemas') {
-    return [
-      'Machine-readable schemas',
-      'Declarative JSON schemas for package-adjacent report/tooling contracts.',
-    ];
-  }
-  if (path === 'shiki') {
-    return ['Theme data', 'Shiki theme JSON on the governed palette.'];
-  }
-  if (path === 'llms.txt') {
-    return ['Agent entrypoint', 'Shipped plain-text orientation for offline LLM/agent consumers.'];
-  }
-  if (path === 'CHANGELOG.md') {
-    return ['Release record', 'Shipped historical release notes.'];
-  }
-  if (path === 'MIGRATIONS.json') {
-    return ['Migration data', 'Shipped rename/migration map for tooling.'];
-  }
-  if (path === 'docs/reference.md' || path === 'docs/package-contract.md') {
-    return ['Generated documentation', 'Committed generated doc; never hand-edit.'];
   }
   if (path.startsWith('docs/')) {
     return ['Shipped documentation', 'Curated Markdown reading asset shipped in the npm tarball.'];

@@ -4,15 +4,15 @@
 // untested public surface.
 //
 // Run: node scripts/check-behavior-matrix.mjs
-import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { discoverNonPixelE2eSpecs } from './lib/e2e-specs.mjs';
 import { reportAndExit } from './lib/gate-report.mjs';
+import { checkOwnerProof, createTextReader } from './lib/ownership-proof.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
-const textCache = new Map();
+const text = createTextReader(root);
 const nonPixelE2eSpecs = new Set(discoverNonPixelE2eSpecs(root));
 
 const BEHAVIORS = [
@@ -143,34 +143,23 @@ function behavior(name, options) {
   return { name, ...options };
 }
 
-function text(rel) {
-  if (!textCache.has(rel)) textCache.set(rel, readFileSync(resolve(root, rel), 'utf8'));
-  return textCache.get(rel);
-}
-
 function proof(kind, name, items) {
-  if (!items?.length) {
-    errors.push(`${name} has no ${kind} owner`);
-    return;
-  }
-  for (const item of items) {
-    if (kind === 'browser' && !nonPixelE2eSpecs.has(item.file)) {
-      errors.push(
-        `${name} browser owner ${item.file} is not a non-pixel Playwright spec discovered by scripts/test-e2e-nonpixel.mjs`,
-      );
-    }
-    const abs = resolve(root, item.file);
-    if (!existsSync(abs)) {
-      errors.push(`${name} ${kind} owner is missing: ${item.file}`);
-      continue;
-    }
-    const body = text(item.file);
-    for (const needle of item.includes ?? [name]) {
-      if (!body.includes(needle)) {
-        errors.push(`${name} ${kind} owner ${item.file} does not contain "${needle}"`);
+  checkOwnerProof({
+    root,
+    errors,
+    text,
+    subject: name,
+    kind,
+    items,
+    fallbackIncludes: [name],
+    validateItem(item) {
+      if (kind === 'browser' && !nonPixelE2eSpecs.has(item.file)) {
+        errors.push(
+          `${name} browser owner ${item.file} is not a non-pixel Playwright spec discovered by scripts/test-e2e-nonpixel.mjs`,
+        );
       }
-    }
-  }
+    },
+  });
 }
 
 function behaviorExports() {
