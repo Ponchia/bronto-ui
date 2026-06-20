@@ -123,7 +123,7 @@
    near-imperceptible tint/dot opacity delta survives, and current-page becomes
    invisible to HCM users. Re-assert "current" on channels HCM preserves: a
    Highlight start-border and marker dot, plus a NON-colour bold weight so the
-   cue does not rely on colour alone (WCAG 1.4.1). (component audit C8.) */
+   cue does not rely on colour alone (WCAG 1.4.1). */
 @media (forced-colors: active) {
   .ui-app-nav a.is-active,
   .ui-app-nav a[aria-current]:not([aria-current='false']) {
@@ -276,7 +276,7 @@
     /* The shell keeps `min-block-size: 100dvh`, so with two auto rows the default
        `align-content: stretch` distributes the leftover viewport across BOTH
        tracks — ballooning the horizontal rail to ~half the screen. Pin tracks to
-       their content and let the content row absorb the slack. (component audit C7.) */
+       their content and let the content row absorb the slack. */
     align-content: start;
     grid-template-rows: auto 1fr;
   }
@@ -296,8 +296,7 @@
 
   /* The rail is flex-row here, so the base `margin-block-start: auto` (which
      pushed account to the bottom in the column layout) is inert and account can
-     scroll off. Push it to the inline end instead so sign-out stays reachable.
-     (layout review C21.) */
+     scroll off. Push it to the inline end instead so sign-out stays reachable. */
   .ui-app-rail__account {
     margin-block-start: 0;
     margin-inline-start: auto;

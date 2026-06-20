@@ -3,7 +3,7 @@
  * "am I being run directly?" guard, the write-the-generated-files loop, and the
  * canonical GENERATED banner. Each generator owns its token→slot MAP and its
  * artifact shape; only this boilerplate was copy-pasted across all of them.
- * (code-quality audit Q11/Q12.)
+ *
  */
 import { writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';

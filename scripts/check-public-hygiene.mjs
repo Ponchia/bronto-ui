@@ -4,7 +4,9 @@
  * @ponchia/ui is a public package. check:pack proves the tarball file list is
  * intended; this gate scans the actual `npm pack --dry-run` text files for the
  * subtler leaks an allowlist cannot see: local workstation paths, known private
- * consumer names, and actual secret-looking assignments.
+ * consumer names, actual secret-looking assignments, and internal audit-ticket
+ * notes that should not survive into maintained public files. It also scans
+ * repository source files for the same internal-note residue.
  *
  * The scope is intentionally pack-file and text-only. That keeps historical
  * local audit material from creating false positives while still catching any
@@ -17,10 +19,14 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { reportAndExit } from './lib/gate-report.mjs';
+import {
+  isPublicTextFile,
+  isRepositorySourceFile,
+  publicSourceNoteProblems,
+} from './lib/public-hygiene.mjs';
+import { npmPackFiles } from './lib/shipped-files.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-
-const TEXT_FILE = /\.(?:css|html|js|json|mjs|md|ts|tsx|jsx|d\.ts|map|ya?ml|txt|toml|svg)$/i;
 
 const EXCLUDE = new Set(['package-lock.json']);
 const TERM_SPLIT = /[\n,]/;
@@ -42,21 +48,27 @@ const PRIVATE_TERMS = Object.freeze([
   ['agent', 'world'].join('-'),
 ]);
 
-const { errors, fileCount } = scanPublicHygiene();
+const { errors, fileCount, sourceFileCount } = scanPublicHygiene();
 
 reportAndExit(errors, {
   label: 'public hygiene',
-  ok: `${fileCount} packed public text files contain no private terms, local paths, or secret-looking assignments`,
+  ok: `${fileCount} packed public text files and ${sourceFileCount} repository source files contain no private terms, local paths, secret-looking assignments, or internal audit markers`,
 });
 
 function scanPublicHygiene() {
   const files = publicTextFiles();
+  const sourceFiles = repositorySourceFiles(files);
   const forbiddenTerms = collectForbiddenTerms();
   const scanErrors = [];
   for (const rel of files) {
     scanPublicFile(scanErrors, rel, forbiddenTerms);
+    scanInternalNotes(scanErrors, rel);
   }
-  return { errors: scanErrors, fileCount: files.length };
+  const packed = new Set(files);
+  for (const rel of sourceFiles) {
+    if (!packed.has(rel)) scanInternalNotes(scanErrors, rel);
+  }
+  return { errors: scanErrors, fileCount: files.length, sourceFileCount: sourceFiles.length };
 }
 
 function collectForbiddenTerms() {
@@ -103,21 +115,39 @@ function scanPublicFile(scanErrors, rel, forbiddenTerms) {
   }
 }
 
+function scanInternalNotes(scanErrors, rel) {
+  const src = readFileSync(resolve(root, rel), 'utf8');
+  for (const label of publicSourceNoteProblems(src)) {
+    scanErrors.push(`${rel}: contains ${label}`);
+  }
+}
+
 function publicTextFiles() {
   try {
-    const out = execFileSync('npm', ['pack', '--dry-run', '--json', '--ignore-scripts'], {
-      cwd: root,
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-    });
-    return (JSON.parse(out)[0]?.files ?? [])
-      .map((f) => f.path.replace(/\\/g, '/'))
-      .filter((rel) => TEXT_FILE.test(rel))
+    return npmPackFiles(root)
+      .filter(isPublicTextFile)
       .filter((rel) => !EXCLUDE.has(rel))
       .sort();
   } catch (e) {
     console.error('✖ `npm pack --dry-run --json` failed:', e.message);
     process.exit(1);
+  }
+}
+
+function repositorySourceFiles(packFiles) {
+  try {
+    return execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z'], {
+      cwd: root,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    })
+      .split('\0')
+      .filter(Boolean)
+      .map((rel) => rel.replace(/\\/g, '/'))
+      .filter(isRepositorySourceFile)
+      .sort();
+  } catch {
+    return packFiles.filter(isRepositorySourceFile);
   }
 }
 

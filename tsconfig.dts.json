@@ -37,6 +37,7 @@
     "behaviors/table.js",
     "behaviors/carousel.js",
     "behaviors/glyph.js",
+    "behaviors/inert.js",
     "behaviors/legend.js",
     "behaviors/connectors.js",
     "behaviors/spotlight.js",

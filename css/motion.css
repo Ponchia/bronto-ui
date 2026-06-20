@@ -57,7 +57,7 @@
    scroll far enough to finish its range, so a fade-to-opacity-1 would strand the
    content permanently transparent. Reach full opacity early (35%) and hold it,
    so even a partially-driven reveal is fully legible — only the last few px of
-   the rise are left unfinished. (component audit C9.) */
+   the rise are left unfinished. */
 @keyframes uiScrollReveal {
   0% {
     opacity: 0;
@@ -183,7 +183,7 @@
 /* Stagger children: set --i on each child (or use nth-child cap). Cap the manual
    --i path at index 6 (360ms) to match the .ui-stagger--auto ceiling — a long
    list with --i:30 would otherwise hold the last child at opacity:0 for 1.8s
-   before popping in. (audit C32.) */
+   before popping in. */
 .ui-stagger > * {
   animation: uiRise var(--duration-slow) var(--ease-spring) both;
   animation-delay: calc(min(var(--i, 0), 6) * 60ms);
@@ -307,7 +307,7 @@
    rest to one system colour, so the ring looks uniform with no visible sweep,
    and the scroll-progress bar can vanish into the canvas. Re-assert distinct
    system colours so each keeps a visible channel; AT is already covered via
-   aria-busy / role="status" / role="progressbar". (component audit C35.) */
+   aria-busy / role="status" / role="progressbar". */
 @media (forced-colors: active) {
   .ui-spinner {
     border-color: CanvasText;
@@ -321,7 +321,7 @@
   /* HCM strips the shimmer gradient, leaving an invisible box where a loading
      placeholder should be. Give it a system-colour border so the skeleton
      still reads as present. Same decorative-loading family as the spinner +
-     scroll-progress above. (audit C15.) */
+     scroll-progress above. */
   .ui-skeleton {
     border: 1px solid CanvasText;
   }
@@ -346,7 +346,7 @@
    The range is `entry 0% entry 100%`, NOT the old `cover 40%`: `cover` only
    completes once the element has scrolled most of the way THROUGH the viewport,
    which an element near the document bottom can never do — it froze part-way,
-   leaving a conclusion section permanently semi-transparent (C9). `entry`
+   leaving a conclusion section permanently semi-transparent. `entry`
    completes the moment the element is fully in view, which any scroll-to-bottom
    reaches. Paired with the early-opacity uiScrollReveal keyframe, an element
    taller than the viewport is legible even if its range never fully completes. */
@@ -405,7 +405,7 @@
     /* Zero the delay too: `.ui-stagger` children animate `uiRise` with
        `fill-mode: both`, so a non-zero `animation-delay` holds them at the
        `opacity: 0` from-state for the full delay and then pops them in — the
-       exact late flash a reduced-motion user asked to avoid (C4). */
+       exact late flash a reduced-motion user asked to avoid. */
     animation-delay: 0s !important;
     transition-duration: 0.01ms !important;
   }

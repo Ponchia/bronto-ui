@@ -244,7 +244,10 @@ chart rendering, overlay content, and accessibility text. Details:
 
 Optional SVG annotations for charts/reports — opt-in, never in the default
 bundle. This is Bronto's subject / connector / note grammar inspired by
-d3-annotation, not an authoring engine:
+d3-annotation, not an authoring engine. For placement, collision handling,
+renderers, editing, and chart/diagram adapters, use the sibling
+`@ponchia/annotations` package; `@ponchia/ui/annotations` stays a
+dependency-free Bronto static-helper compatibility surface:
 
 ```html
 <link rel="stylesheet" href="@ponchia/ui/css/annotations.css" />
@@ -750,7 +753,8 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
 - `schemas/report-claims.v1.schema.json` — declarative JSON Schema for
   `claims.json` sidecars that map report claims to source IDs and relations.
 - `docs/annotations.md` — SVG annotation recipes and helper guidance for
-  analytical figures.
+  analytical figures, plus the boundary with the sibling `@ponchia/annotations`
+  engine package.
 - `docs/mermaid.md` — theme Mermaid diagrams from bronto tokens (resolved
   `base` themeVariables, gated) and annotate the rendered SVG.
 - `docs/d2.md` — theme D2 diagrams from bronto tokens (theme-override slots,
@@ -775,7 +779,9 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   `glyphCells` signatures for the display glyphs. (The DOM form,
   `initDotGlyph`, is declared in `behaviors/index.d.ts`.)
 - `annotations/index.d.ts` — no-dependency SVG path helpers for Bronto
-  annotation geometry.
+  annotation geometry. Do not add placement/collision/renderers/adapters here;
+  that belongs in `@ponchia/annotations`; do not import or type-reference that
+  sibling package from `@ponchia/ui` code or declarations.
 - `classes/vscode.css-custom-data.json` — editor autocomplete for tokens.
 
 ## External web references

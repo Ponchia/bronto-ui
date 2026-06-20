@@ -278,7 +278,7 @@ function verdict(x) {
 
 // One decimal, not rounded-to-integer: the advisory APCA shortfall the gate
 // itself sees (e.g. Lc 44.9) must not round up to a passing-looking `Lc 45` in
-// the doc. (tokens review C20.)
+// the doc.
 const apcaCell = (n) => (n == null ? 'n/a' : `Lc ${n.toFixed(1)}`);
 
 function themeTable(rows) {

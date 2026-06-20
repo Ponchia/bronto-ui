@@ -2,7 +2,7 @@
 // chain (and the chain must not name a check that doesn't exist). The chain is a
 // hand-maintained `&&` list, so a newly-added gate silently never runs until
 // someone remembers to append it — the exact silent-coverage-drop this repo has
-// been bitten by. This closes it structurally. (code-quality audit Q4.)
+// been bitten by. This closes it structurally.
 //
 // Run: node scripts/check-chain.mjs
 import { readFileSync } from 'node:fs';

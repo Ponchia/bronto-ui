@@ -159,7 +159,7 @@ function expandCellGlyph(el, name, label, cleanups) {
   // balloons to fill its container (full-bleed) — asymmetric with the mask
   // path's safe 1em. If the author set no `--dotmatrix-dot` (inline OR via the
   // cascade), default it to an intrinsic icon scale so a forgotten size
-  // degrades to ~icon, not full-bleed. (component audit C9.)
+  // degrades to ~icon, not full-bleed.
   const defaults = applyDefaultDotScale(el, solid, hadGap);
   applyGlyphA11y(el, label);
   appendGlyphCells(el, cells, { solid, animAttr });

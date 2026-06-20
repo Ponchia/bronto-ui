@@ -20,7 +20,7 @@ test('attrs.meter/progress bundle the painted value with its announced value', (
   assert.equal(d.style['--value'], 50);
 });
 
-test('attrs.progress() with no value is indeterminate — omits aria-valuenow (C9)', () => {
+test('attrs.progress() with no value is indeterminate — omits aria-valuenow', () => {
   const ind = attrs.progress();
   assert.equal(ind.role, 'progressbar');
   assert.equal(ind['aria-busy'], 'true');

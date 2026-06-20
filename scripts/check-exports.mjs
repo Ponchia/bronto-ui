@@ -13,8 +13,9 @@
  *  5. Consumer metadata (`style`, CSS `sideEffects`) still points at the
  *     shipped root stylesheet instead of drifting away from the exports map.
  *  6. The package keeps the promised zero-runtime-dependency contract: no
- *     runtime/optional/bundled dependencies, and only the documented optional
- *     framework peers for thin adapters.
+ *     runtime/optional/bundled dependencies, only the documented optional
+ *     framework peers for thin adapters, and no shipped code/declaration file
+ *     in the packed artifact imports the sibling annotation engine.
  *  7. The Tailwind bridge stays a bridge: exported at both public subpaths,
  *     CSS-only, no component imports, and the documented Bronto variants remain
  *     present.
@@ -29,6 +30,8 @@ import { leafFiles, EXTRA_LEAVES } from './build-dist.mjs';
 import { exportTargets } from './lib/package-targets.mjs';
 import { OPTIONAL_FRAMEWORK_PEERS, optionalFrameworkPeerNames } from './lib/framework-peers.mjs';
 import { cssImports, stripCssComments } from './lib/patterns.mjs';
+import { importsAnnotationEngine, isJavaScriptOrDeclarationFile } from './lib/import-policy.mjs';
+import { isUnderPackageFiles, npmPackFiles } from './lib/shipped-files.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
@@ -62,11 +65,12 @@ for (const entry of ['css/core.css', 'css/analytical.css', 'css/report-kit.css']
 }
 
 // 3. exported files fall under the `files` allowlist
-const allow = pkg.files ?? [];
 for (const [key, target] of exportTargets(pkg)) {
   const rel = target.replace(/^\.\//, '').replace(/\*.*$/, '');
-  if (!allow.some((f) => rel === f || rel.startsWith(`${f}/`))) {
-    errors.push(`exports["${key}"] → ${target} not covered by "files" ${JSON.stringify(allow)}`);
+  if (!isUnderPackageFiles(pkg, rel)) {
+    errors.push(
+      `exports["${key}"] → ${target} not covered by "files" ${JSON.stringify(pkg.files ?? [])}`,
+    );
   }
 }
 
@@ -190,6 +194,15 @@ for (const { peer, subpath, target } of OPTIONAL_FRAMEWORK_PEERS) {
   if (pkg.exports?.[subpath]?.default !== target) {
     errors.push(
       `optional framework peer "${peer}" must map ${subpath} default export to ${target}`,
+    );
+  }
+}
+
+for (const file of npmPackFiles(root).filter(isJavaScriptOrDeclarationFile)) {
+  const source = readFileSync(resolve(root, file), 'utf8');
+  if (importsAnnotationEngine(source, file)) {
+    errors.push(
+      `${file} must not import or type-reference @ponchia/annotations; keep @ponchia/ui dependency-free and use the sibling package directly in consumers`,
     );
   }
 }

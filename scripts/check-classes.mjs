@@ -88,7 +88,7 @@ const dts = readFileSync(resolve(root, 'classes/index.d.ts'), 'utf8');
 // Match any method signature `name(` — not only `name(opts?:`. The tighter form
 // passed only because all 43 recipes happen to share that exact shape today; a
 // future no-arg / required-arg / renamed recipe would silently fall out of
-// `declared` and the gate could only ever false-pass. (code-quality audit Q5.)
+// `declared` and the gate could only ever false-pass.
 const declared = new Set([...dts.matchAll(/^\s*(\w+)\s*\(/gm)].map((m) => m[1]));
 for (const name of Object.keys(ui)) {
   if (!declared.has(name)) {
