@@ -5,7 +5,7 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
-## Unreleased — 0.6.9
+## 0.6.9 — 2026-06-20
 
 ### Changed
 
@@ -43,6 +43,11 @@
 
 ### Verified
 
+- **Release evidence.** `npm run check` passed for `0.6.9`, including
+  `check:pack`, `check:consumer-surface`, `check:consumer-types`,
+  `check:examples`, `check:publint`, and `check:attw`. No default-bundle budget
+  movement; this release is gate/docs/declaration hardening rather than a
+  runtime surface expansion.
 - **Downstream proof.** The packed current tarball installed into a disposable
   copy of a real React/Vite app consumer that imports `@ponchia/ui/classes`,
   `@ponchia/ui/behaviors`, `@ponchia/ui/tokens/resolved.json`, and

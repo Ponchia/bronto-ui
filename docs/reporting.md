@@ -54,18 +54,18 @@ No install? Link the same files from a CDN. Pin the version — pre-1.0, breakin
 changes ship in the minor (see [stability.md](./stability.md)):
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.8/dist/bronto.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.8/dist/css/report-kit.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.9/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.9/dist/css/report-kit.css" />
 ```
 
 Leaf-by-leaf CDN imports use the same `dist/css/` paths:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.8/dist/bronto.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.8/dist/css/report.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.8/dist/css/dataviz.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.8/dist/css/annotations.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.8/dist/css/legend.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.9/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.9/dist/css/report.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.9/dist/css/dataviz.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.9/dist/css/annotations.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.9/dist/css/legend.css" />
 ```
 
 The CDN serves the package's own `fonts/` next to the CSS, so font URLs resolve
@@ -879,7 +879,7 @@ or validation runtime.
 
 ```json
 {
-  "$schema": "https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.8/schemas/report-claims.v1.schema.json",
+  "$schema": "https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.9/schemas/report-claims.v1.schema.json",
   "schemaVersion": "bronto-report-claims.v1",
   "report": { "title": "Decision readiness", "type": "decision" },
   "claims": [
