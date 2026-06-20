@@ -1,6 +1,6 @@
 {
   "name": "@ponchia/ui",
-  "version": "0.6.8",
+  "version": "0.6.9",
   "type": "module",
   "description": "CSS-first identity and UI layer for services, tools, sites, and reports — works in HTML, every framework, and PDF, no component runtime. Shared app shell, forms, tables, workflow chrome, plus opt-in analytical/report primitives. Monochrome with one rationed accent. Zero runtime dependencies.",
   "keywords": [

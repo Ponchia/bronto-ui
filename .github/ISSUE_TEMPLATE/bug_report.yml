@@ -6,7 +6,7 @@ body:
     id: version
     attributes:
       label: '@ponchia/ui version'
-      placeholder: '0.6.8'
+      placeholder: '0.6.9'
     validations:
       required: true
   - type: dropdown
