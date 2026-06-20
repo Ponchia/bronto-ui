@@ -25,7 +25,7 @@ test('classes.json: every group member is a real class under its base', () => {
   for (const [base, g] of Object.entries(m.groups)) {
     // `g.base` is the standalone base class when it exists, else null for a
     // parts-only namespace (e.g. ui-themetoggle — __button/__track but no bare
-    // .ui-themetoggle). Members still share the `base` key prefix either way. (C11.)
+    // .ui-themetoggle). Members still share the `base` key prefix either way.
     if (g.base === null) {
       assert.ok(!allClasses.has(base), `group "${base}" has base:null but ${base} IS a real class`);
     } else {
@@ -87,7 +87,7 @@ test('classes.json: behaviorAttributes + requiredAria are well-formed (C14/C18)'
     // The named behavior must be a REAL export of the barrel — not just init*-shaped.
     // (The old /^init/ regex passed `initDismissible`, which doesn't exist; the
     // real export is `dismissible`. That is the initForms→initFormValidation class
-    // of contract lie this manifest must not ship — component audit C2/C32.)
+    // of contract lie this manifest must not ship.)
     assert.ok(
       behaviorExports.has(a.behavior),
       `behaviorAttribute ${a.name} names "${a.behavior}()" — not an export of behaviors/index.js`,

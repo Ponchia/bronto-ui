@@ -2,13 +2,12 @@
 //
 // The artifact-drift gates (check:fresh / check:classes / check:dts-*) prove the
 // generated tokens + class registry stay in sync, but NOTHING gated the prose +
-// manifest an external system actually reads. The 0.6.0 component audit found
-// exactly that blind spot: a `--icon-mask: var(--glyph-check)` recipe pointing at
-// a token that never existed (C1, paints a solid square), a documented
-// `initForms()` that is really `initFormValidation` (C15, ImportError), and the
-// form/combobox wiring attributes absent from the machine-adjacent contract
-// (C14). All three VALIDATE — the markup/recipe looks right — and silently
-// no-op. This gate closes that whole class (component-audit C39):
+// manifest an external system actually reads. The blind spot was concrete:
+// a `--icon-mask: var(--glyph-check)` recipe pointing at a token that never
+// existed, a documented `initForms()` that is really `initFormValidation`, and
+// form/combobox wiring attributes absent from the machine-adjacent contract.
+// All three VALIDATE — the markup/recipe looks right — and silently no-op.
+// This gate closes that whole class:
 //
 //   (a) every classes.json `customProperties` example RESOLVES — each `var(--X)`
 //       it references names a custom property actually defined in css/.
@@ -62,9 +61,9 @@ for (const p of manifest.customProperties) {
 }
 
 // ---- (b) wiring attributes are in the contract doc -------------------------
-// The audit-flagged set: the attributes/events an author MUST write for form
+// The required wiring set: the attributes/events an author MUST write for form
 // validation + the combobox to work. They were only in behavior JSDoc, so an
-// LLM authoring from classes.json/reference.md built a no-op form (C14).
+// LLM authoring from classes.json/reference.md built a no-op form.
 const WIRING = [
   'data-bronto-validate',
   'data-bronto-error',
@@ -206,10 +205,10 @@ for (const [name, g] of Object.entries(manifest.groups)) {
 // (b) only checks a hand-picked WIRING subset appears as prose in reference.md.
 // That let the manifest itself drift: classes.json shipped 9 of ~34 consumed
 // data-bronto-* hooks, so an LLM reading the structured contract was blind to
-// tabs / theme-toggle / sortable / combobox-live / carousel / glyph / … (C2).
+// tabs / theme-toggle / sortable / combobox-live / carousel / glyph / …
 // Derive the expected set from the behaviors source — the runtime truth — and
 // fail on any hook a behavior READS but the manifest omits (or lists but no
-// behavior reads). This is the structural fix that keeps C2 from recurring (C11).
+// behavior reads). This is the structural fix that keeps that drift from recurring.
 const behDir = resolve(root, 'behaviors');
 const consumed = new Set();
 for (const f of readdirSync(behDir)) {

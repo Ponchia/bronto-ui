@@ -1,7 +1,7 @@
 // Shared regexes for the gates. Kept here so the three foreign-renderer theme
 // gates (check-d2/mermaid/vega) validate "is this a real resolved colour" with
 // one definition — a fix (e.g. a new colour syntax) then lands in all three at
-// once instead of drifting. (code-quality audit Q9.)
+// once instead of drifting.
 
 /** A fully-resolved CSS colour: hex (3–8 digits) or rgb()/rgba(). No var(). */
 export const CSS_COLOR = /^(#[0-9a-f]{3,8}|rgba?\([^)]+\))$/i;
@@ -20,6 +20,6 @@ export const cssImports = (css) => [...css.matchAll(CSS_IMPORT)].map((m) => m[2]
  * generator (check-classes/legend/contract/color-policy) share this: a class or
  * token named only inside a comment must NOT satisfy the contract, or a deleted
  * rule whose name lingers in prose would keep a gate green. One definition so
- * the strip can never drift between them. (code-quality audit Q9.)
+ * the strip can never drift between them.
  */
 export const stripCssComments = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '');

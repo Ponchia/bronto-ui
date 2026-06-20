@@ -121,7 +121,7 @@ export function scrollIntoViewSafe(el, opts = { block: 'nearest' }) {
 // by the modal and popover focus paths (a dialog/modal must move focus into
 // itself on open). Focus the first focusable descendant, else make the
 // container programmatically focusable and focus it, so a content-only
-// panel/modal still receives focus. (code-quality audit Q4.)
+// panel/modal still receives focus.
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -138,7 +138,7 @@ export function focusInto(container) {
 // Wrap an index by `delta` within [0, len), the roving keyboard math shared by
 // the combobox and command listboxes (a -1 `cur` lands on the first/last as
 // before). Only this core is shared — the surrounding setActive/filter/group
-// logic diverges between the two for real reasons. (code-quality audit Q12.)
+// logic diverges between the two for real reasons.
 export function wrapIndex(cur, delta, len) {
   let next = cur + delta;
   if (next < 0) next = len - 1;

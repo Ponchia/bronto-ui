@@ -283,7 +283,7 @@
 
 /* The comet expects exactly 8 `<i>`; a 9th+ child has no rotation rule and
    would pile up dead-centre. Hide the overflow so extra children fail safe
-   rather than rendering a stray static dot (C26). */
+   rather than rendering a stray static dot. */
 .ui-dotspinner i:nth-child(n + 9) {
   display: none;
 }
@@ -523,7 +523,7 @@
    clipped from-state on `scripting: enabled`: with JS off, `.is-in` is never
    toggled, so without the gate the content stays permanently clipped away and
    invisible to every no-JS/static/print reader. Same graceful default as
-   `.ui-reveal`. (component audit C12.) */
+   `.ui-reveal`. */
 @media (scripting: enabled) {
   .ui-matrix {
     clip-path: inset(0 100% 0 0);
@@ -583,7 +583,7 @@
 
   /* Brand/live dots aren't status tones, but they still encode meaning via
      background-color alone, which HCM flattens. Keep them on a distinct,
-     opted-out system colour for completeness. (audit C31.) */
+     opted-out system colour for completeness. */
   .ui-dot--accent,
   .ui-dot--live {
     forced-color-adjust: none;
@@ -599,7 +599,7 @@
      glyph vanishes (white-on-white) — yet .ui-icon is the recommended
      icon-at-scale path AND backs .ui-legend__symbol, and the print block
      already special-cases it. Opt out and pin the fill to the system text
-     colour so the glyph stays visible. (audit C1.) */
+     colour so the glyph stays visible. */
   .ui-icon {
     forced-color-adjust: none;
     background: CanvasText;

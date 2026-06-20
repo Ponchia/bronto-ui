@@ -142,7 +142,7 @@ test('scroll-driven primitives bind a scroll/view timeline where supported (else
     expect(probe.barName).toContain('uiScrollGrow');
     expect(probe.barTimeline).toMatch(/scroll/);
     // The reveal uses the early-opacity keyframe + an `entry`-bounded range, so
-    // an element near the document bottom can't freeze stranded transparent (C9).
+    // an element near the document bottom can't freeze stranded transparent.
     expect(probe.revName).toContain('uiScrollReveal');
     expect(probe.revTimeline).toMatch(/view/);
     expect(probe.revRange).not.toMatch(/cover/);

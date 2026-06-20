@@ -58,7 +58,7 @@ export function parseOklch(str) {
  * One parser feeding both the resolved-token build (gen-resolved) and the WCAG
  * contrast gate (gen-contrast) so the two cannot drift on a security-relevant
  * gate; the finite-number guard rejects malformed channels rather than letting a
- * NaN slip through as a non-comparable ratio. (code-quality audit Q4.)
+ * NaN slip through as a non-comparable ratio.
  */
 export function parseCssColor(v) {
   const s = String(v).trim();
@@ -98,7 +98,7 @@ export function rgbToHex([r, g, b]) {
 // sRGB gamma transfer (CSS Color 4), channels normalised to 0-1. Single source
 // for the gate (check-charts), the contrast-doc generator (gen-contrast) and
 // this module's own OKLab/OKLCH conversions, so a magic constant can't diverge
-// between what one measures and another renders. (code-quality audit Q6.)
+// between what one measures and another renders.
 export const srgbToLinear = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
 export const linearToSrgb = (x) => (x <= 0.0031308 ? 12.92 * x : 1.055 * x ** (1 / 2.4) - 0.055);
 

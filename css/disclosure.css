@@ -59,7 +59,7 @@
 
 /* Forced-colors re-assert MUST sit after the default above (same specificity,
    @media adds none) or the accent default wins and the selected tab loses its
-   only cue. Moved here from base.css, an earlier bundle leaf. (a11y review C10.) */
+   only cue. Moved here from base.css, an earlier bundle leaf. */
 @media (forced-colors: active) {
   .ui-tab.is-active {
     border-block-end-color: Highlight;
@@ -306,7 +306,7 @@
 /* Active page keys on BOTH `.is-active` and `[aria-current]` — usage.md calls
    aria-current "the framework rule", and every nav sibling (breadcrumb, sitenav,
    app-nav) highlights on it, so a pagination author who sets only aria-current
-   must still get the highlight. (component audit C17.) */
+   must still get the highlight. */
 .ui-pagination__item.is-active,
 .ui-pagination__item[aria-current]:not([aria-current='false']) {
   border-color: var(--accent);
@@ -319,7 +319,7 @@
    (CSS can't intercept keys). For a fully-inert control prefer native
    `<button disabled>`, run `initDisabledGuard()` (intercepts Enter/Space), or
    pair aria-disabled with `tabindex="-1"`. See docs/usage.md "Disabled vs
-   aria-disabled". (audit C4.) */
+   aria-disabled". */
 .ui-pagination__item[aria-disabled='true'],
 .ui-pagination__item:disabled {
   cursor: not-allowed;

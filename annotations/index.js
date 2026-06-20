@@ -209,8 +209,7 @@ import {
   arrowHead,
   dotMark,
   angleBetween,
-  // Shared scalar/geometry kernel — single source of truth (was copy-pasted,
-  // and the local clamp had silently diverged from the connectors one).
+  // Shared scalar/geometry kernel for annotation and connector path output.
   roundNumber,
   finite,
   dimension,
@@ -220,8 +219,8 @@ import {
   rectPath,
 } from '../connectors/index.js';
 
-// A circle subject is just a filled dot at (x, y) — delegate to the kernel's
-// dotMark so the arc geometry/precision can't diverge. (code-quality audit Q5.)
+// A circle subject is just a filled dot at (x, y); delegate to the connector
+// kernel so arc geometry and numeric precision stay aligned.
 function circlePathAt(x, y, radius) {
   return dotMark({ x, y }, radius);
 }
@@ -670,8 +669,8 @@ export function connectorCurve(opts = {}) {
   return curvePath(start, end, { curvature: 0.35 });
 }
 
-// subject.type → its path builder. A flat dispatch table (replaces an 11-arm
-// if/else) keyed by the SubjectType union; an unknown type throws below. (Q10.)
+// subject.type → its path builder. A flat dispatch table keyed by the
+// SubjectType union; an unknown type throws below.
 const SUBJECT_BUILDERS = {
   circle: circleSubjectPath,
   rect: rectSubjectPath,

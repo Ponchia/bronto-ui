@@ -134,7 +134,7 @@ test('renderGlyph() escapes label and sanitizes dot/gap (no CSS/HTML injection)'
   const evilDot = renderGlyph(name, { dot: '1px;position:fixed;inset:0' });
   assert.doesNotMatch(evilDot, /position:fixed/); // injection dropped
   // A malformed dot falls back to the safe intrinsic default (0.08em) rather
-  // than emitting the payload OR full-bleeding with no dot at all. (audit C7.)
+  // than emitting the payload OR full-bleeding with no dot at all.
   assert.match(evilDot, /--dotmatrix-dot:0\.08em/);
 
   // Well-formed lengths/calc are kept verbatim.

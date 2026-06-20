@@ -3,7 +3,7 @@
  * domain errors into an array, then ends with the identical frame: print every
  * problem and exit 1, or print a single `✓` success line. That frame was copied
  * verbatim into ~18 gates; this owns it once so a change to the report format
- * lands everywhere. The per-gate logic stays in the gate. (code-quality audit Q8.)
+ * lands everywhere. The per-gate logic stays in the gate.
  *
  * Sibling to assertFresh() in ./assert-fresh.mjs, which is the same idea
  * specialised to the pure freshness gates.

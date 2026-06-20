@@ -103,8 +103,8 @@ export function arrowHead(p: Point, angle: number, size?: number, spread?: numbe
 export function dotMark(p: Point, radius?: number): string;
 /**
  * An axis-aligned rectangle path from its corners (callers derive the corners
- * from a centre or a top-left as they need). Shared by the annotation
- * rect/band and evidence-marker subjects. (code-quality audit Q5.)
+ * from a centre or a top-left as they need). Shared by annotation rect/band
+ * and evidence-marker subjects.
  * @param {number} left
  * @param {number} top
  * @param {number} right

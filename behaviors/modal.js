@@ -151,7 +151,7 @@ export function initModal({ root } = {}) {
         // A controlled modal must announce AS a modal dialog, not a generic group —
         // parity with initPopover. Apply a dialog role + aria-modal (unless the
         // author set a role), and dev-warn on a missing accessible name since we
-        // can't invent a good one. (component audit C13.)
+        // can't invent a good one.
         if (!modal.hasAttribute('role')) modal.setAttribute('role', 'dialog');
         if (!modal.hasAttribute('aria-modal')) modal.setAttribute('aria-modal', 'true');
         const named =

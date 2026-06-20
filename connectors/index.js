@@ -43,9 +43,8 @@
  */
 
 // Shared scalar/geometry primitives. Exported so the annotations layer composes
-// on the SAME kernel instead of copy-pasting it (the copies had silently
-// diverged — see `clamp`). Low-level helpers; the documented API is the path
-// builders below.
+// on the same kernel as the connector path builders. Low-level helpers; the
+// documented API is the path builders below.
 export const PRECISION = 1000;
 
 /**
@@ -74,9 +73,8 @@ export function dimension(name, value, fallback) {
   return v;
 }
 
-// Round to PRECISION, normalising -0 → 0, and return the NUMBER (the numeric
-// core `fmt` stringifies). Shared with the annotations layer for the rounded
-// coordinates it echoes back to the host. (code-quality audit Q5.)
+// Round to PRECISION, normalising -0 → 0, and return the NUMBER. `fmt`
+// stringifies the numeric core; annotations use the same rounded coordinates.
 /**
  * @param {number} value
  * @returns {number}
@@ -103,8 +101,7 @@ export function point(x, y) {
   return `${fmt(x)},${fmt(y)}`;
 }
 
-// Guarded form (returns min when the range is inverted) — the reconciled body;
-// connectors only ever calls clamp(v, 0, 1) so this is output-identical here.
+// Guarded form: an inverted range resolves to `min`.
 /**
  * @param {number} value
  * @param {number} min
@@ -284,8 +281,8 @@ export function dotMark(p, radius = 3) {
 
 /**
  * An axis-aligned rectangle path from its corners (callers derive the corners
- * from a centre or a top-left as they need). Shared by the annotation
- * rect/band and evidence-marker subjects. (code-quality audit Q5.)
+ * from a centre or a top-left as they need). Shared by annotation rect/band
+ * and evidence-marker subjects.
  * @param {number} left
  * @param {number} top
  * @param {number} right

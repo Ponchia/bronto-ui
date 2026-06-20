@@ -69,7 +69,7 @@ for (const [scope, rows] of apcaScopes) {
   for (const x of rows) {
     // Skip advisory (translucent-tint) rows: the ratio/APCA model flattens a
     // translucent bg over white, which misreads the dark theme — a spurious
-    // warning, not a real shortfall (component-audit C34).
+    // warning, not a real shortfall.
     if (x.level === 'advisory') continue;
     const target = APCA_TARGET[x.fg];
     if (target == null || x.apca == null) continue;
