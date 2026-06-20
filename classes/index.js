@@ -212,7 +212,7 @@ export const cls = Object.freeze({
   tableLined: 'ui-table--lined',
   tableBreakAnywhere: 'ui-table--break-anywhere',
   tableWrap: 'ui-table-wrap',
-  // Loading state goes on the WRAP, so the modifier is named for the wrap (C19).
+  // Loading state goes on the wrap, so the modifier is named for the wrap.
   tableLoading: 'ui-table-wrap--loading',
   tableEmpty: 'ui-table__empty',
   tableSort: 'ui-table__sort',
@@ -739,14 +739,14 @@ const srcTone = (state) =>
   })[state] || '';
 
 // Component tone → modifier class. Same object-literal idiom as srcTone/stateTone
-// (still grep-by-class-name; the modifier set differs per component). (Q9.)
+// while keeping modifier classes grep-friendly.
 //
 // The set differs PER COMPONENT on purpose — `muted` is a badge/num tone, not an
 // alert/toast/meter/dot one — so a caller extrapolating a universal tone (e.g.
 // `ui.alert({ tone: 'muted' })`) used to get a silent no-op: a bare, untoned
 // element with no signal that the tone was dropped. Warn at dev time instead, so
 // that "validates-but-no-ops" trap is loud rather than invisible. An omitted tone
-// is fine (returns no modifier). (component audit C12.)
+// is fine and returns no modifier.
 const toneClass = (component, map, tone) => {
   if (tone == null) return '';
   const hit = map[tone];
@@ -964,7 +964,7 @@ export const ui = {
     j(
       cls.legendSwatch,
       // Series 1–8 map to ui-legend__swatch--N; the explicit bounds-check keeps a
-      // 0/9/non-integer from coining a class the stylesheet never defines. (Q9.)
+      // 0/9/non-integer from coining a class the stylesheet never defines.
       Number.isInteger(series) && series >= 1 && series <= 8 && cls[`legendSwatch${series}`],
       shape === 'circle' && cls.legendSwatchCircle,
       shape === 'line' && cls.legendSwatchLine,
@@ -1063,7 +1063,7 @@ export const ui = {
 // UNITLESS `--value` (0–100) and AT needs role + aria-valuenow/min/max. This sets
 // the painted value and its announced value together so they can't drift, and
 // normalizes an arbitrary {min,max} to the 0–100 `--value` the CSS expects while
-// keeping aria-valuenow in the caller's real units. (component audit C8.)
+// keeping aria-valuenow in the caller's real units.
 // `busyWhenIndeterminate` — a progressbar advertises aria-busy when its value is
 // unknown; a meter is never indeterminate so it passes false. (Kept a boolean
 // flag rather than testing the role string, so check:recipe-types doesn't read it
@@ -1078,7 +1078,7 @@ const valueAttrs = (role, value, min, max, busyWhenIndeterminate) => {
   // advertises aria-busy; a meter has no indeterminate state, so a non-finite
   // value there is a caller error we still fail safe on by omitting the
   // misleading 0. Pair with `ui.progress({ indeterminate: true })` for the CSS
-  // sweep. (component audit C9.)
+  // sweep.
   if (!Number.isFinite(raw)) {
     return busyWhenIndeterminate ? { role, 'aria-busy': 'true' } : { role };
   }
@@ -1100,13 +1100,13 @@ const valueAttrs = (role, value, min, max, busyWhenIndeterminate) => {
  *   </div>
  * `value` is in your own units; pass `{ min, max }` (default 0–100) and the
  * `--value` width is normalized for you. Call `attrs.progress()` with no value
- * for an indeterminate bar (omits aria-valuenow, sets aria-busy). (audit C9.)
+ * for an indeterminate bar (omits aria-valuenow, sets aria-busy).
  *
  * `attrs.dotbar(value)` is the segmented analogue of `attrs.progress`: a
  * determinate `.ui-dotbar` carries the same progress data as `.ui-progress` but,
  * without this, was eight empty `<span>`s to AT (the segments are decorative —
  * mark them `aria-hidden`). Same progressbar role + aria-valuenow/min/max;
- * call with no value for the indeterminate sweep. (component audit C10.)
+ * call with no value for the indeterminate sweep.
  */
 export const attrs = Object.freeze({
   meter: (value, { min = 0, max = 100 } = {}) => valueAttrs('meter', value, min, max, false),

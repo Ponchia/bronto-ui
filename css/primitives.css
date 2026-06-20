@@ -74,7 +74,7 @@
 /* Intrinsic aspect-ratio box; the media child fills it. The contract is ONE
    child (a single <img>/<video>/<iframe>). Scope the fill to :first-child rather
    than every child: a second child would otherwise be forced to 100%/100% +
-   object-fit and stack on top, silently breaking the ratio. (audit C34.) */
+   object-fit and stack on top, silently breaking the ratio. */
 .ui-ratio {
   aspect-ratio: var(--ratio, 16 / 9);
 }
@@ -100,7 +100,7 @@
 /* Logical `max-inline-size`, not physical `max-width`: the container is typed
    `inline-size`, so the inline axis is the one actually tracked — the logical
    query matches it in any writing mode (a physical `width` query silently
-   misses in a vertical WM). (component audit C34.) */
+   misses in a vertical writing mode). */
 @container bronto (max-inline-size: 34rem) {
   .ui-grid {
     --grid-min: 100%;
@@ -193,7 +193,7 @@
   /* These tiles hold IDs / hashes / big numbers — the unbreakable-token case is
      the common one. A grid item defaults to min-inline-size:auto, so a long
      value pushes the whole statgrid track wider; allow the tile to shrink so the
-     value can wrap instead (paired with overflow-wrap on __value). (audit C5.) */
+     value can wrap instead (paired with overflow-wrap on __value). */
   min-inline-size: 0;
   padding: var(--space-md);
 }
@@ -216,7 +216,7 @@
   font-weight: var(--display-weight-strong);
   letter-spacing: 0.02em;
   line-height: 1.05;
-  overflow-wrap: anywhere; /* break an unspaced ID/hash rather than overflow (audit C5) */
+  overflow-wrap: anywhere; /* break an unspaced ID/hash rather than overflow */
 }
 
 .ui-stat__delta,
@@ -237,7 +237,7 @@
 
 /* A direction arrow is the non-colour channel — colour alone (success/danger)
    fails WCAG 1.4.1, so the tile carries the same ▲/▼ glyph as `.ui-delta`
-   (C13). Marked aria-hidden-equivalent by being generated content; the sign is
+   as a second signal. Marked aria-hidden-equivalent by being generated content; the sign is
    still in the author's text ("+12%"). */
 .ui-stat__delta.is-pos::before,
 .ui-app-metric__delta.is-pos::before {
@@ -259,7 +259,7 @@
 .ui-num {
   /* inline-block so `text-align: end` actually applies: on a bare inline element
      it computes but never paints (the box is shrink-wrapped), so an author who
-     followed the docs to right-align an inline figure saw no effect. (audit C17.) */
+     followed the docs to right-align an inline figure saw no effect. */
   display: inline-block;
   font-variant-numeric: tabular-nums;
   text-align: end;
@@ -436,8 +436,8 @@
    this looks-dead state is NOT keyboard-inert: for that, prefer native
    `<button disabled>`, run `initDisabledGuard()` (it intercepts Enter/Space on
    aria-disabled controls), or add `tabindex="-1"` (and drop `href` on a link).
-   See docs/usage.md "Disabled vs aria-disabled". (a11y review C3 / audit C4;
-   native :disabled already inert.) */
+   See docs/usage.md "Disabled vs aria-disabled"; native :disabled is already
+   inert. */
 .ui-button[aria-disabled='true'],
 .ui-link[aria-disabled='true'] {
   pointer-events: none;
@@ -445,7 +445,7 @@
 
 /* The button family dims + shows not-allowed via its `:disabled` rule above, but
    a disabled LINK got only pointer-events:none — it looked fully live. Give it
-   the same visual disabled cue. (component audit C30.) */
+   the same visual disabled cue. */
 .ui-link[aria-disabled='true'] {
   cursor: not-allowed;
   opacity: 0.45;
@@ -480,7 +480,7 @@
      !important `animation-duration`, so the old non-important `1.4s` slow-spin
      here was dead code AND left a broken, transparent-topped ring looking like a
      rendering bug. Drop the dead rule; show a STATIC complete ring instead — a
-     still busy cue with no implied motion. (component audit C15.) */
+     still busy cue with no implied motion. */
   .ui-button[aria-busy='true']::before {
     border-block-start-color: currentcolor;
   }
@@ -530,8 +530,7 @@
 
 /* RTL: the logical borders flip sides, but a fixed `rotate(45deg)` then points
    the chevron UP rather than toward the inline-end (the reading-forward way).
-   Mirror the rotation so the resting affordance points forward in RTL too.
-   (component audit C14.) */
+   Mirror the rotation so the resting affordance points forward in RTL too. */
 [dir='rtl'] .ui-link--arrow::after,
 [dir='rtl'] .ui-link--cta::after {
   transform: rotate(-45deg);
@@ -540,8 +539,7 @@
 /* Standalone CTA links are tap targets, not inline prose links: on a coarse
    pointer float them to the WCAG 2.5.8 AA 24px floor (the 2.5.8 inline-link
    exception doesn't cover a block-level call-to-action, which is what these
-   are). Buttons already auto-grow to ~44px on coarse pointers. (component
-   audit C14.) */
+   are). Buttons already auto-grow to ~44px on coarse pointers. */
 @media (pointer: coarse) {
   .ui-link--arrow,
   .ui-link--cta {
@@ -600,7 +598,7 @@
 
   /* Accent mixes 45% (vs 40% for the status tones below) on purpose: the brand
      hue is lower-chroma here than the status hues, so it needs a touch more to
-     read at the same border weight. Intentional, not a copy-paste slip. (Q15.) */
+     read at the same border weight. Intentional, not a copy-paste slip. */
   border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
 }
 
@@ -694,7 +692,7 @@
   font-family: var(--mono);
   margin: 0;
   min-inline-size: 0;
-  overflow-wrap: anywhere; /* IDs/hashes/paths are the common value — break, don't overflow (audit C5) */
+  overflow-wrap: anywhere; /* IDs/hashes/paths are the common value — break, don't overflow */
 }
 
 /* --- Hover (pointer only) --- */

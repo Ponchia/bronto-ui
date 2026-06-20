@@ -7,11 +7,11 @@
 // tarball-membership requirement.
 //
 // Run: node scripts/check-doc-links.mjs
-import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, extname, normalize, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { shippedDocs } from './lib/shipped-docs.mjs';
+import { npmPackFiles } from './lib/shipped-files.mjs';
 import { log } from './lib/stdio.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -21,7 +21,8 @@ const shippedSet = new Set(shipped);
 const authoringSources = publicAuthoringSources();
 
 const LOCAL_SCHEMES = new Set(['', 'file']);
-const SKIP_SCHEMES = new Set(['http', 'https', 'mailto', 'tel', 'data', 'javascript']);
+const SKIP_SCHEMES = new Set(['http', 'https', 'mailto', 'tel', 'data']);
+const FORBIDDEN_SCHEMES = new Set(['javascript', 'vbscript']);
 
 const FENCE = /^ {0,3}(```|~~~)/;
 const HEADING = /^ {0,3}(#{1,6})\s+(.+?)\s*#*\s*$/;
@@ -41,12 +42,7 @@ let checkedInventoryDocs = 0;
 
 function packFileList() {
   try {
-    const out = execFileSync('npm', ['pack', '--dry-run', '--json', '--ignore-scripts'], {
-      cwd: root,
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-    });
-    return (JSON.parse(out)[0]?.files ?? []).map((f) => f.path.replace(/\\/g, '/'));
+    return npmPackFiles(root);
   } catch (error) {
     console.error('✗ check:doc-links — `npm pack --dry-run --json` failed:', error.message);
     process.exit(1);
@@ -117,6 +113,7 @@ function parseUrl(raw) {
     return null;
   }
   const scheme = url.protocol.replace(/:$/, '');
+  if (FORBIDDEN_SCHEMES.has(scheme)) return { forbiddenScheme: scheme };
   if (SKIP_SCHEMES.has(scheme)) return { skip: true };
   if (!LOCAL_SCHEMES.has(scheme)) return { skip: true };
 
@@ -206,6 +203,10 @@ function normalizeHash(hash) {
 function recordLink(sourceRel, line, rawTarget, { requirePackedTarget = false } = {}) {
   const parsed = parseUrl(rawTarget);
   if (!parsed || parsed.skip) return;
+  if (parsed.forbiddenScheme) {
+    problems.push(`${sourceRel}:${line}  ${rawTarget} — executable URL scheme is not allowed`);
+    return;
+  }
 
   const local = localLinkTarget(sourceRel, line, rawTarget, parsed.path);
   if (!local) return;

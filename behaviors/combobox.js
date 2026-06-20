@@ -88,16 +88,16 @@ function bindComboboxLifecycle({
   syncOptions();
   list.setAttribute('role', 'listbox');
   // Give the listbox its own accessible name (a bare role=listbox is unnamed
-  // to a screen reader) by mirroring the input's REAL name. (a11y review C30.)
+  // to a screen reader) by mirroring the input's real name.
   // The placeholder is deliberately NOT in this chain: the input warning below
   // already rejects a placeholder as an inadequate name, so papering the
-  // listbox over with it would contradict that — if there's no real name the
-  // listbox stays unnamed and the warning is the signal. (component audit C28.)
+  // listbox over with it would contradict that. If there is no real name, the
+  // listbox stays unnamed and the warning is the signal.
   mirrorListboxLabel(input, list);
   // A `role="combobox"` with no accessible name is a silent AT failure. A
   // placeholder is not a robust name (it can vanish and is ignored by some
   // AT), so warn unless there is a real label/aria-label/aria-labelledby/title
-  // (C7). We can't invent a good name, hence a dev-time warning, not a guess.
+  // We cannot invent a good name, hence a dev-time warning, not a guess.
   warnNamelessCombobox(input);
   input.setAttribute('role', 'combobox');
   input.setAttribute('aria-controls', listId);
@@ -107,8 +107,8 @@ function bindComboboxLifecycle({
   // Hide the empty-state at rest: it must only appear once a filter yields no
   // matches, never on an idle combobox. Without this an author who omits
   // `hidden` on `.ui-combobox__empty` ships a box that reads "No matches"
-  // before the user has typed anything. (component audit C10.) Make it a
-  // status live region so its appearance is announced. (component audit C38.)
+  // before the user has typed anything. Make it a status live region so its
+  // appearance is announced.
   prepareEmptyState(empty);
   close();
   input.addEventListener('input', onInput);
@@ -291,7 +291,6 @@ export function initCombobox({ root } = {}) {
       // Show the human LABEL in the input; emit the `data-value` CODE in the
       // event. The natural pattern is code in `data-value`, label in the text —
       // putting the code in the visible input silently shows the user a raw code.
-      // (component audit C10.)
       const label = opt.textContent.trim();
       const value = opt.dataset.value ?? label;
       input.value = label;

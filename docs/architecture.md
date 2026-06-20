@@ -76,6 +76,13 @@ on top of the CSS, none of which require a framework commitment**:
   `index.js` is a barrel; each behavior lives in its own module
   (`dialog.js`, `combobox.js`, …) over a shared `internal.js` of DOM helpers,
   so the public import surface is unchanged.
+- **connectors/** and **annotations/** — dependency-free SVG geometry helpers
+  for report and analytical figures. `@ponchia/ui/annotations` intentionally
+  stays a small static-helper compatibility layer for the Bronto subject /
+  connector / note grammar. The richer annotation engine - placement,
+  collision handling, SVG/React renderers, editing, and diagram/chart adapters
+  - lives in the sibling `@ponchia/annotations` package and must not be pulled
+  in as a runtime or public type dependency of `@ponchia/ui`.
 - **glyphs/** — static bitmap data and SSR-safe render helpers. The
   256-cell DOM renderers are for display and solid inline icons; the `.ui-icon`
   mask renderer is for dense icon-at-scale use.

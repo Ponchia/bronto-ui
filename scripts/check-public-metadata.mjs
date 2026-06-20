@@ -16,6 +16,8 @@ import { optInLeaves } from './lib/css-leaves.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => readFileSync(resolve(root, rel), 'utf8');
+const normalizeText = (value) => value.replace(/\s+/g, ' ').trim();
+const includesProse = (source, text) => normalizeText(source).includes(normalizeText(text));
 const pkg = JSON.parse(read('package.json'));
 const [major, minor] = pkg.version.split('.');
 const currentMinor = `${major}.${minor}`;
@@ -168,7 +170,53 @@ if (!architecture.includes('no per-function exception list')) {
   errors.push('docs/architecture.md complexity row must reject per-function exceptions');
 }
 
+const annotationsDoc = read('docs/annotations.md');
+const llms = read('llms.txt');
 const changelog = read('CHANGELOG.md');
+const annotationBoundaryMentions = [
+  [
+    'docs/annotations.md',
+    annotationsDoc,
+    [
+      '@ponchia/annotations',
+      'dependency-free compatibility surface',
+      'installing the UI package never pulls in the annotation engine',
+      'public declarations never type-reference it',
+    ],
+  ],
+  [
+    'docs/architecture.md',
+    architecture,
+    ['@ponchia/annotations', 'runtime or public type dependency of `@ponchia/ui`'],
+  ],
+  [
+    'docs/stability.md',
+    stability,
+    [
+      '@ponchia/annotations',
+      '`@ponchia/ui` does not depend on it at runtime or through public declarations',
+    ],
+  ],
+  ['README.md', readme, ['@ponchia/annotations', 'dependency-free Bronto helper surface']],
+  [
+    'llms.txt',
+    llms,
+    ['@ponchia/annotations', 'dependency-free Bronto static-helper compatibility surface'],
+  ],
+  [
+    'CHANGELOG.md',
+    changelog,
+    ['@ponchia/annotations', 'no runtime or public type dependency is added to `@ponchia/ui`'],
+  ],
+];
+for (const [file, source, required] of annotationBoundaryMentions) {
+  for (const text of required) {
+    if (!includesProse(source, text)) {
+      errors.push(`${file} must document the @ponchia/annotations package boundary: ${text}`);
+    }
+  }
+}
+
 const downstreamEvidencePatterns = [
   ['Downstream proof', /Downstream proof/],
   ['React/Vite app consumer', /React\/Vite app consumer/],

@@ -1554,7 +1554,7 @@ function dotmatrixStyle({ solid, dot, gap }) {
   // `minmax(0, 1fr)` and the 16×16 matrix balloons to fill its container
   // (full-bleed, ~1250px) — the string API would then render an icon-intent call
   // very differently from the DOM `initDotGlyph` path, which already defaults to
-  // 0.08em. Mirror that default here so both paths render the same icon. (C7.)
+  // 0.08em. Mirror that default here so both paths render the same icon.
   style.push(`--dotmatrix-dot:${dotLen || '0.08em'}`);
   // Solid mode fuses the dots into a crisp pixel glyph: square cells, no gap.
   if (solid) style.push('--dotmatrix-dot-radius:0', '--dotmatrix-gap:0');

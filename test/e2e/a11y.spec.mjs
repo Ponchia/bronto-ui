@@ -86,7 +86,7 @@ test('a11y — dialog returns focus to its trigger on Escape', async ({ page }) 
   await expect(page.locator('dialog.ui-modal#demoModal')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.locator('dialog.ui-modal#demoModal')).toBeHidden();
-  await expect(opener).toBeFocused(); // review C1: focus must not land on <body>
+  await expect(opener).toBeFocused(); // focus must not land on <body>
 });
 
 test('a11y — toast pushes into a persistent polite live region', async ({ page }) => {

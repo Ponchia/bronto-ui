@@ -26,6 +26,20 @@
   aggregate `npm run check` chain. It uses the existing TypeScript parser to
   keep function-level cyclomatic complexity at 12 or lower and function size
   under budget without carrying per-function exception baselines.
+- **Gate-backed annotation package boundary.** The annotation docs now make the
+  split with `@ponchia/annotations` explicit: `@ponchia/ui/annotations` remains
+  the dependency-free Bronto static-helper compatibility surface, while richer
+  placement, renderer, editing, and adapter work belongs in the sibling
+  annotation package. `check:public-metadata` now guards that doctrine,
+  `check:exports` rejects packed code or declaration references to the sibling
+  package, and no runtime or public type dependency is added to `@ponchia/ui`.
+- **Public source hygiene guard.** `check:public-hygiene` now rejects internal
+  audit-ticket markers across repository source files, and still scans the
+  packed public text files for private terms, local paths, and secret-looking
+  assignments. `check:doc-links` also rejects executable URL schemes in public
+  authoring docs. The pass also brought
+  `behaviors/inert.js` under the generated declaration emit inputs so
+  `check:dts-emit` covers its public `.d.ts` surface.
 
 ### Verified
 
@@ -498,7 +512,7 @@ and D2. The data-viz **palette** (`--chart-*`, `tokens/charts.json`) and the
 
 ### Fixed
 
-- **Published-type drift (code-quality audit).** `ui.meter({ tone: 'info' })` and
+- **Published-type drift.** `ui.meter({ tone: 'info' })` and
   `ui.bracketNote({ tone: 'success' })` emit real classes at runtime, but the
   generated `.d.ts` tone unions (hand-mirrored in `gen-dts.mjs`) omitted them, so
   a TS consumer got a spurious type error for a value that renders. The unions
@@ -670,16 +684,16 @@ and D2. The data-viz **palette** (`--chart-*`, `tokens/charts.json`) and the
   token source as a read-only export for foreign renderers (in-DOM ink is
   `--button-text`). `contrast.md` now prints APCA `Lc` to one decimal so an
   advisory shortfall (e.g. `Lc 44.9`) no longer rounds to a passing-looking `45`.
-- Raw bundle budget 81 → 82 kB for the component-audit accessibility/state
+- Raw bundle budget 81 → 82 kB for the accessibility/state
   blocks (gzip held ~14.1 kB — the additions are repetitive media-query and
   `:has()`/`:not()` rules that compress well).
-- **Code-quality audit (16-agent) — two new gates + targeted dedup, no churn.**
+- **Code-health pass — two new gates + targeted dedup, no churn.**
   A code-health pass (complexity / duplication / AI-slop / missing-best-practice)
   that deliberately left working, gate-protected code alone. Added:
   `check:recipe-types` (factory↔`.d.ts` option parity, above) and `check:chain`
   (every `check:*` script is wired into the aggregate `check` chain — closes the
   silent-coverage-drop class; it would have caught a forgotten gate). Reconciled
-  a latent bug — `clamp()` had silently diverged between `connectors` and
+  a latent bug — `clamp()` had drifted between `connectors` and
   `annotations`; the two now share one scalar/geometry kernel (the guarded form).
   Dedup that removed real duplication: a shared `collectHosts()` /
   `scrollIntoViewSafe()` / `wrapIndex()` in `behaviors/internal.js` (~9 behaviors),

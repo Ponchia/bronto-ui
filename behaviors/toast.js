@@ -3,7 +3,7 @@ import { hasDom, noop } from './internal.js';
 // The tones that have a `.ui-toast--*` rule. The TS type already unions these,
 // but a plain-JS / LLM caller can pass any string — and an unknown tone built a
 // `.ui-toast--error` class that matches no CSS, yielding a silent neutral toast.
-// Validate so an unknown tone degrades to neutral *and warns*, never lies. (C16)
+// Validate so an unknown tone degrades to neutral *and warns*, never lies.
 const TOAST_TONES = new Set(['accent', 'success', 'warning', 'danger', 'info']);
 
 // First-toast deferral queue. The very first toast on a brand-new stack
@@ -29,7 +29,7 @@ function toastStack(isAssertive) {
       stack.setAttribute('role', 'alert');
       // The assertive region carries one error at a time and must be read whole;
       // aria-atomic ensures the full toast (title + message) announces, not just
-      // the diff. (component audit C38.)
+      // the changed fragment.
       stack.setAttribute('aria-atomic', 'true');
     }
     document.body.appendChild(stack);
@@ -67,7 +67,7 @@ function toastElement(message, { tone, title }) {
   // aria-atomic so a *titled* toast announces title + message as one unit, not
   // disjointly — and unlike aria-atomic on the polite STACK (which would re-read
   // every resident toast on each new one), scoping it to the toast keeps sibling
-  // toasts out of the announcement. (component audit C23.)
+  // toasts out of the announcement.
   el.setAttribute('aria-atomic', 'true');
   if (title) {
     const t = document.createElement('p');
@@ -183,8 +183,8 @@ export function toast(message, { tone, title, duration = 4000, assertive, closab
   // `closable`. The button carries no text node (glyph is a CSS
   // ::before) so the toast's announced/textContent stays the message.
   // Explicitly opting OUT of the close button on a sticky toast strands it with
-  // no in-UI dismissal — warn that the caller must retain and call the returned
-  // dismiss fn. (component audit C37.)
+  // no in-UI dismissal; warn that the caller must retain and call the returned
+  // dismiss function.
   if (duration === 0 && closable === false && typeof console !== 'undefined') {
     console.warn(
       '[bronto] toast(): duration:0 + closable:false has no in-UI dismissal — keep the returned dismiss() and call it yourself, or set closable:true.',

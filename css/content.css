@@ -15,7 +15,7 @@
 
   /* Machine-generated Markdown carries long unbreakable tokens (URLs, hashes,
      code) that otherwise force horizontal page scroll on the prose surface
-     itself. Break them. (css-robustness review C9; the table cell already does.) */
+     itself. Break them; table cells already do this locally. */
   overflow-wrap: break-word;
 
   /* Readable measure; the container can still be wider for tables/media. */
@@ -108,7 +108,7 @@
    is the opt-in marks leaf (marks.css) and must win: this rule is higher-specificity
    (0,1,1) than `.ui-mark` (0,1,0) and sits in the same `bronto` layer, so without the
    `:not(.ui-mark)` it silently overrides every `.ui-mark` tone/draw modifier in prose —
-   the most-documented mark usage. (component audit C1.) */
+   the most-documented mark usage. */
 .ui-prose mark:not(.ui-mark) {
   background: var(--accent-soft);
   color: var(--text);
@@ -255,7 +255,7 @@
    because `.ui-prose` is generated prose, not a data grid — but for a table whose
    semantics MUST survive on WebKit, author the `.ui-table` component inside a
    `.ui-table-wrap` instead (the wrap scrolls, the <table> keeps `display: table`),
-   or add `role="table"` to the markdown output. (component audit C29.) */
+   or add `role="table"` to the markdown output. */
 
 .ui-prose table {
   border: 1px solid var(--line);

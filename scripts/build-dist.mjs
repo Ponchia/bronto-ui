@@ -149,21 +149,21 @@ export function buildBundles() {
  *  dots, menu/segmented focus-visible affordances, flat reduced-motion
  *  skeleton); the deleted dead keyframes clawed some back. Gzip held (~14.0 kB)
  *  — the additions are repetitive media-query blocks that compress well. At
- *  0.6.0 the raw ceiling was nudged 82→83 kB for the component-audit a11y/contract
+ *  0.6.0 the raw ceiling was nudged 82→83 kB for the accessibility/contract
  *  pass (forced-colors meter + modal backdrop scrim, coarse-pointer floors on
  *  tabs/pagination/switch/check, stat-delta direction glyph, app-nav aria-current
  *  parity, dotspinner overflow fail-safe); gzip held (more repetitive media-query
- *  + forced-colors blocks). The second component-audit pass nudged it 83→84 kB:
+ *  + forced-colors blocks). A follow-up accessibility/contract pass nudged it 83→84 kB:
  *  the forced-colors error-family + spinner/scroll-progress blocks, the `--value`
  *  @property, scripting-gated `.ui-matrix`, RTL link-arrow mirror, pagination
  *  aria-current, disabled-link + read-only cues, and logical container queries —
- *  all repetitive blocks, so gzip stayed well under ceiling. The third
- *  component-audit pass nudged it 84→85 kB (raw) / 14.5→14.7 kB (gzip): the
+ *  all repetitive blocks, so gzip stayed well under ceiling. The next
+ *  accessibility/contract pass nudged it 84→85 kB (raw) / 14.5→14.7 kB (gzip): the
  *  forced-colors icon/skeleton/dot-accent/combobox-option blocks, the modal-close
  *  tap-target + coarse bump, overflow-wrap on stat/key-value/property, the
  *  reduced-motion indeterminate-progress hatch, the stagger cap, and the legend
  *  symbol fallback — again repetitive media-query/FC blocks that gzip well. The
- *  fourth component-audit pass nudged it 85→86 kB (raw) / 14.7→14.85 kB (gzip):
+ *  following accessibility/contract pass nudged it 85→86 kB (raw) / 14.7→14.85 kB (gzip):
  *  the modal scroll-lock, the wrapper-control + forced-colors invalid cues, the
  *  forced-colors app-nav active channel + menu hover/focus parity, the
  *  uiScrollReveal keyframe + entry-bounded range, the coarse CTA-link floor, and

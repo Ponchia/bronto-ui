@@ -343,7 +343,7 @@ function checkAccentAsText(file, line, lineNumber, activeSelector) {
   if (!ACCENT_AS_TEXT.test(line) || GRAPHICAL_SELECTOR.test(activeSelector)) return;
   errors.push(
     `css/${file}:${lineNumber} \`color: var(--accent)\` on text "${activeSelector.trim()}" — ` +
-      `use --accent-text (raw --accent fails WCAG AA after a paler re-brand; ADR-0001 / audit C6)`,
+      `use --accent-text (raw --accent fails WCAG AA after a paler re-brand; ADR-0001)`,
   );
 }
 

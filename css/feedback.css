@@ -9,8 +9,7 @@
    a stray `--value: 50%` is invalid against the typed syntax and falls back to
    the initial `0` (empty bar) instead of poisoning the `clamp()` and painting a
    FULL bar (the old failure mode). It inherits so the value set on the host
-   `.ui-meter` / `.ui-progress` cascades to the inner `__fill`/`__bar`.
-   (component audit C8.) */
+   `.ui-meter` / `.ui-progress` cascades to the inner `__fill`/`__bar`. */
 @property --value {
   syntax: '<number>';
   inherits: true;
@@ -442,7 +441,7 @@
     /* A still, solid, full-width bar reads as "100% complete" — the opposite of
        indeterminate. Fall back to a static diagonal hatch that fills the track
        (so it's clearly active) but doesn't read as done. AT is covered via
-       aria-busy. (audit C26.) */
+       aria-busy. */
     background: repeating-linear-gradient(
       -45deg,
       var(--accent) 0,
@@ -466,7 +465,7 @@
    Drive the fill with the same --value knob as progress; tone the fill by
    threshold. Author role="meter" + aria-valuenow/min/max for AT — but role=meter
    has uneven AT support, so keep the visible .ui-meter__label/__value (they are
-   the real channel, not just decoration). (component audit C25.) --- */
+   the real channel, not just decoration). --- */
 
 .ui-meter {
   background: var(--panel-soft);
@@ -537,7 +536,7 @@
   /* Prefer the natural one-line width, but never wider than the container: a
      long step label at `max-content` couldn't shrink and overflowed the page on
      narrow viewports (tabs scroll; steps didn't). Capping at 100% lets an
-     over-long label wrap instead of overflowing. (component audit C18.) */
+     over-long label wrap instead of overflowing. */
   min-inline-size: min(100%, max-content);
   text-transform: uppercase;
 }
@@ -597,10 +596,10 @@
 /* Forced-colors flattens the fill's tone to the system palette and can erase it
    against the track, dropping the only visual cue of the measured proportion.
    Re-assert a system colour so the bar stays visible; the tone's *semantic* is
-   carried by the author-written label beside it, not the colour. (a11y C10.)
+   carried by the author-written label beside it, not the colour.
    The toned `.ui-meter--TONE .ui-meter__fill` rules are (0,2,0); the bare
    `.ui-meter__fill` reset is only (0,1,0), so it lost — a toned fill stayed
-   `var(--TONE)` and was forced to black-on-black (component-audit C3). Match the
+   `var(--TONE)` and was forced to black-on-black. Match the
    tone specificity here (and set `forced-color-adjust: none`) so every meter,
    toned or not, paints `Highlight`, mirroring the `.ui-dot` precedent. */
 @media (forced-colors: active) {

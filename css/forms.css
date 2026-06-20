@@ -79,8 +79,7 @@
 
 /* Read-only is editable-looking but not editable; give it a distinct, quieter
    cue (muted fill + default cursor) so it doesn't read as a live field. Not
-   disabled — value still submits and the field stays focusable/selectable.
-   (component audit C28.) */
+   disabled — value still submits and the field stays focusable/selectable. */
 .ui-input:read-only:not(:disabled),
 .ui-textarea:read-only:not(:disabled) {
   background: var(--panel-soft);
@@ -91,7 +90,7 @@
    the controls that WRAP a native input (switch/check/segmented) showed no
    disabled cue and their label kept cursor:pointer — a lie. Mirror the cue via
    :has(input:disabled); the native-element controls (range/file) take :disabled
-   directly. (a11y/forms review C4.) */
+   directly. */
 .ui-range:disabled,
 .ui-file:disabled,
 .ui-switch:has(input:disabled),
@@ -102,7 +101,7 @@
 }
 
 /* Keep autofilled fields on-theme — the UA's yellow fill otherwise paints over
-   the monochrome surface and breaks the contrast story. (forms review C24.) */
+   the monochrome surface and breaks the contrast story. */
 .ui-input:autofill,
 .ui-select:autofill,
 .ui-textarea:autofill,
@@ -121,8 +120,7 @@
 /* Wrapper controls (switch / check / segmented) hide their native <input>, so
    the `[aria-invalid]` the validator sets on it paints nothing — a sighted,
    non-AT user couldn't see the error (WCAG 1.4.1). Mirror the invalid cue onto
-   the visible surface via :has(), the same way the disabled cue is mirrored.
-   (component audit C7.) */
+   the visible surface via :has(), the same way the disabled cue is mirrored. */
 .ui-check:has(input[aria-invalid='true']) input {
   outline: 2px solid var(--danger);
   outline-offset: 1px;
@@ -141,8 +139,7 @@
    one and sighted HCM users lose the only error cue (WCAG 1.4.1). The switch got
    a forced-colors block; the error family did not. Re-assert the state on a
    NON-colour channel — a thicker, doubled border — that survives HCM, and prefix
-   the error hint with a glyph so the message itself carries the error.
-   (component audit C5.) */
+   the error hint with a glyph so the message itself carries the error. */
 @media (forced-colors: active) {
   .ui-input[aria-invalid='true'],
   .ui-select[aria-invalid='true'],
@@ -151,7 +148,7 @@
     border-width: 3px;
   }
 
-  /* Same NON-colour re-assertion for the wrapper controls (C7): a thicker,
+  /* Same NON-colour re-assertion for the wrapper controls: a thicker,
      doubled outline/border survives the HCM colour flattening. */
   .ui-check:has(input[aria-invalid='true']) input {
     outline-width: 3px;
@@ -205,7 +202,7 @@
 
 .ui-input-group > .ui-input:focus-visible,
 .ui-input-group > .ui-select:focus-visible {
-  z-index: 1; /* keep the focus ring above the adjacent addon border (select too — audit C29) */
+  z-index: 1; /* keep the focus ring above the adjacent addon border */
 }
 
 .ui-input-group__addon {
@@ -213,7 +210,7 @@
   background: var(--panel-soft);
 
   /* Match the wrapped control's `--line-strong` border so the prefix/suffix seam
-     isn't a fainter cap than the field it abuts. (component audit C33.) */
+     isn't a fainter cap than the field it abuts. */
   border: 1px solid var(--line-strong);
   color: var(--text-dim);
   display: flex;
@@ -358,7 +355,7 @@
 
 /* Keyboard focus ring to match every sibling input (which use a 2px ring); the
    border-colour shift alone read markedly fainter on this one control. Keyed to
-   :focus-visible on the inner input so it stays keyboard-only. (a11y review C12.) */
+   :focus-visible on the inner input so it stays keyboard-only. */
 .ui-search:has(input:focus-visible) {
   outline: 2px solid var(--focus-ring);
   outline-offset: 1px;

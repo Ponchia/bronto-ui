@@ -27,7 +27,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 /**
  * The freshness compare, returning an error array instead of exiting — so a gate
  * that ALSO collects semantic errors (a parser, CVD/contrast math) can fold the
- * drift check into its own `errors` and exit once. (code-quality audit Q6.)
+ * drift check into its own `errors` and exit once.
  *
  * @param {Record<string, string>} artifacts repo-relative path → expected string
  * @param {string} buildHint command suggested for each stale/missing file

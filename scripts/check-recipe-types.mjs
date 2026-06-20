@@ -8,7 +8,7 @@
 // `tsc` only checks the `.d.ts` is internally consistent, not that it matches the
 // factory. A consumer then gets a spurious type-error for a value that renders a
 // real class (this gate was added after exactly that drift: meter `info`,
-// bracket-note `success`). Found by the code-quality audit (Q1).
+// bracket-note `success`). This keeps recipe props from drifting into prose-only notes.
 //
 // Scope, deliberately narrow: only STRING-literal option keys (tone, variant,
 // style, motion, state, size, density, orient, type, shape, …). Numeric keys

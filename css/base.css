@@ -230,7 +230,7 @@ textarea:focus-visible,
   /* NB: the active-tab forced-colors re-assert lives in disclosure.css, right
      after the `.ui-tab.is-active` default — placing it here (an earlier bundle
      leaf) let the later default win even in forced-colors mode, since @media
-     adds no specificity. (a11y review C10.) */
+     adds no specificity. */
 
   /* Keyboard focus must never depend on a colour that gets overridden. */
   a:focus-visible,

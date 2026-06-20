@@ -94,9 +94,9 @@ export function initPopover({ root } = {}) {
     }
   };
 
-  // The trigger advertises `aria-haspopup="dialog"`, so the open panel must BE a
-  // dialog: a role, an accessible name, and focus moved into it (C6) — see the
-  // shared `focusInto` in internal.js.
+  // The trigger advertises `aria-haspopup="dialog"`, so the open panel must be
+  // a dialog: a role, an accessible name, and focus moved into it. See the
+  // shared `focusInto` helper in internal.js.
 
   const place = (trigger, panel) => {
     const r = trigger.getBoundingClientRect();
@@ -148,7 +148,7 @@ export function initPopover({ root } = {}) {
     rememberPanel(panel);
     // Live up to the advertised `aria-haspopup="dialog"`: give the panel a
     // dialog role (unless the author set one) so AT announces it as the promised
-    // dialog rather than a generic group (C6).
+    // dialog rather than a generic group.
     if (!panel.hasAttribute('role')) panel.setAttribute('role', 'dialog');
     trigger.setAttribute('aria-controls', panel.id);
     trigger.setAttribute('aria-expanded', 'true');
@@ -211,7 +211,7 @@ export function initPopover({ root } = {}) {
       trigger.setAttribute('aria-controls', panel.id);
       if (!trigger.hasAttribute('aria-expanded')) trigger.setAttribute('aria-expanded', 'false');
       // A dialog with no accessible name is announced as just "dialog". We can't
-      // invent a good name, so warn the author at dev time (C6).
+      // invent a good name, so warn the author at dev time.
       const named =
         panel.hasAttribute('aria-label') ||
         panel.hasAttribute('aria-labelledby') ||

@@ -29,7 +29,7 @@ import { hasDom, resolveHost, noop, bindOnce, collectHosts, closestSafe } from '
  * canonical number in a `data-sort-value` attribute on the cell. That escape
  * hatch wins over the parsed text and accepts either a dot ("3.5") or a single
  * decimal comma ("3,5"). It is a client-side convenience sorter, not a data
- * grid. (component audit C3/C5.)
+ * grid.
  *
  * @param {import('./internal.js').DelegateOpts} [opts]
  * @returns {import('./internal.js').Cleanup}
@@ -98,8 +98,7 @@ export function initTableSort({ root } = {}) {
     };
     const seedSorters = () => {
       // Seed the resting `aria-sort="none"` on every sortable header so AT
-      // announces the column as sortable from the start (it was unset until the
-      // first click — C10).
+      // announces the column as sortable from the start.
       for (const sort of table.querySelectorAll('.ui-table__sort')) {
         rememberSorterState(sort);
         if (sort.tagName === 'BUTTON' && !sort.hasAttribute('type')) sort.type = 'button';
@@ -139,7 +138,7 @@ export function initTableSort({ root } = {}) {
     // authoritative escape hatch; otherwise normalize the display text so the
     // sign survives (U+2212 / en-em dashes → minus, accounting parens →
     // negative) and `,` grouping is dropped. Returns 0 for unparseable cells so
-    // they cluster rather than scatter. (component audit C3.)
+    // they cluster rather than scatter.
     const cellNum = (row, i) => {
       const cell = row.children[i];
       const explicit = cell?.getAttribute?.('data-sort-value');
@@ -181,8 +180,8 @@ export function initTableSort({ root } = {}) {
       th.setAttribute('aria-sort', dir);
       const i = colIndex(th);
       const sign = dir === 'ascending' ? 1 : -1;
-      // Empty/sentinel rows sort out of the data set AND must re-append LAST,
-      // or after a sort they float above the real rows (C29).
+      // Empty/sentinel rows sort out of the data set and must re-append last,
+      // or after a sort they float above the real rows.
       const emptyRows = [...tbody.rows].filter((r) => r.classList.contains('ui-table__empty'));
       const rows = [...tbody.rows].filter((r) => !r.classList.contains('ui-table__empty'));
       rows.sort((a, b) => {
@@ -222,8 +221,8 @@ export function initTableSort({ root } = {}) {
     const onClick = (e) => {
       // Only the focusable `.ui-table__sort` button is a sort trigger — it is
       // keyboard-operable and carries the `::after` sort glyph. The bare
-      // `th[data-sort]` path was mouse-only with no affordance, so it is gone
-      // (C10); `data-sort="num"` is still read from the button or its th.
+      // `th[data-sort]` path was mouse-only with no affordance, so it is gone;
+      // `data-sort="num"` is still read from the button or its th.
       const sorter = closestSafe(e.target, '.ui-table__sort');
       if (sorter && table.contains(sorter)) {
         rememberSorterState(sorter);

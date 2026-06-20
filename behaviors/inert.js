@@ -15,7 +15,7 @@ const DISABLED = '[aria-disabled="true"]';
  *
  * Wire once near the root, like {@link applyStoredTheme}. Capturing listeners
  * intercept activation before any component handler (tabs, pagination, menus)
- * sees it. (component audit C4.)
+ * sees it.
  *
  * @param {import('./internal.js').DelegateOpts} [opts]
  * @returns {import('./internal.js').Cleanup}

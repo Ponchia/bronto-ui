@@ -45,7 +45,7 @@ for (const value of all) {
   // `__button`/`__track` but NO bare `.ui-themetoggle` rule — gets `base: null`,
   // so a contract-driven generator never emits a phantom unstyled
   // `class="ui-themetoggle"`. A CSS-presence gate (check-classes.mjs) enforces
-  // that every non-null `base` resolves to a real selector. (component audit C11.)
+  // that every non-null `base` resolves to a real selector.
   groups[prefix] ??= { base: allSet.has(prefix) ? prefix : null, modifiers: [], parts: [] };
   if (value === prefix) continue;
   if (value.includes('--')) groups[prefix].modifiers.push(value);
@@ -64,8 +64,7 @@ const sortedGroups = Object.fromEntries(
  *  treat every entry here as known, not as an invented class. Entries flagged
  *  `managed: 'runtime'` are toggled by JS or a data binding — discoverable so a
  *  validator never false-flags them, but an author normally does NOT hand-write
- *  them (component-audit C25, which found `is-on`/`is-visible` were only in this
- *  comment, so valid markup validated as "unknown"). `is-on` is the exception:
+ *  them. `is-on` is the exception:
  *  it is author-writable to light a static `.ui-dotbar` segment. */
 const states = [
   {
@@ -166,8 +165,8 @@ const customProperties = [
     on: '.ui-icon',
     type: 'image',
     // A real, resolvable mask `url()` — there is NO `--glyph-*` token, so the
-    // old `var(--glyph-check)` example silently no-opped to a solid square
-    // (component-audit C1). In JS, `renderGlyph(name, { render: 'mask' })` from
+    // old `var(--glyph-check)` example silently no-opped to a solid square.
+    // In JS, `renderGlyph(name, { render: 'mask' })` from
     // @ponchia/ui/glyphs builds this value for any of the 43 named glyphs.
     example:
       "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='4'/%3E%3C/svg%3E\")",
@@ -350,8 +349,8 @@ const customProperties = [
 
   // Layout-primitive tuning knobs — the Every-Layout intrinsics + app-shell.
   // Undiscoverable before (prose-only / not even prose) so an author couldn't
-  // set a column min, sidebar width, ratio, or rail width from the contract
-  // (component-audit C18). Each falls back to the listed default when unset.
+  // set a column min, sidebar width, ratio, or rail width from the contract.
+  // Each falls back to the listed default when unset.
   {
     name: '--stack-gap',
     on: '.ui-stack',
@@ -397,7 +396,6 @@ const customProperties = [
   // Gap knobs for the two flex Every-Layout primitives. Every sibling layout
   // (--stack-gap/--cluster-gap/--grid-gap) was already discoverable; these two
   // were the only gaps an author had to guess, so an LLM hand-rolled a margin.
-  // (component audit C13.)
   {
     name: '--sidebar-gap',
     on: '.ui-sidebar',
@@ -447,8 +445,8 @@ const customProperties = [
     example: '16rem',
     note: 'width of the app-shell sidebar rail column (default 14rem)',
   },
-  // Page-frame container caps (component-audit C20 — these were real, working
-  // sizing knobs the manifest never surfaced). `.ui-container` is a border-box
+  // Page-frame container caps: real, working sizing knobs the manifest never
+  // surfaced. `.ui-container` is a border-box
   // page frame; `.ui-center` is a content-box measure — see usage.md.
   {
     name: '--container',
@@ -594,7 +592,7 @@ const customProperties = [
 
 // Root-level attributes that switch the whole theme/skin/density/surface. An
 // LLM consuming only the manifest had no signal that theming existed or how to
-// opt into a skin/OLED/density (component-audit C21). Set on :root / <html>.
+// opt into a skin/OLED/density. Set on :root / <html>.
 const rootAttributes = [
   {
     name: 'data-theme',
@@ -639,7 +637,6 @@ const rootAttributes = [
 // and theming; this is the OTHER half a contract-driven generator needs: how to
 // wire an overlay up. Without it the open/close contract lived only in JSDoc, so
 // a tool reading the manifest could emit a `.ui-modal` but had no way to open it.
-// (component audit C14.)
 const behaviorAttributes = [
   {
     name: 'data-bronto-open',
@@ -896,7 +893,7 @@ const behaviorAttributes = [
 // Per-component ARIA a generator MUST emit for the role to mean anything — the
 // class paints, but a `.ui-meter`/`.ui-progress`/`.ui-error-summary` with no role
 // is invisible to AT. The `attrs.*` helpers from @ponchia/ui/classes set these for
-// you; this is the language-neutral statement of the same contract. (audit C18.)
+// you; this is the language-neutral statement of the same contract.
 const requiredAria = [
   {
     on: '.ui-progress',

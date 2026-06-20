@@ -27,7 +27,7 @@
  * canonical number in a `data-sort-value` attribute on the cell. That escape
  * hatch wins over the parsed text and accepts either a dot ("3.5") or a single
  * decimal comma ("3,5"). It is a client-side convenience sorter, not a data
- * grid. (component audit C3/C5.)
+ * grid.
  *
  * @param {import('./internal.js').DelegateOpts} [opts]
  * @returns {import('./internal.js').Cleanup}

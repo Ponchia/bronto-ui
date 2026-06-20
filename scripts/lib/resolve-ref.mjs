@@ -4,7 +4,7 @@
 // `var(--x)`; this turns a `var(--token)` reference into the per-theme resolved
 // value (or passes a literal — a font stack, an already-resolved colour —
 // through), throwing if a referenced token has no resolved value. One copy so a
-// fix lands in all three at once. (code-quality audit Q3.)
+// fix lands in all three at once.
 import { buildResolved } from '../gen-resolved.mjs';
 
 const VAR = /^var\(\s*(--[\w-]+)\s*\)$/;

@@ -103,14 +103,14 @@ export function initTabs({ root } = {}) {
         t.tabIndex = on ? 0 : -1;
       }
       // Only retarget panels when this tab actually controls one. A panel-less
-      // tab must NOT hide every panel — leave the prior panel visible (C30).
+      // tab must not hide every panel; leave the prior panel visible.
       if (!panels.some((p) => p.dataset.panel === tab.dataset.tab)) return;
       for (const p of panels) {
         p.setAttribute('role', 'tabpanel');
         const shown = p.dataset.panel === tab.dataset.tab;
         p.hidden = !shown;
         // APG: a tabpanel is focusable so keyboard users can reach a text-only
-        // panel; hidden panels drop out of the tab order (C30).
+        // panel; hidden panels drop out of the tab order.
         if (shown) p.tabIndex = 0;
         else p.removeAttribute('tabindex');
       }

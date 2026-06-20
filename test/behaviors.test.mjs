@@ -1051,7 +1051,7 @@ test('initFormValidation: invalid submit marks fields, fills summary, blocks', (
   assert.equal(input.hasAttribute('aria-invalid'), false, 'cleared on valid blur');
   // The canonical error node carries BOTH `ui-hint` and `data-bronto-error`.
   // It must be treated as a dedicated error slot: cleared AND unlinked, so AT
-  // never announces a dangling empty error association (component audit C6).
+  // never announces a dangling empty error association.
   const errNode = d.querySelector('[data-bronto-error]');
   assert.equal(errNode.textContent, '', 'error node cleared when valid');
   assert.equal(
@@ -1182,7 +1182,7 @@ test('initFormValidation: dynamically handled forms restore noValidate on cleanu
 
 // SSR-safe contract: with no DOM each arg-less initializer no-ops and returns a
 // callable cleanup. One loop over the uniform initializers (theme + toast differ
-// — see their own tests above). (code-quality audit Q14.)
+// — see their own tests above).
 const SSR_INITS = {
   initFormValidation,
   initCombobox,
@@ -1250,7 +1250,7 @@ test('initCombobox: wires ARIA, filters, keyboard-selects, emits change', () => 
   assert.ok(d.querySelector('.ui-combobox__option.is-active'), 'active option set');
   assert.equal(input.getAttribute('aria-activedescendant'), shown[0].id);
   input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-  // Input shows the human LABEL; the change event carries the data-value CODE (C10).
+  // Input shows the human LABEL; the change event carries the data-value CODE.
   assert.equal(input.value, 'Banana', 'input shows the option label');
   assert.equal(changed, 'banana', 'bronto:change emits the data-value code');
   assert.equal(list.hidden, true, 'closes on select');
@@ -1707,7 +1707,7 @@ test('initTableSort: invalid root no-ops instead of widening or traversing text'
   stop();
 });
 
-test('initTableSort: numeric sort keeps the sign on U+2212, accounting parens, and data-sort-value (C3)', () => {
+test('initTableSort: numeric sort keeps the sign on U+2212, accounting parens, and data-sort-value', () => {
   // P/L column mixing a Unicode minus (−), accounting parentheses, a thousands
   // separator, and a data-sort-value escape hatch. The losses must sort below
   // the gains, not above them.
@@ -1734,7 +1734,7 @@ test('initTableSort: numeric sort keeps the sign on U+2212, accounting parens, a
   stop();
 });
 
-test('initTableSort: data-sort-value escape hatch accepts a European decimal comma (C5)', () => {
+test('initTableSort: data-sort-value escape hatch accepts a European decimal comma', () => {
   // A column where the display text is European decimal ("3,5" = 3.5). Without
   // the escape hatch the parser drops the comma → 35, mis-ranking it. The
   // data-sort-value attribute must sort the rows by the real magnitude, and it
@@ -3244,7 +3244,7 @@ test('initModal lets an open nested popover own Escape', async () => {
 
 // ---------------------------------------------------------------------------
 // initDisabledGuard — aria-disabled controls become keyboard-inert, not just
-// pointer-inert (component audit C4). Capturing listeners must swallow the
+// pointer-inert. Capturing listeners must swallow the
 // activation before any component handler sees it.
 // ---------------------------------------------------------------------------
 test('disabled guard blocks click + Enter/Space on aria-disabled controls', () => {

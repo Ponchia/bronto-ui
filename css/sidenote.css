@@ -41,7 +41,7 @@
 /* The inline superscript that anchors a numbered sidenote. Use --accent-text,
    not raw --accent: this is readable text and must clear WCAG AA 4.5:1 even
    after a one-knob re-brand to a paler --accent (raw --accent drops to ~1.5:1).
-   Same accent-as-text contract as .ui-eyebrow / .ui-link--cta. (audit C6.) */
+   Same accent-as-text contract as .ui-eyebrow / .ui-link--cta. */
 .ui-sidenote__ref {
   color: var(--accent-text);
   counter-increment: ui-sidenote;
@@ -54,7 +54,7 @@
 }
 
 /* The note repeats its number (display only — the ref already incremented).
-   --accent-text for the same WCAG-AA reason as the ref above. (audit C6.) */
+   --accent-text for the same WCAG-AA reason as the ref above. */
 .ui-sidenote::before {
   color: var(--accent-text);
   content: counter(ui-sidenote) '. ';
