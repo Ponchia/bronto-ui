@@ -5,6 +5,26 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## 0.6.10 — 2026-06-23
+
+### Added
+
+- **Workbench toolstrip primitives.** `workbench.css`, the generated class
+  registry, and the workbench docs now cover floating toolstrips, compact
+  grouped actions, segmented button groups, contextual labels, and search/action
+  slots for dense canvas or editor-style tools.
+- **Annotation composition guidance.** The annotation docs now show how the
+  dependency-free `@ponchia/ui` annotation surface composes with richer
+  annotation engines in a workbench-style consumer, while keeping runtime
+  package boundaries explicit.
+
+### Verified
+
+- **Release evidence.** PR CI passed for the workbench expansion, including the
+  aggregate `check` gate, Chromium e2e, CodeQL, and the packed examples matrix.
+  This release adds opt-in workbench CSS and generated class/docs artifacts; it
+  does not move the default bundle contract.
+
 ## 0.6.9 — 2026-06-20
 
 ### Changed
