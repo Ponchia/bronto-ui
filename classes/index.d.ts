@@ -574,6 +574,16 @@ export declare const cls: {
   readonly inspector: 'ui-inspector';
   readonly inspectorHead: 'ui-inspector__head';
   readonly inspectorBody: 'ui-inspector__body';
+  readonly toolstrip: 'ui-toolstrip';
+  readonly toolstripFloating: 'ui-toolstrip--floating';
+  readonly toolstripCompact: 'ui-toolstrip--compact';
+  readonly toolstripBrand: 'ui-toolstrip__brand';
+  readonly toolstripContext: 'ui-toolstrip__context';
+  readonly toolstripGroup: 'ui-toolstrip__group';
+  readonly toolstripActions: 'ui-toolstrip__actions';
+  readonly toolstripSearch: 'ui-toolstrip__search';
+  readonly segmentedButtons: 'ui-segmented-buttons';
+  readonly segmentedButtonsButton: 'ui-segmented-buttons__button';
   readonly property: 'ui-property';
   readonly propertyLabel: 'ui-property__label';
   readonly propertyValue: 'ui-property__value';

@@ -4,6 +4,26 @@ async function open(page) {
   await page.goto('/demo/workbench.html', { waitUntil: 'networkidle' });
 }
 
+test('toolstrip supports floating viewport controls and button modes', async ({ page }) => {
+  await open(page);
+  const toolstrip = page.locator('.ui-toolstrip').first();
+  const activeMode = page.locator('.ui-segmented-buttons__button[aria-pressed="true"]').first();
+
+  await expect(toolstrip).toHaveCSS('display', 'flex');
+  await expect(toolstrip).toHaveCSS('flex-wrap', 'wrap');
+  await expect(toolstrip).toHaveClass(/ui-toolstrip--floating/);
+  await expect(toolstrip.locator('.ui-toolstrip__brand strong')).toHaveText('Workspace');
+  await expect(toolstrip.locator('.ui-toolstrip__context')).toHaveText('review queue');
+  await expect(toolstrip.locator('.ui-toolstrip__search input')).toBeVisible();
+  await expect(toolstrip.locator('.ui-toolstrip__actions')).toBeVisible();
+  await expect(activeMode).toHaveText('Map');
+
+  const boxShadow = await toolstrip.evaluate((el) => getComputedStyle(el).boxShadow);
+  expect(boxShadow).not.toBe('none');
+  const activeBackground = await activeMode.evaluate((el) => getComputedStyle(el).backgroundColor);
+  expect(activeBackground).not.toBe('rgba(0, 0, 0, 0)');
+});
+
 test('splitter exposes separator ARIA and resizes with the keyboard', async ({ page }) => {
   await open(page);
   const splitter = page.locator('[data-bronto-splitter]').first();

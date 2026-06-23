@@ -32,6 +32,119 @@
   gap: var(--space-2xs);
 }
 
+/* --- Toolstrip — compact workbench controls, optionally floating over a
+   viewport. The host owns commands, search behavior, active mode, and
+   responsive hiding policy. --- */
+.ui-toolstrip {
+  align-items: center;
+  background: var(--panel-strong);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  min-inline-size: 0;
+  padding: 0.35rem;
+}
+
+.ui-toolstrip--floating {
+  box-shadow: var(--shadow-raised);
+}
+
+.ui-toolstrip--compact {
+  gap: var(--space-2xs);
+  padding: 0.25rem;
+}
+
+.ui-toolstrip__brand {
+  align-items: baseline;
+  display: inline-flex;
+  flex: 0 1 auto;
+  gap: var(--space-xs);
+  min-inline-size: 0;
+  padding-inline: var(--space-xs);
+}
+
+.ui-toolstrip__brand strong {
+  color: var(--text);
+  font-size: var(--text-sm);
+}
+
+.ui-toolstrip__context {
+  color: var(--text-dim);
+  font-size: var(--text-xs);
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ui-toolstrip__group,
+.ui-toolstrip__actions {
+  align-items: center;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+}
+
+.ui-toolstrip__group {
+  background: var(--panel-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.16rem;
+}
+
+.ui-toolstrip__search {
+  flex: 1 1 14rem;
+  min-inline-size: min(100%, 11rem);
+}
+
+.ui-toolstrip__actions {
+  margin-inline-start: auto;
+}
+
+/* --- Button segmented control — command buttons that expose one active
+   mode. For actual form values, keep using `.ui-segmented` with radio inputs. --- */
+.ui-segmented-buttons {
+  align-items: center;
+  background: var(--panel-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.16rem;
+  padding: 0.16rem;
+}
+
+.ui-segmented-buttons__button {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-soft);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  line-height: 1;
+  min-block-size: 1.9rem;
+  padding: 0.48rem 0.7rem;
+  text-transform: uppercase;
+}
+
+.ui-segmented-buttons__button[aria-pressed='true'],
+.ui-segmented-buttons__button.is-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--button-text);
+}
+
+.ui-segmented-buttons__button:disabled,
+.ui-segmented-buttons__button[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 /* --- Property row — a label/value pair, denser than ui-key-value and tuned
    for an inspector (the value can hold an input or a static read-out). --- */
 .ui-property {
@@ -79,6 +192,14 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-xs);
+}
+
+@media (hover: hover) {
+  .ui-segmented-buttons__button:hover:not(:disabled, [aria-disabled='true'], [aria-pressed='true'], .is-active) {
+    background: var(--panel);
+    border-color: var(--line-strong);
+    color: var(--text);
+  }
 }
 
 /* --- Splitter — two panes separated by a focusable ARIA separator handle. --- */
@@ -166,6 +287,13 @@
 }
 
 @media (forced-colors: active) {
+  .ui-segmented-buttons__button[aria-pressed='true'],
+  .ui-segmented-buttons__button.is-active {
+    background: Highlight;
+    border-color: Highlight;
+    color: HighlightText;
+  }
+
   .ui-splitter__handle {
     border-color: CanvasText;
   }

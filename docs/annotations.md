@@ -22,6 +22,33 @@ declarations never type-reference it. Combine the two by using Bronto's
 `css/annotations.css` for the visual grammar, or the annotation package's Bronto
 CSS bridge when the engine emits its own layer.
 
+When an annotation engine overlays a rendered chart, screenshot, canvas, or
+diagram, put the rendered media in `.ui-figure__media` and the emitted annotation
+layer in `.ui-figure__overlay`. The figure stage supplies the stable positioning
+context; the annotation package owns anchors, placement, collision handling, and
+SVG/React rendering. Keep the same annotation text available through a caption,
+`<desc>`, fallback table, or surrounding prose when it carries data.
+
+For inspector-driven selection, keep selection state in the host application:
+the selected item can render details in `.ui-inspector`, while the annotation
+engine receives the focused anchor and emits the matching overlay. Bronto UI
+styles the inspector, figure stage, and annotation visual grammar; it does not
+own hit-testing, selected IDs, camera/chart state, or focus policy.
+
+```html
+<figure class="ui-figure" role="group" aria-labelledby="annotated-title">
+  <figcaption id="annotated-title" class="ui-figure__caption">
+    Annotated service latency
+  </figcaption>
+  <div class="ui-figure__stage">
+    <canvas class="ui-figure__media" aria-label="Latency chart"></canvas>
+    <svg class="ui-figure__overlay pa-annotation-layer" viewBox="0 0 640 360">
+      <!-- emitted by @ponchia/annotations -->
+    </svg>
+  </div>
+</figure>
+```
+
 ```js
 import {
   annotationParts,

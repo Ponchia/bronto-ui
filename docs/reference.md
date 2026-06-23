@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 634 classes across 177 component groups
+- 644 classes across 179 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -1131,6 +1131,13 @@ each one matches a real selector in the stylesheet.
 | `cls.segmented` | `ui-segmented` | base |
 | `cls.segmentedOption` | `ui-segmented__option` | part |
 
+### `.ui-segmented-buttons`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.segmentedButtons` | `ui-segmented-buttons` | base |
+| `cls.segmentedButtonsButton` | `ui-segmented-buttons__button` | part |
+
 ### `.ui-sel`
 
 | Registry key | Class | Kind |
@@ -1495,6 +1502,19 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.toolLog` | `ui-tool-log` | base |
+
+### `.ui-toolstrip`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.toolstrip` | `ui-toolstrip` | base |
+| `cls.toolstripActions` | `ui-toolstrip__actions` | part |
+| `cls.toolstripBrand` | `ui-toolstrip__brand` | part |
+| `cls.toolstripContext` | `ui-toolstrip__context` | part |
+| `cls.toolstripGroup` | `ui-toolstrip__group` | part |
+| `cls.toolstripSearch` | `ui-toolstrip__search` | part |
+| `cls.toolstripCompact` | `ui-toolstrip--compact` | modifier |
+| `cls.toolstripFloating` | `ui-toolstrip--floating` | modifier |
 
 ### `.ui-tooltip`
 
