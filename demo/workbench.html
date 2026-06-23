@@ -7,7 +7,7 @@
     <title>@ponchia/ui — workbench specimen</title>
     <meta
       name="description"
-      content="Split panes, inspector, property rows and selection bar primitives for tool UIs."
+      content="Split panes, toolstrips, inspector, property rows and selection bar primitives for tool UIs."
     />
     <link rel="stylesheet" href="../dist/bronto.css" />
     <link rel="stylesheet" href="../dist/css/workbench.css" />
@@ -44,17 +44,58 @@
         list-style: none;
         padding: 0.45rem 0.6rem;
       }
+
+      .wb-toolstage {
+        --wb-grid-line: color-mix(in srgb, var(--accent) 5%, transparent);
+
+        background:
+          linear-gradient(90deg, var(--wb-grid-line) 1px, transparent 1px),
+          linear-gradient(0deg, var(--wb-grid-line) 1px, transparent 1px), var(--panel);
+        background-size: 1.25rem 1.25rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        min-block-size: 12rem;
+        padding: var(--space-md);
+      }
     </style>
   </head>
   <body>
     <main class="wb-demo">
       <h1 class="ui-display">Workbench</h1>
       <p>
-        Split panes, inspector, property rows and a selection bar — the low-risk workbench core for
-        real tools. Opt-in; not in the core bundle.
+        Split panes, toolstrips, inspector, property rows and a selection bar — the low-risk
+        workbench core for real tools. Opt-in; not in the core bundle.
       </p>
 
       <div class="wb-demo__stack">
+        <section class="wb-toolstage" aria-label="Toolstrip specimen">
+          <header class="ui-toolstrip ui-toolstrip--floating" aria-label="View controls">
+            <div class="ui-toolstrip__brand">
+              <strong>Workspace</strong>
+              <span class="ui-toolstrip__context">review queue</span>
+            </div>
+            <div class="ui-toolstrip__group" aria-label="Mode">
+              <button class="ui-segmented-buttons__button" type="button" aria-pressed="true">
+                Map
+              </button>
+              <button class="ui-segmented-buttons__button" type="button" aria-pressed="false">
+                Flow
+              </button>
+              <button class="ui-segmented-buttons__button" type="button" aria-pressed="false">
+                Risk
+              </button>
+            </div>
+            <label class="ui-toolstrip__search">
+              <span class="ui-visually-hidden">Filter items</span>
+              <input class="ui-input" type="search" placeholder="Filter by path, owner, or tag" />
+            </label>
+            <div class="ui-toolstrip__actions" aria-label="Viewport actions">
+              <button class="ui-button ui-button--ghost ui-button--sm" type="button">Fit</button>
+              <button class="ui-button ui-button--ghost ui-button--sm" type="button">Reset</button>
+            </div>
+          </header>
+        </section>
+
         <div
           class="ui-splitter ui-splitter--vertical"
           data-bronto-splitter

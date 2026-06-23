@@ -1,8 +1,8 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `groups[].base` is null for a parts-only namespace (no standalone base class — do NOT emit it). A modifier whose name contains `__` (e.g. `ui-spark__bar--pos`) attaches to THAT part, not the base host. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `behaviorAttributes` are the `data-bronto-*` wiring hooks the optional behaviors delegate on; `requiredAria` is the role/aria a generator must emit per component. `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 634,
-    "groups": 177
+    "classes": 644,
+    "groups": 179
   },
   "groups": {
     "ui-accordion": {
@@ -1081,6 +1081,13 @@
         "ui-segmented__option"
       ]
     },
+    "ui-segmented-buttons": {
+      "base": "ui-segmented-buttons",
+      "modifiers": [],
+      "parts": [
+        "ui-segmented-buttons__button"
+      ]
+    },
     "ui-sel": {
       "base": "ui-sel",
       "modifiers": [
@@ -1436,6 +1443,20 @@
       "base": "ui-tool-log",
       "modifiers": [],
       "parts": []
+    },
+    "ui-toolstrip": {
+      "base": "ui-toolstrip",
+      "modifiers": [
+        "ui-toolstrip--compact",
+        "ui-toolstrip--floating"
+      ],
+      "parts": [
+        "ui-toolstrip__actions",
+        "ui-toolstrip__brand",
+        "ui-toolstrip__context",
+        "ui-toolstrip__group",
+        "ui-toolstrip__search"
+      ]
     },
     "ui-tooltip": {
       "base": "ui-tooltip",
@@ -1964,6 +1985,8 @@
     "ui-scroll-reveal",
     "ui-search",
     "ui-segmented",
+    "ui-segmented-buttons",
+    "ui-segmented-buttons__button",
     "ui-segmented__option",
     "ui-sel",
     "ui-sel--maybe",
@@ -2100,6 +2123,14 @@
     "ui-tool-call__name",
     "ui-tool-call__status",
     "ui-tool-log",
+    "ui-toolstrip",
+    "ui-toolstrip--compact",
+    "ui-toolstrip--floating",
+    "ui-toolstrip__actions",
+    "ui-toolstrip__brand",
+    "ui-toolstrip__context",
+    "ui-toolstrip__group",
+    "ui-toolstrip__search",
     "ui-tooltip",
     "ui-tooltip__bubble",
     "ui-tour-note",
