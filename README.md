@@ -67,7 +67,7 @@ npm i @ponchia/ui
 Or drop it in with no build step, straight from a CDN:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.9/dist/bronto.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.10/dist/bronto.css">
 ```
 
 ## Quick start
