@@ -1,10 +1,11 @@
-# Workbench — split panes, inspector, properties, selection bar
+# Workbench — split panes, toolstrips, inspector, properties, selection bar
 
 `@ponchia/ui/css/workbench.css` is an opt-in set of primitives for **real
-tools**: resizable split panes, an inspector panel, property rows for a selected
-object, and a bar of actions on the current selection. Generic kits stop at
-cards/tables/forms, so every app builds its own half-consistent workbench. This
-is the low-risk core — layout, resize affordance, and ARIA value sync.
+tools**: resizable split panes, compact toolstrips, button-mode segmented
+controls, an inspector panel, property rows for a selected object, and a bar of
+actions on the current selection. Generic kits stop at cards/tables/forms, so
+every app builds its own half-consistent workbench. This is the low-risk core —
+layout, dense controls, resize affordance, and ARIA value sync.
 
 ```css
 @import '@ponchia/ui';
@@ -19,6 +20,51 @@ initSplitter();
 
 Not in the core bundle. Import the CSS leaf where the workbench appears and run
 `initSplitter()` only if the page includes `[data-bronto-splitter]`.
+
+## Toolstrip — `.ui-toolstrip`
+
+A compact row of controls for a tool surface or viewport. Use
+`.ui-toolstrip--floating` when the strip sits over a canvas, chart, map, media
+stage, or preview. The CSS owns density, wrapping, grouping, and raised/floating
+treatment; the host owns commands, search behavior, active mode, responsive
+hiding, and placement.
+
+```html
+<header class="ui-toolstrip ui-toolstrip--floating" aria-label="View controls">
+  <div class="ui-toolstrip__brand">
+    <strong>Repository</strong>
+    <span class="ui-toolstrip__context">main branch</span>
+  </div>
+  <div class="ui-toolstrip__group" aria-label="Mode">
+    <button class="ui-segmented-buttons__button" type="button" aria-pressed="true">Map</button>
+    <button class="ui-segmented-buttons__button" type="button" aria-pressed="false">Flow</button>
+    <button class="ui-segmented-buttons__button" type="button" aria-pressed="false">Risk</button>
+  </div>
+  <label class="ui-toolstrip__search">
+    <span class="ui-visually-hidden">Filter items</span>
+    <input class="ui-input" type="search" placeholder="Filter by path, owner, or tag" />
+  </label>
+  <div class="ui-toolstrip__actions" aria-label="Viewport actions">
+    <button class="ui-button ui-button--ghost ui-button--icon ui-button--sm" type="button">
+      Fit
+    </button>
+  </div>
+</header>
+```
+
+## Button segmented control — `.ui-segmented-buttons`
+
+Use `.ui-segmented-buttons` when each option is a real command button and the
+current mode is exposed with `aria-pressed`. For form values submitted with the
+page, keep using the core `.ui-segmented` radio-input pattern.
+
+```html
+<div class="ui-segmented-buttons" aria-label="Density">
+  <button class="ui-segmented-buttons__button" type="button" aria-pressed="true">Dense</button>
+  <button class="ui-segmented-buttons__button" type="button" aria-pressed="false">Comfort</button>
+  <button class="ui-segmented-buttons__button" type="button" aria-pressed="false">Wide</button>
+</div>
+```
 
 ## Splitter — `.ui-splitter`
 
@@ -113,7 +159,8 @@ A raised bar of actions on the current selection: a `__count` on one side,
 ## Scope
 
 No recipes — these are structural containers and rows; apply the classes
-directly (or read them from `cls.splitter`, `cls.inspector`, `cls.property`, …).
-Pair the selection bar with the cross-cutting [`ui-sel`](./selection.md) states
-on the selected items themselves. Bronto styles both and wires the splitter
-affordance; the host owns hit-testing, persistence, pane contents, and commands.
+directly (or read them from `cls.toolstrip`, `cls.splitter`, `cls.inspector`,
+`cls.property`, …). Pair the selection bar with the cross-cutting
+[`ui-sel`](./selection.md) states on the selected items themselves. Bronto styles
+the chrome and wires the splitter affordance; the host owns hit-testing,
+persistence, pane contents, viewport semantics, and commands.
