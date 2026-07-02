@@ -1,0 +1,29 @@
+# API-reference accuracy — bronto-ui documentation review
+**Verdict:** The generated API surface is in good shape: `docs/reference.md` is explicitly generated from `classes/index.js` and `tokens/index.js`, and the repo has drift gates for generated artifacts, class selectors, and recipe option unions (`docs/reference.md:1`, `scripts/gen-reference.mjs:1`, `package.json:149`). The remaining accuracy risk is concentrated in hand-authored docs: a stale glyph count, renderer bridge wording that over-promises live CSS re-skinning, a wrong bullet custom-property alias, and a few snippets whose imports do not load every class they use.
+**Grade:** B+ — strong generated contracts, but several consumer-facing hand-written examples drift from code.
+
+## Strengths
+- `docs/reference.md` clearly labels itself generated from `classes/index.js` and `tokens/index.js`, and the package exposes `check:fresh`, `check:classes`, and `check:recipe-types` gates to keep that surface synchronized (`docs/reference.md:1`, `scripts/gen-reference.mjs:1`, `package.json:149`).
+- Typed recipe options match the implementation for the previously found `breakAnywhere` case: the JSDoc documents it, `ui.table()` emits `ui-table--break-anywhere`, the generated d.ts includes it, and CSS implements it (`classes/index.js:902`, `classes/index.js:940`, `scripts/gen-dts.mjs:103`, `classes/index.d.ts:715`, `css/table.css:83`).
+- Renderer bridge APIs are mostly documented against real exports: Mermaid, D2, and Vega docs name helpers that exist in token modules and type files (`docs/mermaid.md:8`, `tokens/mermaid.js:175`, `docs/d2.md:8`, `tokens/d2.js:59`, `docs/vega.md:9`, `tokens/vega.js:133`).
+- Primitive docs spot-checks are generally accurate for class/property names: spark bars use `--v`, intervals use `--lo`/`--hi`/`--v`, and annotations document variants present in CSS (`docs/spark.md:22`, `css/spark.css:16`, `docs/interval.md:15`, `css/interval.css:25`, `docs/annotations.md:126`, `css/annotations.css:118`).
+- Version/support docs align with package metadata where package metadata exists: Node is `>=18`, and optional React/Solid/Qwik peers match README language (`package.json:38`, `package.json:228`, `README.md:190`).
+
+## Weaknesses / risks
+- [P1] Mermaid/Vega docs say renderer output “re-skins for free” with `--accent`, but README says those helpers emit resolved theme data and do not live-reskin from later CSS overrides; the helpers return precomputed token configs with literal color values (`docs/mermaid.md:75`, `docs/vega.md:146`, `docs/vega.md:172`, `README.md:182`, `tokens/mermaid.js:175`, `tokens/vega.js:133`). Consumer cost: teams overriding `--accent` will expect embedded charts/diagrams to update, but they will keep the generated default colors until re-rendered.
+- [P2] `docs/usage.md` says `@ponchia/ui/glyphs` is a 48-glyph set, while README says 71 and the runtime registry is derived from `GLYPHS` via `GLYPH_NAMES` (`docs/usage.md:407`, `README.md:135`, `README.md:159`, `glyphs/glyphs.js:1321`). Consumer cost: users and agents under-discover shipped glyphs and may duplicate icons that already exist.
+- [P2] Bullet docs list band custom properties as `--b1` / `--b2`, but CSS registers and reads `--band-lo` / `--band-hi` (`docs/bullet.md:50`, `docs/bullet.md:60`, `css/bullet.css:22`, `css/bullet.css:42`). Consumer cost: copying the documented aliases silently no-ops and leaves default band thresholds in place.
+- [P2] Some opt-in primitive snippets omit CSS leaves required by their own class examples: figure imports `figure.css` and `legend.css` but uses `ui-report__figure` / `ui-print-exact`, which live in non-core `report.css`; annotations imports only `annotations.css` but its example uses `ui-figure*` classes from `figure.css` (`docs/figure.md:8`, `docs/figure.md:18`, `css/core.css:12`, `css/report.css:1`, `docs/annotations.md:8`, `docs/annotations.md:38`, `css/figure.css:10`). Consumer cost: standalone copy-paste examples render partially unstyled unless readers infer extra imports.
+- [P3] The generated reference state table omits `.ui-app-metric__delta` for `is-pos` / `is-neg`, even though `classes.json` and CSS support those states beside `.ui-stat__delta` (`docs/reference.md:1572`, `classes/classes.json:2157`, `css/primitives.css:222`). Consumer cost: app metric users may miss supported positive/negative tone and arrow behavior.
+
+## Top recommendations
+1. [needs-writing] Normalize Mermaid/Vega wording: say helpers use resolved token-source colors and require regeneration/re-rendering after CSS accent overrides.
+2. [safe-mechanical] Update the glyph count in `docs/usage.md`, or generate that number from `GLYPH_NAMES.length`.
+3. [safe-mechanical] Replace bullet `--b1` / `--b2` references with `--band-lo` / `--band-hi`.
+4. [needs-writing] Make snippet imports complete: add `report.css` where report classes are used, and add `figure.css` to annotation examples that use `ui-figure*`.
+5. [safe-mechanical] Generate the state/scope reference directly from `classes/classes.json.states` so `.ui-app-metric__delta` cannot drift out.
+6. [safe-mechanical] Add a doc lint that checks literal `ui-*` classes and `--*` custom properties in hand-authored docs against `classes.json`, CSS, and token registries, with an allowlist for deliberate no-op examples.
+
+## Notable observations
+- `npm run check:recipe-types` and `npm run check:fresh` passed during this review; the problems above sit outside the generated contract or inside generated prose that draws from incomplete metadata (`package.json:149`, `package.json:151`).
+- Browser floor is documented in README but not machine-readable in `package.json`; package metadata only declares the Node engine (`README.md:223`, `package.json:38`).
