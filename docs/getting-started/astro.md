@@ -15,9 +15,9 @@ import '@ponchia/ui';        // the flattened bundle (dist/bronto.css)
 
 Importing the package from a `.astro` frontmatter or a global stylesheet
 both work — Vite resolves the `.` export to the CSS bundle. To self-host
-the Doto font, import `@ponchia/ui/css` leaf-by-leaf and skip
-`fonts.css`, overriding `--display` / `--dot-font` (see README → Browser
-support).
+the Doto font, import the `@ponchia/ui/css/<leaf>.css` files you need and
+skip `@ponchia/ui/css/fonts.css`, overriding `--display` / `--dot-font`
+(see README → Browser support).
 
 ## 2. No-flash theme (inline, in `<head>`)
 
@@ -37,15 +37,24 @@ before paint — exactly what the theme needs:
 
 Without `is:inline` Astro would hoist/bundle it and you'd get a flash.
 
-## 3. Behaviors in islands
+## 3. Minimal styled markup
 
-Behaviors are DOM glue, so they belong in a client-side island, not in
-server frontmatter. Theme toggle example:
+Start with the classes and attributes the CSS/behavior contracts expect:
 
 ```astro
-<button data-bronto-theme-toggle aria-label="Toggle theme"
-        class="ui-themetoggle">…</button>
+<button type="button" data-bronto-theme-toggle class="ui-themetoggle__button">
+  <span class="ui-themetoggle__prefix">Theme</span>
+  <span class="ui-themetoggle__label">Dark</span>
+  <span class="ui-themetoggle__track"><span class="ui-themetoggle__thumb"></span></span>
+</button>
+```
 
+## 4. Behaviors in islands
+
+Behaviors are DOM glue, so they belong in a client-side island, not in
+server frontmatter. Call the initializer after the markup is in the DOM:
+
+```astro
 <script>
   import { initThemeToggle } from '@ponchia/ui/behaviors';
   initThemeToggle(); // SSR-safe; idempotent if the island re-runs

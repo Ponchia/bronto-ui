@@ -81,3 +81,9 @@ for (const id of links.keys()) {
   navigation landmark.
 - Without the optional observer the rail is a normal anchored list — every link
   still jumps to its section.
+
+## Related
+
+Use the [reporting toolbox](./reporting.md#the-analytical-toolbox-in-a-report)
+to place `toc.css` in report surfaces, and use
+[reference.md](./reference.md) for the generated class catalog.

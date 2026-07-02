@@ -23,7 +23,7 @@ export declare const vega: { light: VegaConfig; dark: VegaConfig };
  *  back to light. Spread into a spec's `config`, or pass to vega-embed. */
 export declare function brontoVegaConfig(theme?: 'light' | 'dark'): VegaConfig;
 
-/** The live accent hex (series 1 of `range.category`) for a theme — to spend the
+/** The resolved accent hex (series 1 of `range.category`) for a theme — to spend the
  *  accent on one emphasised mark without hard-coding the palette index. */
 export declare function brontoVegaAccent(theme?: 'light' | 'dark'): string;
 

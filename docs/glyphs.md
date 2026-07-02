@@ -1,7 +1,8 @@
 # Display glyphs
 
 `@ponchia/ui/glyphs` is a small, frozen bitmap icon set rendered on the same
-`.ui-dotmatrix` dot primitive as every other dot surface (see `docs/dots.md`).
+`.ui-dotmatrix` dot primitive as every other dot surface (see
+[dot surfaces](dots.md)).
 CSS-first to the core: a glyph is just a grid of dot cells — `.` off, `#` hot,
 `*` accent — so it re-skins with the same `--field-dot*` tokens and the Tier-3
 display knobs as the rest of the dot family. No icon font, no SVG sprite, no
@@ -12,6 +13,10 @@ returns a string; nothing touches the DOM).
 import { renderGlyph } from '@ponchia/ui/glyphs';
 el.innerHTML = renderGlyph('check', { label: 'Done' });
 ```
+
+Load `@ponchia/ui/css` or the leaf `@ponchia/ui/css/dots.css` before rendering
+glyphs. The cell path uses `.ui-dotmatrix`, the mask path uses `.ui-icon`, and
+`renderReadout()` uses `.ui-readout`.
 
 The authoritative API is the generated, CI-drift-checked `glyphs/glyphs.d.ts`.
 Read it before guessing a name — `GlyphName` is a literal union, so a typo is a
@@ -76,7 +81,7 @@ advance). Anything else is skipped. Every per-glyph option (`solid`, `render`,
 `dot`, `gap`, `anim`) passes through to each character; `gap` sets the spacing
 between characters. The digits are decorative — the readout's **value** is its
 accessible name, so pass a `label` (it defaults to the raw text). Output wraps
-in `.ui-readout` (see `docs/dots.md`).
+in `.ui-readout` (see [dot surfaces](dots.md)).
 
 ## Finding a glyph — `findGlyphs` / `GLYPH_TAGS`
 
@@ -123,3 +128,10 @@ An unknown name is left untouched.
 The accent (`*`) tone lifts one feature of a glyph onto `--field-dot-accent`.
 The curated two-tone set is `spark`, `warning`, and `info`; every other glyph is
 monotone. Two-tone only shows in the cell render — the mask path is single-tone.
+
+## Related
+
+- [Dot surfaces](dots.md) covers the underlying grid and readout styles.
+- [Usage](usage.md#display-glyphs-when-and-when-not) explains when to use each
+  glyph render path.
+- [Reference](reference.md) lists the generated dot and icon classes.

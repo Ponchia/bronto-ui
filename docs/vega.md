@@ -143,8 +143,10 @@ series needs the redundant second channel, drive the mark's fill from the
 
 ### Spending the accent
 
-Series 1 of `range.category` **is** the live accent, so a single-series chart and
-the first category re-skin for free with `--accent`. To emphasise one mark in a
+Series 1 of `range.category` resolves to the accent (per theme), so a single-series
+chart and the first category carry the accent automatically — baked into the
+generated `config`, so regenerate the config and re-render to change it (Vega output
+does not live-reskin from `--accent`). To emphasise one mark in a
 multi-series chart, paint just that mark with the accent and leave the rest
 neutral — the same "reserve the accent for the one thing a reader must not miss"
 rule the rest of the system follows. Two small helpers hand you the exact
@@ -169,7 +171,7 @@ const spec = {
 };
 ```
 
-`brontoVegaAccent(theme)` is `range.category[0]` (the live accent) and
+`brontoVegaAccent(theme)` is `range.category[0]` (the resolved accent) and
 `brontoVegaNeutral(theme)` is the last category (the quiet neutral); re-read both
 when the theme toggles. Prefer them over digging the hex out of
 `tokens/resolved.json` — they are guaranteed to match the palette the config

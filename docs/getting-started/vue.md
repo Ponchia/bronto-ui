@@ -17,7 +17,33 @@ import App from './App.vue';
 createApp(App).mount('#app');
 ```
 
-## 2. Scope behavior to the owning subtree
+## 2. No-flash theme (inline, in `index.html`)
+
+Put the theme script in `index.html` so it runs before Vue mounts:
+
+```html
+<!-- index.html, inside <head> -->
+<script>
+  try {
+    var t = localStorage.getItem('bronto-theme');
+    if (t) document.documentElement.dataset.theme = t;
+  } catch (e) {}
+</script>
+```
+
+## 3. Minimal styled markup
+
+Start with the classes and attributes the CSS/behavior contracts expect:
+
+```vue
+<template>
+  <main class="ui-center ui-stack">
+    <button class="ui-button" data-bronto-theme-toggle>Toggle theme</button>
+  </main>
+</template>
+```
+
+## 4. Scope behavior to the owning subtree
 
 In SFCs, import the directives you use as local `vBronto*` bindings. Vue then
 compiles `v-bronto-*` directly to those bindings, so the behavior stays
