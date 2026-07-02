@@ -105,9 +105,9 @@ export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
     );
   };
 
-  applyStoredTheme({ storageKey, root: docEl });
-  reflect();
   return bindOnce(host, 'themeToggle', () => {
+    applyStoredTheme({ storageKey, root: docEl });
+    reflect();
     host.addEventListener('click', onClick);
     return () => {
       host.removeEventListener('click', onClick);

@@ -335,18 +335,19 @@
    Lives here, in the exempt tier-definition file, because it is a token-value
    override (ADR-0001), not component styling. CSS-only, like the presets above.
 
-   Selector is `:root:root:root` (specificity 0,3,0), not a bare `:root`: a media
+   Selector is `:root:root:root:root` (specificity 0,4,0), not a bare `:root`: a media
    query adds NO specificity, so a bare `:root` (0,1,0) loses the cascade to the
    on-screen dark palette at `:root[data-theme='dark']` (0,2,0) and the OLED
    surface at `:root[data-theme='dark'][data-surface='oled']` (0,3,0) — i.e. a
    dark-mode user would print a near-black `.ui-card` on white paper, the exact
-   opposite of what this block promises. Tripling `:root` matches the OLED rule's
-   specificity and wins on source order (this block is last), so the remap also
-   beats the `prefers-color-scheme: dark` blocks. Neutralise the OLED-only dark
-   surfaces (--bg / --bg-elevated / --panel-strong) too, or they'd leak through.
+   opposite of what this block promises. Quadrupling `:root` also beats later
+   opt-in skin selectors at 0,3,0 when css/skins.css is loaded after the default
+   bundle, so the print-safe accent survives colorways. Neutralise the OLED-only
+   dark surfaces (--bg / --bg-elevated / --panel-strong) too, or they'd leak
+   through.
    -------------------------------------------------------------------------- */
 @media print {
-  :root:root:root {
+  :root:root:root:root {
     color-scheme: light;
 
     --text: #111;

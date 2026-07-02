@@ -55,6 +55,15 @@
   position: relative;
 }
 
+.ui-bullet:dir(rtl) {
+  background: linear-gradient(
+    to left,
+    var(--surface-4) 0 calc(var(--band-lo) * 100%),
+    var(--surface-3) calc(var(--band-lo) * 100%) calc(var(--band-hi) * 100%),
+    var(--surface-2) calc(var(--band-hi) * 100%) 100%
+  );
+}
+
 /* The measure bar — a thinner dark bar centred in the track, the primary value.
    `--v` is the normalised reading; with none it collapses to a hairline. */
 .ui-bullet__measure {
@@ -89,6 +98,10 @@
   inset-inline-start: calc(var(--t, 0) * 100%);
   position: absolute;
   transform: translateX(-50%);
+}
+
+.ui-bullet:dir(rtl) .ui-bullet__target {
+  transform: translateX(50%);
 }
 
 /* Optional caption row beneath the track — label + reading in mono, matching

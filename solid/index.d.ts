@@ -1,5 +1,6 @@
-/** Run a delegated behavior for the component's lifetime (init on mount, its
- * returned cleanup on dispose). Options resolve on mount, after refs exist.
+/** Run a delegated behavior for the component's lifetime (init after mount, its
+ * returned cleanup before re-init/dispose). Options resolve after mount and
+ * re-resolve when tracked Solid signals change.
  * @template {DelegateOpts} [T=DelegateOpts]
  * @param {(opts?: T) => Cleanup | void} init
  * @param {BrontoBindingOptsResolver<T>} [opts]
