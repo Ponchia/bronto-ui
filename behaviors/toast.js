@@ -102,13 +102,16 @@ function removeToast(el) {
   }
   el.classList.add('is-leaving');
   let done = false;
+  let timer;
   const finish = () => {
     if (done) return;
     done = true;
+    el.removeEventListener('transitionend', finish);
+    if (timer !== undefined) clearTimeout(timer);
     el.remove();
   };
-  el.addEventListener('transitionend', finish, { once: true });
-  const timer = setTimeout(finish, dur * 1000 + 120);
+  el.addEventListener('transitionend', finish);
+  timer = setTimeout(finish, dur * 1000 + 120);
   timer?.unref?.(); // don't keep a Node test process alive
 }
 

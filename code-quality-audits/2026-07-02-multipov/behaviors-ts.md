@@ -1,0 +1,35 @@
+# JS behaviors, types & framework adapters — bronto-ui review
+**Verdict:** The JS layer largely matches the CSS-first claim: behavior modules are import-side-effect-free, DOM work is guarded, cleanup is usually explicit, and adapters are thin lifecycle wrappers rather than component libraries. The main risks are edge-case scoping across non-global documents, one-shot framework hooks that can permanently miss late refs/options, and generated declaration gaps caused by unchecked JS emit.
+**Grade:** A- — strong runtime discipline with a few real adapter/type seams.
+
+## Strengths
+- Behaviors centralize SSR/null-root safety: `hasDom()` gates DOM use and `resolveHost(root)` distinguishes omitted root from `root: null`, preventing accidental whole-document wiring for unready refs (`behaviors/internal.js:19`, `behaviors/internal.js:38`, `behaviors/internal.js:50`).
+- Idempotence is deliberate: `bindOnce` tears down the previous binding for the same target/key before installing a new one (`behaviors/internal.js:62`, `behaviors/internal.js:69`, `behaviors/internal.js:71`).
+- Broad cleanup coverage is good: combobox removes input/list/document listeners and disconnects its observer (`behaviors/combobox.js:114`, `behaviors/combobox.js:121`), popover removes document/window/toggle listeners (`behaviors/popover.js:236`, `behaviors/popover.js:253`), and splitter removes document pointer listeners plus restores attributes/styles (`behaviors/splitter.js:200`, `behaviors/splitter.js:202`).
+- DOM insertion avoids markup parsing in normal behaviors: toast builds nodes with `createElement` and writes user strings via `textContent` (`behaviors/toast.js:72`, `behaviors/toast.js:79`), and form summaries do the same (`behaviors/forms.js:146`, `behaviors/forms.js:167`).
+- The zero-runtime-dependency story holds for core JS: framework packages are optional peers (`package.json:226`, `package.json:231`), and source imports are local except React/Solid/Qwik adapter peer imports (`react/index.js:48`, `solid/index.js:50`, `qwik/index.js:54`).
+- Adapters are thin lifecycle wrappers over behavior initializers: React delegates through one `useEffect` (`react/index.js:103`), Solid through `onMount`/`onCleanup` (`solid/index.js:105`), Qwik through `useVisibleTask$` plus `ctx.cleanup` (`qwik/index.js:110`), Svelte through actions (`svelte/index.js:84`), and Vue through directives (`vue/index.js:101`).
+- Public class/token types are precise: `cls` is literal-valued (`classes/index.d.ts:15`), recipe options use literal unions (`classes/index.d.ts:666`, `classes/index.d.ts:732`, `classes/index.d.ts:798`), and token names/themes are literal unions (`tokens/index.d.ts:4`, `tokens/index.d.ts:6`).
+- Connectors/annotations keep boundary discipline: connectors are documented as pure functions with no DOM/live tracking (`connectors/index.js:5`), annotations only imports the local connector kernel (`annotations/index.js:204`), and schema objects are strict with `additionalProperties: false` and enums (`schemas/report-claims.v1.schema.json:5`, `schemas/report-claims.v1.schema.json:61`).
+- The HTML-string glyph API has explicit escaping/allowlisting: labels are escaped (`glyphs/glyphs.js:1441`, `glyphs/glyphs.js:1584`) and inline CSS lengths are restricted before being embedded (`glyphs/glyphs.js:1449`, `glyphs/glyphs.js:1454`).
+
+## Weaknesses / risks
+- [P2] Several scoped behaviors still use the process-global `document`, so roots from iframes/alternate documents can mis-wire or not receive events: `initDialog` installs on global `document` (`behaviors/dialog.js:88`), combobox outside-click uses global `document` (`behaviors/combobox.js:117`), popover reads `document.defaultView` and installs global listeners (`behaviors/popover.js:71`, `behaviors/popover.js:238`), while `initMenu` shows the safer owner-document pattern (`behaviors/menu.js:21`, `behaviors/menu.js:48`).
+- [P2] React/Solid/Qwik scoped bindings are one-shot; if a resolver returns `null` on first mount/visible task, `resolveOpts` deliberately passes `root: null` (`react/index.js:85`, `solid/index.js:87`, `qwik/index.js:94`) and the hooks do not retry (`react/index.js:103`, `solid/index.js:105`, `qwik/index.js:122`), so late refs or changed options can leave behavior permanently unwired.
+- [P3] Type generation intentionally does not check JS and can emit weak declarations: `tsconfig.dts.json` sets `checkJs: false` and `noEmitOnError: false` (`tsconfig.dts.json:4`, `tsconfig.dts.json:14`), producing `any`-typed internal helpers (`behaviors/internal.d.ts:1`, `behaviors/internal.d.ts:10`) that adapter declarations reference as generic defaults (`react/index.d.ts:38`, `solid/index.d.ts:64`).
+- [P3] Vue directive updates only restart when the binding object identity changes (`vue/index.js:107`), so mutating an options object in place can leave stale behavior wiring; Svelte restarts on every action update (`svelte/index.js:88`), so adapter semantics differ.
+- [P3] `initDialog` cleanup removes pending focus restorers without closing the dialog or preserving focus-return behavior for an already-open dialog (`behaviors/dialog.js:29`, `behaviors/dialog.js:48`, `behaviors/dialog.js:90`), so teardown while open can strand later close paths at the browser default focus target.
+- [P3] `removeToast` leaves its transition fallback timeout alive after a real `transitionend` (`behaviors/toast.js:110`, `behaviors/toast.js:111`); this is bounded, but it retains the toast closure until timeout expiry under heavy toast churn.
+
+## Top recommendations
+1. Replace global `document`/`document.defaultView` in scoped behaviors with `host.nodeType === 9 ? host : host.ownerDocument`, matching `initMenu`.
+2. Add a small “late root” strategy for React/Solid/Qwik: dependency-aware hook variants, documented stable-root requirement, or a retry when `root: null` is observed.
+3. Turn on `checkJs` for emitted declaration sources incrementally, or add JSDoc annotations to `internal.js` so `behaviors/internal.d.ts` stops emitting `any`.
+4. Align adapter update semantics: document that React/Solid/Qwik are mount-only and Vue is identity-change-only, or support explicit re-init APIs/options consistently.
+5. Decide teardown semantics for open dialogs/popovers: either close/restore on cleanup or document cleanup as listener-only teardown.
+6. Clear the toast transition fallback timer inside `finish()` to avoid bounded-but-unnecessary retention.
+
+## Notable observations
+- `bindOnce` is the core design win: it makes HMR/repeated init safe without global registries (`behaviors/internal.js:67`).
+- Svelte and Vue avoid runtime framework imports entirely; their adapters are plain functions/objects over vanilla behaviors (`svelte/index.js:36`, `vue/index.js:38`).
+- The package root is intentionally CSS-only, while all JS is explicit subpath export (`package.json:242`, `package.json:406`, `package.json:422`).

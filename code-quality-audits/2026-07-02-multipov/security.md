@@ -1,0 +1,39 @@
+# Security & supply chain — bronto-ui review
+**Verdict:** Strong posture for a public npm UI package: the published surface is zero-runtime-dependency by policy and manifest shape, provenance is enabled, Actions are SHA-pinned, release is tag-driven and manually gated, and publish runs with scripts disabled (`package.json:34-37`, `package.json:205-240`, `.github/SECURITY.md:27-33`, `.github/workflows/release.yml:153-199`). Main residual risks are around non-package surfaces and maintainer/CI hygiene: CDN-loaded docs dependencies, trusted-markup behavior boundaries, and write-capable automation tokens (`docs/index.html:14`, `docs/index.html:138-139`, `.github/SECURITY.md:35-41`, `.github/workflows/visual-baselines.yml:64-87`).
+
+**Grade:** A- — excellent release/provenance controls, held back by a few low-severity hardening gaps (`.github/workflows/release.yml:163-199`, `.github/workflows/scorecard.yml:31-39`, `docs/index.html:138-139`).
+
+## Strengths
+- Zero runtime dependency stance is explicit and matched by manifest structure: root package lists dev deps and optional peers, not runtime deps (`package.json:205-240`, `.github/SECURITY.md:27-33`).
+- npm provenance is configured in `publishConfig`, and the publish job grants `id-token: write` only where npm provenance needs it (`package.json:34-37`, `.github/workflows/release.yml:163-166`).
+- Publish is tag-only, validates tag ancestry on `main`, checks tag/version equality, gates on `npm run check`, e2e, examples, and preflight before npm (`.github/workflows/release.yml:34-40`, `.github/workflows/release.yml:69-89`, `.github/workflows/release.yml:95-127`).
+- `npm publish` uses `--ignore-scripts`, so `NODE_AUTH_TOKEN` is not exposed to package lifecycle scripts or devDependency build tooling (`.github/workflows/release.yml:175-199`).
+- GitHub Actions are SHA-pinned in the workflows I opened, and Dependabot is configured to update pinned Actions weekly (`.github/workflows/ci.yml:57`, `.github/workflows/release.yml:275`, `.github/workflows/scorecard.yml:27-39`, `.github/dependabot.yml:3-11`).
+- Default workflow permissions are read-only, with narrow job-level elevation for publish provenance, Scorecard SARIF upload, Pages deploy, and branch/PR cleanup (`.github/workflows/ci.yml:24-26`, `.github/workflows/release.yml:38-40`, `.github/workflows/scorecard.yml:21-24`, `.github/workflows/pages.yml:99-107`).
+- Pack and public-hygiene gates defend the shipped tarball against dev-only path leakage, local paths, secret-looking assignments, and private key blocks (`scripts/check-pack.mjs:51-70`, `scripts/check-public-hygiene.mjs:31-40`, `scripts/check-public-hygiene.mjs:107-115`, `scripts/check-public-hygiene.mjs:159-168`).
+- Client-side HTML injection surface is small: production sink search found only carousel cleanup restoring a prior snapshot, while user-facing toast/form writes use DOM APIs and `textContent` (`behaviors/carousel.js:22-35`, `behaviors/toast.js:72-80`, `behaviors/forms.js:146-173`).
+- The string-returning glyph API escapes labels and allowlists inline CSS lengths before returning HTML intended for `innerHTML` insertion (`glyphs/glyphs.js:1441-1456`, `glyphs/glyphs.js:1478-1489`, `glyphs/glyphs.js:1516-1545`, `glyphs/glyphs.js:1584-1585`).
+- CSS source imports are local package files and bundled fonts; I did not see external-origin CSS `url()` fetches in source CSS (`css/core.css:12-26`, `css/report-kit.css:14-38`, `css/fonts.css:18-63`).
+
+## Weaknesses / risks
+- [P2] The docs app allows and imports remote ESM from jsDelivr without SRI; if that CDN path is compromised, the public docs page can execute attacker code even though fetched Markdown is sanitized (`docs/index.html:14`, `docs/index.html:138-139`, `docs/index.html:327-329`).
+- [P3] Behavior modules explicitly assume trusted markup; if a consumer initializes them over unsanitized CMS/user HTML, `data-bronto-*` and `aria-controls` can drive dialog/popover targets and focus behavior outside the intended island (`.github/SECURITY.md:35-41`, `behaviors/internal.js:81-88`, `behaviors/dialog.js:14-16`, `behaviors/popover.js:171-177`).
+- [P3] The visual-baseline workflow can use `BASELINE_PAT` or `github.token` with `contents: write` and `pull-requests: write`; it does not publish npm, but it is a write-capable automation path worth tightly scoping and auditing (`.github/workflows/visual-baselines.yml:8-14`, `.github/workflows/visual-baselines.yml:64-87`, `.github/workflows/visual-baselines.yml:121-141`).
+- [P3] CI and validation jobs run plain `npm ci`, and the lockfile includes dev-only install-script packages such as `esbuild` and optional `fsevents`; the publish secret is protected, but maintainer/CI dependency install remains the main supply-chain execution surface (`.github/workflows/ci.yml:115`, `.github/workflows/release.yml:78`, `package-lock.json:3194-3209`, `package-lock.json:3383-3396`).
+- [P3] Dependabot intentionally ignores Playwright/axe and example-framework bumps; reasonable for visual stability, but it creates a manual patch-management lane that can go stale (`.github/dependabot.yml:21-40`).
+- [P3] Semgrep ignore config exists, but the aggregate `check` chain is custom gates rather than a Semgrep/CodeQL static-analysis gate; this is acceptable for the current small JS surface, but weaker for future behavior growth (`.semgrepignore:1-11`, `package.json:188-191`).
+- [P3] A transitive devDependency uses a TypeScript release candidate inside `@arethetypeswrong/core`; dev-only, but it is a less conservative CI/tooling dependency than the package runtime surface (`package-lock.json:90-103`).
+
+## Top recommendations
+1. Self-host or vendor the docs app’s `marked` and `DOMPurify` modules, or add a bundling step so the Pages app no longer executes remote CDN ESM (`docs/index.html:14`, `docs/index.html:138-139`).
+2. Add an explicit consumer-facing warning near each behavior initializer doc that trusted markup is required, matching the security policy’s boundary statement (`.github/SECURITY.md:35-41`, `behaviors/dialog.js:14-16`, `behaviors/popover.js:41-63`).
+3. Keep `BASELINE_PAT` as a fine-grained GitHub App/PAT with only branch/PR rights, and document rotation/owner expectations beside the workflow comments (`.github/workflows/visual-baselines.yml:8-14`, `.github/workflows/visual-baselines.yml:64-87`).
+4. Add a scheduled dependency security scan that runs outside publish with no npm token, covering ignored/manual-update deps too (`.github/dependabot.yml:21-40`, `.github/workflows/release.yml:175-199`).
+5. Add Semgrep or CodeQL as a read-only scheduled/PR check for JS sinks and workflow injection, complementing the existing custom gates (`.semgrepignore:1-11`, `package.json:188-191`, `.github/workflows/scorecard.yml:31-39`).
+6. Periodically review dev-only parser/rendering stacks and install-script packages, because they are the realistic supply-chain execution surface despite zero runtime deps (`package.json:205-224`, `package-lock.json:3194-3209`, `package-lock.json:4362-4373`, `package-lock.json:5440-5465`).
+
+## Notable observations
+- The release-hygiene gate self-tests the release workflow invariants, including tag-only trigger, no PR/manual release trigger, protected npm environment, provenance token, and `npm publish --ignore-scripts` (`scripts/check-release.mjs:98-128`, `scripts/check-release.mjs:179-253`).
+- The package contract is generated from `package.json` and documents that generated artifacts are committed but drift-checked before publish (`docs/package-contract.md:1-10`, `docs/package-contract.md:279-296`).
+- The docs renderer sanitizes rendered Markdown before `innerHTML`, and fallback rendering uses DOM APIs rather than interpolated HTML (`docs/index.html:307-342`).
+- CSS print mode intentionally exposes external link URLs with `attr(href)`; that is information disclosure in printed output by design, not a network exfiltration pattern (`css/base.css:312-317`).

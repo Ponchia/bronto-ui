@@ -8,6 +8,20 @@
    core.css.
    ========================================================================== */
 
+/* `--lo` / `--hi` are inherited 0..1 endpoints for range geometry. The optional
+   `--v` stays unregistered so its `var(--v, var(--lo))` fallback remains intact. */
+@property --lo {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --hi {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+
 .ui-interval {
   --lo: 0;
   --hi: 1;

@@ -267,6 +267,7 @@ textarea:focus-visible,
   .ui-dotloader,
   .ui-dotspinner,
   dialog.ui-modal::backdrop {
+    /* Intentional !important: print chrome must stay hidden across component display rules. */
     display: none !important;
   }
 
@@ -274,6 +275,7 @@ textarea:focus-visible,
   *,
   *::before,
   *::after {
+    /* Intentional !important: print output drops decorative shadows globally. */
     box-shadow: none !important;
     text-shadow: none !important;
   }
@@ -291,6 +293,7 @@ textarea:focus-visible,
   .ui-prose table,
   .ui-tabs__list,
   pre {
+    /* Intentional !important: print must spill scroll containers even if component rules clip. */
     overflow: visible !important;
   }
 

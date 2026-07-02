@@ -94,6 +94,9 @@ export function initModal({ root } = {}) {
   const cleanups = [];
 
   for (const modal of modals) {
+    const doc = modal.ownerDocument;
+    if (!doc) continue;
+    const view = doc.defaultView;
     let opener = null;
     let inerted = [];
 
@@ -103,10 +106,10 @@ export function initModal({ root } = {}) {
     // app inerted for its own reasons.
     const trap = () => {
       if (opener) return; // already trapped
-      opener = document.activeElement;
+      opener = doc.activeElement;
       pushActiveModal(modal);
       let el = modal;
-      while (el && el.parentElement && el !== document.body) {
+      while (el && el.parentElement && el !== doc.body) {
         for (const sib of el.parentElement.children) {
           if (sib !== el && !sib.inert) {
             sib.inert = true;
@@ -134,8 +137,9 @@ export function initModal({ root } = {}) {
       if (e.key === 'Escape' && opener) {
         if (activeModals.at(-1) !== modal) return;
         if (insideOpenPopover(e.target, modal)) return;
+        const ModalCloseEvent = view?.CustomEvent ?? CustomEvent;
         modal.dispatchEvent(
-          new CustomEvent('bronto:modal:close', {
+          new ModalCloseEvent('bronto:modal:close', {
             detail: { reason: 'escape' },
             bubbles: true,
             cancelable: true,
@@ -164,13 +168,16 @@ export function initModal({ root } = {}) {
           );
         }
 
-        const observer = typeof MutationObserver === 'function' ? new MutationObserver(sync) : null;
+        const Observer =
+          view?.MutationObserver ??
+          (typeof MutationObserver === 'function' ? MutationObserver : null);
+        const observer = Observer ? new Observer(sync) : null;
         observer?.observe(modal, { attributes: true, attributeFilter: ['class'] });
-        document.addEventListener('keydown', onKey, true);
+        doc.addEventListener('keydown', onKey, true);
         if (modal.classList.contains('is-open')) trap(); // already open at init
         return () => {
           observer?.disconnect();
-          document.removeEventListener('keydown', onKey, true);
+          doc.removeEventListener('keydown', onKey, true);
           release();
           restoreAttrs(modal, attrs);
         };
