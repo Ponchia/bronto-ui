@@ -467,9 +467,10 @@ It NEVER parses or tokenizes — the host (or Shiki, via the shipped
 `shiki/nothing.json` token theme) supplies the coloured spans; Bronto owns only
 the chrome. `ui-code` (+`__head` filename bar, `__body` the `<pre>`); wrap each
 line in `ui-code__line` to opt into the `ui-code--numbered` gutter (CSS
-counters) and the `ui-code__line--add`/`--del`/`--hl` line states (forced-colors
-+ print safe via an inline-start border). Long lines wrap. `ui.code({ numbered })`
-/ `ui.codeLine({ change })`. Details: `docs/code.md`.
+counters) and the `ui-code__line--add`/`--remove`/`--hl` line states
+(forced-colors + print safe via an inline-start border). Long lines wrap.
+`ui.code({ numbered })` / `ui.codeLine({ change: 'add'|'remove'|'hl' })`.
+Details: `docs/code.md`.
 
 Optional inline datawords — opt-in, CSS only, never in the default bundle. A
 word-sized microchart (trend-in-a-sentence) for reports and dense tables, the
@@ -607,12 +608,12 @@ default bundle:
 <link rel="stylesheet" href="@ponchia/ui/css/workbench.css" />
 ```
 
-`ui-inspector` (+`__header`/`__body`) is a selected-object detail panel;
+`ui-inspector` (+`__head`/`__body`) is a selected-object detail panel;
 `ui-property` (+`__label`/`__value`) is a denser key/value row for it;
 `ui-selectionbar` (+`__count`/`__actions`) is a raised action bar for the current
 selection (pair with `ui-sel` states on the items). Layout/affordances only —
-resizable split panes and drag handles are deferred. Class-only. Details:
-`docs/workbench.md`.
+`ui-splitter` (+`--vertical`/`--horizontal`, `__pane`/`__handle`) ships with
+optional `initSplitter()` for ARIA resize sync. Details: `docs/workbench.md`.
 
 Optional command palette — opt-in CSS shell (`css/command.css`) + `initCommand`
 behavior. Filter + keyboard-navigate a DOM-authored command list:

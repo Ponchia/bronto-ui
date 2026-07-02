@@ -1,5 +1,47 @@
 # React / Solid / Qwik
 
+```bash
+npm i @ponchia/ui
+```
+
+## 1. Load the CSS
+
+Import the CSS once at your root (`import '@ponchia/ui'`) when your
+bundler understands CSS side-effect imports.
+
+## 2. No-flash theme (inline, in your HTML shell)
+
+Put the inline script in your HTML shell before the app script. In Vite/CRA
+`index.html`, use the same plain `<script>` body as the other guides. In
+Next App Router, render it in `<head>`:
+
+```tsx
+<script
+  dangerouslySetInnerHTML={{
+    __html: `try{var t=localStorage.getItem('bronto-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}`,
+  }}
+/>
+```
+
+It must be inline and render-blocking — a `useEffect` runs after paint
+and will flash.
+
+## 3. Minimal styled markup
+
+Use typed class recipes or literal classes for the markup itself:
+
+```tsx
+import { ui } from '@ponchia/ui/classes';
+
+<button className={ui.button({ variant: 'ghost' })} data-bronto-theme-toggle>
+  Toggle theme
+</button>;
+```
+
+Solid and Qwik use `class` instead of `className`.
+
+## 4. Behavior/adapter wiring
+
 `@ponchia/ui` ships **no per-framework component package** — that is a
 deliberate ADR (`docs/architecture.md`): the CSS is the framework and
 the typed `cls`/`ui` recipes are already framework-agnostic. Only the
@@ -17,7 +59,11 @@ function App() {
   useDialog(); // wires every .ui-modal under document; cleans up on unmount
   useTabs();
   const toast = useToast();
-  return <button className={cls.button} onClick={() => toast('Saved', { tone: 'success' })}>Save</button>;
+  return (
+    <button className={cls.button} onClick={() => toast('Saved', { tone: 'success' })}>
+      Save
+    </button>
+  );
 }
 ```
 
@@ -35,35 +81,17 @@ There's a `useX` for each behavior (`useDialog`, `useTabs`, `useMenu`,
 `useCombobox`, `usePopover`, `useDisclosure`, `useFormValidation`,
 `useTableSort`, `useCarousel`, `useDismissible`, `useDisabledGuard`,
 `useThemeToggle`, `useDotGlyph`, `useLegend`, `useConnectors`, `useSpotlight`,
-`useCrosshair`, `useCommand`, `useSources`, `useSplitter`, `useModal`), `useToast()` → the
-imperative, and the generic `useBrontoBehavior(init, opts)`. To scope a hook to a subtree, pass a
-React ref object (`{ root: ref }`) or a resolver callback (`() => ({
-root: el })`). The bindings resolve options on mount, after refs have
-been assigned; the ref/resolver timing was hardened in 0.4.1. Avoid
-`{ root: ref.current }` in React render code because that captures the first
-render's `null`. The hand-rolled equivalent below still works if you'd rather
-not take the binding — it's exactly what the bindings do.
+`useCrosshair`, `useCommand`, `useSources`, `useSplitter`, `useModal`),
+`useToast()` for the imperative toast helper, and the generic
+`useBrontoBehavior(init, opts)`. To scope a hook to a subtree, pass a React ref
+object (`{ root: ref }`) or a resolver callback (`() => ({ root: el })`). The
+bindings resolve options on mount, after refs have been assigned; the
+ref/resolver timing was hardened in 0.4.1. Avoid `{ root: ref.current }` in
+React render code because that captures the first render's `null`. The
+hand-rolled equivalent below still works if you'd rather not take the binding
+— it's exactly what the bindings do.
 
-## CSS + no-flash theme
-
-Import the CSS once at your root (`import '@ponchia/ui'`) when your
-bundler understands CSS side-effect imports. For the
-no-flash theme, put the inline script in your HTML shell — `index.html`
-(Vite/CRA), or `app/layout.tsx` for Next via a raw `<script>` in
-`<head>` with `dangerouslySetInnerHTML`:
-
-```tsx
-<script
-  dangerouslySetInnerHTML={{
-    __html: `try{var t=localStorage.getItem('bronto-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}`,
-  }}
-/>
-```
-
-It must be inline and render-blocking — a `useEffect` runs after paint
-and will flash.
-
-## React: a one-time behaviors hook
+### React: a one-time behaviors hook
 
 `init*` is idempotent and returns a cleanup, which maps exactly onto
 `useEffect`. Note React 18 StrictMode mounts effects twice in dev —
@@ -82,12 +110,7 @@ export function useBrontoBehaviors() {
 ```
 
 Call `useBrontoBehaviors()` once near the app root, after the markup it
-wires is mounted. Use the typed classes for the markup itself:
-
-```tsx
-import { ui } from '@ponchia/ui/classes';
-<button className={ui.button({ variant: 'ghost' })} data-bronto-theme-toggle />;
-```
+wires is mounted.
 
 `toast(message, opts)` is import-and-call from any handler — no hook.
 
@@ -109,7 +132,7 @@ export function Screen() {
 dialogs, disclosures, and popovers resolve root-first, then document-wide so
 body/portal-mounted overlays keep working.
 
-## Solid: `onMount` / `onCleanup`
+### Solid: `onMount` / `onCleanup`
 
 ```tsx
 import { onMount, onCleanup } from 'solid-js';
@@ -134,7 +157,7 @@ useTabs(() => ({ root }));
 <main ref={root}>{/* dialog/tab markup */}</main>;
 ```
 
-## Qwik: `useVisibleTask$`
+### Qwik: `useVisibleTask$`
 
 `@ponchia/ui/qwik` (peer dep `@builder.io/qwik`) wraps each behavior in a
 `useVisibleTask$` — it runs when the owning component first becomes visible
@@ -169,7 +192,7 @@ the `init*` behavior and returns its cleanup via `ctx.cleanup(...)` — which is
 exactly what the binding does. The no-flash theme script is the same inline,
 render-blocking `<script>` in your root document (Qwik City: `src/root.tsx`).
 
-## SSR (Next / SolidStart)
+### SSR (Next / SolidStart)
 
 `@ponchia/ui/behaviors` is side-effect-free on import and every `init*`
 no-ops without a DOM, so importing it in a server-rendered module will

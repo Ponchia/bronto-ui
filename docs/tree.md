@@ -72,3 +72,9 @@ honest as-is.
   open-branch accent cue is re-asserted with the system highlight.
 - The chevron spin and the auto-height animation both respect
   `prefers-reduced-motion`.
+
+## Related
+
+Use the [reporting toolbox](./reporting.md#the-analytical-toolbox-in-a-report)
+to place `tree.css` in report surfaces, and use
+[reference.md](./reference.md) for the generated class catalog.

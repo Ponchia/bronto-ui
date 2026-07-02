@@ -12,6 +12,9 @@ DOM.
 Bronto only paints the names below. The host owns range discovery, search,
 source mapping, current-match state, and cleanup.
 
+Because highlights are paint only, mirror search and current-match state in
+host-owned controls or text when users need to navigate it.
+
 | Highlight name | Use |
 | --- | --- |
 | `bronto-evidence` | Cited evidence or selected proof text. |
@@ -50,3 +53,9 @@ if (CSS.highlights) {
 
 Check `CSS.highlights` before registering ranges. Without support, the page
 falls back to plain text; no wrapper spans or extra cleanup are required.
+
+## Related
+
+`highlights.css` is part of
+[`analytical.css`](./reporting.md#the-analytical-toolbox-in-a-report). Use
+[reference.md](./reference.md) for the generated class catalog.

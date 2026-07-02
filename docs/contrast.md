@@ -238,9 +238,9 @@ the brand accent.
 
 - This gates the **framework token contract** (core palette **and** every
   shipped colorway), not arbitrary consumer re-brands. Re-accenting via
-  `--accent` yourself is your contrast obligation (see [theming.md](theming.md)
-  → "Re-brand obligations"); this table is the guarantee for the *shipped*
-  palettes and skins only.
+  `--accent` yourself is your contrast obligation (see
+  [Re-brand obligations](theming.md#re-brand-obligations)); this table is the
+  guarantee for the *shipped* palettes and skins only.
 - Status colours (`--success` / `--warning` / `--danger`) are gated
   as **indicators** (3:1). If you set status text *as body copy* on a
   surface, verify 4.5:1 yourself or pair it with an icon/label.

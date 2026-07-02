@@ -61,3 +61,9 @@ vertical scrubber, etc.).
 
 The crosshair is decorative (`aria-hidden`); expose the underlying values to
 assistive tech through a data table or text, not the rules.
+
+## Related
+
+`crosshair.css` is part of
+[`analytical.css`](./reporting.md#the-analytical-toolbox-in-a-report). Use
+[reference.md](./reference.md) for the generated class and token catalog.

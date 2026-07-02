@@ -47,3 +47,8 @@ only `ui-clamp` plus `ui-clamp__body`.
 
 Print expands the body and hides the toggle/control. Do not use `ui-clamp` to
 hide information from archived or PDF output.
+
+## Related
+
+- [Sources](sources.md) pairs excerpts with citation and provenance primitives.
+- [Reference](reference.md) lists the generated clamp class contract.

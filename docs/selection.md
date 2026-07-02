@@ -34,7 +34,16 @@ logic — Bronto only styles them. `--off` uses `opacity` (which survives
 forced-colors), and `--on` falls back to the system `Highlight` color in
 forced-colors so the selection stays visible.
 
+Pair the visual classes with host-owned selection semantics, such as
+`aria-selected`, native checked state, or a visible selected-count label.
+
 > **Why no brush behavior?** A rectangular brush or lasso must translate a
 > dragged region into a data domain (or test points against a polygon), which
 > requires owning the chart's scales/geometry — across Bronto's line. Bring your
 > own selection logic; use these classes to render the result.
+
+## Related
+
+`selection.css` is part of
+[`analytical.css`](./reporting.md#the-analytical-toolbox-in-a-report). Use
+[reference.md](./reference.md) for the generated class catalog.

@@ -167,3 +167,8 @@ ui.provenance({ state: 'reviewed' }); // "ui-provenance ui-src--reviewed"
   `CanvasText`, so the label remains the channel.
 - Tone dots and the card's tone border carry `print-color-adjust: exact`, so
   they survive printing; expand citation URLs in print where it helps the reader.
+
+## Related
+
+- [Usage](usage.md#static-reports) shows where citations fit in reports.
+- [Reference](reference.md) lists the generated source and citation classes.

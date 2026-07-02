@@ -53,3 +53,9 @@ and optional point estimate.
 Pair each interval with a written label or `role="img"` plus `aria-label`. The
 range is not the data of record: under forced-colors or print, the readable
 label and bounds must still explain the value.
+
+## Related
+
+Use the [reporting toolbox](./reporting.md#the-analytical-toolbox-in-a-report)
+to place `interval.css` in report surfaces, and use
+[reference.md](./reference.md) for the generated class catalog.

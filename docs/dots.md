@@ -4,7 +4,8 @@ The dot-matrix is the library's signature: one lit/dim/accent dot vocabulary
 expressed across backgrounds, dividers, indicators, loaders, and a family of
 data-bound reporting surfaces. Everything here lives in the core stylesheet
 (`@ponchia/ui` / `@ponchia/ui/css`); the glyph icon set built on the same
-primitive is documented in `docs/glyphs.md`.
+primitive is documented in [display glyphs](glyphs.md). If you build
+leaf-by-leaf, import `@ponchia/ui/css/dots.css`.
 
 All classes are in the typed registry (`@ponchia/ui/classes`) and the
 language-neutral `classes.json`; those are authoritative.
@@ -122,8 +123,8 @@ Knobs: `--v`, `--gauge-size`, `--gauge-sweep` (default 270deg), `--gauge-from`,
 
 ### `.ui-readout` — big dot-matrix numeric
 
-The row wrapper produced by `renderReadout` (see `docs/glyphs.md`) — a Nothing-style
-hero numeric composed from digit glyphs. Tune character spacing with
+The row wrapper produced by `renderReadout` (see [display glyphs](glyphs.md)) —
+a Nothing-style hero numeric composed from digit glyphs. Tune character spacing with
 `--readout-gap`; spaces render as a `.ui-readout__spacer` of width `--readout-space`.
 Large multi-character readouts are intentionally intrinsic; on narrow report or
 demo pages, either tune the glyph dot size or wrap the readout in a local
@@ -147,3 +148,9 @@ Mode flattens — the dot surfaces opt out of forced-color remapping and pin lit
 states to distinct system colours (the activity ramp collapses to present vs
 absent). The data surfaces also set `print-color-adjust: exact` so their fills
 survive printing. Animations honour `prefers-reduced-motion`.
+
+## Related
+
+- [Display glyphs](glyphs.md) covers the icon/readout API built on the dot grid.
+- [Usage](usage.md#display-glyphs-when-and-when-not) explains glyph selection.
+- [Reference](reference.md) lists the generated dot-surface classes.

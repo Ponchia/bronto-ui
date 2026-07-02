@@ -404,7 +404,7 @@ infinite-clone track). It's a gallery: the user drives it.
 
 ## Display glyphs: when (and when not)
 
-`@ponchia/ui/glyphs` is a 48-glyph dot-matrix icon set — navigation
+`@ponchia/ui/glyphs` is a 71-glyph dot-matrix icon set — navigation
 (`arrow-*`, `chevron-*`), actions (`check`, `close`, `plus`, `minus`,
 `search`, `menu`, `gear`), status (`info`, `warning`, `bell`, `lock`) and
 common marks (`home`, `user`, `heart`, `star`, `spark`, circle-family marks) — rendered on the

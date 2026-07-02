@@ -71,8 +71,10 @@ below):
 > an `http(s)` origin the `import`/`fetch` forms both work.
 
 The result is monochrome surfaces and lines with the rationed accent reserved
-for notes — a diagram that looks like the rest of a bronto surface and
-**re-skins for free** when you change `--accent`, exactly like the chart palette.
+for notes — a diagram that looks like the rest of a bronto surface. The accent is
+**resolved into the theme map** you pass to `initialize`, not read live from
+`--accent`: to change it you re-`initialize` with the new palette and re-render;
+an already-drawn diagram does not live-reskin (see below).
 
 ### Why resolved colours, not `var(--x)`
 
@@ -90,7 +92,7 @@ switch, re-`initialize` with the other palette and re-render.
 - **Chart-like** diagrams carry a categorical series palette — **pie**
   (`pie1`…`pie12`), **git** (`git0`…`git7`), and **user-journey**
   (`fillType0`…`fillType7`) are wired to the CVD-safe
-  [charts palette](./legends.md) (series 1 = the live accent).
+  [charts palette](./legends.md) (series 1 = the resolved accent).
 - **Structural** diagrams — flowchart, sequence, class, ER, state — use the
   monochrome node/edge/cluster grammar and spend the accent only on notes.
 - **Not themed: `gantt` and `timeline`.** Their colours come from
