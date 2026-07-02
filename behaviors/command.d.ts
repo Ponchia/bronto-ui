@@ -16,7 +16,7 @@
  * `data-value`), interleaved with `.ui-command__group` labels and an optional
  * `.ui-command__empty`. The behavior owns ids, `role=combobox/listbox/option`,
  * `aria-activedescendant`, a roving active item, substring filtering (hiding
- * empty groups), full keyboard (Down/Up/Home/End/Enter/Escape), and pointer
+ * empty groups), keyboard list navigation (Down/Up/Enter/Escape), and pointer
  * select. It emits `bronto:command:select` ({ detail: { value, label } }) on
  * choose and `bronto:command:close` on Escape. SSR-safe, idempotent per
  * instance; returns a cleanup function.

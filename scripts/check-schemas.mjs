@@ -115,6 +115,37 @@ function validateArray(value, node, schema, path, problems) {
   }
 }
 
+const RFC3339_DATE_TIME =
+  /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d+)?(Z|[+-]\d{2}:\d{2})$/i;
+
+function isStrictDateTime(value) {
+  const match = RFC3339_DATE_TIME.exec(value);
+  if (!match) return false;
+
+  const [, year, month, day, hour, minute, second, , zone] = match;
+  const hourNumber = Number(hour);
+  const minuteNumber = Number(minute);
+  const secondNumber = Number(second);
+  const zoneHour = zone.toUpperCase() === 'Z' ? 0 : Number(zone.slice(1, 3));
+  const zoneMinute = zone.toUpperCase() === 'Z' ? 0 : Number(zone.slice(4, 6));
+  if (
+    hourNumber > 23 ||
+    minuteNumber > 59 ||
+    secondNumber > 59 ||
+    zoneHour > 23 ||
+    zoneMinute > 59 ||
+    Number.isNaN(Date.parse(value))
+  ) {
+    return false;
+  }
+
+  const calendarTimestamp = Date.parse(`${year}-${month}-${day}T00:00:00Z`);
+  if (Number.isNaN(calendarTimestamp)) return false;
+
+  const roundTrippedDate = new Date(calendarTimestamp).toISOString().slice(0, 10);
+  return roundTrippedDate === `${year}-${month}-${day}`;
+}
+
 function validateString(value, node, path, problems) {
   if (node.minLength != null && value.length < node.minLength) {
     problems.push(`${path}: expected string length >= ${node.minLength}`);
@@ -129,8 +160,8 @@ function validateString(value, node, path, problems) {
       problems.push(`${path}: expected URI`);
     }
   }
-  if (node.format === 'date-time' && Number.isNaN(Date.parse(value))) {
-    problems.push(`${path}: expected date-time`);
+  if (node.format === 'date-time' && !isStrictDateTime(value)) {
+    problems.push(`${path}: expected RFC3339 date-time`);
   }
 }
 
@@ -333,6 +364,24 @@ const valid = examples[0] ?? {
   const problems = validateAgainstSchema(sample, reportSchema);
   if (problems.length) {
     errors.push(`valid sha256 content hash should pass, got ${problems.join('; ')}`);
+  }
+}
+{
+  const sample = clone(valid);
+  sample.sources[0].retrievedAt = '2026-02-30T00:00:00Z';
+  expectInvalid(
+    reportSchema,
+    'impossible retrievedAt date-time',
+    sample,
+    'expected RFC3339 date-time',
+  );
+}
+{
+  const sample = clone(valid);
+  sample.sources[0].retrievedAt = '2026-02-28T00:00:00Z';
+  const problems = validateAgainstSchema(sample, reportSchema);
+  if (problems.length) {
+    errors.push(`valid retrievedAt date-time should pass, got ${problems.join('; ')}`);
   }
 }
 {

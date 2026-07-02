@@ -41,6 +41,7 @@ const PONCHIA_CDN = new RegExp(
 const GLYPH_TOKEN = /var\(\s*(--glyph-[\w-]*)/gi;
 
 const problems = [];
+const lineAt = (src, index) => src.slice(0, index).split('\n').length;
 
 for (const rel of shipped) {
   let text;
@@ -49,39 +50,36 @@ for (const rel of shipped) {
   } catch {
     continue; // a missing listed doc is the pack gate's concern, not ours
   }
-  const lines = text.split('\n');
-  lines.forEach((line, i) => {
-    for (const m of line.matchAll(SCRIPT_SRC)) {
-      const url = m[1];
-      if (!JSDELIVR_PINNED.test(url)) continue; // not a pinned jsDelivr npm bundle
-      if (!/\/build\//.test(url)) {
-        problems.push(
-          `${rel}:${i + 1}  <script src="${url}">  — bare jsDelivr bundle; ` +
-            `pin the UMD build path, e.g. …@6.2.0/build/vega.min.js`,
-        );
-      }
-    }
-    for (const m of line.matchAll(LINK_TAG)) {
-      const tag = m[0];
-      if (!/\brel=["']stylesheet["']/i.test(tag)) continue;
-      const url = HREF.exec(tag)?.[1];
-      if (!url || !PONCHIA_CDN.test(url)) continue;
-      if (!/\/dist\/(?:bronto\.css|css\/[a-z-]+\.css)$/.test(url)) {
-        problems.push(
-          `${rel}:${i + 1}  <link href="${url}"> — browser stylesheet CDN ` +
-            `recipes must point at built dist assets, e.g. dist/bronto.css or ` +
-            `dist/css/report-kit.css`,
-        );
-      }
-    }
-    for (const m of line.matchAll(GLYPH_TOKEN)) {
+  for (const m of text.matchAll(SCRIPT_SRC)) {
+    const url = m[1];
+    if (!JSDELIVR_PINNED.test(url)) continue; // not a pinned jsDelivr npm bundle
+    if (!/\/build\//.test(url)) {
       problems.push(
-        `${rel}:${i + 1}  references ${m[1]} — there is NO --glyph-* token; it ` +
-          `resolves to nothing and the masked icon paints a solid square. Build ` +
-          `the mask with renderGlyph(name, { render: 'mask' }).`,
+        `${rel}:${lineAt(text, m.index)}  <script src="${url}">  — bare jsDelivr bundle; ` +
+          `pin the UMD build path, e.g. …@6.2.0/build/vega.min.js`,
       );
     }
-  });
+  }
+  for (const m of text.matchAll(LINK_TAG)) {
+    const tag = m[0];
+    if (!/\brel=["']stylesheet["']/i.test(tag)) continue;
+    const url = HREF.exec(tag)?.[1];
+    if (!url || !PONCHIA_CDN.test(url)) continue;
+    if (!/\/dist\/(?:bronto\.css|css\/[a-z-]+\.css)$/.test(url)) {
+      problems.push(
+        `${rel}:${lineAt(text, m.index)}  <link href="${url}"> — browser stylesheet CDN ` +
+          `recipes must point at built dist assets, e.g. dist/bronto.css or ` +
+          `dist/css/report-kit.css`,
+      );
+    }
+  }
+  for (const m of text.matchAll(GLYPH_TOKEN)) {
+    problems.push(
+      `${rel}:${lineAt(text, m.index)}  references ${m[1]} — there is NO --glyph-* token; it ` +
+        `resolves to nothing and the masked icon paints a solid square. Build ` +
+        `the mask with renderGlyph(name, { render: 'mask' }).`,
+    );
+  }
 }
 
 const reporting = readFileSync(resolve(root, 'docs/reporting.md'), 'utf8');

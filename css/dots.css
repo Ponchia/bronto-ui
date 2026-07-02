@@ -505,7 +505,7 @@
   container: dotfit / inline-size;
 }
 
-@container dotfit (width < 18rem) {
+@container dotfit (inline-size < 18rem) {
   .ui-dotfit .ui-dotgrid {
     --dot-gap: 8px;
   }

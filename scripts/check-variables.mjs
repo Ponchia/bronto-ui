@@ -25,6 +25,91 @@ const stripCommentsKeepLines = (css) =>
   css.replace(/\/\*[\s\S]*?\*\//g, (block) => block.replace(/[^\n]/g, ' '));
 
 const lineAt = (src, index) => src.slice(0, index).split('\n').length;
+const VAR_FUNCTION = 'var(';
+
+function matchingParenIndex(src, openIndex, end = src.length) {
+  let depth = 0;
+  let quote = null;
+  for (let i = openIndex; i < end; i += 1) {
+    const char = src[i];
+    if (quote) {
+      if (char === '\\') {
+        i += 1;
+      } else if (char === quote) {
+        quote = null;
+      }
+      continue;
+    }
+    if (char === '"' || char === "'") {
+      quote = char;
+    } else if (char === '(') {
+      depth += 1;
+    } else if (char === ')') {
+      depth -= 1;
+      if (depth === 0) return i;
+    }
+  }
+  return -1;
+}
+
+function firstTopLevelComma(value) {
+  let depth = 0;
+  let quote = null;
+  for (let i = 0; i < value.length; i += 1) {
+    const char = value[i];
+    if (quote) {
+      if (char === '\\') {
+        i += 1;
+      } else if (char === quote) {
+        quote = null;
+      }
+      continue;
+    }
+    if (char === '"' || char === "'") {
+      quote = char;
+    } else if (char === '(') {
+      depth += 1;
+    } else if (char === ')') {
+      depth -= 1;
+    } else if (char === ',' && depth === 0) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+function validateVarReference(rel, src, functionIndex, bodyStart, closeIndex) {
+  const body = src.slice(bodyStart, closeIndex);
+  const commaIndex = firstTopLevelComma(body);
+  const nameText = (commaIndex === -1 ? body : body.slice(0, commaIndex)).trim();
+  const name = /^--[\w-]+$/.test(nameText) ? nameText : null;
+  const hasFallback = commaIndex !== -1;
+
+  if (name && !defined.has(name) && !hasFallback && !INTENTIONAL_HOST_PROPS.has(name)) {
+    errors.push(
+      `${rel}:${lineAt(src, functionIndex)} references ${name} without a fallback, but css/ never defines it`,
+    );
+  }
+  if (hasFallback) validateVarReferences(rel, src, bodyStart + commaIndex + 1, closeIndex);
+}
+
+function validateVarReferences(rel, src, start = 0, end = src.length) {
+  let cursor = start;
+  while (cursor < end) {
+    const functionIndex = src.indexOf(VAR_FUNCTION, cursor);
+    if (functionIndex === -1 || functionIndex >= end) return;
+
+    const openIndex = functionIndex + VAR_FUNCTION.length - 1;
+    const closeIndex = matchingParenIndex(src, openIndex, end);
+    if (closeIndex === -1) {
+      cursor = functionIndex + VAR_FUNCTION.length;
+      continue;
+    }
+
+    validateVarReference(rel, src, functionIndex, openIndex + 1, closeIndex);
+    cursor = closeIndex + 1;
+  }
+}
 
 const files = [
   ...readdirSync(cssDir)
@@ -48,14 +133,7 @@ for (const file of files) {
 }
 
 for (const [rel, src] of sources) {
-  for (const match of src.matchAll(/var\(\s*(--[\w-]+)\s*(?:,([^)]*))?\)/g)) {
-    const name = match[1];
-    const hasFallback = match[2] !== undefined;
-    if (defined.has(name) || hasFallback || INTENTIONAL_HOST_PROPS.has(name)) continue;
-    errors.push(
-      `${rel}:${lineAt(src, match.index)} references ${name} without a fallback, but css/ never defines it`,
-    );
-  }
+  validateVarReferences(rel, src);
 }
 
 reportAndExit(errors, {

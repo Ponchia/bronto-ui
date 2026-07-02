@@ -105,10 +105,11 @@ function resolveOpts(opts) {
 
 /** Run a delegated behavior on visible and register its cleanup on dispose.
  *  `init` and `opts` are resolved inside the visible task, so a Qwik-signal
- *  root is read after the element is assigned. Shared, non-QRL, so the
- *  optimizer keeps the captured behavior import inside the task segment. */
+ *  root is read after the element is assigned and tracked for later changes.
+ *  Shared, non-QRL, so the optimizer keeps the captured behavior import inside
+ *  the task segment. */
 function start(init, opts, ctx) {
-  const cleanup = init(resolveOpts(opts));
+  const cleanup = init(ctx.track(() => resolveOpts(opts)));
   if (typeof cleanup === 'function') ctx.cleanup(cleanup);
 }
 

@@ -231,9 +231,11 @@ test('Svelte useDisclosure action wires the real behavior end-to-end', async () 
   action.destroy();
 });
 
-test('Vue directive resolves element roots and cleans up on beforeUnmount/update', async () => {
+test('Vue directive resolves element roots, re-applies only on real option change, cleans up', async () => {
   const host = mount();
   host.id = 'scoped-vue';
+  const other = mount();
+  other.id = 'scoped-vue-2';
   const { createBrontoDirective } = await import('../vue/index.js');
   const calls = [];
   const directive = createBrontoDirective((opts) => {
@@ -243,10 +245,22 @@ test('Vue directive resolves element roots and cleans up on beforeUnmount/update
 
   directive.mounted(host, { value: undefined });
   assert.deepEqual(calls, ['scoped-vue']);
+
+  // updated() whose RESOLVED options are unchanged (undefined and { root: host }
+  // both resolve to host) must NOT re-apply — no teardown/re-init churn.
   directive.updated(host, { value: { root: host }, oldValue: undefined });
-  assert.deepEqual(calls, ['scoped-vue', 'cleanup', 'scoped-vue']);
+  assert.deepEqual(calls, ['scoped-vue'], 'no churn when resolved options are unchanged');
+
+  // updated() with a genuinely different root re-applies (cleanup + re-init).
+  directive.updated(host, { value: { root: other }, oldValue: { root: host } });
+  assert.deepEqual(
+    calls,
+    ['scoped-vue', 'cleanup', 'scoped-vue-2'],
+    're-applies on a real root change',
+  );
+
   directive.beforeUnmount(host);
-  assert.deepEqual(calls, ['scoped-vue', 'cleanup', 'scoped-vue', 'cleanup']);
+  assert.deepEqual(calls, ['scoped-vue', 'cleanup', 'scoped-vue-2', 'cleanup']);
 });
 
 test('Vue directives on the same element keep independent cleanups', async () => {
