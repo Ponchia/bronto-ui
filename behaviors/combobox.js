@@ -148,7 +148,7 @@ function bindComboboxLifecycle({
  * optional `data-value`). An optional `.ui-combobox__empty` (hidden at rest)
  * shows when nothing matches. The behavior owns ids, `aria-expanded`,
  * `aria-controls`, `aria-activedescendant`, roving active option,
- * type-to-filter, full keyboard (Down/Up/Home/End/Enter/Escape/Tab),
+ * type-to-filter, keyboard list navigation (Down/Up/Enter/Escape/Tab),
  * pointer select, and outside-click close. On select the **visible input shows
  * the option's text label**, while the emitted `bronto:change` CustomEvent
  * carries the option's `data-value` code: `{ detail: { value, label } }` (value
@@ -315,14 +315,6 @@ export function initCombobox({ root } = {}) {
       active = options.indexOf(vis[next]);
       setActive(options[active]);
     };
-    const activateEdge = (which) => {
-      if (list.hidden) return false;
-      const v = visible();
-      if (!v.length) return true;
-      active = options.indexOf(which === 'first' ? v[0] : v[v.length - 1]);
-      setActive(options[active]);
-      return true;
-    };
     const selectActive = () => {
       if (list.hidden || active < 0 || options[active].hidden) return false;
       select(options[active]);
@@ -358,8 +350,6 @@ export function initCombobox({ root } = {}) {
         move(-1);
         return true;
       },
-      Home: () => activateEdge('first'),
-      End: () => activateEdge('last'),
       Enter: () => selectActive(),
       Escape: () => closeIfOpen(),
       Tab: () => {

@@ -1389,7 +1389,7 @@ test('initCombobox: a filtered-out active option cannot be Enter-selected (APG)'
   stop();
 });
 
-test('initCombobox: ArrowUp wraps to last, Home/End jump to edges, Tab closes', () => {
+test('initCombobox: ArrowUp wraps to last, Home/End edit text natively, Tab closes', () => {
   const d = mount(CB);
   const stop = initCombobox();
   const input = d.querySelector('.ui-combobox__input');
@@ -1405,11 +1405,20 @@ test('initCombobox: ArrowUp wraps to last, Home/End jump to edges, Tab closes', 
   input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
   assert.equal(input.getAttribute('aria-activedescendant'), opts[2].id, 'ArrowUp wraps to last');
 
-  // Home jumps to the first, End to the last.
+  // Home/End are left to native text-caret editing (APG editable combobox): they
+  // must NOT move the active option.
   input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Home', bubbles: true }));
-  assert.equal(input.getAttribute('aria-activedescendant'), opts[0].id, 'Home → first');
+  assert.equal(
+    input.getAttribute('aria-activedescendant'),
+    opts[2].id,
+    'Home does not move the active option',
+  );
   input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'End', bubbles: true }));
-  assert.equal(input.getAttribute('aria-activedescendant'), opts[2].id, 'End → last');
+  assert.equal(
+    input.getAttribute('aria-activedescendant'),
+    opts[2].id,
+    'End does not move the active option',
+  );
 
   // Tab closes the listbox.
   input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
@@ -3064,7 +3073,7 @@ test('initCommand: cleanup restores filtering, active state, and generated ARIA'
   );
 });
 
-test('initCommand: ArrowUp wraps to last, Home/End jump to edges', () => {
+test('initCommand: ArrowUp wraps to last, Home/End edit query text natively', () => {
   const d = mount(CMD);
   const stop = initCommand();
   const input = d.querySelector('.ui-command__input');
@@ -3078,11 +3087,12 @@ test('initCommand: ArrowUp wraps to last, Home/End jump to edges', () => {
   assert.ok(items[2].classList.contains('is-active'), 'ArrowUp wraps to last');
   assert.equal(input.getAttribute('aria-activedescendant'), items[2].id);
 
-  // Home → first, End → last.
+  // Home/End are left to native text-caret editing of the query (APG combobox
+  // input): they must NOT move the active command.
   input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Home', bubbles: true }));
-  assert.ok(items[0].classList.contains('is-active'), 'Home → first');
+  assert.ok(items[2].classList.contains('is-active'), 'Home does not move the active command');
   input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'End', bubbles: true }));
-  assert.ok(items[2].classList.contains('is-active'), 'End → last');
+  assert.ok(items[2].classList.contains('is-active'), 'End does not move the active command');
 
   stop();
 });

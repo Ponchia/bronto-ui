@@ -29,7 +29,7 @@ import {
  * `data-value`), interleaved with `.ui-command__group` labels and an optional
  * `.ui-command__empty`. The behavior owns ids, `role=combobox/listbox/option`,
  * `aria-activedescendant`, a roving active item, substring filtering (hiding
- * empty groups), full keyboard (Down/Up/Home/End/Enter/Escape), and pointer
+ * empty groups), keyboard list navigation (Down/Up/Enter/Escape), and pointer
  * select. It emits `bronto:command:select` ({ detail: { value, label } }) on
  * choose and `bronto:command:close` on Escape. SSR-safe, idempotent per
  * instance; returns a cleanup function.
@@ -191,22 +191,6 @@ export function initCommand({ root } = {}) {
           e.preventDefault();
           move(-1);
           break;
-        case 'Home': {
-          const v = visible();
-          if (v.length) {
-            setActive(v[0]);
-            e.preventDefault();
-          }
-          break;
-        }
-        case 'End': {
-          const v = visible();
-          if (v.length) {
-            setActive(v[v.length - 1]);
-            e.preventDefault();
-          }
-          break;
-        }
         case 'Enter':
           if (active >= 0 && !items[active].hidden) {
             choose(items[active]);

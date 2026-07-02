@@ -70,7 +70,10 @@ export function bindOnce(target, key, add) {
   const reg = target[BOUND] || (target[BOUND] = Object.create(null));
   if (reg[key]) reg[key]();
   const remove = add();
+  let done = false;
   const cleanup = () => {
+    if (done) return;
+    done = true;
     remove();
     if (reg[key] === cleanup) delete reg[key];
   };

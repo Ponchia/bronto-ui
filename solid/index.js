@@ -47,7 +47,7 @@
  *   | null
  *   | undefined} BrontoBindingOptsResolver
  */
-import { onMount, onCleanup } from 'solid-js';
+import { createEffect, onCleanup, onMount } from 'solid-js';
 import {
   applyStoredTheme,
   initThemeToggle,
@@ -96,8 +96,9 @@ function resolveOpts(opts) {
   return { ...value, root: root || null };
 }
 
-/** Run a delegated behavior for the component's lifetime (init on mount, its
- * returned cleanup on dispose). Options resolve on mount, after refs exist.
+/** Run a delegated behavior for the component's lifetime (init after mount, its
+ * returned cleanup before re-init/dispose). Options resolve after mount and
+ * re-resolve when tracked Solid signals change.
  * @template {DelegateOpts} [T=DelegateOpts]
  * @param {(opts?: T) => Cleanup | void} init
  * @param {BrontoBindingOptsResolver<T>} [opts]
@@ -105,8 +106,10 @@ function resolveOpts(opts) {
  */
 export function useBrontoBehavior(init, opts) {
   onMount(() => {
-    const cleanup = init(resolveOpts(opts));
-    if (typeof cleanup === 'function') onCleanup(cleanup);
+    createEffect(() => {
+      const cleanup = init(resolveOpts(opts));
+      if (typeof cleanup === 'function') onCleanup(cleanup);
+    });
   });
 }
 

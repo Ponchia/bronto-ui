@@ -62,6 +62,7 @@ import {
 } from '../behaviors/index.js';
 
 const cleanups = new WeakMap();
+const optionSignatures = new WeakMap();
 
 function cleanupMap(el) {
   let map = cleanups.get(el);
@@ -72,12 +73,37 @@ function cleanupMap(el) {
   return map;
 }
 
+function optionSignatureMap(el) {
+  let map = optionSignatures.get(el);
+  if (!map) {
+    map = new Map();
+    optionSignatures.set(el, map);
+  }
+  return map;
+}
+
+function optionSignature(opts) {
+  return Object.entries(opts).sort(([a], [b]) => a.localeCompare(b));
+}
+
+function sameOptionSignature(a, b) {
+  if (a === b) return true;
+  if (!a || !b || a.length !== b.length) return false;
+  return a.every(([key, value], index) => {
+    const [otherKey, otherValue] = b[index];
+    return key === otherKey && Object.is(value, otherValue);
+  });
+}
+
 function stop(el, key) {
   const map = cleanups.get(el);
   const cleanup = map?.get(key);
   if (typeof cleanup === 'function') cleanup();
   map?.delete(key);
   if (map?.size === 0) cleanups.delete(el);
+  const signatures = optionSignatures.get(el);
+  signatures?.delete(key);
+  if (signatures?.size === 0) optionSignatures.delete(el);
 }
 
 function resolveOpts(el, opts) {
@@ -87,9 +113,15 @@ function resolveOpts(el, opts) {
 }
 
 function start(el, key, init, opts) {
+  const resolved = resolveOpts(el, opts);
+  startResolved(el, key, init, resolved, optionSignature(resolved));
+}
+
+function startResolved(el, key, init, resolved, signature) {
   stop(el, key);
-  const cleanup = init(resolveOpts(el, opts));
+  const cleanup = init(resolved);
   if (typeof cleanup === 'function') cleanupMap(el).set(key, cleanup);
+  optionSignatureMap(el).set(key, signature);
 }
 
 /**
@@ -105,8 +137,10 @@ export function createBrontoDirective(init) {
       start(el, key, init, binding?.value);
     },
     updated(el, binding) {
-      if (binding?.value === binding?.oldValue) return;
-      start(el, key, init, binding?.value);
+      const resolved = resolveOpts(el, binding?.value);
+      const signature = optionSignature(resolved);
+      if (sameOptionSignature(optionSignatures.get(el)?.get(key), signature)) return;
+      startResolved(el, key, init, resolved, signature);
     },
     beforeUnmount(el) {
       stop(el, key);

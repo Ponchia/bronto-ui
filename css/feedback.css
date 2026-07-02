@@ -345,6 +345,15 @@
   transform: translate(-50%, 0);
 }
 
+.ui-tooltip:dir(rtl) .ui-tooltip__bubble {
+  transform: translate(50%, 4px);
+}
+
+.ui-tooltip:dir(rtl):hover .ui-tooltip__bubble,
+.ui-tooltip:dir(rtl):focus-within .ui-tooltip__bubble {
+  transform: translate(50%, 0);
+}
+
 /* Popover surface — a top-layer panel positioned by initPopover (JS
    collision-aware, dependency-free). Uses the native [popover] top
    layer when available so it never clips; the class styles it either

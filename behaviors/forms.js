@@ -141,12 +141,50 @@ function controlsOf(form) {
   );
 }
 
+function textOf(el) {
+  return el?.textContent?.replace(/\s+/g, ' ').trim() || '';
+}
+
+function controlLabel(control) {
+  const doc = control.ownerDocument || document;
+  const labelledby = (control.getAttribute('aria-labelledby') || '')
+    .split(/\s+/)
+    .map((id) => textOf(doc.getElementById(id)))
+    .filter(Boolean)
+    .join(' ');
+  if (labelledby) return labelledby;
+
+  const ariaLabel = control.getAttribute('aria-label')?.trim();
+  if (ariaLabel) return ariaLabel;
+
+  const labels = control.labels
+    ? [...control.labels]
+        .map((label) => textOf(label))
+        .filter(Boolean)
+        .join(' ')
+    : '';
+  if (labels) return labels;
+
+  const field = control.closest('.ui-field');
+  const fieldLabel = textOf(field?.querySelector('label, .ui-label'));
+  if (fieldLabel) return fieldLabel;
+
+  const legend =
+    textOf(field?.querySelector('legend')) ||
+    textOf(control.closest('fieldset')?.querySelector('legend'));
+  if (legend) return legend;
+
+  return (control.getAttribute('name') || control.name || '').trim();
+}
+
 function summaryItem(control) {
   const id = ensureId(control, 'bronto-field');
   const li = document.createElement('li');
   const a = document.createElement('a');
+  const label = controlLabel(control);
+  const message = control.validationMessage;
   a.href = `#${id}`;
-  a.textContent = control.validationMessage;
+  a.textContent = label ? `${label}: ${message}` : message;
   a.addEventListener('click', (e) => {
     e.preventDefault();
     control.focus();

@@ -62,8 +62,9 @@ the core bundle.
 ## Behavior & events
 
 `initCommand()` owns ids, `role`/`aria-activedescendant`, a roving active item,
-substring filtering, the full keyboard (Down/Up/Home/End/Enter/Escape), and
-pointer select. It emits:
+substring filtering, the keyboard (Down/Up to move, Enter to run, Escape to
+close — Home/End stay with the query input's native text caret), and pointer
+select. It emits:
 
 - `bronto:command:select` — `{ value, label }`. The host executes and closes.
 - `bronto:command:close` — on Escape. The host closes the dialog.

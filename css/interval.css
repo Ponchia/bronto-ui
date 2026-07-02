@@ -64,6 +64,10 @@
   transform: translate(-50%, -50%);
 }
 
+.ui-interval:dir(rtl) .ui-interval__point {
+  transform: translate(50%, -50%);
+}
+
 .ui-interval__label,
 .ui-interval__bounds {
   color: var(--text-dim);

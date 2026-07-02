@@ -137,6 +137,43 @@
   --chart-color: var(--chart-8);
 }
 
+/* Keep the exact helper → token mapping above for the legend contract gate, then
+   make the live custom property resolvable when dataviz.css is not present. A
+   bare `--chart-color: var(--chart-2)` makes the base `background` invalid if
+   --chart-2 is undefined; these later equal-specificity selectors degrade to the
+   accent instead while preserving the dataviz palette when it exists. */
+:where(.ui-legend__swatch).ui-legend__swatch--1 {
+  --chart-color: var(--chart-1, var(--accent));
+}
+
+:where(.ui-legend__swatch).ui-legend__swatch--2 {
+  --chart-color: var(--chart-2, var(--accent));
+}
+
+:where(.ui-legend__swatch).ui-legend__swatch--3 {
+  --chart-color: var(--chart-3, var(--accent));
+}
+
+:where(.ui-legend__swatch).ui-legend__swatch--4 {
+  --chart-color: var(--chart-4, var(--accent));
+}
+
+:where(.ui-legend__swatch).ui-legend__swatch--5 {
+  --chart-color: var(--chart-5, var(--accent));
+}
+
+:where(.ui-legend__swatch).ui-legend__swatch--6 {
+  --chart-color: var(--chart-6, var(--accent));
+}
+
+:where(.ui-legend__swatch).ui-legend__swatch--7 {
+  --chart-color: var(--chart-7, var(--accent));
+}
+
+:where(.ui-legend__swatch).ui-legend__swatch--8 {
+  --chart-color: var(--chart-8, var(--accent));
+}
+
 /* Continuous colour ramp. Author supplies the min/mid/max tick *text*; the
    track interpolates the sequential ramp in OKLCH (a single perceptual hue,
    so no banding and no muddy midpoint). `--diverging` swaps in the 7-stop

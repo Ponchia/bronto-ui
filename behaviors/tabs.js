@@ -128,10 +128,13 @@ export function initTabs({ root } = {}) {
     const onKey = (e) => {
       const i = tabs.indexOf(closestSafe(e.target, '.ui-tab'));
       if (i < 0) return;
+      const orientation =
+        list?.getAttribute('aria-orientation') === 'vertical' ? 'vertical' : 'horizontal';
+      const nextKey = orientation === 'vertical' ? 'ArrowDown' : 'ArrowRight';
+      const prevKey = orientation === 'vertical' ? 'ArrowUp' : 'ArrowLeft';
       let n = i;
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') n = (i + 1) % tabs.length;
-      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp')
-        n = (i - 1 + tabs.length) % tabs.length;
+      if (e.key === nextKey) n = (i + 1) % tabs.length;
+      else if (e.key === prevKey) n = (i - 1 + tabs.length) % tabs.length;
       else if (e.key === 'Home') n = 0;
       else if (e.key === 'End') n = tabs.length - 1;
       else return;
