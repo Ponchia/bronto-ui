@@ -70,7 +70,8 @@ export function initSources({ root } = {}) {
     const targetFor = (ref) => {
       const id = sourceId(ref);
       if (!id) return null;
-      return byIdInHost(island, id);
+      const source = byIdInHost(island, id);
+      return source && island.contains(source) ? source : null;
     };
 
     const seed = () => {

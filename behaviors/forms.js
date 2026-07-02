@@ -145,36 +145,46 @@ function textOf(el) {
   return el?.textContent?.replace(/\s+/g, ' ').trim() || '';
 }
 
-function controlLabel(control) {
+function fieldsetLegend(control, field) {
+  return (
+    textOf(field?.querySelector('legend')) ||
+    textOf(control.closest('fieldset')?.querySelector('legend'))
+  );
+}
+
+function labelledbyText(control) {
   const doc = control.ownerDocument || document;
-  const labelledby = (control.getAttribute('aria-labelledby') || '')
+  return (control.getAttribute('aria-labelledby') || '')
     .split(/\s+/)
     .map((id) => textOf(doc.getElementById(id)))
     .filter(Boolean)
     .join(' ');
-  if (labelledby) return labelledby;
+}
 
-  const ariaLabel = control.getAttribute('aria-label')?.trim();
-  if (ariaLabel) return ariaLabel;
-
-  const labels = control.labels
+function labelsText(control) {
+  return control.labels
     ? [...control.labels]
         .map((label) => textOf(label))
         .filter(Boolean)
         .join(' ')
     : '';
-  if (labels) return labels;
+}
 
+function controlLabel(control) {
   const field = control.closest('.ui-field');
-  const fieldLabel = textOf(field?.querySelector('label, .ui-label'));
-  if (fieldLabel) return fieldLabel;
-
-  const legend =
-    textOf(field?.querySelector('legend')) ||
-    textOf(control.closest('fieldset')?.querySelector('legend'));
-  if (legend) return legend;
-
-  return (control.getAttribute('name') || control.name || '').trim();
+  // A radio's accessible name is its group legend when present.
+  if (control.type === 'radio') {
+    const groupLegend = fieldsetLegend(control, field);
+    if (groupLegend) return groupLegend;
+  }
+  return (
+    labelledbyText(control) ||
+    control.getAttribute('aria-label')?.trim() ||
+    labelsText(control) ||
+    textOf(field?.querySelector('label, .ui-label')) ||
+    fieldsetLegend(control, field) ||
+    (control.getAttribute('name') || control.name || '').trim()
+  );
 }
 
 function summaryItem(control) {
@@ -193,6 +203,19 @@ function summaryItem(control) {
   return li;
 }
 
+function summaryControls(form, invalid) {
+  const radioNames = new Set();
+  const controls = [];
+  for (const control of invalid) {
+    if (control.form === form && control.type === 'radio' && control.name) {
+      if (radioNames.has(control.name)) continue;
+      radioNames.add(control.name);
+    }
+    controls.push(control);
+  }
+  return controls;
+}
+
 function refreshSummary(form, invalid, state) {
   const summary = form.querySelector('[data-bronto-error-summary]');
   if (!summary) return;
@@ -207,7 +230,7 @@ function refreshSummary(form, invalid, state) {
   title.textContent = 'There is a problem';
   const list = document.createElement('ul');
   list.className = 'ui-error-summary__list';
-  list.append(...invalid.map(summaryItem));
+  list.append(...summaryControls(form, invalid).map(summaryItem));
   summary.replaceChildren(title, list);
   summary.setAttribute('role', 'alert');
   summary.tabIndex = -1;

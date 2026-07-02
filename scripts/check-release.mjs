@@ -37,8 +37,9 @@ const prerelease = version.includes('-');
 const target = prerelease ? version.split('-')[0] : version;
 const headings = [...changelog.matchAll(/^##\s+(.+)$/gm)].map((m) => m[1].trim());
 
-// A heading "owns" the version if the (base) version string appears in it.
-const owning = headings.filter((h) => h.includes(target));
+// A heading owns the version only when the target appears as a complete SemVer token.
+const targetHeadingPattern = semverTokenPattern(target);
+const owning = headings.filter((h) => targetHeadingPattern.test(h));
 
 if (owning.length === 0) {
   errors.push(
@@ -65,6 +66,10 @@ if (owning.length === 0) {
 
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function semverTokenPattern(value) {
+  return new RegExp(`(^|[^0-9A-Za-z.+-])${escapeRegExp(value)}($|[^0-9A-Za-z.+-])`);
 }
 
 function jobBlock(name) {

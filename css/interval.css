@@ -45,9 +45,9 @@
   background: color-mix(in srgb, var(--accent) 26%, transparent);
   border: 1px solid color-mix(in srgb, var(--accent) 58%, var(--line));
   border-radius: var(--radius-pill);
-  inline-size: max(2px, calc((var(--hi) - var(--lo)) * 100%));
+  inline-size: max(2px, calc((max(var(--lo), var(--hi)) - min(var(--lo), var(--hi))) * 100%));
   inset-block: 18%;
-  inset-inline-start: calc(var(--lo) * 100%);
+  inset-inline-start: calc(min(var(--lo), var(--hi)) * 100%);
   position: absolute;
 }
 

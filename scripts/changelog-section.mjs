@@ -21,11 +21,13 @@ const raw = (process.argv[2] || '').replace(/^v/, '');
 const base = raw.split('-')[0]; // prerelease → base version's section
 const changelog = readFileSync(resolve(root, 'CHANGELOG.md'), 'utf8');
 const lines = changelog.split('\n');
+const baseHeadingPattern = base ? semverTokenPattern(base) : null;
 
-// Find the `## …<base>…` heading, then capture until the next `## ` heading.
+// Find the heading whose SemVer token exactly matches `base`, then capture until
+// the next `## ` heading.
 let start = -1;
 for (let i = 0; i < lines.length; i++) {
-  if (/^##\s/.test(lines[i]) && base && lines[i].includes(base)) {
+  if (/^##\s/.test(lines[i]) && baseHeadingPattern?.test(lines[i])) {
     start = i;
     break;
   }
@@ -53,3 +55,11 @@ const body = lines
   .join('\n')
   .trim();
 process.stdout.write(`${body}\n`);
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function semverTokenPattern(value) {
+  return new RegExp(`(^|[^0-9A-Za-z.+-])${escapeRegExp(value)}($|[^0-9A-Za-z.+-])`);
+}

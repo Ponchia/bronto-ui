@@ -94,6 +94,10 @@ export function initDialog({ root } = {}) {
     return () => {
       doc.removeEventListener('click', onClick);
       for (const [dlg, restoreFocus] of focusRestorers) {
+        // Only pull focus back to the opener when it is currently INSIDE this
+        // dialog — closing would otherwise strand it on <body>. If the app has
+        // already moved focus elsewhere, leave it where it is.
+        const focusInside = dlg.contains(doc.activeElement);
         dlg.removeEventListener('close', restoreFocus);
         if (dlg.open) {
           try {
@@ -102,6 +106,7 @@ export function initDialog({ root } = {}) {
             /* already closed */
           }
         }
+        if (focusInside) restoreFocus();
       }
       focusRestorers.clear();
       managedDialogs.clear();

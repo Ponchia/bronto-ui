@@ -69,7 +69,7 @@
 .ui-bullet__measure {
   background: var(--text);
   border-radius: var(--radius-sm);
-  inline-size: max(2px, calc(var(--v, 0) * 100%));
+  inline-size: max(calc(sign(var(--v, 1)) * 2px), calc(var(--v, 0) * 100%));
   inset-block: 30%;
   inset-inline-start: 0;
   position: absolute;
