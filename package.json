@@ -119,6 +119,8 @@
     "check:format": "prettier --check .",
     "size:report": "node scripts/size-report.mjs",
     "report:pdf": "node scripts/render-pdf.mjs",
+    "audit:selectors": "node scripts/audit-selectors.mjs",
+    "audit:behavior-exports": "node scripts/audit-behavior-exports.mjs",
     "release:prep": "node scripts/release-prep.mjs",
     "emit:theme": "node scripts/emit-theme.mjs",
     "emit:theme:check": "node scripts/emit-theme.mjs --check",

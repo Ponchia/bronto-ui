@@ -44,11 +44,13 @@ npm run test:examples:visual
 and `e2e` green and the branch up to date. Branches auto-delete on
 merge.
 
-New to the repo? **[docs/architecture.md → Repository layout](docs/architecture.md#repository-layout)**
-classifies every top-level directory — which are hand-authored source, which
-are **generated** (don't edit; a gate will revert you), and which are
-**path-frozen published subpaths** (don't move; the path is the public import
-specifier).
+New to the repo? Start with **[docs/repository-map.md](docs/repository-map.md)**
+for edit points and regeneration targets, then use
+**[docs/adding-a-primitive.md](docs/adding-a-primitive.md)** before adding public
+surface. **[docs/architecture.md → Repository layout](docs/architecture.md#repository-layout)**
+has the deeper layout rationale, including which paths are **generated** (don't
+edit; a gate will revert you) and which are **path-frozen published subpaths**
+(don't move; the path is the public import specifier).
 
 ## Conventions
 
