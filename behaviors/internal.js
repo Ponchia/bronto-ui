@@ -80,11 +80,13 @@ export function bindOnce(target, key, add) {
 
 export function byIdInHost(host, id) {
   if (!id) return null;
-  if (host === document) return document.getElementById(id);
+  const doc = host.nodeType === 9 ? host : host.ownerDocument;
+  if (host === doc) return doc.getElementById(id);
   if (host.id === id) return host;
   return (
     Array.from(host.querySelectorAll?.('[id]') || []).find((el) => el.id === id) ||
-    document.getElementById(id)
+    doc?.getElementById(id) ||
+    null
   );
 }
 

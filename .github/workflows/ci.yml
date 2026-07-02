@@ -128,18 +128,43 @@ jobs:
       cross_browser: ${{ github.event_name == 'workflow_dispatch' }}
       visual_smoke: ${{ github.event_name == 'workflow_dispatch' }}
 
-  # chromium-only on PRs for fast feedback. Pushes to main run the full
-  # firefox/webkit pass too when the change touches an engine-sensitive
-  # surface (css/dist/behaviors/fonts/tokens/e2e) — cross-engine-only-at-
-  # tag-time is how a deterministic WebKit defect merged green and then
-  # burned two release attempts (v0.6.1/v0.6.2). Manual workflow_dispatch
+  # Chromium-only for cheap changes. Risky PRs and pushes to main run the
+  # full firefox/webkit pass too when the change touches an engine-sensitive
+  # surface (css/dist/behaviors/fonts/tokens/e2e/docs app) — cross-engine-
+  # only-at-tag-time is how a deterministic WebKit defect merged green and
+  # then burned two release attempts (v0.6.1/v0.6.2). Manual workflow_dispatch
   # always runs the cross-engine pass as the any-branch escape hatch.
   e2e:
     needs: changes
     if: needs.changes.outputs.heavy == 'true'
     uses: ./.github/workflows/e2e.yml
     with:
-      cross_engine: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && needs.changes.outputs.engine_sensitive == 'true') }}
+      cross_engine: ${{ github.event_name == 'workflow_dispatch' || ((github.event_name == 'pull_request' || github.event_name == 'push') && needs.changes.outputs.engine_sensitive == 'true') }}
+
+  sast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Install Semgrep
+        run: python3 -m pip install --user --disable-pip-version-check 'semgrep==1.166.0'
+
+      # Advisory lightweight SAST — NOT yet a required gate. Semgrep respects
+      # .semgrepignore by default. `p/default` currently flags pre-existing,
+      # intentional non-literal-RegExp patterns in dev scripts (e.g.
+      # scripts/lib/ownership-proof.mjs, scripts/check-schemas.mjs) that are
+      # not user-input-facing. Triage / suppress those, then promote to
+      # required by removing `continue-on-error` and adding `sast` back to the
+      # ci-gate `needs`.
+      - name: Run Semgrep SAST
+        continue-on-error: true
+        run: |
+          "$HOME/.local/bin/semgrep" scan \
+            --config p/default \
+            --error \
+            --metrics=off \
+            .
 
   # Single aggregating gate — the ONLY required status check on `main`.
   # Requiring individual matrix legs by name (`examples (qwik-vite)` …) is

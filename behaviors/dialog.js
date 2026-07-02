@@ -22,7 +22,9 @@ export function initDialog({ root } = {}) {
   if (!hasDom()) return noop;
   const host = resolveHost(root);
   if (!host) return noop;
-  const managedDialogs = new WeakSet();
+  const doc = host.nodeType === 9 ? host : host.ownerDocument;
+  if (!doc) return noop;
+  const managedDialogs = new Set();
   const focusRestorers = new Map();
   const canManageDialog = (dlg, origin) => host.contains(origin) || managedDialogs.has(dlg);
 
@@ -33,9 +35,11 @@ export function initDialog({ root } = {}) {
     if (previous) {
       dlg.removeEventListener('close', previous);
       focusRestorers.delete(dlg);
+      managedDialogs.delete(dlg);
     }
     const restoreFocus = () => {
       focusRestorers.delete(dlg);
+      managedDialogs.delete(dlg);
       if (opener.isConnected && typeof opener.focus === 'function') opener.focus();
     };
     try {
@@ -86,13 +90,21 @@ export function initDialog({ root } = {}) {
     if (lightDismiss(target)) e.preventDefault();
   };
   return bindOnce(host, 'dialog', () => {
-    document.addEventListener('click', onClick);
+    doc.addEventListener('click', onClick);
     return () => {
-      document.removeEventListener('click', onClick);
+      doc.removeEventListener('click', onClick);
       for (const [dlg, restoreFocus] of focusRestorers) {
         dlg.removeEventListener('close', restoreFocus);
+        if (dlg.open) {
+          try {
+            dlg.close();
+          } catch {
+            /* already closed */
+          }
+        }
       }
       focusRestorers.clear();
+      managedDialogs.clear();
     };
   });
 }

@@ -28,10 +28,10 @@ const rawKb = Math.round(bundleSize.raw / 1024);
 const gzipKb = Math.round(bundleSize.gzip / 1024);
 
 const readme = read('README.md');
-const expectedBadge = `dist-~${rawKb}kB%20%2F%20~${gzipKb}kB%20gzip`;
+const expectedBadge = `default%20CSS-~${rawKb}kB%20%2F%20~${gzipKb}kB%20gzip`;
 const expectedSizeText = `(~${rawKb} kB raw / ~${gzipKb} kB gzip)`;
 if (!readme.includes(expectedBadge)) {
-  errors.push(`README dist badge must advertise ~${rawKb}kB / ~${gzipKb}kB gzip`);
+  errors.push(`README default-CSS badge must advertise ~${rawKb}kB / ~${gzipKb}kB gzip`);
 }
 if (!readme.includes(expectedSizeText)) {
   errors.push(`README quick-start size text must say ${expectedSizeText}`);

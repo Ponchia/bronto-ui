@@ -97,8 +97,9 @@ function resolveOpts(opts) {
 /** Run a delegated behavior for the component's lifetime (init on mount, its
  *  returned cleanup on unmount). The behavior is run once; `opts` resolves
  *  on mount so refs are usable for scoped roots.
- *  @param {(opts?: DelegateOpts) => Cleanup | void} init
- *  @param {BrontoBindingOptsResolver} [opts]
+ *  @template {DelegateOpts} [T=DelegateOpts]
+ *  @param {(opts?: T) => Cleanup | void} init
+ *  @param {BrontoBindingOptsResolver<T>} [opts]
  *  @returns {void} */
 export function useBrontoBehavior(init, opts) {
   useEffect(() => init(resolveOpts(opts)), []); // eslint-disable-line react-hooks/exhaustive-deps -- intentional delegated once on mount

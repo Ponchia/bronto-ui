@@ -184,6 +184,13 @@
   z-index: var(--z-raised);
 }
 
+@media (prefers-reduced-transparency: reduce) {
+  .ui-app-topbar {
+    backdrop-filter: none;
+    background: var(--surface-1);
+  }
+}
+
 .ui-app-topbar__title {
   color: var(--text);
   font-family: var(--display);

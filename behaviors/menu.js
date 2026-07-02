@@ -18,7 +18,8 @@ export function initMenu({ root } = {}) {
   if (!hasDom()) return noop;
   const host = resolveHost(root);
   if (!host) return noop;
-  const doc = host.nodeType === 9 ? host : host.ownerDocument || document;
+  const doc = host.nodeType === 9 ? host : host.ownerDocument;
+  if (!doc) return noop;
   const openMenus = () => collectHosts(host, '[data-bronto-menu][open]');
   const shut = (menu) => {
     if (!menu || !menu.open) return;

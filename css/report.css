@@ -665,6 +665,7 @@
    `.ui-report__figure` with a `.ui-report__caption` + a `.ui-legend` key. */
 
 .ui-print-only {
+  /* Intentional !important: keep print-only utilities hidden from screen styles. */
   display: none !important;
 }
 
@@ -758,10 +759,12 @@
   }
 
   .ui-print-only {
+    /* Intentional !important: this must override the screen-only utility value. */
     display: var(--print-display, block) !important;
   }
 
   .ui-screen-only {
+    /* Intentional !important: print output must not leak screen-only chrome. */
     display: none !important;
   }
 

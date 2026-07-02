@@ -97,9 +97,10 @@ function resolveOpts(opts) {
 }
 
 /** Run a delegated behavior for the component's lifetime (init on mount, its
- *  returned cleanup on dispose). Options resolve on mount, after refs exist.
- * @param {(opts?: DelegateOpts) => Cleanup | void} init
- * @param {BrontoBindingOptsResolver} [opts]
+ * returned cleanup on dispose). Options resolve on mount, after refs exist.
+ * @template {DelegateOpts} [T=DelegateOpts]
+ * @param {(opts?: T) => Cleanup | void} init
+ * @param {BrontoBindingOptsResolver<T>} [opts]
  * @returns {void}
  */
 export function useBrontoBehavior(init, opts) {

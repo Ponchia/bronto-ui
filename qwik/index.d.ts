@@ -2,10 +2,11 @@
  *  below — they inline a statically-imported behavior so the optimizer can
  *  serialize the task. Passing a runtime function here is only safe when it
  *  is itself optimizer-visible (a module import).
- *  @param {(opts?: DelegateOpts) => Cleanup | void} init
- *  @param {BrontoBindingOptsResolver} [opts]
+ *  @template {DelegateOpts} [T=DelegateOpts]
+ *  @param {(opts?: T) => Cleanup | void} init
+ *  @param {BrontoBindingOptsResolver<T>} [opts]
  *  @returns {void} */
-export function useBrontoBehavior(init: (opts?: DelegateOpts) => Cleanup | void, opts?: BrontoBindingOptsResolver): void;
+export function useBrontoBehavior<T extends DelegateOpts = import("../behaviors/internal.js").DelegateOpts>(init: (opts?: T) => Cleanup | void, opts?: BrontoBindingOptsResolver<T>): void;
 export function useThemeToggle(opts?: BrontoBindingOptsResolver<ThemeStorageOpts & DelegateOpts>): void;
 export function useDismissible(opts?: BrontoBindingOptsResolver): void;
 export function useDisabledGuard(opts?: BrontoBindingOptsResolver): void;

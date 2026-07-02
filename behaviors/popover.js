@@ -68,7 +68,9 @@ export function initPopover({ root } = {}) {
   if (!hasDom()) return noop;
   const host = resolveHost(root);
   if (!host) return noop;
-  const view = document.defaultView;
+  const doc = host.nodeType === 9 ? host : host.ownerDocument;
+  if (!doc) return noop;
+  const view = doc.defaultView;
   const GAP = 8;
   let openPanel = null;
   let openTrigger = null;
@@ -127,7 +129,7 @@ export function initPopover({ root } = {}) {
     // Only steal focus back to the trigger when focus is still inside the panel
     // (Escape / programmatic re-toggle). An outside-click leaves focus where the
     // click landed — deliberate intent to move on, per the doc contract.
-    const focusWasInside = panel.contains(document.activeElement);
+    const focusWasInside = panel.contains(doc.activeElement);
     openPanel = openTrigger = null;
     if (panel.hasAttribute('popover') && typeof panel.hidePopover === 'function') {
       try {
@@ -235,8 +237,8 @@ export function initPopover({ root } = {}) {
 
   return bindOnce(host, 'popover', () => {
     seed();
-    document.addEventListener('click', onClick);
-    document.addEventListener('keydown', onKey);
+    doc.addEventListener('click', onClick);
+    doc.addEventListener('keydown', onKey);
     view?.addEventListener('scroll', onReflow, true);
     view?.addEventListener('resize', onReflow);
     return () => {
@@ -250,8 +252,8 @@ export function initPopover({ root } = {}) {
         restoreStyle(panel, state.style);
       }
       panelStates.clear();
-      document.removeEventListener('click', onClick);
-      document.removeEventListener('keydown', onKey);
+      doc.removeEventListener('click', onClick);
+      doc.removeEventListener('keydown', onKey);
       view?.removeEventListener('scroll', onReflow, true);
       view?.removeEventListener('resize', onReflow);
     };

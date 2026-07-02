@@ -116,8 +116,9 @@ function start(init, opts, ctx) {
  *  below — they inline a statically-imported behavior so the optimizer can
  *  serialize the task. Passing a runtime function here is only safe when it
  *  is itself optimizer-visible (a module import).
- *  @param {(opts?: DelegateOpts) => Cleanup | void} init
- *  @param {BrontoBindingOptsResolver} [opts]
+ *  @template {DelegateOpts} [T=DelegateOpts]
+ *  @param {(opts?: T) => Cleanup | void} init
+ *  @param {BrontoBindingOptsResolver<T>} [opts]
  *  @returns {void} */
 export function useBrontoBehavior(init, opts) {
   // eslint-disable-next-line qwik/no-use-visible-task -- intentional delegated DOM glue + cleanup
