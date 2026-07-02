@@ -140,3 +140,9 @@ CSS only — there is no JS yet. Auto-updating elapsed time ("2m ago"), live
 progress text, polling, cancellation, retry, and conflict-resolution affordances
 are the host's job. A small optional behavior may come later if a real consumer
 needs it.
+
+## Related
+
+Use the [reporting toolbox](./reporting.md#the-analytical-toolbox-in-a-report)
+to place `state.css` in report surfaces, and use
+[reference.md](./reference.md) for the generated class catalog.

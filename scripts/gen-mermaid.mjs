@@ -115,7 +115,7 @@ export function themeVars(theme) {
   for (const [k, ref] of Object.entries(MAP)) out[k] = resolveRef(ref, theme);
 
   // Categorical palette → the chart-like diagram series (pie / git / journey).
-  // Series 1 is the live accent; the rest is the CVD-safe charts palette.
+  // Series 1 is the resolved theme accent; the rest is the CVD-safe charts palette.
   const cat = charts[theme].categorical.map((v) => resolveRef(v, theme));
   for (let i = 1; i <= 12; i++) out[`pie${i}`] = cat[(i - 1) % cat.length];
   for (let i = 0; i <= 7; i++) out[`git${i}`] = cat[i % cat.length];

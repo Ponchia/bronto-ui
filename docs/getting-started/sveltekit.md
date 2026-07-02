@@ -35,7 +35,17 @@ there, not in a component:
 </script>
 ```
 
-## 3. Behaviors as Svelte actions
+## 3. Minimal styled markup
+
+Start with the classes and attributes the CSS/behavior contracts expect:
+
+```svelte
+<main class="ui-center ui-stack">
+  <button class="ui-button" data-bronto-theme-toggle>Toggle theme</button>
+</main>
+```
+
+## 4. Behaviors as Svelte actions
 
 The optional `@ponchia/ui/svelte` entrypoint exports Svelte actions over the
 same vanilla behavior layer. Attach the action to the subtree that owns the
@@ -46,7 +56,7 @@ markup:
   import { themeToggle, dialog } from '@ponchia/ui/svelte';
 </script>
 
-<main use:themeToggle use:dialog>
+<main class="ui-center ui-stack" use:themeToggle use:dialog>
   <button class="ui-button" data-bronto-theme-toggle>Toggle theme</button>
 </main>
 ```
@@ -64,7 +74,7 @@ The action surface maps one-for-one to delegated behaviors: `themeToggle`,
 `useBrontoBehavior` action. `toast()` / `useToast()` expose the imperative
 toast helper.
 
-## 4. Behaviors in `onMount` (with cleanup)
+## 5. Behaviors in `onMount` (with cleanup)
 
 `init*` returns a cleanup; SvelteKit re-runs components on client-side
 navigation, so always return it from `onMount`:

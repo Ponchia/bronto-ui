@@ -69,3 +69,8 @@ when the same stage appears in a dashboard, doc page, or generated artifact.
   rows, annotation text, and accessibility labels.
 - A figure should always have a `<figcaption>`. Data-bearing SVGs still need
   `<title>` and `<desc>`.
+
+## Related
+
+- [Usage](usage.md#static-reports) shows report figure composition.
+- [Reference](reference.md) lists the generated figure and report classes.

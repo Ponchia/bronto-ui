@@ -60,6 +60,8 @@ you change CSS `--accent` later.
 > When in doubt, re-brand at `:root`/`[data-theme]` — that path re-derives
 > the whole family for you.
 
+### Re-brand obligations
+
 > **Two contrast obligations when you change `--accent`:**
 >
 > 1. **Buttons** — pick an `--accent` with ≥ 4.5:1 against `--button-text`

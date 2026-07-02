@@ -8,6 +8,10 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 > New to the repo? Start with **[architecture.md → Repository layout](./architecture.md#repository-layout)**
 > for what each top-level directory is and which files are generated.
 
+> Upgrading? Start with [`MIGRATIONS.json`](../MIGRATIONS.json) for
+> machine-readable rename rules, then use [`migrations/`](./migrations/) for
+> version-by-version notes.
+
 ## Start here
 
 - **App or service shell** — start with the README quick start, then
@@ -16,21 +20,19 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
   [frontier-primitives.md](./frontier-primitives.md),
   [reporting.md](./reporting.md), [sources.md](./sources.md), and
   [generated.md](./generated.md).
-- **Package maintenance or agent integration** — start with
-  [architecture.md](./architecture.md), [stability.md](./stability.md), and
-  `../llms.txt`.
 
-## Contract & governance
+## Getting started (frameworks)
 
-- [architecture.md](./architecture.md) — the layered architecture, the repository layout, drift control, and release gating.
-- [stability.md](./stability.md) — what is contractual (and what is a convenience preset) across versions.
-- [package-contract.md](./package-contract.md) — the generated package manifest matrix: every export, shipped path, and artifact provenance row. _(generated — do not hand-edit)_
+- [getting-started/vanilla.md](./getting-started/vanilla.md) · [getting-started/react-solid.md](./getting-started/react-solid.md) · [getting-started/astro.md](./getting-started/astro.md) · [getting-started/sveltekit.md](./getting-started/sveltekit.md) · [getting-started/vue.md](./getting-started/vue.md)
+- [integration.md](./integration.md) — framework integration overview.
+- [interop/tailwind.md](./interop/tailwind.md) — Tailwind interop recipe.
+- [interop/react-flow.md](./interop/react-flow.md) — React Flow / Xyflow canvas interop recipe.
+
+## Usage & concepts
+
 - [usage.md](./usage.md) — the decision guide: which primitive to reach for when.
-- [reference.md](./reference.md) — the generated catalog of every `.ui-*` class and token. _(generated — do not hand-edit)_
-- [release.md](./release.md) — the release runbook.
-- [repository-map.md](./repository-map.md) — the top-level directory map: what each directory owns, which are authored vs generated, and what to regenerate after editing each.
-- [adding-a-primitive.md](./adding-a-primitive.md) — the end-to-end playbook for adding a new primitive: layer choice, CSS/classes/tokens, exports, the docs/demo/e2e matrices, regeneration, and gates.
 - [frontier-primitives.md](./frontier-primitives.md) — the design line for new analytical/communication primitives.
+- [reference.md](./reference.md) — the generated catalog of every `.ui-*` class and token. _(generated — do not hand-edit)_
 
 ## Theming & color
 
@@ -74,12 +76,17 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 - [crosshair.md](./crosshair.md) — plot ruler + pinned readout.
 - [selection.md](./selection.md) — cross-cutting selection-emphasis vocabulary.
 
-## Getting started (frameworks)
+## Contract & governance
 
-- [getting-started/vanilla.md](./getting-started/vanilla.md) · [getting-started/react-solid.md](./getting-started/react-solid.md) · [getting-started/astro.md](./getting-started/astro.md) · [getting-started/sveltekit.md](./getting-started/sveltekit.md) · [getting-started/vue.md](./getting-started/vue.md)
-- [integration.md](./integration.md) — framework integration overview.
-- [interop/tailwind.md](./interop/tailwind.md) — Tailwind interop recipe.
-- [interop/react-flow.md](./interop/react-flow.md) — React Flow / Xyflow canvas interop recipe.
+- **Package maintenance or agent integration** — start with
+  [architecture.md](./architecture.md), [stability.md](./stability.md), and
+  `../llms.txt`.
+- [architecture.md](./architecture.md) — the layered architecture, the repository layout, drift control, and release gating.
+- [stability.md](./stability.md) — what is contractual (and what is a convenience preset) across versions.
+- [package-contract.md](./package-contract.md) — the generated package manifest matrix: every export, shipped path, and artifact provenance row. _(generated — do not hand-edit)_
+- [release.md](./release.md) — the release runbook.
+- [repository-map.md](./repository-map.md) — the top-level directory map: what each directory owns, which are authored vs generated, and what to regenerate after editing each.
+- [adding-a-primitive.md](./adding-a-primitive.md) — the end-to-end playbook for adding a new primitive: layer choice, CSS/classes/tokens, exports, the docs/demo/e2e matrices, regeneration, and gates.
 
 ## Architecture Decision Records
 

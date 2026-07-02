@@ -71,7 +71,7 @@ export const CHROME = {
   // The plotting frame.
   'view.stroke': VIEW_STROKE,
 
-  // Default mark — series 1 is the live brand accent (re-skins for free).
+  // Default mark — series 1 is the resolved theme accent.
   'mark.color': MARK_COLOR,
   // Reference rules / annotations stay neutral, never the accent.
   'rule.color': RULE_COLOR,
@@ -220,10 +220,11 @@ export async function buildVegaJs() {
     `export function brontoVegaConfig(theme = 'light') {\n` +
     `  return vega[theme === 'dark' ? 'dark' : 'light'];\n` +
     `}\n\n` +
-    `/** The live accent hex for a theme — series 1 of \`range.category\`, the one\n` +
+    `/** The resolved accent hex for a theme — series 1 of \`range.category\`, the one\n` +
     ` *  chromatic mark. Use it to spend the accent on a single emphasised mark in\n` +
     ` *  a multi-series chart (a Vega-Lite conditional to this colour) without\n` +
-    ` *  reverse-engineering the palette array index. Re-skins with \`--accent\`. */\n` +
+    ` *  reverse-engineering the palette array index. Regenerate after changing\n` +
+    ` *  \`--accent\`; already-rendered charts do not live-reskin. */\n` +
     `export function brontoVegaAccent(theme = 'light') {\n` +
     `  return vega[theme === 'dark' ? 'dark' : 'light'].range.category[0];\n` +
     `}\n\n` +
@@ -264,7 +265,7 @@ export declare const vega: { light: VegaConfig; dark: VegaConfig };
  *  back to light. Spread into a spec's \`config\`, or pass to vega-embed. */
 export declare function brontoVegaConfig(theme?: 'light' | 'dark'): VegaConfig;
 
-/** The live accent hex (series 1 of \`range.category\`) for a theme — to spend the
+/** The resolved accent hex (series 1 of \`range.category\`) for a theme — to spend the
  *  accent on one emphasised mark without hard-coding the palette index. */
 export declare function brontoVegaAccent(theme?: 'light' | 'dark'): string;
 

@@ -49,7 +49,7 @@ caption. Either way the **reading lives in text**, never in colour alone.
 
 | Class                        | Role                                                          |
 | ---------------------------- | ------------------------------------------------------------ |
-| `.ui-bullet`                 | The track + qualitative range bands (`--b1` / `--b2`).       |
+| `.ui-bullet`                 | The track + qualitative range bands (`--band-lo` / `--band-hi`). |
 | `.ui-bullet__measure`        | The measure bar; length is `--v` (0..1).                     |
 | `.ui-bullet__measure--accent`| Paint the measure in the rationed accent (emphasis).         |
 | `.ui-bullet__measure--pos`   | Paint the measure in the success tone.                       |
@@ -76,3 +76,8 @@ caption. Either way the **reading lives in text**, never in colour alone.
   economy.
 - Relationship to `ui-meter` (report.css): a meter is a labelled progress reading;
   reach for a bullet when you also need a target and qualitative bands.
+
+## Related
+
+- [Usage](usage.md#meter-vs-progress) explains when to choose measured bars.
+- [Reference](reference.md) lists the generated bullet class contract.
