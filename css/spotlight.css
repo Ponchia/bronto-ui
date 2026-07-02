@@ -11,36 +11,6 @@
    (`pointer-events: none`) — a visual highlight, not a modal trap.
    ========================================================================== */
 
-@property --spot-x {
-  syntax: '<length-percentage>';
-  inherits: true;
-  initial-value: 50%;
-}
-
-@property --spot-y {
-  syntax: '<length-percentage>';
-  inherits: true;
-  initial-value: 50%;
-}
-
-@property --spot-w {
-  syntax: '<length-percentage>';
-  inherits: true;
-  initial-value: 0;
-}
-
-@property --spot-h {
-  syntax: '<length-percentage>';
-  inherits: true;
-  initial-value: 0;
-}
-
-@property --spot-pad {
-  syntax: '<length>';
-  inherits: true;
-  initial-value: 8px;
-}
-
 .ui-spotlight {
   --spot-x: 50%;
   --spot-y: 50%;

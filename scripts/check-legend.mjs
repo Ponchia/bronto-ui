@@ -8,8 +8,9 @@
  *     tokens/charts.js. A swatch can never key a colour the palette doesn't
  *     define (catches `--chart-9`, an off-by-one ramp stop, a typo).
  *  3. INDEX COVERAGE — there is exactly one `.ui-legend__swatch--N` index
- *     helper per categorical series, each mapped to its matching `--chart-N`.
- *     Grow the palette and this reminds you to grow (or shrink) the legend.
+ *     helper per categorical series, each mapped to its matching `--chart-N`
+ *     with an `--accent` fallback. Grow the palette and this reminds you to
+ *     grow (or shrink) the legend.
  *  4. TOKEN-ONLY COLOUR — a swatch colour is only ever set from a `--chart-*`
  *     token (never a raw hex/rgb), mirroring the colour-policy tier.
  *
@@ -64,7 +65,7 @@ for (const m of css.matchAll(/var\(\s*--(chart-[\w-]+)/g)) {
 // --- 3. Index coverage --------------------------------------------------------
 for (let n = 1; n <= CHART_CATEGORICAL; n++) {
   const re = new RegExp(
-    `\\.ui-legend__swatch--${n}\\s*\\{[^}]*--chart-color:\\s*var\\(--chart-${n}\\)`,
+    `\\.ui-legend__swatch--${n}\\s*\\{[^}]*--chart-color:\\s*var\\(\\s*--chart-${n}\\s*,\\s*var\\(\\s*--accent\\s*\\)\\s*\\)`,
   );
   if (!re.test(css))
     errors.push(`.ui-legend__swatch--${n} is missing or not mapped to var(--chart-${n})`);

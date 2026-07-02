@@ -52,6 +52,7 @@
 }
 
 .ui-figure__media {
+  block-size: auto;
   display: block;
   inline-size: 100%;
   max-inline-size: 100%;
@@ -60,6 +61,10 @@
 .ui-figure__stage > :is(canvas, img, picture, svg):not(.ui-figure__overlay) {
   display: block;
   max-inline-size: 100%;
+}
+
+.ui-figure__stage > :is(canvas, img, svg):not(.ui-figure__overlay) {
+  block-size: auto;
 }
 
 .ui-figure__overlay {
