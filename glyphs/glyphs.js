@@ -1396,14 +1396,18 @@ export function findGlyphs(query) {
 
 const TONE = { '#': 'hot', '*': 'accent' };
 
+function glyphRows(name) {
+  return Object.hasOwn(GLYPHS, name) ? GLYPHS[name] : undefined;
+}
+
 /** The raw bitmap rows for a glyph, or `undefined` if the name is unknown. */
 export function glyph(name) {
-  return GLYPHS[name];
+  return glyphRows(name);
 }
 
 /** GLYPH_SIZE² cell descriptors (row-major), or `[]` if the name is unknown. */
 export function glyphCells(name) {
-  const rows = GLYPHS[name];
+  const rows = glyphRows(name);
   if (!rows) return [];
   const cells = [];
   for (const row of rows) {
@@ -1425,7 +1429,7 @@ export function glyphCells(name) {
  * @returns {string}
  */
 export function glyphMask(name) {
-  const rows = GLYPHS[name];
+  const rows = glyphRows(name);
   return rows ? maskUrl(rows) : '';
 }
 
@@ -1446,13 +1450,63 @@ function esc(s) {
     .replace(/"/g, '&quot;');
 }
 
+const CSS_LENGTH_UNITS =
+  '(?:px|r?em|ch|ex|cap|ic|lh|rlh|vw|vh|vi|vb|vmin|vmax|' +
+  'svw|svh|svi|svb|svmin|svmax|lvw|lvh|lvi|lvb|lvmin|lvmax|' +
+  'dvw|dvh|dvi|dvb|dvmin|dvmax|cm|mm|q|in|pc|pt|%)';
+const CSS_NUMBER = '[-+]?(?:\\d*\\.\\d+|\\d+)';
+const CSS_LENGTH_RE = new RegExp(`^(?:0|${CSS_NUMBER}${CSS_LENGTH_UNITS})$`, 'i');
+const CSS_CALC_VALUE_RE = new RegExp(`^${CSS_NUMBER}(?:${CSS_LENGTH_UNITS})?`, 'i');
+
+function isCalcLength(expr) {
+  let rest = expr.trim();
+  let depth = 0;
+  let sawLength = false;
+  let expectValue = true;
+
+  while (rest) {
+    if (expectValue) {
+      if (rest[0] === '(') {
+        depth += 1;
+        rest = rest.slice(1).trim();
+        continue;
+      }
+      const token = rest.match(CSS_CALC_VALUE_RE)?.[0];
+      if (!token) return false;
+      if (CSS_LENGTH_RE.test(token)) sawLength = true;
+      rest = rest.slice(token.length).trim();
+      expectValue = false;
+      continue;
+    }
+
+    if (rest[0] === ')') {
+      depth -= 1;
+      if (depth < 0) return false;
+      rest = rest.slice(1).trim();
+      continue;
+    }
+
+    const op = rest.match(/^[+\-*/]/)?.[0];
+    if (!op) return false;
+    rest = rest.slice(op.length).trim();
+    expectValue = true;
+  }
+
+  if (!sawLength) return false;
+  if (expectValue) return false;
+  return depth === 0;
+}
+
 // `dot`, `gap`, and `size` land in an inline-CSS context (`style="…"`), where
 // HTML-escaping a `"` stops attribute breakout but a `;` would still open a
-// second CSS declaration (overlay/clickjacking, selector exfil). So restrict
-// them to length/calc syntax — digits, units, %, whitespace and `()+-*/.,` for
-// calc()/clamp()/var() — and drop anything else rather than emit it.
+// second CSS declaration. Accept only concrete CSS lengths or calc() expressions.
 function cssLen(v) {
-  return /^[\w.%+\-*/()\s,]+$/.test(v) ? v : '';
+  const value = String(v ?? '').trim();
+  if (CSS_LENGTH_RE.test(value)) return value;
+  if (value.toLowerCase().startsWith('calc(') && value.endsWith(')')) {
+    return isCalcLength(value.slice(5, -1)) ? value : '';
+  }
+  return '';
 }
 
 /**
@@ -1514,7 +1568,7 @@ function maskUrl(rows) {
  * Needs `@ponchia/ui/css` (the `.ui-icon` rule).
  */
 export function renderGlyph(name, options = {}) {
-  const rows = GLYPHS[name];
+  const rows = glyphRows(name);
   if (!rows) return '';
   const { grid = true, solid = false, anim, label, dot, gap, render, size } = options;
 

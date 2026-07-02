@@ -57,7 +57,15 @@
   cursor: pointer;
   display: flex;
   gap: 0.6rem;
+  min-inline-size: 0;
   padding: 0.5rem 0.6rem;
+}
+
+.ui-command__item > :not(.ui-command__shortcut, .ui-command__meta) {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* `display: flex` would otherwise beat the UA `[hidden]` rule, so a
@@ -74,11 +82,13 @@
 
 .ui-command__shortcut {
   color: var(--text-dim);
+  flex-shrink: 0;
   margin-inline-start: auto;
 }
 
 .ui-command__meta {
   color: var(--text-dim);
+  flex-shrink: 0;
   font-family: var(--mono);
   font-size: var(--text-2xs);
   margin-inline-start: auto;

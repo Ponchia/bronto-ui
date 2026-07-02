@@ -142,7 +142,11 @@ export function initConnectors({ root } = {}) {
     for (const svg of connectors) {
       const from = byIdInHost(host, svg.dataset.from);
       const to = byIdInHost(host, svg.dataset.to);
-      if (!from || !to) continue;
+      if (!from || !to) {
+        svg.querySelector('.ui-connector__path')?.remove();
+        svg.querySelector('.ui-connector__end')?.remove();
+        continue;
+      }
       const {
         d,
         to: end,

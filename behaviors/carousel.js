@@ -181,16 +181,35 @@ export function initCarousel({ root } = {}) {
     // While a button/keyboard nav is smooth-scrolling, the IntersectionObserver
     // would observe the intermediate slides crossing its threshold and re-fire
     // `bronto:change` for each — a feedback burst on a single Home→End jump.
-    // This flag makes the IO drive the index on *user* swipes only; a timeout
-    // (not the patchy `scrollend` event) releases it once the scroll settles.
+    // Instant/reduced-motion scrolls settle synchronously, so only smooth
+    // programmatic scrolls hold IO updates; scrollend releases early when present.
     let programmatic = false;
     let progTimer = null;
+    let clearScrollEnd = null;
+    const releaseProgrammatic = () => {
+      programmatic = false;
+      if (progTimer) clearTimeout(progTimer);
+      progTimer = null;
+      clearScrollEnd?.();
+      clearScrollEnd = null;
+    };
+    const shouldHoldProgrammatic = () => {
+      const view = viewport.ownerDocument?.defaultView;
+      if (view?.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return false;
+      return view?.getComputedStyle?.(viewport).scrollBehavior === 'smooth';
+    };
     const holdProgrammatic = () => {
+      if (!shouldHoldProgrammatic()) {
+        releaseProgrammatic();
+        return;
+      }
       programmatic = true;
       if (progTimer) clearTimeout(progTimer);
-      progTimer = setTimeout(() => {
-        programmatic = false;
-      }, 500);
+      clearScrollEnd?.();
+      const onScrollEnd = () => releaseProgrammatic();
+      viewport.addEventListener('scrollend', onScrollEnd, { once: true });
+      clearScrollEnd = () => viewport.removeEventListener('scrollend', onScrollEnd);
+      progTimer = setTimeout(releaseProgrammatic, 500);
       progTimer?.unref?.(); // don't keep a Node test process alive
     };
 
@@ -288,9 +307,7 @@ export function initCarousel({ root } = {}) {
         onClick,
         io,
         holdProgrammatic,
-        clearProgrammaticTimer: () => {
-          if (progTimer) clearTimeout(progTimer);
-        },
+        clearProgrammaticTimer: releaseProgrammatic,
       }),
     );
     cleanups.push(bound);

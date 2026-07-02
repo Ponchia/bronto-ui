@@ -425,8 +425,9 @@ html:has(.ui-modal.is-open) {
   }
 
   .ui-menu {
-    inset-inline: 0;
-    min-inline-size: 0;
+    inline-size: max-content;
+    max-inline-size: calc(100vw - (2 * var(--space-sm)));
+    min-inline-size: min(11rem, calc(100vw - (2 * var(--space-sm))));
   }
 
   /* Let the combobox shed its 14rem floor and span the viewport so the input
