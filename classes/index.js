@@ -706,47 +706,57 @@ export const cls = Object.freeze({
 /** classnames-style joiner: skips falsy, flattens nested arrays of any depth. */
 export function cx(...parts) {
   const out = [];
-  for (const p of parts.flat(Infinity)) if (p) out.push(p);
+  for (const p of parts.flat(Infinity)) if (p && typeof p !== 'boolean') out.push(p);
   return out.join(' ');
 }
 
 const j = (...p) => p.filter(Boolean).join(' ');
+const valueClass = (map, value) => (value == null || !Object.hasOwn(map, value) ? '' : map[value]);
 
 // Lifecycle state → canonical tone class.
 const stateTone = (state) =>
-  ({
-    saving: cls.stateSaving,
-    saved: cls.stateSaved,
-    queued: cls.stateQueued,
-    offline: cls.stateOffline,
-    stale: cls.stateStale,
-    conflict: cls.stateConflict,
-    error: cls.stateError,
-    locked: cls.stateLocked,
-    reviewed: cls.stateReviewed,
-    'needs-review': cls.stateNeedsReview,
-  })[state] || '';
+  valueClass(
+    {
+      saving: cls.stateSaving,
+      saved: cls.stateSaved,
+      queued: cls.stateQueued,
+      offline: cls.stateOffline,
+      stale: cls.stateStale,
+      conflict: cls.stateConflict,
+      error: cls.stateError,
+      locked: cls.stateLocked,
+      reviewed: cls.stateReviewed,
+      'needs-review': cls.stateNeedsReview,
+    },
+    state,
+  );
 
 const jobTone = (state) =>
-  ({
-    queued: cls.jobQueued,
-    running: cls.jobRunning,
-    blocked: cls.jobBlocked,
-    failed: cls.jobFailed,
-    complete: cls.jobComplete,
-  })[state] || '';
+  valueClass(
+    {
+      queued: cls.jobQueued,
+      running: cls.jobRunning,
+      blocked: cls.jobBlocked,
+      failed: cls.jobFailed,
+      complete: cls.jobComplete,
+    },
+    state,
+  );
 
 // Trust-state → tone class, shared by the source/citation/provenance recipes.
-// Object-literal lookup to match stateTone above (shorter, greppable, one idiom).
+// Own-property object-literal lookup to match stateTone above.
 const srcTone = (state) =>
-  ({
-    verified: cls.srcVerified,
-    unverified: cls.srcUnverified,
-    generated: cls.srcGenerated,
-    reviewed: cls.srcReviewed,
-    stale: cls.srcStale,
-    conflict: cls.srcConflict,
-  })[state] || '';
+  valueClass(
+    {
+      verified: cls.srcVerified,
+      unverified: cls.srcUnverified,
+      generated: cls.srcGenerated,
+      reviewed: cls.srcReviewed,
+      stale: cls.srcStale,
+      conflict: cls.srcConflict,
+    },
+    state,
+  );
 
 // Component tone → modifier class. Same object-literal idiom as srcTone/stateTone
 // while keeping modifier classes grep-friendly.
@@ -759,13 +769,13 @@ const srcTone = (state) =>
 // is fine and returns no modifier.
 const toneClass = (component, map, tone) => {
   if (tone == null) return '';
-  const hit = map[tone];
+  const hit = valueClass(map, tone);
   if (!hit && typeof console !== 'undefined') {
     console.warn(
       `[bronto] ui.${component}(): "${tone}" is not a ${component} tone (use one of: ${Object.keys(map).join(', ')}).`,
     );
   }
-  return hit || '';
+  return hit;
 };
 
 const badgeTone = (tone) =>
@@ -861,8 +871,6 @@ const claimStatus = (status) =>
     },
     status,
   );
-
-const valueClass = (map, value) => (value == null ? '' : map[value] || '');
 
 const annotationVariants = Object.freeze({
   label: cls.annotationLabelVariant,

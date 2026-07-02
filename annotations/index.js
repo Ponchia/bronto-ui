@@ -706,8 +706,11 @@ export function annotationParts(opts = {}) {
   let subject = '';
 
   if (opts.subject != null) {
-    const build = SUBJECT_BUILDERS[opts.subject.type];
-    if (!build) throw new TypeError('unsupported subject.type');
+    const subjectType = opts.subject.type;
+    if (!Object.hasOwn(SUBJECT_BUILDERS, subjectType)) {
+      throw new TypeError('unsupported subject.type');
+    }
+    const build = SUBJECT_BUILDERS[subjectType];
     subject = build(opts.subject);
   }
 

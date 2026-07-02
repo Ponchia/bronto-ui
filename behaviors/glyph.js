@@ -30,11 +30,62 @@ function rememberCleanup(el, cleanups, cleanup) {
   cleanups.push(wrapped);
 }
 
-// `dot`/`gap`/`size` land in inline CSS, so allow only length/calc syntax —
-// drop anything with a `;`/`{` that could open a second declaration (mirrors
-// glyphs.js cssLen). Used for the mask path's --icon-size.
+const CSS_LENGTH_UNITS =
+  '(?:px|r?em|ch|ex|cap|ic|lh|rlh|vw|vh|vi|vb|vmin|vmax|' +
+  'svw|svh|svi|svb|svmin|svmax|lvw|lvh|lvi|lvb|lvmin|lvmax|' +
+  'dvw|dvh|dvi|dvb|dvmin|dvmax|cm|mm|q|in|pc|pt|%)';
+const CSS_NUMBER = '[-+]?(?:\\d*\\.\\d+|\\d+)';
+const CSS_LENGTH_RE = new RegExp(`^(?:0|${CSS_NUMBER}${CSS_LENGTH_UNITS})$`, 'i');
+const CSS_CALC_VALUE_RE = new RegExp(`^${CSS_NUMBER}(?:${CSS_LENGTH_UNITS})?`, 'i');
+
+function isCalcLength(expr) {
+  let rest = expr.trim();
+  let depth = 0;
+  let sawLength = false;
+  let expectValue = true;
+
+  while (rest) {
+    if (expectValue) {
+      if (rest[0] === '(') {
+        depth += 1;
+        rest = rest.slice(1).trim();
+        continue;
+      }
+      const token = rest.match(CSS_CALC_VALUE_RE)?.[0];
+      if (!token) return false;
+      if (CSS_LENGTH_RE.test(token)) sawLength = true;
+      rest = rest.slice(token.length).trim();
+      expectValue = false;
+      continue;
+    }
+
+    if (rest[0] === ')') {
+      depth -= 1;
+      if (depth < 0) return false;
+      rest = rest.slice(1).trim();
+      continue;
+    }
+
+    const op = rest.match(/^[+\-*/]/)?.[0];
+    if (!op) return false;
+    rest = rest.slice(op.length).trim();
+    expectValue = true;
+  }
+
+  if (!sawLength) return false;
+  if (expectValue) return false;
+  return depth === 0;
+}
+
+// `size` lands in inline CSS, so accept only concrete CSS lengths or calc()
+// expressions (mirrors glyphs.js cssLen). Used for the mask path's --icon-size.
 function cssLen(v) {
-  return v && /^[\w.%+\-*/()\s,]+$/.test(v) ? v : '';
+  const value = String(v ?? '').trim();
+  if (CSS_LENGTH_RE.test(value)) return value;
+  if (value.toLowerCase().startsWith('calc(') && value.endsWith(')')) {
+    return isCalcLength(value.slice(5, -1)) ? value : '';
+  }
+  return '';
 }
 
 function applyGlyphA11y(el, label) {

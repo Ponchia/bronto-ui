@@ -132,6 +132,25 @@
   inline-size: 100%;
 }
 
+@media (pointer: coarse) {
+  .ui-table__sort {
+    box-sizing: border-box;
+    margin-block: -0.7rem;
+    min-block-size: 24px;
+    padding-block: 0.7rem;
+  }
+
+  .ui-table--dense .ui-table__sort {
+    margin-block: -0.42rem;
+    padding-block: 0.42rem;
+  }
+
+  .ui-table--comfortable .ui-table__sort {
+    margin-block: -0.95rem;
+    padding-block: 0.95rem;
+  }
+}
+
 .ui-table__sort::after {
   content: '↕';
   opacity: 0.4;

@@ -543,7 +543,7 @@
 @media (pointer: coarse) {
   .ui-link--arrow,
   .ui-link--cta {
-    min-block-size: 1.5rem;
+    min-block-size: max(24px, 1.6rem);
   }
 }
 

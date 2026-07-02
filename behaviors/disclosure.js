@@ -1,4 +1,14 @@
-import { hasDom, resolveHost, noop, bindOnce, byIdInHost, closestSafe } from './internal.js';
+import {
+  hasDom,
+  resolveHost,
+  noop,
+  bindOnce,
+  byIdInHost,
+  closestSafe,
+  collectHosts,
+} from './internal.js';
+
+const handledDisclosureEvents = new WeakSet();
 
 const snapshotAttr = (el, name) => ({
   had: el.hasAttribute(name),
@@ -35,16 +45,23 @@ export function initDisclosure({ root } = {}) {
   };
 
   const onClick = (e) => {
+    if (handledDisclosureEvents.has(e)) return;
     const trigger = closestSafe(e.target, '[data-bronto-disclosure]');
     if (!trigger || !host.contains(trigger)) return;
     const id = trigger.getAttribute('aria-controls');
     const panel = byIdInHost(host, id);
     if (!panel) return;
+    handledDisclosureEvents.add(e);
     e.preventDefault();
-    remember(trigger, panel);
-    const open = trigger.getAttribute('aria-expanded') === 'true';
-    trigger.setAttribute('aria-expanded', String(!open));
-    panel.hidden = open;
+    const nextOpen = panel.hidden;
+    const triggers = collectHosts(host, '[data-bronto-disclosure]').filter(
+      (el) => el.getAttribute('aria-controls') === id,
+    );
+    for (const el of triggers) {
+      remember(el, panel);
+      el.setAttribute('aria-expanded', String(nextOpen));
+    }
+    panel.hidden = !nextOpen;
   };
   return bindOnce(host, 'disclosure', () => {
     host.addEventListener('click', onClick);

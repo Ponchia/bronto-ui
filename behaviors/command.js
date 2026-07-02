@@ -212,8 +212,9 @@ export function initCommand({ root } = {}) {
     const bound = bindOnce(box, 'command', () => {
       const state = rememberState();
       const listId = list.id || (list.id = `bronto-cmd-${nextFieldUid()}`);
+      const optionIdBase = `bronto-cmd-opt-${nextFieldUid()}`;
       items.forEach((it, i) => {
-        if (!it.id) it.id = `${listId}-opt-${i}`;
+        if (!it.id) it.id = `${optionIdBase}-${i}`;
         it.setAttribute('role', 'option');
       });
       groups.forEach((g) => g.setAttribute('role', 'presentation'));

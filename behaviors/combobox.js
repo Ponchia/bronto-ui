@@ -183,6 +183,7 @@ export function initCombobox({ root } = {}) {
     const empty = box.querySelector('.ui-combobox__empty');
     const optionStates = new WeakMap();
     let listId = '';
+    const optionIdBase = `bronto-cb-opt-${nextFieldUid()}`;
 
     const rememberOptionState = (option) => {
       if (optionStates.has(option)) return;
@@ -240,7 +241,7 @@ export function initCombobox({ root } = {}) {
       options = [...list.querySelectorAll(COMBOBOX_OPTION_SELECTOR)];
       options.forEach((o, i) => {
         rememberOptionState(o);
-        if (!o.id) o.id = `${listId}-opt-${i}`;
+        if (!o.id) o.id = `${optionIdBase}-${i}`;
         o.setAttribute('role', 'option');
       });
     };

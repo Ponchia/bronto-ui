@@ -87,6 +87,8 @@ export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
     });
   };
 
+  const onThemeChange = () => reflect();
+
   const onClick = (e) => {
     const trigger = closestSafe(e.target, '[data-bronto-theme-toggle]');
     if (!trigger || !host.contains(trigger)) return;
@@ -108,8 +110,10 @@ export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
   return bindOnce(host, 'themeToggle', () => {
     applyStoredTheme({ storageKey, root: docEl });
     reflect();
+    docEl.addEventListener('bronto:themechange', onThemeChange);
     host.addEventListener('click', onClick);
     return () => {
+      docEl.removeEventListener('bronto:themechange', onThemeChange);
       host.removeEventListener('click', onClick);
       for (const [el, state] of toggleStates) {
         if (state.had) el.setAttribute('aria-pressed', state.value);
