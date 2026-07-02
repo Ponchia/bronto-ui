@@ -28,6 +28,8 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 - [usage.md](./usage.md) — the decision guide: which primitive to reach for when.
 - [reference.md](./reference.md) — the generated catalog of every `.ui-*` class and token. _(generated — do not hand-edit)_
 - [release.md](./release.md) — the release runbook.
+- [repository-map.md](./repository-map.md) — the top-level directory map: what each directory owns, which are authored vs generated, and what to regenerate after editing each.
+- [adding-a-primitive.md](./adding-a-primitive.md) — the end-to-end playbook for adding a new primitive: layer choice, CSS/classes/tokens, exports, the docs/demo/e2e matrices, regeneration, and gates.
 - [frontier-primitives.md](./frontier-primitives.md) — the design line for new analytical/communication primitives.
 
 ## Theming & color
