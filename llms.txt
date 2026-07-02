@@ -3,8 +3,8 @@
 > CSS-first, framework-agnostic UI framework. Zero runtime dependencies.
 > One `@layer bronto` cascade, a typed class vocabulary, design tokens as
 > data, and optional SSR-safe vanilla behaviors. Token-driven restraint:
-> monochrome by default, one rationed accent, dot-matrix display type, with
-> opt-in colorways + a colourblind-safe data-viz palette layered on top.
+> neutral by default, one core accent for UI emphasis, dot-matrix display type,
+> plus separate governed tiers for status, display colorways, and data-viz.
 >
 > This file orients an LLM/agent. The authoritative, always-correct API
 > is the TypeScript declarations shipped in this package (paths below):
@@ -29,9 +29,10 @@ explicit JS subpaths below.
 JS subpaths are ESM-only. In CommonJS, use dynamic `import()`.
 
 Everything lands in `@layer bronto`. Consumer styles in no layer (or a
-later layer) always win over framework styles regardless of selector
-specificity — this is the intended override mechanism; do not fight it
-with `!important`.
+later layer) win ordinary framework styles regardless of selector specificity —
+this is the intended override mechanism. Do not fight normal component styling
+with `!important`; the framework reserves `!important` for print and
+reduced-motion safeguards.
 
 Loading a stylesheet — read before copying a `<link>` below. The opt-in
 leaves are written as `@ponchia/ui/css/<leaf>.css` for brevity. That
@@ -815,8 +816,10 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   `dist/bronto.css` carries the report/chart/legend/annotation layers — it
   does not. Link each opt-in leaf from `dist/css/` via a real URL
   (`./node_modules/…` or a pinned CDN). See the loading note above.
-- Override framework styles by writing your own rules outside
-  `@layer bronto` — not with higher specificity or `!important`.
+- Override ordinary framework styles by writing your own rules outside
+  `@layer bronto`, not with higher specificity. Reserve `!important` for the
+  same kind of media-boundary safeguards the framework uses in print and
+  reduced-motion rules.
 - Color is tiered (ADR-0001): neutral canvas · one rationed accent · locked
   status · display expression · opt-in data-viz. Theme via the documented
   tokens — re-point `--accent` (or a `data-bronto-skin` colorway), use status

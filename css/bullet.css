@@ -10,13 +10,34 @@
    SSR-static, print-survivable. Not imported by core.css.
 
    Boundary: the HOST normalises EVERY value to 0..1 and sets custom props —
-   `--v` (measure), `--t` (target), `--b1`/`--b2` (the band boundaries). Bronto
-   only paints geometry; it refuses raw values and min/max/scale computation —
-   the same contract as `ui-spark`. A bare bullet is opaque to assistive tech, so
-   `.ui-bullet` MUST carry a host-written `role="img"` + `aria-label` text
-   equivalent (e.g. "uptime 99.62%, inside target 99.9%, in the warning band").
-   Colour is never the only channel — the reading lives in that label.
+   `--v` (measure), `--t` (target), `--band-lo`/`--band-hi` (the band
+   boundaries). Bronto only paints geometry; it refuses raw values and
+   min/max/scale computation — the same contract as `ui-spark`. A bare bullet is
+   opaque to assistive tech, so `.ui-bullet` MUST carry a host-written
+   `role="img"` + `aria-label` text equivalent (e.g. "uptime 99.62%, inside
+   target 99.9%, in the warning band"). Colour is never the only channel — the
+   reading lives in that label.
    ========================================================================== */
+
+/* Register only bullet-specific numeric geometry plus the target. Generic
+   `--v` stays unregistered because interval/spark/dot fallbacks depend on it. */
+@property --band-lo {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0.5;
+}
+
+@property --band-hi {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0.8;
+}
+
+@property --t {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
 
 .ui-bullet {
   --band-lo: 0.5;

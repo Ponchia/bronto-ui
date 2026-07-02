@@ -407,6 +407,94 @@
       "types": "./behaviors/index.d.ts",
       "default": "./behaviors/index.js"
     },
+    "./behaviors/carousel": {
+      "types": "./behaviors/carousel.d.ts",
+      "default": "./behaviors/carousel.js"
+    },
+    "./behaviors/combobox": {
+      "types": "./behaviors/combobox.d.ts",
+      "default": "./behaviors/combobox.js"
+    },
+    "./behaviors/command": {
+      "types": "./behaviors/command.d.ts",
+      "default": "./behaviors/command.js"
+    },
+    "./behaviors/connectors": {
+      "types": "./behaviors/connectors.d.ts",
+      "default": "./behaviors/connectors.js"
+    },
+    "./behaviors/crosshair": {
+      "types": "./behaviors/crosshair.d.ts",
+      "default": "./behaviors/crosshair.js"
+    },
+    "./behaviors/dialog": {
+      "types": "./behaviors/dialog.d.ts",
+      "default": "./behaviors/dialog.js"
+    },
+    "./behaviors/disclosure": {
+      "types": "./behaviors/disclosure.d.ts",
+      "default": "./behaviors/disclosure.js"
+    },
+    "./behaviors/dismissible": {
+      "types": "./behaviors/dismissible.d.ts",
+      "default": "./behaviors/dismissible.js"
+    },
+    "./behaviors/forms": {
+      "types": "./behaviors/forms.d.ts",
+      "default": "./behaviors/forms.js"
+    },
+    "./behaviors/glyph": {
+      "types": "./behaviors/glyph.d.ts",
+      "default": "./behaviors/glyph.js"
+    },
+    "./behaviors/inert": {
+      "types": "./behaviors/inert.d.ts",
+      "default": "./behaviors/inert.js"
+    },
+    "./behaviors/legend": {
+      "types": "./behaviors/legend.d.ts",
+      "default": "./behaviors/legend.js"
+    },
+    "./behaviors/menu": {
+      "types": "./behaviors/menu.d.ts",
+      "default": "./behaviors/menu.js"
+    },
+    "./behaviors/modal": {
+      "types": "./behaviors/modal.d.ts",
+      "default": "./behaviors/modal.js"
+    },
+    "./behaviors/popover": {
+      "types": "./behaviors/popover.d.ts",
+      "default": "./behaviors/popover.js"
+    },
+    "./behaviors/sources": {
+      "types": "./behaviors/sources.d.ts",
+      "default": "./behaviors/sources.js"
+    },
+    "./behaviors/splitter": {
+      "types": "./behaviors/splitter.d.ts",
+      "default": "./behaviors/splitter.js"
+    },
+    "./behaviors/spotlight": {
+      "types": "./behaviors/spotlight.d.ts",
+      "default": "./behaviors/spotlight.js"
+    },
+    "./behaviors/table": {
+      "types": "./behaviors/table.d.ts",
+      "default": "./behaviors/table.js"
+    },
+    "./behaviors/tabs": {
+      "types": "./behaviors/tabs.d.ts",
+      "default": "./behaviors/tabs.js"
+    },
+    "./behaviors/theme": {
+      "types": "./behaviors/theme.d.ts",
+      "default": "./behaviors/theme.js"
+    },
+    "./behaviors/toast": {
+      "types": "./behaviors/toast.d.ts",
+      "default": "./behaviors/toast.js"
+    },
     "./glyphs": {
       "types": "./glyphs/glyphs.d.ts",
       "default": "./glyphs/glyphs.js"

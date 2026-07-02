@@ -83,6 +83,8 @@ function bindComboboxLifecycle({
   onDocClick,
   resetActive,
 }) {
+  const doc = box.ownerDocument;
+  if (!doc) return noop;
   const state = rememberState();
   const listId = assignListId();
   syncOptions();
@@ -114,7 +116,7 @@ function bindComboboxLifecycle({
   input.addEventListener('input', onInput);
   input.addEventListener('keydown', onKey);
   list.addEventListener('click', onOptionClick);
-  document.addEventListener('click', onDocClick);
+  doc.addEventListener('click', onDocClick);
   // Opt-in: keep options in sync with a list mutated after init (async /
   // remote results). Off by default so the common static case stays free.
   const observer = liveOptionObserver(box, list, relist);
@@ -123,7 +125,7 @@ function bindComboboxLifecycle({
     input.removeEventListener('input', onInput);
     input.removeEventListener('keydown', onKey);
     list.removeEventListener('click', onOptionClick);
-    document.removeEventListener('click', onDocClick);
+    doc.removeEventListener('click', onDocClick);
     restoreState(state);
     resetActive();
   };

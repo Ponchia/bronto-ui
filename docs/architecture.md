@@ -50,9 +50,11 @@ on top of the CSS, none of which require a framework commitment**:
 ### Consequences of each layer
 
 - **css/** — wrapped in a single `@layer bronto`. Any un-layered CSS in a
-  consumer wins the cascade without specificity wars or `!important`. This is
-  a deliberate behavioural change vs. unlayered v0.1.0; consumers pin a tag
-  so it ships only on the next version bump.
+  consumer wins the ordinary cascade without specificity wars. Framework
+  `!important` use is limited to media-boundary safeguards such as print and
+  reduced-motion resets, not normal component styling. This is a deliberate
+  behavioural change vs. unlayered v0.1.0; consumers pin a tag so it ships only
+  on the next version bump.
 - **Fonts** — `@font-face` moved out of `tokens.css` into `css/fonts.css`
   with URLs relative to the package (`../fonts/*`), so font hosting is
   decoupled from the token layer and resolves through bundlers or static

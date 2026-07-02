@@ -7,7 +7,7 @@ UI catalog.
 
 > **Source of truth is [`CHANGELOG.md`](CHANGELOG.md).** This file describes
 > direction; the changelog records what actually shipped. If they disagree, the
-> changelog wins. Last reconciled against `0.6.8`.
+> changelog wins. Last reconciled against `0.6.10`.
 >
 > **Strategic north star:** Bronto should not out-catalog generic UI kits. It
 > owns framework-agnostic primitives for interfaces that explain themselves —
@@ -18,10 +18,10 @@ UI catalog.
 > follow-ons.
 > See [`docs/frontier-primitives.md`](docs/frontier-primitives.md).
 >
-> **Adoption stance:** published openly on npm with provenance, but built and
-> maintained primarily for the maintainer's own agents and report tooling.
-> Public-surface fixes are kept correct (README, docs site, llms.txt);
-> marketing pushes are not a goal.
+> **Adoption stance:** published openly on npm with provenance and public docs,
+> but built and maintained primarily for the maintainer's own agents and report
+> tooling. Public-surface correctness is in scope (README, authored docs, docs
+> site route list, `llms.txt`); marketing pushes are not a goal.
 
 ## Current stewardship priorities
 
@@ -54,8 +54,16 @@ UI catalog.
   refusal list, reliable release gates, downstream upgrade proof, and bundle
   headroom. It should not wait for one more component family.
 
-## Recently completed through 0.6.8
+## Recently completed through 0.6.10
 
+- **Workbench and annotation composition.** `0.6.10` added opt-in workbench
+  toolstrip primitives and clarified how the dependency-free
+  `@ponchia/ui/annotations` surface composes with richer annotation engines
+  without adding a runtime or public type dependency.
+- **Product doctrine and gate-backed readiness.** `0.6.9` codified the
+  core-vs-opt-in boundary, refusal list, packed-tarball proof, release evidence
+  policy, and public stability matrix. It also consolidated registry-backed
+  gates and made the native complexity budget part of the aggregate check.
 - **Adoption bridges without component sprawl.** Tailwind v4 has a CSS-only
   `@theme inline` bridge plus a packed Vite example; Svelte and Vue have thin
   lifecycle adapters over the existing delegated behaviors; token handoff has
@@ -246,6 +254,7 @@ choices.
 ## Support expectations
 
 Solo-maintained, pre-1.0. Breaking changes ship in the **minor**; patches are
-non-breaking. Security issues: see `.github/SECURITY.md` for private reporting.
-Best-effort response; no SLA. Adopters should pin the compatible minor and
-visual-test their own app on upgrade.
+non-breaking. Security issues go through `.github/SECURITY.md`; general support
+expectations live in `.github/SUPPORT.md`. Best-effort response; no SLA.
+Adopters should pin the compatible minor and visual-test their own app on
+upgrade.

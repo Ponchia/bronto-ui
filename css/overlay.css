@@ -450,6 +450,17 @@ html:has(.ui-modal.is-open) {
   }
 }
 
+@media (prefers-reduced-transparency: reduce) {
+  .ui-modal::backdrop {
+    backdrop-filter: none;
+    background: var(--surface-1);
+  }
+
+  .ui-lightbox::backdrop {
+    background: var(--surface-1);
+  }
+}
+
 /* Forced-colors drops both `backdrop-filter: blur()` and the `color-mix()`
    scrim, so the dialog/lightbox would float over an undimmed page with no
    separation. Re-assert a translucent scrim with `forced-color-adjust: none`

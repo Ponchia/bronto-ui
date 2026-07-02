@@ -384,6 +384,7 @@
   ::view-transition-group(*),
   ::view-transition-old(*),
   ::view-transition-new(*) {
+    /* Intentional !important: view-transition pseudos sit outside the global reset. */
     animation: none !important;
   }
 }
@@ -419,6 +420,7 @@
   }
 
   .ui-reveal {
+    /* Intentional !important: reveal content must not remain hidden for reduced-motion users. */
     opacity: 1 !important;
     transform: none !important;
   }

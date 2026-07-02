@@ -94,8 +94,7 @@ jobs:
   # runs, and adds the cross-engine e2e pass PRs defer.
   e2e:
     needs: validate
-    # Full cross-engine pass gates the publish — PRs run chromium-only for
-    # speed, so the release is where firefox/webkit must go green.
+    # Full cross-engine pass gates every publish.
     uses: ./.github/workflows/e2e.yml
     with:
       cross_engine: true

@@ -3,26 +3,37 @@
 [![npm](https://img.shields.io/npm/v/@ponchia/ui?logo=npm)](https://www.npmjs.com/package/@ponchia/ui)
 [![npm provenance](https://img.shields.io/badge/npm-provenance-blue?logo=npm)](https://www.npmjs.com/package/@ponchia/ui#provenance)
 [![runtime deps](https://img.shields.io/badge/runtime%20deps-0-brightgreen)](https://github.com/Ponchia/bronto-ui/blob/main/package.json)
-[![dist](https://img.shields.io/badge/dist-~88kB%20%2F%20~15kB%20gzip-informational)](https://github.com/Ponchia/bronto-ui/blob/main/scripts/check-dist.mjs)
+[![default CSS](https://img.shields.io/badge/default%20CSS-~88kB%20%2F%20~15kB%20gzip-informational)](https://github.com/Ponchia/bronto-ui/blob/main/scripts/check-dist.mjs)
 [![CI](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Ponchia/bronto-ui/badge)](https://scorecard.dev/viewer/?uri=github.com/Ponchia/bronto-ui)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE)
 
-**A CSS-first identity and UI layer for services, tools, sites, and reports.** It
-works in plain HTML, every modern framework, and print/PDF, with no component
-runtime to adopt and zero runtime dependencies.
+**A CSS-first identity layer for services, tools, and reports that need
+provenance.** It works in plain HTML, modern frameworks, and print/PDF, with no
+component runtime to adopt and zero runtime dependencies.
 
-The look is a deliberate stance: a neutral monochrome canvas with one rationed
-accent (colour signals, it never decorates), dot-matrix display type, and
-hairline borders — all re-skinnable from a single `--accent` knob (opt-in
-amber-CRT, phosphor-green, and e-ink colorways).
+The sharpest lane is report and tooling UI: static/PDF reports, evidence,
+provenance, system state, dense workbenches, and explanatory figures. The
+default CSS bundle stays the shared service identity, not the whole package:
+app shells, navigation, forms, tables, feedback, overlays, prose, motion, and
+the token system that lets apps feel related without sharing a component runtime.
 
-The default bundle is the shared service identity: app shells, navigation,
-forms, tables, feedback, overlays, workflow surfaces, prose, motion and the
-token system that lets each app feel related without sharing a component
-runtime. On top of that it ships opt-in tooling/report layers — workbench panes,
-commands, system state, provenance, figure stages, annotations, legends,
-evidence highlights, intervals, data-viz tokens and a static/PDF report grammar.
+The look is deliberately restrained: a mostly neutral canvas, one core accent
+for emphasis, dot-matrix display type, and hairline borders. Status colors,
+display-expression tokens, and data-viz colors are separate governed tiers, not
+extra brand accents. Opt-in skins re-point the root accent; Mermaid, D2, and
+Vega bridges use resolved renderer theme data instead of live CSS variables.
+
+## Start here
+
+- **Building an app or service shell?** Use the quick start below, then the
+  framework guide for your stack.
+- **Building a report, audit, or provenance view?** Start with
+  [docs/reporting.md](docs/reporting.md) and
+  [docs/frontier-primitives.md](docs/frontier-primitives.md).
+- **Maintaining or integrating the package?** Read
+  [docs/architecture.md](docs/architecture.md),
+  [docs/stability.md](docs/stability.md), and `llms.txt`.
 
 ### [Live demo →](https://ponchia.github.io/bronto-ui/) &nbsp;·&nbsp; [Service shell →](https://ponchia.github.io/bronto-ui/demo/service.html) &nbsp;·&nbsp; [Static report →](https://ponchia.github.io/bronto-ui/demo/report-standalone.html) &nbsp;·&nbsp; [Theme playground →](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)
 
@@ -46,9 +57,11 @@ that genuinely need JS (theme persistence, dialogs, toasts, disclosure).
 
 The guiding principle is that **colour is rationed and structure carries
 meaning** — layout, type weight, and the hairline do the work before a hue does,
-and the accent is a spotlight, not a paint bucket. Because everything lives in a
-single `@layer bronto`, your own un-layered CSS overrides the framework with no
-specificity fight and no `!important`.
+and the accent is a spotlight, not a paint bucket. Because framework rules live
+in `@layer bronto`, ordinary un-layered consumer CSS overrides them without a
+specificity fight. Print and reduced-motion rules still use `!important`
+deliberately where the framework must neutralize animation or layout at a media
+boundary.
 
 It ships a complete, accessible **standard component set** because that is the
 identity layer every service consumes. Its sharper edge is the opt-in **tooling,
@@ -72,7 +85,7 @@ Or drop it in with no build step, straight from a CDN:
 
 ## Quick start
 
-**1. Load the CSS.** One flattened, minified bundle — the whole standard component set, one request (~88 kB raw / ~15 kB gzip):
+**1. Load the CSS.** One flattened, minified default CSS bundle — the standard component set, one request (~88 kB raw / ~15 kB gzip) — that is `dist/bronto.css`, not the whole package tarball:
 
 ```css
 @import '@ponchia/ui';            /* via a bundler */
@@ -85,7 +98,7 @@ Or drop it in with no build step, straight from a CDN:
 
 > Prefer source leaves through a bundler? Use `@import '@ponchia/ui/css'` (a thin `@import` fan-out) instead. Both resolve the Doto `@font-face` with relative URLs, so there's no `/fonts` path assumption.
 
-> The bundle is the standard component set. The opt-in analytical & report layers — `report.css`, `dataviz.css`, `figure.css`, `annotations.css`, `legend.css`, `interval.css`, `clamp.css`, `highlights.css`, and the rest — are **not** in `bronto.css`; link each one you need from `dist/css/`. For LLM-authored static reports see [docs/reporting.md](docs/reporting.md).
+> The size above is only `dist/bronto.css`. The opt-in analytical and report layers — `report.css`, `dataviz.css`, `figure.css`, `annotations.css`, `legend.css`, `interval.css`, `clamp.css`, `highlights.css`, and the rest — are **not** in the default CSS bundle; link each one you need from `dist/css/`. For LLM-authored static reports see [docs/reporting.md](docs/reporting.md).
 
 **2. Write markup with `ui-*` classes** (primary is the default button; modifiers are opt-in):
 
@@ -151,7 +164,7 @@ Full generated catalog of every class: **[docs/reference.md](https://github.com/
 
 ## Theming: one knob
 
-Everything accent-colored derives from a single `--accent` variable via `color-mix()`. Re-brand the entire app — both light and dark — with root-level, per-theme overrides:
+Core DOM accent surfaces derive from a single `--accent` variable via `color-mix()`. Re-brand the entire app — both light and dark — with root-level, per-theme overrides:
 
 ```css
 :root   { --accent: #2f6df6; }   /* whole app blue   */
@@ -162,11 +175,11 @@ derived family (`--accent-text`, `--accent-soft`, focus/dot/ramp tokens) is a
 root-level skin contract. Use the full per-theme recipe in
 [`docs/theming.md`](docs/theming.md) for production rebrands.
 
-Buttons, focus rings, dot motifs, accent borders and soft fills all follow automatically. Light/dark is `data-theme="light"` / `"dark"` on `<html>` (defaults to `prefers-color-scheme`); `data-density` and `data-contrast` give density and contrast presets. A full re-skin (radius, display face, dot density, surfaces) is a handful more token overrides — the default monochrome look is **one skin, not the architecture**.
+Buttons, focus rings, dot motifs, accent borders and soft fills follow the root accent automatically. Light/dark is `data-theme="light"` / `"dark"` on `<html>` (defaults to `prefers-color-scheme`); `data-density` and `data-contrast` give density and contrast presets. A full re-skin (radius, display face, dot density, surfaces) is a handful more token overrides, while status colours and data-viz colours remain their own governed tiers — the default monochrome look is **one skin, not the architecture**.
 
 **One system, many skins.** That the knob is real isn't a claim — it ships: drop in `@ponchia/ui/css/skins.css` and set `data-bronto-skin="amber-crt | phosphor-green | e-ink"` on `<html>` for a complete, contrast-gated recolour (the derived accent family, focus ring, dot-matrix and glyphs all follow). Colour is governed in **tiers** — neutral canvas · one accent · locked status · display expression · opt-in data-viz — so it always earns its place; the full constitution is **[ADR-0001](https://github.com/Ponchia/bronto-ui/blob/main/docs/adr/0001-color-system.md)**.
 
-> When you change `--accent`, contrast becomes yours: verify your hue in the **[theme playground](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)** (it shows the derived family and computed WCAG ratios). Full contract: **[docs/theming.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/theming.md)**.
+> When you change `--accent`, contrast becomes yours: verify your hue in the **[theme playground](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)** (it shows the derived family and computed WCAG ratios). Mermaid, D2, and Vega helpers emit resolved theme data for those renderers; they do not live-reskin from a later CSS `--accent` override. Full contract: **[docs/theming.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/theming.md)**.
 
 ## Accessibility
 

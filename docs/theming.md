@@ -26,8 +26,15 @@ So a full re-brand is one declaration **at `:root` (or a theme root)**:
 :root[data-theme='dark'] { --accent: #6ea8ff; } /* per-theme tuning */
 ```
 
-Everything — buttons, focus rings, dot motifs, accent borders, soft
-fills — follows automatically, in both light and dark.
+Core DOM accent surfaces — buttons, focus rings, dot motifs, accent borders,
+soft fills — follow automatically, in both light and dark.
+
+That scope matters. `--accent` is the core action/emphasis hue, not the whole
+color system. Status colors (`--success`, `--warning`, `--danger`, `--info`),
+neutral surface tiers, display-expression tokens, and the opt-in data-viz
+palette stay separate governed tiers. Mermaid, D2, and Vega bridges emit
+resolved renderer theme data; a rendered SVG or canvas does not live-reskin when
+you change CSS `--accent` later.
 
 > **Re-branding a subtree (not `:root`) is only a *partial* re-brand.**
 > The derived family (`--accent-soft`, `--accent-strong`, `--accent-text`,
@@ -106,7 +113,7 @@ fills — follows automatically, in both light and dark.
   set `accent-color` yourself on them — this is the one accent surface
   the framework can't tune for you.
 
-## Beyond accent: a full re-skin (the knob really works)
+## Beyond accent: full re-skins
 
 The "Nothing" look is the **default skin, not the architecture**. It is
 a handful of token declarations deep — no selector hardcodes the
@@ -142,11 +149,12 @@ no fork:
 ```
 
 That changes buttons, cards, inputs, badges, focus rings, the display
-type and the dot motif together, because every component consumes those
-tokens — not because there is a per-component theme file. This is the
-difference between a *system* and a *skin*: the skin is swappable, the
-system (rationed colour, density, classless prose, minimal JS) is what
-you are actually adopting.
+type and the dot motif together, because those surfaces consume the token
+contract — not because there is a per-component theme file. It does not
+rewrite status semantics or chart palettes; those are governed by their own
+tiers. This is the difference between a *system* and a *skin*: the skin is
+swappable, the system (rationed colour, density, classless prose, minimal JS)
+is what you are actually adopting.
 
 Caveat, restated: a custom `--accent` is **your** contrast obligation —
 the shipped palettes are CI-gated ([contrast.md](contrast.md)), a re-skin

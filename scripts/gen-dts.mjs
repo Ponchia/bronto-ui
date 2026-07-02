@@ -103,6 +103,7 @@ export interface DotgridOpts {
 export interface TableOpts {
   density?: 'dense' | 'comfortable';
   lined?: boolean;
+  breakAnywhere?: boolean;
 }
 export interface EyebrowOpts {
   muted?: boolean;

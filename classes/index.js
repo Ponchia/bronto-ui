@@ -899,6 +899,13 @@ const annotationMotions = Object.freeze({
   focus: cls.annotationFocus,
 });
 
+/**
+ * @typedef {object} TableOpts
+ * @property {'dense' | 'comfortable'} [density] Density modifier.
+ * @property {boolean} [lined] Add row separator lines.
+ * @property {boolean} [breakAnywhere] Allow long unspaced cell content to wrap instead of overflowing.
+ */
+
 export const ui = {
   button: ({ variant, icon, size } = {}) =>
     j(
@@ -930,6 +937,7 @@ export const ui = {
   dot: ({ tone, live } = {}) => j(cls.dot, dotTone(tone), live && cls.dotLive),
   dotgrid: ({ accent, dense } = {}) =>
     j(cls.dotgrid, accent && cls.dotgridAccent, dense && cls.dotgridDense),
+  /** @type {(opts?: TableOpts) => string} */
   table: ({ density, lined, breakAnywhere } = {}) =>
     j(
       cls.table,

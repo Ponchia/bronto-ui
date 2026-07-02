@@ -275,6 +275,7 @@
   .ui-annotation__note,
   .ui-annotation__note-line,
   .ui-annotation__badge {
+    /* Intentional !important: print must freeze opt-in draw/reveal animations. */
     animation: none !important;
     opacity: 1;
     stroke-dashoffset: 0;

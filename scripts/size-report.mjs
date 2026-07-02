@@ -19,9 +19,40 @@ const fileSize = (rel) => statSync(resolve(root, rel)).size;
 const gzipSize = (rel) => gzipSync(readFileSync(resolve(root, rel))).length;
 
 const rows = [];
-const bundle = buildBundles()['dist/bronto.css'];
-const bundleSize = cssSizes(bundle);
-rows.push(['dist/bronto.css', bundleSize.raw, bundleSize.gzip]);
+const bundles = buildBundles();
+const cssSizeByRel = new Map(
+  Object.entries(bundles).map(([rel, content]) => [rel, cssSizes(content)]),
+);
+const cssRollups = new Set(['dist/css/analytical.css', 'dist/css/report-kit.css']);
+const addCssRow = (label, rel) => {
+  const size = cssSizeByRel.get(rel);
+  if (!size) throw new Error(`missing generated CSS bundle ${rel}`);
+  rows.push([`${label} (${rel})`, size.raw, size.gzip]);
+};
+
+addCssRow('root CSS bundle', 'dist/bronto.css');
+addCssRow('base CSS leaf', 'dist/css/base.css');
+addCssRow('analytical CSS roll-up', 'dist/css/analytical.css');
+addCssRow('report CSS leaf', 'dist/css/report.css');
+addCssRow('report kit CSS roll-up', 'dist/css/report-kit.css');
+
+const cssLeaves = [...cssSizeByRel.entries()].filter(
+  ([rel]) => rel.startsWith('dist/css/') && !cssRollups.has(rel),
+);
+const [largestCssLeafRel, largestCssLeafSize] = cssLeaves.reduce((largest, entry) =>
+  entry[1].raw > largest[1].raw ? entry : largest,
+);
+rows.push([
+  `largest CSS leaf (${largestCssLeafRel})`,
+  largestCssLeafSize.raw,
+  largestCssLeafSize.gzip,
+]);
+
+const totalGeneratedCss = [...cssSizeByRel.values()].reduce(
+  (total, size) => ({ raw: total.raw + size.raw, gzip: total.gzip + size.gzip }),
+  { raw: 0, gzip: 0 },
+);
+rows.push(['total generated CSS', totalGeneratedCss.raw, totalGeneratedCss.gzip]);
 
 for (const rel of [
   'behaviors/index.js',
@@ -36,14 +67,14 @@ for (const rel of [
   rows.push([rel, fileSize(rel), gzipSize(rel)]);
 }
 
-const reportCss = buildBundles()['dist/css/report.css'];
-const reportSize = cssSizes(reportCss);
-rows.push(['dist/css/report.css', reportSize.raw, reportSize.gzip]);
-
 const fonts = readdirSync(resolve(root, 'fonts'))
   .filter((name) => /\.(ttf|woff2?)$/i.test(name))
   .map((name) => `fonts/${name}`);
-rows.push(['fonts/*', fonts.reduce((n, rel) => n + fileSize(rel), 0), null]);
+rows.push([
+  'fonts/*',
+  fonts.reduce((n, rel) => n + fileSize(rel), 0),
+  fonts.reduce((n, rel) => n + gzipSize(rel), 0),
+]);
 
 const pack = JSON.parse(
   execFileSync('npm', ['pack', '--dry-run', '--json', '--ignore-scripts'], {
@@ -53,7 +84,7 @@ const pack = JSON.parse(
   }),
 )[0];
 
-log('| Surface | Raw | Gzip |');
+log('| Surface | Raw / unpacked | Gzip / packed |');
 log('| --- | ---: | ---: |');
 for (const [name, raw, gzip] of rows) {
   log(`| ${name} | ${bytes(raw)} | ${gzip == null ? 'n/a' : bytes(gzip)} |`);

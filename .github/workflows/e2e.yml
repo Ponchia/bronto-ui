@@ -7,8 +7,9 @@
 # Called by BOTH ci.yml and release.yml via `workflow_call` — one
 # definition, no drift. (These used to be two near-identical copies that
 # had already diverged: CI had a registry-retry the release path lacked.)
-# CI calls it chromium-only for fast PR feedback; release.yml calls it with
-# cross_engine: true so the full firefox/webkit pass gates the publish.
+# CI calls it chromium-only for cheap changes and cross-engine for risky PRs;
+# release.yml calls it with cross_engine: true so the full firefox/webkit pass
+# gates the publish.
 name: e2e
 
 on:
@@ -18,8 +19,8 @@ on:
         description: >
           Run firefox + webkit too. Default false → chromium only (the
           pixel/visual + a11y + behaviour gate, the high-frequency
-          regression surface, ~half the wall-clock). CI passes false on
-          PRs/main for fast feedback; release.yml passes true so the
+          regression surface, ~half the wall-clock). CI passes true for
+          engine-sensitive PRs/main pushes; release.yml passes true so the
           cross-engine pass (the engine-specific `:has()`/`color-mix()`/
           `<dialog>`/`@starting-style` risk) gates the actual publish.
         type: boolean

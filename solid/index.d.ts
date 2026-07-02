@@ -1,10 +1,11 @@
 /** Run a delegated behavior for the component's lifetime (init on mount, its
- *  returned cleanup on dispose). Options resolve on mount, after refs exist.
- * @param {(opts?: DelegateOpts) => Cleanup | void} init
- * @param {BrontoBindingOptsResolver} [opts]
+ * returned cleanup on dispose). Options resolve on mount, after refs exist.
+ * @template {DelegateOpts} [T=DelegateOpts]
+ * @param {(opts?: T) => Cleanup | void} init
+ * @param {BrontoBindingOptsResolver<T>} [opts]
  * @returns {void}
  */
-export function useBrontoBehavior(init: (opts?: DelegateOpts) => Cleanup | void, opts?: BrontoBindingOptsResolver): void;
+export function useBrontoBehavior<T extends DelegateOpts = import("../behaviors/internal.js").DelegateOpts>(init: (opts?: T) => Cleanup | void, opts?: BrontoBindingOptsResolver<T>): void;
 /** @type {(opts?: BrontoBindingOptsResolver<ThemeStorageOpts & DelegateOpts>) => void} */
 export const useThemeToggle: (opts?: BrontoBindingOptsResolver<ThemeStorageOpts & DelegateOpts>) => void;
 /** @type {(opts?: BrontoBindingOptsResolver) => void} */

@@ -8,6 +8,18 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 > New to the repo? Start with **[architecture.md → Repository layout](./architecture.md#repository-layout)**
 > for what each top-level directory is and which files are generated.
 
+## Start here
+
+- **App or service shell** — start with the README quick start, then
+  [usage.md](./usage.md) and the matching framework guide.
+- **Report, audit, or provenance UI** — start with
+  [frontier-primitives.md](./frontier-primitives.md),
+  [reporting.md](./reporting.md), [sources.md](./sources.md), and
+  [generated.md](./generated.md).
+- **Package maintenance or agent integration** — start with
+  [architecture.md](./architecture.md), [stability.md](./stability.md), and
+  `../llms.txt`.
+
 ## Contract & governance
 
 - [architecture.md](./architecture.md) — the layered architecture, the repository layout, drift control, and release gating.
@@ -20,7 +32,7 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 
 ## Theming & color
 
-- [theming.md](./theming.md) — the one-knob `--accent` model and a full re-skin recipe.
+- [theming.md](./theming.md) — the root-level `--accent` model, its limits, and a full re-skin recipe.
 - [contrast.md](./contrast.md) — the CI-gated WCAG contrast matrix (+ APCA advisory).
 
 ## App/service primitives

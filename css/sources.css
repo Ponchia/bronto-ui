@@ -229,12 +229,12 @@
 }
 
 /* Print: an inline citation marker points into the references list, so never
-   expand its href inline. base.css expands `.ui-prose a[href^="http"]` with a
-   trailing "(url)"; on a superscript marker that dumps a full URL mid-sentence.
-   !important + print-scoped because base's rule is more specific. */
+   expand its href inline. Match base's `.ui-prose a[href^="http"]` specificity
+   without `!important`. */
 @media print {
+  .ui-prose .ui-citation[href]::after,
   .ui-citation[href]::after {
-    content: none !important;
+    content: none;
   }
 
   .ui-source-card,
