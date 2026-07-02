@@ -28,7 +28,21 @@
   display: flex;
   gap: var(--space-sm);
   justify-content: space-between;
+  min-inline-size: 0;
+  overflow: hidden;
   padding: var(--space-2xs) var(--space-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ui-code__head > * {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ui-code__head > :last-child {
+  flex-shrink: 0;
 }
 
 .ui-code__body {
