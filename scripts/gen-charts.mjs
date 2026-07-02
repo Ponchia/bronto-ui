@@ -95,7 +95,11 @@ export function buildDatavizCss() {
     `:root {\n${chartVars('light', '  ')}\n\n${patterns}\n}\n\n` +
     `@media (prefers-color-scheme: dark) {\n` +
     `  :root:not([data-theme='light']) {\n${chartVars('dark', '    ')}\n  ${darkPatternInk.trim()}\n  }\n}\n\n` +
-    `:root[data-theme='dark'] {\n${chartVars('dark', '  ')}\n${darkPatternInk}\n}\n`
+    `:root[data-theme='dark'] {\n${chartVars('dark', '  ')}\n${darkPatternInk}\n}\n\n` +
+    // Print always uses the light, ink-on-white chart palette — dark sequential/
+    // diverging ramps and pattern ink are unreadable on white paper (PDF export).
+    `@media print {\n` +
+    `  :root:not([data-theme='light']) {\n${chartVars('light', '    ')}\n    --chart-pattern-ink: rgb(0 0 0 / 0.34);\n  }\n}\n`
   );
 }
 

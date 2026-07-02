@@ -275,13 +275,7 @@
 /* High contrast — manual opt-in and the OS `prefers-contrast` signal.
    Both collapse the soft greys toward the strong end; theme-agnostic
    because they reference the per-theme *-strong / -soft tokens. */
-[data-contrast='high'] {
-  --line: var(--line-strong);
-  --text-dim: var(--text-soft);
-  --focus-ring: var(--accent);
-  --shadow-raised: 0 0 0 1px var(--text);
-}
-
+[data-contrast='high'],
 :root[data-contrast='high'] {
   --line: var(--line-strong);
   --text-dim: var(--text-soft);
