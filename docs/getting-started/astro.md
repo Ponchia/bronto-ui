@@ -29,7 +29,7 @@ before paint — exactly what the theme needs:
   <script is:inline>
     try {
       var t = localStorage.getItem('bronto-theme');
-      if (t) document.documentElement.dataset.theme = t;
+      if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
     } catch (e) {}
   </script>
 </head>

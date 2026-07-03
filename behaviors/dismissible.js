@@ -15,7 +15,7 @@ export function dismissible({ root } = {}) {
   const onClick = (e) => {
     const btn = closestSafe(e.target, '[data-bronto-dismiss]');
     if (!btn || !host.contains(btn)) return;
-    const sel = btn.getAttribute('data-bronto-dismiss');
+    const sel = btn.getAttribute('data-bronto-dismiss')?.trim();
     const target = sel ? closestSafe(btn, sel) : closestSafe(btn, '[data-bronto-dismissible]');
     if (!target) return;
     e.preventDefault();

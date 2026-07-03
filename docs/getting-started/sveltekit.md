@@ -30,7 +30,7 @@ there, not in a component:
 <script>
   try {
     var t = localStorage.getItem('bronto-theme');
-    if (t) document.documentElement.dataset.theme = t;
+    if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
   } catch (e) {}
 </script>
 ```

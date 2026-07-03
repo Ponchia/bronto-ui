@@ -18,7 +18,7 @@ Next App Router, render it in `<head>`:
 ```tsx
 <script
   dangerouslySetInnerHTML={{
-    __html: `try{var t=localStorage.getItem('bronto-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}`,
+    __html: `try{var t=localStorage.getItem('bronto-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}`,
   }}
 />
 ```
@@ -215,7 +215,7 @@ requirement.
          <head>
            <script
              dangerouslySetInnerHTML={{
-               __html: `try{var t=localStorage.getItem('bronto-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}`,
+               __html: `try{var t=localStorage.getItem('bronto-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}`,
              }}
            />
          </head>

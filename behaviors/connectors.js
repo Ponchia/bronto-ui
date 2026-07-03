@@ -1,4 +1,4 @@
-import { hasDom, resolveHost, noop, bindOnce, byIdInHost, collectHosts } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, collectHosts } from './internal.js';
 import { connectRects, arrowHead, dotMark } from '../connectors/index.js';
 
 const SVGNS = 'http://www.w3.org/2000/svg';
@@ -179,70 +179,122 @@ export function initConnectors({ root } = {}) {
 
   const warnedInvalidOptions = new WeakMap();
   const endpointInHost = (el) => host.nodeType === 9 || host.contains(el);
-  const endpointById = (id) => {
-    const el = byIdInHost(host, id);
-    return el && endpointInHost(el) ? el : null;
+  const endpointStillInHost = (el) => host.contains?.(el) ?? endpointInHost(el);
+  const cacheEndpoint = (endpoints, el) => {
+    if (el?.id && !endpoints.has(el.id) && endpointInHost(el)) endpoints.set(el.id, el);
+  };
+  const endpointCache = () => {
+    const endpoints = new Map();
+    if (host.nodeType !== 9) cacheEndpoint(endpoints, host);
+    for (const el of host.querySelectorAll?.('[id]') || []) cacheEndpoint(endpoints, el);
+    return endpoints;
+  };
+  const endpointById = (endpoints, id) => {
+    if (!id) return null;
+    const el = endpoints.get(id) || null;
+    return el && endpointStillInHost(el) ? el : null;
   };
 
-  const draw = () => {
-    const connectors = collectHosts(host, '[data-bronto-connector]');
-    for (const svg of connectors) {
-      const from = endpointById(svg.dataset.from);
-      const to = endpointById(svg.dataset.to);
-      if (!from || !to) {
+  const measureConnector = (endpoints, svg) => {
+    const from = endpointById(endpoints, svg.dataset.from);
+    const to = endpointById(endpoints, svg.dataset.to);
+    if (!from || !to) return { svg, skipped: true };
+    try {
+      const {
+        d,
+        to: end,
+        angle,
+      } = connectRects({
+        fromRect: rectInSvg(svg, from),
+        toRect: rectInSvg(svg, to),
+        shape: svg.dataset.shape || 'straight',
+        fromSide: svg.dataset.fromSide || undefined,
+        toSide: svg.dataset.toSide || undefined,
+      });
+      return { svg, d, end, angle };
+    } catch {
+      return { svg, invalid: true };
+    }
+  };
+
+  const draw = (endpoints, connectors) => {
+    const measurements = connectors.map((svg) => measureConnector(endpoints, svg));
+    for (const result of measurements) {
+      const { svg } = result;
+      if (result.skipped || result.invalid) {
         clearConnectorParts(svg);
+        if (result.invalid) warnInvalidConnectorOptions(svg, warnedInvalidOptions);
         continue;
       }
-      try {
-        const {
-          d,
-          to: end,
-          angle,
-        } = connectRects({
-          fromRect: rectInSvg(svg, from),
-          toRect: rectInSvg(svg, to),
-          shape: svg.dataset.shape || 'straight',
-          fromSide: svg.dataset.fromSide || undefined,
-          toSide: svg.dataset.toSide || undefined,
-        });
-        const path = upsertConnectorPart(svg, '.ui-connector__path', 'ui-connector__path');
-        path.setAttribute('d', d);
-        syncDrawPathLength(svg, path);
-        syncConnectorEnd(svg, end, angle);
-      } catch {
-        clearConnectorParts(svg);
-        warnInvalidConnectorOptions(svg, warnedInvalidOptions);
-      }
+      const path = upsertConnectorPart(svg, '.ui-connector__path', 'ui-connector__path');
+      path.setAttribute('d', result.d);
+      syncDrawPathLength(svg, path);
+      syncConnectorEnd(svg, result.end, result.angle);
     }
+  };
+
+  const observeEndpoint = (ro, el) => {
+    if (el && endpointStillInHost(el)) ro.observe(el);
   };
 
   return bindOnce(host, 'connectors', () => {
     const connectors = collectHosts(host, '[data-bronto-connector]');
     if (!connectors.length) return noop;
+    const endpoints = endpointCache();
     const states = connectors.map((svg) => ({
       svg,
       path: snapshotPart(svg, '.ui-connector__path'),
       end: snapshotPart(svg, '.ui-connector__end'),
     }));
-    draw();
     const view = host.defaultView || host.ownerDocument?.defaultView || null;
+    const raf =
+      view?.requestAnimationFrame?.bind(view) || globalThis.requestAnimationFrame?.bind(globalThis);
+    const caf =
+      view?.cancelAnimationFrame?.bind(view) || globalThis.cancelAnimationFrame?.bind(globalThis);
+    let frame = null;
+    let framePending = false;
+    let stopped = false;
+
+    const drawNow = () => {
+      if (!stopped) draw(endpoints, connectors);
+    };
+    const scheduleDraw = () => {
+      if (stopped || framePending) return;
+      if (!raf) {
+        drawNow();
+        return;
+      }
+      framePending = true;
+      frame = raf(() => {
+        framePending = false;
+        frame = null;
+        drawNow();
+      });
+    };
+    const cancelScheduledDraw = () => {
+      if (framePending && caf) caf(frame);
+      framePending = false;
+      frame = null;
+    };
+
+    drawNow();
     const RO = view?.ResizeObserver;
-    const ro = RO ? new RO(draw) : null;
+    const ro = RO ? new RO(scheduleDraw) : null;
     if (ro) {
       for (const svg of connectors) {
         if (svg.parentElement) ro.observe(svg.parentElement);
-        const f = endpointById(svg.dataset.from);
-        const t = endpointById(svg.dataset.to);
-        if (f) ro.observe(f);
-        if (t) ro.observe(t);
+        observeEndpoint(ro, endpointById(endpoints, svg.dataset.from));
+        observeEndpoint(ro, endpointById(endpoints, svg.dataset.to));
       }
     }
-    view?.addEventListener('resize', draw);
-    view?.addEventListener('scroll', draw, true);
+    view?.addEventListener('resize', scheduleDraw);
+    view?.addEventListener('scroll', scheduleDraw, true);
     return () => {
+      stopped = true;
+      cancelScheduledDraw();
       ro?.disconnect();
-      view?.removeEventListener('resize', draw);
-      view?.removeEventListener('scroll', draw, true);
+      view?.removeEventListener('resize', scheduleDraw);
+      view?.removeEventListener('scroll', scheduleDraw, true);
       for (const state of states) {
         restorePart(state.svg, '.ui-connector__path', state.path);
         restorePart(state.svg, '.ui-connector__end', state.end);
