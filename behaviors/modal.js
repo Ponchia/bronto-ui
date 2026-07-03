@@ -97,6 +97,7 @@ export function initModal({ root } = {}) {
     const doc = modal.ownerDocument;
     if (!doc) continue;
     const view = doc.defaultView;
+    const isNativeDialog = modal.localName === 'dialog';
     let opener = null;
     let inerted = [];
 
@@ -131,7 +132,15 @@ export function initModal({ root } = {}) {
       if (back?.isConnected && typeof back.focus === 'function') back.focus();
     };
 
-    const sync = () => (modal.classList.contains('is-open') ? trap() : release());
+    const sync = () => {
+      if (modal.classList.contains('is-open')) {
+        if (!isNativeDialog) modal.hidden = false;
+        trap();
+        return;
+      }
+      release();
+      if (!isNativeDialog) modal.hidden = true;
+    };
 
     const onKey = (e) => {
       if (e.key === 'Escape' && opener) {
@@ -150,7 +159,7 @@ export function initModal({ root } = {}) {
 
     cleanups.push(
       bindOnce(modal, 'modal', () => {
-        const attrs = snapshotAttrs(modal, ['role', 'aria-modal', 'tabindex']);
+        const attrs = snapshotAttrs(modal, ['role', 'aria-modal', 'tabindex', 'hidden']);
 
         // A controlled modal must announce AS a modal dialog, not a generic group —
         // parity with initPopover. Apply a dialog role + aria-modal (unless the
@@ -174,7 +183,7 @@ export function initModal({ root } = {}) {
         const observer = Observer ? new Observer(sync) : null;
         observer?.observe(modal, { attributes: true, attributeFilter: ['class'] });
         doc.addEventListener('keydown', onKey, true);
-        if (modal.classList.contains('is-open')) trap(); // already open at init
+        sync();
         return () => {
           observer?.disconnect();
           doc.removeEventListener('keydown', onKey, true);

@@ -82,6 +82,31 @@ export function initCommand({ root } = {}) {
     }
   };
 
+  const firstTextNode = (el) => {
+    for (const node of el.childNodes) {
+      if (node.nodeType === 3 && node.nodeValue.trim()) return node;
+      if (node.nodeType === 1) {
+        const child = firstTextNode(node);
+        if (child) return child;
+      }
+    }
+    return null;
+  };
+
+  const refreshLiveText = (el) => {
+    const node = firstTextNode(el);
+    if (!node) return;
+    const text = node.nodeValue;
+    node.nodeValue = '';
+    node.nodeValue = text;
+  };
+
+  const prepareEmptyState = (el) => {
+    if (!el) return;
+    el.setAttribute('role', 'status');
+    el.setAttribute('aria-live', 'polite');
+  };
+
   for (const box of palettes) {
     const input = box.querySelector('.ui-command__input, input');
     const list = box.querySelector('.ui-command__list, [role="listbox"]');
@@ -101,7 +126,12 @@ export function initCommand({ root } = {}) {
         'autocomplete',
       ]),
       list: snapshotAttrs(list, ['id', 'role']),
-      empty: empty ? { hidden: empty.hidden } : null,
+      empty: empty
+        ? {
+            hidden: empty.hidden,
+            attrs: snapshotAttrs(empty, ['role', 'aria-live']),
+          }
+        : null,
       groups: groups.map((g) => ({
         el: g,
         hidden: g.hidden,
@@ -118,7 +148,10 @@ export function initCommand({ root } = {}) {
     const restoreState = (state) => {
       restoreAttrs(input, state.input);
       restoreAttrs(list, state.list);
-      if (empty && state.empty) empty.hidden = state.empty.hidden;
+      if (empty && state.empty) {
+        empty.hidden = state.empty.hidden;
+        restoreAttrs(empty, state.empty.attrs);
+      }
       for (const group of state.groups) {
         group.el.hidden = group.hidden;
         restoreAttrs(group.el, group.attrs);
@@ -172,7 +205,10 @@ export function initCommand({ root } = {}) {
         if (match) any = true;
       }
       syncGroups();
-      if (empty) empty.hidden = any;
+      if (empty) {
+        empty.hidden = any;
+        if (!any) refreshLiveText(empty);
+      }
       const vis = visible();
       setActive(vis[0] || null);
     };
@@ -237,6 +273,7 @@ export function initCommand({ root } = {}) {
       });
       groups.forEach((g) => g.setAttribute('role', 'presentation'));
       list.setAttribute('role', 'listbox');
+      prepareEmptyState(empty);
       input.setAttribute('role', 'combobox');
       input.setAttribute('aria-controls', listId);
       input.setAttribute('aria-autocomplete', 'list');

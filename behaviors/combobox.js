@@ -47,14 +47,26 @@ const restoreAttrs = (el, attrs) => {
   }
 };
 
-const inputLabel = (input) =>
-  input.getAttribute('aria-label') || input.labels?.[0]?.textContent?.trim();
+const labelFromIdRefs = (input) => {
+  const refs = input.getAttribute('aria-labelledby')?.trim();
+  if (!refs) return '';
+  const doc = input.ownerDocument;
+  return refs
+    .split(/\s+/)
+    .map((id) => doc.getElementById(id)?.textContent?.trim())
+    .filter(Boolean)
+    .join(' ')
+    .trim();
+};
 
-const inputHasAccessibleName = (input) =>
-  input.hasAttribute('aria-label') ||
-  input.hasAttribute('aria-labelledby') ||
-  !!input.labels?.length ||
-  input.hasAttribute('title');
+const inputLabel = (input) =>
+  labelFromIdRefs(input) ||
+  input.getAttribute('aria-label')?.trim() ||
+  (input.labels ? [...input.labels].map((label) => label.textContent?.trim()).join(' ') : '') ||
+  input.getAttribute('title')?.trim() ||
+  '';
+
+const inputHasAccessibleName = (input) => !!inputLabel(input);
 
 function mirrorListboxLabel(input, list) {
   if (list.hasAttribute('aria-label') || list.hasAttribute('aria-labelledby')) return;
@@ -223,7 +235,7 @@ export function initCombobox({ root } = {}) {
       ]),
       list: {
         hidden: list.hidden,
-        attrs: snapshotAttrs(list, ['id', 'role', 'aria-label']),
+        attrs: snapshotAttrs(list, ['id', 'role', 'aria-label', 'aria-labelledby']),
       },
       empty: empty
         ? {

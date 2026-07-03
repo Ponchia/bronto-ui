@@ -67,6 +67,12 @@ const carouselRoleDescription = (box, viewport, roleDescription) =>
   roleDescription ||
   'carousel';
 
+const carouselSlideRoleDescription = (box, viewport, slide) =>
+  slide.getAttribute('data-bronto-carousel-slide-roledescription') ||
+  viewport.getAttribute('data-bronto-carousel-slide-roledescription') ||
+  box.getAttribute('data-bronto-carousel-slide-roledescription') ||
+  'slide';
+
 function applyCarouselA11y({
   box,
   viewport,
@@ -96,7 +102,12 @@ function applyCarouselA11y({
   if (!viewport.hasAttribute('tabindex')) viewport.tabIndex = 0;
   slides.forEach((slide, i) => {
     slide.setAttribute('role', 'group');
-    slide.setAttribute('aria-roledescription', 'slide');
+    if (!slide.hasAttribute('aria-roledescription')) {
+      slide.setAttribute(
+        'aria-roledescription',
+        carouselSlideRoleDescription(box, viewport, slide),
+      );
+    }
     if (!slide.hasAttribute('aria-label')) slide.setAttribute('aria-label', `${i + 1} of ${n}`);
   });
   if (status) status.setAttribute('aria-live', 'polite');

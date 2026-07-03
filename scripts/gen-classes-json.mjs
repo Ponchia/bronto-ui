@@ -689,6 +689,12 @@ const behaviorAttributes = [
     note: 'localized override for the carousel aria-roledescription; the behavior applies its English default only when this attribute and any authored aria-roledescription are absent.',
   },
   {
+    name: 'data-bronto-carousel-slide-roledescription',
+    on: 'a .ui-carousel host (applies to each slide)',
+    behavior: 'initCarousel',
+    note: 'localized override for the per-slide aria-roledescription; an authored slide aria-roledescription is preserved and the English "slide" default applies only when both are absent.',
+  },
+  {
     name: 'data-bronto-error-summary-title',
     on: 'a form/error-summary host enhanced by initFormValidation',
     behavior: 'initFormValidation',

@@ -178,12 +178,17 @@ export function initConnectors({ root } = {}) {
   };
 
   const warnedInvalidOptions = new WeakMap();
+  const endpointInHost = (el) => host.nodeType === 9 || host.contains(el);
+  const endpointById = (id) => {
+    const el = byIdInHost(host, id);
+    return el && endpointInHost(el) ? el : null;
+  };
 
   const draw = () => {
     const connectors = collectHosts(host, '[data-bronto-connector]');
     for (const svg of connectors) {
-      const from = byIdInHost(host, svg.dataset.from);
-      const to = byIdInHost(host, svg.dataset.to);
+      const from = endpointById(svg.dataset.from);
+      const to = endpointById(svg.dataset.to);
       if (!from || !to) {
         clearConnectorParts(svg);
         continue;
@@ -226,8 +231,8 @@ export function initConnectors({ root } = {}) {
     if (ro) {
       for (const svg of connectors) {
         if (svg.parentElement) ro.observe(svg.parentElement);
-        const f = byIdInHost(host, svg.dataset.from);
-        const t = byIdInHost(host, svg.dataset.to);
+        const f = endpointById(svg.dataset.from);
+        const t = endpointById(svg.dataset.to);
         if (f) ro.observe(f);
         if (t) ro.observe(t);
       }

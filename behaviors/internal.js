@@ -127,11 +127,53 @@ export function scrollIntoViewSafe(el, opts = { block: 'nearest' }) {
 // itself on open). Focus the first focusable descendant, else make the
 // container programmatically focusable and focus it, so a content-only
 // panel/modal still receives focus.
-const FOCUSABLE =
-  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE = 'a[href], button, input, select, textarea, [tabindex]';
+
+function isInsideDisabledFieldset(el) {
+  return Boolean(el.closest?.('fieldset[disabled]'));
+}
+
+function isRendered(el) {
+  try {
+    if (
+      typeof el.checkVisibility === 'function' &&
+      !el.checkVisibility({ checkVisibilityCSS: true, visibilityProperty: true })
+    ) {
+      return false;
+    }
+  } catch {
+    /* fall through to conservative checks */
+  }
+
+  const view = el.ownerDocument?.defaultView;
+  const style = view?.getComputedStyle?.(el);
+  if (style?.display === 'none') return false;
+  if (style?.visibility === 'hidden' || style?.visibility === 'collapse') return false;
+
+  const docHasLayout = Boolean(el.ownerDocument?.documentElement?.getClientRects?.().length);
+  if (
+    docHasLayout &&
+    'offsetParent' in el &&
+    el.offsetParent === null &&
+    el.getClientRects?.().length === 0
+  ) {
+    return false;
+  }
+  return true;
+}
+
+function isFocusableCandidate(el) {
+  if (el.closest?.('[hidden], [inert]')) return false;
+  if ('disabled' in el && el.disabled) return false;
+  if (isInsideDisabledFieldset(el)) return false;
+  if (el.tabIndex < 0) return false;
+  return isRendered(el);
+}
 
 export function focusInto(container) {
-  const first = container.querySelector(FOCUSABLE);
+  const first = Array.from(container.querySelectorAll?.(FOCUSABLE) || []).find(
+    isFocusableCandidate,
+  );
   if (first) {
     first.focus?.();
     return;
