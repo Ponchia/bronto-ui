@@ -43,6 +43,43 @@ const renderedStatusIndex = (status) => {
   return Number.isInteger(value) ? value - 1 : -1;
 };
 
+const rectRight = (rect) => rect.right ?? rect.left + rect.width;
+const rectBottom = (rect) => rect.bottom ?? rect.top + rect.height;
+
+function intersectionRatioInViewport(viewportRect, slideRect) {
+  if (!slideRect.width || !slideRect.height) return 0;
+  const left = Math.max(viewportRect.left, slideRect.left);
+  const right = Math.min(rectRight(viewportRect), rectRight(slideRect));
+  const top = Math.max(viewportRect.top, slideRect.top);
+  const bottom = Math.min(rectBottom(viewportRect), rectBottom(slideRect));
+  const width = Math.max(0, right - left);
+  const height = Math.max(0, bottom - top);
+  return (width * height) / (slideRect.width * slideRect.height);
+}
+
+function measuredCarouselIndex(viewport, slides) {
+  const viewportRect = viewport.getBoundingClientRect();
+  if (!viewportRect.width || !viewportRect.height) return -1;
+  let bestIndex = -1;
+  let bestRatio = 0;
+  for (const [i, slide] of slides.entries()) {
+    const ratio = intersectionRatioInViewport(viewportRect, slide.getBoundingClientRect());
+    if (ratio > bestRatio) {
+      bestIndex = i;
+      bestRatio = ratio;
+    }
+  }
+  return bestRatio >= 0.6 ? bestIndex : -1;
+}
+
+function bestCarouselEntry(entries) {
+  let best = null;
+  for (const ent of entries) {
+    if (ent.isIntersecting && (!best || ent.intersectionRatio > best.intersectionRatio)) best = ent;
+  }
+  return best;
+}
+
 const snapshotCarouselState = ({ viewport, slides, status, prevBtn, nextBtn, thumbs }) => ({
   viewport: snapshotNode(viewport),
   slides: slides.map((slide) => snapshotNode(slide)),
@@ -132,6 +169,7 @@ function bindCarouselLifecycle({
   io,
   holdProgrammatic,
   clearProgrammaticTimer,
+  onUserScrollStart,
   roleDescription,
 }) {
   const state = snapshotCarouselState({ viewport, slides, status, prevBtn, nextBtn, thumbs });
@@ -148,6 +186,9 @@ function bindCarouselLifecycle({
   });
   render();
   viewport.addEventListener('keydown', onKey);
+  viewport.addEventListener('pointerdown', onUserScrollStart);
+  viewport.addEventListener('touchstart', onUserScrollStart, { passive: true });
+  viewport.addEventListener('wheel', onUserScrollStart, { passive: true });
   box.addEventListener('click', onClick);
   // Observe inside the add callback so observe/disconnect pair with the
   // binding lifecycle: a re-init tears down the prior binding (which
@@ -159,6 +200,9 @@ function bindCarouselLifecycle({
   }
   return () => {
     viewport.removeEventListener('keydown', onKey);
+    viewport.removeEventListener('pointerdown', onUserScrollStart);
+    viewport.removeEventListener('touchstart', onUserScrollStart);
+    viewport.removeEventListener('wheel', onUserScrollStart);
     box.removeEventListener('click', onClick);
     io?.disconnect();
     clearProgrammaticTimer();
@@ -231,12 +275,23 @@ export function initCarousel({ root, roleDescription } = {}) {
     let programmatic = false;
     let progTimer = null;
     let clearScrollEnd = null;
-    const releaseProgrammatic = () => {
+    let ignoredProgrammaticEntry = null;
+    let userScrolledDuringProgrammatic = false;
+    const releaseProgrammatic = ({ replay = true } = {}) => {
+      const replayIgnored = replay && userScrolledDuringProgrammatic && ignoredProgrammaticEntry;
       programmatic = false;
       if (progTimer) clearTimeout(progTimer);
       progTimer = null;
       clearScrollEnd?.();
       clearScrollEnd = null;
+      userScrolledDuringProgrammatic = false;
+      const ignored = ignoredProgrammaticEntry;
+      ignoredProgrammaticEntry = null;
+      if (replayIgnored) {
+        const measured = measuredCarouselIndex(viewport, slides);
+        if (measured >= 0) syncToIndex(measured);
+        else syncFromEntry(ignored);
+      }
     };
     const shouldHoldProgrammatic = () => {
       const view = viewport.ownerDocument?.defaultView;
@@ -245,10 +300,12 @@ export function initCarousel({ root, roleDescription } = {}) {
     };
     const holdProgrammatic = () => {
       if (!shouldHoldProgrammatic()) {
-        releaseProgrammatic();
+        releaseProgrammatic({ replay: false });
         return;
       }
       programmatic = true;
+      ignoredProgrammaticEntry = null;
+      userScrolledDuringProgrammatic = false;
       if (progTimer) clearTimeout(progTimer);
       clearScrollEnd?.();
       const onScrollEnd = () => releaseProgrammatic();
@@ -272,6 +329,22 @@ export function initCarousel({ root, roleDescription } = {}) {
       box.dispatchEvent(new CustomEvent('bronto:change', { detail: { index }, bubbles: true }));
 
     const reveal = (el) => scrollIntoViewSafe(el, { block: 'nearest', inline: 'center' });
+
+    const syncToIndex = (i) => {
+      if (i < 0 || i === index) return;
+      index = i;
+      render();
+      reveal(thumbs[index]);
+      emit();
+    };
+
+    const syncFromEntry = (entry) => syncToIndex(slides.indexOf(entry.target));
+
+    const onUserScrollStart = () => {
+      if (programmatic) userScrolledDuringProgrammatic = true;
+    };
+
+    const clearProgrammaticHold = () => releaseProgrammatic({ replay: false });
 
     const goTo = (i, { emitChange = true } = {}) => {
       const next = loop ? (i + n) % n : Math.max(0, Math.min(n - 1, i));
@@ -318,20 +391,13 @@ export function initCarousel({ root, roleDescription } = {}) {
     if (typeof IntersectionObserver === 'function') {
       io = new IntersectionObserver(
         (entries) => {
-          if (programmatic) return; // ignore the echo of a button/key-driven scroll
-          let best = null;
-          for (const ent of entries) {
-            if (ent.isIntersecting && (!best || ent.intersectionRatio > best.intersectionRatio))
-              best = ent;
-          }
+          const best = bestCarouselEntry(entries);
           if (!best) return;
-          const i = slides.indexOf(best.target);
-          if (i >= 0 && i !== index) {
-            index = i;
-            render();
-            reveal(thumbs[index]);
-            emit();
+          if (programmatic) {
+            ignoredProgrammaticEntry = best;
+            return; // ignore the echo of a button/key-driven scroll until release
           }
+          syncFromEntry(best);
         },
         { root: viewport, threshold: 0.6 },
       );
@@ -352,7 +418,8 @@ export function initCarousel({ root, roleDescription } = {}) {
         onClick,
         io,
         holdProgrammatic,
-        clearProgrammaticTimer: releaseProgrammatic,
+        clearProgrammaticTimer: clearProgrammaticHold,
+        onUserScrollStart,
         roleDescription,
       }),
     );

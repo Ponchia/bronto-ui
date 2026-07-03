@@ -1,6 +1,25 @@
 import { hasDom, resolveHost, noop, bindOnce, collectHosts, closestSafe } from './internal.js';
 
 const THEMES = ['light', 'dark'];
+const DARK_SCHEME_QUERY = '(prefers-color-scheme: dark)';
+
+const colorSchemeQuery = () =>
+  typeof matchMedia === 'function' ? matchMedia(DARK_SCHEME_QUERY) : null;
+
+function onColorSchemeChange(query, listener) {
+  if (
+    typeof query?.addEventListener === 'function' &&
+    typeof query.removeEventListener === 'function'
+  ) {
+    query.addEventListener('change', listener);
+    return () => query.removeEventListener('change', listener);
+  }
+  if (typeof query?.addListener === 'function' && typeof query.removeListener === 'function') {
+    query.addListener(listener);
+    return () => query.removeListener(listener);
+  }
+  return null;
+}
 
 /**
  * @typedef {object} ThemeStorageOpts
@@ -66,8 +85,12 @@ export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
     }
   };
 
-  const prefersDark = () =>
-    typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme: dark)').matches;
+  let schemeQuery = null;
+  let removeSchemeListener = noop;
+
+  const hasExplicitTheme = () => THEMES.includes(docEl.getAttribute('data-theme'));
+
+  const prefersDark = () => (schemeQuery || colorSchemeQuery())?.matches === true;
 
   const current = () => {
     const attr = docEl.getAttribute('data-theme');
@@ -87,7 +110,37 @@ export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
     });
   };
 
-  const onThemeChange = () => reflect();
+  const clearSchemeListener = () => {
+    removeSchemeListener();
+    removeSchemeListener = noop;
+    schemeQuery = null;
+  };
+
+  const syncSchemeListener = () => {
+    if (hasExplicitTheme()) {
+      clearSchemeListener();
+      return;
+    }
+    if (schemeQuery) return;
+    const query = colorSchemeQuery();
+    const cleanup = onColorSchemeChange(query, onSchemeChange);
+    if (!cleanup) return;
+    schemeQuery = query;
+    removeSchemeListener = cleanup;
+  };
+
+  function onSchemeChange() {
+    if (hasExplicitTheme()) {
+      clearSchemeListener();
+      return;
+    }
+    reflect();
+  }
+
+  const onThemeChange = () => {
+    reflect();
+    syncSchemeListener();
+  };
 
   const onClick = (e) => {
     const trigger = closestSafe(e.target, '[data-bronto-theme-toggle]');
@@ -96,6 +149,7 @@ export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
     const forced = trigger.getAttribute('data-bronto-theme-toggle');
     const next = THEMES.includes(forced) ? forced : current() === 'dark' ? 'light' : 'dark';
     docEl.setAttribute('data-theme', next);
+    clearSchemeListener();
     try {
       localStorage.setItem(storageKey, next);
     } catch {
@@ -110,11 +164,13 @@ export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
   return bindOnce(host, 'themeToggle', () => {
     applyStoredTheme({ storageKey, root: docEl });
     reflect();
+    syncSchemeListener();
     docEl.addEventListener('bronto:themechange', onThemeChange);
     host.addEventListener('click', onClick);
     return () => {
       docEl.removeEventListener('bronto:themechange', onThemeChange);
       host.removeEventListener('click', onClick);
+      clearSchemeListener();
       for (const [el, state] of toggleStates) {
         if (state.had) el.setAttribute('aria-pressed', state.value);
         else el.removeAttribute('aria-pressed');

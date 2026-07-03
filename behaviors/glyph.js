@@ -265,7 +265,7 @@ export function initDotGlyph({ root } = {}) {
     const label = el.getAttribute('data-bronto-glyph-label');
 
     // One-node mask path — the icon-at-scale counterpart to the 256-cell grid.
-    if (el.getAttribute('data-bronto-glyph-render') === 'mask') {
+    if (el.getAttribute('data-bronto-glyph-render')?.trim() === 'mask') {
       expandMaskGlyph(el, name, label, cleanups);
       continue;
     }

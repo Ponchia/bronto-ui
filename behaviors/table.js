@@ -173,7 +173,7 @@ export function initTableSort({ root } = {}) {
       const cell = row.children[i];
       const explicit = cell?.getAttribute?.('data-sort-value');
       if (explicit != null && explicit.trim() !== '') {
-        const raw = explicit.trim();
+        const raw = explicit.trim().replace(/[−–—]/g, '-');
         let v = Number(raw);
         // The escape hatch must actually handle the case the doc names it for: a
         // European decimal comma. `Number("3,5")` is NaN, which silently fell
@@ -214,15 +214,18 @@ export function initTableSort({ root } = {}) {
       // or after a sort they float above the real rows.
       const emptyRows = [...tbody.rows].filter((r) => r.classList.contains('ui-table__empty'));
       const rows = [...tbody.rows].filter((r) => !r.classList.contains('ui-table__empty'));
-      rows.sort((a, b) => {
-        const cmp = numeric
-          ? cellNum(a, i) - cellNum(b, i)
-          : compareText(cellText(a, i), cellText(b, i));
-        return cmp * sign;
+      const keyedRows = rows.map((row, index) => ({
+        row,
+        index,
+        key: numeric ? cellNum(row, i) : cellText(row, i),
+      }));
+      keyedRows.sort((a, b) => {
+        const cmp = numeric ? a.key - b.key : compareText(a.key, b.key);
+        return cmp === 0 ? a.index - b.index : cmp * sign;
       });
       // Re-parent in document order: sorted data rows, then any empty/sentinel
       // row last. These are existing <tr> nodes being moved; no markup is parsed.
-      tbody.append(...rows, ...emptyRows);
+      tbody.append(...keyedRows.map(({ row }) => row), ...emptyRows);
     };
 
     const allBox = table.querySelector('[data-bronto-select-all]');

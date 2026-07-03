@@ -1,1 +1,1 @@
-{"version":3,"file":"splitter.d.ts","sourceRoot":"","sources":["splitter.js"],"names":[],"mappings":"AAgOA;;;;;;;;;;;;;GAaG;AACH,wCAHW,OAAO,eAAe,EAAE,YAAY,GAClC,OAAO,eAAe,EAAE,OAAO,CAU3C;;;;;WA1Oa,MAAM;;;;iBACN,UAAU,GAAG,YAAY"}
+{"version":3,"file":"splitter.d.ts","sourceRoot":"","sources":["splitter.js"],"names":[],"mappings":"AA6OA;;;;;;;;;;;;;GAaG;AACH,wCAHW,OAAO,eAAe,EAAE,YAAY,GAClC,OAAO,eAAe,EAAE,OAAO,CAU3C;;;;;WAvPa,MAAM;;;;iBACN,UAAU,GAAG,YAAY"}

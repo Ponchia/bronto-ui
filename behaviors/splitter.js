@@ -14,7 +14,16 @@ const LARGE_STEP = 10;
  * @property {'vertical' | 'horizontal'} orientation Splitter orientation.
  */
 
+const NUMBER_RE = /^[-+]?(?:(?:\d+\.?\d*)|\.\d+)(?:e[-+]?\d+)?$/i;
+
 const num = (v, fallback) => {
+  const value = String(v ?? '').trim();
+  if (!NUMBER_RE.test(value)) return fallback;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+};
+
+const cssNum = (v, fallback) => {
   const n = Number.parseFloat(String(v ?? '').trim());
   return Number.isFinite(n) ? n : fallback;
 };
@@ -26,7 +35,7 @@ const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
 const readCssValue = (splitter) => splitter.style.getPropertyValue('--splitter-pos');
 
 const readOrientation = (splitter, handle) => {
-  const data = splitter.getAttribute('data-bronto-splitter');
+  const data = splitter.getAttribute('data-bronto-splitter')?.trim();
   if (data === 'horizontal' || data === 'vertical') return data;
   if (splitter.classList.contains('ui-splitter--horizontal')) return 'horizontal';
   if (splitter.classList.contains('ui-splitter--vertical')) return 'vertical';
@@ -92,13 +101,17 @@ function wireSplitter(splitter) {
     const min = num(minAttr, DEFAULT_MIN);
     const max = Math.max(min, num(maxAttr, DEFAULT_MAX));
     let value = clamp(
-      num(handle.getAttribute('aria-valuenow'), num(readCssValue(splitter), DEFAULT_VALUE)),
+      num(handle.getAttribute('aria-valuenow'), cssNum(readCssValue(splitter), DEFAULT_VALUE)),
       min,
       max,
     );
     const syncRangeAttr = (name, authored, normalized) => {
       const parsed = num(authored, Number.NaN);
-      if (authored === null || !Number.isFinite(parsed) || fmt(parsed) !== fmt(normalized)) {
+      if (
+        authored === null ||
+        !Number.isFinite(parsed) ||
+        String(authored).trim() !== fmt(normalized)
+      ) {
         handle.setAttribute(name, fmt(normalized));
       }
     };

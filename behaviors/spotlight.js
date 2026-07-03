@@ -20,6 +20,18 @@ const restoreSpotProps = (spot, props) => {
   }
 };
 
+const clearSpotProps = (spot) => {
+  for (const name of SPOT_PROPS) spot.style.removeProperty(name);
+};
+
+const placeSpot = (spot, target) => {
+  const r = target.getBoundingClientRect();
+  spot.style.setProperty('--spot-x', `${r.left}px`);
+  spot.style.setProperty('--spot-y', `${r.top}px`);
+  spot.style.setProperty('--spot-w', `${r.width}px`);
+  spot.style.setProperty('--spot-h', `${r.height}px`);
+};
+
 /**
  * Position a spotlight cutout over a target element. Each
  * `[data-bronto-spotlight]` is a `.ui-spotlight` overlay; `data-target` is the
@@ -40,42 +52,70 @@ export function initSpotlight({ root } = {}) {
   const host = resolveHost(root);
   if (!host) return noop;
 
-  const place = () => {
-    const spots = collectHosts(host, '[data-bronto-spotlight]');
-    for (const spot of spots) {
-      const target = byIdInHost(host, spot.dataset.target);
-      if (!target) continue;
-      const r = target.getBoundingClientRect();
-      spot.style.setProperty('--spot-x', `${r.left}px`);
-      spot.style.setProperty('--spot-y', `${r.top}px`);
-      spot.style.setProperty('--spot-w', `${r.width}px`);
-      spot.style.setProperty('--spot-h', `${r.height}px`);
-    }
-  };
-
   return bindOnce(host, 'spotlight', () => {
     const spots = collectHosts(host, '[data-bronto-spotlight]');
     if (!spots.length) return noop;
-    const states = spots.map((spot) => ({
-      spot,
-      props: snapshotSpotProps(spot),
-    }));
+    const states = new Map();
+    const remember = (spot) => {
+      if (!states.has(spot)) states.set(spot, snapshotSpotProps(spot));
+    };
+    const place = () => {
+      for (const spot of collectHosts(host, '[data-bronto-spotlight]')) {
+        remember(spot);
+        const target = byIdInHost(host, spot.dataset.target);
+        if (!target) {
+          clearSpotProps(spot);
+          continue;
+        }
+        placeSpot(spot, target);
+      }
+    };
     place();
     const view = host.defaultView || host.ownerDocument?.defaultView || null;
     const MO = view?.MutationObserver;
-    const mo = MO ? new MO(place) : null;
+    let scheduledFrame = null;
+    let scheduledTimer = null;
+    const cancelScheduledPlace = () => {
+      if (scheduledFrame !== null) view?.cancelAnimationFrame?.(scheduledFrame);
+      if (scheduledTimer !== null) clearTimeout(scheduledTimer);
+      scheduledFrame = null;
+      scheduledTimer = null;
+    };
+    const schedulePlace = () => {
+      if (scheduledFrame !== null || scheduledTimer !== null) return;
+      if (typeof view?.requestAnimationFrame === 'function') {
+        scheduledFrame = view.requestAnimationFrame(() => {
+          scheduledFrame = null;
+          place();
+        });
+        return;
+      }
+      scheduledTimer = setTimeout(() => {
+        scheduledTimer = null;
+        place();
+      }, 0);
+      scheduledTimer?.unref?.();
+    };
+    const onMutation = () => {
+      place();
+      schedulePlace();
+    };
+    const mo = MO ? new MO(onMutation) : null;
     if (mo) {
       for (const spot of spots) {
         mo.observe(spot, { attributes: true, attributeFilter: ['data-target'] });
       }
+      const doc = host.nodeType === 9 ? host : host.ownerDocument;
+      if (doc) mo.observe(doc, { childList: true, subtree: true });
     }
     view?.addEventListener('resize', place);
     view?.addEventListener('scroll', place, true);
     return () => {
+      cancelScheduledPlace();
       mo?.disconnect();
       view?.removeEventListener('resize', place);
       view?.removeEventListener('scroll', place, true);
-      for (const state of states) restoreSpotProps(state.spot, state.props);
+      for (const [spot, props] of states) restoreSpotProps(spot, props);
     };
   });
 }
