@@ -5,6 +5,7 @@
  * @property {number} [duration] Auto-dismiss delay in ms. `0` keeps it until dismissed. Default: `4000`.
  * @property {boolean} [assertive] Route to the assertive live region so AT interrupts immediately. Defaults to `true` when `tone === 'danger'`.
  * @property {boolean} [closable] Render a dismiss button on the toast.
+ * @property {string} [dismissLabel] Accessible label for the generated dismiss button. Default: `Dismiss`.
  */
 /**
  * Push a transient toast into a shared, screen-anchored stack. The stack
@@ -23,7 +24,7 @@
  * @param {ToastOpts} [opts]
  * @returns {import('./internal.js').Cleanup}
  */
-export function toast(message: string, { tone, title, duration, assertive, closable }?: ToastOpts): import("./internal.js").Cleanup;
+export function toast(message: string, { tone, title, duration, assertive, closable, dismissLabel }?: ToastOpts): import("./internal.js").Cleanup;
 export type ToastOpts = {
     /**
      * Status tone — maps to `ui-toast--<tone>`.
@@ -45,5 +46,9 @@ export type ToastOpts = {
      * Render a dismiss button on the toast.
      */
     closable?: boolean | undefined;
+    /**
+     * Accessible label for the generated dismiss button. Default: `Dismiss`.
+     */
+    dismissLabel?: string | undefined;
 };
 //# sourceMappingURL=toast.d.ts.map

@@ -377,17 +377,18 @@ function noteRect(x, y, width, height, placement) {
  * @param {NotePlacementOptions} options
  * @returns {NotePlacement}
  */
-export function notePlacement({
-  x = 0,
-  y = 0,
-  width,
-  height,
-  bounds,
-  padding = 8,
-  gap = 32,
-  preferred = 'right',
-  inset = 0,
-} = {}) {
+export function notePlacement(options) {
+  const {
+    x = 0,
+    y = 0,
+    width,
+    height,
+    bounds,
+    padding = 8,
+    gap = 32,
+    preferred = 'right',
+    inset = 0,
+  } = options ?? {};
   const anchorX = finite('x', x);
   const anchorY = finite('y', y);
   const w = dimension('width', width);
@@ -439,7 +440,8 @@ export function notePlacement({
  * @param {CircleSubjectOptions} options
  * @returns {string}
  */
-export function circleSubjectPath({ radius } = {}) {
+export function circleSubjectPath(options) {
+  const { radius } = options ?? {};
   return circlePathAt(0, 0, radius);
 }
 
@@ -447,7 +449,8 @@ export function circleSubjectPath({ radius } = {}) {
  * @param {RectSubjectOptions} options
  * @returns {string}
  */
-export function rectSubjectPath({ width, height, x, y, padding = 0 } = {}) {
+export function rectSubjectPath(options) {
+  const { width, height, x, y, padding = 0 } = options ?? {};
   const w = dimension('width', width);
   const h = dimension('height', height);
   const p = dimension('padding', padding);
@@ -463,7 +466,8 @@ export function rectSubjectPath({ width, height, x, y, padding = 0 } = {}) {
  * @param {ThresholdOptions} options
  * @returns {string}
  */
-export function thresholdPath({ x1 = 0, y1 = 0, x2, y2 } = {}) {
+export function thresholdPath(options) {
+  const { x1 = 0, y1 = 0, x2, y2 } = options ?? {};
   const start = { x: finite('x1', x1), y: finite('y1', y1) };
   const end = { x: finite('x2', x2), y: finite('y2', y2) };
   return linePath(start, end);
@@ -473,7 +477,8 @@ export function thresholdPath({ x1 = 0, y1 = 0, x2, y2 } = {}) {
  * @param {AxisThresholdOptions} options
  * @returns {string}
  */
-export function axisThresholdPath({ orientation = 'horizontal', value = 0, start = 0, end } = {}) {
+export function axisThresholdPath(options) {
+  const { orientation = 'horizontal', value = 0, start = 0, end } = options ?? {};
   const v = finite('value', value);
   const s = finite('start', start);
   const e = finite('end', end);
@@ -486,7 +491,8 @@ export function axisThresholdPath({ orientation = 'horizontal', value = 0, start
  * @param {BracketSubjectOptions} options
  * @returns {string}
  */
-export function bracketSubjectPath({ x1, y1, x2, y2, depth = 12 } = {}) {
+export function bracketSubjectPath(options) {
+  const { x1, y1, x2, y2, depth = 12 } = options ?? {};
   const start = { x: finite('x1', x1), y: finite('y1', y1) };
   const end = { x: finite('x2', x2), y: finite('y2', y2) };
   const d = finite('depth', depth);
@@ -501,7 +507,8 @@ export function bracketSubjectPath({ x1, y1, x2, y2, depth = 12 } = {}) {
  * @param {BandSubjectOptions} options
  * @returns {string}
  */
-export function bandSubjectPath({ x = 0, y = 0, width, height, padding = 0 } = {}) {
+export function bandSubjectPath(options) {
+  const { x = 0, y = 0, width, height, padding = 0 } = options ?? {};
   return rectSubjectPath({ x, y, width, height, padding });
 }
 
@@ -509,7 +516,8 @@ export function bandSubjectPath({ x = 0, y = 0, width, height, padding = 0 } = {
  * @param {SlopeSubjectOptions} options
  * @returns {string}
  */
-export function slopeSubjectPath({ x1, y1, x2, y2 } = {}) {
+export function slopeSubjectPath(options) {
+  const { x1, y1, x2, y2 } = options ?? {};
   return thresholdPath({ x1, y1, x2, y2 });
 }
 
@@ -517,7 +525,8 @@ export function slopeSubjectPath({ x1, y1, x2, y2 } = {}) {
  * @param {ComparisonBraceOptions} options
  * @returns {string}
  */
-export function comparisonBracePath({ x1, y1, x2, y2, depth = 14 } = {}) {
+export function comparisonBracePath(options) {
+  const { x1, y1, x2, y2, depth = 14 } = options ?? {};
   const start = { x: finite('x1', x1), y: finite('y1', y1) };
   const end = { x: finite('x2', x2), y: finite('y2', y2) };
   const d = finite('depth', depth);
@@ -558,7 +567,8 @@ export function comparisonBracePath({ x1, y1, x2, y2, depth = 14 } = {}) {
  * @param {OutlierClusterOptions} options
  * @returns {string}
  */
-export function outlierClusterPath({ points, radius = 6 } = {}) {
+export function outlierClusterPath(options) {
+  const { points, radius = 6 } = options ?? {};
   if (!Array.isArray(points)) throw new TypeError('points must be an array');
   return points
     .map((p, i) =>
@@ -604,7 +614,8 @@ export function evidenceMarkerPath({ x = 0, y = 0, width = 36, height = 36, padd
  * @param {ConnectorEndDotOptions} options
  * @returns {string}
  */
-export function connectorEndDot({ x, y, radius = 3 } = {}) {
+export function connectorEndDot(options) {
+  const { x, y, radius = 3 } = options ?? {};
   return dotMark({ x: finite('x', x), y: finite('y', y) }, radius);
 }
 
@@ -612,7 +623,8 @@ export function connectorEndDot({ x, y, radius = 3 } = {}) {
  * @param {ConnectorEndArrowOptions} options
  * @returns {string}
  */
-export function connectorEndArrow({ x1 = 0, y1 = 0, x2, y2, size = 8, spread = 0.32 } = {}) {
+export function connectorEndArrow(options) {
+  const { x1 = 0, y1 = 0, x2, y2, size = 8, spread = 0.32 } = options ?? {};
   const start = { x: finite('x1', x1), y: finite('y1', y1) };
   const end = { x: finite('x2', x2), y: finite('y2', y2) };
   const s = dimension('size', size);
@@ -624,10 +636,11 @@ export function connectorEndArrow({ x1 = 0, y1 = 0, x2, y2, size = 8, spread = 0
  * @param {ConnectorOptions} opts
  * @returns {string}
  */
-export function connectorLine(opts = {}) {
-  const { dx, dy } = validateOffset(opts);
+export function connectorLine(opts) {
+  const options = opts ?? {};
+  const { dx, dy } = validateOffset(options);
   if (dx === 0 && dy === 0) return '';
-  const start = connectorStart(dx, dy, opts.subject);
+  const start = connectorStart(dx, dy, options.subject);
   if (!start) return '';
   const end = { x: dx, y: dy };
   // Guard a trim that rounds onto the note anchor (straightPath has no guard).
@@ -639,10 +652,11 @@ export function connectorLine(opts = {}) {
  * @param {ConnectorOptions} opts
  * @returns {string}
  */
-export function connectorElbow(opts = {}) {
-  const { dx, dy } = validateOffset(opts);
+export function connectorElbow(opts) {
+  const options = opts ?? {};
+  const { dx, dy } = validateOffset(options);
   if (dx === 0 && dy === 0) return '';
-  const start = connectorStart(dx, dy, opts.subject);
+  const start = connectorStart(dx, dy, options.subject);
   if (!start) return '';
   const end = { x: dx, y: dy };
   if (samePoint(start, end)) return '';
@@ -651,17 +665,18 @@ export function connectorElbow(opts = {}) {
   // annotation leader and a node connector draw the same elbow. (The former
   // inline form turned by min(|dx|,|dy|), i.e. a 45° chamfer that read as a
   // diagonal stub, not an elbow — which the `stroke-linejoin` bevel assumes.)
-  return elbowPath(start, end, { mid: opts.mid });
+  return elbowPath(start, end, { mid: options.mid });
 }
 
 /**
  * @param {ConnectorOptions} opts
  * @returns {string}
  */
-export function connectorCurve(opts = {}) {
-  const { dx, dy } = validateOffset(opts);
+export function connectorCurve(opts) {
+  const options = opts ?? {};
+  const { dx, dy } = validateOffset(options);
   if (dx === 0 && dy === 0) return '';
-  const start = connectorStart(dx, dy, opts.subject);
+  const start = connectorStart(dx, dy, options.subject);
   if (!start) return '';
   const end = { x: dx, y: dy };
   if (samePoint(start, end)) return '';

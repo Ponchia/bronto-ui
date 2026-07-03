@@ -853,8 +853,22 @@
                   </div>
                 </div>
               </div>
-              <button class="ui-carousel__prev" data-bronto-carousel-prev></button>
-              <button class="ui-carousel__next" data-bronto-carousel-next></button>
+              <button
+                class="ui-carousel__prev"
+                data-bronto-carousel-prev
+                type="button"
+                aria-label="Previous photo"
+                disabled
+                hidden
+              ></button>
+              <button
+                class="ui-carousel__next"
+                data-bronto-carousel-next
+                type="button"
+                aria-label="Next photo"
+                disabled
+                hidden
+              ></button>
               <p class="ui-carousel__status"></p>
             </div>
             <ul class="ui-carousel__thumbs">
@@ -902,8 +916,22 @@
                     </div>
                   </div>
                 </div>
-                <button class="ui-carousel__prev" data-bronto-carousel-prev></button>
-                <button class="ui-carousel__next" data-bronto-carousel-next></button>
+                <button
+                  class="ui-carousel__prev"
+                  data-bronto-carousel-prev
+                  type="button"
+                  aria-label="Previous gallery photo"
+                  disabled
+                  hidden
+                ></button>
+                <button
+                  class="ui-carousel__next"
+                  data-bronto-carousel-next
+                  type="button"
+                  aria-label="Next gallery photo"
+                  disabled
+                  hidden
+                ></button>
                 <p class="ui-carousel__status"></p>
               </div>
             </div>
@@ -1837,6 +1865,16 @@ useCommand();  // react/solid/qwik</code></pre>
 
     <!-- The demo drives itself with the package's own shipped modules,
          so it doubles as a live integration test of behaviors + classes. -->
+    <script>
+      // The authored fallback hides inert carousel controls when JS is absent;
+      // the behavior module restores live state immediately after this.
+      for (const control of document.querySelectorAll(
+        '[data-bronto-carousel-prev][hidden], [data-bronto-carousel-next][hidden]',
+      )) {
+        control.hidden = false;
+        control.disabled = false;
+      }
+    </script>
     <script type="module" src="./index.js"></script>
   </body>
 </html>
