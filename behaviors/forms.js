@@ -59,6 +59,7 @@ function rememberSummary(summary, state) {
       attrs: snapshotAttrs(summary, ['role', 'tabindex']),
       children: [...summary.childNodes],
       hidden: summary.hidden,
+      title: summary.querySelector('.ui-error-summary__title')?.cloneNode(true) ?? null,
     });
   }
 }
@@ -216,7 +217,24 @@ function summaryControls(form, invalid) {
   return controls;
 }
 
-function refreshSummary(form, invalid, state) {
+function nonEmpty(value) {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function summaryTitleNode(form, summary, state, fallbackTitle) {
+  const authored = state.summaryState.get(summary)?.title;
+  if (authored) return authored.cloneNode(true);
+  const title = document.createElement('p');
+  title.className = 'ui-error-summary__title';
+  title.textContent =
+    nonEmpty(summary.getAttribute('data-bronto-error-summary-title')) ||
+    nonEmpty(form.getAttribute('data-bronto-error-summary-title')) ||
+    nonEmpty(fallbackTitle) ||
+    'There is a problem';
+  return title;
+}
+
+function refreshSummary(form, invalid, state, summaryTitle) {
   const summary = form.querySelector('[data-bronto-error-summary]');
   if (!summary) return;
   rememberSummary(summary, state);
@@ -225,9 +243,7 @@ function refreshSummary(form, invalid, state) {
     summary.replaceChildren();
     return;
   }
-  const title = document.createElement('p');
-  title.className = 'ui-error-summary__title';
-  title.textContent = 'There is a problem';
+  const title = summaryTitleNode(form, summary, state, summaryTitle);
   const list = document.createElement('ul');
   list.className = 'ui-error-summary__list';
   list.append(...summaryControls(form, invalid).map(summaryItem));
@@ -253,6 +269,16 @@ function restoreValidationState(state) {
 }
 
 /**
+ * @typedef {object} FormValidationOpts
+ * @property {Document | Element | null} [root]
+ *   Event-delegation root; default: `document`.
+ * @property {string} [summaryTitle]
+ *   Localized validation-summary title. A summary/form
+ *   `data-bronto-error-summary-title` attribute overrides it, and an authored
+ *   `.ui-error-summary__title` child is preserved.
+ */
+
+/**
  * Accessible form validation glue for `<form data-bronto-validate>`.
  * Progressive enhancement over the native Constraint Validation API —
  * the framework already ships the `[aria-invalid]` / `.ui-hint--error`
@@ -274,10 +300,10 @@ function restoreValidationState(state) {
  * Pure enhancement: with JS off the form still submits and the browser
  * validates natively. SSR-safe, idempotent; returns a cleanup function.
  *
- * @param {import('./internal.js').DelegateOpts} [opts]
+ * @param {FormValidationOpts} [opts]
  * @returns {import('./internal.js').Cleanup}
  */
-export function initFormValidation({ root } = {}) {
+export function initFormValidation({ root, summaryTitle } = {}) {
   if (!hasDom()) return noop;
   const host = resolveHost(root);
   if (!host) return noop;
@@ -288,7 +314,7 @@ export function initFormValidation({ root } = {}) {
     if (!form) return;
     suppressNativeValidation(form, state);
     const invalid = controlsOf(form).filter((control) => !validateField(control, state));
-    refreshSummary(form, invalid, state);
+    refreshSummary(form, invalid, state, summaryTitle);
     if (invalid.length) {
       event.preventDefault();
       const summary = form.querySelector('[data-bronto-error-summary]');
@@ -309,6 +335,7 @@ export function initFormValidation({ root } = {}) {
         form,
         controlsOf(form).filter((candidate) => !candidate.validity.valid),
         state,
+        summaryTitle,
       );
     }
   };

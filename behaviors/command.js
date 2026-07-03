@@ -10,6 +10,23 @@ import {
   closestSafe,
 } from './internal.js';
 
+const localeOf = (el) => {
+  const locale =
+    closestSafe(el, '[lang]')?.getAttribute('lang')?.trim() ||
+    el?.ownerDocument?.documentElement?.getAttribute('lang')?.trim();
+  return locale || undefined;
+};
+
+const lowerForSearch = (value, locale) => {
+  const text = String(value ?? '');
+  if (!locale) return text.toLowerCase();
+  try {
+    return text.toLocaleLowerCase(locale);
+  } catch {
+    return text.toLowerCase();
+  }
+};
+
 /**
  * @typedef {object} CommandSelectDetail
  * @property {string} value The chosen command's value.
@@ -72,6 +89,7 @@ export function initCommand({ root } = {}) {
     const empty = box.querySelector('.ui-command__empty');
     const items = [...list.querySelectorAll('.ui-command__item, [role="option"]')];
     const groups = [...list.querySelectorAll('.ui-command__group')];
+    const locale = localeOf(box);
 
     const rememberState = () => ({
       input: snapshotAttrs(input, [
@@ -146,10 +164,10 @@ export function initCommand({ root } = {}) {
     };
 
     const filter = () => {
-      const q = input.value.trim().toLowerCase();
+      const q = lowerForSearch(input.value.trim(), locale);
       let any = false;
       for (const it of items) {
-        const match = !q || it.textContent.toLowerCase().includes(q);
+        const match = !q || lowerForSearch(it.textContent, locale).includes(q);
         it.hidden = !match;
         if (match) any = true;
       }

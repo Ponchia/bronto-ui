@@ -10,7 +10,9 @@
  * `[data-bronto-carousel-prev]` / `[data-bronto-carousel-next]` controls,
  * a `.ui-carousel__thumbs` list of `.ui-carousel__thumb` buttons, and a
  * `.ui-carousel__status` counter slot. Add `data-bronto-carousel-loop` to
- * wrap at the ends, `data-bronto-carousel-label` to name the region.
+ * wrap at the ends, `data-bronto-carousel-label` to name the region, and
+ * `data-bronto-carousel-roledescription` to localize the default
+ * `aria-roledescription` when the viewport does not already carry one.
  *
  * A full-screen **lightbox** is the same markup inside a native
  * `<dialog class="ui-lightbox">` opened by {@link initDialog}: the
@@ -21,8 +23,10 @@
  * (button, key, thumbnail, or swipe). SSR-safe, idempotent per carousel;
  * returns a cleanup function.
  *
- * @param {import('./internal.js').DelegateOpts} [opts]
+ * @param {import('./internal.js').DelegateOpts & { roleDescription?: string }} [opts]
  * @returns {import('./internal.js').Cleanup}
  */
-export function initCarousel({ root }?: import("./internal.js").DelegateOpts): import("./internal.js").Cleanup;
+export function initCarousel({ root, roleDescription }?: import("./internal.js").DelegateOpts & {
+    roleDescription?: string;
+}): import("./internal.js").Cleanup;
 //# sourceMappingURL=carousel.d.ts.map

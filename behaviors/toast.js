@@ -115,13 +115,39 @@ function removeToast(el) {
   timer?.unref?.(); // don't keep a Node test process alive
 }
 
-function addToastClose(el, dismiss) {
+function addToastClose(el, dismiss, label = 'Dismiss') {
   const close = document.createElement('button');
   close.type = 'button';
   close.className = 'ui-toast__close';
-  close.setAttribute('aria-label', 'Dismiss');
+  close.setAttribute('aria-label', label);
   close.addEventListener('click', dismiss);
   el.appendChild(close);
+}
+
+function normalizeToastDuration(duration) {
+  let value;
+  try {
+    value = Number(duration);
+  } catch {
+    value = NaN;
+  }
+  if (Number.isFinite(value) && value >= 0) return value;
+  if (typeof console !== 'undefined') {
+    console.warn(
+      '[bronto] toast(): duration must be a finite non-negative number. Rendering a sticky, closable toast instead.',
+    );
+  }
+  return 0;
+}
+
+function toastDismissLabel(stack, dismissLabel) {
+  return (
+    (typeof dismissLabel === 'string' && dismissLabel.trim()) ||
+    stack.getAttribute('data-bronto-toast-dismiss-label')?.trim() ||
+    document.body?.getAttribute('data-bronto-toast-dismiss-label')?.trim() ||
+    document.documentElement?.getAttribute('data-bronto-toast-dismiss-label')?.trim() ||
+    'Dismiss'
+  );
 }
 
 /**
@@ -131,6 +157,7 @@ function addToastClose(el, dismiss) {
  * @property {number} [duration] Auto-dismiss delay in ms. `0` keeps it until dismissed. Default: `4000`.
  * @property {boolean} [assertive] Route to the assertive live region so AT interrupts immediately. Defaults to `true` when `tone === 'danger'`.
  * @property {boolean} [closable] Render a dismiss button on the toast.
+ * @property {string} [dismissLabel] Accessible label for the generated dismiss button. Default: `Dismiss`.
  */
 
 /**
@@ -150,7 +177,10 @@ function addToastClose(el, dismiss) {
  * @param {ToastOpts} [opts]
  * @returns {import('./internal.js').Cleanup}
  */
-export function toast(message, { tone, title, duration = 4000, assertive, closable } = {}) {
+export function toast(
+  message,
+  { tone, title, duration = 4000, assertive, closable, dismissLabel } = {},
+) {
   if (!hasDom()) return noop;
   // Errors must interrupt: danger toasts (or an explicit `assertive`)
   // go to a SEPARATE assertive region so they announce immediately,
@@ -160,6 +190,7 @@ export function toast(message, { tone, title, duration = 4000, assertive, closab
   const isAssertive = assertive ?? tone === 'danger';
   const { stack, fresh: freshStack } = toastStack(isAssertive);
   const el = toastElement(message, { tone, title });
+  const normalizedDuration = normalizeToastDuration(duration);
   // Append after a frame the *first* time so the empty live region is
   // observed by AT before its first child arrives; once the region has
   // been observed, later toasts append synchronously.
@@ -188,12 +219,14 @@ export function toast(message, { tone, title, duration = 4000, assertive, closab
   // Explicitly opting OUT of the close button on a sticky toast strands it with
   // no in-UI dismissal; warn that the caller must retain and call the returned
   // dismiss function.
-  if (duration === 0 && closable === false && typeof console !== 'undefined') {
+  if (normalizedDuration === 0 && closable === false && typeof console !== 'undefined') {
     console.warn(
       '[bronto] toast(): duration:0 + closable:false has no in-UI dismissal — keep the returned dismiss() and call it yourself, or set closable:true.',
     );
   }
-  if (closable ?? duration === 0) addToastClose(el, dismiss);
-  if (duration > 0) timer = setTimeout(dismiss, duration);
+  if (closable ?? normalizedDuration === 0) {
+    addToastClose(el, dismiss, toastDismissLabel(stack, dismissLabel));
+  }
+  if (normalizedDuration > 0) timer = setTimeout(dismiss, normalizedDuration);
   return dismiss;
 }

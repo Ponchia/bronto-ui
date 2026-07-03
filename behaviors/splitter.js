@@ -87,13 +87,21 @@ function wireSplitter(splitter) {
     ]);
     const splitterPos = snapshotStyleProp(splitter, '--splitter-pos');
     const orientation = readOrientation(splitter, handle);
-    const min = num(handle.getAttribute('aria-valuemin'), DEFAULT_MIN);
-    const max = Math.max(min, num(handle.getAttribute('aria-valuemax'), DEFAULT_MAX));
+    const minAttr = handle.getAttribute('aria-valuemin');
+    const maxAttr = handle.getAttribute('aria-valuemax');
+    const min = num(minAttr, DEFAULT_MIN);
+    const max = Math.max(min, num(maxAttr, DEFAULT_MAX));
     let value = clamp(
       num(handle.getAttribute('aria-valuenow'), num(readCssValue(splitter), DEFAULT_VALUE)),
       min,
       max,
     );
+    const syncRangeAttr = (name, authored, normalized) => {
+      const parsed = num(authored, Number.NaN);
+      if (authored === null || !Number.isFinite(parsed) || fmt(parsed) !== fmt(normalized)) {
+        handle.setAttribute(name, fmt(normalized));
+      }
+    };
     let activePointer = null;
 
     const apply = (next, { emit = true } = {}) => {
@@ -108,8 +116,8 @@ function wireSplitter(splitter) {
     if (!handle.hasAttribute('tabindex')) handle.tabIndex = 0;
     if (!handle.hasAttribute('aria-orientation'))
       handle.setAttribute('aria-orientation', orientation);
-    if (!handle.hasAttribute('aria-valuemin')) handle.setAttribute('aria-valuemin', fmt(min));
-    if (!handle.hasAttribute('aria-valuemax')) handle.setAttribute('aria-valuemax', fmt(max));
+    syncRangeAttr('aria-valuemin', minAttr, min);
+    syncRangeAttr('aria-valuemax', maxAttr, max);
     apply(value, { emit: false });
 
     const fromPointer = (event) => {

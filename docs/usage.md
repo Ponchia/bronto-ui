@@ -624,7 +624,6 @@ HTML, print/PDF, and before any hydration:
 | Accordion | native `<details>` / `<summary>` |
 | Segmented control (`ui-segmented`) | `:has(input:checked)` over a radio group |
 | Scroll-reveal (`ui-scroll-reveal`) | scroll-driven animation, zero JS |
-| Modal via native `<dialog>` | the element brings focus-trap + Escape; `initDialog` only adds open-triggers + focus-return |
 
 **Behavior-required — a CSS skin that needs its `init*` to be interactive.**
 These are JS widgets wearing the Bronto look; without the behavior they are inert
@@ -640,6 +639,7 @@ These are JS widgets wearing the Bronto look; without the behavior they are iner
 | Table sort/select (`[data-bronto-sortable]`) | `initTableSort` | a static table (still readable) |
 | Popover (`ui-popover`) | `initPopover` | no placement/ARIA — prefer the native `popover` attribute |
 | Carousel (`ui-carousel`) | `initCarousel` | a native scroll-snap track (usable, no controls) |
+| Native dialog/lightbox (`<dialog>`, `ui-lightbox`) | `initDialog` | closed markup stays closed; `data-bronto-open`/close buttons do nothing. Do not use `open` as a modal fallback: it is non-modal and has no trigger/focus-return path |
 | Controlled modal (`ui-modal.is-open`) | `initModal` | open skin only — no inert trap, focus-return, or Escape close signal |
 | Menu (`data-bronto-menu`) | `initMenu` | a button next to a list with no open/close, outside-click, or Escape |
 | Dismissible alert/callout (`data-bronto-dismissible`) | `dismissible` | the close affordance is just a button; nothing is removed |
