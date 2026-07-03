@@ -230,14 +230,15 @@ export function curvePath(from, to, opts = {}) {
 
 /**
  * Build a path between two points by `shape` (`straight` | `elbow` | `curve`).
- * @param {ConnectorPathOptions} [opts]
+ * @param {ConnectorPathOptions} opts
  * @returns {string}
  */
-export function connectorPath(opts = {}) {
-  const { from, to } = opts;
-  const shape = connectorShape(opts.shape);
-  if (shape === 'elbow') return elbowPath(from, to, opts);
-  if (shape === 'curve') return curvePath(from, to, opts);
+export function connectorPath(opts) {
+  const options = opts ?? {};
+  const { from, to } = options;
+  const shape = connectorShape(options.shape);
+  if (shape === 'elbow') return elbowPath(from, to, options);
+  if (shape === 'curve') return curvePath(from, to, options);
   return straightPath(from, to);
 }
 
@@ -332,17 +333,18 @@ export function endTangentAngle(from, to, shape = 'straight') {
  * Connect two rects. Resolves anchor points (explicit `fromSide`/`toSide`, else
  * auto), builds the path, and returns `{ d, from, to, angle }` so the caller can
  * place an arrowhead/dot at `to` rotated by `angle`.
- * @param {ConnectRectsOptions} [opts]
+ * @param {ConnectRectsOptions} opts
  * @returns {ConnectRectsResult}
  */
-export function connectRects(opts = {}) {
-  const { fromRect, toRect, curvature, mid } = opts;
-  const shape = connectorShape(opts.shape);
+export function connectRects(opts) {
+  const options = opts ?? {};
+  const { fromRect, toRect, curvature, mid } = options;
+  const shape = connectorShape(options.shape);
   // Honor each side override independently; auto-pick whichever is unset.
   const auto = autoSides(fromRect, toRect);
   const sides = {
-    from: opts.fromSide == null ? auto.from : sideValue(opts.fromSide),
-    to: opts.toSide == null ? auto.to : sideValue(opts.toSide),
+    from: options.fromSide == null ? auto.from : sideValue(options.fromSide),
+    to: options.toSide == null ? auto.to : sideValue(options.toSide),
   };
   const from = anchorPoint(fromRect, sides.from);
   const to = anchorPoint(toRect, sides.to);

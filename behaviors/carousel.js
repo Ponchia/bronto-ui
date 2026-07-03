@@ -61,11 +61,32 @@ function setDefaultButtonType(button) {
   if (button?.tagName === 'BUTTON' && !button.hasAttribute('type')) button.type = 'button';
 }
 
-function applyCarouselA11y({ box, viewport, slides, status, prevBtn, nextBtn, thumbs, n }) {
+const carouselRoleDescription = (box, viewport, roleDescription) =>
+  viewport.getAttribute('data-bronto-carousel-roledescription') ||
+  box.getAttribute('data-bronto-carousel-roledescription') ||
+  roleDescription ||
+  'carousel';
+
+function applyCarouselA11y({
+  box,
+  viewport,
+  slides,
+  status,
+  prevBtn,
+  nextBtn,
+  thumbs,
+  n,
+  roleDescription,
+}) {
   // ARIA scaffolding — pragmatic carousel semantics (not the full APG
   // tablist), the same restraint initMenu takes.
   viewport.setAttribute('role', 'group');
-  viewport.setAttribute('aria-roledescription', 'carousel');
+  if (!viewport.hasAttribute('aria-roledescription')) {
+    viewport.setAttribute(
+      'aria-roledescription',
+      carouselRoleDescription(box, viewport, roleDescription),
+    );
+  }
   if (!viewport.hasAttribute('aria-label')) {
     viewport.setAttribute(
       'aria-label',
@@ -100,9 +121,20 @@ function bindCarouselLifecycle({
   io,
   holdProgrammatic,
   clearProgrammaticTimer,
+  roleDescription,
 }) {
   const state = snapshotCarouselState({ viewport, slides, status, prevBtn, nextBtn, thumbs });
-  applyCarouselA11y({ box, viewport, slides, status, prevBtn, nextBtn, thumbs, n });
+  applyCarouselA11y({
+    box,
+    viewport,
+    slides,
+    status,
+    prevBtn,
+    nextBtn,
+    thumbs,
+    n,
+    roleDescription,
+  });
   render();
   viewport.addEventListener('keydown', onKey);
   box.addEventListener('click', onClick);
@@ -135,7 +167,9 @@ function bindCarouselLifecycle({
  * `[data-bronto-carousel-prev]` / `[data-bronto-carousel-next]` controls,
  * a `.ui-carousel__thumbs` list of `.ui-carousel__thumb` buttons, and a
  * `.ui-carousel__status` counter slot. Add `data-bronto-carousel-loop` to
- * wrap at the ends, `data-bronto-carousel-label` to name the region.
+ * wrap at the ends, `data-bronto-carousel-label` to name the region, and
+ * `data-bronto-carousel-roledescription` to localize the default
+ * `aria-roledescription` when the viewport does not already carry one.
  *
  * A full-screen **lightbox** is the same markup inside a native
  * `<dialog class="ui-lightbox">` opened by {@link initDialog}: the
@@ -146,10 +180,10 @@ function bindCarouselLifecycle({
  * (button, key, thumbnail, or swipe). SSR-safe, idempotent per carousel;
  * returns a cleanup function.
  *
- * @param {import('./internal.js').DelegateOpts} [opts]
+ * @param {import('./internal.js').DelegateOpts & { roleDescription?: string }} [opts]
  * @returns {import('./internal.js').Cleanup}
  */
-export function initCarousel({ root } = {}) {
+export function initCarousel({ root, roleDescription } = {}) {
   if (!hasDom()) return noop;
   const host = resolveHost(root);
   if (!host) return noop;
@@ -308,6 +342,7 @@ export function initCarousel({ root } = {}) {
         io,
         holdProgrammatic,
         clearProgrammaticTimer: releaseProgrammatic,
+        roleDescription,
       }),
     );
     cleanups.push(bound);

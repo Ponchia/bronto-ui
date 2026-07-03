@@ -45,6 +45,7 @@
     "css",
     "dist",
     "tailwind.css",
+    "index.d.ts",
     "fonts",
     "tokens",
     "classes",
@@ -243,6 +244,7 @@
   },
   "exports": {
     ".": {
+      "types": "./index.d.ts",
       "style": "./dist/bronto.css",
       "default": "./dist/bronto.css"
     },

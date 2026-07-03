@@ -77,6 +77,46 @@ const syncConnectorEnd = (svg, end, angle) => {
   );
 };
 
+const CONNECTOR_SHAPES = ['straight', 'elbow', 'curve'];
+const CONNECTOR_SIDES = ['top', 'right', 'bottom', 'left', 'center'];
+const CONNECTOR_SHAPE_VALUES = new Set(CONNECTOR_SHAPES);
+const CONNECTOR_SIDE_VALUES = new Set(CONNECTOR_SIDES);
+
+const clearConnectorParts = (svg) => {
+  svg.querySelector('.ui-connector__path')?.remove();
+  svg.querySelector('.ui-connector__end')?.remove();
+};
+
+const invalidConnectorOptionDetails = (svg) => {
+  const details = [];
+  const shape = svg.dataset.shape;
+  if (shape && !CONNECTOR_SHAPE_VALUES.has(shape)) {
+    details.push(`data-shape="${shape}" (allowed: ${CONNECTOR_SHAPES.join('/')})`);
+  }
+  const fromSide = svg.dataset.fromSide;
+  if (fromSide && !CONNECTOR_SIDE_VALUES.has(fromSide)) {
+    details.push(`data-from-side="${fromSide}" (allowed: ${CONNECTOR_SIDES.join('/')})`);
+  }
+  const toSide = svg.dataset.toSide;
+  if (toSide && !CONNECTOR_SIDE_VALUES.has(toSide)) {
+    details.push(`data-to-side="${toSide}" (allowed: ${CONNECTOR_SIDES.join('/')})`);
+  }
+  return details;
+};
+
+const warnInvalidConnectorOptions = (svg, warnedInvalidOptions) => {
+  const details = invalidConnectorOptionDetails(svg);
+  if (!details.length || typeof console === 'undefined') return;
+  const signature = details.join('|');
+  if (warnedInvalidOptions.get(svg) === signature) return;
+  warnedInvalidOptions.set(svg, signature);
+  console.warn(
+    `[bronto] initConnectors(): invalid connector option ${details.join(
+      ', ',
+    )} - skipping connector.`,
+  );
+};
+
 /**
  * Draw + keep leader lines in sync. Each `[data-bronto-connector]` is an
  * `.ui-connector` SVG overlaying a positioned container; `data-from`/`data-to`
@@ -137,31 +177,37 @@ export function initConnectors({ root } = {}) {
     }
   };
 
+  const warnedInvalidOptions = new WeakMap();
+
   const draw = () => {
     const connectors = collectHosts(host, '[data-bronto-connector]');
     for (const svg of connectors) {
       const from = byIdInHost(host, svg.dataset.from);
       const to = byIdInHost(host, svg.dataset.to);
       if (!from || !to) {
-        svg.querySelector('.ui-connector__path')?.remove();
-        svg.querySelector('.ui-connector__end')?.remove();
+        clearConnectorParts(svg);
         continue;
       }
-      const {
-        d,
-        to: end,
-        angle,
-      } = connectRects({
-        fromRect: rectInSvg(svg, from),
-        toRect: rectInSvg(svg, to),
-        shape: svg.dataset.shape || 'straight',
-        fromSide: svg.dataset.fromSide || undefined,
-        toSide: svg.dataset.toSide || undefined,
-      });
-      const path = upsertConnectorPart(svg, '.ui-connector__path', 'ui-connector__path');
-      path.setAttribute('d', d);
-      syncDrawPathLength(svg, path);
-      syncConnectorEnd(svg, end, angle);
+      try {
+        const {
+          d,
+          to: end,
+          angle,
+        } = connectRects({
+          fromRect: rectInSvg(svg, from),
+          toRect: rectInSvg(svg, to),
+          shape: svg.dataset.shape || 'straight',
+          fromSide: svg.dataset.fromSide || undefined,
+          toSide: svg.dataset.toSide || undefined,
+        });
+        const path = upsertConnectorPart(svg, '.ui-connector__path', 'ui-connector__path');
+        path.setAttribute('d', d);
+        syncDrawPathLength(svg, path);
+        syncConnectorEnd(svg, end, angle);
+      } catch {
+        clearConnectorParts(svg);
+        warnInvalidConnectorOptions(svg, warnedInvalidOptions);
+      }
     }
   };
 

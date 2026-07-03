@@ -703,7 +703,17 @@ export const cls = Object.freeze({
   themetoggleThumb: 'ui-themetoggle__thumb',
 });
 
-/** classnames-style joiner: skips falsy, flattens nested arrays of any depth. */
+/**
+ * Mirrors clsx's permissive input: `number`/`boolean` accepted so guarded class
+ * expressions type-check; readonly arrays/tuples flatten the same as mutable ones.
+ * @typedef {string | number | boolean | null | undefined | ReadonlyArray<ClassValue>} ClassValue
+ */
+
+/**
+ * classnames-style joiner: skips falsy, flattens nested arrays of any depth.
+ * @param {...ClassValue} parts
+ * @returns {string}
+ */
 export function cx(...parts) {
   const out = [];
   for (const p of parts.flat(Infinity)) if (p && typeof p !== 'boolean') out.push(p);
@@ -1094,9 +1104,19 @@ export const ui = {
 // unknown; a meter is never indeterminate so it passes false. (Kept a boolean
 // flag rather than testing the role string, so check:recipe-types doesn't read it
 // as a recipe option literal.)
-const valueAttrs = (role, value, min, max, busyWhenIndeterminate) => {
+const valueAttrs = (component, role, value, min, max, busyWhenIndeterminate) => {
   const lo = Number(min);
   const hi = Number(max);
+  const validRange = Number.isFinite(lo) && Number.isFinite(hi) && hi > lo;
+  if (!validRange) {
+    if (typeof console !== 'undefined') {
+      console.warn(
+        `[bronto] attrs.${component}(): invalid range (expected finite min/max with max > min); omitting value ARIA.`,
+      );
+    }
+    return busyWhenIndeterminate ? { role, 'aria-busy': 'true' } : { role };
+  }
+
   const raw = Number(value);
   // Indeterminate: an omitted/unknown value (attrs.progress() with no argument).
   // ARIA requires aria-valuenow be OMITTED here — emitting 0 announces "0%",
@@ -1109,7 +1129,7 @@ const valueAttrs = (role, value, min, max, busyWhenIndeterminate) => {
     return busyWhenIndeterminate ? { role, 'aria-busy': 'true' } : { role };
   }
   const now = Math.min(hi, Math.max(lo, raw));
-  const pct = hi > lo ? ((now - lo) / (hi - lo)) * 100 : 0;
+  const pct = ((now - lo) / (hi - lo)) * 100;
   return {
     role,
     'aria-valuenow': now,
@@ -1135,10 +1155,12 @@ const valueAttrs = (role, value, min, max, busyWhenIndeterminate) => {
  * call with no value for the indeterminate sweep.
  */
 export const attrs = Object.freeze({
-  meter: (value, { min = 0, max = 100 } = {}) => valueAttrs('meter', value, min, max, false),
+  meter: (value, { min = 0, max = 100 } = {}) =>
+    valueAttrs('meter', 'meter', value, min, max, false),
   progress: (value, { min = 0, max = 100 } = {}) =>
-    valueAttrs('progressbar', value, min, max, true),
-  dotbar: (value, { min = 0, max = 100 } = {}) => valueAttrs('progressbar', value, min, max, true),
+    valueAttrs('progress', 'progressbar', value, min, max, true),
+  dotbar: (value, { min = 0, max = 100 } = {}) =>
+    valueAttrs('dotbar', 'progressbar', value, min, max, true),
 });
 
 export default ui;

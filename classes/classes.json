@@ -2755,6 +2755,24 @@
       "note": "wires the filter input + active-option keyboard model"
     },
     {
+      "name": "data-bronto-carousel-roledescription",
+      "on": "a .ui-carousel host",
+      "behavior": "initCarousel",
+      "note": "localized override for the carousel aria-roledescription; the behavior applies its English default only when this attribute and any authored aria-roledescription are absent."
+    },
+    {
+      "name": "data-bronto-error-summary-title",
+      "on": "a form/error-summary host enhanced by initFormValidation",
+      "behavior": "initFormValidation",
+      "note": "localized heading for the generated validation error summary; an authored title or this attribute is preserved, English is only the fallback."
+    },
+    {
+      "name": "data-bronto-toast-dismiss-label",
+      "on": "the toast host (or via toast() options)",
+      "behavior": "toast",
+      "note": "localized aria-label for the generated toast dismiss button; defaults to the English 'Dismiss' only when absent."
+    },
+    {
       "name": "data-bronto-sources",
       "on": "a source/citation island",
       "behavior": "initSources",

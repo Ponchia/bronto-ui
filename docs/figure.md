@@ -7,7 +7,9 @@ fallback data.
 
 ```css
 @import '@ponchia/ui';
+@import '@ponchia/ui/css/dataviz.css';
 @import '@ponchia/ui/css/figure.css';
+@import '@ponchia/ui/css/annotations.css';
 @import '@ponchia/ui/css/legend.css';
 ```
 

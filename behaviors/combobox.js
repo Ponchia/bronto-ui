@@ -12,6 +12,23 @@ import {
 
 const COMBOBOX_OPTION_SELECTOR = '[role="option"], .ui-combobox__option';
 
+const localeOf = (el) => {
+  const locale =
+    closestSafe(el, '[lang]')?.getAttribute('lang')?.trim() ||
+    el?.ownerDocument?.documentElement?.getAttribute('lang')?.trim();
+  return locale || undefined;
+};
+
+const lowerForSearch = (value, locale) => {
+  const text = String(value ?? '');
+  if (!locale) return text.toLowerCase();
+  try {
+    return text.toLocaleLowerCase(locale);
+  } catch {
+    return text.toLowerCase();
+  }
+};
+
 const snapshotAttrs = (el, names) => {
   const out = {};
   for (const name of names) {
@@ -184,6 +201,7 @@ export function initCombobox({ root } = {}) {
     const optionStates = new WeakMap();
     let listId = '';
     const optionIdBase = `bronto-cb-opt-${nextFieldUid()}`;
+    const locale = localeOf(box);
 
     const rememberOptionState = (option) => {
       if (optionStates.has(option)) return;
@@ -273,10 +291,10 @@ export function initCombobox({ root } = {}) {
     };
 
     const filter = () => {
-      const q = input.value.trim().toLowerCase();
+      const q = lowerForSearch(input.value.trim(), locale);
       let any = false;
       for (const o of options) {
-        const match = !q || o.textContent.toLowerCase().includes(q);
+        const match = !q || lowerForSearch(o.textContent, locale).includes(q);
         o.hidden = !match;
         if (match) any = true;
       }

@@ -80,10 +80,10 @@ export function curvePath(from: Point, to: Point, opts?: {
 }): string;
 /**
  * Build a path between two points by `shape` (`straight` | `elbow` | `curve`).
- * @param {ConnectorPathOptions} [opts]
+ * @param {ConnectorPathOptions} opts
  * @returns {string}
  */
-export function connectorPath(opts?: ConnectorPathOptions): string;
+export function connectorPath(opts: ConnectorPathOptions): string;
 /**
  * A filled triangle arrowhead at `p`, pointing along `angle` (radians).
  * @param {Point} p
@@ -136,10 +136,10 @@ export function endTangentAngle(from: Point, to: Point, shape?: ConnectorShape):
  * Connect two rects. Resolves anchor points (explicit `fromSide`/`toSide`, else
  * auto), builds the path, and returns `{ d, from, to, angle }` so the caller can
  * place an arrowhead/dot at `to` rotated by `angle`.
- * @param {ConnectRectsOptions} [opts]
+ * @param {ConnectRectsOptions} opts
  * @returns {ConnectRectsResult}
  */
-export function connectRects(opts?: ConnectRectsOptions): ConnectRectsResult;
+export function connectRects(opts: ConnectRectsOptions): ConnectRectsResult;
 /**
  * @ponchia/ui/connectors — dependency-free SVG geometry for connecting two
  * elements (or two points) with a leader line.

@@ -38,8 +38,9 @@ open/close animation come from the platform. This leaf is the hierarchy *layer*
 ```
 
 Add `name="…"` to sibling `<details class="ui-tree__branch">` to make them an
-exclusive-accordion group (only one open at a time) — a platform behaviour, no
-script.
+exclusive-accordion group (only one open at a time) — a platform behaviour in
+Chrome 120+, Safari 17.2+, and Firefox 130+. If Firefox 129 must enforce
+exclusivity, add a host-owned JS fallback or leave the branches independent.
 
 ## A11y honesty — disclosure group, not an ARIA tree
 

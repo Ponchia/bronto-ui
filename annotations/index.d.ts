@@ -12,52 +12,52 @@ export function noteTransform({ dx, dy, x, y, align, valign, width, height, }?: 
  * @param {NotePlacementOptions} options
  * @returns {NotePlacement}
  */
-export function notePlacement({ x, y, width, height, bounds, padding, gap, preferred, inset, }?: NotePlacementOptions): NotePlacement;
+export function notePlacement(options: NotePlacementOptions): NotePlacement;
 /**
  * @param {CircleSubjectOptions} options
  * @returns {string}
  */
-export function circleSubjectPath({ radius }?: CircleSubjectOptions): string;
+export function circleSubjectPath(options: CircleSubjectOptions): string;
 /**
  * @param {RectSubjectOptions} options
  * @returns {string}
  */
-export function rectSubjectPath({ width, height, x, y, padding }?: RectSubjectOptions): string;
+export function rectSubjectPath(options: RectSubjectOptions): string;
 /**
  * @param {ThresholdOptions} options
  * @returns {string}
  */
-export function thresholdPath({ x1, y1, x2, y2 }?: ThresholdOptions): string;
+export function thresholdPath(options: ThresholdOptions): string;
 /**
  * @param {AxisThresholdOptions} options
  * @returns {string}
  */
-export function axisThresholdPath({ orientation, value, start, end }?: AxisThresholdOptions): string;
+export function axisThresholdPath(options: AxisThresholdOptions): string;
 /**
  * @param {BracketSubjectOptions} options
  * @returns {string}
  */
-export function bracketSubjectPath({ x1, y1, x2, y2, depth }?: BracketSubjectOptions): string;
+export function bracketSubjectPath(options: BracketSubjectOptions): string;
 /**
  * @param {BandSubjectOptions} options
  * @returns {string}
  */
-export function bandSubjectPath({ x, y, width, height, padding }?: BandSubjectOptions): string;
+export function bandSubjectPath(options: BandSubjectOptions): string;
 /**
  * @param {SlopeSubjectOptions} options
  * @returns {string}
  */
-export function slopeSubjectPath({ x1, y1, x2, y2 }?: SlopeSubjectOptions): string;
+export function slopeSubjectPath(options: SlopeSubjectOptions): string;
 /**
  * @param {ComparisonBraceOptions} options
  * @returns {string}
  */
-export function comparisonBracePath({ x1, y1, x2, y2, depth }?: ComparisonBraceOptions): string;
+export function comparisonBracePath(options: ComparisonBraceOptions): string;
 /**
  * @param {OutlierClusterOptions} options
  * @returns {string}
  */
-export function outlierClusterPath({ points, radius }?: OutlierClusterOptions): string;
+export function outlierClusterPath(options: OutlierClusterOptions): string;
 /**
  * @param {TimelineEventOptions} [options]
  * @returns {string}
@@ -72,27 +72,27 @@ export function evidenceMarkerPath({ x, y, width, height, padding }?: EvidenceMa
  * @param {ConnectorEndDotOptions} options
  * @returns {string}
  */
-export function connectorEndDot({ x, y, radius }?: ConnectorEndDotOptions): string;
+export function connectorEndDot(options: ConnectorEndDotOptions): string;
 /**
  * @param {ConnectorEndArrowOptions} options
  * @returns {string}
  */
-export function connectorEndArrow({ x1, y1, x2, y2, size, spread }?: ConnectorEndArrowOptions): string;
+export function connectorEndArrow(options: ConnectorEndArrowOptions): string;
 /**
  * @param {ConnectorOptions} opts
  * @returns {string}
  */
-export function connectorLine(opts?: ConnectorOptions): string;
+export function connectorLine(opts: ConnectorOptions): string;
 /**
  * @param {ConnectorOptions} opts
  * @returns {string}
  */
-export function connectorElbow(opts?: ConnectorOptions): string;
+export function connectorElbow(opts: ConnectorOptions): string;
 /**
  * @param {ConnectorOptions} opts
  * @returns {string}
  */
-export function connectorCurve(opts?: ConnectorOptions): string;
+export function connectorCurve(opts: ConnectorOptions): string;
 /**
  * @param {AnnotationPartsOptions} [opts]
  * @returns {AnnotationParts}

@@ -9,6 +9,7 @@ import {
 } from './internal.js';
 
 const handledDisclosureEvents = new WeakSet();
+const warnedMissingTargets = new WeakSet();
 
 const snapshotAttr = (el, name) => ({
   had: el.hasAttribute(name),
@@ -18,6 +19,14 @@ const snapshotAttr = (el, name) => ({
 const restoreAttr = (el, name, state) => {
   if (state.had) el.setAttribute(name, state.value);
   else el.removeAttribute(name);
+};
+
+const warnMissingTarget = (trigger, id) => {
+  if (warnedMissingTargets.has(trigger) || typeof console === 'undefined') return;
+  warnedMissingTargets.add(trigger);
+  console.warn(
+    `[bronto] initDisclosure(): no panel found for aria-controls="${id || ''}" - disclosure trigger stays inert.`,
+  );
 };
 
 /**
@@ -50,7 +59,10 @@ export function initDisclosure({ root } = {}) {
     if (!trigger || !host.contains(trigger)) return;
     const id = trigger.getAttribute('aria-controls');
     const panel = byIdInHost(host, id);
-    if (!panel) return;
+    if (!panel) {
+      warnMissingTarget(trigger, id);
+      return;
+    }
     handledDisclosureEvents.add(e);
     e.preventDefault();
     const nextOpen = panel.hidden;

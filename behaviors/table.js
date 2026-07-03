@@ -1,5 +1,24 @@
 import { hasDom, resolveHost, noop, bindOnce, collectHosts, closestSafe } from './internal.js';
 
+const localeOf = (el) => {
+  const locale =
+    closestSafe(el, '[lang]')?.getAttribute('lang')?.trim() ||
+    el?.ownerDocument?.documentElement?.getAttribute('lang')?.trim();
+  return locale || undefined;
+};
+
+const textComparatorFor = (el) => {
+  const options = { sensitivity: 'base', numeric: false };
+  if (typeof Intl === 'undefined' || typeof Intl.Collator !== 'function') {
+    return (a, b) => a.localeCompare(b);
+  }
+  try {
+    return new Intl.Collator(localeOf(el), options).compare;
+  } catch {
+    return new Intl.Collator(undefined, options).compare;
+  }
+};
+
 /**
  * Client-side sortable + selectable data table. Wires
  * `[data-bronto-sortable]`:
@@ -71,6 +90,8 @@ export function initTableSort({ root } = {}) {
     const rows = [];
     const checkboxStates = new WeakMap();
     const checkboxes = [];
+    const misplacedSorters = new WeakSet();
+    const compareText = textComparatorFor(table);
 
     const rememberHeaderState = (th) => {
       if (!th || headerStates.has(th)) return;
@@ -134,6 +155,15 @@ export function initTableSort({ root } = {}) {
 
     const colIndex = (th) => [...th.parentElement.children].indexOf(th);
     const cellText = (row, i) => row.children[i]?.textContent.trim() ?? '';
+    const warnMisplacedSorter = (sorter) => {
+      if (misplacedSorters.has(sorter)) return;
+      misplacedSorters.add(sorter);
+      if (typeof console !== 'undefined') {
+        console.warn(
+          '[bronto] initTableSort(): .ui-table__sort must be placed inside a <th>; ignoring this sorter.',
+        );
+      }
+    };
     // Numeric value of a cell for sorting. A `data-sort-value` attribute is the
     // authoritative escape hatch; otherwise normalize the display text so the
     // sign survives (U+2212 / en-em dashes → minus, accounting parens →
@@ -187,7 +217,7 @@ export function initTableSort({ root } = {}) {
       rows.sort((a, b) => {
         const cmp = numeric
           ? cellNum(a, i) - cellNum(b, i)
-          : cellText(a, i).localeCompare(cellText(b, i));
+          : compareText(cellText(a, i), cellText(b, i));
         return cmp * sign;
       });
       // Re-parent in document order: sorted data rows, then any empty/sentinel
@@ -227,6 +257,10 @@ export function initTableSort({ root } = {}) {
       if (sorter && table.contains(sorter)) {
         rememberSorterState(sorter);
         const th = sorter.closest('th');
+        if (!th) {
+          warnMisplacedSorter(sorter);
+          return;
+        }
         const numeric =
           (sorter.getAttribute('data-sort') || th.getAttribute('data-sort')) === 'num' ||
           th.classList.contains('is-num');

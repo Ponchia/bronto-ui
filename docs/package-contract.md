@@ -25,7 +25,7 @@ semantic versioning contract for the surfaces listed here.
 
 | Export | Target | Group | Stability | Contract |
 | --- | --- | --- | --- | --- |
-| `.` | style: `./dist/bronto.css`<br>default: `./dist/bronto.css` | CSS root bundle | Stable | CSS-only package root. Supported as a CSS side-effect import in CSS-aware bundlers; not a Node/runtime JS entrypoint. |
+| `.` | types: `./index.d.ts`<br>style: `./dist/bronto.css`<br>default: `./dist/bronto.css` | CSS root bundle | Stable | CSS-only package root. Supported as a CSS side-effect import in CSS-aware bundlers; not a Node/runtime JS entrypoint. |
 | `./dist/bronto.css` | `./dist/bronto.css` | Flattened CSS bundle | Stable path | The prebuilt default stylesheet. Generated from css/core.css and byte-checked by check:dist. |
 | `./tailwind` | `./tailwind.css` | Tailwind CSS bridge | Stable additive | CSS-only Tailwind v4 theme/variant bridge. It maps Bronto tokens into Tailwind namespaces; it does not import component CSS. |
 | `./tailwind.css` | `./tailwind.css` | Tailwind CSS bridge | Stable additive | CSS-only Tailwind v4 theme/variant bridge. It maps Bronto tokens into Tailwind namespaces; it does not import component CSS. |
@@ -232,6 +232,7 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `css` | Source CSS directory | Public source leaves. Mostly hand-authored; generated exceptions are called out in the provenance table. |
 | `dist` | Generated CSS directory | Prebuilt layered bundle and leaves. Never hand-edit. |
 | `tailwind.css` | Tailwind CSS bridge | CSS-only Tailwind v4 theme/variant bridge; hand-authored and not part of the default Bronto bundle. |
+| `index.d.ts` | Package file | Included in the npm files allowlist. |
 | `fonts` | Vendored assets | Doto woff2 files plus OFL license. |
 | `tokens` | Mixed source/generated data | Token source plus generated JSON, declarations, and renderer theme data. |
 | `classes` | Mixed source/generated data | Class recipe source plus generated JSON/declarations/custom-data. |

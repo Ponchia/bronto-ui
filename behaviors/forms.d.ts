@@ -1,4 +1,13 @@
 /**
+ * @typedef {object} FormValidationOpts
+ * @property {Document | Element | null} [root]
+ *   Event-delegation root; default: `document`.
+ * @property {string} [summaryTitle]
+ *   Localized validation-summary title. A summary/form
+ *   `data-bronto-error-summary-title` attribute overrides it, and an authored
+ *   `.ui-error-summary__title` child is preserved.
+ */
+/**
  * Accessible form validation glue for `<form data-bronto-validate>`.
  * Progressive enhancement over the native Constraint Validation API —
  * the framework already ships the `[aria-invalid]` / `.ui-hint--error`
@@ -20,8 +29,20 @@
  * Pure enhancement: with JS off the form still submits and the browser
  * validates natively. SSR-safe, idempotent; returns a cleanup function.
  *
- * @param {import('./internal.js').DelegateOpts} [opts]
+ * @param {FormValidationOpts} [opts]
  * @returns {import('./internal.js').Cleanup}
  */
-export function initFormValidation({ root }?: import("./internal.js").DelegateOpts): import("./internal.js").Cleanup;
+export function initFormValidation({ root, summaryTitle }?: FormValidationOpts): import("./internal.js").Cleanup;
+export type FormValidationOpts = {
+    /**
+     * Event-delegation root; default: `document`.
+     */
+    root?: Document | Element | null | undefined;
+    /**
+     * Localized validation-summary title. A summary/form
+     * `data-bronto-error-summary-title` attribute overrides it, and an authored
+     * `.ui-error-summary__title` child is preserved.
+     */
+    summaryTitle?: string | undefined;
+};
 //# sourceMappingURL=forms.d.ts.map

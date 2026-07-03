@@ -10,7 +10,7 @@ export type ClassValue =
   | boolean
   | null
   | undefined
-  | ClassValue[];
+  | readonly ClassValue[];
 
 /** The flat registry of every class @ponchia/ui defines (literal). */
 export declare const cls: {
@@ -661,7 +661,7 @@ export declare const cls: {
 };
 
 /** classnames-style joiner: skips falsy, flattens arrays. */
-export declare function cx(...parts: ClassValue[]): string;
+export declare function cx(...parts: readonly ClassValue[]): string;
 
 export interface ButtonOpts {
   variant?: 'ghost' | 'subtle' | 'danger';
