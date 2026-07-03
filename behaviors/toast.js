@@ -27,10 +27,10 @@ function toastStack(isAssertive) {
     stack.setAttribute('aria-live', isAssertive ? 'assertive' : 'polite');
     if (isAssertive) {
       stack.setAttribute('role', 'alert');
-      // The assertive region carries one error at a time and must be read whole;
-      // aria-atomic ensures the full toast (title + message) announces, not just
-      // the changed fragment.
-      stack.setAttribute('aria-atomic', 'true');
+      // The assertive stack may hold more than one sticky danger toast. Keep the
+      // container non-atomic so adding a new toast announces that toast only,
+      // while the per-toast aria-atomic below still reads its title + message.
+      stack.setAttribute('aria-atomic', 'false');
     }
     document.body.appendChild(stack);
   }

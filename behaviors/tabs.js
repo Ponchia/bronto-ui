@@ -57,6 +57,17 @@ export function initTabs({ root } = {}) {
     const panels = [...group.querySelectorAll('.ui-tabs__panel')].filter(owned);
     if (!tabs.length) continue;
     const list = [...group.querySelectorAll('.ui-tabs__list')].find(owned);
+    const isNativeDisabled = (tab) => {
+      try {
+        if (tab.matches?.(':disabled')) return true;
+      } catch {
+        /* fall through to the native property */
+      }
+      return Boolean('disabled' in tab && tab.disabled);
+    };
+    const isReachable = (tab) => !tab.hidden && !isNativeDisabled(tab);
+    const isAriaDisabled = (tab) => tab.getAttribute('aria-disabled') === 'true';
+    const reachableTabs = () => tabs.filter(isReachable);
     const rememberState = () => ({
       list: list ? snapshotAttrs(list, ['role']) : null,
       tabs: new Map(
@@ -94,17 +105,31 @@ export function initTabs({ root } = {}) {
       }
     };
 
-    const select = (tab) => {
+    let selectedTab = null;
+    const syncTabs = (selected, tabStop) => {
       for (const t of tabs) {
-        const on = t === tab;
+        const on = t === selected;
         t.classList.toggle('is-active', on);
         t.setAttribute('role', 'tab');
         t.setAttribute('aria-selected', String(on));
-        t.tabIndex = on ? 0 : -1;
+        t.tabIndex = t === tabStop ? 0 : -1;
       }
+    };
+    const moveTabStop = (tab) => {
+      const candidates = reachableTabs();
+      const next = candidates.includes(tab) ? tab : candidates[0] || null;
+      if (!next) return false;
+      syncTabs(selectedTab, next);
+      return true;
+    };
+    const select = (tab) => {
+      const candidates = reachableTabs();
+      if (!candidates.includes(tab) || isAriaDisabled(tab)) return false;
+      selectedTab = tab;
+      syncTabs(tab, tab);
       // Only retarget panels when this tab actually controls one. A panel-less
       // tab must not hide every panel; leave the prior panel visible.
-      if (!panels.some((p) => p.dataset.panel === tab.dataset.tab)) return;
+      if (!panels.some((p) => p.dataset.panel === tab.dataset.tab)) return true;
       for (const p of panels) {
         p.setAttribute('role', 'tabpanel');
         const shown = p.dataset.panel === tab.dataset.tab;
@@ -114,6 +139,7 @@ export function initTabs({ root } = {}) {
         if (shown) p.tabIndex = 0;
         else p.removeAttribute('tabindex');
       }
+      return true;
     };
     const onClick = (e) => {
       // `tabs` is filtered to this group, so membership (not mere DOM
@@ -121,26 +147,28 @@ export function initTabs({ root } = {}) {
       const tab = closestSafe(e.target, '.ui-tab');
       if (tab && tabs.includes(tab)) {
         e.preventDefault();
-        select(tab);
-        tab.focus();
+        const handled = select(tab) || moveTabStop(tab);
+        if (handled) tab.focus();
       }
     };
     const onKey = (e) => {
-      const i = tabs.indexOf(closestSafe(e.target, '.ui-tab'));
+      const candidates = reachableTabs();
+      const i = candidates.indexOf(closestSafe(e.target, '.ui-tab'));
       if (i < 0) return;
       const orientation =
         list?.getAttribute('aria-orientation') === 'vertical' ? 'vertical' : 'horizontal';
       const nextKey = orientation === 'vertical' ? 'ArrowDown' : 'ArrowRight';
       const prevKey = orientation === 'vertical' ? 'ArrowUp' : 'ArrowLeft';
       let n = i;
-      if (e.key === nextKey) n = (i + 1) % tabs.length;
-      else if (e.key === prevKey) n = (i - 1 + tabs.length) % tabs.length;
+      if (e.key === nextKey) n = (i + 1) % candidates.length;
+      else if (e.key === prevKey) n = (i - 1 + candidates.length) % candidates.length;
       else if (e.key === 'Home') n = 0;
-      else if (e.key === 'End') n = tabs.length - 1;
+      else if (e.key === 'End') n = candidates.length - 1;
       else return;
       e.preventDefault();
-      select(tabs[n]);
-      tabs[n].focus();
+      const next = candidates[n];
+      if (!select(next)) moveTabStop(next);
+      next.focus();
     };
     cleanups.push(
       bindOnce(group, 'tabs', () => {
@@ -158,7 +186,13 @@ export function initTabs({ root } = {}) {
           t.setAttribute('aria-controls', p.id);
           p.setAttribute('aria-labelledby', t.id);
         }
-        select(tabs.find((t) => t.classList.contains('is-active')) || tabs[0]);
+        const candidates = reachableTabs();
+        const initial =
+          candidates.find((t) => t.classList.contains('is-active') && !isAriaDisabled(t)) ||
+          candidates.find((t) => !isAriaDisabled(t)) ||
+          candidates[0];
+        if (initial && !select(initial)) moveTabStop(initial);
+        else if (!initial) syncTabs(null, null);
         group.addEventListener('click', onClick);
         group.addEventListener('keydown', onKey);
         return () => {
