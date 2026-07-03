@@ -26,7 +26,7 @@ Put the theme script in `index.html` so it runs before Vue mounts:
 <script>
   try {
     var t = localStorage.getItem('bronto-theme');
-    if (t) document.documentElement.dataset.theme = t;
+    if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
   } catch (e) {}
 </script>
 ```

@@ -30,7 +30,7 @@ subpaths such as `@ponchia/ui/behaviors`.
   <script>
     try {
       var t = localStorage.getItem('bronto-theme');
-      if (t) document.documentElement.dataset.theme = t;
+      if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
     } catch (e) {}
   </script>
 
@@ -68,7 +68,7 @@ no `node_modules`, no bundler:
   <script>
     try {
       var t = localStorage.getItem('bronto-theme');
-      if (t) document.documentElement.dataset.theme = t;
+      if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
     } catch (e) {}
   </script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.10/dist/bronto.css" />

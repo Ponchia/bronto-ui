@@ -3,7 +3,6 @@ import {
   resolveHost,
   noop,
   bindOnce,
-  byIdInHost,
   collectHosts,
   scrollIntoViewSafe,
   closestSafe,
@@ -42,6 +41,16 @@ function sourcePreview(source) {
   return [title, meta, excerpt].filter(Boolean).join(' — ');
 }
 
+function idMapFor(island) {
+  const ids = new Map();
+  const add = (el) => {
+    if (el?.id && !ids.has(el.id)) ids.set(el.id, el);
+  };
+  add(island);
+  for (const el of island.querySelectorAll?.('[id]') || []) add(el);
+  return ids;
+}
+
 /**
  * Source/citation affordances for the `sources.css` trust layer. The behavior
  * is deliberately small: within each `[data-bronto-sources]` island it resolves
@@ -66,12 +75,23 @@ export function initSources({ root } = {}) {
     const timers = new Set();
     const seeded = [];
     const activeSources = new Set();
+    const sourcesById = idMapFor(island);
+    const previewBySource = new WeakMap();
 
     const targetFor = (ref) => {
       const id = sourceId(ref);
       if (!id) return null;
-      const source = byIdInHost(island, id);
+      const source = sourcesById.get(id) || null;
       return source && island.contains(source) ? source : null;
+    };
+
+    const previewFor = (source) => {
+      let preview = previewBySource.get(source);
+      if (preview === undefined) {
+        preview = sourcePreview(source);
+        previewBySource.set(source, preview);
+      }
+      return preview;
     };
 
     const seed = () => {
@@ -82,7 +102,7 @@ export function initSources({ root } = {}) {
         const describedBy = ref.getAttribute('aria-describedby') || '';
         const describedIds = describedBy.split(/\s+/).filter(Boolean);
         const title = ref.getAttribute('title');
-        const preview = sourcePreview(source);
+        const preview = previewFor(source);
         const prior = {
           ref,
           describedBy,

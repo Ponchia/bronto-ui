@@ -1,5 +1,7 @@
 import { hasDom, resolveHost, noop, bindOnce, collectHosts } from './internal.js';
 
+const rectRight = (rect) => rect.right ?? rect.left + rect.width;
+
 /**
  * @typedef {object} CrosshairMoveDetail
  * @property {number} x Pointer x within the plot, in pixels.
@@ -34,6 +36,56 @@ export function initCrosshair({ root } = {}) {
   for (const plot of plots) {
     const overlay = plot.querySelector('.ui-crosshair');
     let overlayState = null;
+    let geometry = null;
+    let active = overlay?.classList.contains('is-active') ?? false;
+    let writtenX = null;
+    let writtenY = null;
+    let writtenInline = overlay?.dataset.readoutInline ?? null;
+    let writtenBlock = overlay?.dataset.readoutBlock ?? null;
+    const view = plot.ownerDocument?.defaultView || null;
+    const invalidateGeometry = () => {
+      geometry = null;
+    };
+    const readGeometry = () => {
+      const overlayRect = overlay.getBoundingClientRect();
+      const r =
+        overlayRect.width && overlayRect.height ? overlayRect : plot.getBoundingClientRect();
+      if (!r.width || !r.height) return null;
+      geometry = {
+        left: r.left,
+        right: rectRight(r),
+        top: r.top,
+        width: r.width,
+        height: r.height,
+        rtl: view?.getComputedStyle?.(overlay).direction === 'rtl',
+      };
+      return geometry;
+    };
+    const currentGeometry = () => geometry || readGeometry();
+    const writeOverlay = (y, logicalX, inline, block) => {
+      const xValue = `${logicalX}px`;
+      const yValue = `${y}px`;
+      if (writtenX !== xValue) {
+        overlay.style.setProperty('--crosshair-x', xValue);
+        writtenX = xValue;
+      }
+      if (writtenY !== yValue) {
+        overlay.style.setProperty('--crosshair-y', yValue);
+        writtenY = yValue;
+      }
+      if (writtenInline !== inline) {
+        overlay.dataset.readoutInline = inline;
+        writtenInline = inline;
+      }
+      if (writtenBlock !== block) {
+        overlay.dataset.readoutBlock = block;
+        writtenBlock = block;
+      }
+      if (!active) {
+        overlay.classList.add('is-active');
+        active = true;
+      }
+    };
     const rememberOverlay = () => {
       if (!overlay || overlayState) return;
       overlayState = {
@@ -71,15 +123,19 @@ export function initCrosshair({ root } = {}) {
       else overlay.style.removeProperty('--crosshair-y');
       restoreData('data-readout-inline', overlayState.inline);
       restoreData('data-readout-block', overlayState.block);
+      active = overlayState.active;
+      writtenX = overlayState.x.value || null;
+      writtenY = overlayState.y.value || null;
+      writtenInline = overlayState.inline.had ? overlayState.inline.value : null;
+      writtenBlock = overlayState.block.had ? overlayState.block.value : null;
+      invalidateGeometry();
       overlayState = null;
     };
     const onMove = (e) => {
       if (!overlay) return;
       rememberOverlay();
-      const overlayRect = overlay.getBoundingClientRect();
-      const r =
-        overlayRect.width && overlayRect.height ? overlayRect : plot.getBoundingClientRect();
-      if (!r.width || !r.height) return;
+      const r = currentGeometry();
+      if (!r) return;
       const x = e.clientX - r.left;
       const y = e.clientY - r.top;
       // The CSS positions the vertical rule / readout with a *logical* inset
@@ -88,12 +144,12 @@ export function initCrosshair({ root } = {}) {
       // Emitting the physical x instead made the RTL rule land off-plot. The
       // public `detail.x`/`fx` stay physical-from-left so host scale-mapping
       // keeps one stable coordinate space regardless of direction.
-      const rtl = getComputedStyle(overlay).direction === 'rtl';
-      overlay.style.setProperty('--crosshair-x', `${rtl ? r.right - e.clientX : x}px`);
-      overlay.style.setProperty('--crosshair-y', `${y}px`);
-      overlay.dataset.readoutInline = x / r.width > 0.5 ? 'before' : 'after';
-      overlay.dataset.readoutBlock = y / r.height > 0.5 ? 'above' : 'below';
-      overlay.classList.add('is-active');
+      writeOverlay(
+        y,
+        r.rtl ? r.right - e.clientX : x,
+        x / r.width > 0.5 ? 'before' : 'after',
+        y / r.height > 0.5 ? 'above' : 'below',
+      );
       plot.dispatchEvent(
         new CustomEvent('bronto:crosshair:move', {
           bubbles: true,
@@ -104,6 +160,7 @@ export function initCrosshair({ root } = {}) {
     const onLeave = () => {
       if (!overlay) return;
       overlay.classList.remove('is-active');
+      active = false;
       plot.dispatchEvent(new CustomEvent('bronto:crosshair:leave', { bubbles: true }));
     };
     cleanups.push(
@@ -111,9 +168,13 @@ export function initCrosshair({ root } = {}) {
         if (!overlay) return noop;
         plot.addEventListener('pointermove', onMove);
         plot.addEventListener('pointerleave', onLeave);
+        view?.addEventListener('resize', invalidateGeometry);
+        view?.addEventListener('scroll', invalidateGeometry, true);
         return () => {
           plot.removeEventListener('pointermove', onMove);
           plot.removeEventListener('pointerleave', onLeave);
+          view?.removeEventListener('resize', invalidateGeometry);
+          view?.removeEventListener('scroll', invalidateGeometry, true);
           restoreOverlay();
         };
       }),
