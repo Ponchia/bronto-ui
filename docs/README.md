@@ -30,6 +30,7 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 
 ## Usage & concepts
 
+- [concepts.md](./concepts.md) — the canonical mental model: CSS-first surface, cascade layer, colour tiers, primitive ownership, token projections, and package shape.
 - [usage.md](./usage.md) — the decision guide: which primitive to reach for when.
 - [frontier-primitives.md](./frontier-primitives.md) — the design line for new analytical/communication primitives.
 - [reference.md](./reference.md) — the generated catalog of every `.ui-*` class and token. _(generated — do not hand-edit)_
