@@ -5,6 +5,78 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## 0.6.11 — 2026-07-04
+
+A correctness, accessibility, and performance release drawn from a multi-pass
+review of the behavior layer and docs. No default-bundle contract change, no
+public class/token/subpath renames, and the CSS payload is unchanged — this is a
+non-breaking patch. Every change landed through PR CI, including the aggregate
+`check` gate and cross-engine (Chromium/Firefox/WebKit) end-to-end coverage.
+
+### Added
+
+- **Localization hooks for behavior-authored text.** New opt-in attributes let
+  hosts localize the strings behaviors set on enhanced elements —
+  `data-bronto-carousel-roledescription` and
+  `data-bronto-carousel-slide-roledescription` for carousel/slide
+  `aria-roledescription`, plus localized error-summary title, toast dismiss
+  label, combobox, command, and table hooks. Absent an override, the existing
+  English defaults are preserved, and any author-provided value now wins over the
+  behavior's default.
+- **Root type resolution for `import '@ponchia/ui'`.** The package root now
+  advertises a types condition (`index.d.ts`) so TypeScript consumers importing
+  the CSS entry resolve types without reaching for a subpath.
+- **Concepts guide.** `docs/concepts.md` is a new canonical mental-model page
+  that consolidates the load-bearing concepts (CSS-first, the cooperative
+  `@layer bronto` override model, the tiered color model, primitive ownership,
+  identity-vs-inventory bundling, token projections, and the package-path
+  contract) that were previously scattered across many pages.
+
+### Fixed
+
+- **Focus management.** `focusInto()` now skips hidden, `inert`, disabled, and
+  non-rendered candidates instead of parking focus on them; the tablist roving
+  set excludes hidden/disabled tabs so keyboard focus can always enter it; and a
+  closed controlled (non-`<dialog>`) modal is hidden while closed, so its
+  controls are no longer reachable by Tab.
+- **Screen-reader announcements.** The assertive toast stack no longer
+  re-announces earlier toasts when a new one arrives; the command palette's empty
+  state is a polite live region; the combobox listbox now mirrors the input's
+  accessible name (via `aria-labelledby`/`title`); and toast/command/combobox
+  ARIA added at init is fully restored on cleanup.
+- **Internationalization.** Combobox, command, and table filtering/sorting are
+  locale-aware, and a Unicode minus in `data-sort-value` (e.g. `−3,5`) now parses
+  correctly instead of sorting as `-35`.
+- **Connector resilience and scoping.** A malformed enum on one connector no
+  longer aborts its siblings, and a scoped connector can no longer resolve an
+  endpoint to a same-id element outside its root.
+- **Attribute parsing.** Splitter ARIA-range values are parsed strictly and
+  rewritten to a canonical numeric form; splitter/glyph enum values and the
+  dismissible target selector are trimmed, so trailing whitespace no longer
+  changes behavior.
+- **Theme following the OS.** When no explicit theme is set, an OS
+  `prefers-color-scheme` change now updates the theme toggle's `aria-pressed`,
+  and the render-blocking no-flash snippets in the integration and framework
+  guides validate the stored value is `light` or `dark` before applying it.
+
+### Performance
+
+- **Behavior hot paths.** Connector redraw caches its records and endpoint map
+  per init and batches scroll/resize/observer redraws through one animation
+  frame; source backrefs build one island-scoped id map instead of rescanning
+  per citation; the crosshair caches layout reads across `pointermove`; the table
+  text sort decorates rows once instead of parsing inside the comparator; and a
+  genuine user scroll during a carousel's programmatic-scroll suppression is now
+  replayed instead of dropped. Observable behavior is unchanged.
+
+### Verified
+
+- PR CI passed for every change, including the aggregate `check` gate,
+  cross-engine e2e, CodeQL, and the packed examples matrix. The default bundle
+  and its size are unchanged; this release adds optional localization hooks, root
+  type resolution, and documentation, and fixes accessibility, correctness, and
+  performance defects without moving the public contract.
+
 ## 0.6.10 — 2026-06-23
 
 ### Added
