@@ -347,7 +347,7 @@
     },
     {
       "name": "--text-2xs",
-      "description": "Global scale token. Value: `0.68rem`"
+      "description": "Global scale token. Value: `0.72rem`"
     },
     {
       "name": "--text-base",

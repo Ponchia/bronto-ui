@@ -377,6 +377,16 @@ also gives the overlay `role="dialog"` + `aria-modal="true"` and dev-warns if it
 has no accessible name (add `aria-label`/`aria-labelledby`). A drawer is a modal
 that enters from an edge — same rule.
 
+Controlled modals share one document-level stack. Opening a sibling portal
+modal makes the previous modal inert and keeps only the new top modal
+interactive; closing it restores focus into the previous modal. An
+`initPopover()` trigger inside the top modal may target a panel portaled
+elsewhere in the document: while that panel is open, it joins the live modal
+tree and owns Escape without releasing unrelated background content. Background
+nodes added after the modal opens are trapped too. If a controlled parent modal
+closes while a descendant still carries `is-open`, the descendant is suspended
+with the parent and resumes if the parent reopens.
+
 **Scroll-lock is not automatic on either path.** Neither the native `<dialog>`
 nor the `is-open` path freezes the background — the page behind an open modal can
 still scroll. If that matters, toggle a lock yourself while the modal is open

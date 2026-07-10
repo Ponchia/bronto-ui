@@ -13,6 +13,8 @@ version with a BREAKING note + migration if applicable.
       `data-bronto-*` attribute — **or** it's a breaking change and the
       CHANGELOG has a BREAKING + migration note (pre-1.0 → minor)
 - [ ] Token *values* only changed (visual, non-breaking) — or N/A
+- [ ] The 1.0 catalog freeze is preserved — or the PR names the repeated
+      downstream need and records explicit maintainer approval to reopen it
 
 ## Checklist
 

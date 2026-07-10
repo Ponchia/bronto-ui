@@ -653,6 +653,67 @@ test('controlled modal cleanup restores generated state and Escape stays topmost
   await page.evaluate(() => window.__modalStackStop());
 });
 
+test('controlled modal reconciles sibling stacks, owned portals, and late background', async ({
+  page,
+}) => {
+  await open(page);
+  await page.evaluate(() => {
+    const stage = document.createElement('section');
+    stage.id = 'modal-portal-stage';
+    stage.innerHTML = `
+      <button id="portal-stack-opener">Open</button>
+      <aside id="portal-stack-bg">Background</aside>
+      <div id="portal-first" class="ui-modal is-open" data-bronto-modal aria-label="First">
+        <button id="portal-first-ok">First ok</button>
+      </div>
+      <div id="portal-second" class="ui-modal" data-bronto-modal aria-label="Second">
+        <button id="portal-second-trigger" data-bronto-popover="owned-portal">More</button>
+      </div>
+      <div id="owned-portal" class="ui-popover" aria-label="Owned portal">
+        <button id="owned-portal-ok">Portal ok</button>
+      </div>`;
+    document.body.append(stage);
+    document.getElementById('portal-stack-opener').focus();
+  });
+  await page.addScriptTag({
+    type: 'module',
+    content: `
+    import { initModal, initPopover } from '/behaviors/index.js';
+    window.__portalStackStops = [initModal(), initPopover()];
+    window.__portalStackReady = true;
+    `,
+  });
+  await page.waitForFunction(() => window.__portalStackReady === true);
+
+  await expect(page.locator('#portal-first-ok')).toBeFocused();
+  await expect.poll(() => page.locator('#portal-second').evaluate((el) => el.inert)).toBe(true);
+  await page.evaluate(() => document.getElementById('portal-second').classList.add('is-open'));
+  await expect(page.locator('#portal-second-trigger')).toBeFocused();
+  await expect.poll(() => page.locator('#portal-first').evaluate((el) => el.inert)).toBe(true);
+  await expect.poll(() => page.locator('#portal-second').evaluate((el) => el.inert)).toBe(false);
+
+  await page.locator('#portal-second-trigger').click();
+  await expect(page.locator('#owned-portal')).toHaveClass(/is-open/);
+  await expect.poll(() => page.locator('#owned-portal').evaluate((el) => el.inert)).toBe(false);
+  await expect(page.locator('#owned-portal-ok')).toBeFocused();
+  await expect.poll(() => page.locator('#portal-stack-bg').evaluate((el) => el.inert)).toBe(true);
+
+  await page.evaluate(() => {
+    const late = document.createElement('button');
+    late.id = 'portal-stack-late';
+    late.textContent = 'Late background';
+    document.getElementById('modal-portal-stage').append(late);
+  });
+  await expect.poll(() => page.locator('#portal-stack-late').evaluate((el) => el.inert)).toBe(true);
+
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#owned-portal')).not.toHaveClass(/is-open/);
+  await expect(page.locator('#portal-second')).toHaveClass(/is-open/);
+  await page.evaluate(() => document.getElementById('portal-second').classList.remove('is-open'));
+  await expect(page.locator('#portal-first-ok')).toBeFocused();
+  await page.evaluate(() => window.__portalStackStops.forEach((stop) => stop()));
+});
+
 test('Escape on a popover nested in a <dialog> closes only the popover, not the dialog', async ({
   page,
 }) => {

@@ -142,7 +142,7 @@ generator overwrites them and a drift gate fails CI).
 
 | Path | Kind | Edit here? | Notes |
 | --- | --- | --- | --- |
-| `css/` | source | yes | The framework. Hand-authored `@layer bronto` CSS. (`css/tokens.css` palette blocks and `css/generated.css` are generated — see below.) |
+| `css/` | source | yes | The framework. Most leaves are hand-authored `@layer bronto` CSS. The palette blocks in `css/tokens.css`, plus `css/skins.css` and `css/dataviz.css`, are generated. `css/generated.css` is authored trust-surface CSS despite its name. |
 | `tokens/index.js` | source | yes | The single source of truth for token **values** (`cssVars`). |
 | `classes/index.js`, `behaviors/`, `annotations/`, `connectors/`, `react/`, `solid/`, `qwik/`, `svelte/`, `vue/`, `glyphs/`, `shiki/` | source · published-subpath (path-frozen) | yes — but **do not move** | Authored ESM shipped as-is; the dir name is the public import path. The `.d.ts` beside them are generated/drift-checked: `connectors`/`annotations`/`react`/`solid`/`qwik`/`svelte`/`vue`/`behaviors` are emitted from JSDoc by `tsc` (`npm run dts:emit`), `classes`/`tokens`/`glyphs` from the runtime. No leaf `.d.ts` is hand-maintained. |
 | `schemas/*.schema.json` | source · published schema files (path-frozen) | yes — but **do not move exported files** | Declarative JSON Schema contracts for sidecars/tooling data. Each exported schema file path is public; the directory itself is not a wildcard import. No validator runtime ships. |

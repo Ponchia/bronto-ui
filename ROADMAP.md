@@ -7,7 +7,7 @@ UI catalog.
 
 > **Source of truth is [`CHANGELOG.md`](CHANGELOG.md).** This file describes
 > direction; the changelog records what actually shipped. If they disagree, the
-> changelog wins. Last reconciled against `0.6.10`.
+> changelog wins. Last reconciled against `0.6.11`.
 >
 > **Strategic north star:** Bronto should not out-catalog generic UI kits. It
 > owns framework-agnostic primitives for interfaces that explain themselves —
@@ -22,6 +22,20 @@ UI catalog.
 > but built and maintained primarily for the maintainer's own agents and report
 > tooling. Public-surface correctness is in scope (README, authored docs, docs
 > site route list, `llms.txt`); marketing pushes are not a goal.
+
+## 1.0 stabilization mode
+
+The public catalog is frozen from 2026-07-10 until the 1.0 evidence pass is
+complete. Fix existing contracts, simplify ownership, improve readability, and
+upgrade real consumers. Do not add public classes, tokens, behaviors, helpers,
+bindings, schemas, leaves, or package paths during the freeze.
+
+Package examples remain required compatibility proof, but they do not establish
+product demand. The adoption ledger in
+[`docs/stability.md`](docs/stability.md#adoption-evidence-for-10) identifies the
+surfaces proven by non-example consumers and the surfaces that remain
+package-only candidates. Reopen catalog work only when a repeated downstream
+need is recorded and the maintainer explicitly approves the exception.
 
 ## Current stewardship priorities
 
@@ -239,8 +253,9 @@ UI catalog.
   them, and preferably as documented recipes before growing the core behavior
   layer. (The command palette and tree outline shipped in 0.5.0/0.6.0; their
   follow-ons are demand-gated — see `docs/frontier-primitives.md`.)
-- Optional font-weight strategy: WOFF2/subsetting or a fontless preset if the
-  install-size report shows the current bundled TTF set is too heavy.
+- Optional font-weight strategy: reduce the six-weight WOFF2 set or add a
+  fontless preset only if real consumer measurements justify the current
+  33.8 kB font payload as an adoption problem.
 
 ## Explicitly out of scope
 
