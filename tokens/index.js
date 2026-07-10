@@ -40,7 +40,7 @@ export const cssVars = {
     '--display': 'var(--dot-font)',
     '--display-weight': '700',
     '--display-weight-strong': '800',
-    '--text-2xs': '0.68rem',
+    '--text-2xs': '0.72rem',
     '--text-xs': '0.76rem',
     '--text-sm': '0.86rem',
     '--text-base': '0.95rem',

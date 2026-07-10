@@ -5,7 +5,13 @@ small behavior-backed widget. It follows the contracts in
 [CONTRIBUTING.md](../CONTRIBUTING.md) and
 [architecture.md](./architecture.md#surface-admission-rule).
 
-## 1. Choose The Layer
+> **1.0 catalog freeze:** Do not use this playbook while the stabilization
+> freeze is active. Fixes to existing surface remain in scope. Reopen new public
+> surface only when a repeated downstream need is documented and the maintainer
+> explicitly approves the exception. Package examples are compatibility proof,
+> not downstream adoption.
+
+## 1. Choose the layer
 
 Pick the lane before adding classes or exports:
 
@@ -24,7 +30,7 @@ persistence, chart scales, workflow execution, action registries, and component
 state. Bronto owns visual grammar, CSS contracts, pure geometry, and narrow
 delegated accessibility behavior.
 
-## 2. Add The CSS
+## 2. Add the CSS
 
 Use `.ui-*` class names and keep the authored CSS in `css/`.
 
@@ -45,7 +51,7 @@ Use `tokens/skins.js` only for root-level `data-bronto-skin` colorways and
 `tokens/charts.js` only for chart/data-viz palettes. Do not add raw chromatic
 component colors to CSS; `scripts/check-color-policy.mjs` gates that boundary.
 
-## 3. Add The Class Contract
+## 3. Add the class contract
 
 Add every public selector to `classes/index.js`:
 
@@ -58,7 +64,7 @@ Add every public selector to `classes/index.js`:
 `scripts/check-classes.mjs` enforces the bidirectional match between
 `classes/index.js` and stylesheet `.ui-*` selectors.
 
-## 4. Add Behavior Only When CSS Cannot Own It
+## 4. Add behavior only when CSS cannot own it
 
 If the primitive needs JS, add the vanilla behavior under `behaviors/` and export
 it from `behaviors/index.js` only if it is public.
@@ -79,7 +85,7 @@ If the new public surface is a helper in `classes/`, `annotations/`,
 `connectors/`, or `glyphs/`, add it to `scripts/check-helper-matrix.mjs` with
 docs, unit, and type-test owners.
 
-## 5. Declare Published Surface
+## 5. Declare published surface
 
 Public paths are declared in `package.json`:
 
@@ -92,7 +98,7 @@ Public paths are declared in `package.json`:
 pairs, package metadata, and dependency policy. `scripts/check-pack.mjs` proves
 the packed tarball contains the intended files and no dev-only directories.
 
-## 6. Add Docs, Demo, And Specs
+## 6. Add docs, demo, and specs
 
 A shipped CSS leaf must be matrix-owned:
 
@@ -113,7 +119,7 @@ Docs that describe public classes, behavior names, imports, or HTML snippets are
 checked by `scripts/check-doc-links.mjs`, `scripts/check-contract.mjs`,
 `scripts/check-doc-recipes.mjs`, and `scripts/check-report.mjs`.
 
-## 7. Regenerate And Run Gates
+## 7. Regenerate and run gates
 
 After implementation, regenerate committed artifacts with:
 

@@ -12,21 +12,21 @@
  *
  * Mark the overlay `[data-bronto-modal]` (opt-in). On bind it gives the modal a
  * `role="dialog"` + `aria-modal="true"` (unless the author set a role) and
- * dev-warns when it has no accessible name, so it announces as a named modal
- * dialog — parity with `initPopover`. The behavior watches its
- * `class` for `is-open`: on open it remembers the focused element, moves focus
- * into the modal (first focusable, else the panel itself), and **traps focus by
- * marking every sibling at each ancestor level `inert`** so the rest of the page
- * is non-focusable and non-interactive — the modern, robust trap. On close it
- * un-inerts exactly what it inerted and returns focus to the opener. Bronto owns
- * focus only: the **consumer still owns open/close state** (the `is-open`
- * class). Escape dispatches a cancelable `bronto:modal:close`
- * ({@link ModalCloseDetail}) on the modal so the consumer can drop `is-open` in
- * response; the behavior never changes visibility itself.
+ * dev-warns when it has no accessible name. While open, a document-level stack
+ * reconciler keeps only the top controlled modal interactive, marks the rest of
+ * the page `inert`, admits an open popover owned by the top modal even when the
+ * panel is portaled elsewhere, and applies the trap to background nodes added
+ * after open. Nested and sibling portal modals therefore share one ownership
+ * model instead of independently inverting each other's `inert` state.
  *
- * Best suited to a body-/portal-level overlay (the documented `.is-open` use
- * case); a deeply-nested modal still gets focus-into, focus-return, and the
- * Escape signal. SSR-safe, idempotent per modal; returns a cleanup function.
+ * Bronto owns focus only: the **consumer still owns open/close state** (the
+ * `is-open` class). Escape dispatches a cancelable `bronto:modal:close`
+ * ({@link ModalCloseDetail}) on the modal so the consumer can drop `is-open` in
+ * response; the behavior never changes visibility itself. Closing a parent
+ * modal temporarily suspends any still-`is-open` controlled descendants; they
+ * resume at the top of the stack if the parent reopens.
+ *
+ * SSR-safe, idempotent per modal; returns a cleanup function.
  *
  * @param {import('./internal.js').DelegateOpts} [opts]
  * @returns {import('./internal.js').Cleanup}

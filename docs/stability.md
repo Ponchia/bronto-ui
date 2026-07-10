@@ -1,4 +1,4 @@
-# Public API Stability
+# Public API stability
 
 `@ponchia/ui` is pre-1.0. Breaking changes ship in the minor (`0.x.0`), and
 patches are non-breaking. In practical terms: **PATCH releases (`0.6.x`) are
@@ -11,7 +11,7 @@ For the exhaustive package-manifest inventory — every `exports` key, every
 shipped `files` entry, and the generated artifact provenance map — see
 [package-contract.md](./package-contract.md).
 
-## Path To 1.0
+## Path to 1.0
 
 `1.0.0` is a stability declaration, not a catalog milestone. The package is
 ready for 1.0 when the existing public contract is boring to upgrade:
@@ -36,7 +36,7 @@ ready for 1.0 when the existing public contract is boring to upgrade:
   migration entry when machine-actionable, and the deprecate-one-minor policy
   has been followed or explicitly exempted for provably-unreferenced surface.
 
-### 1.0 Readiness Ledger
+### 1.0 readiness ledger
 
 This ledger is the release-candidate checklist. A row is ready only when the
 evidence column is green for the candidate commit; prose approval alone is not
@@ -50,6 +50,31 @@ enough.
 | Generated contracts stay registry-backed | `check:fresh`, `check:classes`, `check:dts-emit`, `check:doc-links`, `check:public-metadata`, `check:public-hygiene`, and the matrix gates prove generated artifacts, shipped docs, public hygiene, and ownership maps do not drift. | New public surface has one registry/source of truth before it gets a hand-authored gate row. |
 | Bundle budget has headroom | `check:dist`, `check:public-metadata`, `check:pack`, and the README size badge keep default bundle and tarball claims visible. | Budget increases are intentional, reviewed, and named in `CHANGELOG.md`; accidental growth fails before release. |
 | Deprecation history is clean | `check:migrations`, `check:release`, `check:versions`, `MIGRATIONS.json`, and this deprecation policy tie breaking changes to changelog and migration evidence. | No removal ships without either a deprecate-one-minor trail or an explicit BREAKING note for provably-unreferenced surface. |
+
+### Adoption evidence for 1.0
+
+This snapshot records product evidence as of 2026-07-10. Use three evidence
+classes:
+
+- **Downstream-proven:** A non-example app, site, report generator, or tool
+  imports the published surface and passes its own build or checks.
+- **Package-proven:** Packed examples, unit tests, browser tests, and type tests
+  prove compatibility, but no inspected non-example consumer imports the
+  surface.
+- **Speculative:** Neither downstream use nor a package-level executable proof
+  justifies freezing the surface into 1.0.
+
+Package-proven is necessary but does not establish demand. During the catalog
+freeze, do not expand package-only surfaces. Recheck this table against real
+consumer upgrades before the 1.0 release candidate.
+
+| Surface family | Current evidence | 1.0 disposition |
+| --- | --- | --- |
+| Core CSS, class recipes, vanilla behaviors, tokens, and Tailwind bridge | Downstream-proven by Hometolotto, personal-site, polpo-admin, bronto-status, and Parquet. | Stabilize names and behavior contracts. Use consumer upgrades as the release-candidate proof. |
+| Report, provenance, analytical CSS, annotations, glyphs, skins, workbench CSS, chart data, and Vega theme | Downstream-proven across personal-site, Parquet, CodeCity, and the llm-config report verifier. | Keep opt-in. Stabilize the consumed paths; do not broaden the catalog during the freeze. |
+| Controlled non-`<dialog>` modal | Package-proven by stack, portal, late-node, focus, and cleanup regressions. No inspected non-example consumer initializes `initModal`. | Keep compatible through 0.6.x, but require a real consumer before declaring this alternative to native `<dialog>` stable in 1.0. |
+| React, Solid, Qwik, Svelte, and Vue lifecycle adapters | Package-proven by packed examples, types, and lifecycle tests. No inspected non-example consumer imports an adapter entrypoint. | Pre-1.0 candidate only. Freeze the adapter set and require downstream adoption before declaring all five stable in 1.0. |
+| Mermaid, D2, Shiki, Figma Variables, and the report-claims schema | Package-proven by generated-data, render, schema, and drift checks. No inspected non-example consumer currently supplies downstream proof for every path. | Keep compatible through 0.6.x, but decide each 1.0 contract from adoption evidence rather than generator coverage alone. |
 
 After 1.0, breaking changes move to majors. Until then, the table below is the
 current public-surface matrix and the release policy above still applies.
@@ -104,13 +129,13 @@ current public-surface matrix and the release policy above still applies.
 | Terms / glossary (`css/term.css`, `.ui-term`, `.ui-glossary`) | Stable additive | Term and glossary class names plus native-popover definition hooks are public. Opt-in, not in the default bundle. The host owns glossary content and terminology policy. |
 | Contents rail (`css/toc.css`, `.ui-toc*`) | Stable additive | TOC rail class/part names and current-section state classes are public. Opt-in, not in the default bundle. The host owns section observation and active-state updates. |
 | Tree outlines (`css/tree.css`, `.ui-tree*`) | Stable additive | Tree outline class names, depth styling, and native `<details>` composition are public. Opt-in, not in the default bundle. The host owns tree data, lazy loading, and selection state. |
-| Controlled-modal focus trap (`initModal`, `useModal`, `data-bronto-modal`) | Stable additive | For the `.ui-modal.is-open` (non-`<dialog>`) path: the `data-bronto-modal` opt-in marker, the `inert`-based focus trap + focus-return, and the cancelable `bronto:modal:close` (`detail: { reason }`) event are public. The consumer still owns the `is-open` class; the behavior never changes visibility. The native `<dialog>` path (`initDialog`) is the default and gets the trap for free. |
+| Controlled-modal focus trap (`initModal`, `useModal`, `data-bronto-modal`) | Stable additive | For the `.ui-modal.is-open` (non-`<dialog>`) path: the `data-bronto-modal` opt-in marker, stack-aware `inert` ownership, focus-return, late-background trapping, owned portaled-popover admission, and the cancelable `bronto:modal:close` (`detail: { reason }`) event are public. The consumer still owns the `is-open` class; closing a parent suspends still-open controlled descendants until the parent reopens. The native `<dialog>` path (`initDialog`) remains the default. |
 | Keyboard-shortcut hint (`.ui-shortcut`, `.ui-shortcut__sep`) | Stable additive | Class names for the chord/sequence hint over `.ui-kbd` are public. Ships in the core layer (class-only, no recipe). |
 | Agent and migration data (`llms.txt`, `MIGRATIONS.json`) | Stable additive | `llms.txt` stays shipped as the offline agent entrypoint. `MIGRATIONS.json` stays a machine-readable migration map for breaking renames/removals. New migration entries are additive; removal of a migration record requires the same breaking-change discipline as the surface it describes. |
 | Generated docs shipped in npm | Stable paths | Exported docs paths stay shipped and resolvable within a compatible minor. Markdown/text assets are for reading unless your runtime has a loader. Generated content may change with the source contract. |
 | Demo, examples, tests, scripts | Internal | Useful for learning and verification, but not shipped runtime API unless a path is explicitly exported in `package.json`. |
 
-## Deprecation Policy
+## Deprecation policy
 
 Public surface (`.ui-*` classes, `data-bronto-*` attributes, `cls`/token keys,
 behavior signatures, and exported schema values) is removed on a
@@ -126,7 +151,7 @@ A token/class/attribute that is provably referenced by no shipped CSS,
 component, behavior, or doc may skip that window and be removed with a BREAKING
 entry plus migration note; there is no working call-site to keep alive.
 
-## Trust Boundary
+## Trust boundary
 
 Behaviors assume trusted application markup. If a delegated root includes
 untrusted CMS or user HTML, sanitize it first or do not initialize behaviors on

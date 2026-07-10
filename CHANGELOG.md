@@ -5,6 +5,42 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased — 0.6.12
+
+A stabilization patch. It changes no public class, token name, behavior name,
+or package path.
+
+### Changed
+
+- **Small-text readability.** The `--text-2xs` value increases from `0.68rem`
+  to `0.72rem`. This raises the floor for form labels, table headings,
+  provenance metadata, report captions, and other dense secondary text without
+  changing the type scale's public names or the default CSS payload size.
+- **1.0 stabilization mode.** Public catalog growth is frozen while real
+  consumers move onto one current minor. The stability guide now distinguishes
+  downstream-proven surfaces from package-only proof and unproven 1.0
+  candidates. New public surface needs explicit maintainer approval to reopen
+  the catalog.
+
+### Fixed
+
+- **Controlled-modal ownership.** `initModal()` now reconciles one stack per
+  document instead of letting each modal own `inert` independently. Sibling
+  portal modals no longer inert the active top modal, nested stacks restore the
+  previous modal correctly, late-added background nodes join the trap, and a
+  popover opened from the top modal remains interactive when its panel is
+  portaled elsewhere. Cleanup still preserves author-owned `inert` state.
+- **Maintainer documentation.** The architecture map now identifies
+  `css/generated.css` as authored trust-surface CSS, and the roadmap reflects
+  the current release and WOFF2 font payload.
+
+### Verified
+
+- Focused unit coverage exercises sibling and nested modal stacks, portaled
+  popovers, late background nodes, focus restoration, and cleanup ownership.
+  The non-pixel browser suite carries the same sibling-stack, portal, and
+  late-node scenario.
+
 ## 0.6.11 — 2026-07-04
 
 A correctness, accessibility, and performance release drawn from a multi-pass
