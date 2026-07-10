@@ -5,7 +5,7 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
-## Unreleased — 0.6.12
+## 0.6.12 — 2026-07-10
 
 A stabilization patch. It changes no public class, token name, behavior name,
 or package path.
