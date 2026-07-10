@@ -3219,6 +3219,69 @@ test('initModal: Escape is owned by the topmost active controlled modal', async 
   stop();
 });
 
+test('initModal keeps only the top sibling portal modal interactive', async () => {
+  const d = mount(`
+    <button id="opener">Open</button>
+    <aside id="bg">Background</aside>
+    <div id="first" class="ui-modal" data-bronto-modal aria-label="First">
+      <button id="first-ok">First ok</button>
+    </div>
+    <div id="second" class="ui-modal" data-bronto-modal aria-label="Second">
+      <button id="second-ok">Second ok</button>
+    </div>`);
+  const opener = d.getElementById('opener');
+  const first = d.getElementById('first');
+  const second = d.getElementById('second');
+  opener.focus();
+  const stop = initModal();
+
+  first.classList.add('is-open');
+  await tick();
+  assert.equal(first.inert, undefined, 'first modal is interactive');
+  assert.equal(second.inert, true, 'closed sibling belongs to the trapped background');
+
+  second.classList.add('is-open');
+  await tick();
+  assert.equal(first.inert, true, 'lower sibling modal becomes inert');
+  assert.equal(second.inert, false, 'new top modal is released from the prior trap');
+  assert.equal(d.getElementById('bg').inert, true, 'background stays inert');
+  assert.equal(d.activeElement.id, 'second-ok', 'focus moves into the new top modal');
+
+  second.classList.remove('is-open');
+  await tick();
+  assert.equal(first.inert, false, 'previous modal becomes interactive again');
+  assert.equal(second.inert, true, 'closed sibling returns to the trapped background');
+  assert.equal(d.activeElement.id, 'first-ok', 'focus returns into the previous modal');
+
+  first.classList.remove('is-open');
+  await tick();
+  assert.equal(first.inert, false);
+  assert.equal(second.inert, false);
+  assert.equal(d.getElementById('bg').inert, false);
+  assert.equal(d.activeElement, opener);
+  stop();
+});
+
+test('initModal traps late background nodes and preserves authored inert', async () => {
+  const d = mount(`
+    <div id="authored" inert>Already inert</div>
+    <div class="ui-modal is-open" data-bronto-modal aria-label="Live">
+      <button>Inside</button>
+    </div>`);
+  // jsdom does not reflect the inert content attribute onto the property.
+  d.getElementById('authored').inert = true;
+  const stop = initModal();
+  const late = d.createElement('button');
+  late.id = 'late';
+  d.body.append(late);
+  await tick();
+
+  assert.equal(late.inert, true, 'a node appended behind the modal is trapped');
+  stop();
+  assert.equal(late.inert, false, 'behavior-owned inert is released');
+  assert.equal(d.getElementById('authored').inert, true, 'authored inert is preserved');
+});
+
 test('initModal lets an open nested popover own Escape', async () => {
   const d = mount(`
     <button id="opener">Open</button>
@@ -3248,6 +3311,44 @@ test('initModal lets an open nested popover own Escape', async () => {
   assert.equal(modal.classList.contains('is-open'), true, 'modal remains open');
   assert.equal(panel.classList.contains('is-open'), false, 'popover closes');
   assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+  stopPopover();
+  stopModal();
+});
+
+test('initModal admits an owned portaled popover without releasing the background', async () => {
+  const d = mount(`
+    <button id="opener">Open</button>
+    <aside id="bg">Background</aside>
+    <div class="ui-modal is-open" data-bronto-modal aria-label="Settings">
+      <button id="t" data-bronto-popover="portal-pop">More</button>
+    </div>
+    <div class="ui-popover" id="portal-pop" aria-label="More details">
+      <button id="portal-inner">Inner</button>
+    </div>`);
+  const modal = d.querySelector('.ui-modal');
+  const trigger = d.getElementById('t');
+  const panel = d.getElementById('portal-pop');
+  d.getElementById('opener').focus();
+  let reason = null;
+  modal.addEventListener('bronto:modal:close', (event) => (reason = event.detail.reason));
+
+  const stopModal = initModal();
+  const stopPopover = initPopover();
+  assert.equal(panel.inert, true, 'closed portal begins in the trapped background');
+
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  await tick();
+  assert.equal(panel.classList.contains('is-open'), true);
+  assert.equal(panel.inert, false, 'open owned portal joins the live modal tree');
+  assert.equal(d.getElementById('bg').inert, true, 'unrelated background stays trapped');
+  assert.equal(d.activeElement.id, 'portal-inner', 'focus enters the admitted portal');
+
+  d.getElementById('portal-inner').dispatchEvent(
+    new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
+  );
+  assert.equal(reason, null, 'the portal owns Escape instead of closing its modal');
+  assert.equal(panel.classList.contains('is-open'), false);
+  assert.equal(modal.classList.contains('is-open'), true);
   stopPopover();
   stopModal();
 });

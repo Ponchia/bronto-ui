@@ -2030,12 +2030,12 @@
           "type": "FLOAT",
           "sourceCssVariable": "--text-2xs",
           "valuesByMode": {
-            "global": 0.68
+            "global": 0.72
           },
           "$extensions": {
             "com.ponchia.css": {
               "variable": "--text-2xs",
-              "value": "0.68rem"
+              "value": "0.72rem"
             }
           },
           "unit": "rem"

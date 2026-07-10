@@ -74,8 +74,52 @@ export function initPopover({ root } = {}) {
   const GAP = 8;
   let openPanel = null;
   let openTrigger = null;
+  let pendingFocusObserver = null;
   const triggerStates = new Map();
   const panelStates = new Map();
+
+  const cancelPendingFocus = () => {
+    pendingFocusObserver?.disconnect();
+    pendingFocusObserver = null;
+  };
+
+  const focusWhenInteractive = (panel) => {
+    cancelPendingFocus();
+    if (!panel.inert) {
+      focusInto(panel);
+      return;
+    }
+
+    // A panel portaled out of a controlled modal starts in the trapped
+    // background. Wait for initModal to admit that specific panel instead of
+    // guessing how many microtasks its MutationObserver reconciliation needs.
+    const Observer = view?.MutationObserver;
+    if (!Observer) {
+      queueMicrotask(() => {
+        if (openPanel === panel && !panel.inert) focusInto(panel);
+      });
+      return;
+    }
+    const focusIfReady = () => {
+      if (openPanel !== panel) {
+        cancelPendingFocus();
+        return;
+      }
+      if (panel.inert) return;
+      cancelPendingFocus();
+      focusInto(panel);
+    };
+    pendingFocusObserver = new Observer(focusIfReady);
+    pendingFocusObserver.observe(panel, { attributes: true, attributeFilter: ['inert'] });
+    // Some DOM implementations model `inert` as a property without reflecting
+    // its attribute, so no observer record is delivered. Cover that test-DOM
+    // path across the modal reconciler's queued microtask; real browsers still
+    // use the attribute observer as the source of truth.
+    queueMicrotask(() => {
+      focusIfReady();
+      if (openPanel === panel && panel.inert) queueMicrotask(focusIfReady);
+    });
+  };
 
   const rememberTrigger = (trigger) => {
     if (!triggerStates.has(trigger)) {
@@ -123,6 +167,7 @@ export function initPopover({ root } = {}) {
   };
 
   const close = () => {
+    cancelPendingFocus();
     if (!openPanel) return;
     const panel = openPanel;
     const trigger = openTrigger;
@@ -166,7 +211,7 @@ export function initPopover({ root } = {}) {
     openPanel = panel;
     openTrigger = trigger;
     place(trigger, panel);
-    focusInto(panel);
+    focusWhenInteractive(panel);
   };
 
   const onClick = (e) => {
@@ -227,7 +272,10 @@ export function initPopover({ root } = {}) {
         const onToggle = (e) => {
           const isOpen = e.newState === 'open';
           trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-          if (!isOpen && openPanel === panel) openPanel = openTrigger = null;
+          if (!isOpen && openPanel === panel) {
+            cancelPendingFocus();
+            openPanel = openTrigger = null;
+          }
         };
         panel.addEventListener('toggle', onToggle);
         seedTeardowns.push(() => panel.removeEventListener('toggle', onToggle));

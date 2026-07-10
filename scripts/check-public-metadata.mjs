@@ -93,7 +93,7 @@ for (const mention of requiredSubpathMentions) {
     errors.push(`docs/stability.md public-surface matrix must mention ${mention}`);
   }
 }
-const ledgerStart = stability.indexOf('### 1.0 Readiness Ledger');
+const ledgerStart = stability.indexOf('### 1.0 readiness ledger');
 const ledgerEnd = stability.indexOf('After 1.0, breaking changes move to majors.', ledgerStart);
 if (ledgerStart === -1 || ledgerEnd === -1) {
   errors.push('docs/stability.md must keep the 1.0 readiness ledger before the public matrix');
