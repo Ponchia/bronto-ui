@@ -1,6 +1,10 @@
 /**
  * @ponchia/ui/vue — thin Vue directives over @ponchia/ui/behaviors.
  *
+ * @deprecated Import the framework-agnostic behavior initializers directly.
+ * This adapter remains compatible in 0.7 and is scheduled for removal no
+ * earlier than 0.8 because no real consumer adopted it.
+ *
  * The CSS is the framework; these are optional lifecycle adapters that run the
  * vanilla behavior initializers from Vue directive hooks. They are plain
  * directive objects, so this module has no runtime dependency on Vue.

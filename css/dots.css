@@ -136,7 +136,9 @@
 
 /* Status dot — the glyph-style state indicator. */
 .ui-dot {
-  background: var(--text-dim);
+  --ui-dot-color: var(--text-dim);
+
+  background: var(--ui-dot-color);
   border-radius: 50%;
   display: inline-block;
   flex: 0 0 auto;
@@ -145,34 +147,45 @@
 }
 
 .ui-dot--accent {
-  background: var(--accent);
+  --ui-dot-color: var(--accent);
 }
 
 .ui-dot--success {
-  background: var(--success);
+  --ui-dot-color: var(--success);
 }
 
 .ui-dot--warning {
-  background: var(--warning);
+  --ui-dot-color: var(--warning);
 }
 
 .ui-dot--danger {
-  background: var(--danger);
+  --ui-dot-color: var(--danger);
 }
 
 .ui-dot--info {
-  background: var(--info);
+  --ui-dot-color: var(--info);
 }
 
 .ui-dot--live {
-  background: var(--success);
-  box-shadow: 0 0 0 0 color-mix(in srgb, var(--success) 70%, transparent);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--ui-dot-color) 70%, transparent);
   position: relative;
+}
+
+/* Live describes motion, not status. A standalone live dot defaults to
+   success; an explicit tone remains the colour of both the dot and ring. */
+.ui-dot--live:not(
+    .ui-dot--accent,
+    .ui-dot--success,
+    .ui-dot--warning,
+    .ui-dot--danger,
+    .ui-dot--info
+  ) {
+  --ui-dot-color: var(--success);
 }
 
 .ui-dot--live::after {
   animation: pulseRing 1.8s var(--ease-out) infinite;
-  border: 1px solid var(--success);
+  border: 1px solid var(--ui-dot-color);
   border-radius: 50%;
   content: '';
   inset: -3px;
@@ -562,36 +575,48 @@
    differentiable. */
 @media (forced-colors: active) {
   .ui-dot--success {
+    --ui-dot-color: LinkText;
+
     forced-color-adjust: none;
-    background: LinkText;
   }
 
   .ui-dot--warning {
+    --ui-dot-color: Mark;
+
     forced-color-adjust: none;
-    background: Mark;
   }
 
   .ui-dot--danger {
+    --ui-dot-color: Highlight;
+
     forced-color-adjust: none;
-    background: Highlight;
   }
 
   .ui-dot--info {
+    --ui-dot-color: ButtonText;
+
     forced-color-adjust: none;
-    background: ButtonText;
   }
 
   /* Brand/live dots aren't status tones, but they still encode meaning via
      background-color alone, which HCM flattens. Keep them on a distinct,
      opted-out system colour for completeness. */
-  .ui-dot--accent,
-  .ui-dot--live {
+  .ui-dot--accent {
+    --ui-dot-color: LinkText;
+
     forced-color-adjust: none;
-    background: LinkText;
   }
 
-  .ui-dot--live::after {
-    border-color: LinkText;
+  .ui-dot--live:not(
+      .ui-dot--accent,
+      .ui-dot--success,
+      .ui-dot--warning,
+      .ui-dot--danger,
+      .ui-dot--info
+    ) {
+    --ui-dot-color: LinkText;
+
+    forced-color-adjust: none;
   }
 
   /* The masked one-node icon paints `background: currentcolor` through an SVG

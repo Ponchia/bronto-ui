@@ -4,6 +4,8 @@
  * (`role="separator"`). The behavior keeps `--splitter-pos` and
  * `aria-valuenow` in sync for keyboard and pointer resizing, then dispatches
  * `bronto:splitter:resize` with `{ value, orientation }`.
+ * Buttons inside the splitter may set `data-bronto-splitter-adjust="-10"` or
+ * `"10"` to provide the required single-pointer, non-drag resize path.
  *
  * Bronto owns the control affordance only. The host owns pane content,
  * persistence, min/max policy, collapse behavior, and any saved layout state.

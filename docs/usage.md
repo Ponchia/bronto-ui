@@ -362,20 +362,16 @@ element (e.g. `aria-label="Ada Lovelace"`) because the initials alone don't
 convey identity to AT. Keep initials to ~2 characters — the box is
 `overflow: hidden` and silently clips a third.
 
-## Modal: native `<dialog>` vs `is-open`
+## Modal: use native `<dialog>`
 
 Prefer the **native `<dialog>`** path — you get top-layer, backdrop and
 focus-trap free (wire it with `initDialog` for open-triggers + focus-return).
-Only use `ui-modal.is-open` (`ui.modal({ open: true })`) when a portal/React
-modal genuinely can't be a `<dialog>`. The **backdrop and top-layer stacking
-stay yours**, but you no longer have to hand-roll the focus trap: mark the
-overlay `data-bronto-modal` and call `initModal()`. While `is-open` it traps
-focus with `inert` (the rest of the page goes non-interactive), returns focus to
-the opener on close, and dispatches a cancelable `bronto:modal:close` on Escape —
-you still own the `is-open` class, so drop it in response. On bind `initModal`
-also gives the overlay `role="dialog"` + `aria-modal="true"` and dev-warns if it
-has no accessible name (add `aria-label`/`aria-labelledby`). A drawer is a modal
-that enters from an edge — same rule.
+The older `ui-modal.is-open` + `data-bronto-modal` + `initModal()` path remains
+compatible throughout 0.7, but is deprecated for removal no earlier than 0.8.
+It duplicates platform focus, stacking, and inert ownership and no inspected
+real consumer uses it. Migrate portals to a native `<dialog>` where possible;
+if a framework must retain the controlled path during 0.7, keep the existing
+accessible name and `bronto:modal:close` handling unchanged.
 
 Controlled modals share one document-level stack. Opening a sibling portal
 modal makes the previous modal inert and keeps only the new top modal
@@ -387,8 +383,8 @@ nodes added after the modal opens are trapped too. If a controlled parent modal
 closes while a descendant still carries `is-open`, the descendant is suspended
 with the parent and resumes if the parent reopens.
 
-**Scroll-lock is not automatic on either path.** Neither the native `<dialog>`
-nor the `is-open` path freezes the background — the page behind an open modal can
+**Scroll-lock is not automatic.** A native `<dialog>` does not freeze background
+scroll — the page behind an open modal can
 still scroll. If that matters, toggle a lock yourself while the modal is open
 (`document.documentElement.style.overflow = 'hidden'`, restored on close), or add
 `html:has(dialog[open]) { overflow: hidden }` for the native path.
@@ -574,6 +570,49 @@ authoring engine.
   provide. The summary's title is the legible sans, not the display face — it's
   meant to be read.
 
+### Branded file input: keep the native control operable
+
+Prefer the visible native control: `<input class="ui-file" type="file">` styles
+its file-selector button without hiding the input. If the product needs a
+button-shaped label, keep the native input focusable inside the label and expose
+its focus on the visible wrapper. Never use `display: none` on the input: that
+removes it from keyboard navigation.
+
+```html
+<label class="ui-button upload-button">
+  Choose file
+  <input class="ui-visually-hidden" type="file" name="document" />
+</label>
+```
+
+```css
+.upload-button:focus-within {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+```
+
+### Sortable table: the button is part of the contract
+
+Put a real button in each sortable header, mark the table, then initialize the
+behavior. Use `data-sort="num"` for numeric columns and `data-sort-value` on a
+cell when its displayed text is not a canonical sortable value.
+
+```html
+<table class="ui-table" data-bronto-sortable>
+  <thead><tr>
+    <th><button class="ui-table__sort" data-sort type="button">Name</button></th>
+    <th class="is-num"><button class="ui-table__sort" data-sort="num" type="button">Score</button></th>
+  </tr></thead>
+  <tbody><tr><td>Ada</td><td class="is-num" data-sort-value="9.5">9,5</td></tr></tbody>
+</table>
+```
+
+```js
+import { initTableSort } from '@ponchia/ui/behaviors';
+const cleanup = initTableSort();
+```
+
 ## Reveal: `ui-reveal` needs JS, `ui-scroll-reveal` doesn't
 
 `ui-scroll-reveal` is scroll-driven and **zero-JS** — reach for it in a static
@@ -615,8 +654,9 @@ It is a **non-modal** dialog by design: the panel gets `role="dialog"` and focus
 moves into it, but there is **no focus trap** and the rest of the page stays
 interactive — Tab moves *out* of the panel (it does not cycle), and it closes on
 Escape or outside-click. Don't assume `<dialog>`-modal semantics; if you need a
-trap and an inert backdrop, use a real modal (`<dialog>` + `initDialog`, or
-`initModal`). And the `is-open` fallback is a plain stacked element, so it sits
+trap and an inert backdrop, use a real modal (`<dialog>` + `initDialog`). The
+deprecated `initModal()` path remains available only for 0.7 migration. And the
+`is-open` fallback is a plain stacked element, so it sits
 *under* any open native `<dialog>`'s top layer — another reason to prefer the
 native `popover` attribute when a popover and a dialog can be open together.
 
@@ -650,7 +690,7 @@ These are JS widgets wearing the Bronto look; without the behavior they are iner
 | Popover (`ui-popover`) | `initPopover` | no placement/ARIA — prefer the native `popover` attribute |
 | Carousel (`ui-carousel`) | `initCarousel` | a native scroll-snap track (usable, no controls) |
 | Native dialog/lightbox (`<dialog>`, `ui-lightbox`) | `initDialog` | closed markup stays closed; `data-bronto-open`/close buttons do nothing. Do not use `open` as a modal fallback: it is non-modal and has no trigger/focus-return path |
-| Controlled modal (`ui-modal.is-open`) | `initModal` | open skin only — no inert trap, focus-return, or Escape close signal |
+| Controlled modal (`ui-modal.is-open`, deprecated) | `initModal` (deprecated) | open skin only — no inert trap, focus-return, or Escape close signal |
 | Menu (`data-bronto-menu`) | `initMenu` | a button next to a list with no open/close, outside-click, or Escape |
 | Dismissible alert/callout (`data-bronto-dismissible`) | `dismissible` | the close affordance is just a button; nothing is removed |
 | Toast | `toast()` | nothing — it is imperative-only |
@@ -671,7 +711,7 @@ boundary of what CSS alone cannot do.
 
 The CSS is the framework; `@ponchia/ui/behaviors` is the *sanctioned*
 home for the little JS that genuinely needs scripting (theme persistence,
-disclosure, dialog glue, modal focus-trap, toast, combobox, form-validation,
+disclosure, native-dialog glue, toast, combobox, form-validation,
 table-sort, splitter resizing). Reach for it instead of reimplementing — every
 initializer is SSR-safe, idempotent, and returns a cleanup. If you find yourself
 writing focus management, ARIA value sync, or `aria-expanded` toggling by hand,

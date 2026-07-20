@@ -5,6 +5,83 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## 0.7.0 — 2026-07-20
+
+A consumer-first contract-hardening release. Ten real applications and tools,
+plus a web-platform and design-system landscape review, found more value in
+repairing and pruning the existing surface than in adding components.
+
+### BREAKING
+
+- **DTCG 2025.10 values.** `tokens.dtcg.json` now emits portable structured
+  color, dimension, duration, numeric, and cubic-bezier values. It no longer
+  emits CSS strings for typed values or `$value: null` placeholders. Derived
+  colors are resolved per light/dark theme; the original CSS expression remains
+  under `$extensions["com.ponchia.css"].authoredValue`. CSS-only shadow
+  expressions and em-based letter-spacing remain in `tokens.json` rather than
+  pretending to be portable DTCG values; the DTCG root extension lists those
+  deliberate omissions. Update JSON readers using
+  [`docs/migrations/0.6-to-0.7.md`](docs/migrations/0.6-to-0.7.md).
+
+### Added
+
+- **Consumer contract checker.** The zero-dependency `bronto-ui-check` binary
+  scans consumer source for literal `ui-*` classes absent from `classes.json`
+  and unresolved Bronto-like `var(--*)` references. It understands local token
+  definitions, strips source comments, ignores Markdown prose and build/vendor
+  directories, supports explicit allowlists, and can emit JSON.
+- **Non-drag splitter controls.** Buttons inside a splitter can use
+  `data-bronto-splitter-adjust="-10"` / `"10"` to change the first pane by a
+  signed percentage-point delta. This gives pointer users the same resize
+  function without requiring a dragging gesture.
+- **DTCG semantic gate.** `check:dtcg` validates every emitted typed value and
+  rejects null placeholders or malformed structured values before publication.
+
+### Changed
+
+- **Meter ownership.** The already-public `ui-meter__row`, `__label`, and
+  `__value` styling moves from optional `report.css` into core `feedback.css`.
+  Core consumers now receive the layout the public class contract promised;
+  report-kit output remains visually unchanged. Together with the explicit
+  24×24px coarse-pointer utility-link floors below, this intentionally adds
+  1,121 B raw / 164 B gzip to the default bundle versus 0.6.12 (now 89.9 kB raw /
+  15.4 kB gzip) and raises the hard budget only enough to admit those contracts.
+- **Release evidence.** CI and release documentation now treat real-consumer
+  literal validation, packed-tarball upgrades, and payload reporting as the
+  evidence for 1.0 readiness.
+
+### Fixed
+
+- **Live dot composition.** `ui-dot--live` now describes motion only. A
+  standalone live dot defaults to success, while an explicit accent, success,
+  warning, danger, or info tone controls both the dot and its pulse ring,
+  including forced-colors mode.
+- **OS theme synchronization.** An OS `prefers-color-scheme` change now emits
+  the existing `bronto:themechange` event when no explicit theme is set, keeping
+  consumer-rendered charts, icons, and labels synchronized with the CSS theme.
+- **Named dialogs.** `initDialog()` now warns once when an opened native dialog
+  has no `aria-label`, `aria-labelledby`, or `title`. All shipped framework
+  examples provide a name.
+- **Touch target floors.** Breadcrumb and footer utility links reach the WCAG
+  2.5.8 24 CSS-pixel floor under a coarse pointer.
+
+### Deprecated
+
+- **Framework adapter subpaths.** `@ponchia/ui/react`, `/solid`, `/qwik`,
+  `/svelte`, and `/vue` remain compatible in 0.7 but are scheduled for removal
+  no earlier than 0.8. None of the ten inspected consumers imports them; use the
+  vanilla behavior initializers in each framework's mount/cleanup lifecycle.
+- **Controlled non-native modal.** `initModal()`, its adapter bindings, and
+  `data-bronto-modal` remain compatible in 0.7 but are scheduled for removal no
+  earlier than 0.8. Prefer native `<dialog>` with `initDialog()`.
+
+### Verified
+
+- Unit, type, generated-artifact, package, schema, DTCG, class/token contract,
+  browser, accessibility, packed-example, and real-consumer checks are release
+  gates. The release evidence records consumer classes and imported surfaces
+  without exposing private project details.
+
 ## 0.6.12 — 2026-07-10
 
 A stabilization patch. It changes no public class, token name, behavior name,

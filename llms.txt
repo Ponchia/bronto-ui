@@ -45,7 +45,7 @@ the path changes from source `css/` to built `dist/css/`:
 <!-- installed locally -->
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/<leaf>.css" />
 <!-- or from a CDN; pin the version (pre-1.0, breaking changes ship in the minor) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.12/dist/css/<leaf>.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.7.0/dist/css/<leaf>.css" />
 ```
 
 The flattened default bundle is `dist/bronto.css` (bundler shorthand
@@ -75,7 +75,8 @@ import { applyStoredTheme } from '@ponchia/ui/behaviors';
 Notable behaviors beyond the obvious: `initMenu()` adds close affordances to a
 native `<details data-bronto-menu>` dropdown (outside-click/Escape/select-close);
 `initModal()` wires the controlled `.ui-modal.is-open` path (inert focus-trap +
-role/aria-modal); `initDisabledGuard()` makes every `aria-disabled` control
+role/aria-modal), but is deprecated in 0.7 for removal no earlier than 0.8;
+prefer native `<dialog>` + `initDialog()`. `initDisabledGuard()` makes every `aria-disabled` control
 keyboard-inert (CSS alone is only pointer-inert). For the value-bearing fills,
 `attrs.meter(value)` / `attrs.progress(value)` from `@ponchia/ui/classes` return
 `role`+`aria-valuenow/min/max`+the `--value` style to spread onto the host.
@@ -86,6 +87,8 @@ matching `.ui-source-card`, seed lightweight preview metadata, and emit
 and any rich preview popover.
 
 Optional lifecycle adapters wrap those behaviors without owning markup or state.
+They remain compatible in 0.7 but are deprecated for removal no earlier than
+0.8; prefer vanilla behavior initialization in the host lifecycle.
 React/Solid/Qwik use hook bindings (peer deps `react` / `solid-js` /
 `@builder.io/qwik`, optional — core stays zero-dep); Svelte uses dependency-free
 actions, and Vue uses dependency-free directives/plugin helpers:
@@ -769,7 +772,8 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   resolved palette; the build fails below the declared floor.
 - `tokens/index.d.ts` — every design-token name as a literal union.
 - `tokens/index.json` — tokens as plain data (global / light / dark).
-- `tokens/tokens.dtcg.json` — same tokens in W3C DTCG format.
+- `tokens/tokens.dtcg.json` — resolved DTCG 2025.10 structured typed values;
+  authored CSS expressions remain in `tokens/index.json` and DTCG extensions.
 - `tokens/resolved.json` — every colour token resolved to a static
   `#rrggbb` / `rgba(...)` per theme (var() + color-mix() evaluated) in
   `light`/`dark`, plus a `scale` block of the non-colour scales

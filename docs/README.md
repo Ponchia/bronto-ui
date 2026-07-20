@@ -94,7 +94,8 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 - [adr/0001-color-system.md](./adr/0001-color-system.md) — the five-tier color constitution.
 - [adr/0002-scope-and-2026-baseline.md](./adr/0002-scope-and-2026-baseline.md) — scope, the 2026 browser floor, and CSS-native motion.
 - [adr/0003-theme-model.md](./adr/0003-theme-model.md) — the binary base × one-knob × orthogonal-axes theme model.
+- [adr/0004-prune-unused-adapters.md](./adr/0004-prune-unused-adapters.md) — deprecate unadopted framework adapters and the controlled-modal path.
 
 ## Migrations
 
-- [migrations/0.2-to-0.3.md](./migrations/0.2-to-0.3.md) · [migrations/0.3-to-0.4.md](./migrations/0.3-to-0.4.md) · [migrations/0.4-to-0.5.md](./migrations/0.4-to-0.5.md) · [migrations/0.5-to-0.6.md](./migrations/0.5-to-0.6.md)
+- [migrations/0.2-to-0.3.md](./migrations/0.2-to-0.3.md) · [migrations/0.3-to-0.4.md](./migrations/0.3-to-0.4.md) · [migrations/0.4-to-0.5.md](./migrations/0.4-to-0.5.md) · [migrations/0.5-to-0.6.md](./migrations/0.5-to-0.6.md) · [migrations/0.6-to-0.7.md](./migrations/0.6-to-0.7.md)

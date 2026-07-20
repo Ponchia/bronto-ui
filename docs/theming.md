@@ -4,6 +4,46 @@
 This is the **stable, supported surface** for re-branding without forking.
 Anything not listed here is internal and may change between minor versions.
 
+## Theme selection, persistence, and OS synchronization
+
+Declare both supported schemes in the document head so browser-owned controls
+and chrome follow the active theme:
+
+```html
+<meta name="color-scheme" content="light dark" />
+```
+
+Call `initThemeToggle()` for any `[data-bronto-theme-toggle]` controls. It
+persists an explicit light/dark choice in `localStorage['bronto-theme']`, keeps
+`aria-pressed` current, and emits `bronto:themechange` on `<html>`. When there is
+no explicit `data-theme`, an OS preference change emits the same event, so
+canvas, SVG, MapLibre, and other non-CSS renderers can redraw without a separate
+media-query listener.
+
+```js
+import { initThemeToggle } from '@ponchia/ui/behaviors';
+
+const stopTheme = initThemeToggle();
+document.documentElement.addEventListener('bronto:themechange', (event) => {
+  redrawNonCssSurface(event.detail.theme);
+});
+```
+
+For a stored preference without first-paint flash, put this render-blocking
+script in `<head>` before the stylesheet/module code:
+
+```html
+<script>
+  try {
+    var theme = localStorage.getItem('bronto-theme');
+    if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+  } catch (error) {}
+</script>
+```
+
+To return to automatic OS mode, remove both the storage item and `data-theme`,
+then reinitialize the theme behavior so it can subscribe to OS changes again.
+
 ## The brand knob: `--accent`
 
 The accent family derives from `--accent` via `color-mix()` and the
@@ -307,11 +347,15 @@ semantics — the CSS can't add ARIA for you:
 `@ponchia/ui/tokens.dtcg.json` is the token model in the W3C Design
 Tokens Community Group format, for Style Dictionary / Figma / other
 tooling. Generated from `tokens/index.js` and drift-checked by
-`npm run check`. Resolvable primitives (the scale, `--accent`, literal
-palette) carry real `$value`s; the CSS-runtime-derived family
-(`accent-soft`, `focus-ring`, aliases) is spec-shaped with
-`$value: null` + the CSS in `$extensions["com.ponchia.css"]` rather than
-fabricating a number — the resolvable knob is `color.<theme>.accent`.
+`npm run check`. From 0.7 it is a resolved DTCG 2025.10 projection: colours use
+structured sRGB values, dimensions use `{ value, unit }`, durations use
+`{ value, unit }`, and every typed token has a non-null portable value. Derived
+`var()` / `color-mix()` colours are resolved independently in the light and dark
+groups. The authored CSS remains in `$extensions["com.ponchia.css"].authoredValue`.
+CSS-only expressions that cannot be represented portably, including shadows,
+and em-based letter-spacing remain in `@ponchia/ui/tokens.json` rather than
+becoming fake DTCG values. The root extension lists every deliberately omitted
+CSS variable.
 
 `@ponchia/ui/tokens/figma.variables.json` is the resolved local handoff for
 Figma Variables import/sync scripts. It is generated from `tokens/resolved.json`

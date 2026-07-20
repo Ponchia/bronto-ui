@@ -27,6 +27,7 @@ there, not in a component:
 
 ```html
 <!-- src/app.html, inside <head> -->
+<meta name="color-scheme" content="light dark" />
 <script>
   try {
     var t = localStorage.getItem('bronto-theme');
@@ -45,11 +46,13 @@ Start with the classes and attributes the CSS/behavior contracts expect:
 </main>
 ```
 
-## 4. Behaviors as Svelte actions
+## 4. Deprecated compatibility actions
 
-The optional `@ponchia/ui/svelte` entrypoint exports Svelte actions over the
-same vanilla behavior layer. Attach the action to the subtree that owns the
-markup:
+The `@ponchia/ui/svelte` action entrypoint remains compatible in 0.7 but is
+deprecated for removal no earlier than 0.8. Prefer initializing the vanilla
+behavior on mount and retaining its cleanup, as shown in the next section. The
+old entrypoint exports actions over the same vanilla behavior layer. During
+migration, attach the action to the subtree that owns the markup:
 
 ```svelte
 <script>

@@ -8,8 +8,8 @@ the README).
 
 | Version | Supported |
 | ------- | --------- |
-| 0.6.x   | ✅        |
-| < 0.6   | ❌        |
+| 0.7.x   | ✅        |
+| < 0.7   | ❌        |
 
 ## Reporting a vulnerability
 
@@ -27,10 +27,11 @@ new patch/minor and noted in `CHANGELOG.md`.
 The package ships **zero runtime dependencies** — it is CSS plus
 optional dependency-free, side-effect-free-on-import, SSR-safe vanilla
 JS (`tokens` / `classes` / `behaviors` / `glyphs` / `skins` /
-`charts`). The `react`, `solid`, and `qwik` subpaths are optional
-lifecycle hook bindings over the same behavior layer and require their
-matching optional peer only when imported; `svelte` and `vue` are
-dependency-free action/directive adapters.
+`charts`). The deprecated `react`, `solid`, and `qwik` subpaths are optional
+lifecycle hook bindings over the same behavior layer and require their matching
+optional peer only when imported; the deprecated `svelte` and `vue` subpaths are
+dependency-free action/directive adapters. They remain compatible throughout
+0.7 and may be removed in 0.8 or later.
 
 Behaviors assume trusted application markup. Do not initialize them over
 untrusted user/CMS HTML unless you have sanitized that markup and are

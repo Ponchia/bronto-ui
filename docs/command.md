@@ -24,6 +24,20 @@ Cmd/Ctrl+K**; you open the palette yourself (e.g. a `<dialog>` opened by a butto
 or your own shortcut). Pairs with the [`ui-shortcut`](./reference.md) hint. Not in
 the core bundle.
 
+## Controlled host mode
+
+When React or another host already owns the query, filtered results, active
+item, and selection, use only the `ui-command*` CSS shell and do not call
+`initCommand()`. This is a supported composition boundary, not a second Bronto
+state model. The host must then provide the complete combobox/listbox contract:
+stable ids, roles, `aria-controls`, `aria-expanded`,
+`aria-activedescendant`, keyboard navigation, filtering, selection, and close
+behavior. Do not bind both owners to the same palette.
+
+The framework adapter subpaths remain compatible in 0.7 but are deprecated for
+removal no earlier than 0.8. Prefer direct `initCommand()` lifecycle cleanup for
+a DOM-authored list, or controlled host mode when the framework owns the widget.
+
 ## Markup
 
 ```html
@@ -85,10 +99,10 @@ document.querySelector('[data-bronto-command]').addEventListener('bronto:command
 );
 ```
 
-Framework adapters: `useCommand()` in `@ponchia/ui/react`, `/solid`, and
-`/qwik`; the `command` / `useCommand` action in `@ponchia/ui/svelte`; and
-`vCommand` (or the `v-bronto-command` directive from `brontoVue`) in
-`@ponchia/ui/vue`.
+Deprecated compatibility adapters in 0.7: `useCommand()` in
+`@ponchia/ui/react`, `/solid`, and `/qwik`; the `command` / `useCommand` action
+in `@ponchia/ui/svelte`; and `vCommand` (or `v-bronto-command`) in
+`@ponchia/ui/vue`. Migrate before 0.8.
 
 ## Accessibility
 
