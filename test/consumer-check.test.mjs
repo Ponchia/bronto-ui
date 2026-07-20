@@ -68,7 +68,9 @@ test('consumer checker ignores comments but keeps real string and selector liter
     );
     writeFileSync(
       resolve(root, 'app.js'),
-      '// conceptual: ui-phantom and var(--space-4)\nconst className = "ui-app";',
+      '// conceptual: ui-phantom and var(--space-4)\n' +
+        'const reportPath = "../../reports/ui-smoke/index.html";\n' +
+        'const className = "ui-app";',
     );
     writeFileSync(
       resolve(root, 'page.html'),

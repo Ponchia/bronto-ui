@@ -172,7 +172,7 @@ export function checkPaths(inputs, { allowClasses = [], allowTokens = [] } = {})
   };
 
   for (const { file, text, scanned } of documents) {
-    for (const match of scanned.matchAll(/\bui-[a-z0-9](?:[\w-]*[a-z0-9])?/gi)) {
+    for (const match of scanned.matchAll(/(?<![/\w-])ui-[a-z0-9](?:[\w-]*[a-z0-9])?(?![\w/-])/gi)) {
       if (!allowedClasses.has(match[0]) && !nonClassIdentifiers.has(match[0])) {
         add({ kind: 'class', file, line: lineAt(text, match.index), name: match[0] });
       }
