@@ -28,9 +28,13 @@ const SKIP_DIRS = new Set([
   '.next',
   '.nuxt',
   '.output',
+  '.pytest_cache',
   '.svelte-kit',
+  '.tox',
   '.vercel',
+  '.venv',
   '.vite',
+  '__pycache__',
   'build',
   'coverage',
   'dist',
@@ -40,6 +44,8 @@ const SKIP_DIRS = new Set([
   'public',
   'storybook-static',
   'test-results',
+  'vendor',
+  'venv',
 ]);
 
 const knownClasses = new Set(classesManifest.classes);

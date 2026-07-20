@@ -29,6 +29,8 @@ test('consumer checker reports unknown classes and unresolved reserved tokens', 
     );
     mkdirSync(resolve(root, 'test-results'));
     writeFileSync(resolve(root, 'test-results/trace.js'), 'const cls = "ui-generated";');
+    mkdirSync(resolve(root, '.venv'));
+    writeFileSync(resolve(root, '.venv/playwright.js'), 'const cls = "ui-mode";');
 
     const result = checkPaths([root]);
     assert.equal(result.files, 2);
