@@ -93,6 +93,54 @@ test('prefers-reduced-motion: the dot spinner stops animating', async ({ page })
   expect(Number(spin.dotOpacity)).toBeGreaterThan(0); // …but stays legible
 });
 
+test('live dots preserve an explicit semantic tone across motion modes', async ({ page }) => {
+  await page.goto('/demo/', { waitUntil: 'networkidle' });
+  await page.evaluate(() => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<span id="live-default" class="ui-dot ui-dot--live"></span>' +
+        '<span id="live-warning" class="ui-dot ui-dot--warning ui-dot--live"></span>' +
+        '<span id="success-reference" class="ui-dot ui-dot--success"></span>' +
+        '<span id="warning-reference" class="ui-dot ui-dot--warning"></span>',
+    );
+  });
+
+  const read = () =>
+    page.evaluate(() => {
+      const defaultDot = document.querySelector('#live-default');
+      const warningDot = document.querySelector('#live-warning');
+      const successReference = document.querySelector('#success-reference');
+      const warningReference = document.querySelector('#warning-reference');
+      const defaultStyle = getComputedStyle(defaultDot);
+      const warningStyle = getComputedStyle(warningDot);
+      const warningRing = getComputedStyle(warningDot, '::after');
+      return {
+        success: getComputedStyle(successReference).backgroundColor,
+        warning: getComputedStyle(warningReference).backgroundColor,
+        defaultColor: defaultStyle.backgroundColor,
+        warningColor: warningStyle.backgroundColor,
+        warningRingColor: warningRing.borderTopColor,
+        warningRingAnimation: warningRing.animationName,
+      };
+    });
+
+  const normal = await read();
+  expect(normal.defaultColor).toBe(normal.success);
+  expect(normal.warningColor).toBe(normal.warning);
+  expect(normal.warningRingColor).toBe(normal.warningColor);
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const reduced = await read();
+  expect(reduced.warningColor).toBe(reduced.warning);
+  expect(reduced.warningRingColor).toBe(reduced.warningColor);
+  expect(reduced.warningRingAnimation).toBe('none');
+
+  await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
+  const forced = await read();
+  expect(forced.warningRingColor).toBe(forced.warningColor);
+  expect(forced.warningColor).not.toBe(forced.defaultColor);
+});
+
 test('print: chrome is hidden, content + link URLs are kept', async ({ page }) => {
   await page.emulateMedia({ media: 'print' });
   await page.goto('/demo/', { waitUntil: 'networkidle' });

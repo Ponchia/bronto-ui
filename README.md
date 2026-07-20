@@ -3,7 +3,7 @@
 [![npm](https://img.shields.io/npm/v/@ponchia/ui?logo=npm)](https://www.npmjs.com/package/@ponchia/ui)
 [![npm provenance](https://img.shields.io/badge/npm-provenance-blue?logo=npm)](https://www.npmjs.com/package/@ponchia/ui#provenance)
 [![runtime deps](https://img.shields.io/badge/runtime%20deps-0-brightgreen)](https://github.com/Ponchia/bronto-ui/blob/main/package.json)
-[![default CSS](https://img.shields.io/badge/default%20CSS-~89kB%20%2F%20~15kB%20gzip-informational)](https://github.com/Ponchia/bronto-ui/blob/main/scripts/check-dist.mjs)
+[![default CSS](https://img.shields.io/badge/default%20CSS-~90kB%20%2F%20~15kB%20gzip-informational)](https://github.com/Ponchia/bronto-ui/blob/main/scripts/check-dist.mjs)
 [![CI](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Ponchia/bronto-ui/badge)](https://scorecard.dev/viewer/?uri=github.com/Ponchia/bronto-ui)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE)
@@ -77,15 +77,16 @@ for the thesis.
 npm i @ponchia/ui
 ```
 
-Or drop it in with no build step, straight from a CDN:
+Or drop it in with no build step, straight from a CDN (replace the version only
+when deliberately upgrading across a breaking pre-1.0 minor):
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.6.12/dist/bronto.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.7.0/dist/bronto.css">
 ```
 
 ## Quick start
 
-**1. Load the CSS.** One flattened, minified default CSS bundle — the standard component set, one request (~89 kB raw / ~15 kB gzip) — that is `dist/bronto.css`, not the whole package tarball:
+**1. Load the CSS.** One flattened, minified default CSS bundle — the standard component set, one request (~90 kB raw / ~15 kB gzip) — that is `dist/bronto.css`, not the whole package tarball:
 
 ```css
 @import '@ponchia/ui';            /* via a bundler */
@@ -187,7 +188,13 @@ Not an afterthought — a gate. Every contractual token pairing has a declared W
 
 ## Works with anything
 
-The CSS is the framework, so it works with React, Svelte/SvelteKit, Astro, Vue, Solid, Qwik or plain HTML — there's no component runtime to adopt. The optional `classes` and `behaviors` entrypoints pull in **no** UI framework and are SSR-safe. For React, Solid and Qwik there are also **optional thin bindings** — `@ponchia/ui/react`, `@ponchia/ui/solid` and `@ponchia/ui/qwik` wrap the behaviors as hooks (`useDialog`, `useToast`, …); `react`/`solid-js`/`@builder.io/qwik` are optional peer deps. Svelte and Vue get dependency-free lifecycle adapters too: `@ponchia/ui/svelte` exports actions, and `@ponchia/ui/vue` exports directives/plugin helpers over the same behavior layer.
+The CSS is the framework, so it works with React, Svelte/SvelteKit, Astro, Vue,
+Solid, Qwik or plain HTML — there's no component runtime to adopt. The optional
+`classes` and framework-neutral `behaviors` entrypoints pull in **no** UI
+framework and are SSR-safe. The React, Solid, Qwik, Svelte, and Vue lifecycle
+adapter subpaths remain compatible in 0.7 but are deprecated for removal no
+earlier than 0.8; initialize vanilla behaviors in the framework's ordinary
+mount/cleanup lifecycle instead.
 
 Per-framework getting-started guides + runnable example apps live in the repo:
 
@@ -204,7 +211,8 @@ Per-framework getting-started guides + runnable example apps live in the repo:
 
 ## Extras
 
-- **Tokens as data** — `import tokens, { themeColor, cssVars } from '@ponchia/ui/tokens'` (plus `tokens.json`, W3C DTCG `tokens.dtcg.json`, `tokens/resolved.json` for concrete values in canvas/SVG/MapLibre, and `tokens/figma.variables.json` for local Figma Variables import/sync scripts).
+- **Tokens as data** — `import tokens, { themeColor, cssVars } from '@ponchia/ui/tokens'` (plus authored `tokens.json`, a structured DTCG 2025.10 `tokens.dtcg.json`, `tokens/resolved.json` for concrete values in canvas/SVG/MapLibre, and `tokens/figma.variables.json` for local Figma Variables import/sync scripts).
+- **Consumer contract checker** — after an upgrade, run `npx --no-install bronto-ui-check src` to catch unknown literal `ui-*` classes and unresolved Bronto token references in code, style, and template sources before build or deployment. Comments, generated/vendor directories, and Markdown prose are excluded.
 - **Chart colours for dashboards** — `import charts from '@ponchia/ui/charts.json' with { type: 'json' }` in Node ESM, or the same path through a bundler JSON import (resolved hex per theme; series 1 = your accent) plus the opt-in `@ponchia/ui/css/dataviz.css`.
 - **Static reports for LLMs** — add `@ponchia/ui/css/report-kit.css` for the complete report vocabulary, or `@ponchia/ui/css/report.css` plus the specific leaves a smaller report needs. Sidecar claim/source contracts can validate against `@ponchia/ui/schemas/report-claims.v1.schema.json`. Full cookbook: `docs/reporting.md`.
 - **Modern-platform motion** — overlays (modal/drawer/popover), toasts and the `<details>` accordion animate **in and out** with zero JS (`@starting-style` + `allow-discrete`, `::details-content` + `interpolate-size`). Progressive-enhancement extras: `.ui-scroll-progress` / `.ui-scroll-reveal` (scroll-driven, no JS) and `.ui-vt` for View Transitions. All degrade to a static end-state and respect `prefers-reduced-motion`. For smooth **cross-document** navigations, add the document-global one-liner to your own top-level (unlayered) CSS: `@view-transition { navigation: auto; }`.

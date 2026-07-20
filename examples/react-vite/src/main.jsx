@@ -71,7 +71,12 @@ function App() {
         {charts.light.categorical.length} chart colours, {Object.keys(skins).length} skins.
       </p>
 
-      <dialog id="reactDlg" className="ui-modal" data-bronto-dialog-light>
+      <dialog
+        id="reactDlg"
+        className="ui-modal"
+        data-bronto-dialog-light
+        aria-label="React example dialog"
+      >
         <form method="dialog" className="ui-stack">
           <h2>React binding</h2>
           <p className="ui-muted">Dialog behavior is scoped to the React root ref.</p>

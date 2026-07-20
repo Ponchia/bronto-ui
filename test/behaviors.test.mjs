@@ -442,6 +442,9 @@ test('initMenu owns Escape for an open menu', () => {
 /** jsdom 25 has no <dialog> showModal/close — polyfill the platform API
  *  so the delegation glue (our code) is what's under test. */
 function stubDialog(dlg) {
+  if (!dlg.hasAttribute('aria-label') && !dlg.hasAttribute('aria-labelledby')) {
+    dlg.setAttribute('aria-label', 'Test dialog');
+  }
   dlg.showModal = function () {
     this.open = true;
   };
@@ -457,7 +460,7 @@ function stubDialog(dlg) {
 test('initDialog opens via data-bronto-open and closes via data-bronto-close', () => {
   const d = mount(
     '<button data-bronto-open="dlg" id="open">open</button>' +
-      '<dialog id="dlg"><button data-bronto-close>x</button></dialog>',
+      '<dialog id="dlg" aria-label="Test dialog"><button data-bronto-close>x</button></dialog>',
   );
   const stop = initDialog();
   const dlg = stubDialog(d.getElementById('dlg'));
@@ -588,7 +591,7 @@ test('initDialog failed showModal leaves no pending focus-return listener', () =
   const d = mount(
     '<a id="open" href="#jump" data-bronto-open="dlg">open</a>' +
       '<button id="other">other</button>' +
-      '<dialog id="dlg"><button data-bronto-close>x</button></dialog>',
+      '<dialog id="dlg" aria-label="Test dialog"><button data-bronto-close>x</button></dialog>',
   );
   const opener = d.getElementById('open');
   const other = d.getElementById('other');
@@ -799,6 +802,59 @@ test('prefers-color-scheme is honored when matchMedia exists and no attr/storage
   // current() → no attr, no storage → prefersDark() true → 'dark'; click → 'light'
   d.getElementById('t').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   assert.equal(d.documentElement.getAttribute('data-theme'), 'light');
+});
+
+test('OS color-scheme changes emit bronto:themechange when no explicit theme is set', () => {
+  const d = mount('<button data-bronto-theme-toggle id="t">x</button>');
+  const query = {
+    matches: false,
+    listener: null,
+    addEventListener(type, listener) {
+      if (type === 'change') this.listener = listener;
+    },
+    removeEventListener(type, listener) {
+      if (type === 'change' && this.listener === listener) this.listener = null;
+    },
+  };
+  globalThis.matchMedia = () => query;
+  const events = [];
+  d.documentElement.addEventListener('bronto:themechange', (event) => {
+    events.push(event.detail.theme);
+  });
+
+  const stop = initThemeToggle();
+  query.matches = true;
+  query.listener(new dom.window.Event('change'));
+
+  assert.deepEqual(events, ['dark']);
+  assert.equal(d.getElementById('t').getAttribute('aria-pressed'), 'true');
+  assert.equal(d.documentElement.hasAttribute('data-theme'), false, 'OS mode stays implicit');
+
+  stop();
+  assert.equal(query.listener, null, 'media listener removed on cleanup');
+});
+
+test('initDialog warns once when an opened native dialog has no accessible name', () => {
+  const d = mount(
+    '<button data-bronto-open="dlg" id="open">open</button>' +
+      '<dialog id="dlg"><button data-bronto-close>close</button></dialog>',
+  );
+  const dlg = stubDialog(d.getElementById('dlg'));
+  dlg.removeAttribute('aria-label');
+  const warnings = [];
+  const originalWarn = console.warn;
+  console.warn = (message) => warnings.push(message);
+  try {
+    initDialog();
+    d.getElementById('open').click();
+    dlg.close();
+    d.getElementById('open').click();
+  } finally {
+    console.warn = originalWarn;
+  }
+
+  assert.equal(warnings.length, 1);
+  assert.match(warnings[0], /initDialog\(\).*no accessible name/);
 });
 
 test('initDialog returns focus to the trigger on close (every path)', () => {
@@ -2818,6 +2874,34 @@ test('initSplitter: keyboard syncs CSS/ARIA and cleanup restores generated state
     false,
     'cleanup leaves generated value absent',
   );
+});
+
+test('initSplitter: adjustment buttons resize without a drag and detach on cleanup', () => {
+  const d = mount(`
+    <div class="ui-splitter ui-splitter--vertical" data-bronto-splitter style="--splitter-pos: 40%">
+      <section class="ui-splitter__pane">
+        <button type="button" data-bronto-splitter-adjust="-10">Narrow</button>
+        <button type="button" data-bronto-splitter-adjust="10"><span>Widen</span></button>
+      </section>
+      <div class="ui-splitter__handle" aria-label="Resize pane"></div>
+      <section class="ui-splitter__pane">Editor</section>
+    </div>`);
+  const splitter = d.querySelector('[data-bronto-splitter]');
+  const handle = d.querySelector('.ui-splitter__handle');
+  const [narrow, widen] = d.querySelectorAll('[data-bronto-splitter-adjust]');
+  const values = [];
+  splitter.addEventListener('bronto:splitter:resize', (event) => values.push(event.detail.value));
+
+  const stop = initSplitter();
+  narrow.click();
+  assert.equal(handle.getAttribute('aria-valuenow'), '30');
+  widen.querySelector('span').click();
+  assert.equal(handle.getAttribute('aria-valuenow'), '40');
+  assert.deepEqual(values, [30, 40]);
+
+  stop();
+  widen.click();
+  assert.equal(splitter.style.getPropertyValue('--splitter-pos'), '40%');
 });
 
 test('initSplitter: pointer drag calculates percentages and detaches on cleanup', () => {

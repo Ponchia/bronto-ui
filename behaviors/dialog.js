@@ -26,7 +26,20 @@ export function initDialog({ root } = {}) {
   if (!doc) return noop;
   const managedDialogs = new Set();
   const focusRestorers = new Map();
+  const warnedNameless = new WeakSet();
   const canManageDialog = (dlg, origin) => host.contains(origin) || managedDialogs.has(dlg);
+
+  const warnIfNameless = (dlg) => {
+    const named =
+      dlg.hasAttribute('aria-label') ||
+      dlg.hasAttribute('aria-labelledby') ||
+      dlg.hasAttribute('title');
+    if (named || warnedNameless.has(dlg) || typeof console === 'undefined') return;
+    warnedNameless.add(dlg);
+    console.warn(
+      `[bronto] initDialog(): dialog #${dlg.id || '(without id)'} has no accessible name — add aria-label, aria-labelledby, or title so it is announced as a named dialog.`,
+    );
+  };
 
   const openFrom = (opener) => {
     const dlg = byIdInHost(host, opener.getAttribute('data-bronto-open'));
@@ -47,6 +60,7 @@ export function initDialog({ root } = {}) {
     } catch {
       return false;
     }
+    warnIfNameless(dlg);
     managedDialogs.add(dlg);
     focusRestorers.set(dlg, restoreFocus);
     dlg.addEventListener('close', restoreFocus, { once: true });

@@ -721,6 +721,13 @@ const behaviorAttributes = [
     note: 'keyboard + pointer ARIA window-splitter behavior; updates --splitter-pos and aria-valuenow, then emits bronto:splitter:resize. The host owns persistence and pane state.',
   },
   {
+    name: 'data-bronto-splitter-adjust',
+    on: 'a button inside a .ui-splitter host',
+    value: 'signed percentage-point delta, for example -10 or 10',
+    behavior: 'initSplitter',
+    note: 'single-pointer non-drag alternative to moving the separator; activation clamps to aria-valuemin/aria-valuemax and emits bronto:splitter:resize.',
+  },
+  {
     name: 'data-bronto-source-ref',
     on: 'a button/control that references a source card',
     value: 'id of the source card, with or without a leading #',

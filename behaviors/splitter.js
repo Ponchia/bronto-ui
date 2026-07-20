@@ -1,7 +1,8 @@
-import { hasDom, resolveHost, noop, bindOnce, collectHosts } from './internal.js';
+import { hasDom, resolveHost, noop, bindOnce, collectHosts, closestSafe } from './internal.js';
 
 const SELECTOR = '[data-bronto-splitter]';
 const HANDLE_SELECTOR = '.ui-splitter__handle';
+const ADJUST_SELECTOR = '[data-bronto-splitter-adjust]';
 const DEFAULT_MIN = 20;
 const DEFAULT_MAX = 80;
 const DEFAULT_VALUE = 50;
@@ -218,11 +219,22 @@ function wireSplitter(splitter) {
       splitter.ownerDocument.addEventListener('pointercancel', onPointerUp);
     };
 
+    const onClick = (event) => {
+      const control = closestSafe(event.target, ADJUST_SELECTOR);
+      if (!control || control.closest(SELECTOR) !== splitter) return;
+      const delta = num(control.getAttribute('data-bronto-splitter-adjust'), Number.NaN);
+      if (!Number.isFinite(delta) || delta === 0) return;
+      event.preventDefault();
+      apply(value + delta);
+    };
+
     handle.addEventListener('keydown', onKeydown);
     handle.addEventListener('pointerdown', onPointerDown);
+    splitter.addEventListener('click', onClick);
     return () => {
       handle.removeEventListener('keydown', onKeydown);
       handle.removeEventListener('pointerdown', onPointerDown);
+      splitter.removeEventListener('click', onClick);
       splitter.ownerDocument.removeEventListener('pointermove', onPointerMove);
       splitter.ownerDocument.removeEventListener('pointerup', onPointerUp);
       splitter.ownerDocument.removeEventListener('pointercancel', onPointerUp);
@@ -241,6 +253,8 @@ function wireSplitter(splitter) {
  * (`role="separator"`). The behavior keeps `--splitter-pos` and
  * `aria-valuenow` in sync for keyboard and pointer resizing, then dispatches
  * `bronto:splitter:resize` with `{ value, orientation }`.
+ * Buttons inside the splitter may set `data-bronto-splitter-adjust="-10"` or
+ * `"10"` to provide the required single-pointer, non-drag resize path.
  *
  * Bronto owns the control affordance only. The host owns pane content,
  * persistence, min/max policy, collapse behavior, and any saved layout state.

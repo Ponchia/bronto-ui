@@ -80,7 +80,17 @@ domain selection model.
   data-bronto-splitter
   style="--splitter-pos: 36%"
 >
-  <section class="ui-splitter__pane" id="files" aria-label="Files">...</section>
+  <section class="ui-splitter__pane" id="files" aria-label="Files">
+    <div class="ui-cluster" role="group" aria-label="Resize files pane">
+      <button class="ui-button ui-button--sm" type="button" data-bronto-splitter-adjust="-10">
+        Narrow
+      </button>
+      <button class="ui-button ui-button--sm" type="button" data-bronto-splitter-adjust="10">
+        Widen
+      </button>
+    </div>
+    ...
+  </section>
   <div
     class="ui-splitter__handle"
     role="separator"
@@ -99,7 +109,11 @@ domain selection model.
 Use `.ui-splitter--horizontal` for top/bottom panes. Arrow keys change the value
 by 2 percentage points, Shift+Arrow and PageUp/PageDown by 10, and Home/End jump
 to `aria-valuemin` / `aria-valuemax`. The handle needs a real accessible name
-and `aria-controls` pointing at the primary pane.
+and `aria-controls` pointing at the primary pane. Also provide ordinary buttons
+with `data-bronto-splitter-adjust="-10"` / `"10"`: pointer users then have a
+non-drag resize path, while keyboard and assistive-technology users retain the
+separator interaction. The signed value is a percentage-point delta and is
+clamped to the separator's min/max.
 
 ## Inspector — `.ui-inspector`
 

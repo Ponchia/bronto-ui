@@ -1,6 +1,6 @@
 {
   "name": "@ponchia/ui",
-  "version": "0.6.12",
+  "version": "0.7.0",
   "type": "module",
   "description": "CSS-first identity and UI layer for services, tools, sites, and reports — works in HTML, every framework, and PDF, no component runtime. Shared app shell, forms, tables, workflow chrome, plus opt-in analytical/report primitives. Monochrome with one rationed accent. Zero runtime dependencies.",
   "keywords": [
@@ -38,6 +38,9 @@
   "engines": {
     "node": ">=18"
   },
+  "bin": {
+    "bronto-ui-check": "./bin/bronto-ui-check.mjs"
+  },
   "sideEffects": [
     "**/*.css"
   ],
@@ -49,6 +52,7 @@
     "fonts",
     "tokens",
     "classes",
+    "bin",
     "behaviors",
     "glyphs",
     "schemas",
@@ -108,9 +112,11 @@
     "docs/migrations/0.3-to-0.4.md",
     "docs/migrations/0.4-to-0.5.md",
     "docs/migrations/0.5-to-0.6.md",
+    "docs/migrations/0.6-to-0.7.md",
     "docs/adr/0001-color-system.md",
     "docs/adr/0002-scope-and-2026-baseline.md",
-    "docs/adr/0003-theme-model.md"
+    "docs/adr/0003-theme-model.md",
+    "docs/adr/0004-prune-unused-adapters.md"
   ],
   "style": "./dist/bronto.css",
   "scripts": {
@@ -188,10 +194,11 @@
     "check:contract": "node scripts/check-contract.mjs",
     "check:variables": "node scripts/check-variables.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
+    "check:dtcg": "node scripts/check-dtcg.mjs",
     "check:publint": "publint --strict",
     "check:attw": "attw --pack --ignore-rules no-resolution cjs-resolves-to-esm",
     "check:workflows": "github-actionlint .github/workflows/*.yml",
-    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:fresh && npm run check:classes && npm run check:recipe-types && npm run check:dead && npm run check:complexity && npm run check:types && npm run check:unit && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:consumer-surface && npm run check:consumer-types && npm run check:component-matrix && npm run check:behavior-matrix && npm run check:helper-matrix && npm run check:binding-matrix && npm run check:examples && npm run check:visual-baselines && npm run check:playwright-container && npm run check:schemas && npm run check:publint && npm run check:attw && npm run check:workflows && npm run check:release && npm run check:versions && npm run check:migrations && npm run check:public-metadata && npm run check:public-hygiene && npm run check:doc-links && npm run check:doc-recipes && npm run check:contract && npm run check:variables && npm run check:contrast && npm run check:dts-emit && npm run check:glyphs && npm run check:color-policy && npm run check:skins && npm run check:charts && npm run check:mermaid && npm run check:d2 && npm run check:vega && npm run check:report && npm run check:legend && npm run check:chain",
+    "check": "npm run lint && npm run check:format && npm run check:exports && npm run check:fresh && npm run check:classes && npm run check:recipe-types && npm run check:dead && npm run check:complexity && npm run check:types && npm run check:unit && npm run check:shiki && npm run check:dist && npm run check:pack && npm run check:consumer-surface && npm run check:consumer-types && npm run check:component-matrix && npm run check:behavior-matrix && npm run check:helper-matrix && npm run check:binding-matrix && npm run check:examples && npm run check:visual-baselines && npm run check:playwright-container && npm run check:schemas && npm run check:publint && npm run check:attw && npm run check:workflows && npm run check:release && npm run check:versions && npm run check:migrations && npm run check:public-metadata && npm run check:public-hygiene && npm run check:doc-links && npm run check:doc-recipes && npm run check:contract && npm run check:variables && npm run check:contrast && npm run check:dtcg && npm run check:dts-emit && npm run check:glyphs && npm run check:color-policy && npm run check:skins && npm run check:charts && npm run check:mermaid && npm run check:d2 && npm run check:vega && npm run check:report && npm run check:legend && npm run check:chain",
     "test": "node --test \"test/*.test.mjs\"",
     "test:e2e": "playwright test",
     "test:e2e:chromium": "playwright test --project=chromium",
@@ -399,9 +406,11 @@
     "./docs/migrations/0.3-to-0.4.md": "./docs/migrations/0.3-to-0.4.md",
     "./docs/migrations/0.4-to-0.5.md": "./docs/migrations/0.4-to-0.5.md",
     "./docs/migrations/0.5-to-0.6.md": "./docs/migrations/0.5-to-0.6.md",
+    "./docs/migrations/0.6-to-0.7.md": "./docs/migrations/0.6-to-0.7.md",
     "./docs/adr/0001-color-system.md": "./docs/adr/0001-color-system.md",
     "./docs/adr/0002-scope-and-2026-baseline.md": "./docs/adr/0002-scope-and-2026-baseline.md",
     "./docs/adr/0003-theme-model.md": "./docs/adr/0003-theme-model.md",
+    "./docs/adr/0004-prune-unused-adapters.md": "./docs/adr/0004-prune-unused-adapters.md",
     "./classes": {
       "types": "./classes/index.d.ts",
       "default": "./classes/index.js"
@@ -558,6 +567,7 @@
     "./fonts/*": "./fonts/*"
   },
   "overrides": {
+    "adm-zip": "0.6.0",
     "esbuild": "0.28.1"
   }
 }
