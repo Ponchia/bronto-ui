@@ -272,6 +272,16 @@
   }
 }
 
+@media (pointer: coarse) {
+  .ui-breadcrumb__item a {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    min-block-size: max(24px, 1.6rem);
+    min-inline-size: max(24px, 1.6rem);
+  }
+}
+
 /* --- Pagination --- */
 
 .ui-pagination {

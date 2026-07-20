@@ -14,6 +14,10 @@
  *     <button data-bronto-theme-toggle>Toggle theme</button>
  *   </main>
  *
+ * @deprecated Import the framework-agnostic behavior initializers directly.
+ * This adapter remains compatible in 0.7 and is scheduled for removal no
+ * earlier than 0.8 because no real consumer adopted it.
+ *
  * @typedef {import('../behaviors/index.js').Cleanup} Cleanup
  * @typedef {import('../behaviors/index.js').DelegateOpts} DelegateOpts
  * @typedef {import('../behaviors/index.js').ThemeStorageOpts} ThemeStorageOpts

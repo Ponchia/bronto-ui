@@ -175,8 +175,14 @@ export function buildBundles() {
  *  theme-runtime/print-token cleanup nudged it 90→91 kB (raw) / 15.5→15.65 kB
  *  (gzip): system dark-mode theme-toggle parity plus the print remap of derived
  *  accent, status-soft, code, and dot tokens. Gzip was effectively flat (1 byte
- *  over the old ceiling); the new cap restores intentional headroom. */
-export const BUDGET = { raw: 91_000, gzip: 15_650 };
+ *  over the old ceiling); the new cap restores intentional headroom. The 0.7
+ *  contract repair moves the already-public meter row/label/value grammar from
+ *  the opt-in report leaf into core feedback and adds explicit 24×24px coarse-
+ *  pointer floors for compact breadcrumb/footer links (+1,121 B raw / +164 B
+ *  gzip total versus 0.6.12). The 92,200 B / 15,850 B cap admits those two
+ *  universal contracts while retaining only 171 B raw / 108 B gzip of
+ *  deliberate headroom. */
+export const BUDGET = { raw: 92_200, gzip: 15_850 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };

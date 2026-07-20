@@ -23,6 +23,7 @@ Put the theme script in `index.html` so it runs before Vue mounts:
 
 ```html
 <!-- index.html, inside <head> -->
+<meta name="color-scheme" content="light dark" />
 <script>
   try {
     var t = localStorage.getItem('bronto-theme');
@@ -43,9 +44,11 @@ Start with the classes and attributes the CSS/behavior contracts expect:
 </template>
 ```
 
-## 4. Scope behavior to the owning subtree
+## 4. Deprecated compatibility directives
 
-In SFCs, import the directives you use as local `vBronto*` bindings. Vue then
+The `@ponchia/ui/vue` directive entrypoint remains compatible in 0.7 but is
+deprecated for removal no earlier than 0.8. Prefer the vanilla lifecycle recipe
+below. During migration, import directives as local `vBronto*` bindings. Vue then
 compiles `v-bronto-*` directly to those bindings, so the behavior stays
 tree-shakeable and scoped to the component that owns the markup.
 
@@ -90,7 +93,7 @@ import { brontoVue } from '@ponchia/ui/vue';
 app.use(brontoVue);
 ```
 
-Use the vanilla behavior layer directly when you need non-directive control:
+Use the vanilla behavior layer directly for the stable path:
 
 ```js
 import { initThemeToggle } from '@ponchia/ui/behaviors';

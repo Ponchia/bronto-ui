@@ -16,6 +16,7 @@ Put the inline script in your HTML shell before the app script. In Vite/CRA
 Next App Router, render it in `<head>`:
 
 ```tsx
+<meta name="color-scheme" content="light dark" />
 <script
   dangerouslySetInnerHTML={{
     __html: `try{var t=localStorage.getItem('bronto-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}`,
@@ -40,17 +41,19 @@ import { ui } from '@ponchia/ui/classes';
 
 Solid and Qwik use `class` instead of `className`.
 
-## 4. Behavior/adapter wiring
+## 4. Behavior lifecycle (adapters deprecated)
 
 `@ponchia/ui` ships **no per-framework component package** — that is a
 deliberate ADR (`docs/architecture.md`): the CSS is the framework and
 the typed `cls`/`ui` recipes are already framework-agnostic. Only the
 imperative behaviors need a lifecycle wrapper.
 
-Since 0.4.0 those wrappers ship as **optional, thin bindings** —
+Those wrappers remain as **optional, thin bindings** —
 `@ponchia/ui/react`, `@ponchia/ui/solid` and `@ponchia/ui/qwik`
 (`react` / `solid-js` / `@builder.io/qwik` are _optional_ peer deps).
-They're hooks over the same `init*` behaviors:
+They are deprecated in 0.7 for removal no earlier than 0.8 because real-consumer
+audits found no adoption. Prefer the direct lifecycle recipes below. The hooks
+remain documented here for migration and wrap the same `init*` behaviors:
 
 ```tsx
 // React
@@ -213,6 +216,7 @@ requirement.
      return (
        <html lang="en" suppressHydrationWarning>
          <head>
+           <meta name="color-scheme" content="light dark" />
            <script
              dangerouslySetInnerHTML={{
                __html: `try{var t=localStorage.getItem('bronto-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}`,

@@ -288,6 +288,10 @@ function targetIsOwnedPopover(target, modal, state) {
  *
  * SSR-safe, idempotent per modal; returns a cleanup function.
  *
+ * @deprecated Use a native `<dialog>` with `initDialog()`. This controlled
+ * non-dialog path remains compatible in 0.7 and is scheduled for removal no
+ * earlier than 0.8 because no real consumer adopted it.
+ *
  * @param {import('./internal.js').DelegateOpts} [opts]
  * @returns {import('./internal.js').Cleanup}
  */

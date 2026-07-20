@@ -54,7 +54,12 @@
     </section>
   </div>
 
-  <dialog id="svelteDlg" class="ui-modal" data-bronto-dialog-light>
+  <dialog
+    id="svelteDlg"
+    class="ui-modal"
+    data-bronto-dialog-light
+    aria-label="Svelte example dialog"
+  >
     <form method="dialog" class="ui-stack">
       <h2>Svelte action</h2>
       <p class="ui-muted">Dialog behavior is scoped to the Svelte action root.</p>

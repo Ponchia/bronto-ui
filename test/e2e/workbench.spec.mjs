@@ -83,6 +83,21 @@ test('splitter pointer drag updates the pane percentage and emits resize detail'
   expect(details.at(-1).value).toBeLessThan(65);
 });
 
+test('splitter offers a single-pointer non-drag resize path', async ({ page }) => {
+  await open(page);
+  const splitter = page.locator('[data-bronto-splitter]').first();
+  const handle = page.getByRole('separator', { name: 'Resize files pane' });
+
+  await page.getByRole('button', { name: 'Widen' }).click();
+  await expect(handle).toHaveAttribute('aria-valuenow', '46');
+  await expect
+    .poll(() => splitter.evaluate((el) => el.style.getPropertyValue('--splitter-pos')))
+    .toBe('46%');
+
+  await page.getByRole('button', { name: 'Narrow' }).click();
+  await expect(handle).toHaveAttribute('aria-valuenow', '36');
+});
+
 test('splitter cleanup restores generated ARIA and CSS state in a real browser', async ({
   page,
 }) => {

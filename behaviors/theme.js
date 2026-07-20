@@ -58,8 +58,9 @@ export function applyStoredTheme({ storageKey = 'bronto-theme', root } = {}) {
  * persists to localStorage, and **always** sets `data-theme` on <html>
  * (a theme is document-global). State is reflected via `aria-pressed`
  * and a `bronto:themechange` CustomEvent ({ detail: { theme } }) is
- * dispatched on <html> so consumers can sync their own UI without
- * racing the click handler. A control may set
+ * dispatched on <html> for both explicit changes and OS preference changes,
+ * so consumers can sync their own UI without racing the click/media handler.
+ * A control may set
  * `data-bronto-theme-toggle="dark"` to force a specific theme.
  *
  * `root` scopes event delegation and which controls are queried/reflected
@@ -98,6 +99,11 @@ export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
     return prefersDark() ? 'dark' : 'light';
   };
 
+  const emitThemeChange = (theme) => {
+    const ThemeEvent = doc.defaultView?.CustomEvent ?? CustomEvent;
+    docEl.dispatchEvent(new ThemeEvent('bronto:themechange', { detail: { theme }, bubbles: true }));
+  };
+
   const reflect = () => {
     const c = current();
     collectHosts(host, '[data-bronto-theme-toggle]').forEach((el) => {
@@ -134,7 +140,7 @@ export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
       clearSchemeListener();
       return;
     }
-    reflect();
+    emitThemeChange(current());
   }
 
   const onThemeChange = () => {
@@ -156,9 +162,7 @@ export function initThemeToggle({ storageKey = 'bronto-theme', root } = {}) {
       /* storage blocked — theme still applies for this session */
     }
     reflect();
-    docEl.dispatchEvent(
-      new CustomEvent('bronto:themechange', { detail: { theme: next }, bubbles: true }),
-    );
+    emitThemeChange(next);
   };
 
   return bindOnce(host, 'themeToggle', () => {

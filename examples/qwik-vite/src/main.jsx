@@ -78,7 +78,12 @@ const App = component$(() => {
         {charts.light.categorical.length} chart colours, {Object.keys(skins).length} skins.
       </p>
 
-      <dialog id="qwikDlg" class="ui-modal" data-bronto-dialog-light>
+      <dialog
+        id="qwikDlg"
+        class="ui-modal"
+        data-bronto-dialog-light
+        aria-label="Qwik example dialog"
+      >
         <form method="dialog" class="ui-stack">
           <h2>Qwik binding</h2>
           <p class="ui-muted">Dialog behavior is scoped to the Qwik root signal.</p>

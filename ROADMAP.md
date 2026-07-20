@@ -7,7 +7,7 @@ UI catalog.
 
 > **Source of truth is [`CHANGELOG.md`](CHANGELOG.md).** This file describes
 > direction; the changelog records what actually shipped. If they disagree, the
-> changelog wins. Last reconciled against `0.6.11`.
+> changelog wins. Last reconciled against `0.7.0`.
 >
 > **Strategic north star:** Bronto should not out-catalog generic UI kits. It
 > owns framework-agnostic primitives for interfaces that explain themselves —
@@ -67,6 +67,26 @@ need is recorded and the maintainer explicitly approves the exception.
   1.0 candidate should have stable core/opt-in boundaries, a documented
   refusal list, reliable release gates, downstream upgrade proof, and bundle
   headroom. It should not wait for one more component family.
+
+## Completed for 0.7.0
+
+- **Consumer-led contract repair.** Audits of ten personal-project consumers
+  drove the work: core meter styles no longer depend on the report leaf, live
+  dots retain their authored tone, implicit OS theme changes emit the public
+  theme event, native dialogs warn when unnamed, splitters have a non-drag
+  pointer path, and coarse-pointer footer/breadcrumb links retain usable target
+  floors.
+- **Portable token handoff.** The DTCG export now follows the 2025.10 structured
+  typed-value model with no null placeholders, backed by a semantic release
+  gate. Authored CSS expressions remain available through `tokens.json` and
+  DTCG extensions.
+- **Consumer proof and simplification.** `bronto-ui-check` checks downstream
+  class/token literals. Unused framework adapters and the controlled modal are
+  deprecated for removal no earlier than 0.8 under ADR-0004; the stable center
+  stays CSS plus framework-neutral vanilla behaviors.
+- **Missing integration recipes.** The docs now specify accessible branded file
+  inputs, sortable tables, controlled command-palette ownership, theme
+  synchronization, and splitter alternatives.
 
 ## Recently completed through 0.6.10
 

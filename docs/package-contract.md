@@ -174,9 +174,11 @@ semantic versioning contract for the surfaces listed here.
 | `./docs/migrations/0.3-to-0.4.md` | `./docs/migrations/0.3-to-0.4.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/migrations/0.4-to-0.5.md` | `./docs/migrations/0.4-to-0.5.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/migrations/0.5-to-0.6.md` | `./docs/migrations/0.5-to-0.6.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/migrations/0.6-to-0.7.md` | `./docs/migrations/0.6-to-0.7.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/adr/0001-color-system.md` | `./docs/adr/0001-color-system.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/adr/0002-scope-and-2026-baseline.md` | `./docs/adr/0002-scope-and-2026-baseline.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/adr/0003-theme-model.md` | `./docs/adr/0003-theme-model.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/adr/0004-prune-unused-adapters.md` | `./docs/adr/0004-prune-unused-adapters.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./classes` | types: `./classes/index.d.ts`<br>default: `./classes/index.js` | Class recipes JS | Stable | ESM class registry, recipes, attrs helpers, and cx joiner. The emitted class vocabulary is public. |
 | `./classes.json` | `./classes/classes.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
 | `./behaviors` | types: `./behaviors/index.d.ts`<br>default: `./behaviors/index.js` | Vanilla behavior JS | Stable | ESM, SSR-safe, cleanup-returning behavior initializers. Behavior internals are not public. |
@@ -205,11 +207,11 @@ semantic versioning contract for the surfaces listed here.
 | `./glyphs` | types: `./glyphs/glyphs.d.ts`<br>default: `./glyphs/glyphs.js` | Geometry/render helper JS | Stable additive | ESM helper surface. Function names, options, and data shapes are public; rendering heuristics may tune. |
 | `./annotations` | types: `./annotations/index.d.ts`<br>default: `./annotations/index.js` | Geometry/render helper JS | Stable additive | ESM helper surface. Function names, options, and data shapes are public; rendering heuristics may tune. |
 | `./connectors` | types: `./connectors/index.d.ts`<br>default: `./connectors/index.js` | Geometry/render helper JS | Stable additive | ESM helper surface. Function names, options, and data shapes are public; rendering heuristics may tune. |
-| `./react` | types: `./react/index.d.ts`<br>default: `./react/index.js` | Framework binding JS | Stable thin adapter | Optional peer wrapper over vanilla behaviors. It owns lifecycle hookup, not markup or component state. |
-| `./solid` | types: `./solid/index.d.ts`<br>default: `./solid/index.js` | Framework binding JS | Stable thin adapter | Optional peer wrapper over vanilla behaviors. It owns lifecycle hookup, not markup or component state. |
-| `./qwik` | types: `./qwik/index.d.ts`<br>default: `./qwik/index.js` | Framework binding JS | Stable thin adapter | Optional peer wrapper over vanilla behaviors. It owns lifecycle hookup, not markup or component state. |
-| `./svelte` | types: `./svelte/index.d.ts`<br>default: `./svelte/index.js` | Framework binding JS | Stable thin adapter | Optional peer wrapper over vanilla behaviors. It owns lifecycle hookup, not markup or component state. |
-| `./vue` | types: `./vue/index.d.ts`<br>default: `./vue/index.js` | Framework binding JS | Stable thin adapter | Optional peer wrapper over vanilla behaviors. It owns lifecycle hookup, not markup or component state. |
+| `./react` | types: `./react/index.d.ts`<br>default: `./react/index.js` | Framework binding JS | Deprecated in 0.7 | Compatibility wrapper over vanilla behaviors. Scheduled for removal no earlier than 0.8 under ADR-0004; use direct behavior lifecycle cleanup. |
+| `./solid` | types: `./solid/index.d.ts`<br>default: `./solid/index.js` | Framework binding JS | Deprecated in 0.7 | Compatibility wrapper over vanilla behaviors. Scheduled for removal no earlier than 0.8 under ADR-0004; use direct behavior lifecycle cleanup. |
+| `./qwik` | types: `./qwik/index.d.ts`<br>default: `./qwik/index.js` | Framework binding JS | Deprecated in 0.7 | Compatibility wrapper over vanilla behaviors. Scheduled for removal no earlier than 0.8 under ADR-0004; use direct behavior lifecycle cleanup. |
+| `./svelte` | types: `./svelte/index.d.ts`<br>default: `./svelte/index.js` | Framework binding JS | Deprecated in 0.7 | Compatibility wrapper over vanilla behaviors. Scheduled for removal no earlier than 0.8 under ADR-0004; use direct behavior lifecycle cleanup. |
+| `./vue` | types: `./vue/index.d.ts`<br>default: `./vue/index.js` | Framework binding JS | Deprecated in 0.7 | Compatibility wrapper over vanilla behaviors. Scheduled for removal no earlier than 0.8 under ADR-0004; use direct behavior lifecycle cleanup. |
 | `./skins` | types: `./tokens/skins.d.ts`<br>default: `./tokens/skins.js` | Renderer/theme helper JS | Stable additive | ESM theme data/helpers for opt-in skins, chart palettes, and external renderers. |
 | `./charts` | types: `./tokens/charts.d.ts`<br>default: `./tokens/charts.js` | Renderer/theme helper JS | Stable additive | ESM theme data/helpers for opt-in skins, chart palettes, and external renderers. |
 | `./charts.json` | `./tokens/charts.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
@@ -236,6 +238,7 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `fonts` | Vendored assets | Doto woff2 files plus OFL license. |
 | `tokens` | Mixed source/generated data | Token source plus generated JSON, declarations, and renderer theme data. |
 | `classes` | Mixed source/generated data | Class recipe source plus generated JSON/declarations/custom-data. |
+| `bin` | Package file | Included in the npm files allowlist. |
 | `behaviors` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
 | `glyphs` | Authored public JS directory | Glyph registry/renderers shipped as JS; declarations are generated. |
 | `schemas` | Machine-readable schemas | Declarative JSON schemas for package-adjacent report/tooling contracts. |
@@ -295,9 +298,11 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `docs/migrations/0.3-to-0.4.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/migrations/0.4-to-0.5.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/migrations/0.5-to-0.6.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/migrations/0.6-to-0.7.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/adr/0001-color-system.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/adr/0002-scope-and-2026-baseline.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/adr/0003-theme-model.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/adr/0004-prune-unused-adapters.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 
 ## Artifact Provenance
 

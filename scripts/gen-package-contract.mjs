@@ -238,8 +238,8 @@ function jsExportClass(key) {
   if (FRAMEWORK_EXPORTS.has(key)) {
     return [
       'Framework binding JS',
-      'Stable thin adapter',
-      'Optional peer wrapper over vanilla behaviors. It owns lifecycle hookup, not markup or component state.',
+      'Deprecated in 0.7',
+      'Compatibility wrapper over vanilla behaviors. Scheduled for removal no earlier than 0.8 under ADR-0004; use direct behavior lifecycle cleanup.',
     ];
   }
   if (GEOMETRY_EXPORTS.has(key)) {

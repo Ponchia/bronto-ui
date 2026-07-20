@@ -62,7 +62,7 @@ function notify() {
       </section>
     </div>
 
-    <dialog id="vueDlg" class="ui-modal" data-bronto-dialog-light>
+    <dialog id="vueDlg" class="ui-modal" data-bronto-dialog-light aria-label="Vue example dialog">
       <form method="dialog" class="ui-stack">
         <h2>Vue directive</h2>
         <p class="ui-muted">Dialog behavior is scoped to the Vue root directive.</p>

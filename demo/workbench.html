@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="data:," />
     <title>@ponchia/ui — workbench specimen</title>
     <meta
@@ -103,6 +104,22 @@
         >
           <section class="ui-splitter__pane" id="workbench-files" aria-label="Files">
             <h2 class="ui-eyebrow">Files</h2>
+            <div class="ui-cluster" role="group" aria-label="Files pane size">
+              <button
+                class="ui-button ui-button--subtle ui-button--sm"
+                type="button"
+                data-bronto-splitter-adjust="-10"
+              >
+                Narrow
+              </button>
+              <button
+                class="ui-button ui-button--subtle ui-button--sm"
+                type="button"
+                data-bronto-splitter-adjust="10"
+              >
+                Widen
+              </button>
+            </div>
             <ul class="wb-file-list">
               <li><span>jobs.yaml</span><span class="ui-badge ui-badge--success">clean</span></li>
               <li>

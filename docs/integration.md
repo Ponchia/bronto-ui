@@ -21,6 +21,7 @@ Inline, render-blocking, in `<head>`, before any stylesheet-dependent
 paint. No import — it must run before module JS:
 
 ```html
+<meta name="color-scheme" content="light dark" />
 <script>
   try {
     var t = localStorage.getItem('bronto-theme');
@@ -28,6 +29,9 @@ paint. No import — it must run before module JS:
   } catch (e) {}
 </script>
 ```
+
+The meta declaration lets browser-owned form controls and chrome advertise and
+render both supported schemes; it does not replace the stored-theme script.
 
 `applyStoredTheme()` from `@ponchia/ui/behaviors` does exactly this
 (default `storageKey: 'bronto-theme'`) and is what `initThemeToggle()`

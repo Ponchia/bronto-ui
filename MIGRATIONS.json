@@ -101,6 +101,20 @@
         }
       ],
       "codemod": "No codemod — the .ui-chart* renderer has no replacement class. rg -l 'ui-chart\\\\b|ui-chart__' to find call sites, then rebuild each as a Vega-Lite chart (@ponchia/ui/vega) or a token-themed inline <svg>. See docs/vega.md."
+    },
+    {
+      "from": "0.6",
+      "to": "0.7",
+      "summary": "Contract-hardening release. tokens.dtcg.json now uses conforming DTCG 2025.10 structured values instead of CSS strings/null placeholders. Splitters gain an additive non-drag pointer path. Framework adapters and initModal are deprecated, but remain compatible throughout 0.7.",
+      "safe": [],
+      "manual": [
+        {
+          "old": "tokens.dtcg.json scalar color/dimension values and $value:null CSS-expression placeholders",
+          "new": "DTCG 2025.10 structured typed values resolved per light/dark theme",
+          "note": "Update tooling to read color objects ({ colorSpace, components, alpha, optional hex }) and dimension objects ({ value, unit }). Read tokens.json when the authored CSS var()/color-mix() expression is required. CSS-only shadow expressions are not part of the portable DTCG projection."
+        }
+      ],
+      "codemod": "No source codemod. Update the DTCG reader at its JSON access boundary, then run npx --no-install bronto-ui-check against consumer source. See docs/migrations/0.6-to-0.7.md."
     }
   ]
 }

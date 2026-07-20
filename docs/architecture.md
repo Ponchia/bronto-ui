@@ -10,6 +10,10 @@ Status: accepted · 2026-05-15 · applies from v0.2.0
 >   constitution, the `check:color-policy`/`check:skins`/`check:charts`
 >   gates, opt-in colorways, data-viz, APCA advisory reporting, and the
 >   OKLCH core accent ramp.
+> - [ADR-0004 — Prune unused adapter and controlled-modal surfaces](./adr/0004-prune-unused-adapters.md)
+>   (accepted; deprecated in 0.7) — retain the package-only adapters and
+>   controlled modal for one migration minor, then remove them unless a real
+>   consumer supplies adoption evidence.
 
 ## Context
 
@@ -40,11 +44,11 @@ on top of the CSS, none of which require a framework commitment**:
 ├── annotations/ pure SVG callout geometry (builds on connectors)     [optional]
 ├── glyphs/      dot-matrix glyph registry/renderers                 [optional]
 ├── schemas/     declarative JSON contracts for report/tooling data   [optional]
-├── react/       thin React hooks over behaviors                     [optional peer]
-├── solid/       thin Solid primitives over behaviors                [optional peer]
-├── qwik/        thin Qwik hooks over behaviors (useVisibleTask$)     [optional peer]
-├── svelte/      thin Svelte actions over behaviors                  [optional]
-└── vue/         thin Vue directives over behaviors                  [optional]
+├── react/       deprecated React hooks over behaviors               [remove >=0.8]
+├── solid/       deprecated Solid primitives over behaviors          [remove >=0.8]
+├── qwik/        deprecated Qwik hooks over behaviors                 [remove >=0.8]
+├── svelte/      deprecated Svelte actions over behaviors            [remove >=0.8]
+└── vue/         deprecated Vue directives over behaviors            [remove >=0.8]
 ```
 
 ### Consequences of each layer
@@ -88,11 +92,11 @@ on top of the CSS, none of which require a framework commitment**:
 - **glyphs/** — static bitmap data and SSR-safe render helpers. The
   256-cell DOM renderers are for display and solid inline icons; the `.ui-icon`
   mask renderer is for dense icon-at-scale use.
-- **react/** / **solid/** / **qwik/** / **svelte/** / **vue/** — optional lifecycle
-  adapters over `behaviors/`. They do not define markup, own state, or fork
-  behavior logic; they only run the vanilla initializers on mount and cleanup
-  on unmount/dispose. The Svelte and Vue adapters are plain action/directive
-  objects, so they do not add runtime dependencies to the package.
+- **react/** / **solid/** / **qwik/** / **svelte/** / **vue/** — deprecated
+  lifecycle adapters over `behaviors/`. They remain compatible for the complete
+  0.7 minor, then may be removed in 0.8 under ADR-0004. Ten real-consumer audits
+  found no adapter imports; framework consumers already use the vanilla
+  initializers in their own mount/cleanup lifecycle.
 - **`css/analytical.css` — the analytical roll-up.** This convenience file
   `@import`s exactly **nine** analytical figure/evidence leaves: `figure`,
   `annotations`, `legend`, `marks`, `connectors`, `spotlight`, `crosshair`,

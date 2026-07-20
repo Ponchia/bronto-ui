@@ -1,56 +1,178 @@
 {
-  "$description": "@ponchia/ui design tokens (W3C DTCG). Generated from tokens/index.js — do not edit by hand. CSS-runtime-derived tokens carry $value:null + $extensions.com.ponchia.css.",
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "$description": "@ponchia/ui portable design tokens in DTCG 2025.10 format. Generated from the resolved light/dark palettes and flattened global scale; use tokens.json for authored CSS var()/color-mix() expressions.",
+  "$extensions": {
+    "com.ponchia.ui": {
+      "format": "DTCG 2025.10",
+      "source": "tokens/index.js",
+      "rawCssArtifact": "tokens.json",
+      "omittedCssVariables": [
+        "--tracking-wide",
+        "--tracking-wider",
+        "--shadow",
+        "--shadow-raised"
+      ]
+    }
+  },
   "scale": {
     "radius": {
       "xl": {
         "$type": "dimension",
-        "$value": "4px"
+        "$value": {
+          "value": 4,
+          "unit": "px"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--radius-xl",
+            "authoredValue": "4px"
+          }
+        }
       },
       "lg": {
         "$type": "dimension",
-        "$value": "3px"
+        "$value": {
+          "value": 3,
+          "unit": "px"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--radius-lg",
+            "authoredValue": "3px"
+          }
+        }
       },
       "md": {
         "$type": "dimension",
-        "$value": "2px"
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--radius-md",
+            "authoredValue": "2px"
+          }
+        }
       },
       "sm": {
         "$type": "dimension",
-        "$value": "1px"
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--radius-sm",
+            "authoredValue": "1px"
+          }
+        }
       },
       "pill": {
         "$type": "dimension",
-        "$value": "999px"
+        "$value": {
+          "value": 999,
+          "unit": "px"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--radius-pill",
+            "authoredValue": "999px"
+          }
+        }
       }
     },
     "space": {
       "2xs": {
         "$type": "dimension",
-        "$value": "0.25rem"
+        "$value": {
+          "value": 0.25,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--space-2xs",
+            "authoredValue": "0.25rem"
+          }
+        }
       },
       "xs": {
         "$type": "dimension",
-        "$value": "0.5rem"
+        "$value": {
+          "value": 0.5,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--space-xs",
+            "authoredValue": "0.5rem"
+          }
+        }
       },
       "sm": {
         "$type": "dimension",
-        "$value": "0.75rem"
+        "$value": {
+          "value": 0.75,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--space-sm",
+            "authoredValue": "0.75rem"
+          }
+        }
       },
       "md": {
         "$type": "dimension",
-        "$value": "1rem"
+        "$value": {
+          "value": 1,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--space-md",
+            "authoredValue": "1rem"
+          }
+        }
       },
       "lg": {
         "$type": "dimension",
-        "$value": "1.35rem"
+        "$value": {
+          "value": 1.35,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--space-lg",
+            "authoredValue": "1.35rem"
+          }
+        }
       },
       "xl": {
         "$type": "dimension",
-        "$value": "1.75rem"
+        "$value": {
+          "value": 1.75,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--space-xl",
+            "authoredValue": "1.75rem"
+          }
+        }
       },
       "2xl": {
         "$type": "dimension",
-        "$value": "2.5rem"
+        "$value": {
+          "value": 2.5,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--space-2xl",
+            "authoredValue": "2.5rem"
+          }
+        }
       }
     },
     "mono": {
@@ -63,7 +185,13 @@
           "SF Mono",
           "ui-monospace",
           "monospace"
-        ]
+        ],
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--mono",
+            "authoredValue": "'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', ui-monospace, monospace"
+          }
+        }
       }
     },
     "sans": {
@@ -77,77 +205,179 @@
           "Segoe UI",
           "system-ui",
           "sans-serif"
-        ]
+        ],
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--sans",
+            "authoredValue": "'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+          }
+        }
       }
     },
     "dot": {
       "font": {
         "$type": "fontFamily",
-        "$value": null,
+        "$value": [
+          "Doto",
+          "JetBrains Mono",
+          "Fira Code",
+          "Cascadia Code",
+          "SF Mono",
+          "ui-monospace",
+          "monospace"
+        ],
         "$extensions": {
-          "com.ponchia.css": "'Doto', var(--mono)"
+          "com.ponchia.css": {
+            "variable": "--dot-font",
+            "authoredValue": "'Doto', var(--mono)"
+          }
         }
       },
       "size": {
         "$type": "dimension",
-        "$value": "2px"
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--dot-size",
+            "authoredValue": "2px"
+          }
+        }
       },
       "gap": {
         "$type": "dimension",
-        "$value": "14px"
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--dot-gap",
+            "authoredValue": "14px"
+          }
+        }
       }
     },
     "display": {
       "DEFAULT": {
         "$type": "fontFamily",
-        "$value": null,
+        "$value": [
+          "Doto",
+          "JetBrains Mono",
+          "Fira Code",
+          "Cascadia Code",
+          "SF Mono",
+          "ui-monospace",
+          "monospace"
+        ],
         "$extensions": {
-          "com.ponchia.css": "var(--dot-font)"
+          "com.ponchia.css": {
+            "variable": "--display",
+            "authoredValue": "var(--dot-font)"
+          }
         }
       },
       "weight": {
         "$type": "fontWeight",
-        "$value": "700"
+        "$value": 700,
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--display-weight",
+            "authoredValue": "700"
+          }
+        }
       },
       "weight-strong": {
         "$type": "fontWeight",
-        "$value": "800"
+        "$value": 800,
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--display-weight-strong",
+            "authoredValue": "800"
+          }
+        }
       }
     },
     "text": {
       "2xs": {
         "$type": "dimension",
-        "$value": "0.72rem"
+        "$value": {
+          "value": 0.72,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--text-2xs",
+            "authoredValue": "0.72rem"
+          }
+        }
       },
       "xs": {
         "$type": "dimension",
-        "$value": "0.76rem"
+        "$value": {
+          "value": 0.76,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--text-xs",
+            "authoredValue": "0.76rem"
+          }
+        }
       },
       "sm": {
         "$type": "dimension",
-        "$value": "0.86rem"
+        "$value": {
+          "value": 0.86,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--text-sm",
+            "authoredValue": "0.86rem"
+          }
+        }
       },
       "base": {
         "$type": "dimension",
-        "$value": "0.95rem"
+        "$value": {
+          "value": 0.95,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--text-base",
+            "authoredValue": "0.95rem"
+          }
+        }
       },
       "lg": {
         "$type": "dimension",
-        "$value": "1.15rem"
+        "$value": {
+          "value": 1.15,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--text-lg",
+            "authoredValue": "1.15rem"
+          }
+        }
       },
       "xl": {
         "$type": "dimension",
-        "$value": "1.45rem"
-      }
-    },
-    "tracking": {
-      "wide": {
-        "$type": "dimension",
-        "$value": "0.14em"
-      },
-      "wider": {
-        "$type": "dimension",
-        "$value": "0.22em"
+        "$value": {
+          "value": 1.45,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--text-xl",
+            "authoredValue": "1.45rem"
+          }
+        }
       }
     },
     "ease": {
@@ -158,7 +388,13 @@
           0.8,
           0.2,
           1
-        ]
+        ],
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--ease-standard",
+            "authoredValue": "cubic-bezier(0.2, 0.8, 0.2, 1)"
+          }
+        }
       },
       "spring": {
         "$type": "cubicBezier",
@@ -167,7 +403,13 @@
           1,
           0.3,
           1
-        ]
+        ],
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--ease-spring",
+            "authoredValue": "cubic-bezier(0.16, 1, 0.3, 1)"
+          }
+        }
       },
       "out": {
         "$type": "cubicBezier",
@@ -176,7 +418,13 @@
           1,
           0.68,
           1
-        ]
+        ],
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--ease-out",
+            "authoredValue": "cubic-bezier(0.33, 1, 0.68, 1)"
+          }
+        }
       }
     },
     "duration": {
@@ -185,6 +433,12 @@
         "$value": {
           "value": 130,
           "unit": "ms"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--duration-fast",
+            "authoredValue": "130ms"
+          }
         }
       },
       "base": {
@@ -192,6 +446,12 @@
         "$value": {
           "value": 200,
           "unit": "ms"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--duration-base",
+            "authoredValue": "200ms"
+          }
         }
       },
       "slow": {
@@ -199,634 +459,2483 @@
         "$value": {
           "value": 360,
           "unit": "ms"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--duration-slow",
+            "authoredValue": "360ms"
+          }
         }
       }
     },
     "z": {
       "base": {
         "$type": "number",
-        "$value": "0"
+        "$value": 0,
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--z-base",
+            "authoredValue": "0"
+          }
+        }
       },
       "raised": {
         "$type": "number",
-        "$value": "10"
+        "$value": 10,
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--z-raised",
+            "authoredValue": "10"
+          }
+        }
       },
       "sticky": {
         "$type": "number",
-        "$value": "20"
+        "$value": 20,
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--z-sticky",
+            "authoredValue": "20"
+          }
+        }
       },
       "overlay": {
         "$type": "number",
-        "$value": "30"
+        "$value": 30,
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--z-overlay",
+            "authoredValue": "30"
+          }
+        }
       },
       "popover": {
         "$type": "number",
-        "$value": "50"
+        "$value": 50,
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--z-popover",
+            "authoredValue": "50"
+          }
+        }
       },
       "toast": {
         "$type": "number",
-        "$value": "60"
-      }
-    },
-    "accent": {
-      "1": {
-        "$type": "color",
-        "$value": null,
+        "$value": 60,
         "$extensions": {
-          "com.ponchia.css": "color-mix(in oklch, var(--accent) 8%, var(--accent-ramp-end))"
-        }
-      },
-      "2": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "color-mix(in oklch, var(--accent) 16%, var(--accent-ramp-end))"
-        }
-      },
-      "3": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "color-mix(in oklch, var(--accent) 32%, var(--accent-ramp-end))"
-        }
-      },
-      "4": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "color-mix(in oklch, var(--accent) 60%, var(--accent-ramp-end))"
-        }
-      },
-      "5": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--accent)"
-        }
-      },
-      "6": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--accent-strong)"
-        }
-      }
-    },
-    "surface": {
-      "1": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--bg)"
-        }
-      },
-      "2": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--bg-elevated)"
-        }
-      },
-      "3": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--panel)"
-        }
-      },
-      "4": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--panel-soft)"
-        }
-      },
-      "5": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--line)"
-        }
-      },
-      "6": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--line-strong)"
-        }
-      },
-      "DEFAULT": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--panel)"
-        }
-      },
-      "raised": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--panel-strong)"
-        }
-      },
-      "muted": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--panel-soft)"
-        }
-      }
-    },
-    "bronto": {
-      "color-bg": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--bg)"
-        }
-      },
-      "color-surface": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--panel)"
-        }
-      },
-      "color-surface-raised": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--panel-strong)"
-        }
-      },
-      "color-border": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--line)"
-        }
-      },
-      "color-border-strong": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--line-strong)"
-        }
-      },
-      "color-text": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--text)"
-        }
-      },
-      "color-text-muted": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--text-dim)"
-        }
-      },
-      "color-action": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--accent)"
-        }
-      },
-      "color-on-action": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--button-text)"
-        }
-      },
-      "color-focus": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--focus-ring)"
-        }
-      },
-      "color-success": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--success)"
-        }
-      },
-      "color-warning": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--warning)"
-        }
-      },
-      "color-danger": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--danger)"
-        }
-      },
-      "color-info": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--info)"
-        }
-      }
-    },
-    "border": {
-      "DEFAULT": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--line)"
-        }
-      },
-      "strong": {
-        "$type": "color",
-        "$value": null,
-        "$extensions": {
-          "com.ponchia.css": "var(--line-strong)"
+          "com.ponchia.css": {
+            "variable": "--z-toast",
+            "authoredValue": "60"
+          }
         }
       }
     }
   },
   "color": {
     "light": {
+      "accent": {
+        "1": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              0.937255,
+              0.929412
+            ],
+            "alpha": 1,
+            "hex": "#ffefed"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-1",
+              "authoredValue": "color-mix(in oklch, var(--accent) 8%, var(--accent-ramp-end))"
+            }
+          }
+        },
+        "2": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              0.878431,
+              0.858824
+            ],
+            "alpha": 1,
+            "hex": "#ffe0db"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-2",
+              "authoredValue": "color-mix(in oklch, var(--accent) 16%, var(--accent-ramp-end))"
+            }
+          }
+        },
+        "3": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.984314,
+              0.752941,
+              0.72549
+            ],
+            "alpha": 1,
+            "hex": "#fbc0b9"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-3",
+              "authoredValue": "color-mix(in oklch, var(--accent) 32%, var(--accent-ramp-end))"
+            }
+          }
+        },
+        "4": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.945098,
+              0.529412,
+              0.490196
+            ],
+            "alpha": 1,
+            "hex": "#f1877d"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-4",
+              "authoredValue": "color-mix(in oklch, var(--accent) 60%, var(--accent-ramp-end))"
+            }
+          }
+        },
+        "5": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.843137,
+              0.098039,
+              0.129412
+            ],
+            "alpha": 1,
+            "hex": "#d71921"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-5",
+              "authoredValue": "var(--accent)"
+            }
+          }
+        },
+        "6": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.698039,
+              0.082353,
+              0.105882
+            ],
+            "alpha": 1,
+            "hex": "#b2151b"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-6",
+              "authoredValue": "var(--accent-strong)"
+            }
+          }
+        },
+        "DEFAULT": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.843137,
+              0.098039,
+              0.129412
+            ],
+            "alpha": 1,
+            "hex": "#d71921"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent",
+              "authoredValue": "#d71921"
+            }
+          }
+        },
+        "ramp-end": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              1,
+              1
+            ],
+            "alpha": 1,
+            "hex": "#ffffff"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-ramp-end",
+              "authoredValue": "#ffffff"
+            }
+          }
+        },
+        "strong": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.698039,
+              0.082353,
+              0.105882
+            ],
+            "alpha": 1,
+            "hex": "#b2151b"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-strong",
+              "authoredValue": "color-mix(in srgb, var(--accent) 83%, #000)"
+            }
+          }
+        },
+        "text": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.698039,
+              0.082353,
+              0.105882
+            ],
+            "alpha": 1,
+            "hex": "#b2151b"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-text",
+              "authoredValue": "var(--accent-strong)"
+            }
+          }
+        },
+        "soft": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.843137,
+              0.098039,
+              0.129412
+            ],
+            "alpha": 0.1
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-soft",
+              "authoredValue": "color-mix(in srgb, var(--accent) 10%, transparent)"
+            }
+          }
+        }
+      },
+      "surface": {
+        "1": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.956863,
+              0.956863,
+              0.94902
+            ],
+            "alpha": 1,
+            "hex": "#f4f4f2"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-1",
+              "authoredValue": "var(--bg)"
+            }
+          }
+        },
+        "2": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.984314,
+              0.984314,
+              0.980392
+            ],
+            "alpha": 1,
+            "hex": "#fbfbfa"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-2",
+              "authoredValue": "var(--bg-elevated)"
+            }
+          }
+        },
+        "3": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              1,
+              1
+            ],
+            "alpha": 1,
+            "hex": "#ffffff"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-3",
+              "authoredValue": "var(--panel)"
+            }
+          }
+        },
+        "4": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.92549,
+              0.92549,
+              0.917647
+            ],
+            "alpha": 1,
+            "hex": "#ececea"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-4",
+              "authoredValue": "var(--panel-soft)"
+            }
+          }
+        },
+        "5": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.847059,
+              0.847059,
+              0.831373
+            ],
+            "alpha": 1,
+            "hex": "#d8d8d4"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-5",
+              "authoredValue": "var(--line)"
+            }
+          }
+        },
+        "6": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.658824,
+              0.658824,
+              0.635294
+            ],
+            "alpha": 1,
+            "hex": "#a8a8a2"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-6",
+              "authoredValue": "var(--line-strong)"
+            }
+          }
+        },
+        "DEFAULT": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              1,
+              1
+            ],
+            "alpha": 1,
+            "hex": "#ffffff"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface",
+              "authoredValue": "var(--panel)"
+            }
+          }
+        },
+        "raised": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              1,
+              1
+            ],
+            "alpha": 1,
+            "hex": "#ffffff"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-raised",
+              "authoredValue": "var(--panel-strong)"
+            }
+          }
+        },
+        "muted": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.92549,
+              0.92549,
+              0.917647
+            ],
+            "alpha": 1,
+            "hex": "#ececea"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-muted",
+              "authoredValue": "var(--panel-soft)"
+            }
+          }
+        }
+      },
+      "bronto": {
+        "color-bg": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.956863,
+              0.956863,
+              0.94902
+            ],
+            "alpha": 1,
+            "hex": "#f4f4f2"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-bg",
+              "authoredValue": "var(--bg)"
+            }
+          }
+        },
+        "color-surface": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              1,
+              1
+            ],
+            "alpha": 1,
+            "hex": "#ffffff"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-surface",
+              "authoredValue": "var(--panel)"
+            }
+          }
+        },
+        "color-surface-raised": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              1,
+              1
+            ],
+            "alpha": 1,
+            "hex": "#ffffff"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-surface-raised",
+              "authoredValue": "var(--panel-strong)"
+            }
+          }
+        },
+        "color-border": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.847059,
+              0.847059,
+              0.831373
+            ],
+            "alpha": 1,
+            "hex": "#d8d8d4"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-border",
+              "authoredValue": "var(--line)"
+            }
+          }
+        },
+        "color-border-strong": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.658824,
+              0.658824,
+              0.635294
+            ],
+            "alpha": 1,
+            "hex": "#a8a8a2"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-border-strong",
+              "authoredValue": "var(--line-strong)"
+            }
+          }
+        },
+        "color-text": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.039216,
+              0.039216,
+              0.039216
+            ],
+            "alpha": 1,
+            "hex": "#0a0a0a"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-text",
+              "authoredValue": "var(--text)"
+            }
+          }
+        },
+        "color-text-muted": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.407843,
+              0.407843,
+              0.388235
+            ],
+            "alpha": 1,
+            "hex": "#686863"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-text-muted",
+              "authoredValue": "var(--text-dim)"
+            }
+          }
+        },
+        "color-action": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.843137,
+              0.098039,
+              0.129412
+            ],
+            "alpha": 1,
+            "hex": "#d71921"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-action",
+              "authoredValue": "var(--accent)"
+            }
+          }
+        },
+        "color-on-action": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              1,
+              1
+            ],
+            "alpha": 1,
+            "hex": "#ffffff"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-on-action",
+              "authoredValue": "var(--button-text)"
+            }
+          }
+        },
+        "color-focus": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.843137,
+              0.098039,
+              0.129412
+            ],
+            "alpha": 1,
+            "hex": "#d71921"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-focus",
+              "authoredValue": "var(--focus-ring)"
+            }
+          }
+        },
+        "color-success": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.184314,
+              0.490196,
+              0.309804
+            ],
+            "alpha": 1,
+            "hex": "#2f7d4f"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-success",
+              "authoredValue": "var(--success)"
+            }
+          }
+        },
+        "color-warning": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.501961,
+              0.392157,
+              0.078431
+            ],
+            "alpha": 1,
+            "hex": "#806414"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-warning",
+              "authoredValue": "var(--warning)"
+            }
+          }
+        },
+        "color-danger": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.752941,
+              0.086275,
+              0.133333
+            ],
+            "alpha": 1,
+            "hex": "#c01622"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-danger",
+              "authoredValue": "var(--danger)"
+            }
+          }
+        },
+        "color-info": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.121569,
+              0.388235,
+              0.768627
+            ],
+            "alpha": 1,
+            "hex": "#1f63c4"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-info",
+              "authoredValue": "var(--info)"
+            }
+          }
+        }
+      },
+      "border": {
+        "DEFAULT": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.847059,
+              0.847059,
+              0.831373
+            ],
+            "alpha": 1,
+            "hex": "#d8d8d4"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--border",
+              "authoredValue": "var(--line)"
+            }
+          }
+        },
+        "strong": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.658824,
+              0.658824,
+              0.635294
+            ],
+            "alpha": 1,
+            "hex": "#a8a8a2"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--border-strong",
+              "authoredValue": "var(--line-strong)"
+            }
+          }
+        }
+      },
       "bg": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#f4f4f2"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.956863,
+              0.956863,
+              0.94902
+            ],
+            "alpha": 1,
+            "hex": "#f4f4f2"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bg",
+              "authoredValue": "#f4f4f2"
+            }
+          }
         },
         "elevated": {
           "$type": "color",
-          "$value": "#fbfbfa"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.984314,
+              0.984314,
+              0.980392
+            ],
+            "alpha": 1,
+            "hex": "#fbfbfa"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bg-elevated",
+              "authoredValue": "#fbfbfa"
+            }
+          }
         },
         "accent": {
           "$type": "color",
-          "$value": null,
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.843137,
+              0.098039,
+              0.129412
+            ],
+            "alpha": 0.06
+          },
           "$extensions": {
-            "com.ponchia.css": "color-mix(in srgb, var(--accent) 6%, transparent)"
+            "com.ponchia.css": {
+              "variable": "--bg-accent",
+              "authoredValue": "color-mix(in srgb, var(--accent) 6%, transparent)"
+            }
           }
         }
       },
       "panel": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#ffffff"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              1,
+              1
+            ],
+            "alpha": 1,
+            "hex": "#ffffff"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--panel",
+              "authoredValue": "#ffffff"
+            }
+          }
         },
         "strong": {
           "$type": "color",
-          "$value": "#ffffff"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              1,
+              1
+            ],
+            "alpha": 1,
+            "hex": "#ffffff"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--panel-strong",
+              "authoredValue": "#ffffff"
+            }
+          }
         },
         "soft": {
           "$type": "color",
-          "$value": "#ececea"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.92549,
+              0.92549,
+              0.917647
+            ],
+            "alpha": 1,
+            "hex": "#ececea"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--panel-soft",
+              "authoredValue": "#ececea"
+            }
+          }
         }
       },
       "line": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#d8d8d4"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.847059,
+              0.847059,
+              0.831373
+            ],
+            "alpha": 1,
+            "hex": "#d8d8d4"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--line",
+              "authoredValue": "#d8d8d4"
+            }
+          }
         },
         "strong": {
           "$type": "color",
-          "$value": "#a8a8a2"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.658824,
+              0.658824,
+              0.635294
+            ],
+            "alpha": 1,
+            "hex": "#a8a8a2"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--line-strong",
+              "authoredValue": "#a8a8a2"
+            }
+          }
         }
       },
       "text": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#0a0a0a"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.039216,
+              0.039216,
+              0.039216
+            ],
+            "alpha": 1,
+            "hex": "#0a0a0a"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--text",
+              "authoredValue": "#0a0a0a"
+            }
+          }
         },
         "soft": {
           "$type": "color",
-          "$value": "#353533"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.207843,
+              0.207843,
+              0.2
+            ],
+            "alpha": 1,
+            "hex": "#353533"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--text-soft",
+              "authoredValue": "#353533"
+            }
+          }
         },
         "dim": {
           "$type": "color",
-          "$value": "#686863"
-        }
-      },
-      "accent": {
-        "DEFAULT": {
-          "$type": "color",
-          "$value": "#d71921"
-        },
-        "ramp-end": {
-          "$type": "color",
-          "$value": "#ffffff"
-        },
-        "strong": {
-          "$type": "color",
-          "$value": null,
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.407843,
+              0.407843,
+              0.388235
+            ],
+            "alpha": 1,
+            "hex": "#686863"
+          },
           "$extensions": {
-            "com.ponchia.css": "color-mix(in srgb, var(--accent) 83%, #000)"
-          }
-        },
-        "text": {
-          "$type": "color",
-          "$value": null,
-          "$extensions": {
-            "com.ponchia.css": "var(--accent-strong)"
-          }
-        },
-        "soft": {
-          "$type": "color",
-          "$value": null,
-          "$extensions": {
-            "com.ponchia.css": "color-mix(in srgb, var(--accent) 10%, transparent)"
+            "com.ponchia.css": {
+              "variable": "--text-dim",
+              "authoredValue": "#686863"
+            }
           }
         }
       },
       "on": {
         "accent": {
           "$type": "color",
-          "$value": null,
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              1,
+              1
+            ],
+            "alpha": 1,
+            "hex": "#ffffff"
+          },
           "$extensions": {
-            "com.ponchia.css": "var(--button-text)"
+            "com.ponchia.css": {
+              "variable": "--on-accent",
+              "authoredValue": "var(--button-text)"
+            }
           }
         }
       },
       "success": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#2f7d4f"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.184314,
+              0.490196,
+              0.309804
+            ],
+            "alpha": 1,
+            "hex": "#2f7d4f"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--success",
+              "authoredValue": "#2f7d4f"
+            }
+          }
         },
         "soft": {
           "$type": "color",
-          "$value": "rgb(47, 125, 79, 0.12)"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.184314,
+              0.490196,
+              0.309804
+            ],
+            "alpha": 0.12
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--success-soft",
+              "authoredValue": "rgb(47, 125, 79, 0.12)"
+            }
+          }
         }
       },
       "warning": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#806414"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.501961,
+              0.392157,
+              0.078431
+            ],
+            "alpha": 1,
+            "hex": "#806414"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--warning",
+              "authoredValue": "#806414"
+            }
+          }
         },
         "soft": {
           "$type": "color",
-          "$value": "rgb(128, 100, 20, 0.13)"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.501961,
+              0.392157,
+              0.078431
+            ],
+            "alpha": 0.13
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--warning-soft",
+              "authoredValue": "rgb(128, 100, 20, 0.13)"
+            }
+          }
         }
       },
       "danger": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#c01622"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.752941,
+              0.086275,
+              0.133333
+            ],
+            "alpha": 1,
+            "hex": "#c01622"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--danger",
+              "authoredValue": "#c01622"
+            }
+          }
         },
         "soft": {
           "$type": "color",
-          "$value": "rgb(192, 22, 34, 0.1)"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.752941,
+              0.086275,
+              0.133333
+            ],
+            "alpha": 0.1
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--danger-soft",
+              "authoredValue": "rgb(192, 22, 34, 0.1)"
+            }
+          }
         }
       },
       "info": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#1f63c4"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.121569,
+              0.388235,
+              0.768627
+            ],
+            "alpha": 1,
+            "hex": "#1f63c4"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--info",
+              "authoredValue": "#1f63c4"
+            }
+          }
         },
         "soft": {
           "$type": "color",
-          "$value": "rgb(31, 99, 196, 0.12)"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.121569,
+              0.388235,
+              0.768627
+            ],
+            "alpha": 0.12
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--info-soft",
+              "authoredValue": "rgb(31, 99, 196, 0.12)"
+            }
+          }
         }
       },
       "code": {
         "bg": {
           "$type": "color",
-          "$value": "rgb(10, 10, 10, 0.05)"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.039216,
+              0.039216,
+              0.039216
+            ],
+            "alpha": 0.05
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--code-bg",
+              "authoredValue": "rgb(10, 10, 10, 0.05)"
+            }
+          }
         }
       },
       "button": {
         "text": {
           "$type": "color",
-          "$value": "#ffffff"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              1,
+              1
+            ],
+            "alpha": 1,
+            "hex": "#ffffff"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--button-text",
+              "authoredValue": "#ffffff"
+            }
+          }
         }
       },
       "field": {
         "dot": {
           "$type": "color",
-          "$value": "rgb(10, 10, 10, 0.16)"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.039216,
+              0.039216,
+              0.039216
+            ],
+            "alpha": 0.16
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--field-dot",
+              "authoredValue": "rgb(10, 10, 10, 0.16)"
+            }
+          }
         },
         "dot-hot": {
           "$type": "color",
-          "$value": "rgb(10, 10, 10, 0.4)"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.039216,
+              0.039216,
+              0.039216
+            ],
+            "alpha": 0.4
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--field-dot-hot",
+              "authoredValue": "rgb(10, 10, 10, 0.4)"
+            }
+          }
         },
         "dot-accent": {
           "$type": "color",
-          "$value": null,
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.843137,
+              0.098039,
+              0.129412
+            ],
+            "alpha": 0.78
+          },
           "$extensions": {
-            "com.ponchia.css": "color-mix(in srgb, var(--accent) 78%, transparent)"
+            "com.ponchia.css": {
+              "variable": "--field-dot-accent",
+              "authoredValue": "color-mix(in srgb, var(--accent) 78%, transparent)"
+            }
           }
         }
       },
       "focus": {
         "ring": {
           "$type": "color",
-          "$value": null,
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.843137,
+              0.098039,
+              0.129412
+            ],
+            "alpha": 1,
+            "hex": "#d71921"
+          },
           "$extensions": {
-            "com.ponchia.css": "var(--accent)"
-          }
-        }
-      },
-      "shadow": {
-        "DEFAULT": {
-          "$type": "shadow",
-          "$value": "none"
-        },
-        "raised": {
-          "$type": "shadow",
-          "$value": null,
-          "$extensions": {
-            "com.ponchia.css": "0 0 0 1px var(--line-strong)"
+            "com.ponchia.css": {
+              "variable": "--focus-ring",
+              "authoredValue": "var(--accent)"
+            }
           }
         }
       }
     },
     "dark": {
+      "accent": {
+        "1": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.007843,
+              0,
+              0
+            ],
+            "alpha": 1,
+            "hex": "#020000"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-1",
+              "authoredValue": "color-mix(in oklch, var(--accent) 8%, var(--accent-ramp-end))"
+            }
+          }
+        },
+        "2": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.05098,
+              0.003922,
+              0.003922
+            ],
+            "alpha": 1,
+            "hex": "#0d0101"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-2",
+              "authoredValue": "color-mix(in oklch, var(--accent) 16%, var(--accent-ramp-end))"
+            }
+          }
+        },
+        "3": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.2,
+              0.019608,
+              0.023529
+            ],
+            "alpha": 1,
+            "hex": "#330506"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-3",
+              "authoredValue": "color-mix(in oklch, var(--accent) 32%, var(--accent-ramp-end))"
+            }
+          }
+        },
+        "4": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.501961,
+              0.098039,
+              0.109804
+            ],
+            "alpha": 1,
+            "hex": "#80191c"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-4",
+              "authoredValue": "color-mix(in oklch, var(--accent) 60%, var(--accent-ramp-end))"
+            }
+          }
+        },
+        "5": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              0.231373,
+              0.254902
+            ],
+            "alpha": 1,
+            "hex": "#ff3b41"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-5",
+              "authoredValue": "var(--accent)"
+            }
+          }
+        },
+        "6": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              0.384314,
+              0.403922
+            ],
+            "alpha": 1,
+            "hex": "#ff6267"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-6",
+              "authoredValue": "var(--accent-strong)"
+            }
+          }
+        },
+        "DEFAULT": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              0.231373,
+              0.254902
+            ],
+            "alpha": 1,
+            "hex": "#ff3b41"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent",
+              "authoredValue": "#ff3b41"
+            }
+          }
+        },
+        "ramp-end": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 1,
+            "hex": "#000000"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-ramp-end",
+              "authoredValue": "#000000"
+            }
+          }
+        },
+        "strong": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              0.384314,
+              0.403922
+            ],
+            "alpha": 1,
+            "hex": "#ff6267"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-strong",
+              "authoredValue": "color-mix(in srgb, var(--accent) 80%, #fff)"
+            }
+          }
+        },
+        "text": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              0.384314,
+              0.403922
+            ],
+            "alpha": 1,
+            "hex": "#ff6267"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-text",
+              "authoredValue": "var(--accent-strong)"
+            }
+          }
+        },
+        "soft": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              0.231373,
+              0.254902
+            ],
+            "alpha": 0.14
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--accent-soft",
+              "authoredValue": "color-mix(in srgb, var(--accent) 14%, transparent)"
+            }
+          }
+        }
+      },
+      "surface": {
+        "1": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.070588,
+              0.070588,
+              0.070588
+            ],
+            "alpha": 1,
+            "hex": "#121212"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-1",
+              "authoredValue": "var(--bg)"
+            }
+          }
+        },
+        "2": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.094118,
+              0.094118,
+              0.094118
+            ],
+            "alpha": 1,
+            "hex": "#181818"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-2",
+              "authoredValue": "var(--bg-elevated)"
+            }
+          }
+        },
+        "3": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.109804,
+              0.109804,
+              0.109804
+            ],
+            "alpha": 1,
+            "hex": "#1c1c1c"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-3",
+              "authoredValue": "var(--panel)"
+            }
+          }
+        },
+        "4": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.141176,
+              0.141176,
+              0.141176
+            ],
+            "alpha": 1,
+            "hex": "#242424"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-4",
+              "authoredValue": "var(--panel-soft)"
+            }
+          }
+        },
+        "5": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.219608,
+              0.219608,
+              0.219608
+            ],
+            "alpha": 1,
+            "hex": "#383838"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-5",
+              "authoredValue": "var(--line)"
+            }
+          }
+        },
+        "6": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.333333,
+              0.333333,
+              0.333333
+            ],
+            "alpha": 1,
+            "hex": "#555555"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-6",
+              "authoredValue": "var(--line-strong)"
+            }
+          }
+        },
+        "DEFAULT": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.109804,
+              0.109804,
+              0.109804
+            ],
+            "alpha": 1,
+            "hex": "#1c1c1c"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface",
+              "authoredValue": "var(--panel)"
+            }
+          }
+        },
+        "raised": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.133333,
+              0.133333,
+              0.133333
+            ],
+            "alpha": 1,
+            "hex": "#222222"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-raised",
+              "authoredValue": "var(--panel-strong)"
+            }
+          }
+        },
+        "muted": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.141176,
+              0.141176,
+              0.141176
+            ],
+            "alpha": 1,
+            "hex": "#242424"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--surface-muted",
+              "authoredValue": "var(--panel-soft)"
+            }
+          }
+        }
+      },
+      "bronto": {
+        "color-bg": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.070588,
+              0.070588,
+              0.070588
+            ],
+            "alpha": 1,
+            "hex": "#121212"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-bg",
+              "authoredValue": "var(--bg)"
+            }
+          }
+        },
+        "color-surface": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.109804,
+              0.109804,
+              0.109804
+            ],
+            "alpha": 1,
+            "hex": "#1c1c1c"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-surface",
+              "authoredValue": "var(--panel)"
+            }
+          }
+        },
+        "color-surface-raised": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.133333,
+              0.133333,
+              0.133333
+            ],
+            "alpha": 1,
+            "hex": "#222222"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-surface-raised",
+              "authoredValue": "var(--panel-strong)"
+            }
+          }
+        },
+        "color-border": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.219608,
+              0.219608,
+              0.219608
+            ],
+            "alpha": 1,
+            "hex": "#383838"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-border",
+              "authoredValue": "var(--line)"
+            }
+          }
+        },
+        "color-border-strong": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.333333,
+              0.333333,
+              0.333333
+            ],
+            "alpha": 1,
+            "hex": "#555555"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-border-strong",
+              "authoredValue": "var(--line-strong)"
+            }
+          }
+        },
+        "color-text": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.901961,
+              0.901961,
+              0.901961
+            ],
+            "alpha": 1,
+            "hex": "#e6e6e6"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-text",
+              "authoredValue": "var(--text)"
+            }
+          }
+        },
+        "color-text-muted": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.627451,
+              0.627451,
+              0.627451
+            ],
+            "alpha": 1,
+            "hex": "#a0a0a0"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-text-muted",
+              "authoredValue": "var(--text-dim)"
+            }
+          }
+        },
+        "color-action": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              0.231373,
+              0.254902
+            ],
+            "alpha": 1,
+            "hex": "#ff3b41"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-action",
+              "authoredValue": "var(--accent)"
+            }
+          }
+        },
+        "color-on-action": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 1,
+            "hex": "#000000"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-on-action",
+              "authoredValue": "var(--button-text)"
+            }
+          }
+        },
+        "color-focus": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              0.231373,
+              0.254902
+            ],
+            "alpha": 1,
+            "hex": "#ff3b41"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-focus",
+              "authoredValue": "var(--focus-ring)"
+            }
+          }
+        },
+        "color-success": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.305882,
+              0.760784,
+              0.494118
+            ],
+            "alpha": 1,
+            "hex": "#4ec27e"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-success",
+              "authoredValue": "var(--success)"
+            }
+          }
+        },
+        "color-warning": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.847059,
+              0.741176,
+              0.447059
+            ],
+            "alpha": 1,
+            "hex": "#d8bd72"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-warning",
+              "authoredValue": "var(--warning)"
+            }
+          }
+        },
+        "color-danger": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              0.301961,
+              0.329412
+            ],
+            "alpha": 1,
+            "hex": "#ff4d54"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-danger",
+              "authoredValue": "var(--danger)"
+            }
+          }
+        },
+        "color-info": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.435294,
+              0.690196,
+              0.901961
+            ],
+            "alpha": 1,
+            "hex": "#6fb0e6"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bronto-color-info",
+              "authoredValue": "var(--info)"
+            }
+          }
+        }
+      },
+      "border": {
+        "DEFAULT": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.219608,
+              0.219608,
+              0.219608
+            ],
+            "alpha": 1,
+            "hex": "#383838"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--border",
+              "authoredValue": "var(--line)"
+            }
+          }
+        },
+        "strong": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.333333,
+              0.333333,
+              0.333333
+            ],
+            "alpha": 1,
+            "hex": "#555555"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--border-strong",
+              "authoredValue": "var(--line-strong)"
+            }
+          }
+        }
+      },
       "bg": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#121212"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.070588,
+              0.070588,
+              0.070588
+            ],
+            "alpha": 1,
+            "hex": "#121212"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bg",
+              "authoredValue": "#121212"
+            }
+          }
         },
         "elevated": {
           "$type": "color",
-          "$value": "#181818"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.094118,
+              0.094118,
+              0.094118
+            ],
+            "alpha": 1,
+            "hex": "#181818"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--bg-elevated",
+              "authoredValue": "#181818"
+            }
+          }
         },
         "accent": {
           "$type": "color",
-          "$value": null,
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              0.231373,
+              0.254902
+            ],
+            "alpha": 0.08
+          },
           "$extensions": {
-            "com.ponchia.css": "color-mix(in srgb, var(--accent) 8%, transparent)"
+            "com.ponchia.css": {
+              "variable": "--bg-accent",
+              "authoredValue": "color-mix(in srgb, var(--accent) 8%, transparent)"
+            }
           }
         }
       },
       "panel": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#1c1c1c"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.109804,
+              0.109804,
+              0.109804
+            ],
+            "alpha": 1,
+            "hex": "#1c1c1c"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--panel",
+              "authoredValue": "#1c1c1c"
+            }
+          }
         },
         "strong": {
           "$type": "color",
-          "$value": "#222222"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.133333,
+              0.133333,
+              0.133333
+            ],
+            "alpha": 1,
+            "hex": "#222222"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--panel-strong",
+              "authoredValue": "#222222"
+            }
+          }
         },
         "soft": {
           "$type": "color",
-          "$value": "#242424"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.141176,
+              0.141176,
+              0.141176
+            ],
+            "alpha": 1,
+            "hex": "#242424"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--panel-soft",
+              "authoredValue": "#242424"
+            }
+          }
         }
       },
       "line": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#383838"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.219608,
+              0.219608,
+              0.219608
+            ],
+            "alpha": 1,
+            "hex": "#383838"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--line",
+              "authoredValue": "#383838"
+            }
+          }
         },
         "strong": {
           "$type": "color",
-          "$value": "#555555"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.333333,
+              0.333333,
+              0.333333
+            ],
+            "alpha": 1,
+            "hex": "#555555"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--line-strong",
+              "authoredValue": "#555555"
+            }
+          }
         }
       },
       "text": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#e6e6e6"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.901961,
+              0.901961,
+              0.901961
+            ],
+            "alpha": 1,
+            "hex": "#e6e6e6"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--text",
+              "authoredValue": "#e6e6e6"
+            }
+          }
         },
         "soft": {
           "$type": "color",
-          "$value": "#c8c8c8"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.784314,
+              0.784314,
+              0.784314
+            ],
+            "alpha": 1,
+            "hex": "#c8c8c8"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--text-soft",
+              "authoredValue": "#c8c8c8"
+            }
+          }
         },
         "dim": {
           "$type": "color",
-          "$value": "#a0a0a0"
-        }
-      },
-      "accent": {
-        "DEFAULT": {
-          "$type": "color",
-          "$value": "#ff3b41"
-        },
-        "ramp-end": {
-          "$type": "color",
-          "$value": "#000000"
-        },
-        "strong": {
-          "$type": "color",
-          "$value": null,
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.627451,
+              0.627451,
+              0.627451
+            ],
+            "alpha": 1,
+            "hex": "#a0a0a0"
+          },
           "$extensions": {
-            "com.ponchia.css": "color-mix(in srgb, var(--accent) 80%, #fff)"
-          }
-        },
-        "text": {
-          "$type": "color",
-          "$value": null,
-          "$extensions": {
-            "com.ponchia.css": "var(--accent-strong)"
-          }
-        },
-        "soft": {
-          "$type": "color",
-          "$value": null,
-          "$extensions": {
-            "com.ponchia.css": "color-mix(in srgb, var(--accent) 14%, transparent)"
+            "com.ponchia.css": {
+              "variable": "--text-dim",
+              "authoredValue": "#a0a0a0"
+            }
           }
         }
       },
       "on": {
         "accent": {
           "$type": "color",
-          "$value": null,
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 1,
+            "hex": "#000000"
+          },
           "$extensions": {
-            "com.ponchia.css": "var(--button-text)"
+            "com.ponchia.css": {
+              "variable": "--on-accent",
+              "authoredValue": "var(--button-text)"
+            }
           }
         }
       },
       "success": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#4ec27e"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.305882,
+              0.760784,
+              0.494118
+            ],
+            "alpha": 1,
+            "hex": "#4ec27e"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--success",
+              "authoredValue": "#4ec27e"
+            }
+          }
         },
         "soft": {
           "$type": "color",
-          "$value": "rgb(78, 194, 126, 0.14)"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.305882,
+              0.760784,
+              0.494118
+            ],
+            "alpha": 0.14
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--success-soft",
+              "authoredValue": "rgb(78, 194, 126, 0.14)"
+            }
+          }
         }
       },
       "warning": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#d8bd72"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.847059,
+              0.741176,
+              0.447059
+            ],
+            "alpha": 1,
+            "hex": "#d8bd72"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--warning",
+              "authoredValue": "#d8bd72"
+            }
+          }
         },
         "soft": {
           "$type": "color",
-          "$value": "rgb(216, 189, 114, 0.14)"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.847059,
+              0.741176,
+              0.447059
+            ],
+            "alpha": 0.14
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--warning-soft",
+              "authoredValue": "rgb(216, 189, 114, 0.14)"
+            }
+          }
         }
       },
       "danger": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#ff4d54"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              0.301961,
+              0.329412
+            ],
+            "alpha": 1,
+            "hex": "#ff4d54"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--danger",
+              "authoredValue": "#ff4d54"
+            }
+          }
         },
         "soft": {
           "$type": "color",
-          "$value": "rgb(255, 77, 84, 0.15)"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              0.301961,
+              0.329412
+            ],
+            "alpha": 0.15
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--danger-soft",
+              "authoredValue": "rgb(255, 77, 84, 0.15)"
+            }
+          }
         }
       },
       "info": {
         "DEFAULT": {
           "$type": "color",
-          "$value": "#6fb0e6"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.435294,
+              0.690196,
+              0.901961
+            ],
+            "alpha": 1,
+            "hex": "#6fb0e6"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--info",
+              "authoredValue": "#6fb0e6"
+            }
+          }
         },
         "soft": {
           "$type": "color",
-          "$value": "rgb(111, 176, 230, 0.14)"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.435294,
+              0.690196,
+              0.901961
+            ],
+            "alpha": 0.14
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--info-soft",
+              "authoredValue": "rgb(111, 176, 230, 0.14)"
+            }
+          }
         }
       },
       "code": {
         "bg": {
           "$type": "color",
-          "$value": "rgb(255, 255, 255, 0.05)"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              1,
+              1
+            ],
+            "alpha": 0.05
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--code-bg",
+              "authoredValue": "rgb(255, 255, 255, 0.05)"
+            }
+          }
         }
       },
       "button": {
         "text": {
           "$type": "color",
-          "$value": "#000000"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 1,
+            "hex": "#000000"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--button-text",
+              "authoredValue": "#000000"
+            }
+          }
         }
       },
       "field": {
         "dot": {
           "$type": "color",
-          "$value": "rgb(242, 242, 242, 0.14)"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.94902,
+              0.94902,
+              0.94902
+            ],
+            "alpha": 0.14
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--field-dot",
+              "authoredValue": "rgb(242, 242, 242, 0.14)"
+            }
+          }
         },
         "dot-hot": {
           "$type": "color",
-          "$value": "rgb(242, 242, 242, 0.36)"
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.94902,
+              0.94902,
+              0.94902
+            ],
+            "alpha": 0.36
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--field-dot-hot",
+              "authoredValue": "rgb(242, 242, 242, 0.36)"
+            }
+          }
         },
         "dot-accent": {
           "$type": "color",
-          "$value": null,
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              0.231373,
+              0.254902
+            ],
+            "alpha": 0.82
+          },
           "$extensions": {
-            "com.ponchia.css": "color-mix(in srgb, var(--accent) 82%, transparent)"
+            "com.ponchia.css": {
+              "variable": "--field-dot-accent",
+              "authoredValue": "color-mix(in srgb, var(--accent) 82%, transparent)"
+            }
           }
         }
       },
       "focus": {
         "ring": {
           "$type": "color",
-          "$value": null,
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              1,
+              0.231373,
+              0.254902
+            ],
+            "alpha": 1,
+            "hex": "#ff3b41"
+          },
           "$extensions": {
-            "com.ponchia.css": "var(--accent)"
-          }
-        }
-      },
-      "shadow": {
-        "DEFAULT": {
-          "$type": "shadow",
-          "$value": "none"
-        },
-        "raised": {
-          "$type": "shadow",
-          "$value": null,
-          "$extensions": {
-            "com.ponchia.css": "0 0 0 1px var(--line-strong)"
+            "com.ponchia.css": {
+              "variable": "--focus-ring",
+              "authoredValue": "var(--accent)"
+            }
           }
         }
       }

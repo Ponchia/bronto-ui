@@ -296,6 +296,16 @@
   }
 }
 
+@media (pointer: coarse) {
+  .ui-sitefooter__links a {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    min-block-size: max(24px, 1.6rem);
+    min-inline-size: max(24px, 1.6rem);
+  }
+}
+
 /* --- Tags — neutral, wrapping content labels (NOT ui-chip, which is a
    single interactive token). Use a <ul>. --- */
 

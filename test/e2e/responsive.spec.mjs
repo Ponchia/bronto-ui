@@ -271,7 +271,8 @@ test.describe('site nav folds into the details menu', () => {
 //    showcase (button, input, alert close); the alert-dismiss measurement
 //    exercises that shared block, so .ui-toast__close is covered transitively
 //    (the demo's default toast auto-dismisses without a close button, so there
-//    is none to measure live).
+//    is none to measure live). Breadcrumb and footer links separately pin the
+//    WCAG 2.5.8 24×24 CSS-pixel floor added for compact utility navigation.
 //    Making the browser actually REPORT a coarse pointer needs touch emulation:
 //    the `isMobile` flag that flips the pointer media is supported by Chromium
 //    and WebKit but NOT Firefox, which THROWS on `isMobile` at context creation
@@ -314,10 +315,18 @@ test.describe('coarse-pointer touch targets', () => {
           const el = document.querySelector(sel);
           return el ? el.getBoundingClientRect().height : 0;
         };
+        const measureBox = (sel) => {
+          const el = document.querySelector(sel);
+          if (!el) return { width: 0, height: 0 };
+          const box = el.getBoundingClientRect();
+          return { width: box.width, height: box.height };
+        };
         return {
           button: measure('.ui-button'),
           input: measure('.ui-input'),
           alertClose: measure('.ui-alert__close'),
+          breadcrumbLink: measureBox('.ui-breadcrumb__item a'),
+          footerLink: measureBox('.ui-sitefooter__links a'),
           // The coarse rule sets `min-block-size: 2.9rem`. Mobile emulation can
           // pick a non-16px root font (Pixel 7 reports 15px here), so derive the
           // target from the PAGE's own rem base — 2.9rem, whatever a rem is —
@@ -329,6 +338,13 @@ test.describe('coarse-pointer touch targets', () => {
       expect(sizes.button, 'button').toBeGreaterThanOrEqual(sizes.target - 1);
       expect(sizes.input, 'input').toBeGreaterThanOrEqual(sizes.target - 1);
       expect(sizes.alertClose, 'alert close').toBeGreaterThanOrEqual(sizes.target - 1);
+      for (const [name, box] of [
+        ['breadcrumb link', sizes.breadcrumbLink],
+        ['footer link', sizes.footerLink],
+      ]) {
+        expect(box.width, `${name} width`).toBeGreaterThanOrEqual(24);
+        expect(box.height, `${name} height`).toBeGreaterThanOrEqual(24);
+      }
     } finally {
       await context.close();
       await browser.close();

@@ -22,8 +22,9 @@ export function applyStoredTheme({ storageKey, root }?: ApplyThemeOpts): void;
  * persists to localStorage, and **always** sets `data-theme` on <html>
  * (a theme is document-global). State is reflected via `aria-pressed`
  * and a `bronto:themechange` CustomEvent ({ detail: { theme } }) is
- * dispatched on <html> so consumers can sync their own UI without
- * racing the click handler. A control may set
+ * dispatched on <html> for both explicit changes and OS preference changes,
+ * so consumers can sync their own UI without racing the click/media handler.
+ * A control may set
  * `data-bronto-theme-toggle="dark"` to force a specific theme.
  *
  * `root` scopes event delegation and which controls are queried/reflected

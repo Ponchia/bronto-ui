@@ -26,6 +26,7 @@ before paint — exactly what the theme needs:
 
 ```astro
 <head>
+  <meta name="color-scheme" content="light dark" />
   <script is:inline>
     try {
       var t = localStorage.getItem('bronto-theme');
