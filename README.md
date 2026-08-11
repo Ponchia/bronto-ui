@@ -81,7 +81,7 @@ Or drop it in with no build step, straight from a CDN (replace the version only
 when deliberately upgrading across a breaking pre-1.0 minor):
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.8.0/dist/bronto.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.8.1/dist/bronto.css">
 ```
 
 ## Quick start
