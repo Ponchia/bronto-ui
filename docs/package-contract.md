@@ -299,6 +299,7 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `docs/migrations/0.4-to-0.5.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/migrations/0.5-to-0.6.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/migrations/0.6-to-0.7.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/migrations/0.7-to-0.8.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/adr/0001-color-system.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/adr/0002-scope-and-2026-baseline.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/adr/0003-theme-model.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |

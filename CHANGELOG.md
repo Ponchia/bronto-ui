@@ -5,6 +5,51 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## 0.8.1 — 2026-08-11
+
+A packaging fix, plus dependency hygiene. **No published CSS, token, class, or
+type artifact changed** — `dist/`, `css/`, `tokens/` and `classes/` are byte-for-byte
+identical to 0.8.0. If you are on 0.8.0 and do not read the migration guide from
+the package, there is nothing here for you.
+
+### Fixed
+
+- **`docs/migrations/0.7-to-0.8.md` was missing from the published package.**
+  0.8.0's one breaking change is the colorway canvas re-point, `CHANGELOG.md`
+  and `MIGRATIONS.json` both point at that guide, and it was not in the tarball —
+  so a consumer following the pointer from an offline install got nothing. The
+  guide was written, linked, and gated by `check:doc-links`; it was simply never
+  added to `package.json`'s hand-maintained `files` array.
+- **The gate that should have caught it was circular.** `check-pack.mjs` derived
+  its set of shipped docs *from* `files`, so it proved every listed doc ships and
+  could never prove a doc that exists is listed. It now asserts the other
+  direction for the two directories the published package itself references —
+  `docs/migrations/` (from `MIGRATIONS.json`) and `docs/adr/` (from
+  `docs/architecture.md`) — where a missing file costs a reader a dead pointer.
+  Other `docs/` pages stay opt-in: the package ships a curated subset by design.
+
+### Changed
+
+- **Dependency sweep** — ten Dependabot PRs landed as one reviewed change. Every
+  advisory was **devDependency-scoped**; the package declares no runtime
+  dependencies and `npm audit --omit=dev` was already clean, so none of them
+  ever reached a consumer. `npm audit` now reports 0 across the whole tree
+  (`fast-uri`, `js-yaml`, `nanoid`, `pdfjs-dist`, `postcss`, `shell-quote`,
+  `tar`, `undici`), the toolchain moved (`jsdom` 30, `knip` 6.32, `prettier`
+  3.9.6, `publint` 0.3.23, `react`/`react-dom` 19.2.8, `solid-js` 1.9.14,
+  `stylelint` 17.14.1, `vega` 6.3.1, `@arethetypeswrong/cli` 0.18.5), the pinned
+  action SHAs moved, and the Astro example moved to Astro 7 (verified building
+  against the packed 0.8.0 tarball).
+
+### Not taken
+
+- **TypeScript 7.** Its default export is now `{ version, versionMajorMinor }` —
+  the compiler-API namespace moved in the native port — so `ts.ScriptTarget` is
+  `undefined` and `scripts/lib/import-policy.mjs` throws at `check:exports`.
+  Adapting this repository's AST tooling to that API is real work with its own
+  review, and there is no security driver: TypeScript is not in any advisory
+  here. Pinned to `^6.0.3`; Dependabot's dev-group PR stays open for it.
+
 ## 0.8.0 — 2026-08-11
 
 A single-consumer release. A full-surface audit of the largest downstream
