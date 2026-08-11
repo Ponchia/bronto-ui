@@ -9,7 +9,7 @@
  *
  * Run: node scripts/check-pack.mjs
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { reportAndExit } from './lib/gate-report.mjs';
@@ -47,6 +47,33 @@ for (const p of files) {
 // can never drift; the lockstep loop this replaced existed only to catch that
 // drift.
 const shippedDocs = new Set((pkg.files ?? []).filter((f) => f.endsWith('.md')));
+
+// Deriving from `files` proves every LISTED doc ships. It cannot prove a doc
+// that EXISTS is listed — the set and the assertion have the same source, so
+// the check is circular in that direction. 0.8.0 shipped without
+// docs/migrations/0.7-to-0.8.md for exactly that reason: the guide for the
+// release's one breaking change was written, linked from CHANGELOG.md and
+// MIGRATIONS.json, gated by check:doc-links, and absent from the tarball.
+//
+// These two directories are where the omission actually costs a consumer
+// something, because both are referenced BY the published package: MIGRATIONS.json
+// points at migrations/, and docs/architecture.md points at adr/. So require
+// every file in them to be listed. Other docs/ pages stay opt-in — the package
+// deliberately ships a curated subset, not the whole manual.
+const MUST_SHIP_DIRS = ['docs/migrations', 'docs/adr'];
+for (const dir of MUST_SHIP_DIRS) {
+  const abs = resolve(root, dir);
+  if (!existsSync(abs)) continue;
+  for (const name of readdirSync(abs).filter((f) => f.endsWith('.md'))) {
+    const rel = `${dir}/${name}`;
+    if (!shippedDocs.has(rel)) {
+      errors.push(
+        `${rel} exists but is not in package.json "files" — the published package ` +
+          `references ${dir}/, so a consumer following that pointer gets a 404`,
+      );
+    }
+  }
+}
 
 // Belt-and-braces: these must never ship (except the curated docs above).
 const forbidden = [
