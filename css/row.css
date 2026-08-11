@@ -1,5 +1,5 @@
 /* ==========================================================================
-   row — opt-in dense selectable row for a scrolling pane.
+   row — the dense selectable row. IN THE DEFAULT BUNDLE.
 
    Every workbench grows a list of these: a search result, a file in an
    explorer, an outline entry, a backlink, an inbox item, a commit. They are not
@@ -20,7 +20,9 @@
    columns are. Bronto owns the line: its rhythm, its states, and the fact that
    the title is the part that truncates. Rows that carry a severity should reach
    for `.ui-severity-row` in `state.css` instead — that one adds the tone gutter.
-   Not imported by core.css.
+
+   In core rather than opt-in, unusually for a new surface, because
+   `.ui-menu__item` composes it and a core component cannot depend on a leaf.
    ========================================================================== */
 
 .ui-row {
@@ -88,9 +90,16 @@
   border-radius: 0;
 }
 
-/* --- States. `aria-selected` / `aria-current` are the contract, because the
-   host is already setting them for assistive tech; `.is-selected` is the
-   escape hatch for a row that is genuinely not a listbox option. --- */
+/* --- States, and WHICH attribute is yours to use.
+
+   `aria-selected` is only valid on a row that has a role which accepts it —
+   `option` inside a `listbox`, or `row` / `tab` / `gridcell` / `treeitem`. On a
+   bare `<button>` it is invalid ARIA, and axe rates that CRITICAL. This project
+   shipped exactly that mistake in its own demo and the a11y gate caught it.
+
+   So: `aria-current` for a row that is merely the current one (the common
+   case), `aria-selected` only when the row genuinely carries an option/row
+   role, and `.is-selected` when neither applies. All three paint the same. --- */
 
 .ui-row[aria-selected='true'],
 .ui-row[aria-current]:not([aria-current='false']),

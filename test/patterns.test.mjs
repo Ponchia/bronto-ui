@@ -52,3 +52,35 @@ test('the menu item composes the row rather than restating it', async () => {
   // composing it would break for anyone who did not opt in.
   assert.match(stripCssComments(read('core.css')), /row\.css/);
 });
+
+// `aria-selected` is only valid on a role that accepts it — `option` in a
+// `listbox`, or `row` / `tab` / `gridcell` / `treeitem`. On a bare <button> it is
+// invalid ARIA and axe rates it CRITICAL.
+//
+// This exists because 0.9.0's demo shipped exactly that: the new `.ui-row`
+// example put `aria-selected="true"` on a plain button, three a11y specs went
+// red, and the source review had not caught it. The browser gate found it, but
+// it costs 20 minutes; this finds the same class of mistake in milliseconds.
+test('demo markup never puts aria-selected on an element that cannot take it', async () => {
+  const { readFileSync, readdirSync } = await import('node:fs');
+  const { fileURLToPath } = await import('node:url');
+  const dir = fileURLToPath(new URL('../demo/', import.meta.url));
+  const ACCEPTS = /role=["'](option|row|tab|gridcell|treeitem|columnheader|rowheader)["']/;
+
+  const offenders = [];
+  for (const file of readdirSync(dir).filter((name) => name.endsWith('.html'))) {
+    const html = readFileSync(dir + file, 'utf8');
+    // Each opening tag that carries aria-selected must also carry a role that
+    // accepts it. <option> itself is the one element with it built in.
+    for (const tag of html.matchAll(/<([a-z]+)\b[^>]*aria-selected[^>]*>/g)) {
+      if (tag[1] === 'option') continue;
+      if (ACCEPTS.test(tag[0])) continue;
+      offenders.push(`${file}: ${tag[0].slice(0, 110)}`);
+    }
+  }
+  assert.deepEqual(
+    offenders,
+    [],
+    `aria-selected needs an accepting role (option/row/tab/gridcell/treeitem):\n${offenders.join('\n')}`,
+  );
+});

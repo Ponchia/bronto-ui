@@ -27,6 +27,14 @@ downstream workbench onto 0.8.1 and watching where adoption stalled.
   the visual state cannot disagree with the announced one. `--stacked` for a
   row with a snippet, `--ruled` for a list that reads as one object.
 
+  Selection: use **`aria-current`** for a row that is merely the current one —
+  that is the common case and valid anywhere. `aria-selected` is only legal on a
+  role that accepts it (`option` in a `listbox`, or `row`/`tab`/`gridcell`/
+  `treeitem`); on a bare `<button>` it is invalid ARIA and axe rates it
+  *critical*. This release's own demo shipped that mistake, three a11y specs
+  went red, and a new unit gate now catches the same class of error in
+  milliseconds rather than twenty minutes of browser matrix.
+
   It is in **core**, unusually for a new surface, because `.ui-menu__item` now
   composes it and a core component cannot depend on an opt-in leaf. It also
   earns the roadmap's stronger argument for a core addition on two counts:

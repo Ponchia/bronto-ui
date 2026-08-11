@@ -199,7 +199,7 @@ Three shapes look alike and are not interchangeable:
   *persists*.
 
 ```html
-<button class="ui-row ui-row--ruled" type="button" aria-selected="true">
+<button class="ui-row ui-row--ruled" type="button" aria-current="true">
   <span class="ui-row__mark" aria-hidden="true">◆</span>
   <span class="ui-row__title">apps/server/src/collab/room.ts</span>
   <span class="ui-row__meta">4m</span>
@@ -210,11 +210,21 @@ The one rule worth knowing: **`__title` is what truncates.** It takes the slack
 and gives it back first; `__meta` never shrinks, because a half-rendered number
 is worse than no number.
 
-Selection reads `aria-selected` or `aria-current` — the attributes you are
-already setting for assistive tech — so the visual state cannot disagree with
-the announced one. `.is-selected` exists for a row that is genuinely not a
-listbox option. Rows carrying a severity should use `ui-severity-row`
-(`css/state.css`) instead, which adds the tone gutter.
+**Pick the right attribute, and it is probably not `aria-selected`.** That one
+is only valid on a row whose role accepts it — `option` inside a `listbox`, or
+`row` / `tab` / `gridcell` / `treeitem`. On a bare `<button>` it is invalid ARIA
+and axe rates it *critical*; this project shipped that mistake in its own demo
+and the a11y gate caught it before release.
+
+- `aria-current="true"` — the row is the current one. The common case, and valid
+  on any element.
+- `aria-selected="true"` — only when the row really is an `option` in a
+  `listbox`, or another role that accepts it.
+- `.is-selected` — when neither fits.
+
+All three paint the same, so the visual state cannot disagree with the announced
+one. Rows carrying a severity should use `ui-severity-row` (`css/state.css`)
+instead, which adds the tone gutter.
 
 `ui-menu__item` composes `ui-row`, which is why they cannot drift.
 
