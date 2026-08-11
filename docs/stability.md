@@ -1,7 +1,7 @@
 # Public API stability
 
 `@ponchia/ui` is pre-1.0. Breaking changes ship in the minor (`0.x.0`), and
-patches are non-breaking. In practical terms: **PATCH releases (`0.8.x`) are
+patches are non-breaking. In practical terms: **PATCH releases (`0.9.x`) are
 non-breaking bug-fixes and additive changes — safe to upgrade without review;
 MINOR releases (`0.x.0`) may include breaking changes and consumers should
 review the CHANGELOG before upgrading.** Pin `~0.x` (tilde) to accept only
@@ -140,6 +140,7 @@ current public-surface matrix and the release policy above still applies.
 | Connectors (`@ponchia/ui/connectors`, `css/connectors.css`, `.ui-connector*`, `initConnectors`) | Stable additive | Connector class names, the `data-bronto-connector` attribute contract, geometry helper function names, and recipe options are public. Helper internals/heuristics may tune before 1.0. Opt-in, not in the default bundle. |
 | Spotlight (`css/spotlight.css`, `.ui-spotlight*`, `.ui-tour-note*`, `initSpotlight`) | Stable additive | Spotlight/tour-note class names, the `--spot-*` custom-property contract, and the `data-bronto-spotlight`/`data-target` attributes are public. Opt-in, not in the default bundle. Not a tour engine. |
 | Crosshair (`css/crosshair.css`, `.ui-crosshair*`, `.ui-readout`, `initCrosshair`) | Stable additive | Crosshair/readout class names, the `--crosshair-x/y` properties, the `data-bronto-crosshair` attribute, and the `bronto:crosshair:move`/`:leave` event contract are public. Opt-in. Reports pointer position only — no data mapping. |
+| Rows (`css/row.css`, `.ui-row*`) | Stable additive | Class names, the `__title` / `__meta` / `__mark` parts, the `--stacked` / `--ruled` modifiers, and the selection contract are public: `aria-selected`, `aria-current` and `.is-selected` all paint the selected state, so the visual state cannot disagree with the announced one. `__title` is the part that truncates and `__meta` is the part that does not — that asymmetry is the contract, not a detail. **In the default bundle**, unusually for a new surface: `.ui-menu__item` composes it, so a core component depends on it. Also exported standalone, which is why it appears here, but it is NOT opt-in. |
 | Selection states (`css/selection.css`, `.ui-sel*`) | Stable additive | The `.ui-sel`/`--on`/`--off`/`--maybe` emphasis classes and recipe options are public. Opt-in, cross-cutting. The host owns selection logic; Bronto only styles the states. |
 | Analytical roll-up (`css/analytical.css`) | Stable additive | A convenience `@import` of the nine analytical leaves (figure, annotations, legend, marks, connectors, spotlight, crosshair, selection, highlights). The set of leaves it bundles may grow additively; each leaf also stays individually exported. Opt-in, not in the default bundle. |
 | Sources / provenance (`css/sources.css`, `.ui-citation*`, `.ui-source-card*`, `.ui-source-list*`, `.ui-provenance*`, `.ui-src--*`, `initSources`) | Stable additive | Citation/source/provenance class names, the cross-cutting `.ui-src--*` trust-state modifiers (always paired with an author label), the optional `data-bronto-sources` / `data-bronto-source-ref` behavior contract, `bronto:source:focus`, and the `ui.citation`/`ui.source`/`ui.provenance` recipes + `cls.sourceList` are public. Opt-in, not in the default bundle. |

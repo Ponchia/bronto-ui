@@ -26,6 +26,14 @@ const FOUNDATIONS = [
       { file: 'scripts/check-dist.mjs', includes: ['analytical.css'] },
     ],
   }),
+  foundation('row', {
+    docs: [doc('docs/usage.md', ['ui-row'])],
+    demos: ['demo/index.html'],
+    proofs: [
+      { file: 'test/patterns.test.mjs', includes: ['menu item composes the row'] },
+      { file: 'css/core.css', includes: ['row.css'] },
+    ],
+  }),
   foundation('app', {
     docs: [doc('docs/usage.md', ['ui-app-shell'])],
     demos: ['demo/service.html'],

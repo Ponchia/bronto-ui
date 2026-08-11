@@ -55,6 +55,12 @@ export declare const cls: {
   readonly linkArrow: 'ui-link--arrow';
   readonly linkCta: 'ui-link--cta';
   readonly keyValue: 'ui-key-value';
+  readonly row: 'ui-row';
+  readonly rowTitle: 'ui-row__title';
+  readonly rowMeta: 'ui-row__meta';
+  readonly rowMark: 'ui-row__mark';
+  readonly rowStacked: 'ui-row--stacked';
+  readonly rowRuled: 'ui-row--ruled';
   readonly emptyState: 'ui-empty-state';
   readonly emptyStateInvite: 'ui-empty-state--invite';
   readonly emptyStateGlyph: 'ui-empty-state__glyph';
@@ -164,6 +170,8 @@ export declare const cls: {
   readonly modalDrawer: 'ui-modal--drawer';
   readonly menuHost: 'ui-menu-host';
   readonly menu: 'ui-menu';
+  readonly menuDropdown: 'ui-menu--dropdown';
+  readonly menuAtPointer: 'ui-menu--at-pointer';
   readonly menuLabel: 'ui-menu__label';
   readonly menuItem: 'ui-menu__item';
   readonly menuSep: 'ui-menu__sep';

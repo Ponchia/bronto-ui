@@ -1,8 +1,8 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `groups[].base` is null for a parts-only namespace (no standalone base class — do NOT emit it). A modifier whose name contains `__` (e.g. `ui-spark__bar--pos`) attaches to THAT part, not the base host. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `behaviorAttributes` are the `data-bronto-*` wiring hooks the optional behaviors delegate on; `requiredAria` is the role/aria a generator must emit per component. `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 669,
-    "groups": 183
+    "classes": 677,
+    "groups": 184
   },
   "groups": {
     "ui-accordion": {
@@ -830,7 +830,10 @@
     },
     "ui-menu": {
       "base": "ui-menu",
-      "modifiers": [],
+      "modifiers": [
+        "ui-menu--at-pointer",
+        "ui-menu--dropdown"
+      ],
       "parts": [
         "ui-menu__item",
         "ui-menu__label",
@@ -1073,6 +1076,18 @@
       "base": "ui-reveal",
       "modifiers": [],
       "parts": []
+    },
+    "ui-row": {
+      "base": "ui-row",
+      "modifiers": [
+        "ui-row--ruled",
+        "ui-row--stacked"
+      ],
+      "parts": [
+        "ui-row__mark",
+        "ui-row__meta",
+        "ui-row__title"
+      ]
     },
     "ui-screen-only": {
       "base": "ui-screen-only",
@@ -1924,6 +1939,8 @@
     "ui-mark--warning",
     "ui-matrix",
     "ui-menu",
+    "ui-menu--at-pointer",
+    "ui-menu--dropdown",
     "ui-menu-host",
     "ui-menu__item",
     "ui-menu__label",
@@ -2039,6 +2056,12 @@
     "ui-report__title",
     "ui-report__toc",
     "ui-reveal",
+    "ui-row",
+    "ui-row--ruled",
+    "ui-row--stacked",
+    "ui-row__mark",
+    "ui-row__meta",
+    "ui-row__title",
     "ui-screen-only",
     "ui-scroll-progress",
     "ui-scroll-reveal",

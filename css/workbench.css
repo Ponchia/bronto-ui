@@ -53,7 +53,7 @@
 
 .ui-toolstrip--compact {
   gap: var(--space-2xs);
-  padding: 0.25rem;
+  padding: var(--space-2xs);
 }
 
 /* Pane-scale — a control bar belonging to ONE pane rather than to the app. The
