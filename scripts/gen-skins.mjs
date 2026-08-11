@@ -40,9 +40,13 @@ export function buildSkinsCss() {
     ` *  Optional display colorways (ADR-0001). OPT-IN: imported on demand via\n` +
     ` *  \`@ponchia/ui/css/skins.css\`, never part of the default bundle. Apply with\n` +
     ` *  \`data-bronto-skin="${SKIN_NAMES.join(' | ')}"\` on :root / <html> (a\n` +
-    ` *  root-level choice like data-theme), re-pointing the one accent. The accent's\n` +
-    ` *  derived family recomputes from the live var(--accent); status colours + the\n` +
-    ` *  neutral canvas are untouched. Every accent below is gated by check-contrast.mjs. */\n`;
+    ` *  root-level choice like data-theme), re-pointing the one accent and the\n` +
+    ` *  neutral canvas (ADR-0001 step 4, amended in 0.8.0). The accent's derived\n` +
+    ` *  family recomputes from the live var(--accent); STATUS COLOURS ARE UNTOUCHED,\n` +
+    ` *  because a warning must look like a warning in every skin. The canvas keeps\n` +
+    ` *  each core neutral's OKLCH lightness and only moves its hue, so contrast is\n` +
+    ` *  preserved by construction — and check-contrast.mjs re-measures the FULL\n` +
+    ` *  pairing table per skin per theme rather than trusting that. */\n`;
 
   const blocks = [];
   for (const name of SKIN_NAMES) {

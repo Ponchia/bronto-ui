@@ -1,7 +1,7 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `groups[].base` is null for a parts-only namespace (no standalone base class — do NOT emit it). A modifier whose name contains `__` (e.g. `ui-spark__bar--pos`) attaches to THAT part, not the base host. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `behaviorAttributes` are the `data-bronto-*` wiring hooks the optional behaviors delegate on; `requiredAria` is the role/aria a generator must emit per component. `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 644,
+    "classes": 646,
     "groups": 179
   },
   "groups": {
@@ -242,13 +242,16 @@
       "base": "ui-button",
       "modifiers": [
         "ui-button--danger",
+        "ui-button--dense",
         "ui-button--ghost",
         "ui-button--icon",
         "ui-button--lg",
         "ui-button--sm",
         "ui-button--subtle"
       ],
-      "parts": []
+      "parts": [
+        "ui-button__label"
+      ]
     },
     "ui-card": {
       "base": "ui-card",
@@ -1610,11 +1613,13 @@
     "ui-bullet__target",
     "ui-button",
     "ui-button--danger",
+    "ui-button--dense",
     "ui-button--ghost",
     "ui-button--icon",
     "ui-button--lg",
     "ui-button--sm",
     "ui-button--subtle",
+    "ui-button__label",
     "ui-card",
     "ui-card--accent",
     "ui-card--interactive",

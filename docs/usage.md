@@ -278,6 +278,31 @@ without it these widgets are unlabelled or unannounced:
 - **Icon-only buttons** (`ui-button--icon` and any glyph-only control) carry no
   text node, so they're nameless to AT — give them an `aria-label`
   (`<button class="ui-button ui-button--icon" aria-label="Delete">`).
+  Prefer `ui-button__label` when the same control also appears with its word
+  visible, or when a test reads the button by its text. Wrap the text in the
+  slot and let `--icon` decide whether it is painted — the markup does not
+  change, the accessible name survives, and no `aria-label` can drift out of
+  sync with the visible wording:
+
+  ```js
+  // The mask comes from renderGlyph(..., { render: 'mask' }) — there is no
+  // --glyph-* token.
+  const mask = renderGlyph('trash', { render: 'mask' });
+  el.innerHTML =
+    `<button class="ui-button ui-button--icon">` +
+    `<span class="ui-icon" style="--icon-mask: ${mask}"></span>` +
+    `<span class="ui-button__label">Delete</span>` +
+    `</button>`;
+  ```
+
+  Drop `--icon` and the same markup renders glyph + word. The slot also
+  ellipsises rather than wrapping, so a labelled button in a width-constrained
+  bar shrinks instead of pushing its neighbours out.
+- **`ui-button--dense`** is for bars whose height is the constraint — a pane
+  title bar, a packed toolbar, a table row's actions. It lowers only the
+  *visual* floor, to the WCAG 2.5.8 24px minimum. The coarse-pointer block
+  still floats it to the full `--tap-target`, so a control you shrink for a
+  mouse is never shrunk for a finger.
 - **`ui-sitenav` / `ui-app-nav`** — signal the current link with
   `aria-current="page"` (both honour it; `ui-app-nav` also accepts the
   visual-only `.is-active`, but prefer `aria-current`).

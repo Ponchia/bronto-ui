@@ -1,7 +1,7 @@
 # Public API stability
 
 `@ponchia/ui` is pre-1.0. Breaking changes ship in the minor (`0.x.0`), and
-patches are non-breaking. In practical terms: **PATCH releases (`0.7.x`) are
+patches are non-breaking. In practical terms: **PATCH releases (`0.8.x`) are
 non-breaking bug-fixes and additive changes — safe to upgrade without review;
 MINOR releases (`0.x.0`) may include breaking changes and consumers should
 review the CHANGELOG before upgrading.** Pin `~0.x` (tilde) to accept only
@@ -68,13 +68,41 @@ Package-proven is necessary but does not establish demand. During the catalog
 freeze, do not expand package-only surfaces. Recheck this table against real
 consumer upgrades before the 1.0 release candidate.
 
+> **The 0.8.0 consumer audit — read this before trusting the table below.** A
+> full-surface audit of the largest downstream consumer (a Yjs-collaborative
+> spatial canvas workspace: React, Vite, ~10k lines of its own CSS) found it
+> using **26 of the 646 published classes**, and hand-rebuilding much of the
+> rest — 10 bespoke empty states, 15 error surfaces, 17 control bars, three
+> parallel severity vocabularies, its own Markdown prose layer, its own diff
+> rows, its own meters, and two copies of visually-hidden text. Thirteen
+> primitives that map almost exactly onto what it built return **zero** uses:
+> `ui-state`, `ui-prose`, `ui-diff`, `ui-code`, `ui-meter`, `ui-progress`,
+> `ui-toolstrip`, `ui-dot`, `ui-chip`, `ui-tag`, `ui-timeline`, `ui-steps`,
+> `ui-job`.
+>
+> The lesson for this document is not about that consumer. It is that **"no
+> inspected consumer imports the surface" has been measuring discoverability,
+> not demand.** Those surfaces were not rejected; they were never found. The
+> opt-in leaf model is right, but nothing tells a consumer which leaf it is
+> about to reimplement — and `bronto-ui-check`, which catches part of it, was
+> installed in that consumer and had never been run. Before any 1.0 decision
+> retires a package-proven surface for lack of adoption, confirm the surface was
+> *reachable*: named in the consumer's imports, or at least in a leaf it
+> imports. Non-adoption of an unimported leaf is not evidence.
+>
+> The same audit produced this release's four consumer-driven changes (the tap
+> target floor, the safe-area tokens, `ui-button__label`, and the dense tier)
+> and the ADR-0001 canvas amendment. That is the intended loop: the consumer's
+> local classes are the backlog, resolving either to a deletion there or an
+> addition here.
+
 | Surface family | Current evidence | 1.0 disposition |
 | --- | --- | --- |
 | Core CSS, class recipes, vanilla behaviors, tokens, and Tailwind bridge | Downstream-proven across five inspected non-example app, site, and service consumers. | Stabilize names and behavior contracts. Use consumer upgrades as the release-candidate proof. |
 | Report, provenance, analytical CSS, annotations, glyphs, skins, workbench CSS, chart data, and Vega theme | Downstream-proven across four inspected report, site, dashboard, and tool consumers. | Keep opt-in. Stabilize the consumed paths; do not broaden the catalog during the freeze. |
 | Controlled non-`<dialog>` modal | Package-proven by stack, portal, late-node, focus, and cleanup regressions. None of ten inspected non-example consumers initializes `initModal`. | Deprecated in 0.7; remove no earlier than 0.8 unless a real consumer adopts it. Native `<dialog>` + `initDialog` is the stable path. |
 | React, Solid, Qwik, Svelte, and Vue lifecycle adapters | Package-proven by packed examples, types, and lifecycle tests. None of ten inspected non-example consumers imports an adapter entrypoint. | Deprecated in 0.7; remove no earlier than 0.8 unless a real consumer adopts one. Vanilla behaviors remain stable. |
-| Mermaid, D2, Shiki, Figma Variables, and the report-claims schema | Package-proven by generated-data, render, schema, and drift checks. No inspected non-example consumer currently supplies downstream proof for every path. | Keep compatible through 0.7.x, but decide each 1.0 contract from adoption evidence rather than generator coverage alone. |
+| Mermaid, D2, Shiki, Figma Variables, and the report-claims schema | Package-proven by generated-data, render, schema, and drift checks. No inspected non-example consumer currently supplies downstream proof for every path. | Keep compatible through 0.8.x, but decide each 1.0 contract from adoption evidence rather than generator coverage alone. |
 
 After 1.0, breaking changes move to majors. Until then, the table below is the
 current public-surface matrix and the release policy above still applies.

@@ -140,6 +140,24 @@ you change CSS `--accent` later.
   [ADR-0003](adr/0003-theme-model.md) for the theme-model rationale.
 - **Radius** — `--radius-sm … --radius-xl`, `--radius-pill`. The Nothing
   default is near-sharp; raise these for a softer brand.
+- **Tap targets** — `--tap-target` (44px, WCAG 2.5.5 / iOS HIG / Material) is
+  the floor every control floats to inside `@media (pointer: coarse)`;
+  `--tap-target-min` (24px) is the WCAG 2.5.8 AA minimum used by controls that
+  only have to clear the smaller bar. Both are authored as `max(px, rem)` on
+  purpose: they scale up with a larger root font but **cannot shrink below the
+  standard** if you re-point `html { font-size }`. If you override them, keep
+  the clamp — a bare rem is how a 44px floor quietly becomes 43.5px. Raise them
+  for a glove-friendly or kiosk build; do not lower them.
+- **Safe areas** — `--safe-area-top / -right / -bottom / -left` default to
+  `env(safe-area-inset-*, 0px)`, so they are 0 everywhere except a device with
+  a display cutout or a gesture bar. Every viewport-anchored surface Bronto
+  ships reads them: the app rail and topbar, a sticky site header, the skip
+  link, both toast stacks, the drawer modal and the lightbox. Override them
+  when your host supplies its own insets — an embedded webview, a kiosk frame,
+  or a test runner that cannot emulate `env()`, which is the reason the values
+  are indirected through custom properties rather than called at the point of
+  use. Consumers positioning their own floating chrome should follow the same
+  convention: `inset-block-end: max(<your offset>, var(--safe-area-bottom))`.
 - **Type** — `--display` (dot-matrix face), `--mono`, `--sans`. Override
   to drop Doto or swap the body face; the token layer keeps working even
   if you self-host fonts (see the `fonts.css` note in the README).

@@ -423,6 +423,53 @@
   padding: 0.85rem 1.4rem;
 }
 
+/* Dense — for bars whose HEIGHT is the constraint: a pane/node title bar, a
+   packed toolbar, a table row's actions. It lowers only the *visual* floor, to
+   the WCAG 2.5.8 minimum, and deliberately declares no coarse-pointer opinion:
+   the `@media (pointer: coarse)` block below matches at equal specificity and
+   later in the file, so it still floats a dense control to the full
+   `--tap-target`. Shrinking a control for a mouse therefore never shrinks it
+   for a finger — which is the reason this is a separate tier and not just a
+   smaller `--sm`. */
+.ui-button--dense {
+  gap: 0.25rem;
+  min-block-size: var(--tap-target-min);
+  min-inline-size: var(--tap-target-min);
+  padding: 0.2rem 0.35rem;
+}
+
+/* Keep the square icon well; padding is safe to raise specificity on because
+   it is not the tap floor. */
+.ui-button--dense.ui-button--icon {
+  padding: 0;
+}
+
+/* The label slot. An icon button still needs its words — for the accessible
+   name, and for the test/automation selector that reads the button by its
+   text — but not the pixels. Wrapping the text in this slot lets ONE markup
+   shape serve both: the button keeps a real text node, and `--icon` is what
+   decides whether it is painted. Without it, an icon-only button has to choose
+   between an empty accessible name and a title-bar-inflating word.
+
+   The hiding technique matches `.ui-visually-hidden` (base.css) rather than
+   `display: none`, which would take the text out of the accessible name too —
+   the exact opposite of the point. */
+.ui-button__label {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ui-button--icon .ui-button__label {
+  clip-path: inset(50%);
+  block-size: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  inline-size: 1px;
+}
+
 .ui-button:disabled,
 .ui-button[aria-disabled='true'] {
   cursor: not-allowed;
@@ -539,11 +586,11 @@
 /* Standalone CTA links are tap targets, not inline prose links: on a coarse
    pointer float them to the WCAG 2.5.8 AA 24px floor (the 2.5.8 inline-link
    exception doesn't cover a block-level call-to-action, which is what these
-   are). Buttons already auto-grow to ~44px on coarse pointers. */
+   are). Buttons already float to the full `--tap-target` on coarse pointers. */
 @media (pointer: coarse) {
   .ui-link--arrow,
   .ui-link--cta {
-    min-block-size: max(24px, 1.6rem);
+    min-block-size: var(--tap-target-min);
   }
 }
 
@@ -743,16 +790,23 @@
   }
 }
 
-/* --- Touch: comfortable hit targets on coarse pointers --- */
+/* --- Touch: comfortable hit targets on coarse pointers.
+
+   The floor is `--tap-target`, not a bare rem. Bronto's own base sets
+   `html { font-size: 0.9375rem }`, so the 2.9rem this family used to carry
+   resolved to 43.5px — half a pixel under the 44px WCAG 2.5.5 / platform-HIG
+   target, and under any host that shrinks the root further it drifted further
+   still. The token clamps in px against the rem so the standard holds however
+   the root is re-pointed. --- */
 
 @media (pointer: coarse) {
   .ui-button {
-    min-block-size: 2.9rem;
-    min-inline-size: 2.9rem;
+    min-block-size: var(--tap-target);
+    min-inline-size: var(--tap-target);
   }
 
   .ui-button--icon {
-    min-inline-size: 2.9rem;
+    min-inline-size: var(--tap-target);
   }
 }
 

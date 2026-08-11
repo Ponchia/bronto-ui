@@ -5,6 +5,86 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## 0.8.0 — 2026-08-11
+
+A single-consumer release. A full-surface audit of the largest downstream
+consumer — a Yjs-collaborative spatial canvas workspace with roughly ten
+thousand lines of its own CSS — found it using 26 of the 646 published classes
+and hand-rebuilding much of the rest. Everything here comes from what that
+consumer had to write because the framework did not provide it, or got wrong.
+
+### Fixed
+
+- **The coarse-pointer tap target was 43.5px, not 44px.** The floor was written
+  as a bare `2.9rem` at 23 sites across 8 stylesheets, and `css/base.css` sets
+  `html { font-size: 0.9375rem }` — so every control the framework floats on
+  touch landed half a pixel under WCAG 2.5.5 and both platform HIGs, and drifted
+  further under any host that shrank the root. Several comments asserted
+  "≈ 44px". Both floors are now published tokens clamped in px
+  (`--tap-target: max(44px, 2.9rem)`, `--tap-target-min: max(24px, 1.6rem)`) —
+  the same `max()` shape the 24px floor already used correctly in five places.
+  The e2e that should have caught this was derived from the token (`2.9 * rem`),
+  so it agreed with the bug; it now asserts the external 44px standard, and a
+  unit gate walks every `@media (pointer: coarse)` block and fails on any floor
+  written as a bare length. That gate immediately found one more:
+  `.ui-table__sort`.
+
+### Added
+
+- **`.ui-button__label`** — the label slot for icon buttons. Wrap a button's
+  text in it and `--icon` decides whether the words are painted; they stay in
+  the accessible name and in text-based test selectors either way. One markup
+  shape serves both the labelled and icon-only forms, and no `aria-label` can
+  drift out of sync with the visible wording. The slot also ellipsises rather
+  than wrapping, so a labelled button in a tight bar shrinks instead of pushing
+  its neighbours out. `ui.button()` is unchanged; `cls.buttonLabel` is new.
+- **`.ui-button--dense`** — a size tier for bars whose *height* is the
+  constraint (a pane title bar, a packed toolbar, a table row's actions). It
+  lowers only the visual floor, to `--tap-target-min`; the coarse-pointer block
+  still floats it to the full `--tap-target`, so a control shrunk for a mouse is
+  never shrunk for a finger. `ui.button({ size: 'dense' })`.
+- **Safe-area tokens** — `--safe-area-top / -right / -bottom / -left`, defaulting
+  to `env(safe-area-inset-*, 0px)`. The framework had **no** `env()` awareness
+  while shipping eight viewport-anchored surfaces; all eight now read them: the
+  app rail and topbar, a sticky site header, the skip link, both toast stacks,
+  the drawer modal and the lightbox. Every rule uses
+  `max(<authored>, var(--safe-area-*))`, so desktop rendering is unchanged. The
+  values are indirected through custom properties rather than called at the
+  point of use because `env()` cannot be emulated by a desktop test runner —
+  and because a host inside its own chrome (embedded webview, kiosk frame) needs
+  to declare the real insets.
+
+### Changed
+
+- **A colorway now owns the neutral canvas, not only the accent**
+  (ADR-0001 step 4, amended). "Amber CRT" used to leave the surface grey, which
+  is what drove the consumer to hand-write an amber canvas in raw hex — dark
+  theme only, outside OKLCH, outside the contrast gate, with `e-ink` silently
+  un-tinted. Each skin now re-points the ten `SKIN_CANVAS_TOKENS`, **derived
+  rather than picked**: every neutral keeps the core token's OKLCH *lightness*
+  exactly and moves only hue and a small role-scaled chroma. Contrast tracks
+  relative luminance, so the ratios are preserved by construction — and
+  `check-contrast` now widens a canvas-moving skin's audit from the accent
+  subset to the full 24-pair table, re-measuring all 21 gated pairings per skin
+  per theme rather than trusting the argument. `check-skins` rejects a partial
+  canvas and a one-theme-only canvas, the two shapes the hand-written version
+  had. Status colours stay locked: a warning must look like a warning in every
+  skin.
+- `docs/stability.md` records the audit and the correction it forces on this
+  project's adoption model: "no inspected consumer imports the surface" has been
+  measuring **discoverability, not demand**. Those thirteen zero-use primitives
+  were never rejected; they were never found. Non-adoption of a leaf the
+  consumer never imported is not evidence for retiring it at 1.0.
+
+### Notes
+
+- Anything that reads `tokens.dtcg.json` should know that six new scale tokens
+  are **deliberately absent** from it, listed in the root extension's
+  `omittedCssVariables`: the two tap-target floors are `max()` comparisons and
+  the four safe-area insets are `env()` reads, neither of which has a conforming
+  DTCG shape. `tokens.json` carries the authored CSS. This is the same treatment
+  `--shadow` and the em trackings already get.
+
 ## 0.7.0 — 2026-07-20
 
 A consumer-first contract-hardening release. Ten real applications and tools,

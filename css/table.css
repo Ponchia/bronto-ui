@@ -136,7 +136,7 @@
   .ui-table__sort {
     box-sizing: border-box;
     margin-block: -0.7rem;
-    min-block-size: 24px;
+    min-block-size: var(--tap-target-min);
     padding-block: 0.7rem;
   }
 

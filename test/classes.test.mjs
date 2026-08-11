@@ -87,6 +87,56 @@ test('recipes emit only registry classes', () => {
     ui.card({ accent: true, interactive: true }),
     'ui-card ui-card--accent ui-card--interactive',
   );
+  assert.equal(
+    ui.button({ icon: true, size: 'dense' }),
+    'ui-button ui-button--icon ui-button--dense',
+  );
+});
+
+// `--dense` works by NOT out-specifying the coarse-pointer floor: both are
+// single-class selectors, so the later one in the file wins and a dense control
+// still reaches --tap-target on touch. That is a source-ORDER contract, which is
+// invisible in the selector text and would break silently under a reorder or a
+// bumped specificity. Pin it.
+test('the dense tier never out-specifies the coarse-pointer tap floor', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { fileURLToPath } = await import('node:url');
+  const src = readFileSync(
+    fileURLToPath(new URL('../css/primitives.css', import.meta.url)),
+    'utf8',
+  );
+
+  const dense = src.indexOf('.ui-button--dense {');
+  const coarse = src.indexOf('@media (pointer: coarse)', dense);
+  assert.ok(dense > 0, '.ui-button--dense must exist');
+  assert.ok(coarse > dense, 'the coarse-pointer block must come AFTER .ui-button--dense');
+
+  // No compound selector may set a min-*-size on a dense button: at (0,2,0) it
+  // would beat the (0,1,0) coarse floor and shrink the target on touch.
+  const compound = /\.ui-button--dense\.[a-z-]+[^{]*\{([^}]*)\}/g;
+  for (const block of src.matchAll(compound)) {
+    assert.ok(
+      !/min-(?:block|inline)-size/.test(block[1]),
+      `compound dense selector must not set a tap floor:\n${block[0]}`,
+    );
+  }
+});
+
+// The label slot must hide by clipping, never by display/visibility — those
+// remove the text from the accessible name, which is the one thing the slot
+// exists to preserve.
+test('the icon-button label slot hides visually without leaving the a11y tree', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { fileURLToPath } = await import('node:url');
+  const src = readFileSync(
+    fileURLToPath(new URL('../css/primitives.css', import.meta.url)),
+    'utf8',
+  );
+  const rule = /\.ui-button--icon \.ui-button__label \{([^}]*)\}/.exec(src);
+  assert.ok(rule, '--icon must hide the label slot');
+  assert.match(rule[1], /clip-path:\s*inset\(50%\)/);
+  assert.doesNotMatch(rule[1], /display:\s*none/);
+  assert.doesNotMatch(rule[1], /visibility:\s*hidden/);
 });
 
 test('unknown option values are ignored, not emitted', () => {

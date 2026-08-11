@@ -25,6 +25,8 @@ export const cls = Object.freeze({
   buttonIcon: 'ui-button--icon',
   buttonSm: 'ui-button--sm',
   buttonLg: 'ui-button--lg',
+  buttonDense: 'ui-button--dense',
+  buttonLabel: 'ui-button__label',
   card: 'ui-card',
   cardHead: 'ui-card__head',
   cardAccent: 'ui-card--accent',
@@ -934,6 +936,7 @@ export const ui = {
       icon && cls.buttonIcon,
       size === 'sm' && cls.buttonSm,
       size === 'lg' && cls.buttonLg,
+      size === 'dense' && cls.buttonDense,
     ),
   card: ({ accent, interactive } = {}) =>
     j(cls.card, accent && cls.cardAccent, interactive && cls.cardInteractive),

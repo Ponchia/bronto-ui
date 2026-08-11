@@ -181,8 +181,18 @@ export function buildBundles() {
  *  pointer floors for compact breadcrumb/footer links (+1,121 B raw / +164 B
  *  gzip total versus 0.6.12). The 92,200 B / 15,850 B cap admits those two
  *  universal contracts while retaining only 171 B raw / 108 B gzip of
- *  deliberate headroom. */
-export const BUDGET = { raw: 92_200, gzip: 15_850 };
+ *  deliberate headroom.
+ *
+ *  0.8.0 spends +1,331 B raw / +152 B gzip on four consumer-driven contracts,
+ *  every one of them universal application chrome rather than catalog surface:
+ *  the tap-target and safe-area token declarations, the eight viewport-anchored
+ *  surfaces that now read the insets, the `.ui-button__label` slot, and the
+ *  `--dense` tier. The gzip cost is small because the additions are highly
+ *  repetitive `max(…, var(--safe-area-*))` calls. The 94,000 B / 16,200 B cap
+ *  admits them and restores ~470 B raw / ~200 B gzip of deliberate headroom —
+ *  the point of the budget is that the NEXT addition has to argue for itself
+ *  too, so keep the headroom small on purpose. */
+export const BUDGET = { raw: 94_000, gzip: 16_200 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };

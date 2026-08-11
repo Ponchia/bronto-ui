@@ -21,6 +21,8 @@ export declare const cls: {
   readonly buttonIcon: 'ui-button--icon';
   readonly buttonSm: 'ui-button--sm';
   readonly buttonLg: 'ui-button--lg';
+  readonly buttonDense: 'ui-button--dense';
+  readonly buttonLabel: 'ui-button__label';
   readonly card: 'ui-card';
   readonly cardHead: 'ui-card__head';
   readonly cardAccent: 'ui-card--accent';
@@ -666,7 +668,7 @@ export declare function cx(...parts: readonly ClassValue[]): string;
 export interface ButtonOpts {
   variant?: 'ghost' | 'subtle' | 'danger';
   icon?: boolean;
-  size?: 'sm' | 'lg';
+  size?: 'sm' | 'lg' | 'dense';
 }
 export interface CardOpts {
   accent?: boolean;

@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { skins, SKIN_NAMES } from '../tokens/skins.js';
+import { skins, SKIN_NAMES, SKIN_CANVAS_TOKENS } from '../tokens/skins.js';
+import { cssVars } from '../tokens/index.js';
+import { parseOklch, hexToRgb } from '../scripts/lib/oklch.mjs';
 import { ratio, apcaLc, auditSkins } from '../scripts/gen-contrast.mjs';
 import { buildResolved } from '../scripts/gen-resolved.mjs';
 import { generated as genSkins } from '../scripts/gen-skins.mjs';
@@ -68,6 +70,73 @@ test('skin contrast audit recomputes translucent accent tints from the skin acce
   assert.ok(tintRow, 'expected the neutral-on-accent-tint row');
   assert.match(tintRow.bv, /^rgba\(/);
   assert.notEqual(tintRow.bv, coreTint);
+});
+
+// The canvas amendment rests on ONE invariant: a skin neutral keeps its core
+// token's OKLCH lightness and moves only hue/chroma. That is what makes
+// "contrast is preserved by construction" true rather than lucky. check-contrast
+// proves the consequence (every pairing still clears its floor); this proves the
+// cause, so a future edit that darkens a surface to taste fails HERE, naming the
+// rule, instead of failing as a mystery ratio somewhere downstream.
+test('skin canvas neutrals preserve the core token lightness', () => {
+  // Relative luminance is what the WCAG ratio actually consumes; 0.5% of OKLCH
+  // L is well inside the rounding of the published 3-decimal values.
+  const TOLERANCE = 0.005;
+  for (const name of SKIN_NAMES) {
+    for (const theme of ['light', 'dark']) {
+      for (const token of SKIN_CANVAS_TOKENS) {
+        const authored = skins[name][theme][token];
+        assert.ok(authored, `${name}/${theme} must define ${token}`);
+        assert.match(authored, /^oklch\(/, `${name}/${theme} ${token} must be authored in OKLCH`);
+
+        const skinL = Number(/oklch\(\s*([\d.]+)%/.exec(authored)[1]) / 100;
+        const coreL = oklchLightness(cssVars[theme][token]);
+        assert.ok(
+          Math.abs(skinL - coreL) <= TOLERANCE,
+          `${name}/${theme} ${token}: L ${skinL} drifts from the core ${coreL} — a skin may ` +
+            `move hue and chroma, never lightness (ADR-0001 step 4, amended)`,
+        );
+      }
+    }
+  }
+});
+
+/** OKLCH L of a core hex token, via the same OKLab matrix the tooling uses. */
+function oklchLightness(hex) {
+  const [r, g, b] = hexToRgb(hex).map((c) => {
+    const s = c / 255;
+    return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  });
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+  const s2 = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  return 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s2;
+}
+
+// Status must survive every colorway: it is the one channel where colour IS the
+// meaning, and a skin that could re-point it could make a warning look calm.
+test('no skin re-points a status colour', () => {
+  const status = ['--success', '--warning', '--danger', '--info'];
+  for (const token of status) {
+    assert.ok(!SKIN_CANVAS_TOKENS.includes(token), `${token} must not be a canvas token`);
+    for (const name of SKIN_NAMES) {
+      for (const theme of ['light', 'dark']) {
+        assert.equal(
+          skins[name][theme][token],
+          undefined,
+          `${name}/${theme} must not set ${token}`,
+        );
+      }
+    }
+  }
+});
+
+test('every skin accent still parses as OKLCH', () => {
+  for (const name of SKIN_NAMES) {
+    for (const theme of ['light', 'dark']) {
+      assert.ok(parseOklch(skins[name][theme]['--accent']), `${name}/${theme}`);
+    }
+  }
 });
 
 test('generated css/skins.css is root-anchored and opt-in (no bare / descendant selector)', () => {

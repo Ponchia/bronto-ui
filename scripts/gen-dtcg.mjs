@@ -21,7 +21,23 @@ import { log } from './lib/stdio.mjs';
 
 const CSS_EXTENSION = 'com.ponchia.css';
 const fontFamilyTokens = new Set(['mono', 'sans', 'dot-font', 'display']);
-const omittedScaleTokens = new Set(['tracking-wide', 'tracking-wider']);
+const omittedScaleTokens = new Set([
+  'tracking-wide',
+  'tracking-wider',
+  // The tap-target floors are `max(px, rem)` comparisons. DTCG dimensions are a
+  // single number+unit pair and cannot express "whichever of these two is
+  // larger", so emitting one arm would silently drop the clamp that makes the
+  // floor survive a re-pointed root font size. Keep them in tokens.json.
+  'tap-target',
+  'tap-target-min',
+  // The safe-area insets are `env()` reads. Their value is supplied by the
+  // device at render time and has no static number to export; emitting the 0px
+  // fallback would publish a lie to any non-CSS consumer.
+  'safe-area-top',
+  'safe-area-right',
+  'safe-area-bottom',
+  'safe-area-left',
+]);
 const numeric = /^[-+]?(?:(?:\d+\.?\d*)|\.\d+)$/;
 const typedDimension = /^([-+]?(?:(?:\d+\.?\d*)|\.\d+))(px|rem)$/;
 const duration = /^([-+]?(?:(?:\d+\.?\d*)|\.\d+))(ms|s)$/;
@@ -79,8 +95,9 @@ function scaleToken(variable, value) {
     return { $type: 'number', $value: Number(value), $extensions: extensions };
   }
   // DTCG dimensions intentionally allow px/rem only; em tracking has no
-  // conforming scalar type. Keep it in tokens.json instead of fabricating a
-  // unitless number. Any other unhandled scale is a generator error.
+  // conforming scalar type, and a `max()` clamp has no conforming shape at all.
+  // Keep those in tokens.json instead of fabricating a value. Any other
+  // unhandled scale is a generator error.
   if (omittedScaleTokens.has(name)) return null;
   throw new Error(`Cannot convert ${variable}=${value} to a portable DTCG token`);
 }
@@ -132,7 +149,18 @@ export function buildDtcg() {
         format: 'DTCG 2025.10',
         source: 'tokens/index.js',
         rawCssArtifact: 'tokens.json',
-        omittedCssVariables: ['--tracking-wide', '--tracking-wider', '--shadow', '--shadow-raised'],
+        omittedCssVariables: [
+          '--tracking-wide',
+          '--tracking-wider',
+          '--shadow',
+          '--shadow-raised',
+          '--tap-target',
+          '--tap-target-min',
+          '--safe-area-top',
+          '--safe-area-right',
+          '--safe-area-bottom',
+          '--safe-area-left',
+        ],
       },
     },
     scale: group(resolved.scale, scaleToken),
