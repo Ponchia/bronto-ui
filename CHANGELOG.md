@@ -5,6 +5,86 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## 0.9.0 — 2026-08-11
+
+Two additions and one correction, all from the same source: migrating a
+downstream workbench onto 0.8.1 and watching where adoption stalled.
+
+### Added
+
+- **`.ui-row` — the dense selectable row, in the default bundle.** Every
+  workbench grows a list of these: a search result, a file in an explorer, an
+  outline entry, a backlink, a commit. Bronto already had the shape and it was
+  imprisoned — `.ui-menu__item` was exactly it, minus the persistence — so a
+  consumer building an explorer either claimed to be a menu or wrote the row
+  again. The one that migrated had **63 families of it, about 1,200 lines**,
+  each re-deciding the selected state, the hover, the ellipsis and the coarse
+  floor.
+
+  `__title` is the part that truncates and `__meta` is the part that does not;
+  that asymmetry is the contract. Selection reads `aria-selected` /
+  `aria-current` — the attributes a host already sets for assistive tech — so
+  the visual state cannot disagree with the announced one. `--stacked` for a
+  row with a snippet, `--ruled` for a list that reads as one object.
+
+  Selection: use **`aria-current`** for a row that is merely the current one —
+  that is the common case and valid anywhere. `aria-selected` is only legal on a
+  role that accepts it (`option` in a `listbox`, or `row`/`tab`/`gridcell`/
+  `treeitem`); on a bare `<button>` it is invalid ARIA and axe rates it
+  *critical*. This release's own demo shipped that mistake, three a11y specs
+  went red, and a new unit gate now catches the same class of error in
+  milliseconds rather than twenty minutes of browser matrix.
+
+  `min-inline-size: 0` is on the row itself and is not optional: a row is
+  usually a flex or grid item, whose automatic minimum is its min-content width,
+  and `__title` is `white-space: nowrap` — so without it a long title stops the
+  row shrinking and pushes its container past the viewport instead of
+  truncating. The demo proved that at 320/360/390px before release.
+
+  It is in **core**, unusually for a new surface, because `.ui-menu__item` now
+  composes it and a core component cannot depend on an opt-in leaf. It also
+  earns the roadmap's stronger argument for a core addition on two counts:
+  universal application chrome, and it *reduces duplicated core markup*. A unit
+  proof asserts the menu item does not restate what the row says, so the two
+  cannot drift back apart.
+
+### Changed
+
+- **`.ui-menu` no longer welds placement into the surface.** It used to declare
+  `position: absolute` plus a trigger-relative offset, so a menu opened at a
+  pointer — a canvas context menu, a long-press — could not use it at all, and
+  consumers re-declared the panel, border, radius and shadow to get a surface.
+  The dropdown placement is now `--dropdown` (unchanged behaviour, opted into)
+  and `--at-pointer` takes a menu out of flow for a host that computes its own
+  position.
+
+  **Migration:** add `ui-menu--dropdown` to an existing `ui-menu` inside a
+  `ui-menu-host`. Without it the surface renders in flow.
+
+### Fixed
+
+- **`data-density` claimed more than it does, and the guard could not tell.**
+  `docs/theming.md` said the preset applies "on any element". Measured: it
+  re-points the `--space-*` scale, so it reaches the ~40 components whose
+  padding is expressed in that scale and **none** of the rest — `ui-alert` and
+  `ui-menu__item` among them. The remaining paddings are tuned pairs like
+  `0.5rem 0.55rem` that a seven-step scale cannot express, so tokenising them
+  would change how they look at the default density; exactly one declaration in
+  the whole catalog mapped cleanly and was converted.
+
+  The docs now say which components respond and why the others cannot, and a
+  test pins the responding set. The previous guard checked that the preset
+  changed the token *family*, which is true and useless — it would have passed
+  with every component hardcoded. That is the third contract in three releases
+  whose gate validated the mechanism instead of the effect, after the 43.5px tap
+  floor and the shipped-docs list.
+
+### Notes
+
+- Bundle budget raised to 95,600 B / 16,400 B for `.ui-row` (+1,234 B raw /
+  +83 B gzip). The gzip cost is small because the new rules compress against the
+  menu rules they replaced.
+
 ## 0.8.1 — 2026-08-11
 
 A packaging fix, plus dependency hygiene. **No published CSS, token, class, or

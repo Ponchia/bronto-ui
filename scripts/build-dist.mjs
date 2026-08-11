@@ -191,8 +191,19 @@ export function buildBundles() {
  *  repetitive `max(…, var(--safe-area-*))` calls. The 94,000 B / 16,200 B cap
  *  admits them and restores ~470 B raw / ~200 B gzip of deliberate headroom —
  *  the point of the budget is that the NEXT addition has to argue for itself
- *  too, so keep the headroom small on purpose. */
-export const BUDGET = { raw: 94_000, gzip: 16_200 };
+ *  too, so keep the headroom small on purpose.
+ *
+ *  0.9.0 spends +1,234 B raw / +83 B gzip on `.ui-row`, and this one is a CORE
+ *  addition rather than a leaf, which needs the stronger argument the roadmap
+ *  asks for. It has two of the three: it is universal application chrome — every
+ *  workbench grows a list of dense selectable rows — and it REDUCES duplicated
+ *  core markup, because `.ui-menu__item` was already that shape and now composes
+ *  it instead of restating it. The evidence is a downstream workbench carrying
+ *  SIXTY-THREE families of the same row, about 1,200 lines, each re-deciding the
+ *  selected state, the hover, the ellipsis and the coarse floor. The gzip cost is
+ *  small precisely because the new rules compress against the menu rules they
+ *  replaced. 95,600 B / 16,400 B leaves ~370 B raw / ~120 B gzip of headroom. */
+export const BUDGET = { raw: 95_600, gzip: 16_400 };
 
 export function sizes(content) {
   return { raw: Buffer.byteLength(content), gzip: gzipSync(content).length };

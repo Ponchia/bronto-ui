@@ -30,6 +30,9 @@ export const CORE_BUNDLE = new Set([
   'site',
   'content',
   'primitives',
+  // A dense selectable row. In core because .ui-menu__item composes it, so a
+  // core component would otherwise depend on an opt-in leaf (0.9.0).
+  'row',
   'forms',
   'feedback',
   'overlay',

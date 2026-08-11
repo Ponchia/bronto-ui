@@ -130,6 +130,22 @@ you change CSS `--accent` later.
 - **Spacing** — override the `--space-2xs … --space-2xl` scale, or use a
   preset: `data-density="compact"` / `data-density="comfortable"` on any
   element (defaults to the middle scale).
+
+  **Read this before relying on the preset.** It re-points the `--space-*`
+  scale, and only components whose padding is *expressed in that scale* move
+  with it — around 40 of them, including `ui-panel`, `ui-modal__body`,
+  `ui-evidence-item`, `ui-claim`, `ui-job`, `ui-code__body` and the report
+  surfaces. The rest carry tuned padding pairs like `0.5rem 0.55rem`, which the
+  seven-step scale cannot express, so **they do not respond at all** —
+  `ui-alert` and `ui-menu__item` are the two most likely to surprise you.
+
+  That is a real limit, not an oversight to work around: flattening a tuned pair
+  onto the nearest scale step would change how those components look at the
+  default density, which is the one nearly everyone uses. If you need a denser
+  variant of a component that does not respond, override its padding directly —
+  and if you find yourself doing that repeatedly for the same component, that is
+  worth reporting, because it is evidence for a real `--dense` modifier rather
+  than a preset that half-works.
 - **Dark surface** — the dark theme's base is a deliberately *elevated*
   near-black (`--bg: #121212`) for readability: pure black + bright text
   causes halation, and near-black-on-black surface steps are imperceptible.

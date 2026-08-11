@@ -186,6 +186,48 @@ a `.ui-legend` key, and fallback data. Full LLM/static report cookbook:
   spinner is CSS. This is the ARIA-driven contract — see reference.md
   → "Composition & state".
 
+## Rows: `ui-row` vs table vs menu item
+
+Three shapes look alike and are not interchangeable:
+
+- **`ui-table`** when the data has columns and a header. A table promises that
+  the third cell means the same thing on every line.
+- **`ui-menu__item`** when the list is a menu: it dismisses on choice, and it is
+  reached through `ui-menu-host`.
+- **`ui-row`** for everything else — a search result, a file in an explorer, an
+  outline entry, a backlink, a commit. A full-width clickable line that
+  *persists*.
+
+```html
+<button class="ui-row ui-row--ruled" type="button" aria-current="true">
+  <span class="ui-row__mark" aria-hidden="true">◆</span>
+  <span class="ui-row__title">apps/server/src/collab/room.ts</span>
+  <span class="ui-row__meta">4m</span>
+</button>
+```
+
+The one rule worth knowing: **`__title` is what truncates.** It takes the slack
+and gives it back first; `__meta` never shrinks, because a half-rendered number
+is worse than no number.
+
+**Pick the right attribute, and it is probably not `aria-selected`.** That one
+is only valid on a row whose role accepts it — `option` inside a `listbox`, or
+`row` / `tab` / `gridcell` / `treeitem`. On a bare `<button>` it is invalid ARIA
+and axe rates it *critical*; this project shipped that mistake in its own demo
+and the a11y gate caught it before release.
+
+- `aria-current="true"` — the row is the current one. The common case, and valid
+  on any element.
+- `aria-selected="true"` — only when the row really is an `option` in a
+  `listbox`, or another role that accepts it.
+- `.is-selected` — when neither fits.
+
+All three paint the same, so the visual state cannot disagree with the announced
+one. Rows carrying a severity should use `ui-severity-row` (`css/state.css`)
+instead, which adds the tone gutter.
+
+`ui-menu__item` composes `ui-row`, which is why they cannot drift.
+
 ## Empty state vs invite
 
 Both use `ui-empty-state`, and the slots are the same three parts — a quiet
