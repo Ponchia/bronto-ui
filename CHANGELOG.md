@@ -13,6 +13,27 @@ thousand lines of its own CSS — found it using 26 of the 646 published classes
 and hand-rebuilding much of the rest. Everything here comes from what that
 consumer had to write because the framework did not provide it, or got wrong.
 
+### BREAKING
+
+- **A colorway now re-points the neutral canvas, so every skinned surface
+  changes appearance.** No class, token, attribute, or export was removed or
+  renamed, and `bronto-ui-check` will report nothing — the break is *visual*,
+  which is why it is called out here rather than left in Changed. Until 0.7,
+  `data-bronto-skin` moved `--accent` and nothing else, and ADR-0001 step 4 said
+  so explicitly; a consumer could reasonably have relied on the canvas staying
+  neutral. From 0.8 the ten `SKIN_CANVAS_TOKENS` (`--bg`, `--bg-elevated`,
+  `--panel`, `--panel-strong`, `--panel-soft`, `--line`, `--line-strong`,
+  `--text`, `--text-soft`, `--text-dim`) are re-pointed per skin per theme.
+  - **If you want the old look**, re-declare those ten tokens after the skin
+    import; they are ordinary custom properties on `:root[data-bronto-skin=…]`
+    and un-layered app CSS wins.
+  - **If you already hand-wrote a canvas** for a skin — the case this change
+    exists to serve — delete it and check the result; yours was almost certainly
+    not contrast-gated, and this one is.
+  - **Contrast is not a regression risk.** Each neutral keeps the core token's
+    OKLCH lightness exactly, and `check-contrast` re-measures all 21 gated
+    pairings per skin per theme. Status colours are untouched by design.
+
 ### Fixed
 
 - **The coarse-pointer tap target was 43.5px, not 44px.** The floor was written
@@ -56,20 +77,14 @@ consumer had to write because the framework did not provide it, or got wrong.
 
 ### Changed
 
-- **A colorway now owns the neutral canvas, not only the accent**
-  (ADR-0001 step 4, amended). "Amber CRT" used to leave the surface grey, which
-  is what drove the consumer to hand-write an amber canvas in raw hex — dark
-  theme only, outside OKLCH, outside the contrast gate, with `e-ink` silently
-  un-tinted. Each skin now re-points the ten `SKIN_CANVAS_TOKENS`, **derived
-  rather than picked**: every neutral keeps the core token's OKLCH *lightness*
-  exactly and moves only hue and a small role-scaled chroma. Contrast tracks
-  relative luminance, so the ratios are preserved by construction — and
-  `check-contrast` now widens a canvas-moving skin's audit from the accent
-  subset to the full 24-pair table, re-measuring all 21 gated pairings per skin
-  per theme rather than trusting the argument. `check-skins` rejects a partial
-  canvas and a one-theme-only canvas, the two shapes the hand-written version
-  had. Status colours stay locked: a warning must look like a warning in every
-  skin.
+- **ADR-0001 step 4 amended** to permit the canvas re-point above (see
+  BREAKING). "Amber CRT" used to leave the surface grey, which is what drove the
+  consumer to hand-write an amber canvas in raw hex — dark theme only, outside
+  OKLCH, outside the contrast gate, with `e-ink` silently un-tinted. The canvas
+  is **derived rather than picked**: every neutral keeps the core token's OKLCH
+  *lightness* exactly and moves only hue and a small role-scaled chroma.
+  `check-skins` now rejects a partial canvas and a one-theme-only canvas, the
+  two shapes the hand-written version had.
 - `docs/stability.md` records the audit and the correction it forces on this
   project's adoption model: "no inspected consumer imports the surface" has been
   measuring **discoverability, not demand**. Those thirteen zero-use primitives

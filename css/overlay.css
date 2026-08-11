@@ -152,10 +152,12 @@ html:has(.ui-modal.is-open) {
 
   /* Full-height by design, so the panel's edges are the screen's edges: its
      surface should still reach them, but its content must clear the cutout and
-     the home indicator. Pad, don't shrink. */
-  padding-block: max(var(--space-md), var(--safe-area-top))
-    max(var(--space-md), var(--safe-area-bottom));
-  padding-inline-end: max(var(--space-md), var(--safe-area-right));
+     the home indicator. Add the INSET ONLY — `.ui-modal` is deliberately
+     `padding: 0` (its head/body parts own their spacing), so a `max(space, …)`
+     floor here would silently pad the drawer on every device, not just a
+     notched one. */
+  padding-block: var(--safe-area-top) var(--safe-area-bottom);
+  padding-inline-end: var(--safe-area-right);
   border-radius: 0;
   border-width: 0;
   border-inline-start-width: 1px;
