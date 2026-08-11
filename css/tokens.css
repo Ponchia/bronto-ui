@@ -25,6 +25,12 @@
   --space-lg: 1.35rem;
   --space-xl: 1.75rem;
   --space-2xl: 2.5rem;
+  --tap-target: max(44px, 2.9rem);
+  --tap-target-min: max(24px, 1.6rem);
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
 
   /* Type — Doto is the dot-matrix display face; body stays mono-grotesque. */
   --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', ui-monospace, monospace;

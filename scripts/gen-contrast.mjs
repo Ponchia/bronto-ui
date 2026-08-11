@@ -21,7 +21,7 @@
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { buildResolved } from './gen-resolved.mjs';
-import { skins, SKIN_NAMES } from '../tokens/skins.js';
+import { skins, SKIN_NAMES, SKIN_CANVAS_TOKENS } from '../tokens/skins.js';
 import { charts } from '../tokens/charts.js';
 import { resolveColor } from './gen-charts.mjs';
 import { parseCssColor, srgbToLinear } from './lib/oklch.mjs';
@@ -106,18 +106,27 @@ export function apcaLc(fgRaw, bgRaw, baseRaw) {
 }
 
 /**
- * Build a skin's accent family over a base (resolved) palette — re-pointing
- * `--accent` to the skin's (oklch) value and recomputing the derived accent
- * family exactly like css/tokens.css (`--accent-text`/strong plus the soft
- * translucent tints). `--focus-ring` follows `--accent`. Everything else
- * (canvas, status) is the base palette.
+ * Build a skin's palette over the base (resolved) one — re-pointing `--accent`
+ * to the skin's (oklch) value, applying whatever canvas tokens the skin
+ * declares, and recomputing the derived accent family exactly like
+ * css/tokens.css (`--accent-text`/strong plus the soft translucent tints).
+ * `--focus-ring` follows `--accent`. Status colours are always the base
+ * palette: a warning must look like a warning in every skin.
+ *
+ * The canvas overrides are applied BEFORE the derived family, so the tints that
+ * composite over a surface (`--accent-soft`, `--bg-accent`) are measured
+ * against the skin's real surface rather than the core grey.
  */
 function skinPalette(name, theme, base) {
   const accent = skins[name][theme]['--accent'];
   const isLight = theme === 'light';
   const strong = mixSrgb(accent, isLight ? '#000000' : '#ffffff', isLight ? 83 : 80);
+  const canvas = Object.fromEntries(
+    SKIN_CANVAS_TOKENS.filter((t) => skins[name][theme][t]).map((t) => [t, skins[name][theme][t]]),
+  );
   return {
     ...base,
+    ...canvas,
     '--accent': accent,
     '--accent-strong': strong,
     '--accent-text': strong,
@@ -237,12 +246,19 @@ function contrastMetrics(values) {
   };
 }
 
-// The accent-touching subset of PAIRS — what a colorway can move (it only
-// re-points the accent; canvas + status are unchanged, so re-auditing them
-// would just re-report the core result).
-const SKIN_PAIRS = PAIRS.filter(([fg, bg]) =>
+// The accent-touching subset of PAIRS — enough for a colorway that only
+// re-points the accent, since re-auditing an unchanged canvas would just
+// re-report the core result.
+const SKIN_ACCENT_PAIRS = PAIRS.filter(([fg, bg]) =>
   [fg, bg].some((t) => /(^--accent|accent-text|button-text|focus-ring)/.test(t)),
 );
+
+/** A skin that re-points the canvas has moved the ground under EVERY pairing,
+ *  including text-on-surface and line-on-surface, so it gets the full table.
+ *  This is what turns "holding OKLCH lightness preserves contrast" from a claim
+ *  in tokens/skins.js into something proven on every run. */
+const skinPairs = (name, theme) =>
+  SKIN_CANVAS_TOKENS.some((t) => skins[name][theme][t]) ? PAIRS : SKIN_ACCENT_PAIRS;
 
 /** Audit every shipped colorway (both themes) — same floors as the core. */
 export function auditSkins(resolved) {
@@ -253,7 +269,7 @@ export function auditSkins(resolved) {
         name,
         label: skins[name].label,
         theme,
-        rows: auditTheme(skinPalette(name, theme, resolved[theme]), SKIN_PAIRS),
+        rows: auditTheme(skinPalette(name, theme, resolved[theme]), skinPairs(name, theme)),
       });
     }
   }

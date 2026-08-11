@@ -25,6 +25,8 @@ export const cls = Object.freeze({
   buttonIcon: 'ui-button--icon',
   buttonSm: 'ui-button--sm',
   buttonLg: 'ui-button--lg',
+  buttonDense: 'ui-button--dense',
+  buttonLabel: 'ui-button__label',
   card: 'ui-card',
   cardHead: 'ui-card__head',
   cardAccent: 'ui-card--accent',
@@ -58,6 +60,10 @@ export const cls = Object.freeze({
   linkCta: 'ui-link--cta',
   keyValue: 'ui-key-value',
   emptyState: 'ui-empty-state',
+  emptyStateInvite: 'ui-empty-state--invite',
+  emptyStateGlyph: 'ui-empty-state__glyph',
+  emptyStateLead: 'ui-empty-state__lead',
+  emptyStateHint: 'ui-empty-state__hint',
   // dots
   dot: 'ui-dot',
   dotAccent: 'ui-dot--accent',
@@ -597,6 +603,12 @@ export const cls = Object.freeze({
   jobBlocked: 'ui-job--blocked',
   jobFailed: 'ui-job--failed',
   jobComplete: 'ui-job--complete',
+  // severity ladder — the second axis of state (css/state.css)
+  severity: 'ui-severity',
+  severityDot: 'ui-severity-dot',
+  severityRow: 'ui-severity-row',
+  severityRowTitle: 'ui-severity-row__title',
+  severityRowMeta: 'ui-severity-row__meta',
   // generated content / AI-trust surfaces (css/generated.css)
   generated: 'ui-generated',
   generatedLabel: 'ui-generated__label',
@@ -616,11 +628,22 @@ export const cls = Object.freeze({
   toolstrip: 'ui-toolstrip',
   toolstripFloating: 'ui-toolstrip--floating',
   toolstripCompact: 'ui-toolstrip--compact',
+  toolstripPane: 'ui-toolstrip--pane',
+  toolstripAnchored: 'ui-toolstrip--anchored',
+  toolstripAnchorBlockStart: 'ui-toolstrip--anchor-block-start',
+  toolstripAnchorBlockEnd: 'ui-toolstrip--anchor-block-end',
   toolstripBrand: 'ui-toolstrip__brand',
   toolstripContext: 'ui-toolstrip__context',
   toolstripGroup: 'ui-toolstrip__group',
   toolstripActions: 'ui-toolstrip__actions',
+  toolstripFill: 'ui-toolstrip__fill',
   toolstripSearch: 'ui-toolstrip__search',
+  pane: 'ui-pane',
+  paneHead: 'ui-pane__head',
+  paneTitle: 'ui-pane__title',
+  paneTitleInput: 'ui-pane__title-input',
+  paneActions: 'ui-pane__actions',
+  paneBody: 'ui-pane__body',
   segmentedButtons: 'ui-segmented-buttons',
   segmentedButtonsButton: 'ui-segmented-buttons__button',
   property: 'ui-property',
@@ -629,6 +652,9 @@ export const cls = Object.freeze({
   selectionbar: 'ui-selectionbar',
   selectionbarCount: 'ui-selectionbar__count',
   selectionbarActions: 'ui-selectionbar__actions',
+  selectionbarAnchored: 'ui-selectionbar--anchored',
+  selectionbarAnchorBlockStart: 'ui-selectionbar--anchor-block-start',
+  selectionbarAnchorBlockEnd: 'ui-selectionbar--anchor-block-end',
   splitter: 'ui-splitter',
   splitterVertical: 'ui-splitter--vertical',
   splitterHorizontal: 'ui-splitter--horizontal',
@@ -934,6 +960,7 @@ export const ui = {
       icon && cls.buttonIcon,
       size === 'sm' && cls.buttonSm,
       size === 'lg' && cls.buttonLg,
+      size === 'dense' && cls.buttonDense,
     ),
   card: ({ accent, interactive } = {}) =>
     j(cls.card, accent && cls.cardAccent, interactive && cls.cardInteractive),
@@ -1092,7 +1119,40 @@ export const ui = {
   state: ({ state, busy } = {}) => j(cls.state, stateTone(state), busy && cls.stateBusy),
   job: ({ state, compact } = {}) => j(cls.job, jobTone(state), compact && cls.jobCompact),
   originLabel: ({ ai } = {}) => j(cls.originLabel, ai && cls.originLabelAi),
+  emptyState: ({ invite } = {}) => j(cls.emptyState, invite && cls.emptyStateInvite),
+  toolstrip: ({ variant, anchor } = {}) =>
+    j(
+      cls.toolstrip,
+      variant === 'floating' && cls.toolstripFloating,
+      variant === 'compact' && cls.toolstripCompact,
+      variant === 'pane' && cls.toolstripPane,
+      anchor && cls.toolstripAnchored,
+      anchor === 'block-start' && cls.toolstripAnchorBlockStart,
+      anchor === 'block-end' && cls.toolstripAnchorBlockEnd,
+    ),
+  selectionbar: ({ anchor } = {}) =>
+    j(
+      cls.selectionbar,
+      anchor && cls.selectionbarAnchored,
+      anchor === 'block-start' && cls.selectionbarAnchorBlockStart,
+      anchor === 'block-end' && cls.selectionbarAnchorBlockEnd,
+    ),
 };
+
+/** The canonical severity ladder, worst to best. `unknown` is deliberately NOT
+ *  in the ordering — it means "not measured", not "nearly ok", and sorting it
+ *  next to `ok` is how a dead collector reads as a healthy system. Exported as
+ *  data so a host can drive filters and sorts from the same list the CSS
+ *  paints, instead of re-typing the tiers. */
+export const SEVERITY_LEVELS = Object.freeze(['critical', 'error', 'warning', 'notice', 'ok']);
+
+/** `data-level` + the severity class, bundled so the attribute that carries the
+ *  meaning cannot be forgotten — the class alone paints the neutral tone and
+ *  silently loses the level. Unknown/absent levels resolve to `unknown`. */
+export const severity = (level, { part = 'chip' } = {}) => ({
+  class: part === 'dot' ? cls.severityDot : part === 'row' ? cls.severityRow : cls.severity,
+  'data-level': SEVERITY_LEVELS.includes(level) ? level : 'unknown',
+});
 
 // Attribute + style bundle for the data-bearing fills (`ui-meter`/`ui-progress`).
 // The class string alone paints a 0-width, unannounced bar: the fill width is a

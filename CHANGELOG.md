@@ -5,6 +5,139 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## 0.8.0 — 2026-08-11
+
+A single-consumer release. A full-surface audit of the largest downstream
+consumer — a Yjs-collaborative spatial canvas workspace with roughly ten
+thousand lines of its own CSS — found it using 26 of the 646 published classes
+and hand-rebuilding much of the rest. Everything here comes from what that
+consumer had to write because the framework did not provide it, or got wrong.
+
+### BREAKING
+
+- **A colorway now re-points the neutral canvas, so every skinned surface
+  changes appearance.** No class, token, attribute, or export was removed or
+  renamed, and `bronto-ui-check` will report nothing — the break is *visual*,
+  which is why it is called out here rather than left in Changed. Until 0.7,
+  `data-bronto-skin` moved `--accent` and nothing else, and ADR-0001 step 4 said
+  so explicitly; a consumer could reasonably have relied on the canvas staying
+  neutral. From 0.8 the ten `SKIN_CANVAS_TOKENS` (`--bg`, `--bg-elevated`,
+  `--panel`, `--panel-strong`, `--panel-soft`, `--line`, `--line-strong`,
+  `--text`, `--text-soft`, `--text-dim`) are re-pointed per skin per theme.
+  - **If you want the old look**, re-declare those ten tokens after the skin
+    import; they are ordinary custom properties on `:root[data-bronto-skin=…]`
+    and un-layered app CSS wins.
+  - **If you already hand-wrote a canvas** for a skin — the case this change
+    exists to serve — delete it and check the result; yours was almost certainly
+    not contrast-gated, and this one is.
+  - **Contrast is not a regression risk.** Each neutral keeps the core token's
+    OKLCH lightness exactly, and `check-contrast` re-measures all 21 gated
+    pairings per skin per theme. Status colours are untouched by design.
+
+### Fixed
+
+- **The coarse-pointer tap target was 43.5px, not 44px.** The floor was written
+  as a bare `2.9rem` at 23 sites across 8 stylesheets, and `css/base.css` sets
+  `html { font-size: 0.9375rem }` — so every control the framework floats on
+  touch landed half a pixel under WCAG 2.5.5 and both platform HIGs, and drifted
+  further under any host that shrank the root. Several comments asserted
+  "≈ 44px". Both floors are now published tokens clamped in px
+  (`--tap-target: max(44px, 2.9rem)`, `--tap-target-min: max(24px, 1.6rem)`) —
+  the same `max()` shape the 24px floor already used correctly in five places.
+  The e2e that should have caught this was derived from the token (`2.9 * rem`),
+  so it agreed with the bug; it now asserts the external 44px standard, and a
+  unit gate walks every `@media (pointer: coarse)` block and fails on any floor
+  written as a bare length. That gate immediately found one more:
+  `.ui-table__sort`.
+
+### Added
+
+- **`.ui-button__label`** — the label slot for icon buttons. Wrap a button's
+  text in it and `--icon` decides whether the words are painted; they stay in
+  the accessible name and in text-based test selectors either way. One markup
+  shape serves both the labelled and icon-only forms, and no `aria-label` can
+  drift out of sync with the visible wording. The slot also ellipsises rather
+  than wrapping, so a labelled button in a tight bar shrinks instead of pushing
+  its neighbours out. `ui.button()` is unchanged; `cls.buttonLabel` is new.
+- **`.ui-button--dense`** — a size tier for bars whose *height* is the
+  constraint (a pane title bar, a packed toolbar, a table row's actions). It
+  lowers only the visual floor, to `--tap-target-min`; the coarse-pointer block
+  still floats it to the full `--tap-target`, so a control shrunk for a mouse is
+  never shrunk for a finger. `ui.button({ size: 'dense' })`.
+- **A canonical severity ladder** (`css/state.css`, opt-in). Bronto shipped the
+  *tones* long ago but never the *scale* — the tier names, their order, and the
+  attribute carrying them — so every consumer invented the ladder and it drifted
+  inside a single app: one surface saying `critical|error|warning|note`, the
+  next `bad|warn`, a third `critical|warning|info|ok`, under two different
+  attribute names, so findings did not sort against alerts. The ladder is
+  `critical` › `error` › `warning` › `notice` › `ok`, carried on **one**
+  attribute (`data-level`) across `.ui-severity`, `.ui-severity-dot` and
+  `.ui-severity-row`, with `SEVERITY_LEVELS` and `severity()` exported so a host
+  drives filters and sorts from the same list the CSS paints. `unknown` sits
+  deliberately *outside* the ordering: it means "not measured", and collapsing
+  it into `ok` is how a dead collector reads as a healthy system.
+- **`.ui-pane`** (`css/workbench.css`, opt-in) — the window that `.ui-panel`
+  (a padded card) and `.ui-inspector` (head plus body) are not: a grab header,
+  a title that renames in place via `__title-input` without moving layout, and
+  an `__actions` slot that **scrolls rather than pushing** its last control past
+  the pane's clipped edge — the failure that leaves a Focus or Disconnect button
+  present, in the a11y tree, and unreachable.
+- **`.ui-toolstrip--pane`** — the app has one toolstrip; a workbench full of
+  panes has one *per pane*, and those need different framing (no frame of their
+  own, a rule against the content below) and must not wrap, since a second row
+  would resize live content on every state change. `.ui-toolstrip__fill` marks
+  the element that absorbs slack and gives it back first.
+- **`--anchored` / `--anchor-block-start` / `--anchor-block-end`** on
+  `.ui-selectionbar` and `.ui-toolstrip`. Both `--floating` bars were raised but
+  position-less, so every consumer re-derived the placement — including the
+  `max(offset, inset)` shape that keeps a bar out from under the home indicator.
+- **Empty-state slots and an invite variant.** `.ui-empty-state` was a dashed
+  box that styled a `<p>`, so every empty surface in an app re-invented the same
+  three parts under a different name and they drifted. `__glyph` / `__lead` /
+  `__hint` name them, and `--invite` is the different job: an empty state
+  *reports absence*, an invite *offers the next action*, so it drops the dashed
+  frame and centres in the space it is given.
+- **Safe-area tokens** — `--safe-area-top / -right / -bottom / -left`, defaulting
+  to `env(safe-area-inset-*, 0px)`. The framework had **no** `env()` awareness
+  while shipping eight viewport-anchored surfaces; all eight now read them: the
+  app rail and topbar, a sticky site header, the skip link, both toast stacks,
+  the drawer modal and the lightbox. Every rule uses
+  `max(<authored>, var(--safe-area-*))`, so desktop rendering is unchanged. The
+  values are indirected through custom properties rather than called at the
+  point of use because `env()` cannot be emulated by a desktop test runner —
+  and because a host inside its own chrome (embedded webview, kiosk frame) needs
+  to declare the real insets.
+
+### Changed
+
+- **ADR-0001 step 4 amended** to permit the canvas re-point above (see
+  BREAKING). "Amber CRT" used to leave the surface grey, which is what drove the
+  consumer to hand-write an amber canvas in raw hex — dark theme only, outside
+  OKLCH, outside the contrast gate, with `e-ink` silently un-tinted. The canvas
+  is **derived rather than picked**: every neutral keeps the core token's OKLCH
+  *lightness* exactly and moves only hue and a small role-scaled chroma.
+  `check-skins` now rejects a partial canvas and a one-theme-only canvas, the
+  two shapes the hand-written version had.
+- **`check:recipe-types` no longer mis-attributes options.** It sliced the
+  factory body to end-of-file, so the *last* recipe's chunk swallowed everything
+  declared after the `ui` object — an unrelated helper exported below it had its
+  string branches blamed on whichever recipe happened to be last. It now stops
+  at the object's own closing brace.
+- `docs/stability.md` records the audit and the correction it forces on this
+  project's adoption model: "no inspected consumer imports the surface" has been
+  measuring **discoverability, not demand**. Those thirteen zero-use primitives
+  were never rejected; they were never found. Non-adoption of a leaf the
+  consumer never imported is not evidence for retiring it at 1.0.
+
+### Notes
+
+- Anything that reads `tokens.dtcg.json` should know that six new scale tokens
+  are **deliberately absent** from it, listed in the root extension's
+  `omittedCssVariables`: the two tap-target floors are `max()` comparisons and
+  the four safe-area insets are `env()` reads, neither of which has a conforming
+  DTCG shape. `tokens.json` carries the authored CSS. This is the same treatment
+  `--shadow` and the em trackings already get.
+
 ## 0.7.0 — 2026-07-20
 
 A consumer-first contract-hardening release. Ten real applications and tools,

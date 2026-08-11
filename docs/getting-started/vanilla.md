@@ -73,15 +73,15 @@ no `node_modules`, no bundler:
       if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
     } catch (e) {}
   </script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.7.0/dist/bronto.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.8.0/dist/bronto.css" />
 
   <!-- map the subpaths so `import … from '@ponchia/ui/…'` resolves on the CDN -->
   <script type="importmap">
     {
       "imports": {
-        "@ponchia/ui/behaviors": "https://esm.sh/@ponchia/ui@0.7.0/behaviors",
-        "@ponchia/ui/glyphs": "https://esm.sh/@ponchia/ui@0.7.0/glyphs",
-        "@ponchia/ui/classes": "https://esm.sh/@ponchia/ui@0.7.0/classes"
+        "@ponchia/ui/behaviors": "https://esm.sh/@ponchia/ui@0.8.0/behaviors",
+        "@ponchia/ui/glyphs": "https://esm.sh/@ponchia/ui@0.8.0/glyphs",
+        "@ponchia/ui/classes": "https://esm.sh/@ponchia/ui@0.8.0/classes"
       }
     }
   </script>
@@ -99,7 +99,7 @@ no `node_modules`, no bundler:
 </body>
 ```
 
-Pin a version in the URLs (`@ponchia/ui@0.7.0`) for production so a new
+Pin a version in the URLs (`@ponchia/ui@0.8.0`) for production so a new
 release can't shift under you.
 
 ## Theme without the module

@@ -33,6 +33,29 @@ export const cssVars = {
     '--space-lg': '1.35rem',
     '--space-xl': '1.75rem',
     '--space-2xl': '2.5rem',
+    // Tap targets. Both floors are clamped in px against the rem so they cannot
+    // shrink below the standard when a host re-points the root font size —
+    // Bronto's own base sets `html { font-size: 0.9375rem }`, under which a bare
+    // 2.9rem is 43.5px, half a pixel short of the target floor.
+    // `--tap-target` is the WCAG 2.5.5 (AAA) / iOS-HIG / Material 44px target
+    // every coarse-pointer control floats to. `--tap-target-min` is the WCAG
+    // 2.5.8 (AA) 24px minimum, for controls that only have to clear the smaller
+    // bar (standalone CTA links, disclosure carets).
+    '--tap-target': 'max(44px, 2.9rem)',
+    '--tap-target-min': 'max(24px, 1.6rem)',
+    // Display cutouts and system gesture areas. Every viewport-anchored surface
+    // Bronto ships — the app rail and topbar, a sticky site header, the skip
+    // link, the toast stacks, the drawer and the lightbox — reads these instead
+    // of calling env() at the point of use. The indirection is the point: env()
+    // cannot be emulated by a desktop browser runner, so routing every inset
+    // through an overrideable custom property is what makes full-bleed framing
+    // testable, and what lets a host running inside its own chrome (an embedded
+    // webview, a kiosk frame) declare the real insets. They resolve to 0px off
+    // a notched device, so every consuming rule is a no-op on desktop.
+    '--safe-area-top': 'env(safe-area-inset-top, 0px)',
+    '--safe-area-right': 'env(safe-area-inset-right, 0px)',
+    '--safe-area-bottom': 'env(safe-area-inset-bottom, 0px)',
+    '--safe-area-left': 'env(safe-area-inset-left, 0px)',
     '--mono': "'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', ui-monospace, monospace",
     '--sans':
       "'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",

@@ -130,9 +130,12 @@
   display: grid;
   gap: 0.5rem;
 
-  /* Logical so the stack anchors bottom inline-end and mirrors in RTL. */
-  inset-block: auto 1.25rem;
-  inset-inline: auto 1.25rem;
+  /* Logical so the stack anchors bottom inline-end and mirrors in RTL. The
+     bottom offset clears the home-indicator gesture area: a toast landing there
+     is both hard to read and hard to dismiss, because the system swallows the
+     swipe. `max()` leaves the desktop offset untouched. */
+  inset-block: auto max(1.25rem, var(--safe-area-bottom));
+  inset-inline: auto max(1.25rem, var(--safe-area-right));
   justify-items: end;
   max-inline-size: min(22rem, calc(100vw - 2rem));
   pointer-events: none;
@@ -144,7 +147,7 @@
    overlaps the polite bottom stack and reads as a distinct, urgent
    channel. */
 .ui-toast-stack--assertive {
-  inset-block: 1.25rem auto;
+  inset-block: max(1.25rem, var(--safe-area-top)) auto;
 }
 
 .ui-toast {
@@ -225,15 +228,15 @@
 }
 
 /* Touch: enlarge the dismiss/close hit areas to the project's coarse-pointer
-   tap-target floor (2.9rem, as in primitives.css / forms.css) without changing
-   the desktop glyph size. The box is centred so the glyph stays put. */
+   tap-target floor (`--tap-target`, as in primitives.css / forms.css) without
+   changing the desktop glyph size. The box is centred so the glyph stays put. */
 @media (pointer: coarse) {
   .ui-alert__close,
   .ui-toast__close {
     display: inline-grid;
     place-items: center;
-    min-block-size: 2.9rem;
-    min-inline-size: 2.9rem;
+    min-block-size: var(--tap-target);
+    min-inline-size: var(--tap-target);
   }
 
   .ui-alert__close {

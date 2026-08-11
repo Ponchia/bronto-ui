@@ -223,6 +223,153 @@
   }
 }
 
+/* ==========================================================================
+   Severity — the second axis of system state.
+
+   `.ui-state` answers "what is this thing doing". This answers "how bad is
+   it". Bronto already shipped the TONES (`--danger`, `--warning`, `--info`,
+   `--success`) as per-component modifiers, but never the SCALE: the tier names,
+   their order, and the attribute that carries them. So every consumer invents
+   the ladder, and inside a single app it drifts — one surface saying
+   `critical|error|warning|note`, the next `bad|warn`, a third
+   `critical|warning|info|ok`, under two different attribute names. Findings
+   then do not sort against alerts, and a filter written for one list silently
+   misses the other.
+
+   THE LADDER, worst to best:
+
+     critical  broken now, and still losing something
+     error     something failed; it is not currently getting worse
+     warning   a threshold was crossed; nothing has failed yet
+     notice    worth reading, no action implied
+     ok        checked and healthy — an ASSERTION, not the absence of news
+     unknown   not measured, stale, or the check itself failed
+
+   `unknown` sits OUTSIDE the ordering deliberately. It is not "slightly worse
+   than ok", it is "we do not know", and collapsing it into `ok` is how a dead
+   collector reads as a healthy system.
+
+   The level is carried by `data-level` — one attribute name, so the same
+   selector works on a chip, a row, a dot, or the host's own element:
+
+     <span class="ui-severity" data-level="critical">Critical</span>
+     <li class="ui-severity-row" data-level="warning">…</li>
+
+   BOUNDARY: the host owns thresholds, ranking, filtering, and the wording of
+   every label. Colour is never the only channel (WCAG 1.4.1) — `.ui-severity`
+   carries an author-written label, and `.ui-severity-dot` is only for rows that
+   ALSO name their level in text.
+   ========================================================================== */
+
+/* Declared once so a host putting the level on its own element gets the same
+   mapping from `data-level` + `var(--severity-tone)`, without copying a table. */
+.ui-severity,
+.ui-severity-row,
+.ui-severity-dot {
+  --severity-tone: var(--text-dim);
+}
+
+:is(.ui-severity, .ui-severity-row, .ui-severity-dot):is(
+  [data-level='critical'],
+  [data-level='error']
+) {
+  --severity-tone: var(--danger);
+}
+
+:is(.ui-severity, .ui-severity-row, .ui-severity-dot)[data-level='warning'] {
+  --severity-tone: var(--warning);
+}
+
+:is(.ui-severity, .ui-severity-row, .ui-severity-dot)[data-level='notice'] {
+  --severity-tone: var(--info);
+}
+
+:is(.ui-severity, .ui-severity-row, .ui-severity-dot)[data-level='ok'] {
+  --severity-tone: var(--success);
+}
+
+/* `unknown` keeps the neutral default tone — it must not read as a verdict. */
+
+/* The chip — a short uppercase tier label, tinted rather than filled, because
+   a list of findings is mostly chips and filled ones turn it into stripes.
+   `critical` is the exception and fills: in a scrolling list the worst tier has
+   to survive peripheral vision. */
+.ui-severity {
+  background: color-mix(in oklch, var(--severity-tone) 16%, transparent);
+  border-radius: var(--radius-pill);
+  color: var(--severity-tone);
+  display: inline-block;
+  flex: none;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  line-height: 1.2;
+  padding: 0.1rem 0.4rem;
+  text-transform: uppercase;
+}
+
+.ui-severity[data-level='critical'] {
+  background: var(--danger);
+  color: var(--button-text);
+}
+
+/* A tint over an unknown host surface cannot be contrast-gated, so the neutral
+   tier keeps a border instead and stays legible anywhere. */
+.ui-severity[data-level='unknown'] {
+  background: none;
+  border: 1px solid var(--line-strong);
+  padding-block: calc(0.1rem - 1px);
+}
+
+/* The dot — for dense rows where a chip costs more width than the level is
+   worth. An accelerator for scanning, not the label. */
+.ui-severity-dot {
+  background: var(--severity-tone);
+  border-radius: 50%;
+  block-size: 0.5rem;
+  display: inline-block;
+  flex: none;
+  inline-size: 0.5rem;
+  print-color-adjust: exact;
+}
+
+.ui-severity-dot[data-level='unknown'] {
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+
+/* The row — a list item that carries a level. The inline-start gutter is what
+   makes a long list readable without reading it. */
+.ui-severity-row {
+  align-items: baseline;
+  border-block-end: 1px solid var(--line);
+  border-inline-start: 2px solid var(--severity-tone);
+  display: flex;
+  gap: var(--space-xs);
+  padding: var(--space-2xs) var(--space-xs);
+}
+
+.ui-severity-row:last-child {
+  border-block-end: 0;
+}
+
+/* Gives up space first, so the level and any trailing metadata stay put. */
+.ui-severity-row__title {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ui-severity-row__meta {
+  color: var(--text-dim);
+  flex: none;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+}
+
 /* Forced colours: the tone dot collapses to a system colour, so the
    author-written label remains the state channel (it already must be). */
 @media (forced-colors: active) {
@@ -235,6 +382,20 @@
   }
 
   .ui-job__bar {
+    background: CanvasText;
+  }
+
+  /* Same contract for severity: the tint and the gutter both vanish under a
+     replaced palette, so keep the structure and let the label carry meaning. */
+  .ui-severity {
+    border: 1px solid currentColor;
+  }
+
+  .ui-severity-row {
+    border-inline-start-color: CanvasText;
+  }
+
+  .ui-severity-dot {
     background: CanvasText;
   }
 }

@@ -124,14 +124,64 @@ For indeterminate jobs, omit the progress block or omit `aria-valuenow`, and
 make the written state clear ("Running", "Waiting for worker", "Retrying").
 Use `ui-job--compact` for dense queues.
 
+## Severity — `.ui-severity`
+
+`.ui-state` answers *what is this thing doing*. Severity answers *how bad is
+it*. Bronto already shipped the tones as per-component modifiers, but never the
+**scale** — the tier names, their order, and the attribute carrying them. So
+every consumer invents the ladder, and inside one app it drifts: one surface
+saying `critical|error|warning|note`, the next `bad|warn`, a third
+`critical|warning|info|ok`, under two different attribute names. Findings then
+do not sort against alerts, and a filter written for one list misses the other.
+
+The ladder, worst to best:
+
+| Level | Means |
+| --- | --- |
+| `critical` | Broken now, and still losing something. |
+| `error` | Something failed; it is not currently getting worse. |
+| `warning` | A threshold was crossed; nothing has failed yet. |
+| `notice` | Worth reading, no action implied. |
+| `ok` | Checked and healthy — an **assertion**, not the absence of news. |
+| `unknown` | Not measured, stale, or the check itself failed. |
+
+`unknown` sits **outside** the ordering on purpose. It is not "slightly worse
+than ok", it is "we do not know" — and collapsing it into `ok` is how a dead
+collector reads as a healthy system. `SEVERITY_LEVELS` therefore excludes it.
+
+The level travels on `data-level`, one attribute name, so the same selector
+works on a chip, a row, a dot, or your own element via `var(--severity-tone)`:
+
+```html
+<span class="ui-severity" data-level="critical">Critical</span>
+
+<li class="ui-severity-row" data-level="warning">
+  <span class="ui-severity-row__title">Disk 84% on kpi-1</span>
+  <span class="ui-severity-row__meta">12m</span>
+</li>
+```
+
+Colour is never the only channel (WCAG 1.4.1): `.ui-severity` carries an
+author-written label, and `.ui-severity-dot` is only for rows that **also** name
+their level in text.
+
 ## Recipe
 
 ```js
-import { ui } from '@ponchia/ui/classes';
+import { ui, severity, SEVERITY_LEVELS } from '@ponchia/ui/classes';
 
 ui.state({ state: 'saving', busy: true }); // "ui-state ui-state--saving ui-state--busy"
 ui.state({ state: 'conflict' }); // "ui-state ui-state--conflict"
 ui.job({ state: 'running' }); // "ui-job ui-job--running"
+
+// Bundles the class WITH data-level, so the attribute that carries the meaning
+// cannot be forgotten — the class alone paints the neutral tone and silently
+// loses the level.
+severity('critical'); // { class: 'ui-severity', 'data-level': 'critical' }
+severity('warning', { part: 'row' }); // { class: 'ui-severity-row', … }
+severity('nope'); // { class: 'ui-severity', 'data-level': 'unknown' }
+
+SEVERITY_LEVELS; // ['critical','error','warning','notice','ok'] — sort/filter from this
 ```
 
 ## Scope
