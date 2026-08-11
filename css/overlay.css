@@ -149,6 +149,15 @@ html:has(.ui-modal.is-open) {
   margin-inline-start: auto;
   max-block-size: 100vh;
   max-inline-size: min(26rem, 100vw);
+
+  /* Full-height by design, so the panel's edges are the screen's edges: its
+     surface should still reach them, but its content must clear the cutout and
+     the home indicator. Add the INSET ONLY — `.ui-modal` is deliberately
+     `padding: 0` (its head/body parts own their spacing), so a `max(space, …)`
+     floor here would silently pad the drawer on every device, not just a
+     notched one. */
+  padding-block: var(--safe-area-top) var(--safe-area-bottom);
+  padding-inline-end: var(--safe-area-right);
   border-radius: 0;
   border-width: 0;
   border-inline-start-width: 1px;
@@ -162,16 +171,16 @@ html:has(.ui-modal.is-open) {
 }
 
 /* Comfortable hit target on coarse pointers — this bespoke close button measured
-   ~26px on touch, below the 2.9rem floor the rest of the button family meets
-   (WCAG 2.5.8). Scoped to coarse so the fine-pointer (mouse) rendering, which
+   ~26px on touch, below the `--tap-target` floor the rest of the button family
+   meets. Scoped to coarse so the fine-pointer (mouse) rendering, which
    already clears 24×24, is unchanged; centre the glyph in the enlarged box. */
 @media (pointer: coarse) {
   .ui-modal__close {
     align-items: center;
     display: inline-flex;
     justify-content: center;
-    min-block-size: 2.9rem;
-    min-inline-size: 2.9rem;
+    min-block-size: var(--tap-target);
+    min-inline-size: var(--tap-target);
   }
 }
 
@@ -187,7 +196,12 @@ html:has(.ui-modal.is-open) {
   color: var(--text);
   max-block-size: 100vh;
   max-inline-size: 100vw;
-  padding: 0;
+
+  /* Deliberately full-bleed — the dimmed ground SHOULD cover the whole screen,
+     including the cutout. Only the insets keep the carousel's own controls out
+     from under it. */
+  padding: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom)
+    var(--safe-area-left);
   inline-size: 100vw;
 }
 

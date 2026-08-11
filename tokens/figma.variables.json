@@ -1907,6 +1907,62 @@
           "unit": "px"
         },
         {
+          "name": "safe/area/bottom",
+          "type": "STRING",
+          "sourceCssVariable": "--safe-area-bottom",
+          "valuesByMode": {
+            "global": "env(safe-area-inset-bottom, 0px)"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--safe-area-bottom",
+              "value": "env(safe-area-inset-bottom, 0px)"
+            }
+          }
+        },
+        {
+          "name": "safe/area/left",
+          "type": "STRING",
+          "sourceCssVariable": "--safe-area-left",
+          "valuesByMode": {
+            "global": "env(safe-area-inset-left, 0px)"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--safe-area-left",
+              "value": "env(safe-area-inset-left, 0px)"
+            }
+          }
+        },
+        {
+          "name": "safe/area/right",
+          "type": "STRING",
+          "sourceCssVariable": "--safe-area-right",
+          "valuesByMode": {
+            "global": "env(safe-area-inset-right, 0px)"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--safe-area-right",
+              "value": "env(safe-area-inset-right, 0px)"
+            }
+          }
+        },
+        {
+          "name": "safe/area/top",
+          "type": "STRING",
+          "sourceCssVariable": "--safe-area-top",
+          "valuesByMode": {
+            "global": "env(safe-area-inset-top, 0px)"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--safe-area-top",
+              "value": "env(safe-area-inset-top, 0px)"
+            }
+          }
+        },
+        {
           "name": "sans",
           "type": "STRING",
           "sourceCssVariable": "--sans",
@@ -2024,6 +2080,34 @@
             }
           },
           "unit": "rem"
+        },
+        {
+          "name": "tap/target",
+          "type": "STRING",
+          "sourceCssVariable": "--tap-target",
+          "valuesByMode": {
+            "global": "max(44px, 2.9rem)"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--tap-target",
+              "value": "max(44px, 2.9rem)"
+            }
+          }
+        },
+        {
+          "name": "tap/target/min",
+          "type": "STRING",
+          "sourceCssVariable": "--tap-target-min",
+          "valuesByMode": {
+            "global": "max(24px, 1.6rem)"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--tap-target-min",
+              "value": "max(24px, 1.6rem)"
+            }
+          }
         },
         {
           "name": "text/2xs",

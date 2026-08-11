@@ -44,11 +44,11 @@
     border-color var(--duration-fast) var(--ease-standard);
 }
 
-/* Coarse-pointer tap-target floor (~2.9rem ≈ 44px), matching inputs/sitenav —
+/* Coarse-pointer tap-target floor (`--tap-target`), matching inputs/sitenav —
    tabs are easy to mis-tap on touch (WCAG 2.5.8 — C24). */
 @media (pointer: coarse) {
   .ui-tab {
-    min-block-size: 2.9rem;
+    min-block-size: var(--tap-target);
   }
 }
 
@@ -277,8 +277,8 @@
     align-items: center;
     display: inline-flex;
     justify-content: center;
-    min-block-size: max(24px, 1.6rem);
-    min-inline-size: max(24px, 1.6rem);
+    min-block-size: var(--tap-target-min);
+    min-inline-size: var(--tap-target-min);
   }
 }
 
@@ -349,12 +349,12 @@
   }
 }
 
-/* Coarse-pointer tap-target floor, matching inputs/sitenav (~2.9rem ≈ 44px) —
+/* Coarse-pointer tap-target floor (`--tap-target`), matching inputs/sitenav —
    pagination controls are easy to mis-tap on touch (WCAG 2.5.8 — C24). */
 @media (pointer: coarse) {
   .ui-pagination__item {
-    min-block-size: 2.9rem;
-    min-inline-size: 2.9rem;
+    min-block-size: var(--tap-target);
+    min-inline-size: var(--tap-target);
   }
 }
 

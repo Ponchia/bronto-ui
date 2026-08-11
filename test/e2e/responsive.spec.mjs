@@ -267,7 +267,7 @@ test.describe('site nav folds into the details menu', () => {
 // 5. TOUCH TARGETS (coarse pointer) — `@media (pointer: coarse)` enlarges
 //    .ui-button / .ui-input plus the dismiss/close affordances, which share one
 //    declaration block: `.ui-alert__close, .ui-toast__close { min-block-size:
-//    2.9rem; ... }`. We measure the three controls statically present on the
+//    var(--tap-target); ... }`. We measure the three controls statically present on the
 //    showcase (button, input, alert close); the alert-dismiss measurement
 //    exercises that shared block, so .ui-toast__close is covered transitively
 //    (the demo's default toast auto-dismisses without a close button, so there
@@ -284,7 +284,7 @@ test.describe('site nav folds into the details menu', () => {
 //    vacuously.
 // ---------------------------------------------------------------------------
 test.describe('coarse-pointer touch targets', () => {
-  test('controls reach the 2.9rem touch target under a coarse pointer', async ({
+  test('controls reach the 44px touch target under a coarse pointer', async ({
     browserName,
     baseURL,
   }) => {
@@ -327,17 +327,22 @@ test.describe('coarse-pointer touch targets', () => {
           alertClose: measure('.ui-alert__close'),
           breadcrumbLink: measureBox('.ui-breadcrumb__item a'),
           footerLink: measureBox('.ui-sitefooter__links a'),
-          // The coarse rule sets `min-block-size: 2.9rem`. Mobile emulation can
-          // pick a non-16px root font (Pixel 7 reports 15px here), so derive the
-          // target from the PAGE's own rem base — 2.9rem, whatever a rem is —
-          // instead of hard-coding 46px against a 16px assumption.
-          target: 2.9 * parseFloat(getComputedStyle(document.documentElement).fontSize),
+          // Reported for the failure message only — NOT the assertion target.
+          rootFontSize: parseFloat(getComputedStyle(document.documentElement).fontSize),
         };
       });
-      // ~1px slack for sub-pixel rounding; the contract is "control reaches 2.9rem".
-      expect(sizes.button, 'button').toBeGreaterThanOrEqual(sizes.target - 1);
-      expect(sizes.input, 'input').toBeGreaterThanOrEqual(sizes.target - 1);
-      expect(sizes.alertClose, 'alert close').toBeGreaterThanOrEqual(sizes.target - 1);
+      // Assert the STANDARD, not the token. This block used to derive its target
+      // from the rem base (`2.9 * rootFontSize`), which made it a tautology: the
+      // rule said 2.9rem, the test asked for 2.9rem, and both agreed on 43.5px
+      // under the 15px root this emulation reports — half a pixel below the 44
+      // CSS px that WCAG 2.5.5 and both platform HIGs actually require. A test
+      // written against the implementation cannot see that class of bug, so the
+      // number below is the external requirement and `--tap-target` clamps to it.
+      const TAP_TARGET = 44;
+      const why = `(root font-size ${sizes.rootFontSize}px)`;
+      expect(sizes.button, `button ${why}`).toBeGreaterThanOrEqual(TAP_TARGET);
+      expect(sizes.input, `input ${why}`).toBeGreaterThanOrEqual(TAP_TARGET);
+      expect(sizes.alertClose, `alert close ${why}`).toBeGreaterThanOrEqual(TAP_TARGET);
       for (const [name, box] of [
         ['breadcrumb link', sizes.breadcrumbLink],
         ['footer link', sizes.footerLink],

@@ -16,7 +16,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generated } from './gen-skins.mjs';
-import { skins, SKIN_NAMES } from '../tokens/skins.js';
+import { skins, SKIN_NAMES, SKIN_CANVAS_TOKENS } from '../tokens/skins.js';
 import { freshnessErrors } from './lib/assert-fresh.mjs';
 import { reportAndExit } from './lib/gate-report.mjs';
 
@@ -43,10 +43,40 @@ for (const name of SKIN_NAMES) {
     '--dotmatrix-glow',
     '--dotmatrix-pulse-min',
     '--dotmatrix-reveal-step',
+    ...SKIN_CANVAS_TOKENS,
   ]);
   for (const k of [...lk, ...dk]) {
     if (!known.has(k))
       errors.push(`skin "${name}" sets unknown token "${k}" — typo, or add it to the known set`);
+  }
+
+  // A canvas is all-or-nothing, per theme. A skin that re-points three of the
+  // ten neutrals is the half-tinted state the amendment exists to end: some
+  // surfaces take the colorway, the rest stay grey, and the seam only shows on
+  // whichever screen nobody opened. Either own the canvas or leave it alone.
+  for (const [theme, keys] of [
+    ['light', lk],
+    ['dark', dk],
+  ]) {
+    const set = SKIN_CANVAS_TOKENS.filter((t) => keys.includes(t));
+    if (set.length && set.length !== SKIN_CANVAS_TOKENS.length) {
+      const missing = SKIN_CANVAS_TOKENS.filter((t) => !keys.includes(t));
+      errors.push(
+        `skin "${name}" ${theme} re-points ${set.length}/${SKIN_CANVAS_TOKENS.length} canvas ` +
+          `tokens — a partial canvas leaves un-tinted surfaces. Missing: ${missing.join(', ')}`,
+      );
+    }
+  }
+
+  // And all-or-nothing ACROSS themes: a dark-only canvas is exactly the gap the
+  // downstream consumer shipped, and it is invisible until someone switches.
+  const lightCanvas = SKIN_CANVAS_TOKENS.some((t) => lk.includes(t));
+  const darkCanvas = SKIN_CANVAS_TOKENS.some((t) => dk.includes(t));
+  if (lightCanvas !== darkCanvas) {
+    errors.push(
+      `skin "${name}" re-points the canvas in ${lightCanvas ? 'light' : 'dark'} only — ` +
+        `a colorway that changes in one theme and not the other is a bug in the other.`,
+    );
   }
 }
 

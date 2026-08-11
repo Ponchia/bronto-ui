@@ -5,7 +5,16 @@
  * making the declarations generated-from-source. A regression here is a
  * consumer-facing break, so it blocks `npm run check`.
  */
-import { attrs, cls, ui, cx, type ClassValue } from '../classes/index.js';
+import {
+  attrs,
+  cls,
+  ui,
+  cx,
+  severity,
+  SEVERITY_LEVELS,
+  type ClassValue,
+  type SeverityLevel,
+} from '../classes/index.js';
 import tokens, { themeColor, cssVars, type ThemeName } from '../tokens/index.js';
 import {
   initThemeToggle,
@@ -337,6 +346,17 @@ const gname: GlyphName = 'heart';
 const rows = glyph(gname); // readonly string[] | undefined
 const size: 16 = GLYPH_SIZE; // narrows to the literal
 const firstName: GlyphName = GLYPH_NAMES[0];
+
+// The ladder is a readonly tuple of LITERALS, not string[] — so a host can
+// switch exhaustively on SeverityLevel, and a typo'd tier is a compile error
+// rather than a row that silently paints the neutral tone.
+const sevLevel: SeverityLevel = 'critical';
+const sevLadder: readonly ['critical', 'error', 'warning', 'notice', 'ok'] = SEVERITY_LEVELS;
+const sevChip: { class: string; 'data-level': string } = severity('warning');
+const sevRow = severity('ok', { part: 'row' });
+// @ts-expect-error — 'unknown' is the fallback, not a tier, so it is not a member.
+const sevBad: SeverityLevel = 'unknown';
+void sevBad;
 const registryRows = GLYPHS[gname];
 const tags = GLYPH_TAGS.trash;
 const matches: GlyphName[] = findGlyphs('delete');
@@ -661,4 +681,8 @@ void [
   rows,
   size,
   firstName,
+  sevLevel,
+  sevChip,
+  sevRow,
+  sevLadder,
 ];

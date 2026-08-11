@@ -10,7 +10,13 @@
         "--tracking-wide",
         "--tracking-wider",
         "--shadow",
-        "--shadow-raised"
+        "--shadow-raised",
+        "--tap-target",
+        "--tap-target-min",
+        "--safe-area-top",
+        "--safe-area-right",
+        "--safe-area-bottom",
+        "--safe-area-left"
       ]
     }
   },

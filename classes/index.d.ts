@@ -21,6 +21,8 @@ export declare const cls: {
   readonly buttonIcon: 'ui-button--icon';
   readonly buttonSm: 'ui-button--sm';
   readonly buttonLg: 'ui-button--lg';
+  readonly buttonDense: 'ui-button--dense';
+  readonly buttonLabel: 'ui-button__label';
   readonly card: 'ui-card';
   readonly cardHead: 'ui-card__head';
   readonly cardAccent: 'ui-card--accent';
@@ -54,6 +56,10 @@ export declare const cls: {
   readonly linkCta: 'ui-link--cta';
   readonly keyValue: 'ui-key-value';
   readonly emptyState: 'ui-empty-state';
+  readonly emptyStateInvite: 'ui-empty-state--invite';
+  readonly emptyStateGlyph: 'ui-empty-state__glyph';
+  readonly emptyStateLead: 'ui-empty-state__lead';
+  readonly emptyStateHint: 'ui-empty-state__hint';
   readonly dot: 'ui-dot';
   readonly dotAccent: 'ui-dot--accent';
   readonly dotSuccess: 'ui-dot--success';
@@ -560,6 +566,11 @@ export declare const cls: {
   readonly jobBlocked: 'ui-job--blocked';
   readonly jobFailed: 'ui-job--failed';
   readonly jobComplete: 'ui-job--complete';
+  readonly severity: 'ui-severity';
+  readonly severityDot: 'ui-severity-dot';
+  readonly severityRow: 'ui-severity-row';
+  readonly severityRowTitle: 'ui-severity-row__title';
+  readonly severityRowMeta: 'ui-severity-row__meta';
   readonly generated: 'ui-generated';
   readonly generatedLabel: 'ui-generated__label';
   readonly originLabel: 'ui-origin-label';
@@ -577,11 +588,22 @@ export declare const cls: {
   readonly toolstrip: 'ui-toolstrip';
   readonly toolstripFloating: 'ui-toolstrip--floating';
   readonly toolstripCompact: 'ui-toolstrip--compact';
+  readonly toolstripPane: 'ui-toolstrip--pane';
+  readonly toolstripAnchored: 'ui-toolstrip--anchored';
+  readonly toolstripAnchorBlockStart: 'ui-toolstrip--anchor-block-start';
+  readonly toolstripAnchorBlockEnd: 'ui-toolstrip--anchor-block-end';
   readonly toolstripBrand: 'ui-toolstrip__brand';
   readonly toolstripContext: 'ui-toolstrip__context';
   readonly toolstripGroup: 'ui-toolstrip__group';
   readonly toolstripActions: 'ui-toolstrip__actions';
+  readonly toolstripFill: 'ui-toolstrip__fill';
   readonly toolstripSearch: 'ui-toolstrip__search';
+  readonly pane: 'ui-pane';
+  readonly paneHead: 'ui-pane__head';
+  readonly paneTitle: 'ui-pane__title';
+  readonly paneTitleInput: 'ui-pane__title-input';
+  readonly paneActions: 'ui-pane__actions';
+  readonly paneBody: 'ui-pane__body';
   readonly segmentedButtons: 'ui-segmented-buttons';
   readonly segmentedButtonsButton: 'ui-segmented-buttons__button';
   readonly property: 'ui-property';
@@ -590,6 +612,9 @@ export declare const cls: {
   readonly selectionbar: 'ui-selectionbar';
   readonly selectionbarCount: 'ui-selectionbar__count';
   readonly selectionbarActions: 'ui-selectionbar__actions';
+  readonly selectionbarAnchored: 'ui-selectionbar--anchored';
+  readonly selectionbarAnchorBlockStart: 'ui-selectionbar--anchor-block-start';
+  readonly selectionbarAnchorBlockEnd: 'ui-selectionbar--anchor-block-end';
   readonly splitter: 'ui-splitter';
   readonly splitterVertical: 'ui-splitter--vertical';
   readonly splitterHorizontal: 'ui-splitter--horizontal';
@@ -666,7 +691,17 @@ export declare function cx(...parts: readonly ClassValue[]): string;
 export interface ButtonOpts {
   variant?: 'ghost' | 'subtle' | 'danger';
   icon?: boolean;
-  size?: 'sm' | 'lg';
+  size?: 'sm' | 'lg' | 'dense';
+}
+export interface EmptyStateOpts {
+  invite?: boolean;
+}
+export interface ToolstripOpts {
+  variant?: 'floating' | 'compact' | 'pane';
+  anchor?: 'block-start' | 'block-end';
+}
+export interface SelectionbarOpts {
+  anchor?: 'block-start' | 'block-end';
 }
 export interface CardOpts {
   accent?: boolean;
@@ -952,10 +987,27 @@ export interface Ui {
   state(opts?: StateOpts): string;
   job(opts?: JobOpts): string;
   originLabel(opts?: OriginLabelOpts): string;
+  emptyState(opts?: EmptyStateOpts): string;
+  toolstrip(opts?: ToolstripOpts): string;
+  selectionbar(opts?: SelectionbarOpts): string;
 }
 
 export declare const ui: Ui;
 export default ui;
+
+/** The canonical severity ladder, worst to best. `unknown` is deliberately not
+ *  a member: it means "not measured", not "nearly ok". */
+export declare const SEVERITY_LEVELS: readonly ['critical', 'error', 'warning', 'notice', 'ok'];
+
+export type SeverityLevel = (typeof SEVERITY_LEVELS)[number];
+
+/** Bundles `data-level` with the severity class so the attribute that carries
+ *  the meaning cannot be forgotten. An unrecognised level resolves to
+ *  `'unknown'`, which paints the neutral tone. */
+export declare function severity(
+  level: SeverityLevel | (string & {}) | null | undefined,
+  opts?: { part?: 'chip' | 'dot' | 'row' },
+): { class: string; 'data-level': string };
 
 /** Min/max for the value-bearing fills; defaults to 0–100. */
 export interface ValueRangeOpts {

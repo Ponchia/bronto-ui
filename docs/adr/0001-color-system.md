@@ -165,13 +165,42 @@ Hard acceptance criteria for every step below:
    var(--accent) …)` declared on `:root` and only re-evaluates against the new
    accent on the element that carries it; a skin on a subtree would leave that
    family stale, so the selectors are `:root`-anchored and a subtree skin
-   no-ops. Each skin re-points only `--accent` (+ a dark `--dotmatrix-glow`);
-   the family + dot-matrix + glyphs follow automatically. Single-hue per skin →
+   no-ops. Each skin re-points `--accent` (+ a dark `--dotmatrix-glow`); the
+   family + dot-matrix + glyphs follow automatically. Single-hue per skin →
    keeps the one-accent discipline while unlocking range across skins. No
    multi-hue palette. (A future per-subtree skin would need to re-declare the
    derived family — deferred; whole-page is the natural colorway scope.) Skins
    inherit the existing `forced-colors` + `print` behavior in `css/base.css` /
-   `css/forms.css` (they touch only the accent, never the canvas).
+   `css/forms.css`.
+
+   **Amended in 0.8.0 — a colorway also owns the neutral canvas.** The original
+   rule was accent-only, on the reasoning that the canvas is identity and the
+   accent is expression. A downstream consumer disproved it in the most direct
+   way available: offering these three as pickable looks, it found that
+   "Amber CRT" left the surface grey, and shipped a hand-written amber canvas of
+   its own — raw hex, dark theme only, outside OKLCH, outside `check-contrast`,
+   with `e-ink` silently un-tinted because a partial canvas has no failing edge.
+   Every one of those defects is a consequence of the rule, not of the consumer.
+   A look named after a phosphor display that renders on neutral grey is not a
+   colorway; it is an accent swatch with a colorway's name.
+
+   The amendment keeps the discipline that made the original rule right:
+
+   - The canvas is **derived, not picked**. Each of the ten neutrals
+     (`SKIN_CANVAS_TOKENS` in `tokens/skins.js`) keeps the core token's OKLCH
+     *lightness* exactly, adopts the skin accent's *hue*, and takes a small
+     role-scaled chroma. Contrast tracks relative luminance, which OKLCH L
+     tracks closely, so holding L fixed holds every pairing's ratio.
+   - It is **proven, not asserted**. `gen-contrast.mjs` widens a canvas-moving
+     skin's audit from the accent subset to the *full* 24-pair table, so all 21
+     gated pairings are re-measured per skin per theme on every run.
+   - The canvas is **all-or-nothing**, in both directions: `check-skins.mjs`
+     rejects a skin that re-points some neutrals but not others, and one that
+     re-points them in one theme but not the other. Those are exactly the two
+     shapes the consumer's hand-written version had.
+   - **Status colours stay locked.** They are not in `SKIN_CANVAS_TOKENS`: a
+     warning must look like a warning in every skin. Deriving status from a
+     colorway remains rejected (see Rejected alternatives).
 5. **OKLCH for new work first.** *(done for colorways — accents authored in
    OKLCH in `tokens/skins.js`; the contrast tooling now parses `oklch()` →
    sRGB, so skin accents are gated, not eyeballed.)* The core ramp followed in

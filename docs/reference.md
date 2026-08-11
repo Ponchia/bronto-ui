@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 644 classes across 179 component groups
+- 669 classes across 183 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -268,7 +268,9 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.button` | `ui-button` | base |
+| `cls.buttonLabel` | `ui-button__label` | part |
 | `cls.buttonDanger` | `ui-button--danger` | modifier |
+| `cls.buttonDense` | `ui-button--dense` | modifier |
 | `cls.buttonGhost` | `ui-button--ghost` | modifier |
 | `cls.buttonIcon` | `ui-button--icon` | modifier |
 | `cls.buttonLg` | `ui-button--lg` | modifier |
@@ -577,6 +579,10 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.emptyState` | `ui-empty-state` | base |
+| `cls.emptyStateGlyph` | `ui-empty-state__glyph` | part |
+| `cls.emptyStateHint` | `ui-empty-state__hint` | part |
+| `cls.emptyStateLead` | `ui-empty-state__lead` | part |
+| `cls.emptyStateInvite` | `ui-empty-state--invite` | modifier |
 
 ### `.ui-error-summary`
 
@@ -952,6 +958,17 @@ each one matches a real selector in the stylesheet.
 | `cls.pagination` | `ui-pagination` | base |
 | `cls.paginationItem` | `ui-pagination__item` | part |
 
+### `.ui-pane`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.pane` | `ui-pane` | base |
+| `cls.paneActions` | `ui-pane__actions` | part |
+| `cls.paneBody` | `ui-pane__body` | part |
+| `cls.paneHead` | `ui-pane__head` | part |
+| `cls.paneTitle` | `ui-pane__title` | part |
+| `cls.paneTitleInput` | `ui-pane__title-input` | part |
+
 ### `.ui-panel`
 
 | Registry key | Class | Kind |
@@ -1160,6 +1177,29 @@ each one matches a real selector in the stylesheet.
 | `cls.selectionbar` | `ui-selectionbar` | base |
 | `cls.selectionbarActions` | `ui-selectionbar__actions` | part |
 | `cls.selectionbarCount` | `ui-selectionbar__count` | part |
+| `cls.selectionbarAnchorBlockEnd` | `ui-selectionbar--anchor-block-end` | modifier |
+| `cls.selectionbarAnchorBlockStart` | `ui-selectionbar--anchor-block-start` | modifier |
+| `cls.selectionbarAnchored` | `ui-selectionbar--anchored` | modifier |
+
+### `.ui-severity`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.severity` | `ui-severity` | base |
+
+### `.ui-severity-dot`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.severityDot` | `ui-severity-dot` | base |
+
+### `.ui-severity-row`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.severityRow` | `ui-severity-row` | base |
+| `cls.severityRowMeta` | `ui-severity-row__meta` | part |
+| `cls.severityRowTitle` | `ui-severity-row__title` | part |
 
 ### `.ui-shortcut`
 
@@ -1511,10 +1551,15 @@ each one matches a real selector in the stylesheet.
 | `cls.toolstripActions` | `ui-toolstrip__actions` | part |
 | `cls.toolstripBrand` | `ui-toolstrip__brand` | part |
 | `cls.toolstripContext` | `ui-toolstrip__context` | part |
+| `cls.toolstripFill` | `ui-toolstrip__fill` | part |
 | `cls.toolstripGroup` | `ui-toolstrip__group` | part |
 | `cls.toolstripSearch` | `ui-toolstrip__search` | part |
+| `cls.toolstripAnchorBlockEnd` | `ui-toolstrip--anchor-block-end` | modifier |
+| `cls.toolstripAnchorBlockStart` | `ui-toolstrip--anchor-block-start` | modifier |
+| `cls.toolstripAnchored` | `ui-toolstrip--anchored` | modifier |
 | `cls.toolstripCompact` | `ui-toolstrip--compact` | modifier |
 | `cls.toolstripFloating` | `ui-toolstrip--floating` | modifier |
+| `cls.toolstripPane` | `ui-toolstrip--pane` | modifier |
 
 ### `.ui-tooltip`
 
@@ -1672,6 +1717,12 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--space-lg` | `1.35rem` |
 | `--space-xl` | `1.75rem` |
 | `--space-2xl` | `2.5rem` |
+| `--tap-target` | `max(44px, 2.9rem)` |
+| `--tap-target-min` | `max(24px, 1.6rem)` |
+| `--safe-area-top` | `env(safe-area-inset-top, 0px)` |
+| `--safe-area-right` | `env(safe-area-inset-right, 0px)` |
+| `--safe-area-bottom` | `env(safe-area-inset-bottom, 0px)` |
+| `--safe-area-left` | `env(safe-area-inset-left, 0px)` |
 | `--mono` | `'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', ui-monospace, monospace` |
 | `--sans` | `'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif` |
 | `--dot-font` | `'Doto', var(--mono)` |

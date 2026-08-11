@@ -95,7 +95,7 @@
 
 @media (pointer: coarse) {
   .ui-themetoggle__button {
-    min-block-size: 2.9rem;
+    min-block-size: var(--tap-target);
     padding-inline: 0.9rem;
   }
 }

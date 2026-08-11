@@ -21,7 +21,15 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-  padding: var(--space-md);
+
+  /* The rail runs the full viewport height, so on a notched device its top and
+     bottom sit under the status bar and the home indicator. Grow the padding to
+     clear them; `max()` keeps the desktop value exactly as authored, since the
+     insets resolve to 0px there. The inline-start inset covers a landscape
+     rotation that puts the cutout on the rail's side. */
+  padding: max(var(--space-md), var(--safe-area-top)) var(--space-md)
+    max(var(--space-md), var(--safe-area-bottom))
+    max(var(--space-md), var(--safe-area-left));
   position: sticky;
   inset-block-start: 0;
   block-size: 100svh;
@@ -108,7 +116,7 @@
 
 @media (pointer: coarse) {
   .ui-app-nav a {
-    min-block-size: 2.9rem;
+    min-block-size: var(--tap-target);
     padding-inline: 0.9rem;
   }
 }
@@ -178,7 +186,10 @@
   display: flex;
   gap: var(--space-md);
   justify-content: space-between;
-  padding: 0.75rem var(--space-lg);
+
+  /* Sticks to the very top, so the bar's own background must bleed under the
+     status bar while its CONTENT clears it — pad, do not offset. */
+  padding: max(0.75rem, var(--safe-area-top)) var(--space-lg) 0.75rem;
   position: sticky;
   inset-block-start: 0;
   z-index: var(--z-raised);

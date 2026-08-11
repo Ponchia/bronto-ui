@@ -5,8 +5,26 @@
  * A skin is NOT a second brand colour — it *re-points the one accent* (and the
  * Tier-3 dot-matrix display knobs) to a different single hue, so the
  * one-accent-per-scope discipline holds while the palette gains creative range
- * *across* skins. The neutral canvas, status palette, and every component stay
- * exactly as they are.
+ * *across* skins. The status palette and every component stay exactly as they
+ * are.
+ *
+ * Since 0.8.0 a skin ALSO re-points the neutral canvas (ADR-0001 step 4,
+ * amended). Accent-only colorways were the original rule, and a downstream
+ * consumer proved it surprising in the worst way: a workspace offering these
+ * three as pickable looks found that "Amber CRT" left the surface grey, so it
+ * hand-wrote a full amber canvas in raw hex — dark theme only, outside OKLCH,
+ * outside the contrast gate, and with e-ink left un-tinted because nobody
+ * noticed it was missing. Shipping the canvas here makes it governed instead.
+ *
+ * THE NEUTRALS ARE DERIVED, NOT PICKED. Each one keeps the core token's OKLCH
+ * *lightness* exactly, adopts the skin accent's *hue*, and takes a small
+ * role-scaled chroma — surfaces least, lines most, text near-neutral so it
+ * never competes with the accent. Because WCAG contrast is a function of
+ * relative luminance, which OKLCH L tracks closely, holding L fixed means every
+ * gated pairing keeps essentially its core ratio: the colorway gains a canvas,
+ * not a contrast problem. `check-contrast.mjs` audits the FULL pairing table
+ * for any skin that moves the canvas — not just the accent subset — so that
+ * claim is proven on every run rather than asserted here.
  *
  * Accents are authored in **OKLCH** (ADR-0001 step 5 — "OKLCH for new work
  * first"): perceptually-uniform lightness makes the light/dark pair easy to
@@ -41,22 +59,68 @@ export const skins = {
     // bright with a warm bloom in dark theme (the classic CRT glow). The glow
     // and a deeper --pulse breath (`--dotmatrix-pulse-min`) are the Tier-3
     // "display expression" knobs the colorway is allowed to re-point.
-    light: { '--accent': 'oklch(52% 0.11 67deg)', '--dotmatrix-pulse-min': '0.35' },
+    light: {
+      '--accent': 'oklch(52% 0.11 67deg)',
+      '--dotmatrix-pulse-min': '0.35',
+      '--bg': 'oklch(96.66% 0.02 67deg)',
+      '--bg-elevated': 'oklch(98.781% 0.022 67deg)',
+      '--panel': 'oklch(100% 0.024 67deg)',
+      '--panel-strong': 'oklch(100% 0.026 67deg)',
+      '--panel-soft': 'oklch(94.253% 0.026 67deg)',
+      '--line': 'oklch(88.11% 0.035 67deg)',
+      '--line-strong': 'oklch(72.983% 0.04 67deg)',
+      '--text': 'oklch(14.479% 0.03 67deg)',
+      '--text-soft': 'oklch(32.825% 0.03 67deg)',
+      '--text-dim': 'oklch(51.571% 0.028 67deg)',
+    },
     dark: {
       '--accent': 'oklch(82% 0.15 82deg)',
       '--dotmatrix-glow': '0.4em',
       '--dotmatrix-pulse-min': '0.3',
+      '--bg': 'oklch(18.22% 0.02 82deg)',
+      '--bg-elevated': 'oklch(20.904% 0.022 82deg)',
+      '--panel': 'oklch(22.645% 0.024 82deg)',
+      '--panel-strong': 'oklch(25.196% 0.026 82deg)',
+      '--panel-soft': 'oklch(26.032% 0.026 82deg)',
+      '--line': 'oklch(34.07% 0.035 82deg)',
+      '--line-strong': 'oklch(44.953% 0.04 82deg)',
+      '--text': 'oklch(92.494% 0.03 82deg)',
+      '--text-soft': 'oklch(83.279% 0.03 82deg)',
+      '--text-dim': 'oklch(70.576% 0.028 82deg)',
     },
   },
   'phosphor-green': {
     label: 'Phosphor Green',
     // P1-phosphor green. Same light=dark-ink / dark=bright-glow split, with the
     // same deeper phosphor breath as Amber CRT.
-    light: { '--accent': 'oklch(52% 0.13 150deg)', '--dotmatrix-pulse-min': '0.35' },
+    light: {
+      '--accent': 'oklch(52% 0.13 150deg)',
+      '--dotmatrix-pulse-min': '0.35',
+      '--bg': 'oklch(96.66% 0.02 150deg)',
+      '--bg-elevated': 'oklch(98.781% 0.022 150deg)',
+      '--panel': 'oklch(100% 0.024 150deg)',
+      '--panel-strong': 'oklch(100% 0.026 150deg)',
+      '--panel-soft': 'oklch(94.253% 0.026 150deg)',
+      '--line': 'oklch(88.11% 0.035 150deg)',
+      '--line-strong': 'oklch(72.983% 0.04 150deg)',
+      '--text': 'oklch(14.479% 0.03 150deg)',
+      '--text-soft': 'oklch(32.825% 0.03 150deg)',
+      '--text-dim': 'oklch(51.571% 0.028 150deg)',
+    },
     dark: {
       '--accent': 'oklch(84% 0.19 150deg)',
       '--dotmatrix-glow': '0.4em',
       '--dotmatrix-pulse-min': '0.3',
+      '--bg': 'oklch(18.22% 0.02 150deg)',
+      '--bg-elevated': 'oklch(20.904% 0.022 150deg)',
+      '--panel': 'oklch(22.645% 0.024 150deg)',
+      '--panel-strong': 'oklch(25.196% 0.026 150deg)',
+      '--panel-soft': 'oklch(26.032% 0.026 150deg)',
+      '--line': 'oklch(34.07% 0.035 150deg)',
+      '--line-strong': 'oklch(44.953% 0.04 150deg)',
+      '--text': 'oklch(92.494% 0.03 150deg)',
+      '--text-soft': 'oklch(83.279% 0.03 150deg)',
+      '--text-dim': 'oklch(70.576% 0.028 150deg)',
     },
   },
   'e-ink': {
@@ -64,11 +128,57 @@ export const skins = {
     // The opposite move: drop the hue almost entirely → a near-monochrome
     // ink/paper accent, no glow. The most restrained look in the set — and the
     // --reveal scan snaps on instantly (`--dotmatrix-reveal-step: 0ms`), since
-    // e-ink panels don't sweep, they flip.
-    light: { '--accent': 'oklch(34% 0.012 250deg)', '--dotmatrix-reveal-step': '0ms' },
-    dark: { '--accent': 'oklch(84% 0.008 250deg)', '--dotmatrix-reveal-step': '0ms' },
+    // e-ink panels don't sweep, they flip. Its canvas takes a QUARTER of the
+    // chroma the other two do, for the same reason: near-monochrome is the
+    // whole point, so the tint should be felt rather than seen.
+    light: {
+      '--accent': 'oklch(34% 0.012 250deg)',
+      '--dotmatrix-reveal-step': '0ms',
+      '--bg': 'oklch(96.66% 0.005 250deg)',
+      '--bg-elevated': 'oklch(98.781% 0.006 250deg)',
+      '--panel': 'oklch(100% 0.006 250deg)',
+      '--panel-strong': 'oklch(100% 0.007 250deg)',
+      '--panel-soft': 'oklch(94.253% 0.007 250deg)',
+      '--line': 'oklch(88.11% 0.009 250deg)',
+      '--line-strong': 'oklch(72.983% 0.01 250deg)',
+      '--text': 'oklch(14.479% 0.008 250deg)',
+      '--text-soft': 'oklch(32.825% 0.008 250deg)',
+      '--text-dim': 'oklch(51.571% 0.007 250deg)',
+    },
+    dark: {
+      '--accent': 'oklch(84% 0.008 250deg)',
+      '--dotmatrix-reveal-step': '0ms',
+      '--bg': 'oklch(18.22% 0.005 250deg)',
+      '--bg-elevated': 'oklch(20.904% 0.006 250deg)',
+      '--panel': 'oklch(22.645% 0.006 250deg)',
+      '--panel-strong': 'oklch(25.196% 0.007 250deg)',
+      '--panel-soft': 'oklch(26.032% 0.007 250deg)',
+      '--line': 'oklch(34.07% 0.009 250deg)',
+      '--line-strong': 'oklch(44.953% 0.01 250deg)',
+      '--text': 'oklch(92.494% 0.008 250deg)',
+      '--text-soft': 'oklch(83.279% 0.008 250deg)',
+      '--text-dim': 'oklch(70.576% 0.007 250deg)',
+    },
   },
 };
+
+/** The canvas tokens a colorway may re-point (ADR-0001 step 4, amended). Status
+ *  colours are deliberately NOT here: a warning must look like a warning in
+ *  every skin. The gates read this — check-skins allows these keys, and
+ *  gen-contrast widens a skin's audit to the full pairing table when any of
+ *  them is set. */
+export const SKIN_CANVAS_TOKENS = Object.freeze([
+  '--bg',
+  '--bg-elevated',
+  '--panel',
+  '--panel-strong',
+  '--panel-soft',
+  '--line',
+  '--line-strong',
+  '--text',
+  '--text-soft',
+  '--text-dim',
+]);
 
 /** Skin names, frozen + sorted. */
 export const SKIN_NAMES = Object.freeze(Object.keys(skins).sort());

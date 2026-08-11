@@ -258,6 +258,22 @@
       "description": "Global scale token. Value: `4px`"
     },
     {
+      "name": "--safe-area-bottom",
+      "description": "Global scale token. Value: `env(safe-area-inset-bottom, 0px)`"
+    },
+    {
+      "name": "--safe-area-left",
+      "description": "Global scale token. Value: `env(safe-area-inset-left, 0px)`"
+    },
+    {
+      "name": "--safe-area-right",
+      "description": "Global scale token. Value: `env(safe-area-inset-right, 0px)`"
+    },
+    {
+      "name": "--safe-area-top",
+      "description": "Global scale token. Value: `env(safe-area-inset-top, 0px)`"
+    },
+    {
       "name": "--sans",
       "description": "Global scale token. Value: `'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif`"
     },
@@ -340,6 +356,14 @@
     {
       "name": "--surface-raised",
       "description": "Global scale token. Value: `var(--panel-strong)`"
+    },
+    {
+      "name": "--tap-target",
+      "description": "Global scale token. Value: `max(44px, 2.9rem)`"
+    },
+    {
+      "name": "--tap-target-min",
+      "description": "Global scale token. Value: `max(24px, 1.6rem)`"
     },
     {
       "name": "--text",

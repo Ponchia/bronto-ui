@@ -1,4 +1,4 @@
-# Workbench — split panes, toolstrips, inspector, properties, selection bar
+# Workbench — panes, split panes, toolstrips, inspector, properties, selection bar
 
 `@ponchia/ui/css/workbench.css` is an opt-in set of primitives for **real
 tools**: resizable split panes, compact toolstrips, button-mode segmented
@@ -50,6 +50,29 @@ hiding, and placement.
     </button>
   </div>
 </header>
+```
+
+### Pane-scale — `.ui-toolstrip--pane`
+
+The app has one toolstrip; a workbench full of panes has one *per pane*, and
+those are a different thing. The difference is framing, not density: a pane bar
+is a row inside a surface that already has a border, so it drops its own frame
+and corners and rules off from the content below.
+
+It also refuses to wrap. A pane bar usually sits directly above content that may
+be a live terminal, an editor, or a video — and a second row would resize that
+content every time a control appears. The row scrolls instead, and
+`.ui-toolstrip__fill` marks the one element that absorbs slack and gives it back
+first (a title, a path, a filter input), so nothing else is pushed out of reach.
+
+```html
+<div class="ui-toolstrip ui-toolstrip--pane">
+  <button class="ui-button ui-button--subtle ui-button--dense" type="button">Run</button>
+  <span class="ui-toolstrip__fill ui-mono">src/server/routes/reports.ts</span>
+  <button class="ui-button ui-button--ghost ui-button--icon ui-button--dense" type="button">
+    <span class="ui-button__label">Close</span>
+  </button>
+</div>
 ```
 
 ## Button segmented control — `.ui-segmented-buttons`
@@ -170,11 +193,67 @@ A raised bar of actions on the current selection: a `__count` on one side,
 </div>
 ```
 
+### Anchoring a floating bar
+
+Both `--floating` bars are raised but position-less, so every consumer
+re-derives the same thing — including the `max(offset, inset)` shape, which is
+the part people get wrong by writing a bare offset that a phone then swallows
+under the home indicator. `--anchored` centres the bar against its positioned
+ancestor and clears the safe area:
+
+```html
+<div class="ui-selectionbar ui-selectionbar--anchored">…</div>
+
+<!-- The bar that must NOT sit under the thumb: recovery, destructive actions. -->
+<div class="ui-selectionbar ui-selectionbar--anchor-block-start">…</div>
+```
+
+`--anchored` alone means bottom. Override the gap with `--anchor-offset`. The
+host still owns `z-index`, because only it knows what else is on the canvas.
+
+## Pane — `.ui-pane`
+
+`.ui-panel` is a padded card and `.ui-inspector` is head-plus-body; neither is a
+*window*. A pane is what a canvas node, a floating tool window, or a dockable
+panel needs: a header you can drag, a title that renames in place, an actions
+slot that survives a narrow pane, and a body that owns the rest.
+
+```html
+<article class="ui-pane">
+  <header class="ui-pane__head">
+    <strong class="ui-pane__title">deploy.log</strong>
+    <span class="ui-pane__actions">
+      <button class="ui-button ui-button--subtle ui-button--icon ui-button--dense" type="button">
+        <span class="ui-button__label">Focus</span>
+      </button>
+    </span>
+  </header>
+  <div class="ui-pane__body">…</div>
+</article>
+```
+
+Two behaviours are worth knowing, because both come from a real failure:
+
+- **The title gives up space first.** It is the only thing in the header that
+  can be truncated without losing a function.
+- **`__actions` scrolls rather than pushing.** Sized `flex: 0 1 auto` with
+  `overflow-x: auto`, so a pane narrow enough to run out of room scrolls its
+  controls instead of pushing the last one past the clipped edge — which is how
+  an app ends up with a Focus or Disconnect button that exists, is in the a11y
+  tree, and cannot be reached.
+
+Swap the title for `.ui-pane__title-input` to rename in place. It inherits the
+type it replaces, so the swap moves no layout; only the accent border says you
+are typing a name now. The host owns dragging, z-order, focus policy and
+persistence — this leaf has no behavior.
+
 ## Scope
 
-No recipes — these are structural containers and rows; apply the classes
-directly (or read them from `cls.toolstrip`, `cls.splitter`, `cls.inspector`,
-`cls.property`, …). Pair the selection bar with the cross-cutting
+No recipes for the structural containers and rows; apply the classes directly
+(or read them from `cls.toolstrip`, `cls.pane`, `cls.splitter`, `cls.inspector`,
+`cls.property`, …). `ui.toolstrip()` and `ui.selectionbar()` exist only to
+compose the variant/anchor modifiers. Pair the selection bar with the
+cross-cutting
 [`ui-sel`](./selection.md) states on the selected items themselves. Bronto styles
 the chrome and wires the splitter affordance; the host owns hit-testing,
 persistence, pane contents, viewport semantics, and commands.

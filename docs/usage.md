@@ -167,14 +167,49 @@ a `.ui-legend` key, and fallback data. Full LLM/static report cookbook:
 
 ## Buttons: variant and size
 
-- **primary** — the single most important action in a view. Aim for one.
+- **primary is the bare `ui-button`.** There is no `--primary` and no
+  `--accent`: the unmodified class already paints the accent fill, and the
+  variants below all step *down* from it. Aim for one per view. Consumers reach
+  for a `--primary` or `--accent` modifier often enough that it is worth
+  stating plainly: neither exists. Writing one is harmless *and invisible* —
+  the unknown class does nothing and the button still looks right, which is why
+  the mistake survives review. `bronto-ui-check` is what catches it.
 - **ghost** — secondary actions; the default for "another button here".
 - **subtle** — tertiary / low-stakes (toolbar, inline).
+- **danger** — destructive confirmation.
 - Size: default everywhere; `--sm` for dense tooling (toolbars,
-  pagination, table row actions), `--lg` for a hero CTA only.
+  pagination, table row actions), `--lg` for a hero CTA only, `--dense` when a
+  bar's *height* is the constraint (a pane title bar). `--dense` lowers only the
+  visual floor — coarse pointers still get the full `--tap-target`, so a control
+  you shrink for a mouse is never shrunk for a finger.
 - Loading is **not** a class: set `aria-busy="true"` (+ `disabled`); the
   spinner is CSS. This is the ARIA-driven contract — see reference.md
   → "Composition & state".
+
+## Empty state vs invite
+
+Both use `ui-empty-state`, and the slots are the same three parts — a quiet
+`__glyph`, one sentence of full ink in `__lead`, a quieter `__hint`. What
+differs is the job:
+
+- **Plain `ui-empty-state`** *reports absence*: a dashed card saying this region
+  has no rows today. Use it for a list, a table, a results pane.
+- **`--invite`** *offers the next action*: no dashed box (there is nothing to
+  outline — the surface itself is what you are being invited into) and it
+  centres in whatever block space it is given. Use it for a surface the user is
+  meant to fill.
+
+```html
+<div class="ui-empty-state ui-empty-state--invite">
+  <span class="ui-empty-state__glyph" aria-hidden="true">+</span>
+  <p class="ui-empty-state__lead">Nothing pinned yet</p>
+  <p class="ui-empty-state__hint">Drop a file here, or press ⌘K</p>
+</div>
+```
+
+Without the slots, every empty surface in an app re-invents these three parts
+under a different name and they drift — one has a glyph, the next has two
+sentences at the same weight, a third is a bare `<p>`.
 
 ## Link vs link--cta
 
@@ -278,6 +313,31 @@ without it these widgets are unlabelled or unannounced:
 - **Icon-only buttons** (`ui-button--icon` and any glyph-only control) carry no
   text node, so they're nameless to AT — give them an `aria-label`
   (`<button class="ui-button ui-button--icon" aria-label="Delete">`).
+  Prefer `ui-button__label` when the same control also appears with its word
+  visible, or when a test reads the button by its text. Wrap the text in the
+  slot and let `--icon` decide whether it is painted — the markup does not
+  change, the accessible name survives, and no `aria-label` can drift out of
+  sync with the visible wording:
+
+  ```js
+  // The mask comes from renderGlyph(..., { render: 'mask' }) — there is no
+  // --glyph-* token.
+  const mask = renderGlyph('trash', { render: 'mask' });
+  el.innerHTML =
+    `<button class="ui-button ui-button--icon">` +
+    `<span class="ui-icon" style="--icon-mask: ${mask}"></span>` +
+    `<span class="ui-button__label">Delete</span>` +
+    `</button>`;
+  ```
+
+  Drop `--icon` and the same markup renders glyph + word. The slot also
+  ellipsises rather than wrapping, so a labelled button in a width-constrained
+  bar shrinks instead of pushing its neighbours out.
+- **`ui-button--dense`** is for bars whose height is the constraint — a pane
+  title bar, a packed toolbar, a table row's actions. It lowers only the
+  *visual* floor, to the WCAG 2.5.8 24px minimum. The coarse-pointer block
+  still floats it to the full `--tap-target`, so a control you shrink for a
+  mouse is never shrunk for a finger.
 - **`ui-sitenav` / `ui-app-nav`** — signal the current link with
   `aria-current="page"` (both honour it; `ui-app-nav` also accepts the
   visual-only `.is-active`, but prefer `aria-current`).

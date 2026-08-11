@@ -476,18 +476,18 @@
   .ui-input,
   .ui-select,
   .ui-textarea {
-    min-block-size: 2.9rem;
+    min-block-size: var(--tap-target);
   }
 
   .ui-search {
-    min-block-size: 2.9rem;
+    min-block-size: var(--tap-target);
   }
 
   /* The whole label is the toggle target — float it to the ~44px floor so the
      small track/box isn't a sub-target on touch (WCAG 2.5.8 — C24). */
   .ui-switch,
   .ui-check {
-    min-block-size: 2.9rem;
+    min-block-size: var(--tap-target);
   }
 
   .ui-check input {

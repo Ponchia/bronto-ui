@@ -56,6 +56,36 @@
   padding: 0.25rem;
 }
 
+/* Pane-scale — a control bar belonging to ONE pane rather than to the app. The
+   difference from `--compact` is not density but framing: this bar is a row
+   inside a surface that already has a border, so it drops its own frame and
+   corners and rules off from the content below instead. It also refuses to
+   wrap: a pane bar sits directly above content that may be a live terminal or
+   an editor, and a second row would resize that content on every state change.
+   The row scrolls instead — see `__fill` for what gives up the space. */
+.ui-toolstrip--pane {
+  background: none;
+  border: 0;
+  border-block-end: 1px solid var(--line);
+  border-radius: 0;
+  flex-wrap: nowrap;
+  gap: var(--space-2xs);
+  overflow-x: auto;
+  padding: 0.3rem var(--space-xs);
+  scrollbar-width: thin;
+}
+
+/* The element that absorbs slack and gives it back first — a title, a path, a
+   filter input. Everything else in the bar keeps its size, so the control that
+   would otherwise be pushed past the clipped edge stays reachable. */
+.ui-toolstrip__fill {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .ui-toolstrip__brand {
   align-items: baseline;
   display: inline-flex;
@@ -168,6 +198,96 @@
   min-inline-size: 0;
 }
 
+/* --- Pane — a movable, renameable surface with a grab header.
+
+   `.ui-panel` is a padded card and `.ui-inspector` is head-plus-body; neither
+   is a window. A pane is what a canvas node, a floating tool window, or a
+   dockable panel needs: a header you can drag, a title that renames in place,
+   an actions slot that survives a narrow pane, and a body that owns the rest.
+
+   Bronto paints the frame only. The host owns dragging, z-order, focus policy,
+   persistence, and what the actions do — this leaf has no behavior. --- */
+.ui-pane {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+  min-inline-size: 0;
+  overflow: hidden;
+}
+
+/* `cursor: grab` states the affordance; the host wires the gesture. */
+.ui-pane__head {
+  align-items: center;
+  background: var(--bg-elevated);
+  border-block-end: 1px solid var(--line);
+  cursor: grab;
+  display: flex;
+  flex: none;
+  gap: var(--space-2xs);
+  min-block-size: var(--pane-head, 2.5rem);
+  padding: var(--space-2xs) var(--space-xs);
+}
+
+.ui-pane__head:active {
+  cursor: grabbing;
+}
+
+/* The title gives up space FIRST — it is the one thing in the header that can
+   be truncated without losing a function. */
+.ui-pane__title {
+  flex: 1 1 auto;
+  font-size: var(--text-xs);
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Rename in place. It inherits the type it replaces so the swap from label to
+   input does not move a single pixel of layout; only the accent border says
+   "you are typing a name now". Pair with `.ui-pane__title` on the input too. */
+.ui-pane__title-input {
+  background: var(--bg-elevated);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  margin-block: -1px;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  padding: 0 0.25rem;
+}
+
+/* Shrinks only AFTER the title is gone, and then scrolls rather than pushing
+   its last control past the pane's clipped edge — the failure that hides a
+   control the user needs (close, focus, disconnect) with no way to reach it. */
+.ui-pane__actions {
+  display: flex;
+  flex: 0 1 auto;
+  flex-wrap: nowrap;
+  gap: var(--space-2xs);
+  min-inline-size: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.ui-pane__actions:empty {
+  display: none;
+}
+
+.ui-pane__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-block-size: 0;
+  min-inline-size: 0;
+  overflow: auto;
+}
+
 /* --- Selection bar — actions on the current selection ("3 selected"). --- */
 .ui-selectionbar {
   align-items: center;
@@ -192,6 +312,37 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-xs);
+}
+
+/* Anchor a floating bar to a viewport edge, clear of any display cutout or
+   gesture area. Both `--floating` bars above are shadowed but position-less,
+   so every consumer re-derives this — including the `max(offset, inset)` shape,
+   which is the part people get wrong by writing a bare offset that a phone then
+   swallows. `--anchor-block-end` is the default because a bar the thumb must
+   reach belongs at the bottom; `--anchor-block-start` is for the bar that must
+   not be under the thumb (a destructive-action or recovery bar).
+
+   The host still owns z-index — it knows what else is on the canvas. */
+.ui-selectionbar--anchored,
+.ui-toolstrip--anchored {
+  --anchor-offset: var(--space-sm);
+
+  inset-inline-start: 50%;
+  max-inline-size: calc(100% - 2 * var(--space-md));
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+.ui-selectionbar--anchored,
+.ui-toolstrip--anchored,
+.ui-selectionbar--anchor-block-end,
+.ui-toolstrip--anchor-block-end {
+  inset-block: auto max(var(--anchor-offset), var(--safe-area-bottom));
+}
+
+.ui-selectionbar--anchor-block-start,
+.ui-toolstrip--anchor-block-start {
+  inset-block: max(var(--anchor-offset), var(--safe-area-top)) auto;
 }
 
 @media (hover: hover) {

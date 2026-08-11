@@ -111,36 +111,73 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 
 | Foreground | Background | Role | Held to | Ratio | APCA _(advisory)_ | Verdict |
 | --- | --- | --- | --- | --- | --- | --- |
-| `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 6.75:1 | Lc 78.9 | ✅ pass |
+| `--text` | `--bg` | Body text on page background | AA text (4.5:1) | 17.97:1 | Lc 99.0 | ✅ pass |
+| `--text` | `--surface` | Body text on a card/panel | AA text (4.5:1) | 19.84:1 | Lc 105.8 | ✅ pass |
+| `--text` | `--surface-muted` | Body text on a muted panel | AA text (4.5:1) | 16.77:1 | Lc 94.4 | ✅ pass |
+| `--text-soft` | `--bg` | Secondary text on page background | AA text (4.5:1) | 11.20:1 | Lc 91.3 | ✅ pass |
+| `--text-soft` | `--surface` | Secondary text on a card | AA text (4.5:1) | 12.37:1 | Lc 98.1 | ✅ pass |
+| `--text-soft` | `--surface-muted` | Secondary text on a muted panel | AA text (4.5:1) | 10.45:1 | Lc 86.8 | ✅ pass |
+| `--text-dim` | `--bg` | Dim/meta text on page background | AA text (4.5:1) | 5.11:1 | Lc 71.4 | ✅ pass |
+| `--text-dim` | `--surface` | Dim/meta text on a card | AA text (4.5:1) | 5.64:1 | Lc 78.2 | ✅ pass |
+| `--text-dim` | `--surface-muted` | Dim/meta text on a muted panel | AA text (4.5:1) | 4.77:1 | Lc 66.9 | ✅ pass |
+| `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 6.73:1 | Lc 78.7 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 7.44:1 | Lc 85.6 | ✅ pass |
-| `--text-soft` | `--accent-soft` over `--surface-muted` | Neutral tag/badge text on an accent tint | AA text (4.5:1) | 9.13:1 | Lc 78.7 | ✅ pass |
+| `--text-soft` | `--accent-soft` over `--surface-muted` | Neutral tag/badge text on an accent tint | AA text (4.5:1) | 9.19:1 | Lc 78.7 | ✅ pass |
 | `--accent-text` | `--accent-soft` | Accent text on an accent tint | Advisory (translucent tint — not gated) | 6.48:1 | Lc 76.1 | ℹ️ not gated |
 | `--accent-text` | `--bg-accent` | Accent text on an accent-tinted surface | Advisory (translucent tint — not gated) | 6.85:1 | Lc 79.9 | ℹ️ not gated |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 5.66:1 | Lc 83.3 | ✅ pass |
 | `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 5.66:1 | Lc 83.3 | ✅ pass |
-| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 5.14:1 | Lc 71.4 | ✅ pass |
+| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 5.13:1 | Lc 71.2 | ✅ pass |
 | `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 5.66:1 | Lc 78.0 | ✅ pass |
-| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 5.14:1 | Lc 71.4 | ✅ pass |
+| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 5.13:1 | Lc 71.2 | ✅ pass |
+| `--success` | `--surface` | Success indicator vs a card | UI / large (3:1) | 5.04:1 | Lc 74.6 | ✅ pass |
+| `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 5.60:1 | Lc 77.8 | ✅ pass |
+| `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 6.21:1 | Lc 78.9 | ✅ pass |
+| `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 5.77:1 | Lc 78.3 | ✅ pass |
+| `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.41:1 | Lc 47.4 | ℹ️ not gated |
 
 ### Amber CRT — dark
 
 | Foreground | Background | Role | Held to | Ratio | APCA _(advisory)_ | Verdict |
 | --- | --- | --- | --- | --- | --- | --- |
+| `--text` | `--bg` | Body text on page background | AA text (4.5:1) | 15.01:1 | Lc 91.0 | ✅ pass |
+| `--text` | `--surface` | Body text on a card/panel | AA text (4.5:1) | 13.64:1 | Lc 90.0 | ✅ pass |
+| `--text` | `--surface-muted` | Body text on a muted panel | AA text (4.5:1) | 12.43:1 | Lc 88.9 | ✅ pass |
+| `--text-soft` | `--bg` | Secondary text on page background | AA text (4.5:1) | 11.19:1 | Lc 72.7 | ✅ pass |
+| `--text-soft` | `--surface` | Secondary text on a card | AA text (4.5:1) | 10.18:1 | Lc 71.7 | ✅ pass |
+| `--text-soft` | `--surface-muted` | Secondary text on a muted panel | AA text (4.5:1) | 9.27:1 | Lc 70.5 | ✅ pass |
+| `--text-dim` | `--bg` | Dim/meta text on page background | AA text (4.5:1) | 7.16:1 | Lc 50.2 | ✅ pass |
+| `--text-dim` | `--surface` | Dim/meta text on a card | AA text (4.5:1) | 6.51:1 | Lc 49.2 | ✅ pass |
+| `--text-dim` | `--surface-muted` | Dim/meta text on a muted panel | AA text (4.5:1) | 5.93:1 | Lc 48.1 | ✅ pass |
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 11.84:1 | Lc 76.1 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 10.77:1 | Lc 75.1 | ✅ pass |
-| `--text-soft` | `--accent-soft` over `--surface-muted` | Neutral tag/badge text on an accent tint | AA text (4.5:1) | 6.83:1 | Lc 65.5 | ✅ pass |
+| `--text-soft` | `--accent-soft` over `--surface-muted` | Neutral tag/badge text on an accent tint | AA text (4.5:1) | 6.82:1 | Lc 65.4 | ✅ pass |
 | `--accent-text` | `--accent-soft` | Accent text on an accent tint | Advisory (translucent tint — not gated) | 1.46:1 | Lc 20.8 | ℹ️ not gated |
 | `--accent-text` | `--bg-accent` | Accent text on an accent-tinted surface | Advisory (translucent tint — not gated) | 1.51:1 | Lc 23.2 | ℹ️ not gated |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 11.88:1 | Lc 71.6 | ✅ pass |
 | `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 11.88:1 | Lc 71.6 | ✅ pass |
-| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 10.60:1 | Lc 69.9 | ✅ pass |
+| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 10.60:1 | Lc 69.8 | ✅ pass |
 | `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 9.64:1 | Lc 68.9 | ✅ pass |
-| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 10.60:1 | Lc 69.9 | ✅ pass |
+| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 10.60:1 | Lc 69.8 | ✅ pass |
+| `--success` | `--surface` | Success indicator vs a card | UI / large (3:1) | 7.58:1 | Lc 56.6 | ✅ pass |
+| `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 9.29:1 | Lc 66.6 | ✅ pass |
+| `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 5.23:1 | Lc 41.5 | ✅ pass |
+| `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 7.33:1 | Lc 54.8 | ✅ pass |
+| `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.28:1 | Lc 14.5 | ℹ️ not gated |
 
 ### E-ink — light
 
 | Foreground | Background | Role | Held to | Ratio | APCA _(advisory)_ | Verdict |
 | --- | --- | --- | --- | --- | --- | --- |
+| `--text` | `--bg` | Body text on page background | AA text (4.5:1) | 17.98:1 | Lc 99.2 | ✅ pass |
+| `--text` | `--surface` | Body text on a card/panel | AA text (4.5:1) | 19.79:1 | Lc 105.8 | ✅ pass |
+| `--text` | `--surface-muted` | Body text on a muted panel | AA text (4.5:1) | 16.73:1 | Lc 94.5 | ✅ pass |
+| `--text-soft` | `--bg` | Secondary text on page background | AA text (4.5:1) | 11.16:1 | Lc 91.4 | ✅ pass |
+| `--text-soft` | `--surface` | Secondary text on a card | AA text (4.5:1) | 12.29:1 | Lc 98.0 | ✅ pass |
+| `--text-soft` | `--surface-muted` | Secondary text on a muted panel | AA text (4.5:1) | 10.39:1 | Lc 86.7 | ✅ pass |
+| `--text-dim` | `--bg` | Dim/meta text on page background | AA text (4.5:1) | 5.09:1 | Lc 71.4 | ✅ pass |
+| `--text-dim` | `--surface` | Dim/meta text on a card | AA text (4.5:1) | 5.61:1 | Lc 78.0 | ✅ pass |
+| `--text-dim` | `--surface-muted` | Dim/meta text on a muted panel | AA text (4.5:1) | 4.74:1 | Lc 66.7 | ✅ pass |
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 12.23:1 | Lc 93.3 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 13.47:1 | Lc 99.9 | ✅ pass |
 | `--text-soft` | `--accent-soft` over `--surface-muted` | Neutral tag/badge text on an accent tint | AA text (4.5:1) | 8.78:1 | Lc 76.3 | ✅ pass |
@@ -151,51 +188,98 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 10.66:1 | Lc 90.4 | ✅ pass |
 | `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 11.74:1 | Lc 97.0 | ✅ pass |
 | `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 10.66:1 | Lc 90.4 | ✅ pass |
+| `--success` | `--surface` | Success indicator vs a card | UI / large (3:1) | 5.04:1 | Lc 74.6 | ✅ pass |
+| `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 5.60:1 | Lc 77.8 | ✅ pass |
+| `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 6.21:1 | Lc 78.9 | ✅ pass |
+| `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 5.77:1 | Lc 78.3 | ✅ pass |
+| `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.39:1 | Lc 47.1 | ℹ️ not gated |
 
 ### E-ink — dark
 
 | Foreground | Background | Role | Held to | Ratio | APCA _(advisory)_ | Verdict |
 | --- | --- | --- | --- | --- | --- | --- |
+| `--text` | `--bg` | Body text on page background | AA text (4.5:1) | 15.02:1 | Lc 91.1 | ✅ pass |
+| `--text` | `--surface` | Body text on a card/panel | AA text (4.5:1) | 13.66:1 | Lc 90.1 | ✅ pass |
+| `--text` | `--surface-muted` | Body text on a muted panel | AA text (4.5:1) | 12.45:1 | Lc 89.0 | ✅ pass |
+| `--text-soft` | `--bg` | Secondary text on page background | AA text (4.5:1) | 11.20:1 | Lc 72.8 | ✅ pass |
+| `--text-soft` | `--surface` | Secondary text on a card | AA text (4.5:1) | 10.19:1 | Lc 71.8 | ✅ pass |
+| `--text-soft` | `--surface-muted` | Secondary text on a muted panel | AA text (4.5:1) | 9.29:1 | Lc 70.6 | ✅ pass |
+| `--text-dim` | `--bg` | Dim/meta text on page background | AA text (4.5:1) | 7.17:1 | Lc 50.3 | ✅ pass |
+| `--text-dim` | `--surface` | Dim/meta text on a card | AA text (4.5:1) | 6.52:1 | Lc 49.3 | ✅ pass |
+| `--text-dim` | `--surface-muted` | Dim/meta text on a muted panel | AA text (4.5:1) | 5.94:1 | Lc 48.2 | ✅ pass |
 | `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 12.72:1 | Lc 80.3 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 11.57:1 | Lc 79.3 | ✅ pass |
-| `--text-soft` | `--accent-soft` over `--surface-muted` | Neutral tag/badge text on an accent tint | AA text (4.5:1) | 6.66:1 | Lc 65.0 | ✅ pass |
+| `--text-soft` | `--accent-soft` over `--surface-muted` | Neutral tag/badge text on an accent tint | AA text (4.5:1) | 6.67:1 | Lc 65.0 | ✅ pass |
 | `--accent-text` | `--accent-soft` | Accent text on an accent tint | Advisory (translucent tint — not gated) | 1.38:1 | Lc 18.0 | ℹ️ not gated |
 | `--accent-text` | `--bg-accent` | Accent text on an accent-tinted surface | Advisory (translucent tint — not gated) | 1.42:1 | Lc 19.9 | ℹ️ not gated |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 12.86:1 | Lc 75.6 | ✅ pass |
 | `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 12.86:1 | Lc 75.6 | ✅ pass |
-| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 11.48:1 | Lc 74.1 | ✅ pass |
+| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 11.47:1 | Lc 74.1 | ✅ pass |
 | `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 10.44:1 | Lc 73.1 | ✅ pass |
-| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 11.48:1 | Lc 74.1 | ✅ pass |
+| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 11.47:1 | Lc 74.1 | ✅ pass |
+| `--success` | `--surface` | Success indicator vs a card | UI / large (3:1) | 7.58:1 | Lc 56.6 | ✅ pass |
+| `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 9.29:1 | Lc 66.6 | ✅ pass |
+| `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 5.23:1 | Lc 41.5 | ✅ pass |
+| `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 7.33:1 | Lc 54.8 | ✅ pass |
+| `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.29:1 | Lc 14.6 | ℹ️ not gated |
 
 ### Phosphor Green — light
 
 | Foreground | Background | Role | Held to | Ratio | APCA _(advisory)_ | Verdict |
 | --- | --- | --- | --- | --- | --- | --- |
-| `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 6.22:1 | Lc 76.6 | ✅ pass |
+| `--text` | `--bg` | Body text on page background | AA text (4.5:1) | 18.02:1 | Lc 99.5 | ✅ pass |
+| `--text` | `--surface` | Body text on a card/panel | AA text (4.5:1) | 19.72:1 | Lc 105.8 | ✅ pass |
+| `--text` | `--surface-muted` | Body text on a muted panel | AA text (4.5:1) | 16.67:1 | Lc 94.4 | ✅ pass |
+| `--text-soft` | `--bg` | Secondary text on page background | AA text (4.5:1) | 11.10:1 | Lc 91.5 | ✅ pass |
+| `--text-soft` | `--surface` | Secondary text on a card | AA text (4.5:1) | 12.14:1 | Lc 97.7 | ✅ pass |
+| `--text-soft` | `--surface-muted` | Secondary text on a muted panel | AA text (4.5:1) | 10.26:1 | Lc 86.4 | ✅ pass |
+| `--text-dim` | `--bg` | Dim/meta text on page background | AA text (4.5:1) | 5.06:1 | Lc 71.4 | ✅ pass |
+| `--text-dim` | `--surface` | Dim/meta text on a card | AA text (4.5:1) | 5.53:1 | Lc 77.7 | ✅ pass |
+| `--text-dim` | `--surface-muted` | Dim/meta text on a muted panel | AA text (4.5:1) | 4.68:1 | Lc 66.3 | ✅ pass |
+| `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 6.26:1 | Lc 77.1 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 6.85:1 | Lc 83.3 | ✅ pass |
-| `--text-soft` | `--accent-soft` over `--surface-muted` | Neutral tag/badge text on an accent tint | AA text (4.5:1) | 9.16:1 | Lc 78.9 | ✅ pass |
+| `--text-soft` | `--accent-soft` over `--surface-muted` | Neutral tag/badge text on an accent tint | AA text (4.5:1) | 9.05:1 | Lc 78.5 | ✅ pass |
 | `--accent-text` | `--accent-soft` | Accent text on an accent tint | Advisory (translucent tint — not gated) | 5.98:1 | Lc 74.1 | ℹ️ not gated |
 | `--accent-text` | `--bg-accent` | Accent text on an accent-tinted surface | Advisory (translucent tint — not gated) | 6.32:1 | Lc 77.7 | ℹ️ not gated |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 5.19:1 | Lc 80.7 | ✅ pass |
 | `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 5.19:1 | Lc 80.7 | ✅ pass |
-| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 4.71:1 | Lc 68.6 | ✅ pass |
+| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 4.74:1 | Lc 69.1 | ✅ pass |
 | `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 5.19:1 | Lc 75.3 | ✅ pass |
-| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 4.71:1 | Lc 68.6 | ✅ pass |
+| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 4.74:1 | Lc 69.1 | ✅ pass |
+| `--success` | `--surface` | Success indicator vs a card | UI / large (3:1) | 5.04:1 | Lc 74.6 | ✅ pass |
+| `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 5.60:1 | Lc 77.8 | ✅ pass |
+| `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 6.21:1 | Lc 78.9 | ✅ pass |
+| `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 5.77:1 | Lc 78.3 | ✅ pass |
+| `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.35:1 | Lc 46.4 | ℹ️ not gated |
 
 ### Phosphor Green — dark
 
 | Foreground | Background | Role | Held to | Ratio | APCA _(advisory)_ | Verdict |
 | --- | --- | --- | --- | --- | --- | --- |
-| `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 13.18:1 | Lc 82.8 | ✅ pass |
+| `--text` | `--bg` | Body text on page background | AA text (4.5:1) | 15.11:1 | Lc 91.8 | ✅ pass |
+| `--text` | `--surface` | Body text on a card/panel | AA text (4.5:1) | 13.80:1 | Lc 90.8 | ✅ pass |
+| `--text` | `--surface-muted` | Body text on a muted panel | AA text (4.5:1) | 12.57:1 | Lc 89.6 | ✅ pass |
+| `--text-soft` | `--bg` | Secondary text on page background | AA text (4.5:1) | 11.28:1 | Lc 73.3 | ✅ pass |
+| `--text-soft` | `--surface` | Secondary text on a card | AA text (4.5:1) | 10.30:1 | Lc 72.4 | ✅ pass |
+| `--text-soft` | `--surface-muted` | Secondary text on a muted panel | AA text (4.5:1) | 9.38:1 | Lc 71.2 | ✅ pass |
+| `--text-dim` | `--bg` | Dim/meta text on page background | AA text (4.5:1) | 7.22:1 | Lc 50.8 | ✅ pass |
+| `--text-dim` | `--surface` | Dim/meta text on a card | AA text (4.5:1) | 6.60:1 | Lc 49.8 | ✅ pass |
+| `--text-dim` | `--surface-muted` | Dim/meta text on a muted panel | AA text (4.5:1) | 6.01:1 | Lc 48.7 | ✅ pass |
+| `--accent-text` | `--bg` | Accent text on page background | AA text (4.5:1) | 13.13:1 | Lc 82.8 | ✅ pass |
 | `--accent-text` | `--surface` | Accent text on a card | AA text (4.5:1) | 11.99:1 | Lc 81.8 | ✅ pass |
-| `--text-soft` | `--accent-soft` over `--surface-muted` | Neutral tag/badge text on an accent tint | AA text (4.5:1) | 6.66:1 | Lc 65.0 | ✅ pass |
+| `--text-soft` | `--accent-soft` over `--surface-muted` | Neutral tag/badge text on an accent tint | AA text (4.5:1) | 6.74:1 | Lc 65.6 | ✅ pass |
 | `--accent-text` | `--accent-soft` | Accent text on an accent tint | Advisory (translucent tint — not gated) | 1.33:1 | Lc 15.3 | ℹ️ not gated |
 | `--accent-text` | `--bg-accent` | Accent text on an accent-tinted surface | Advisory (translucent tint — not gated) | 1.37:1 | Lc 17.3 | ℹ️ not gated |
 | `--button-text` | `--accent` | Label on the primary button | AA text (4.5:1) | 13.75:1 | Lc 79.7 | ✅ pass |
 | `--on-accent` | `--accent` | Ink on an accent fill | AA text (4.5:1) | 13.75:1 | Lc 79.7 | ✅ pass |
-| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 12.27:1 | Lc 78.5 | ✅ pass |
+| `--focus-ring` | `--bg` | Focus ring vs page background | UI / large (3:1) | 12.22:1 | Lc 78.5 | ✅ pass |
 | `--focus-ring` | `--surface` | Focus ring vs a card | UI / large (3:1) | 11.16:1 | Lc 77.5 | ✅ pass |
-| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 12.27:1 | Lc 78.5 | ✅ pass |
+| `--accent` | `--bg` | Accent fill vs page background | UI / large (3:1) | 12.22:1 | Lc 78.5 | ✅ pass |
+| `--success` | `--surface` | Success indicator vs a card | UI / large (3:1) | 7.58:1 | Lc 56.6 | ✅ pass |
+| `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 9.29:1 | Lc 66.6 | ✅ pass |
+| `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 5.23:1 | Lc 41.5 | ✅ pass |
+| `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 7.33:1 | Lc 54.8 | ✅ pass |
+| `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.33:1 | Lc 15.1 | ℹ️ not gated |
 
 ## Data-viz palette (advisory)
 

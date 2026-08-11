@@ -28,7 +28,13 @@ const dts = readFileSync(resolve(root, 'classes/index.d.ts'), 'utf8');
 
 // --- factory side: classes/index.js `const ui = { … }` -----------------------
 const uiStart = js.indexOf('const ui = {');
-const uiBody = uiStart >= 0 ? js.slice(uiStart) : js;
+// Bound the body at the object's own closing brace. Slicing to end-of-file made
+// the LAST method's chunk swallow everything declared after `ui` — so an
+// unrelated helper exported below it (`severity(level, { part })`) had its
+// string branches attributed to whichever recipe happened to be last, and the
+// gate demanded a `part` union on that recipe's Opts type.
+const uiBodyEnd = uiStart >= 0 ? matchingBraceEnd(js, js.indexOf('{', uiStart)) : -1;
+const uiBody = uiStart >= 0 ? js.slice(uiStart, uiBodyEnd >= 0 ? uiBodyEnd + 1 : undefined) : js;
 
 function matchingBraceEnd(source, open) {
   let depth = 0;
