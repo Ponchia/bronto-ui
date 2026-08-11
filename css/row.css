@@ -1,0 +1,154 @@
+/* ==========================================================================
+   row — the dense selectable row. IN THE DEFAULT BUNDLE.
+
+   Every workbench grows a list of these: a search result, a file in an
+   explorer, an outline entry, a backlink, an inbox item, a commit. They are not
+   table rows — there is no column contract and no header — and they are not
+   menu items, because they persist rather than dismissing. But they are all the
+   same object: a full-width clickable line with a leading mark, a title that
+   gives up space first, and trailing metadata that does not.
+
+   Bronto already had this shape and it was imprisoned. `.ui-menu__item` is
+   exactly it, minus the persistence — so a consumer building an explorer either
+   claimed to be a menu or wrote the row again. One downstream workbench had
+   SIXTY-THREE families of it, about 1,200 lines, each re-deciding the selected
+   state, the hover, the ellipsis and the coarse-pointer floor.
+
+   `.ui-menu__item` now composes this, so the two cannot drift.
+
+   BOUNDARY. The host owns what a row means, what selects it, and what its
+   columns are. Bronto owns the line: its rhythm, its states, and the fact that
+   the title is the part that truncates. Rows that carry a severity should reach
+   for `.ui-severity-row` in `state.css` instead — that one adds the tone gutter.
+
+   In core rather than opt-in, unusually for a new surface, because
+   `.ui-menu__item` composes it and a core component cannot depend on a leaf.
+   ========================================================================== */
+
+.ui-row {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--text-soft);
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  gap: 0.5rem;
+
+  /* The companion to `__title`'s ellipsis, and the demo proved it is not
+     optional: a row is usually a flex or grid ITEM, whose automatic minimum
+     size is its min-content width — and `__title` is `white-space: nowrap`, so
+     that min-content is the WHOLE title. Without this a long title stops the
+     row shrinking and pushes its container past the viewport instead of
+     truncating. Caught at 320/360/390px by the overflow specs. */
+  min-inline-size: 0;
+  padding: 0.4rem 0.5rem;
+  text-align: start;
+  inline-size: 100%;
+}
+
+/* A row is usually a <button> or an <a>; when it is neither, it still needs to
+   look inert rather than pressable. */
+.ui-row:not(button, a, [role='button'], [role='option'], [tabindex]) {
+  cursor: default;
+}
+
+/* The title gives up space FIRST — it is the only part of a row that can be
+   truncated without losing a fact. Everything else keeps its size. */
+.ui-row__title {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Trailing facts: a count, an age, a path fragment. Never the thing that
+   shrinks, because a half-rendered number is worse than no number. */
+.ui-row__meta {
+  color: var(--text-dim);
+  flex: none;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+}
+
+/* A leading mark — an icon, a glyph, a status dot. Sized by the host. */
+.ui-row__mark {
+  display: inline-flex;
+  flex: none;
+}
+
+/* A row that wraps to a second line: a result with a snippet under its title.
+   The parts stack rather than sharing the baseline. */
+.ui-row--stacked {
+  align-items: stretch;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.ui-row--stacked .ui-row__title {
+  flex: none;
+}
+
+/* Rows in a list read as one object when they share a rule; rows in a menu
+   float. `--ruled` is the list form. */
+.ui-row--ruled {
+  border-block-end: 1px solid var(--line);
+  border-radius: 0;
+}
+
+/* --- States, and WHICH attribute is yours to use.
+
+   `aria-selected` is only valid on a row that has a role which accepts it —
+   `option` inside a `listbox`, or `row` / `tab` / `gridcell` / `treeitem`. On a
+   bare `<button>` it is invalid ARIA, and axe rates that CRITICAL. This project
+   shipped exactly that mistake in its own demo and the a11y gate caught it.
+
+   So: `aria-current` for a row that is merely the current one (the common
+   case), `aria-selected` only when the row genuinely carries an option/row
+   role, and `.is-selected` when neither applies. All three paint the same. --- */
+
+.ui-row[aria-selected='true'],
+.ui-row[aria-current]:not([aria-current='false']),
+.ui-row.is-selected {
+  background: var(--panel-soft);
+  color: var(--text);
+}
+
+@media (hover: hover) {
+  .ui-row:is(button, a, [role='button'], [role='option'], [tabindex]):hover {
+    background: var(--bg-accent);
+    color: var(--text);
+  }
+}
+
+.ui-row:focus-visible {
+  background: var(--bg-accent);
+  color: var(--text);
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+
+/* Touch: a row is a primary target in a list, so it floats to the full
+   tap-target rather than the 24px minimum. */
+@media (pointer: coarse) {
+  .ui-row {
+    min-block-size: var(--tap-target);
+  }
+}
+
+/* Forced colours strip the tinted hover/selected background, which would leave
+   the current row indistinguishable from its siblings. Re-assert a system
+   Highlight, the same way the menu and combobox rows do. */
+@media (forced-colors: active) {
+  .ui-row[aria-selected='true'],
+  .ui-row[aria-current]:not([aria-current='false']),
+  .ui-row.is-selected,
+  .ui-row:hover,
+  .ui-row:focus-visible {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+}

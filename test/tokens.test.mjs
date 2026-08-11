@@ -98,3 +98,49 @@ test('no coarse-pointer floor is written as a bare length', async () => {
     `coarse-pointer floors must use var(--tap-target) / var(--tap-target-min):\n${offenders.join('\n')}`,
   );
 });
+
+// `data-density` re-points the --space-* scale, so a component moves with it
+// only if its padding is EXPRESSED in that scale. The docs used to say the
+// preset applied "on any element"; measured, it reaches about 40 of ~145
+// padding declarations, because the rest are tuned pairs the seven-step scale
+// cannot express.
+//
+// The existing guard checked that the preset changes the token FAMILY, which is
+// true and useless — it would pass with every component hardcoded. This pins the
+// set that actually responds, so shrinking it is a visible regression and
+// growing it is a visible improvement, rather than both being silent.
+test('data-density reaches the components documented as responding', async () => {
+  const { readFileSync, readdirSync } = await import('node:fs');
+  const { fileURLToPath } = await import('node:url');
+  const dir = fileURLToPath(new URL('../css/', import.meta.url));
+
+  const responding = new Set();
+  for (const file of readdirSync(dir).filter((name) => name.endsWith('.css'))) {
+    let selector = null;
+    for (const line of readFileSync(dir + file, 'utf8').split('\n')) {
+      if (/^\.ui-[a-z-]/.test(line)) selector = line.replace(/\s*\{$/, '');
+      else if (selector && /^ {2}padding(-block|-inline)?: var\(--space/.test(line)) {
+        responding.add(selector);
+      }
+    }
+  }
+
+  // Named because the docs name them: if one of these stops responding, the
+  // sentence in docs/theming.md became false.
+  for (const named of [
+    '.ui-panel',
+    '.ui-modal__body',
+    '.ui-evidence-item',
+    '.ui-claim',
+    '.ui-job',
+    '.ui-code__body',
+  ]) {
+    assert.ok(responding.has(named), `${named} must respond to data-density`);
+  }
+
+  // And the honest floor: this many, not "any element".
+  assert.ok(
+    responding.size >= 40,
+    `only ${responding.size} components respond to data-density; docs/theming.md says ~40`,
+  );
+});

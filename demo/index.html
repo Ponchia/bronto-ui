@@ -773,7 +773,7 @@
             >
             <details class="ui-menu-host" data-bronto-menu>
               <summary class="ui-button ui-button--subtle" style="list-style: none">Menu ▾</summary>
-              <div class="ui-menu">
+              <div class="ui-menu ui-menu--dropdown">
                 <span class="ui-menu__label">Actions</span>
                 <button class="ui-menu__item" type="button">Duplicate</button>
                 <button class="ui-menu__item" type="button">Archive</button>
@@ -1861,6 +1861,29 @@ useCommand();  // react/solid/qwik</code></pre>
           </div>
         </div>
       </div>
+        <section class="ui-stack">
+          <h3 class="ui-eyebrow ui-eyebrow--muted">Rows</h3>
+            <div class="ui-panel" style="padding: 0.25rem">
+              <button class="ui-row ui-row--ruled" type="button" aria-current="true">
+                <span class="ui-row__mark" aria-hidden="true">◆</span>
+                <span class="ui-row__title">apps/server/src/collab/room.ts</span>
+                <span class="ui-row__meta">4m</span>
+              </button>
+              <button class="ui-row ui-row--ruled" type="button">
+                <span class="ui-row__mark" aria-hidden="true">◆</span>
+                <span class="ui-row__title"
+                  >a title long enough to prove that it is the part which truncates, while the
+                  trailing meta keeps its size</span
+                >
+                <span class="ui-row__meta">12m</span>
+              </button>
+              <button class="ui-row ui-row--stacked" type="button">
+                <span class="ui-row__title">Stacked row</span>
+                <span class="ui-row__meta">a snippet under its title</span>
+              </button>
+            </div>
+        </section>
+
     </main>
 
     <!-- The demo drives itself with the package's own shipped modules,

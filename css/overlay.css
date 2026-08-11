@@ -247,6 +247,12 @@ html:has(.ui-modal.is-open) {
   position: relative;
 }
 
+/* The SURFACE only. Placement is a separate decision, because a menu is not
+   always a dropdown: a canvas context menu opens at the pointer, a mobile one
+   arrives as a sheet. This rule used to weld `position: absolute` plus a
+   trigger-relative offset into the surface itself, so a consumer with a
+   pointer-positioned menu could not use it at all and re-declared the panel,
+   the border, the radius and the shadow to get one. */
 .ui-menu {
   background: var(--panel-strong);
   border: 1px solid var(--line-strong);
@@ -256,10 +262,23 @@ html:has(.ui-modal.is-open) {
   gap: 1px;
   min-inline-size: 11rem;
   padding: 0.3rem;
+}
+
+/* The dropdown placement this class always had: anchored under its trigger
+   inside a `.ui-menu-host`. Unchanged behaviour, now opted into. */
+.ui-menu--dropdown {
   position: absolute;
   inset-inline-end: 0;
   inset-block-start: calc(100% + 0.4rem);
   z-index: var(--z-overlay);
+}
+
+/* Opened at a point the host computes — a right-click, a long-press. The host
+   sets `left`/`top` (or `inset-inline-start`/`inset-block-start`); Bronto only
+   takes it out of flow and gives it the layer. */
+.ui-menu--at-pointer {
+  position: fixed;
+  z-index: var(--z-popover);
 }
 
 .ui-menu__label {
@@ -271,20 +290,15 @@ html:has(.ui-modal.is-open) {
   text-transform: uppercase;
 }
 
+/* Composes `.ui-row` (css/row.css) — a menu item IS a dense selectable row,
+   and keeping two copies of that shape is how they drift. What is menu-specific
+   stays here: the mono face, the slightly roomier padding a pointer target
+   wants, and the leading bullet below. `row.css` is in the core bundle, which
+   is what lets a core component compose it. */
 .ui-menu__item {
-  align-items: center;
-  background: transparent;
-  border: 0;
-  border-radius: var(--radius-sm);
-  color: var(--text-soft);
-  cursor: pointer;
-  display: flex;
   font-family: var(--mono);
   font-size: var(--text-sm);
-  gap: 0.5rem;
   padding: 0.5rem 0.55rem;
-  text-align: start;
-  inline-size: 100%;
 }
 
 .ui-menu__item::before {
