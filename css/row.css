@@ -35,6 +35,14 @@
   display: flex;
   font: inherit;
   gap: 0.5rem;
+
+  /* The companion to `__title`'s ellipsis, and the demo proved it is not
+     optional: a row is usually a flex or grid ITEM, whose automatic minimum
+     size is its min-content width — and `__title` is `white-space: nowrap`, so
+     that min-content is the WHOLE title. Without this a long title stops the
+     row shrinking and pushes its container past the viewport instead of
+     truncating. Caught at 320/360/390px by the overflow specs. */
+  min-inline-size: 0;
   padding: 0.4rem 0.5rem;
   text-align: start;
   inline-size: 100%;

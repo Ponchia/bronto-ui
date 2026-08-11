@@ -35,6 +35,12 @@ downstream workbench onto 0.8.1 and watching where adoption stalled.
   went red, and a new unit gate now catches the same class of error in
   milliseconds rather than twenty minutes of browser matrix.
 
+  `min-inline-size: 0` is on the row itself and is not optional: a row is
+  usually a flex or grid item, whose automatic minimum is its min-content width,
+  and `__title` is `white-space: nowrap` — so without it a long title stops the
+  row shrinking and pushes its container past the viewport instead of
+  truncating. The demo proved that at 320/360/390px before release.
+
   It is in **core**, unusually for a new surface, because `.ui-menu__item` now
   composes it and a core component cannot depend on an opt-in leaf. It also
   earns the roadmap's stronger argument for a core addition on two counts:
