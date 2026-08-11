@@ -56,6 +56,16 @@ export interface ButtonOpts {
   icon?: boolean;
   size?: 'sm' | 'lg' | 'dense';
 }
+export interface EmptyStateOpts {
+  invite?: boolean;
+}
+export interface ToolstripOpts {
+  variant?: 'floating' | 'compact' | 'pane';
+  anchor?: 'block-start' | 'block-end';
+}
+export interface SelectionbarOpts {
+  anchor?: 'block-start' | 'block-end';
+}
 export interface CardOpts {
   accent?: boolean;
   interactive?: boolean;
@@ -340,10 +350,27 @@ export interface Ui {
   state(opts?: StateOpts): string;
   job(opts?: JobOpts): string;
   originLabel(opts?: OriginLabelOpts): string;
+  emptyState(opts?: EmptyStateOpts): string;
+  toolstrip(opts?: ToolstripOpts): string;
+  selectionbar(opts?: SelectionbarOpts): string;
 }
 
 export declare const ui: Ui;
 export default ui;
+
+/** The canonical severity ladder, worst to best. \`unknown\` is deliberately not
+ *  a member: it means "not measured", not "nearly ok". */
+export declare const SEVERITY_LEVELS: readonly ['critical', 'error', 'warning', 'notice', 'ok'];
+
+export type SeverityLevel = (typeof SEVERITY_LEVELS)[number];
+
+/** Bundles \`data-level\` with the severity class so the attribute that carries
+ *  the meaning cannot be forgotten. An unrecognised level resolves to
+ *  \`'unknown'\`, which paints the neutral tone. */
+export declare function severity(
+  level: SeverityLevel | (string & {}) | null | undefined,
+  opts?: { part?: 'chip' | 'dot' | 'row' },
+): { class: string; 'data-level': string };
 
 /** Min/max for the value-bearing fills; defaults to 0–100. */
 export interface ValueRangeOpts {

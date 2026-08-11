@@ -828,6 +828,47 @@
   margin: 0.3rem 0 0;
 }
 
+/* Slots. Without them every empty surface in an app re-invents the same three
+   parts under a different name, and they drift: one has a glyph, the next has
+   two sentences in the same weight, a third is a bare <p>. The shape is always
+   mark → one sentence in full ink → a quieter follow-up. */
+.ui-empty-state__glyph {
+  display: block;
+  font-size: 1.5rem;
+  line-height: 1;
+  opacity: 0.5;
+}
+
+/* The one sentence that says what is missing. Full ink — it is the message,
+   not a caption, and the container's --text-dim would bury it. */
+.ui-empty-state__lead {
+  color: var(--text);
+  margin: 0;
+}
+
+.ui-empty-state__hint {
+  font-size: var(--text-2xs);
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* An empty state REPORTS absence; an invite OFFERS the next action. That is a
+   different job, so it gets a different frame: no dashed box (there is nothing
+   to outline — the surface itself is the thing you are being invited into) and
+   it centres in whatever block space it is given rather than sitting as a
+   card. Use it for a surface the user is meant to fill, and keep the plain
+   `.ui-empty-state` for a region that simply has no rows today. */
+.ui-empty-state--invite {
+  align-items: center;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  justify-content: center;
+  min-block-size: 100%;
+  padding: var(--space-sm);
+}
+
 /* --- Keyboard key — inline glyph for shortcut hints. Wrap a <kbd>. --- */
 
 .ui-kbd {

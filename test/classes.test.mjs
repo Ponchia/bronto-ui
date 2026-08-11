@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import ui, { ui as uiNamed, cls, cx, attrs } from '../classes/index.js';
+import ui, { ui as uiNamed, cls, cx, attrs, severity, SEVERITY_LEVELS } from '../classes/index.js';
 
 test('attrs.meter/progress bundle the painted value with its announced value', () => {
   const p = attrs.progress(64);
@@ -142,6 +142,62 @@ test('the icon-button label slot hides visually without leaving the a11y tree', 
 test('unknown option values are ignored, not emitted', () => {
   assert.equal(ui.button({ variant: 'bogus' }), 'ui-button');
   assert.equal(ui.badge({ tone: 'bogus' }), 'ui-badge');
+});
+
+test('empty-state, toolstrip and selectionbar recipes emit only registry classes', () => {
+  assert.equal(ui.emptyState(), 'ui-empty-state');
+  assert.equal(ui.emptyState({ invite: true }), 'ui-empty-state ui-empty-state--invite');
+  assert.equal(ui.toolstrip({ variant: 'pane' }), 'ui-toolstrip ui-toolstrip--pane');
+  assert.equal(
+    ui.toolstrip({ variant: 'floating', anchor: 'block-start' }),
+    'ui-toolstrip ui-toolstrip--floating ui-toolstrip--anchored ui-toolstrip--anchor-block-start',
+  );
+  assert.equal(ui.toolstrip({ variant: 'bogus' }), 'ui-toolstrip');
+  assert.equal(
+    ui.selectionbar({ anchor: 'block-end' }),
+    'ui-selectionbar ui-selectionbar--anchored ui-selectionbar--anchor-block-end',
+  );
+  assert.equal(ui.selectionbar(), 'ui-selectionbar');
+});
+
+// The whole point of the ladder is that ONE vocabulary exists. Pin the tiers and
+// their order literally: a silent reorder would corrupt every consumer's sort,
+// and a silently-added tier would mean two ladders again.
+test('SEVERITY_LEVELS is the frozen ladder, worst to best, without unknown', () => {
+  assert.deepEqual(SEVERITY_LEVELS, ['critical', 'error', 'warning', 'notice', 'ok']);
+  assert.ok(Object.isFrozen(SEVERITY_LEVELS));
+  // `unknown` means "not measured", not "nearly ok". Sorting it beside ok is how
+  // a dead collector reads as a healthy system.
+  assert.ok(!SEVERITY_LEVELS.includes('unknown'));
+});
+
+test('severity() bundles the class with the attribute that carries the meaning', () => {
+  assert.deepEqual(severity('critical'), { class: 'ui-severity', 'data-level': 'critical' });
+  assert.deepEqual(severity('warning', { part: 'row' }), {
+    class: 'ui-severity-row',
+    'data-level': 'warning',
+  });
+  assert.deepEqual(severity('ok', { part: 'dot' }), {
+    class: 'ui-severity-dot',
+    'data-level': 'ok',
+  });
+  // An unrecognised, absent, or null level degrades to `unknown` — never to a
+  // tier, and never to a missing attribute (which would paint the neutral tone
+  // while claiming nothing, indistinguishable from a real `unknown`).
+  for (const bogus of ['nope', '', null, undefined]) {
+    assert.equal(severity(bogus)['data-level'], 'unknown', `severity(${JSON.stringify(bogus)})`);
+  }
+});
+
+// Every tier the CSS paints must be a tier the JS knows about, and vice versa —
+// the two halves of the ladder living in different files is exactly how a
+// vocabulary drifts.
+test('the CSS severity tiers and SEVERITY_LEVELS are the same set', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { fileURLToPath } = await import('node:url');
+  const src = readFileSync(fileURLToPath(new URL('../css/state.css', import.meta.url)), 'utf8');
+  const painted = new Set([...src.matchAll(/\[data-level='([a-z]+)'\]/g)].map((m) => m[1]));
+  assert.deepEqual([...painted].sort(), [...SEVERITY_LEVELS, 'unknown'].sort());
 });
 
 test('the recipes added this cycle emit only registry classes', () => {

@@ -1,8 +1,8 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `groups[].base` is null for a parts-only namespace (no standalone base class — do NOT emit it). A modifier whose name contains `__` (e.g. `ui-spark__bar--pos`) attaches to THAT part, not the base host. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `behaviorAttributes` are the `data-bronto-*` wiring hooks the optional behaviors delegate on; `requiredAria` is the role/aria a generator must emit per component. `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 646,
-    "groups": 179
+    "classes": 669,
+    "groups": 183
   },
   "groups": {
     "ui-accordion": {
@@ -548,8 +548,14 @@
     },
     "ui-empty-state": {
       "base": "ui-empty-state",
-      "modifiers": [],
-      "parts": []
+      "modifiers": [
+        "ui-empty-state--invite"
+      ],
+      "parts": [
+        "ui-empty-state__glyph",
+        "ui-empty-state__hint",
+        "ui-empty-state__lead"
+      ]
     },
     "ui-error-summary": {
       "base": "ui-error-summary",
@@ -913,6 +919,17 @@
         "ui-pagination__item"
       ]
     },
+    "ui-pane": {
+      "base": "ui-pane",
+      "modifiers": [],
+      "parts": [
+        "ui-pane__actions",
+        "ui-pane__body",
+        "ui-pane__head",
+        "ui-pane__title",
+        "ui-pane__title-input"
+      ]
+    },
     "ui-panel": {
       "base": "ui-panel",
       "modifiers": [],
@@ -1107,10 +1124,32 @@
     },
     "ui-selectionbar": {
       "base": "ui-selectionbar",
-      "modifiers": [],
+      "modifiers": [
+        "ui-selectionbar--anchor-block-end",
+        "ui-selectionbar--anchor-block-start",
+        "ui-selectionbar--anchored"
+      ],
       "parts": [
         "ui-selectionbar__actions",
         "ui-selectionbar__count"
+      ]
+    },
+    "ui-severity": {
+      "base": "ui-severity",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-severity-dot": {
+      "base": "ui-severity-dot",
+      "modifiers": [],
+      "parts": []
+    },
+    "ui-severity-row": {
+      "base": "ui-severity-row",
+      "modifiers": [],
+      "parts": [
+        "ui-severity-row__meta",
+        "ui-severity-row__title"
       ]
     },
     "ui-shortcut": {
@@ -1450,13 +1489,18 @@
     "ui-toolstrip": {
       "base": "ui-toolstrip",
       "modifiers": [
+        "ui-toolstrip--anchor-block-end",
+        "ui-toolstrip--anchor-block-start",
+        "ui-toolstrip--anchored",
         "ui-toolstrip--compact",
-        "ui-toolstrip--floating"
+        "ui-toolstrip--floating",
+        "ui-toolstrip--pane"
       ],
       "parts": [
         "ui-toolstrip__actions",
         "ui-toolstrip__brand",
         "ui-toolstrip__context",
+        "ui-toolstrip__fill",
         "ui-toolstrip__group",
         "ui-toolstrip__search"
       ]
@@ -1753,6 +1797,10 @@
     "ui-dotspinner--lg",
     "ui-dotspinner--sm",
     "ui-empty-state",
+    "ui-empty-state--invite",
+    "ui-empty-state__glyph",
+    "ui-empty-state__hint",
+    "ui-empty-state__lead",
     "ui-error-summary",
     "ui-error-summary__list",
     "ui-error-summary__title",
@@ -1912,6 +1960,12 @@
     "ui-pagehead__title",
     "ui-pagination",
     "ui-pagination__item",
+    "ui-pane",
+    "ui-pane__actions",
+    "ui-pane__body",
+    "ui-pane__head",
+    "ui-pane__title",
+    "ui-pane__title-input",
     "ui-panel",
     "ui-panel__head",
     "ui-popover",
@@ -1999,8 +2053,16 @@
     "ui-sel--on",
     "ui-select",
     "ui-selectionbar",
+    "ui-selectionbar--anchor-block-end",
+    "ui-selectionbar--anchor-block-start",
+    "ui-selectionbar--anchored",
     "ui-selectionbar__actions",
     "ui-selectionbar__count",
+    "ui-severity",
+    "ui-severity-dot",
+    "ui-severity-row",
+    "ui-severity-row__meta",
+    "ui-severity-row__title",
     "ui-shortcut",
     "ui-shortcut__sep",
     "ui-sidebar",
@@ -2129,11 +2191,16 @@
     "ui-tool-call__status",
     "ui-tool-log",
     "ui-toolstrip",
+    "ui-toolstrip--anchor-block-end",
+    "ui-toolstrip--anchor-block-start",
+    "ui-toolstrip--anchored",
     "ui-toolstrip--compact",
     "ui-toolstrip--floating",
+    "ui-toolstrip--pane",
     "ui-toolstrip__actions",
     "ui-toolstrip__brand",
     "ui-toolstrip__context",
+    "ui-toolstrip__fill",
     "ui-toolstrip__group",
     "ui-toolstrip__search",
     "ui-tooltip",

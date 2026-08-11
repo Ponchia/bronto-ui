@@ -64,6 +64,39 @@ consumer had to write because the framework did not provide it, or got wrong.
   lowers only the visual floor, to `--tap-target-min`; the coarse-pointer block
   still floats it to the full `--tap-target`, so a control shrunk for a mouse is
   never shrunk for a finger. `ui.button({ size: 'dense' })`.
+- **A canonical severity ladder** (`css/state.css`, opt-in). Bronto shipped the
+  *tones* long ago but never the *scale* — the tier names, their order, and the
+  attribute carrying them — so every consumer invented the ladder and it drifted
+  inside a single app: one surface saying `critical|error|warning|note`, the
+  next `bad|warn`, a third `critical|warning|info|ok`, under two different
+  attribute names, so findings did not sort against alerts. The ladder is
+  `critical` › `error` › `warning` › `notice` › `ok`, carried on **one**
+  attribute (`data-level`) across `.ui-severity`, `.ui-severity-dot` and
+  `.ui-severity-row`, with `SEVERITY_LEVELS` and `severity()` exported so a host
+  drives filters and sorts from the same list the CSS paints. `unknown` sits
+  deliberately *outside* the ordering: it means "not measured", and collapsing
+  it into `ok` is how a dead collector reads as a healthy system.
+- **`.ui-pane`** (`css/workbench.css`, opt-in) — the window that `.ui-panel`
+  (a padded card) and `.ui-inspector` (head plus body) are not: a grab header,
+  a title that renames in place via `__title-input` without moving layout, and
+  an `__actions` slot that **scrolls rather than pushing** its last control past
+  the pane's clipped edge — the failure that leaves a Focus or Disconnect button
+  present, in the a11y tree, and unreachable.
+- **`.ui-toolstrip--pane`** — the app has one toolstrip; a workbench full of
+  panes has one *per pane*, and those need different framing (no frame of their
+  own, a rule against the content below) and must not wrap, since a second row
+  would resize live content on every state change. `.ui-toolstrip__fill` marks
+  the element that absorbs slack and gives it back first.
+- **`--anchored` / `--anchor-block-start` / `--anchor-block-end`** on
+  `.ui-selectionbar` and `.ui-toolstrip`. Both `--floating` bars were raised but
+  position-less, so every consumer re-derived the placement — including the
+  `max(offset, inset)` shape that keeps a bar out from under the home indicator.
+- **Empty-state slots and an invite variant.** `.ui-empty-state` was a dashed
+  box that styled a `<p>`, so every empty surface in an app re-invented the same
+  three parts under a different name and they drifted. `__glyph` / `__lead` /
+  `__hint` name them, and `--invite` is the different job: an empty state
+  *reports absence*, an invite *offers the next action*, so it drops the dashed
+  frame and centres in the space it is given.
 - **Safe-area tokens** — `--safe-area-top / -right / -bottom / -left`, defaulting
   to `env(safe-area-inset-*, 0px)`. The framework had **no** `env()` awareness
   while shipping eight viewport-anchored surfaces; all eight now read them: the
@@ -85,6 +118,11 @@ consumer had to write because the framework did not provide it, or got wrong.
   *lightness* exactly and moves only hue and a small role-scaled chroma.
   `check-skins` now rejects a partial canvas and a one-theme-only canvas, the
   two shapes the hand-written version had.
+- **`check:recipe-types` no longer mis-attributes options.** It sliced the
+  factory body to end-of-file, so the *last* recipe's chunk swallowed everything
+  declared after the `ui` object — an unrelated helper exported below it had its
+  string branches blamed on whichever recipe happened to be last. It now stops
+  at the object's own closing brace.
 - `docs/stability.md` records the audit and the correction it forces on this
   project's adoption model: "no inspected consumer imports the surface" has been
   measuring **discoverability, not demand**. Those thirteen zero-use primitives

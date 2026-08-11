@@ -3,7 +3,7 @@
 [![npm](https://img.shields.io/npm/v/@ponchia/ui?logo=npm)](https://www.npmjs.com/package/@ponchia/ui)
 [![npm provenance](https://img.shields.io/badge/npm-provenance-blue?logo=npm)](https://www.npmjs.com/package/@ponchia/ui#provenance)
 [![runtime deps](https://img.shields.io/badge/runtime%20deps-0-brightgreen)](https://github.com/Ponchia/bronto-ui/blob/main/package.json)
-[![default CSS](https://img.shields.io/badge/default%20CSS-~91kB%20%2F%20~16kB%20gzip-informational)](https://github.com/Ponchia/bronto-ui/blob/main/scripts/check-dist.mjs)
+[![default CSS](https://img.shields.io/badge/default%20CSS-~92kB%20%2F%20~16kB%20gzip-informational)](https://github.com/Ponchia/bronto-ui/blob/main/scripts/check-dist.mjs)
 [![CI](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Ponchia/bronto-ui/badge)](https://scorecard.dev/viewer/?uri=github.com/Ponchia/bronto-ui)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE)
@@ -86,7 +86,7 @@ when deliberately upgrading across a breaking pre-1.0 minor):
 
 ## Quick start
 
-**1. Load the CSS.** One flattened, minified default CSS bundle — the standard component set, one request (~91 kB raw / ~16 kB gzip) — that is `dist/bronto.css`, not the whole package tarball:
+**1. Load the CSS.** One flattened, minified default CSS bundle — the standard component set, one request (~92 kB raw / ~16 kB gzip) — that is `dist/bronto.css`, not the whole package tarball:
 
 ```css
 @import '@ponchia/ui';            /* via a bundler */

@@ -25,7 +25,7 @@ const MODULES = [
     docs: 'docs/stability.md',
     unit: 'test/classes.test.mjs',
     types: 'test/types.test-d.ts',
-    helpers: ['attrs', 'cls', 'cx', 'ui'],
+    helpers: ['SEVERITY_LEVELS', 'attrs', 'cls', 'cx', 'severity', 'ui'],
   }),
   helperModule('annotations', {
     source: 'annotations/index.js',
