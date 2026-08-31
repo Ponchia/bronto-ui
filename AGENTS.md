@@ -10,3 +10,8 @@ only carries maintainer doctrine that fits nowhere else.
 - Single consumer (the maintainer). When an audit/review surfaces a
   worthwhile fix, default to fixing it now — do not propose deferring to
   post-release backlogs unless asked.
+
+## House check
+
+Run `repo-instruction-audit --repo .` after changing agent instructions or
+documentation routing.
