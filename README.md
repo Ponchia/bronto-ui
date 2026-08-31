@@ -63,6 +63,12 @@ specificity fight. Print and reduced-motion rules still use `!important`
 deliberately where the framework must neutralize animation or layout at a media
 boundary.
 
+One production consumer is **[Sense6](https://sense6.net/en/)**, a privacy-first
+browser perception lab. Its static multilingual discovery pages and interactive
+colour, reaction-time, hearing, and visual-detail experiments use Bronto's
+shared shell, accessible controls, responsive layout, themes, and print rules
+while keeping the experiment-specific visual identity in the application.
+
 It ships a complete, accessible **standard component set** because that is the
 identity layer every service consumes. Its sharper edge is the opt-in **tooling,
 analytical, and communication layer** sketched above. The line that holds it
