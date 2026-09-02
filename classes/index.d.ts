@@ -579,6 +579,11 @@ export declare const cls: {
   readonly severityRow: 'ui-severity-row';
   readonly severityRowTitle: 'ui-severity-row__title';
   readonly severityRowMeta: 'ui-severity-row__meta';
+  readonly severityTone: 'ui-severity-tone';
+  readonly timestrip: 'ui-timestrip';
+  readonly timestripAxis: 'ui-timestrip__axis';
+  readonly timestripNow: 'ui-timestrip__now';
+  readonly timestripEvent: 'ui-timestrip__event';
   readonly generated: 'ui-generated';
   readonly generatedLabel: 'ui-generated__label';
   readonly originLabel: 'ui-origin-label';
@@ -1014,7 +1019,7 @@ export type SeverityLevel = (typeof SEVERITY_LEVELS)[number];
  *  `'unknown'`, which paints the neutral tone. */
 export declare function severity(
   level: SeverityLevel | (string & {}) | null | undefined,
-  opts?: { part?: 'chip' | 'dot' | 'row' },
+  opts?: { part?: 'chip' | 'dot' | 'row' | 'tone' },
 ): { class: string; 'data-level': string };
 
 /** Min/max for the value-bearing fills; defaults to 0–100. */

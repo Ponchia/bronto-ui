@@ -54,12 +54,12 @@ edit; a gate will revert you) and which are **path-frozen published subpaths**
 
 ## Conventions
 
-- **The public catalog is frozen for 1.0 stabilization.** Do not add a public
+- **Public surface is admitted by evidence, not by judgement.** A new public
   class, token, behavior, helper, binding, schema, CSS leaf, or package subpath
-  while this freeze is active. Fixes to an existing contract are in scope. A
-  genuinely repeated downstream need may reopen catalog work only with explicit
-  maintainer approval and adoption evidence in the PR. Package examples prove
-  compatibility; they do not count as downstream adoption.
+  needs a named non-example consumer that already built it by hand, and the PR
+  says who and where. Fixes to an existing contract need no such argument.
+  Package examples prove compatibility; they never establish that anyone needed
+  the surface. See [ROADMAP.md](ROADMAP.md#surface-is-admitted-by-evidence).
 - **Surface has to pay rent.** A public class, token, behavior, schema,
   binding, CSS leaf, or docs path is accepted only when it makes the system
   clearer, safer, smaller, or more stable. Prefer a documented recipe over a

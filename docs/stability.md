@@ -53,7 +53,7 @@ enough.
 
 ### Adoption evidence for 1.0
 
-This snapshot records product evidence as of 2026-07-20. Use three evidence
+This snapshot records product evidence as of 2026-09-02. Use three evidence
 classes:
 
 - **Downstream-proven:** A non-example app, site, report generator, or tool
@@ -64,9 +64,10 @@ classes:
 - **Speculative:** Neither downstream use nor a package-level executable proof
   justifies freezing the surface into 1.0.
 
-Package-proven is necessary but does not establish demand. During the catalog
-freeze, do not expand package-only surfaces. Recheck this table against real
-consumer upgrades before the 1.0 release candidate.
+Package-proven is necessary but does not establish demand: it proves the
+tarball works, not that anyone needed the surface. Do not expand a package-only
+surface without a named consumer that built it by hand. Recheck this table
+against real consumer upgrades before the 1.0 release candidate.
 
 > **The 0.8.0 consumer audit — read this before trusting the table below.** A
 > full-surface audit of the largest downstream consumer (a Yjs-collaborative
@@ -95,11 +96,42 @@ consumer upgrades before the 1.0 release candidate.
 > and the ADR-0001 canvas amendment. That is the intended loop: the consumer's
 > local classes are the backlog, resolving either to a deletion there or an
 > addition here.
+>
+> **Re-measured 2026-09-02, and the loop moved.** The same consumer now
+> references **122 of 682 published classes** (was 26), and **26%** of the
+> classes in the leaves it imports (was 18%). What closed the gap was not new
+> catalog: it was adoption of surface that had shipped and gone unread —
+> `ui-diff` and `ui-code` in a git view that had imported both leaves and used
+> neither, `ui-meter` replacing four hand-built progress bars, `ui-eyebrow`
+> replacing three copies of one label rule, `ui-chip`, `ui-severity-row` under a
+> findings list, and `ui-source-card` / `ui-provenance` / `ui-generated` giving
+> citation and machine-authored content a grammar they had never had.
+>
+> Two things that pass measurement are worth stating because they cut the other
+> way. The consumer **dropped** `report.css` from its bundle: its findings
+> viewer looked like the report lane's consumer and is not — a finding carries a
+> severity, and `.ui-claim`'s tones are about *support*. And the same pass found
+> the only real gap of the set, `.ui-timestrip`, which is in this release.
+>
+> A departure is evidence too, and this one is worth recording because the
+> reason is not rejection. A repository-visualisation consumer adopted `0.7.0`
+> and removed the dependency in its next refactor — the one that cut its
+> maintained surface from ~53k to ~12k lines and turned its viewer into an
+> **embeddable component**. A component that renders inside someone else's page
+> cannot ship a design system; it takes its palette from the host. So it
+> replaced the dependency with a small set of `--host-*` custom properties the
+> embedding page sets, each falling back to the standalone value.
+>
+> That is the token model working as intended, one layer further out than this
+> package usually sees, and it is the shape to expect from any consumer that
+> becomes embeddable: they will want **tokens without CSS**. `tokens.json`,
+> `tokens/resolved.json` and the DTCG export already serve exactly that, and
+> nothing in the ledger below counts a consumer of those.
 
 | Surface family | Current evidence | 1.0 disposition |
 | --- | --- | --- |
 | Core CSS, class recipes, vanilla behaviors, tokens, and Tailwind bridge | Downstream-proven across five inspected non-example app, site, and service consumers. | Stabilize names and behavior contracts. Use consumer upgrades as the release-candidate proof. |
-| Report, provenance, analytical CSS, annotations, glyphs, skins, workbench CSS, chart data, and Vega theme | Downstream-proven across four inspected report, site, dashboard, and tool consumers. | Keep opt-in. Stabilize the consumed paths; do not broaden the catalog during the freeze. |
+| Report, provenance, analytical CSS, annotations, glyphs, skins, workbench CSS, chart data, and Vega theme | Downstream-proven across four inspected report, site, dashboard, and tool consumers. | Keep opt-in. Stabilize the consumed paths; broaden only where a named consumer has built the surface by hand. |
 | Controlled non-`<dialog>` modal | Package-proven by stack, portal, late-node, focus, and cleanup regressions. None of ten inspected non-example consumers initializes `initModal`. | Deprecated in 0.7; remove no earlier than 0.8 unless a real consumer adopts it. Native `<dialog>` + `initDialog` is the stable path. |
 | React, Solid, Qwik, Svelte, and Vue lifecycle adapters | Package-proven by packed examples, types, and lifecycle tests. None of ten inspected non-example consumers imports an adapter entrypoint. | Deprecated in 0.7; remove no earlier than 0.8 unless a real consumer adopts one. Vanilla behaviors remain stable. |
 | Mermaid, D2, Shiki, Figma Variables, and the report-claims schema | Package-proven by generated-data, render, schema, and drift checks. No inspected non-example consumer currently supplies downstream proof for every path. | Keep compatible through 0.8.x, but decide each 1.0 contract from adoption evidence rather than generator coverage alone. |

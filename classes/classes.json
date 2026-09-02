@@ -1,8 +1,8 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `groups[].base` is null for a parts-only namespace (no standalone base class — do NOT emit it). A modifier whose name contains `__` (e.g. `ui-spark__bar--pos`) attaches to THAT part, not the base host. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `behaviorAttributes` are the `data-bronto-*` wiring hooks the optional behaviors delegate on; `requiredAria` is the role/aria a generator must emit per component. `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 677,
-    "groups": 184
+    "classes": 682,
+    "groups": 186
   },
   "groups": {
     "ui-accordion": {
@@ -1167,6 +1167,11 @@
         "ui-severity-row__title"
       ]
     },
+    "ui-severity-tone": {
+      "base": "ui-severity-tone",
+      "modifiers": [],
+      "parts": []
+    },
     "ui-shortcut": {
       "base": "ui-shortcut",
       "modifiers": [],
@@ -1455,6 +1460,15 @@
       "parts": [
         "ui-timeline__item",
         "ui-timeline__time"
+      ]
+    },
+    "ui-timestrip": {
+      "base": "ui-timestrip",
+      "modifiers": [],
+      "parts": [
+        "ui-timestrip__axis",
+        "ui-timestrip__event",
+        "ui-timestrip__now"
       ]
     },
     "ui-toast": {
@@ -2086,6 +2100,7 @@
     "ui-severity-row",
     "ui-severity-row__meta",
     "ui-severity-row__title",
+    "ui-severity-tone",
     "ui-shortcut",
     "ui-shortcut__sep",
     "ui-sidebar",
@@ -2194,6 +2209,10 @@
     "ui-timeline",
     "ui-timeline__item",
     "ui-timeline__time",
+    "ui-timestrip",
+    "ui-timestrip__axis",
+    "ui-timestrip__event",
+    "ui-timestrip__now",
     "ui-toast",
     "ui-toast--accent",
     "ui-toast--danger",

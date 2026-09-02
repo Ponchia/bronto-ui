@@ -5,11 +5,11 @@ small behavior-backed widget. It follows the contracts in
 [CONTRIBUTING.md](../CONTRIBUTING.md) and
 [architecture.md](./architecture.md#surface-admission-rule).
 
-> **1.0 catalog freeze:** Do not use this playbook while the stabilization
-> freeze is active. Fixes to existing surface remain in scope. Reopen new public
-> surface only when a repeated downstream need is documented and the maintainer
-> explicitly approves the exception. Package examples are compatibility proof,
-> not downstream adoption.
+> **Bring the evidence first.** New public surface is admitted when a named
+> non-example consumer has already built it by hand, and the PR says who and
+> where. Fixes to existing surface need no such argument. Package examples are
+> compatibility proof, not downstream adoption — see
+> [ROADMAP.md](../ROADMAP.md#surface-is-admitted-by-evidence).
 
 ## 1. Choose the layer
 
