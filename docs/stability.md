@@ -113,9 +113,20 @@ against real consumer upgrades before the 1.0 release candidate.
 > severity, and `.ui-claim`'s tones are about *support*. And the same pass found
 > the only real gap of the set, `.ui-timestrip`, which is in this release.
 >
-> A departure is evidence too, and one is unexplained: a repository-visualisation
-> consumer adopted `0.7.0` and removed the dependency in its next refactor
-> without recording why.
+> A departure is evidence too, and this one is worth recording because the
+> reason is not rejection. A repository-visualisation consumer adopted `0.7.0`
+> and removed the dependency in its next refactor — the one that cut its
+> maintained surface from ~53k to ~12k lines and turned its viewer into an
+> **embeddable component**. A component that renders inside someone else's page
+> cannot ship a design system; it takes its palette from the host. So it
+> replaced the dependency with a small set of `--host-*` custom properties the
+> embedding page sets, each falling back to the standalone value.
+>
+> That is the token model working as intended, one layer further out than this
+> package usually sees, and it is the shape to expect from any consumer that
+> becomes embeddable: they will want **tokens without CSS**. `tokens.json`,
+> `tokens/resolved.json` and the DTCG export already serve exactly that, and
+> nothing in the ledger below counts a consumer of those.
 
 | Surface family | Current evidence | 1.0 disposition |
 | --- | --- | --- |
