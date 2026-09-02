@@ -165,6 +165,52 @@ Colour is never the only channel (WCAG 1.4.1): `.ui-severity` carries an
 author-written label, and `.ui-severity-dot` is only for rows that **also** name
 their level in text.
 
+### Painting a mark Bronto does not ship — `.ui-severity-tone`
+
+The three classes above all draw something: a chip, a ruled row, a background
+dot. A host painting its own mark — an SVG shape, a gradient stop, a canvas —
+needs the tone as a **value** with none of that. `.ui-severity-tone` paints
+nothing and only resolves `--severity-tone` from `data-level`:
+
+```html
+<circle class="ui-severity-tone" data-level="critical" fill="var(--severity-tone)" />
+```
+
+Reach for it when `background` is not the property you need. An SVG shape
+ignores `background` entirely, so without this a consumer restates the whole
+tier table in `fill` — and then it can drift from the rows beside it.
+
+## Timestrip — `.ui-timestrip`
+
+A status list answers *what*. The strip answers **when**, on one axis, at a
+glance: a cluster of marks at the leading edge is a fresh incident, a lone mark
+pinned to the trailing edge has been wrong for a while. It takes the same
+`data-level` as the ladder, so a strip cannot disagree with the rows under it.
+
+```html
+<div class="ui-timestrip" role="img" aria-label="When these alerts started, last 24 hours">
+  <span class="ui-timestrip__axis"></span>
+  <span class="ui-timestrip__now"></span>
+  <span class="ui-timestrip__event" data-level="critical" style="--at: 0.92"></span>
+  <span class="ui-timestrip__event" data-level="warning" style="--at: 0.4"></span>
+  <span class="ui-timestrip__event" data-level="ok" data-outside style="--at: 0"></span>
+</div>
+```
+
+**This is geometry, not a chart.** The host owns the window, the clock, and the
+arithmetic: it normalises each event to a position in `0..1` and writes it as
+`--at`, where `0` is the oldest edge and `1` is now. Bronto owns the rail, the
+now marker, and the mark. There are no scales, no ticks, no axis labels, and no
+time parsing — a surface that wants those wants a chart, and Bronto
+[refuses chart scales](./frontier-primitives.md).
+
+`data-outside` marks an event older than the window. It stays at the edge at
+reduced weight rather than vanishing, because a strip reading "quiet" while a
+row says "failing for three days" is worse than one reading crowded.
+
+The strip is decorative on its own: give it an `aria-label` naming what it
+plots, and let the rows beneath it name each level in words.
+
 ## Recipe
 
 ```js
@@ -180,6 +226,7 @@ ui.job({ state: 'running' }); // "ui-job ui-job--running"
 severity('critical'); // { class: 'ui-severity', 'data-level': 'critical' }
 severity('warning', { part: 'row' }); // { class: 'ui-severity-row', … }
 severity('nope'); // { class: 'ui-severity', 'data-level': 'unknown' }
+severity('critical', { part: 'tone' }); // { class: 'ui-severity-tone', … }
 
 SEVERITY_LEVELS; // ['critical','error','warning','notice','ok'] — sort/filter from this
 ```

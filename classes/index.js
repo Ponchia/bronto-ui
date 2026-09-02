@@ -617,6 +617,14 @@ export const cls = Object.freeze({
   severityRow: 'ui-severity-row',
   severityRowTitle: 'ui-severity-row__title',
   severityRowMeta: 'ui-severity-row__meta',
+  // The tone as a value, for a mark Bronto does not ship (an SVG shape, a
+  // gradient stop): it paints nothing and only resolves `--severity-tone`.
+  severityTone: 'ui-severity-tone',
+  // timestrip — WHEN, beside the ladder's HOW BAD (css/state.css)
+  timestrip: 'ui-timestrip',
+  timestripAxis: 'ui-timestrip__axis',
+  timestripNow: 'ui-timestrip__now',
+  timestripEvent: 'ui-timestrip__event',
   // generated content / AI-trust surfaces (css/generated.css)
   generated: 'ui-generated',
   generatedLabel: 'ui-generated__label',
@@ -1157,8 +1165,16 @@ export const SEVERITY_LEVELS = Object.freeze(['critical', 'error', 'warning', 'n
 /** `data-level` + the severity class, bundled so the attribute that carries the
  *  meaning cannot be forgotten — the class alone paints the neutral tone and
  *  silently loses the level. Unknown/absent levels resolve to `unknown`. */
+const SEVERITY_PARTS = {
+  chip: 'severity',
+  dot: 'severityDot',
+  row: 'severityRow',
+  // Paints nothing; resolves the tone for a mark Bronto does not ship.
+  tone: 'severityTone',
+};
+
 export const severity = (level, { part = 'chip' } = {}) => ({
-  class: part === 'dot' ? cls.severityDot : part === 'row' ? cls.severityRow : cls.severity,
+  class: cls[SEVERITY_PARTS[part] ?? 'severity'],
   'data-level': SEVERITY_LEVELS.includes(level) ? level : 'unknown',
 });
 

@@ -23,19 +23,41 @@ UI catalog.
 > tooling. Public-surface correctness is in scope (README, authored docs, docs
 > site route list, `llms.txt`); marketing pushes are not a goal.
 
-## 1.0 stabilization mode
+## Surface is admitted by evidence
 
-The public catalog is frozen from 2026-07-10 until the 1.0 evidence pass is
-complete. Fix existing contracts, simplify ownership, improve readability, and
-upgrade real consumers. Do not add public classes, tokens, behaviors, helpers,
-bindings, schemas, leaves, or package paths during the freeze.
+From 2026-07-10 to 2026-09-02 this section declared a catalog freeze: no new
+public classes, tokens, behaviors, helpers, bindings, schemas, leaves, or
+package paths. **It was not what happened.** `0.8.0` and `0.9.0` shipped nine
+new surface families and two token pairs under it — `.ui-pane`,
+`.ui-button__label`, `.ui-button--dense`, the severity ladder,
+`.ui-toolstrip--pane`, the anchoring modifiers, the empty-state slots, the
+safe-area tokens, and `.ui-row` **into core**.
 
-Package examples remain required compatibility proof, but they do not establish
-product demand. The adoption ledger in
-[`docs/stability.md`](docs/stability.md#adoption-evidence-for-10) identifies the
-surfaces proven by non-example consumers and the surfaces that remain
-package-only candidates. Reopen catalog work only when a repeated downstream
-need is recorded and the maintainer explicitly approves the exception.
+Every one of them passed the same test, which is the rule this project actually
+runs on:
+
+> **A public addition is admitted when a named non-example consumer has already
+> built it by hand.** Not "it would be useful"; not "a chart would need it".
+> Someone shipped it locally, and the PR says who and where.
+
+That bar is as strict as the freeze and it is honest, so it replaces it. What
+the freeze got right is kept:
+
+- **A recipe beats a primitive.** If existing classes can teach the pattern,
+  document it and stop. Reach for new surface when a consumer proved the
+  recipe was not enough.
+- **Package examples are compatibility proof, not demand.** They prove the
+  tarball works. They never establish that anyone needed the surface.
+- **Non-adoption of an unreachable surface is not evidence.** Before retiring
+  anything for lack of use, confirm the consumer could have found it — that it
+  was in a leaf they import. See the audit note in
+  [`docs/stability.md`](docs/stability.md#adoption-evidence-for-10).
+- **Removing still costs more than adding.** Deprecate for one minor, with a
+  changelog note and a migration entry when machine-actionable.
+
+The adoption ledger in
+[`docs/stability.md`](docs/stability.md#adoption-evidence-for-10) records which
+surfaces have downstream proof and which remain package-only.
 
 ## Current stewardship priorities
 

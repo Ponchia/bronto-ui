@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 677 classes across 184 component groups
+- 682 classes across 186 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -1214,6 +1214,12 @@ each one matches a real selector in the stylesheet.
 | `cls.severityRowMeta` | `ui-severity-row__meta` | part |
 | `cls.severityRowTitle` | `ui-severity-row__title` | part |
 
+### `.ui-severity-tone`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.severityTone` | `ui-severity-tone` | base |
+
 ### `.ui-shortcut`
 
 | Registry key | Class | Kind |
@@ -1511,6 +1517,15 @@ each one matches a real selector in the stylesheet.
 | `cls.timeline` | `ui-timeline` | base |
 | `cls.timelineItem` | `ui-timeline__item` | part |
 | `cls.timelineTime` | `ui-timeline__time` | part |
+
+### `.ui-timestrip`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.timestrip` | `ui-timestrip` | base |
+| `cls.timestripAxis` | `ui-timestrip__axis` | part |
+| `cls.timestripEvent` | `ui-timestrip__event` | part |
+| `cls.timestripNow` | `ui-timestrip__now` | part |
 
 ### `.ui-toast`
 
