@@ -262,29 +262,38 @@
    ========================================================================== */
 
 /* Declared once so a host putting the level on its own element gets the same
-   mapping from `data-level` + `var(--severity-tone)`, without copying a table. */
+   mapping from `data-level` + `var(--severity-tone)`, without copying a table.
+
+   `.ui-severity-tone` is that host element's hook, and it paints nothing: the
+   three classes below all draw something — a chip, a ruled row, a background
+   dot — and a consumer whose mark Bronto does not ship needs the VALUE without
+   any of them. The case that proved it was an SVG `<circle>`, which ignores
+   `background` entirely, so a status strip had to restate the whole tier table
+   in `fill` and could then disagree with the rows beside it. */
 .ui-severity,
 .ui-severity-row,
-.ui-severity-dot {
+.ui-severity-dot,
+.ui-severity-tone,
+.ui-timestrip__event {
   --severity-tone: var(--text-dim);
 }
 
-:is(.ui-severity, .ui-severity-row, .ui-severity-dot):is(
+:is(.ui-severity, .ui-severity-row, .ui-severity-dot, .ui-severity-tone, .ui-timestrip__event):is(
   [data-level='critical'],
   [data-level='error']
 ) {
   --severity-tone: var(--danger);
 }
 
-:is(.ui-severity, .ui-severity-row, .ui-severity-dot)[data-level='warning'] {
+:is(.ui-severity, .ui-severity-row, .ui-severity-dot, .ui-severity-tone, .ui-timestrip__event)[data-level='warning'] {
   --severity-tone: var(--warning);
 }
 
-:is(.ui-severity, .ui-severity-row, .ui-severity-dot)[data-level='notice'] {
+:is(.ui-severity, .ui-severity-row, .ui-severity-dot, .ui-severity-tone, .ui-timestrip__event)[data-level='notice'] {
   --severity-tone: var(--info);
 }
 
-:is(.ui-severity, .ui-severity-row, .ui-severity-dot)[data-level='ok'] {
+:is(.ui-severity, .ui-severity-row, .ui-severity-dot, .ui-severity-tone, .ui-timestrip__event)[data-level='ok'] {
   --severity-tone: var(--success);
 }
 
@@ -368,6 +377,86 @@
   flex: none;
   font-family: var(--mono);
   font-size: var(--text-2xs);
+}
+
+/* ==========================================================================
+   timestrip — WHEN the things in a list entered the state they are in.
+
+   A status list answers "what". This answers "when", on one axis, at a glance:
+   a cluster of marks at the leading edge is a fresh incident, a lone mark
+   pinned to the trailing edge has been wrong for a while. It is the companion
+   to `.ui-severity-row` and takes the same `data-level`, so a strip can never
+   disagree with the rows beneath it.
+
+   BOUNDARY — this is geometry, not a chart. The host owns the window, the
+   clock, and the arithmetic: it normalises each event to a position in 0..1 and
+   writes it as `--at`. Bronto owns the rail, the marker, and the mark. There
+   are no scales, no ticks, no axis labels and no time parsing here; a surface
+   that wanted those wants a chart, and Bronto refuses chart scales.
+
+     <div class="ui-timestrip" role="img" aria-label="…">
+       <span class="ui-timestrip__axis"></span>
+       <span class="ui-timestrip__now"></span>
+       <span class="ui-timestrip__event" data-level="critical" style="--at: .92"></span>
+       <span class="ui-timestrip__event" data-level="ok" data-outside style="--at: 0"></span>
+     </div>
+
+   `data-outside` is for an event older than the window. It stays at the edge at
+   reduced weight rather than vanishing, because a strip that reads "quiet"
+   while a row says "failing for three days" is worse than one that reads
+   crowded. The mark is not the state's only channel: the rows below name their
+   level in words, and the strip needs an `aria-label` naming what it plots.
+   ========================================================================== */
+
+.ui-timestrip {
+  block-size: 1.4rem;
+  display: block;
+  inline-size: 100%;
+  position: relative;
+}
+
+/* The rail the marks sit on, and the edge that is "now". Both are decorative:
+   they carry no fact the label and the rows do not already carry. */
+.ui-timestrip__axis {
+  background: var(--line);
+  block-size: 1px;
+  inset-block-end: 0.35rem;
+  inset-inline: 0;
+  position: absolute;
+}
+
+.ui-timestrip__now {
+  border-inline-end: 1px dashed var(--text-dim);
+  inset-block: 0.1rem 0.25rem;
+  inset-inline-end: 0;
+  position: absolute;
+}
+
+/* `--at` is the host's answer: 0 is the oldest edge of the window, 1 is now.
+   Clamped rather than trusted — an out-of-range value is a host bug, and a mark
+   drawn outside its own strip is harder to diagnose than one at the edge. */
+.ui-timestrip__event {
+  background: var(--severity-tone);
+  block-size: 0.4rem;
+  border-radius: var(--radius-pill);
+  inline-size: 0.4rem;
+  inset-block-end: 0.55rem;
+  inset-inline-start: calc(clamp(0, var(--at, 0), 1) * 100%);
+  position: absolute;
+  translate: -50% 0;
+}
+
+.ui-timestrip__event[data-outside] {
+  opacity: 0.55;
+}
+
+/* Forced colours: the tone is replaced, so the marks stop distinguishing tiers.
+   They still say WHEN, which is the strip's whole job, and the level stays
+   readable in the rows. */
+@media (forced-colors: active) {
+  .ui-timestrip__event {
+    background: CanvasText;
+  }
 }
 
 /* Forced colours: the tone dot collapses to a system colour, so the

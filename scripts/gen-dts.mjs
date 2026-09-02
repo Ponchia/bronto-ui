@@ -369,7 +369,7 @@ export type SeverityLevel = (typeof SEVERITY_LEVELS)[number];
  *  \`'unknown'\`, which paints the neutral tone. */
 export declare function severity(
   level: SeverityLevel | (string & {}) | null | undefined,
-  opts?: { part?: 'chip' | 'dot' | 'row' },
+  opts?: { part?: 'chip' | 'dot' | 'row' | 'tone' },
 ): { class: string; 'data-level': string };
 
 /** Min/max for the value-bearing fills; defaults to 0–100. */
