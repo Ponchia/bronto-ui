@@ -51,6 +51,9 @@ of container width and hides the inactive resize handle and resize controls.
 Both panes remain available. A tool that needs a pane switch instead should
 keep that policy in its own component.
 
+Keep a badge inside a `ui-row__meta` wrapper rather than applying both classes
+to the same element: the wrapper owns layout and the badge owns its tone.
+
 Use `ui-chip--dense` for static labels inside short pane headers. Dense chips
 on buttons, links, or button roles retain pointer target floors. Use regular
 buttons for actions; a colored chip is not an action registry.

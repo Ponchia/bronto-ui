@@ -286,6 +286,7 @@
 
 /* --- Range --- */
 .ui-range {
+  margin-inline: 0;
   accent-color: var(--accent);
   inline-size: 100%;
 }

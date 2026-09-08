@@ -9,6 +9,8 @@
    ========================================================================== */
 
 .ui-prose {
+  /* A prose block must shrink as a grid/flex item; its pre blocks scroll locally. */
+  min-inline-size: 0;
   color: var(--text-soft);
   font-size: var(--text-base);
   line-height: 1.7;
@@ -41,7 +43,7 @@
   max-inline-size: none;
 }
 
-/* --- Headings — brand display face; only the top two shout --- */
+/* --- Headings — readable hierarchy inside narrative content --- */
 
 .ui-prose :is(h1, h2, h3, h4, h5, h6) {
   color: var(--text);

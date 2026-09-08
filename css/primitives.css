@@ -6,6 +6,8 @@
 /* --- Layout composition --- */
 
 .ui-stack {
+  min-inline-size: 0;
+  grid-template-columns: minmax(0, 1fr);
   display: grid;
   gap: var(--stack-gap, var(--space-md));
 }

@@ -90,9 +90,9 @@ export function initPopover({ root } = {}) {
       return;
     }
 
-    // A panel portaled out of a controlled modal starts in the trapped
-    // background. Wait for initModal to admit that specific panel instead of
-    // guessing how many microtasks its MutationObserver reconciliation needs.
+    // A host may temporarily keep a portaled panel inert. Wait until it
+    // admits this panel rather than guessing how many microtasks the host
+    // needs to reconcile its interaction state.
     const Observer = view?.MutationObserver;
     if (!Observer) {
       queueMicrotask(() => {
@@ -234,7 +234,7 @@ export function initPopover({ root } = {}) {
     // the browser's close-request then finds the dialog as the new topmost
     // element and dismisses it too. preventDefault() stops that native
     // close-request and stopPropagation() keeps it off other delegated keydown
-    // listeners (e.g. initModal's), so only the popover closes — the documented
+    // listeners owned by the host, so only the popover closes — the documented
     // "popover + dialog open together" contract.
     e.preventDefault();
     e.stopPropagation();

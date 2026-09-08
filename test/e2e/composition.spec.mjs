@@ -53,7 +53,8 @@ test('workbench stacks at narrow container width and inspector adapts inside a w
   );
   expect(panes[0].width).toBeGreaterThan(280);
   expect(panes[1].width).toBeGreaterThan(280);
-  expect(panes[1].top).toBeGreaterThanOrEqual(panes[0].bottom);
+  // Firefox exposes adjacent layout edges with tiny float differences.
+  expect(panes[1].top + 0.01).toBeGreaterThanOrEqual(panes[0].bottom);
   await page.locator('.ui-inspector').evaluate((el) => (el.style.width = '280px'));
   const property = await page
     .locator('.ui-property')
@@ -62,7 +63,7 @@ test('workbench stacks at narrow container width and inspector adapts inside a w
       const [label, value] = [...el.children].map((child) => child.getBoundingClientRect());
       return { labelBottom: label.bottom, valueTop: value.top };
     });
-  expect(property.valueTop).toBeGreaterThanOrEqual(property.labelBottom);
+  expect(property.valueTop + 0.01).toBeGreaterThanOrEqual(property.labelBottom);
 });
 
 test('editorial report leads with its decision, preserves reading measure, and opens contents', async ({

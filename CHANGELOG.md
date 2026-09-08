@@ -9,21 +9,21 @@
 
 ### Changed
 
-- **BREAKING: readable tool and report defaults.** The root now respects the
+- **BREAKING: readable tool and report defaults.** The root respects the
   browser's default text size. Everyday headings, labels, navigation, tables,
   and controls use sans typography and sentence case. Explicit `ui-display`,
-  glyphs, and readouts retain the dot-matrix identity. Small text steps become
-  12/13/14px at a 16px root, and corner tokens gain a restrained 2/4/6/8px scale.
-- Service panels remove redundant framing; metrics stay compact and mobile
-  navigation wraps. Inspectors adapt property rows to their container width.
-  The workbench specimen stacks panes when narrow; splitter policy remains
-  host-owned. Reports use 1.125rem prose, a 68ch measure, and 11pt print text.
-- Replace the shipped-duplicate admission rule with demonstrated task evidence.
-  Composition recipes and ADR-0005 explain the productive/editorial direction.
-- The default CSS budget is deliberately raised from 95,600/16,400 bytes to
-  100,000/18,000 bytes raw/gzip to restore maintenance headroom.
-- Playwright owns an isolated server on 8124 (override with
-  `BRONTO_UI_TEST_PORT`) and no longer reuses a live specimen server.
+  glyphs, and readouts retain the dot identity. Small text steps are 12/13/14px
+  at a 16px root; corner tokens use a restrained 2/4/6/8px scale.
+- Service panels remove redundant framing, overview metrics stay compact, and
+  mobile navigation wraps. Inspectors adapt property rows to their own width.
+  Reports use 1.125rem prose, a 68ch measure, and 11pt print text.
+- ADR-0005 and composition recipes replace the shipped-duplicate admission
+  rule with demonstrated task improvement. The default CSS budget is now
+  100,000/18,000 bytes raw/gzip, restoring deliberate maintenance headroom.
+- The example CI matrix derives from the shared registry. The complete browser
+  suite runs in three required shards, with unchanged cross-engine coverage.
+  Local Playwright uses an owned server on 8124 (`BRONTO_UI_TEST_PORT` override)
+  and refuses to reuse a live specimen server.
 
 ### Removed
 
@@ -33,81 +33,32 @@
   event, and `ui.modal({ open: true })` option. Use native dialog plus
   `initDialog`; native modal and drawer styling remain.
 - Unused adapter parity machinery and Solid/Qwik/Vue packed examples. React
-  and SvelteKit examples now verify vanilla behavior mount and cleanup.
-
-See [the migration guide](docs/migrations/0.9-to-0.10.md).
+  and SvelteKit examples verify vanilla behavior mounting and cleanup.
 
 ### Added
 
+- `ui-timestrip` in the opt-in state leaf: the host supplies normalized event
+  positions and Bronto paints the rail, now marker, and severity marks. Old
+  events can remain visible at the window edge through `data-outside`.
+- `ui-severity-tone` exposes the existing severity mapping without painting a
+  background, including for SVG consumers. `severity(level, { part: 'tone' })`
+  returns the corresponding class and level.
 - `ui-chip--dense` and `ui.chip({ dense: true })` for static pane-header labels,
-  with pointer target floors for interactive chips.
+  with pointer target floors when used on controls.
 - A collapsed `details.ui-report__toc` recipe that keeps the decision first.
 
 ### Fixed
 
-- The service example now marks a fall in queue delay as favorable using the
-  existing delta inversion modifier.
+- Single-column stacks and prose shrink inside narrow parents; the showcase's
+  nested legend grid fits its available width. Range inputs no longer add
+  browser margins outside their containing width.
+- The workbench specimen stacks panes when narrow, provides native file-row
+  selection, and separates badge tone from row metadata styling.
+- The service and report examples use favorable tones for decreasing latency.
+  Report annotations leave room for their stroke outside the drawing bounds.
+- Development URI, YAML, and color parsers receive compatible security updates.
 
-The following consumer-proven changes were previously unreleased on main:
-
-
-Additive, plus one contract that the docs promised and the CSS did not keep.
-Both come from the same consumer pass that produced 0.8.0 and 0.9.0.
-
-### Added
-
-- **`.ui-timestrip` — WHEN, beside the ladder's HOW BAD** (`css/state.css`,
-  opt-in). A status list answers *what*; the strip answers *when*, on one axis,
-  at a glance: a cluster of marks at the leading edge is a fresh incident, a
-  lone mark pinned to the trailing edge has been wrong for a while. It takes the
-  same `data-level` as `.ui-severity-row`, so a strip cannot disagree with the
-  rows beneath it.
-
-  It is **geometry, not a chart**, and the split is the whole reason it can
-  exist here: the host owns the window, the clock, and the arithmetic —
-  normalising each event to `0..1` and writing it as `--at` — and Bronto owns
-  the rail, the now marker, and the mark. No scales, no ticks, no axis labels,
-  no time parsing. A surface wanting those wants a chart, which Bronto refuses.
-
-  `data-outside` holds an event older than the window at the edge, at reduced
-  weight, rather than dropping it: a strip reading "quiet" while a row says
-  "failing for three days" is worse than one reading crowded.
-
-  It lands in the existing `state.css` rather than a new leaf because it is the
-  second axis of the same vocabulary, and a consumer already importing the
-  ladder should not have to import a second file to say when.
-
-  **Evidence:** a collaborative canvas workspace built exactly this, in SVG,
-  across three status boards — a 24-hour axis, a dashed now marker,
-  level-coloured dots, and reduced opacity for events clamped in from outside
-  the window. It was the one surface in an eleven-item consumer ledger with no
-  published equivalent; the other ten resolved to adoption. Checked against the
-  near misses before adding: `.ui-spark` is inline word-sized bars with no time
-  axis, `.ui-timeline` is a vertical event list, and `.ui-interval` is a lo/hi
-  uncertainty range.
-
-- **`.ui-severity-tone`** (`css/state.css`) — the ladder's tone as a *value*,
-  painting nothing. See Fixed.
-
-### Fixed
-
-- **`var(--severity-tone)` did not work on a host's own element, which the docs
-  said it did.** `docs/state.md` promised the level "travels on `data-level`, so
-  the same selector works on a chip, a row, a dot, or your own element via
-  `var(--severity-tone)`" — but the custom property was only ever declared under
-  `:is(.ui-severity, .ui-severity-row, .ui-severity-dot)`, so a host element
-  carrying `data-level` resolved nothing.
-
-  The three published carriers all *draw* something, and the case that exposed
-  this was an SVG `<circle>`: it ignores `background` entirely, so the consumer
-  restated the whole tier table in `fill` and could then drift from the rows
-  beside it. `.ui-severity-tone` is the missing hook — no paint, only the
-  mapping — and `severity(level, { part: 'tone' })` returns it.
-
-  This is the fourth contract in four releases whose *documentation* was ahead
-  of its CSS, after the 43.5px tap floor, the shipped-docs list, and
-  `data-density`. The pattern is worth naming: a promise written in prose and
-  proven by no gate is a promise this project has broken every time.
+See [the migration guide](docs/migrations/0.9-to-0.10.md).
 
 ## 0.9.0 — 2026-08-11
 

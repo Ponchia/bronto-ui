@@ -149,6 +149,9 @@ pin an older tag if you need to. Features that aren't yet cross-engine
 (View Transitions, scroll-driven animations, `interpolate-size`) are used
 only as progressive enhancement and degrade to a static end-state.
 
+The complete browser suite runs in three CI shards. Every shard remains
+required by `ci-gate`; sharding changes feedback time, not coverage.
+
 ## Visual baselines
 
 Pixel snapshots (`test/e2e/__screenshots__`) are Linux/Chromium,
