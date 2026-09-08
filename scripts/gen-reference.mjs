@@ -127,13 +127,9 @@ works in any framework without a binding layer:
   families (\`ui-alert\`/\`ui-toast\`/\`ui-meter\`/\`ui-dot\`); the builders warn on an
   out-of-set tone (see usage.md). Mapping an app's own variant
   vocabulary onto a tone is application logic, not a framework class.
-- **Modal** — native \`<dialog>\` gets backdrop + top-layer + focus-trap
-  free. For a controlled/portal modal, add \`is-open\`
-  (\`ui.modal({ open: true })\`) for the same skin/layout, mark the overlay
-  \`data-bronto-modal\`, and run \`initModal()\` for the inert focus trap,
-  focus-return, and Escape close signal. You still own the \`is-open\` state,
-  backdrop, and top-layer stacking (\`.is-open\` is a bare grid — it does not
-  float or stack on its own).
+- **Modal** — style a native \`<dialog>\` with \`ui-modal\`; use
+  \`initDialog()\` for open/close triggers and focus return. Call
+  \`showModal()\` to open the top layer; a CSS class is not an open state.
 - **Current page** — mark the active link with \`aria-current="page"\`; it is
   the programmatic cue the navs honour (\`ui-sitenav\`, \`ui-app-nav\`). The
   \`.is-active\` class is the visual-only equivalent on \`ui-app-nav\`/\`ui-tab\`;

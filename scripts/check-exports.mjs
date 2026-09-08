@@ -28,7 +28,6 @@ import { fileURLToPath } from 'node:url';
 import { reportAndExit } from './lib/gate-report.mjs';
 import { leafFiles, EXTRA_LEAVES } from './build-dist.mjs';
 import { exportTargets } from './lib/package-targets.mjs';
-import { OPTIONAL_FRAMEWORK_PEERS, optionalFrameworkPeerNames } from './lib/framework-peers.mjs';
 import { cssImports, stripCssComments } from './lib/patterns.mjs';
 import { importsAnnotationEngine, isJavaScriptOrDeclarationFile } from './lib/import-policy.mjs';
 import { isUnderPackageFiles, npmPackFiles } from './lib/shipped-files.mjs';
@@ -155,9 +154,7 @@ if (!Array.isArray(pkg.sideEffects) || !pkg.sideEffects.includes('**/*.css')) {
 }
 
 // 6. Zero runtime dependencies. Dev dependencies are allowed for the repo's
-// build/test toolchain. The framework adapter peers are optional by contract:
-// consumers installing the CSS/core package must not receive React/Solid/Qwik
-// unless their app already chose that framework.
+// build/test toolchain. Framework integrations stay in consumers.
 for (const field of [
   'dependencies',
   'optionalDependencies',
@@ -173,29 +170,9 @@ for (const field of [
   }
 }
 
-const optionalPeerDeps = optionalFrameworkPeerNames();
-const peerDeps = Object.keys(pkg.peerDependencies ?? {}).sort((a, b) => a.localeCompare(b));
-if (JSON.stringify(peerDeps) !== JSON.stringify(optionalPeerDeps)) {
-  errors.push(
-    `package.json peerDependencies must be exactly the documented optional framework peers [${optionalPeerDeps.join(', ')}] (got [${peerDeps.join(', ')}])`,
-  );
-}
-for (const peer of optionalPeerDeps) {
-  if (pkg.peerDependenciesMeta?.[peer]?.optional !== true) {
-    errors.push(`package.json peer "${peer}" must be marked optional in peerDependenciesMeta`);
-  }
-}
-for (const peer of Object.keys(pkg.peerDependenciesMeta ?? {})) {
-  if (!optionalPeerDeps.includes(peer)) {
-    errors.push(`package.json peerDependenciesMeta contains undocumented peer "${peer}"`);
-  }
-}
-for (const { peer, subpath, target } of OPTIONAL_FRAMEWORK_PEERS) {
-  if (pkg.exports?.[subpath]?.default !== target) {
-    errors.push(
-      `optional framework peer "${peer}" must map ${subpath} default export to ${target}`,
-    );
-  }
+for (const field of ['peerDependencies', 'peerDependenciesMeta']) {
+  if (Object.keys(pkg[field] ?? {}).length)
+    errors.push(`${field} must stay empty: framework integrations belong to consumers`);
 }
 
 for (const file of npmPackFiles(root).filter(isJavaScriptOrDeclarationFile)) {

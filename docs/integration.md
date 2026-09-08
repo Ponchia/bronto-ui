@@ -45,8 +45,7 @@ client navigation.
 - [SvelteKit](getting-started/sveltekit.md)
 - [Vue](getting-started/vue.md)
 - [Vanilla / Vite / plain HTML](getting-started/vanilla.md)
-- [React / Solid / Qwik](getting-started/react-solid.md) (optional thin bindings,
-  not component packages)
+- [React / Solid / Qwik](getting-started/react-solid.md) (host lifecycle recipes)
 - [Tailwind / cascade-layer interop](interop/tailwind.md)
 
 All behaviors and their attributes are typed in `@ponchia/ui/behaviors`

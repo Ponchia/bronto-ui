@@ -64,12 +64,12 @@
 
 .ui-app-nav__section {
   color: var(--text-dim);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0;
   margin: var(--space-sm) 0 0.3rem;
   padding: 0 0.5rem;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-app-nav a {
@@ -77,7 +77,7 @@
   border-inline-start: 2px solid transparent;
   color: var(--text-soft);
   display: flex;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-sm);
   gap: 0.55rem;
   padding: 0.5rem 0.6rem;
@@ -148,7 +148,7 @@
 .ui-app-rail__foot {
   border-block-start: 1px solid var(--line);
   color: var(--text-dim);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
   margin-block-start: auto;
   padding-block-start: var(--space-sm);
@@ -163,7 +163,13 @@
   display: flex;
   gap: var(--space-xs);
   margin-block-start: auto;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
   padding-block-start: var(--space-sm);
+}
+
+.ui-app-rail__account > * {
+  min-inline-size: 0;
 }
 
 .ui-app-rail__account + .ui-app-rail__foot {
@@ -204,17 +210,17 @@
 
 .ui-app-topbar__title {
   color: var(--text);
-  font-family: var(--display);
-  font-size: 1.1rem;
-  font-weight: var(--display-weight);
-  letter-spacing: var(--tracking-wide);
+  font-family: var(--sans);
+  font-size: 1.25rem;
+  font-weight: 650;
+  letter-spacing: 0;
   margin: 0;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-app-content {
   display: grid;
-  gap: var(--space-lg);
+  gap: var(--space-xl);
   padding: var(--space-lg);
 }
 
@@ -222,14 +228,12 @@
 
 .ui-app-toolbar {
   align-items: center;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
+  border-block-end: 1px solid var(--line);
   display: flex;
   flex-wrap: wrap;
   gap: 0.7rem;
   justify-content: space-between;
-  padding: 0.7rem 0.85rem;
+  padding-block-end: var(--space-md);
 }
 
 .ui-app-toolbar__group {
@@ -242,29 +246,43 @@
 /* --- Panel --- */
 
 .ui-app-panel {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
   display: grid;
-  gap: 0.85rem;
-  padding: var(--space-md);
+  gap: var(--space-md);
+  min-inline-size: 0;
 }
 
 .ui-app-panel__head {
   align-items: flex-start;
   display: flex;
+  flex-wrap: wrap;
   gap: 0.7rem;
   justify-content: space-between;
 }
 
 .ui-app-panel__title {
   color: var(--text);
-  font-family: var(--display);
-  font-size: 0.95rem;
-  font-weight: var(--display-weight);
-  letter-spacing: var(--tracking-wide);
+  font-family: var(--sans);
+  font-size: 1.125rem;
+  font-weight: 650;
+  letter-spacing: 0;
   margin: 0;
-  text-transform: uppercase;
+  text-transform: none;
+}
+
+/* A service overview needs a compact scan, including on a phone. Keep the
+   generic stat tile available elsewhere; avoid framing every metric twice. */
+.ui-app-panel > .ui-statgrid,
+.ui-app-panel > .ui-app-metrics {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 6rem), 1fr));
+}
+
+.ui-app-panel > .ui-statgrid > .ui-stat,
+.ui-app-panel > .ui-app-metrics > .ui-app-metric {
+  background: none;
+  border: 0;
+  border-block-start: 1px solid var(--line);
+  border-radius: 0;
+  padding: var(--space-md) 0;
 }
 
 .ui-app-panel__head p {
@@ -285,7 +303,7 @@
    permanent admin-shell alias (grouped on the canonical rules there —
    identical output). Nothing app-specific left to define here. */
 
-/* --- Mobile rail: collapses to a horizontal scrolling strip --- */
+/* --- Mobile rail: navigation wraps instead of hiding destinations offscreen. --- */
 
 @media (max-width: 880px) {
   .ui-app-shell {
@@ -300,10 +318,10 @@
   }
 
   .ui-app-rail {
-    flex-direction: row;
+    flex-flow: row wrap;
     block-size: auto;
-    overflow-x: auto;
-    position: sticky;
+    overflow: visible;
+    position: static;
     inset-block-start: 0;
     z-index: calc(var(--z-raised) + 1);
   }
@@ -321,7 +339,9 @@
   }
 
   .ui-app-nav {
-    grid-auto-flow: column;
+    display: flex;
+    flex: 1 0 100%;
+    flex-wrap: wrap;
     gap: 0.15rem;
   }
 
@@ -330,6 +350,8 @@
   }
 
   .ui-app-nav a {
+    flex: 1 1 auto;
+    justify-content: center;
     border-inline-start: 0;
     border-block-end: 2px solid transparent;
     white-space: nowrap;

@@ -6,27 +6,84 @@
       "to": "0.3",
       "summary": "Entire non-ui-* legacy vocabulary removed; everything is now under the .ui-* contract and the check-classes drift gate.",
       "safe": [
-        { "old": "skip-link", "new": "ui-skiplink" },
-        { "old": "site-nav", "new": "ui-sitenav" },
-        { "old": "site-menu", "new": "ui-sitemenu" },
-        { "old": "theme-toggle", "new": "ui-themetoggle", "prefix": true },
-        { "old": "app-shell", "new": "ui-app-shell", "prefix": true },
-        { "old": "app-rail", "new": "ui-app-rail", "prefix": true },
-        { "old": "app-topbar", "new": "ui-app-topbar", "prefix": true },
-        { "old": "app-toolbar", "new": "ui-app-toolbar", "prefix": true },
-        { "old": "app-nav", "new": "ui-app-nav", "prefix": true },
-        { "old": "app-panel", "new": "ui-app-panel", "prefix": true },
-        { "old": "app-content", "new": "ui-app-content", "prefix": true },
-        { "old": "app-main", "new": "ui-app-main", "prefix": true },
-        { "old": "app-metrics", "new": "ui-app-metrics", "prefix": true },
-        { "old": "app-metric", "new": "ui-app-metric", "prefix": true },
-        { "old": "app-empty-state", "new": "ui-app-empty-state", "prefix": true }
+        {
+          "old": "skip-link",
+          "new": "ui-skiplink"
+        },
+        {
+          "old": "site-nav",
+          "new": "ui-sitenav"
+        },
+        {
+          "old": "site-menu",
+          "new": "ui-sitemenu"
+        },
+        {
+          "old": "theme-toggle",
+          "new": "ui-themetoggle",
+          "prefix": true
+        },
+        {
+          "old": "app-shell",
+          "new": "ui-app-shell",
+          "prefix": true
+        },
+        {
+          "old": "app-rail",
+          "new": "ui-app-rail",
+          "prefix": true
+        },
+        {
+          "old": "app-topbar",
+          "new": "ui-app-topbar",
+          "prefix": true
+        },
+        {
+          "old": "app-toolbar",
+          "new": "ui-app-toolbar",
+          "prefix": true
+        },
+        {
+          "old": "app-nav",
+          "new": "ui-app-nav",
+          "prefix": true
+        },
+        {
+          "old": "app-panel",
+          "new": "ui-app-panel",
+          "prefix": true
+        },
+        {
+          "old": "app-content",
+          "new": "ui-app-content",
+          "prefix": true
+        },
+        {
+          "old": "app-main",
+          "new": "ui-app-main",
+          "prefix": true
+        },
+        {
+          "old": "app-metrics",
+          "new": "ui-app-metrics",
+          "prefix": true
+        },
+        {
+          "old": "app-metric",
+          "new": "ui-app-metric",
+          "prefix": true
+        },
+        {
+          "old": "app-empty-state",
+          "new": "ui-app-empty-state",
+          "prefix": true
+        }
       ],
       "manual": [
         {
           "old": "hero / project-* / post-card / essay-* / page-* / home-* / signal-panel / worklog-summary",
           "new": "the ui-* content layer",
-          "note": "Long-form content: .ui-prose / .ui-quote. Cards: .ui-card. Layout: .ui-grid / .ui-stack. Site chrome: the ui-site* shell. No 1:1 mapping — re-compose with the content primitives."
+          "note": "Long-form content: .ui-prose / .ui-quote. Cards: .ui-card. Layout: .ui-grid / .ui-stack. Site chrome: the ui-site* shell. No 1:1 mapping \u2014 re-compose with the content primitives."
         },
         {
           "old": "callout",
@@ -41,7 +98,7 @@
         {
           "old": "tag-list / tag",
           "new": "ui-tags / ui-tag",
-          "note": "Compact variant .tag-list--compact → .ui-tags--compact; verify accent-on-accent contrast (see CHANGELOG 0.3.0 a11y fix)."
+          "note": "Compact variant .tag-list--compact \u2192 .ui-tags--compact; verify accent-on-accent contrast (see CHANGELOG 0.3.0 a11y fix)."
         }
       ],
       "codemod": "See docs/migrations/0.2-to-0.3.md for a ready-to-run ripgrep+sed recipe covering the 'safe' rules."
@@ -54,7 +111,7 @@
       "manual": [
         {
           "old": "--orange / --orange-soft",
-          "new": "(removed — re-declare in a consumer :root override if referenced)",
+          "new": "(removed \u2014 re-declare in a consumer :root override if referenced)",
           "note": "Orphan token pair: defined in the token mirrors but referenced by no shipped component and documented nowhere, and untiered under the new colour model. Removed under the CONTRIBUTING 'provably-unreferenced surface' exception. If you used it: :root { --orange: #a85f32; --orange-soft: rgb(168 95 50 / 0.13); }"
         }
       ],
@@ -63,22 +120,31 @@
     {
       "from": "0.4",
       "to": "0.5",
-      "summary": "Adds the analytical-primitives suite (annotations, legend, marks, connectors, spotlight, crosshair, selection + the analytical.css roll-up); all additive/opt-in. Three breaking changes: the chart data key moved out of the report kit into the standalone Legends layer (`.ui-chart__legend`/`.ui-chart__swatch` removed); annotation arrowheads now render via the shared connectors geometry kernel (a small visual path change, no API change); and the marks/bracket-note rationed-accent tone was renamed `evidence`→`accent` to match the annotation/connector tone vocabulary (`.ui-annotation--evidence` stays — it's a marker variant, not a tone).",
+      "summary": "Adds the analytical-primitives suite (annotations, legend, marks, connectors, spotlight, crosshair, selection + the analytical.css roll-up); all additive/opt-in. Three breaking changes: the chart data key moved out of the report kit into the standalone Legends layer (`.ui-chart__legend`/`.ui-chart__swatch` removed); annotation arrowheads now render via the shared connectors geometry kernel (a small visual path change, no API change); and the marks/bracket-note rationed-accent tone was renamed `evidence`\u2192`accent` to match the annotation/connector tone vocabulary (`.ui-annotation--evidence` stays \u2014 it's a marker variant, not a tone).",
       "safe": [
-        { "old": "ui-chart__swatch", "new": "ui-legend__swatch" },
-        { "old": "ui-mark--evidence", "new": "ui-mark--accent" },
-        { "old": "ui-bracket-note--evidence", "new": "ui-bracket-note--accent" }
+        {
+          "old": "ui-chart__swatch",
+          "new": "ui-legend__swatch"
+        },
+        {
+          "old": "ui-mark--evidence",
+          "new": "ui-mark--accent"
+        },
+        {
+          "old": "ui-bracket-note--evidence",
+          "new": "ui-bracket-note--accent"
+        }
       ],
       "manual": [
         {
           "old": "ui.mark({ tone: 'evidence' }) / ui.bracketNote({ tone: 'evidence' })",
           "new": "tone: 'accent'",
-          "note": "The rationed-accent tone option on the mark/bracket-note recipes is now 'accent' (was 'evidence'), matching ui.connector/ui.annotation. Do NOT rewrite ui.annotation({ variant: 'evidence' }) or the 'evidence' subject marker — those are a marker shape, not a tone, and are unchanged."
+          "note": "The rationed-accent tone option on the mark/bracket-note recipes is now 'accent' (was 'evidence'), matching ui.connector/ui.annotation. Do NOT rewrite ui.annotation({ variant: 'evidence' }) or the 'evidence' subject marker \u2014 those are a marker shape, not a tone, and are unchanged."
         },
         {
           "old": "ui-chart__legend",
           "new": "ui-legend",
-          "note": "Also import '@ponchia/ui/css/legend.css' beside report.css, and wrap each entry's content as <li class=\"ui-legend__item\"> … <span class=\"ui-legend__label\">…</span>. The swatch's --chart-color/--chart-pattern inline contract is unchanged; the categorical --chart-N colour is also available via .ui-legend__swatch--N. See docs/legends.md."
+          "note": "Also import '@ponchia/ui/css/legend.css' beside report.css, and wrap each entry's content as <li class=\"ui-legend__item\"> \u2026 <span class=\"ui-legend__label\">\u2026</span>. The swatch's --chart-color/--chart-pattern inline contract is unchanged; the categorical --chart-N colour is also available via .ui-legend__swatch--N. See docs/legends.md."
         },
         {
           "old": "connectorEndArrow (annotations)",
@@ -91,16 +157,16 @@
     {
       "from": "0.5",
       "to": "0.6",
-      "summary": "Charting realignment. The local static bar-chart renderer (.ui-chart*) is removed — a chart needs scales + data binding, out of scope for the analytical layer. bronto is now a themeable target for Vega-Lite (@ponchia/ui/vega), the same tokens-as-data path as Mermaid/D2. The --chart-* data-viz palette, tokens/charts.json, and the .ui-legend layer are unchanged.",
+      "summary": "Charting realignment. The local static bar-chart renderer (.ui-chart*) is removed \u2014 a chart needs scales + data binding, out of scope for the analytical layer. bronto is now a themeable target for Vega-Lite (@ponchia/ui/vega), the same tokens-as-data path as Mermaid/D2. The --chart-* data-viz palette, tokens/charts.json, and the .ui-legend layer are unchanged.",
       "safe": [],
       "manual": [
         {
           "old": "ui-chart / ui-chart__plot / ui-chart__bar / ui-chart__label / ui-chart__track / ui-chart__fill / ui-chart__fallback / ui-chart__caption",
           "new": "a Vega-Lite chart themed with @ponchia/ui/vega, or a token-themed inline <svg>",
-          "note": "No 1:1 class mapping — the renderer is removed. For a real chart: import '@ponchia/ui/vega', pass brontoVegaConfig(theme) to vega-embed, and place the result in a <figure class=\"ui-report__figure\"> with a <figcaption class=\"ui-report__caption\"> and a <ul class=\"ui-legend\"> key (see docs/vega.md). For a frozen/print chart: hand-author an inline <svg> using the --chart-N palette tokens for fills. The --chart-value inline knob is gone; --chart-color/--chart-pattern remain on .ui-legend__swatch."
+          "note": "No 1:1 class mapping \u2014 the renderer is removed. For a real chart: import '@ponchia/ui/vega', pass brontoVegaConfig(theme) to vega-embed, and place the result in a <figure class=\"ui-report__figure\"> with a <figcaption class=\"ui-report__caption\"> and a <ul class=\"ui-legend\"> key (see docs/vega.md). For a frozen/print chart: hand-author an inline <svg> using the --chart-N palette tokens for fills. The --chart-value inline knob is gone; --chart-color/--chart-pattern remain on .ui-legend__swatch."
         }
       ],
-      "codemod": "No codemod — the .ui-chart* renderer has no replacement class. rg -l 'ui-chart\\\\b|ui-chart__' to find call sites, then rebuild each as a Vega-Lite chart (@ponchia/ui/vega) or a token-themed inline <svg>. See docs/vega.md."
+      "codemod": "No codemod \u2014 the .ui-chart* renderer has no replacement class. rg -l 'ui-chart\\\\b|ui-chart__' to find call sites, then rebuild each as a Vega-Lite chart (@ponchia/ui/vega) or a token-themed inline <svg>. See docs/vega.md."
     },
     {
       "from": "0.6",
@@ -115,6 +181,30 @@
         }
       ],
       "codemod": "No source codemod. Update the DTCG reader at its JSON access boundary, then run npx --no-install bronto-ui-check against consumer source. See docs/migrations/0.6-to-0.7.md."
+    },
+    {
+      "from": "0.9",
+      "to": "0.10",
+      "summary": "Readable tool/report defaults; retire framework adapters and controlled modal.",
+      "safe": [],
+      "manual": [
+        {
+          "old": "@ponchia/ui/react / @ponchia/ui/solid / @ponchia/ui/qwik / @ponchia/ui/svelte / @ponchia/ui/vue",
+          "new": "@ponchia/ui/classes + @ponchia/ui/behaviors",
+          "note": "Initialize vanilla behaviors in the host mount lifecycle and return cleanup; wrappers and peers are removed."
+        },
+        {
+          "old": "initModal / data-bronto-modal / ui.modal({ open: true }) / bronto:modal:close",
+          "new": "native dialog + initDialog",
+          "note": "Use showModal/close and native cancel/close events; .is-open no longer opens a modal."
+        },
+        {
+          "old": "global dot headings and compact text defaults",
+          "new": "sans headings; explicit ui-display; productive tools and editorial reports",
+          "note": "Review real screens and preserve intentional display titles. Reports use a reading measure and separate print typography."
+        }
+      ],
+      "codemod": "See docs/migrations/0.9-to-0.10.md. Changes require consumer lifecycle and visual review; no blanket replacement is safe."
     }
   ]
 }

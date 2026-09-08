@@ -41,6 +41,10 @@ env:
 jobs:
   run:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     # Backstop so a hung browser/webServer can't burn a runner for the 6h
     # GitHub default. The suite itself is ~8 min.
     timeout-minutes: 20
@@ -73,14 +77,14 @@ jobs:
           CROSS_ENGINE: ${{ inputs.cross_engine }}
         run: |
           if [ "$CROSS_ENGINE" = "true" ]; then
-            npx playwright test
+            npx playwright test --shard=${{ matrix.shard }}/3
           else
-            npx playwright test --project=chromium
+            npx playwright test --project=chromium --shard=${{ matrix.shard }}/3
           fi
 
       - if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.shard }}
           path: playwright-report/
           retention-days: 7

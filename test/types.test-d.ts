@@ -541,113 +541,6 @@ void [
   partsOut,
 ];
 
-// Framework bindings: the ./react + ./solid hook types resolve from the .d.ts
-// (no react/solid-js needed to type-check), take the behaviors' opts, and the
-// toast hook returns the imperative.
-import {
-  useDialog as useDialogR,
-  useThemeToggle as useThemeToggleR,
-  useToast as useToastR,
-} from '../react/index.js';
-import { useTabs as useTabsS, useThemeToggle as useThemeToggleS } from '../solid/index.js';
-const rDialog: void = useDialogR({ root: document });
-const rDialogRef: void = useDialogR({ root: { current: document } });
-const rDialogResolver: void = useDialogR(() => ({ root: document }));
-const rTheme: void = useThemeToggleR({ root: document, storageKey: 'react-theme' });
-const rToast = useToastR();
-const rDismiss = rToast('hi', { tone: 'success' }); // Cleanup
-const sTabs: void = useTabsS({ root: () => document });
-const sTheme: void = useThemeToggleS(() => ({ root: document, storageKey: 'solid-theme' }));
-// @ts-expect-error — theme storage keys are strings.
-useThemeToggleR({ storageKey: 123 });
-void [rDialog, rDialogRef, rDialogResolver, rTheme, rDismiss, sTabs, sTheme];
-
-// Qwik bindings: same opts surface, and the root additionally accepts a Qwik
-// signal ({ value }) — a shape the React/Solid bindings deliberately don't.
-import {
-  useDialog as useDialogQ,
-  useThemeToggle as useThemeToggleQ,
-  useToast as useToastQ,
-} from '../qwik/index.js';
-const qDialog: void = useDialogQ({ root: document });
-const qDialogSignal: void = useDialogQ({ root: { value: document } }); // Qwik useSignal()
-const qDialogResolver: void = useDialogQ(() => ({ root: { current: document } }));
-const qTheme: void = useThemeToggleQ({ root: { value: document }, storageKey: 'qwik-theme' });
-const qToast = useToastQ();
-const qDismiss = qToast('hi', { tone: 'success' }); // Cleanup
-// @ts-expect-error — the React binding root does not accept a Qwik signal ({ value }) shape.
-const rRejectsSignal: void = useDialogR({ root: { value: document } });
-void [qDialog, qDialogSignal, qDialogResolver, qTheme, qToast, qDismiss, rRejectsSignal];
-
-// Svelte actions: action functions take an Element and return the action
-// lifecycle object; they deliberately use element roots, not React/Solid ref
-// objects or Qwik signals.
-import {
-  disclosure as sDisclosure,
-  themeToggle as sThemeToggle,
-  createBrontoAction,
-  useToast as useToastSv,
-  type SvelteActionReturn,
-} from '../svelte/index.js';
-const sAction: SvelteActionReturn = sDisclosure(document.body, { root: document });
-sThemeToggle(document.body, { root: document, storageKey: 'svelte-theme' });
-sAction.update?.({ root: document.body });
-sAction.destroy();
-const sCustomAction = createBrontoAction((opts) => {
-  const maybeRoot: Document | Element | null | undefined = opts?.root;
-  void maybeRoot;
-  return () => {};
-});
-const sCustomReturn: SvelteActionReturn = sCustomAction(document.body);
-const sToast = useToastSv();
-const sDismiss = sToast('hi', { tone: 'success' });
-// @ts-expect-error — Svelte action roots are nodes, not React-style refs.
-sDisclosure(document.body, { root: { current: document } });
-// @ts-expect-error — Svelte theme storage keys are strings.
-sThemeToggle(document.body, { storageKey: 123 });
-void [sCustomReturn, sDismiss];
-
-// Vue directives: directive objects and registry entries are directly usable
-// without importing Vue, and the plugin shape can register kebab/camel aliases.
-import {
-  vDisclosure,
-  vThemeToggle,
-  directives as vueDirectives,
-  brontoVue,
-  useToast as useToastV,
-  type BrontoDirective,
-  type BrontoVueApp,
-  type BrontoVuePlugin,
-} from '../vue/index.js';
-const vueDirective: BrontoDirective = vDisclosure;
-vueDirective.mounted(document.body, { value: { root: document } });
-vThemeToggle.mounted(document.body, { value: { root: document, storageKey: 'vue-theme' } });
-vueDirective.updated(document.body, {
-  value: { root: document.body },
-  oldValue: { root: document },
-});
-vueDirective.beforeUnmount(document.body);
-vueDirectives.disclosure.mounted(document.body);
-const registeredVueDirectives: string[] = [];
-const vuePlugin: BrontoVuePlugin = brontoVue;
-const vueApp: BrontoVueApp = {
-  directive(name: string, directive: BrontoDirective) {
-    registeredVueDirectives.push(name);
-    void directive;
-  },
-};
-brontoVue.install(vueApp);
-vuePlugin.install(vueApp);
-const vToast = useToastV();
-const vDismiss = vToast('hi', { tone: 'info' });
-// @ts-expect-error — Vue plugin install requires a directive registrar, not any object.
-brontoVue.install({});
-// @ts-expect-error — Vue directive roots are nodes, not Qwik signals.
-vDisclosure.mounted(document.body, { value: { root: { value: document } } });
-// @ts-expect-error — Vue theme storage keys are strings.
-vThemeToggle.mounted(document.body, { value: { storageKey: 123 } });
-void [registeredVueDirectives, vuePlugin, vDismiss];
-
 void [
   btn,
   appShell,
@@ -686,3 +579,7 @@ void [
   sevRow,
   sevLadder,
 ];
+
+ui.chip({ dense: true });
+// @ts-expect-error — a native dialog opens through showModal(), not a recipe flag.
+ui.modal({ open: true });

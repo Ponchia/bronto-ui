@@ -9,11 +9,11 @@
 
 .ui-label {
   color: var(--text-dim);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
   font-weight: 700;
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .ui-input,
@@ -23,7 +23,7 @@
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-md);
   color: var(--text);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-sm);
   padding: 0.6rem 0.7rem;
   transition:
@@ -286,6 +286,7 @@
 
 /* --- Range --- */
 .ui-range {
+  margin-inline: 0;
   accent-color: var(--accent);
   inline-size: 100%;
 }
@@ -315,9 +316,9 @@
   font-family: var(--sans);
   font-size: var(--text-sm);
   font-weight: 700;
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0;
   margin: 0 0 var(--space-xs);
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-error-summary__list {
@@ -369,7 +370,7 @@
   background: transparent;
   border: 0;
   color: var(--text);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-sm);
   outline: none;
   padding: 0.6rem 0;

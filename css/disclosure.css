@@ -32,13 +32,13 @@
   cursor: pointer;
   display: inline-flex;
   flex: 0 0 auto;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-xs);
   gap: 0.4rem;
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0;
   margin-block-end: -1px;
   padding: 0.6rem 0.85rem;
-  text-transform: uppercase;
+  text-transform: none;
   transition:
     color var(--duration-fast) var(--ease-standard),
     border-color var(--duration-fast) var(--ease-standard);
@@ -104,13 +104,13 @@
   color: var(--text);
   cursor: pointer;
   display: flex;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-sm);
   gap: 0.6rem;
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0;
   list-style: none;
   padding: 0.85rem 0.2rem;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-accordion__summary::-webkit-details-marker {
@@ -192,12 +192,12 @@
   color: var(--text-soft);
   cursor: pointer;
   flex: 1 0 auto;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-xs);
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0;
   padding: 0.42rem 0.8rem;
   text-align: center;
-  text-transform: uppercase;
+  text-transform: none;
   transition:
     background-color var(--duration-fast) var(--ease-standard),
     color var(--duration-fast) var(--ease-standard);
@@ -233,14 +233,14 @@
   color: var(--text-dim);
   display: flex;
   flex-wrap: wrap;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
   gap: 0.5rem;
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0;
   list-style: none;
   margin: 0;
   padding: 0;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-breadcrumb__item {
@@ -302,7 +302,7 @@
   color: var(--text-soft);
   cursor: pointer;
   display: inline-flex;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-xs);
   justify-content: center;
   min-block-size: 2rem;
@@ -370,14 +370,14 @@
   color: var(--text);
   display: inline-flex;
   flex: 0 0 auto;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: calc(var(--av-size) * 0.38);
   font-weight: 700;
   block-size: var(--av-size);
   justify-content: center;
   letter-spacing: 0.04em;
   overflow: hidden;
-  text-transform: uppercase;
+  text-transform: none;
   inline-size: var(--av-size);
 }
 
@@ -528,11 +528,11 @@
   background: color-mix(in srgb, var(--panel-strong) 75%, transparent);
   border-radius: var(--radius-pill);
   color: var(--text);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
   inset-block-end: var(--space-xs);
   inset-inline-start: var(--space-xs);
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0;
   padding: 0.2rem 0.5rem;
   position: absolute;
 }

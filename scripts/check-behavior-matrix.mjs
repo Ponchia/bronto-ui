@@ -38,7 +38,7 @@ const BEHAVIORS = [
   behavior('initDisabledGuard', {
     docs: [{ file: 'docs/usage.md', includes: ['initDisabledGuard'] }],
     unit: [{ file: 'test/behaviors.test.mjs', includes: ['disabled guard blocks'] }],
-    browser: [{ file: 'test/e2e/behavior.spec.mjs', includes: ['aria-disabled guard work'] }],
+    browser: [{ file: 'test/e2e/behavior.spec.mjs', includes: ['aria-disabled guard works'] }],
   }),
   behavior('initTabs', {
     docs: [{ file: 'docs/usage.md', includes: ['initTabs'] }],
@@ -51,11 +51,6 @@ const BEHAVIORS = [
     browser: [
       { file: 'test/e2e/behavior.spec.mjs', includes: ['native <dialog> open/close glue'] },
     ],
-  }),
-  behavior('initModal', {
-    docs: [{ file: 'docs/usage.md', includes: ['initModal'] }],
-    unit: [{ file: 'test/behaviors.test.mjs', includes: ['initModal: inert'] }],
-    browser: [{ file: 'test/e2e/behavior.spec.mjs', includes: ['controlled modal'] }],
   }),
   behavior('toast', {
     docs: [{ file: 'docs/usage.md', includes: ['toast()'] }],

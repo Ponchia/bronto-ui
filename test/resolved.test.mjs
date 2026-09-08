@@ -48,7 +48,7 @@ test('resolved: non-colour tokens are dropped from the colour palettes', () => {
 
 test('resolved: the scale block carries non-colour tokens, flattened, no var()/colour', () => {
   assert.equal(r.scale['--space-md'], '1rem');
-  assert.equal(r.scale['--radius-md'], '2px');
+  assert.equal(r.scale['--radius-md'], '4px');
   // var() chain flattened to a usable font stack (--display → --dot-font → --mono).
   assert.match(r.scale['--display'], /^'Doto',/);
   assert.doesNotMatch(r.scale['--display'], /var\(/);

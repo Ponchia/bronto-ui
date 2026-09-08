@@ -51,6 +51,7 @@ export declare const cls: {
   readonly badgeDot: 'ui-badge--dot';
   readonly chip: 'ui-chip';
   readonly chipAccent: 'ui-chip--accent';
+  readonly chipDense: 'ui-chip--dense';
   readonly link: 'ui-link';
   readonly linkArrow: 'ui-link--arrow';
   readonly linkCta: 'ui-link--cta';
@@ -747,6 +748,7 @@ export interface ClaimOpts {
 }
 export interface ChipOpts {
   accent?: boolean;
+  dense?: boolean;
 }
 export interface LinkOpts {
   arrow?: boolean;
@@ -799,8 +801,6 @@ export interface DotbarOpts {
 }
 export interface ModalOpts {
   drawer?: boolean;
-  /** Controlled non-dialog usage — adds only the is-open state; pair with initModal for focus management. */
-  open?: boolean;
 }
 export interface TabOpts {
   active?: boolean;

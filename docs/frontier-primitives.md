@@ -185,8 +185,7 @@ a consumer needs it.
 The keyboard-hint primitive (`.ui-shortcut` + `.ui-shortcut__sep` over `.ui-kbd`,
 core chrome) landed first, then the `ui-command` palette: the
 `@ponchia/ui/css/command.css` shell + the `initCommand` `data-bronto-command`
-behavior (filter, roving focus, `bronto:command:select`/`close`) + `useCommand`
-bindings. The host still owns the action registry and execution — Bronto only
+behavior (filter, roving focus, `bronto:command:select`/`close`). The host still owns the action registry and execution — Bronto only
 filters and navigates.
 
 Why it matters: command palettes turn a product from a page collection into a

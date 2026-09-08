@@ -50,12 +50,12 @@
 
 .ui-alert__title {
   color: var(--text);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
   font-weight: 700;
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0;
   margin: 0;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-alert__body {
@@ -67,7 +67,7 @@
   border: 0;
   color: var(--text-dim);
   cursor: pointer;
-  font-family: var(--mono);
+  font-family: var(--sans);
   grid-column: 3;
   grid-row: 1;
   line-height: 1;
@@ -199,12 +199,12 @@
 
 .ui-toast__title {
   color: var(--text);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
   font-weight: 700;
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0;
   margin: 0;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-toast__close {
@@ -284,7 +284,7 @@
     block-size: auto;
     inline-size: auto;
     margin-block-start: 0;
-    font-family: var(--mono);
+    font-family: var(--sans);
     font-weight: 700;
     line-height: 1.1;
   }
@@ -327,15 +327,15 @@
   border-radius: var(--radius-sm);
   inset-block-end: calc(100% + 0.5rem);
   color: var(--bg);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
   inset-inline-start: 50%;
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0;
   opacity: 0;
   padding: 0.34rem 0.5rem;
   pointer-events: none;
   position: absolute;
-  text-transform: uppercase;
+  text-transform: none;
   transform: translate(-50%, 4px);
   transition: opacity var(--duration-fast) var(--ease-standard);
   white-space: nowrap;
@@ -540,7 +540,7 @@
 
 .ui-meter__value {
   color: var(--text);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-variant-numeric: tabular-nums;
   text-align: end;
 }
@@ -575,17 +575,17 @@
   counter-increment: ui-step;
   display: inline-flex;
   flex: 1 1 auto;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-xs);
   gap: 0.5rem;
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0;
 
   /* Prefer the natural one-line width, but never wider than the container: a
      long step label at `max-content` couldn't shrink and overflowed the page on
      narrow viewports (tabs scroll; steps didn't). Capping at 100% lets an
      over-long label wrap instead of overflowing. */
   min-inline-size: min(100%, max-content);
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-steps__item::before {

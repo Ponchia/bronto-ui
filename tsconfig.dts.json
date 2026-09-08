@@ -1,5 +1,5 @@
 {
-  "comment": "Generate index.d.ts (+ .d.ts.map) for the hand-authored JS leaves from their JSDoc. emitDeclarationOnly writes only declarations — the .js stays the authored, shipped source. Because each .d.ts is now derived from its source, it cannot drift; check-dts-emit.mjs re-emits and byte-compares. Run via `npm run dts:emit`. The behaviors barrel re-exports many modules, so every behaviors/*.js it pulls in is listed here too — the in-place emit deletes each include's .d.ts first (TS5055 guard). (checkJs is intentionally off: the internal pure helpers are untyped and the opt-object defaults trip noImplicitAny; signature-checking the implementations is a separate future enhancement.)",
+  "comment": "Generate index.d.ts (+ .d.ts.map) for the hand-authored JS leaves from their JSDoc. emitDeclarationOnly writes only declarations \u2014 the .js stays the authored, shipped source. Because each .d.ts is now derived from its source, it cannot drift; check-dts-emit.mjs re-emits and byte-compares. Run via `npm run dts:emit`. The behaviors barrel re-exports many modules, so every behaviors/*.js it pulls in is listed here too \u2014 the in-place emit deletes each include's .d.ts first (TS5055 guard). (checkJs is intentionally off: the internal pure helpers are untyped and the opt-object defaults trip noImplicitAny; signature-checking the implementations is a separate future enhancement.)",
   "compilerOptions": {
     "allowJs": true,
     "checkJs": false,
@@ -16,18 +16,12 @@
   "include": [
     "connectors/index.js",
     "annotations/index.js",
-    "react/index.js",
-    "solid/index.js",
-    "qwik/index.js",
-    "svelte/index.js",
-    "vue/index.js",
     "behaviors/index.js",
     "behaviors/internal.js",
     "behaviors/theme.js",
     "behaviors/dismissible.js",
     "behaviors/tabs.js",
     "behaviors/dialog.js",
-    "behaviors/modal.js",
     "behaviors/toast.js",
     "behaviors/disclosure.js",
     "behaviors/menu.js",

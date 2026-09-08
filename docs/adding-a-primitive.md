@@ -76,10 +76,9 @@ Public behavior exports must have:
 - Browser ownership in a non-pixel Playwright spec discovered by
   `scripts/test-e2e-nonpixel.mjs`.
 
-`scripts/check-behavior-matrix.mjs` enforces those three owners. If the export is
-a delegated `init*` behavior, `scripts/check-binding-matrix.mjs` also expects the
-React/Solid/Qwik hooks, Svelte action, Vue directive, framework docs, packed
-example smoke, unit proof, and type proof.
+`scripts/check-behavior-matrix.mjs` enforces those three owners.
+Verify the vanilla lifecycle in the maintained React and Svelte examples when
+the behavior contract changes. The package has no framework adapter matrix.
 
 If the new public surface is a helper in `classes/`, `annotations/`,
 `connectors/`, or `glyphs/`, add it to `scripts/check-helper-matrix.mjs` with
@@ -140,7 +139,7 @@ targeted gates to be relevant:
 - `npm run check:pack`
 - `npm run check:component-matrix`
 - `npm run check:behavior-matrix` when public behavior is involved
-- `npm run check:binding-matrix` when a delegated public behavior is involved
+- `npm run check:behavior-matrix` when a delegated public behavior is involved
 - `npm run check:helper-matrix` when a public helper is involved
 - `npm run check:schemas` when public schemas change
 - `npm run check:variables`

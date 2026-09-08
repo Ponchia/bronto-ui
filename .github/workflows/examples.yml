@@ -39,24 +39,28 @@ env:
   npm_config_fetch_retry_maxtimeout: '120000'
 
 jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.examples.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - id: examples
+        run: |
+          node --input-type=module <<'JS' >> "$GITHUB_OUTPUT"
+          import { EXAMPLE_NAMES, BROWSER_SMOKE_EXAMPLE_NAMES } from './scripts/lib/examples.mjs';
+          console.log('matrix=' + JSON.stringify(EXAMPLE_NAMES.map(example => ({example, smoke: BROWSER_SMOKE_EXAMPLE_NAMES.includes(example)}))));
+          JS
+
   build:
+    needs: inventory
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        example:
-          [
-            vanilla-vite,
-            astro,
-            sveltekit,
-            vue-vite,
-            react-vite,
-            solid-vite,
-            qwik-vite,
-            tailwind-vite,
-            report-static,
-          ]
+        include: ${{ fromJSON(needs.inventory.outputs.matrix) }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -70,15 +74,16 @@ jobs:
       - run: npm ci
 
       - name: Install Playwright browsers for cross-browser smoke
-        if: contains(fromJSON('["vanilla-vite","astro","sveltekit","vue-vite","react-vite","solid-vite","qwik-vite","tailwind-vite","report-static"]'), matrix.example) && (github.event_name == 'workflow_dispatch' || inputs.cross_browser)
+        if: matrix.smoke && (github.event_name == 'workflow_dispatch' || inputs.cross_browser)
         run: npx playwright install --with-deps chromium firefox webkit
 
       - name: Install Chromium for default browser smoke
-        if: contains(fromJSON('["vanilla-vite","astro","sveltekit","vue-vite","react-vite","solid-vite","qwik-vite","tailwind-vite","report-static"]'), matrix.example) && github.event_name != 'workflow_dispatch' && !inputs.cross_browser
+        if: matrix.smoke && github.event_name != 'workflow_dispatch' && !inputs.cross_browser
         run: npx playwright install --with-deps chromium
 
       - name: Build and smoke the ${{ matrix.example }} packed example
         env:
+          EXAMPLE: ${{ matrix.example }}
           CROSS_BROWSER: ${{ github.event_name == 'workflow_dispatch' || inputs.cross_browser }}
           VISUAL_SMOKE: ${{ github.event_name == 'workflow_dispatch' || inputs.visual_smoke }}
         run: |
@@ -86,7 +91,7 @@ jobs:
           if [ "$VISUAL_SMOKE" = "true" ]; then
             args+=(--visual)
           fi
-          args+=("${{ matrix.example }}")
+          args+=("$EXAMPLE")
           if [ "$CROSS_BROWSER" = "true" ]; then
             npm run test:examples:cross-browser -- "${args[@]}"
           else

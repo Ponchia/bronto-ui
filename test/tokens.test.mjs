@@ -13,13 +13,13 @@ test('themeColor falls back to light for unknown/empty', () => {
 });
 
 test('cssVars mirror is keyed by real custom-property names', () => {
-  assert.equal(cssVars.global['--radius-xl'], '4px');
+  assert.equal(cssVars.global['--radius-xl'], '8px');
   assert.equal(cssVars.light['--panel'], '#ffffff');
   assert.equal(cssVars.dark['--bg'], '#121212');
 });
 
 test('tokens is the -- stripped ergonomic view; default export === tokens', async () => {
-  assert.equal(tokens.scale['radius-xl'], '4px');
+  assert.equal(tokens.scale['radius-xl'], '8px');
   assert.equal(tokens.color.dark.accent, '#ff3b41');
   const mod = await import('../tokens/index.js');
   assert.equal(mod.default, mod.tokens);

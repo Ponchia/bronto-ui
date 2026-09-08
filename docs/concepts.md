@@ -21,8 +21,8 @@ contains vanilla, dependency-free behavior initializers for the interactions CSS
 cannot own by itself: theme persistence, dialogs, toasts, tabs, comboboxes,
 menus, source backrefs, and similar delegated glue. Those modules are
 side-effect-free on import, SSR-safe, idempotent, and return cleanup functions.
-React, Solid, Qwik, Svelte, and Vue bindings are lifecycle adapters over the
-same vanilla behaviors; they do not define markup or own component state.
+Framework consumers initialize vanilla behaviors in their own mount/cleanup
+lifecycle. No framework adapters or peers ship in the package.
 
 Read more: [architecture](./architecture.md#decision),
 [integration](./integration.md), and [stability](./stability.md).
@@ -136,9 +136,8 @@ Read more: [theming](./theming.md#design-token-interop-dtcg),
 The package root is CSS-only: `@ponchia/ui` resolves to `dist/bronto.css` for
 CSS-aware bundlers and side-effect stylesheet imports. Runtime JavaScript lives
 behind explicit ESM subpaths such as `/classes`, `/behaviors`, `/tokens`,
-`/glyphs`, `/annotations`, `/connectors`, framework bindings, renderer helpers,
-and JSON/data exports. The package has zero runtime dependencies; framework
-bindings declare optional peers where needed.
+`/glyphs`, `/annotations`, `/connectors`, renderer helpers,
+and JSON/data exports. The package has zero runtime dependencies and no framework peers.
 
 Public surface is versioned by name and path: `.ui-*` classes, documented token
 names and roles, `data-bronto-*` behavior attributes, exported functions,

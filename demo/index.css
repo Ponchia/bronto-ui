@@ -67,8 +67,7 @@
       transition-duration: var(--duration-base) !important;
     }
 
-    /* Modal + toast enter via an animation that reduced-motion nulls outright. */
-    html.demo-motion .ui-modal.is-open,
+    /* Toast entry animation is disabled by the reduced-motion default. */
     html.demo-motion .ui-toast {
       animation: uiToastIn var(--duration-base) var(--ease-spring) both !important;
     }
@@ -166,6 +165,8 @@ section {
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-inline-size: 0;
   gap: 1rem;
   margin-block-start: 1.5rem;
   padding: 1.25rem;
@@ -243,7 +244,7 @@ section {
 .legend-grid {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
 }
 .conn-stage {
   block-size: 15rem;

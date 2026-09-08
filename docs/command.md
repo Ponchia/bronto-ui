@@ -34,8 +34,7 @@ stable ids, roles, `aria-controls`, `aria-expanded`,
 `aria-activedescendant`, keyboard navigation, filtering, selection, and close
 behavior. Do not bind both owners to the same palette.
 
-The framework adapter subpaths remain compatible in 0.7 but are deprecated for
-removal no earlier than 0.8. Prefer direct `initCommand()` lifecycle cleanup for
+The framework adapter subpaths were removed in 0.10. Use direct `initCommand()` lifecycle cleanup for
 a DOM-authored list, or controlled host mode when the framework owns the widget.
 
 ## Markup

@@ -11,7 +11,7 @@
 
 .ui-table {
   border-collapse: collapse;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-sm);
   min-inline-size: 100%;
   inline-size: 100%;
@@ -32,9 +32,9 @@
   color: var(--text-dim);
   font-size: var(--text-2xs);
   font-weight: 700;
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0;
   position: sticky;
-  text-transform: uppercase;
+  text-transform: none;
   inset-block-start: 0;
 
   /* Keep the sticky header above body cells — cheap insurance for the

@@ -7,7 +7,7 @@
   links for real URLs (the package specifiers below do NOT resolve in a browser):
 
     ./node_modules/@ponchia/ui/dist/bronto.css            (installed)
-    https://cdn.jsdelivr.net/npm/@ponchia/ui@0.9.0/dist/bronto.css   (CDN, pinned)
+    https://cdn.jsdelivr.net/npm/@ponchia/ui@0.10.0/dist/bronto.css   (CDN, pinned)
 
   Note: dist/bronto.css is the standard component set only. The report kit is
   a separate opt-in roll-up for the static report vocabulary.
@@ -40,17 +40,6 @@
         </ul>
       </header>
 
-      <nav class="ui-report__toc ui-screen-only" aria-label="Report contents">
-        <p class="ui-eyebrow ui-eyebrow--muted">Contents</p>
-        <ol>
-          <li><a href="#summary">Executive summary</a></li>
-          <li><a href="#trend">Trend</a></li>
-          <li><a href="#migration">Before / after</a></li>
-          <li><a href="#evidence">Evidence</a></li>
-          <li><a href="#timeline">Incident timeline</a></li>
-          <li><a href="#sources">Sources</a></li>
-        </ol>
-      </nav>
       <nav class="ui-report__toc ui-print-only" aria-label="Printed report contents">
         <p class="ui-eyebrow ui-eyebrow--muted">Contents</p>
         <ol>
@@ -140,13 +129,25 @@
         </div>
       </section>
 
+      <details class="ui-report__toc ui-screen-only" aria-label="Report contents">
+        <summary>Contents and evidence</summary>
+        <ol>
+          <li><a href="#summary">Executive summary</a></li>
+          <li><a href="#trend">Trend</a></li>
+          <li><a href="#migration">Before / after</a></li>
+          <li><a href="#evidence">Evidence</a></li>
+          <li><a href="#timeline">Incident timeline</a></li>
+          <li><a href="#sources">Sources</a></li>
+        </ol>
+      </details>
+
       <section id="trend" class="ui-report__section" aria-labelledby="trend-head">
         <h2 class="ui-report__section-head" id="trend-head">Trend</h2>
         <div class="ui-prose">
           <p>
             Quarter over quarter, throughput rose
             <span class="ui-delta ui-delta--up">+12.4%</span> and error rate fell
-            <span class="ui-delta ui-delta--down">−0.3 pts</span>. Cost moved
+            <span class="ui-delta ui-delta--down ui-delta--invert">−0.3 pts</span>. Cost moved
             <span class="ui-delta ui-delta--up ui-delta--invert">+$1.2k</span>
             (up is unwelcome here), while support backlog was
             <span class="ui-delta ui-delta--flat">unchanged</span>.

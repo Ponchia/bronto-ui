@@ -97,6 +97,7 @@ export interface ClaimOpts {
 }
 export interface ChipOpts {
   accent?: boolean;
+  dense?: boolean;
 }
 export interface LinkOpts {
   arrow?: boolean;
@@ -149,8 +150,6 @@ export interface DotbarOpts {
 }
 export interface ModalOpts {
   drawer?: boolean;
-  /** Controlled non-dialog usage — adds only the is-open state; pair with initModal for focus management. */
-  open?: boolean;
 }
 export interface TabOpts {
   active?: boolean;

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   base — reset + element defaults, Nothing-flat
+   base — reset + readable element defaults
    ========================================================================== */
 
 *,
@@ -13,9 +13,8 @@ html {
   color: var(--text);
   font-family: var(--sans);
 
-  /* = 15px at the 16px default, but rem honours a user's browser font-size
-     preference (which a px root would ignore). */
-  font-size: 0.9375rem;
+  /* Preserve the browser's preferred reading size. Compact controls use tokens. */
+  font-size: 1rem;
   line-height: 1.55;
   scroll-behavior: smooth;
   text-rendering: optimizeLegibility;
@@ -74,27 +73,25 @@ li {
   line-height: 1.65;
 }
 
-/* Headings ride the dot-matrix display face. */
+/* Everyday headings are readable text. .ui-display owns the brand face. */
 h1,
 h2,
 h3,
 h4 {
   color: var(--text);
-  font-family: var(--display);
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  line-height: 1.06;
+  font-family: var(--sans);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
   margin: 0;
-  text-transform: uppercase;
 }
 
 h1 {
-  font-size: clamp(2.6rem, 6vw, 4.6rem);
-  letter-spacing: 0.02em;
+  font-size: clamp(2rem, 4vw, 3rem);
 }
 
 h2 {
-  font-size: clamp(1.7rem, 3.4vw, 2.4rem);
+  font-size: clamp(1.5rem, 3vw, 2rem);
 }
 
 h3 {
@@ -103,7 +100,6 @@ h3 {
 
 h4 {
   font-size: 1rem;
-  letter-spacing: var(--tracking-wide);
 }
 
 strong,

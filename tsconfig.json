@@ -1,5 +1,5 @@
 {
-  "//": "Type-only gate: validates the published .d.ts compile and that consumer usage type-checks (incl. that the literal cls/token types reject typos). Does not checkJs the runtime — see test/types.test-d.ts. Run: npm run check:types",
+  "//": "Type-only gate: validates the published .d.ts compile and that consumer usage type-checks (incl. that the literal cls/token types reject typos). Does not checkJs the runtime \u2014 see test/types.test-d.ts. Run: npm run check:types",
   "compilerOptions": {
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
@@ -21,11 +21,6 @@
     "tokens/skins.d.ts",
     "tokens/charts.d.ts",
     "tokens/mermaid.d.ts",
-    "tokens/d2.d.ts",
-    "react/index.d.ts",
-    "solid/index.d.ts",
-    "qwik/index.d.ts",
-    "svelte/index.d.ts",
-    "vue/index.d.ts"
+    "tokens/d2.d.ts"
   ]
 }

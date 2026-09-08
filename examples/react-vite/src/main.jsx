@@ -1,27 +1,29 @@
 import '@ponchia/ui';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { cls, useDialog, useDotGlyph, useTabs, useThemeToggle, useToast } from '@ponchia/ui/react';
+import { cls } from '@ponchia/ui/classes';
+import { initDialog, initDotGlyph, initTabs, initThemeToggle, toast } from '@ponchia/ui/behaviors';
 import { renderGlyph } from '@ponchia/ui/glyphs';
 import { charts } from '@ponchia/ui/charts';
 import { skins } from '@ponchia/ui/skins';
 
-function BrontoBindings({ rootRef }) {
-  useThemeToggle({ root: rootRef });
-  useDialog({ root: rootRef });
-  useTabs({ root: rootRef });
-  useDotGlyph({ root: rootRef });
-  return null;
-}
-
 function App() {
   const rootRef = useRef(null);
   const [bindingsEnabled, setBindingsEnabled] = useState(true);
-  const toast = useToast();
+  useEffect(() => {
+    if (!bindingsEnabled) return;
+    const root = rootRef.current;
+    const stops = [
+      initThemeToggle({ root }),
+      initDialog({ root }),
+      initTabs({ root }),
+      initDotGlyph({ root }),
+    ];
+    return () => stops.forEach((stop) => stop());
+  }, [bindingsEnabled]);
 
   return (
     <main ref={rootRef} className="ui-center ui-stack" style={{ paddingBlock: '3rem' }}>
-      {bindingsEnabled ? <BrontoBindings rootRef={rootRef} /> : null}
       <button hidden data-bindings-disable type="button" onClick={() => setBindingsEnabled(false)}>
         Disable bindings
       </button>
@@ -37,7 +39,7 @@ function App() {
         <button
           className="ui-button ui-button--subtle"
           type="button"
-          onClick={() => toast('Hello from @ponchia/ui/react', { tone: 'success' })}
+          onClick={() => toast('Hello from React', { tone: 'success' })}
         >
           Toast
         </button>
@@ -78,7 +80,7 @@ function App() {
         aria-label="React example dialog"
       >
         <form method="dialog" className="ui-stack">
-          <h2>React binding</h2>
+          <h2>React lifecycle</h2>
           <p className="ui-muted">Dialog behavior is scoped to the React root ref.</p>
           <button className={cls.button} data-bronto-close type="button">
             Close

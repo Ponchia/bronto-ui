@@ -1,11 +1,11 @@
 # Public API stability
 
 `@ponchia/ui` is pre-1.0. Breaking changes ship in the minor (`0.x.0`), and
-patches are non-breaking. In practical terms: **PATCH releases (`0.9.x`) are
+patches are non-breaking. In practical terms: **PATCH releases (`0.10.x`) are
 non-breaking bug-fixes and additive changes — safe to upgrade without review;
 MINOR releases (`0.x.0`) may include breaking changes and consumers should
 review the CHANGELOG before upgrading.** Pin `~0.x` (tilde) to accept only
-patches, or `^0.x` only if you accept minor-level churn. This policy holds
+patches, or `^0.x` for the same compatible pre-1.0 minor. This policy holds
 until `1.0.0` is tagged. This matrix defines what counts as public API.
 For the exhaustive package-manifest inventory — every `exports` key, every
 shipped `files` entry, and the generated artifact provenance map — see
@@ -53,88 +53,22 @@ enough.
 
 ### Adoption evidence for 1.0
 
-This snapshot records product evidence as of 2026-09-02. Use three evidence
-classes:
+Separate downstream proof from package proof. An example build verifies the
+published contract; a real application or report upgrade verifies that it is
+useful. Record the candidate version, imported surface, visual/input checks,
+and remaining consumer-specific overrides with the release.
 
-- **Downstream-proven:** A non-example app, site, report generator, or tool
-  imports the published surface and passes its own build or checks.
-- **Package-proven:** Packed examples, unit tests, browser tests, and type tests
-  prove compatibility, but no inspected non-example consumer imports the
-  surface.
-- **Speculative:** Neither downstream use nor a package-level executable proof
-  justifies freezing the surface into 1.0.
+The 0.10 direction is defined by
+[ADR-0005](adr/0005-productive-tools-and-editorial-reports.md). The active
+packed examples cover vanilla, Astro, SvelteKit, React, Tailwind, and static
+reports. The unadopted framework adapters and controlled modal were removed
+following their 0.7 deprecation; see the
+[migration](migrations/0.9-to-0.10.md).
 
-Package-proven is necessary but does not establish demand: it proves the
-tarball works, not that anyone needed the surface. Do not expand a package-only
-surface without a named consumer that built it by hand. Recheck this table
-against real consumer upgrades before the 1.0 release candidate.
-
-> **The 0.8.0 consumer audit — read this before trusting the table below.** A
-> full-surface audit of the largest downstream consumer (a Yjs-collaborative
-> spatial canvas workspace: React, Vite, ~10k lines of its own CSS) found it
-> using **26 of the 646 published classes**, and hand-rebuilding much of the
-> rest — 10 bespoke empty states, 15 error surfaces, 17 control bars, three
-> parallel severity vocabularies, its own Markdown prose layer, its own diff
-> rows, its own meters, and two copies of visually-hidden text. Thirteen
-> primitives that map almost exactly onto what it built return **zero** uses:
-> `ui-state`, `ui-prose`, `ui-diff`, `ui-code`, `ui-meter`, `ui-progress`,
-> `ui-toolstrip`, `ui-dot`, `ui-chip`, `ui-tag`, `ui-timeline`, `ui-steps`,
-> `ui-job`.
->
-> The lesson for this document is not about that consumer. It is that **"no
-> inspected consumer imports the surface" has been measuring discoverability,
-> not demand.** Those surfaces were not rejected; they were never found. The
-> opt-in leaf model is right, but nothing tells a consumer which leaf it is
-> about to reimplement — and `bronto-ui-check`, which catches part of it, was
-> installed in that consumer and had never been run. Before any 1.0 decision
-> retires a package-proven surface for lack of adoption, confirm the surface was
-> *reachable*: named in the consumer's imports, or at least in a leaf it
-> imports. Non-adoption of an unimported leaf is not evidence.
->
-> The same audit produced this release's four consumer-driven changes (the tap
-> target floor, the safe-area tokens, `ui-button__label`, and the dense tier)
-> and the ADR-0001 canvas amendment. That is the intended loop: the consumer's
-> local classes are the backlog, resolving either to a deletion there or an
-> addition here.
->
-> **Re-measured 2026-09-02, and the loop moved.** The same consumer now
-> references **122 of 682 published classes** (was 26), and **26%** of the
-> classes in the leaves it imports (was 18%). What closed the gap was not new
-> catalog: it was adoption of surface that had shipped and gone unread —
-> `ui-diff` and `ui-code` in a git view that had imported both leaves and used
-> neither, `ui-meter` replacing four hand-built progress bars, `ui-eyebrow`
-> replacing three copies of one label rule, `ui-chip`, `ui-severity-row` under a
-> findings list, and `ui-source-card` / `ui-provenance` / `ui-generated` giving
-> citation and machine-authored content a grammar they had never had.
->
-> Two things that pass measurement are worth stating because they cut the other
-> way. The consumer **dropped** `report.css` from its bundle: its findings
-> viewer looked like the report lane's consumer and is not — a finding carries a
-> severity, and `.ui-claim`'s tones are about *support*. And the same pass found
-> the only real gap of the set, `.ui-timestrip`, which is in this release.
->
-> A departure is evidence too, and this one is worth recording because the
-> reason is not rejection. A repository-visualisation consumer adopted `0.7.0`
-> and removed the dependency in its next refactor — the one that cut its
-> maintained surface from ~53k to ~12k lines and turned its viewer into an
-> **embeddable component**. A component that renders inside someone else's page
-> cannot ship a design system; it takes its palette from the host. So it
-> replaced the dependency with a small set of `--host-*` custom properties the
-> embedding page sets, each falling back to the standalone value.
->
-> That is the token model working as intended, one layer further out than this
-> package usually sees, and it is the shape to expect from any consumer that
-> becomes embeddable: they will want **tokens without CSS**. `tokens.json`,
-> `tokens/resolved.json` and the DTCG export already serve exactly that, and
-> nothing in the ledger below counts a consumer of those.
-
-| Surface family | Current evidence | 1.0 disposition |
-| --- | --- | --- |
-| Core CSS, class recipes, vanilla behaviors, tokens, and Tailwind bridge | Downstream-proven across five inspected non-example app, site, and service consumers. | Stabilize names and behavior contracts. Use consumer upgrades as the release-candidate proof. |
-| Report, provenance, analytical CSS, annotations, glyphs, skins, workbench CSS, chart data, and Vega theme | Downstream-proven across four inspected report, site, dashboard, and tool consumers. | Keep opt-in. Stabilize the consumed paths; broaden only where a named consumer has built the surface by hand. |
-| Controlled non-`<dialog>` modal | Package-proven by stack, portal, late-node, focus, and cleanup regressions. None of ten inspected non-example consumers initializes `initModal`. | Deprecated in 0.7; remove no earlier than 0.8 unless a real consumer adopts it. Native `<dialog>` + `initDialog` is the stable path. |
-| React, Solid, Qwik, Svelte, and Vue lifecycle adapters | Package-proven by packed examples, types, and lifecycle tests. None of ten inspected non-example consumers imports an adapter entrypoint. | Deprecated in 0.7; remove no earlier than 0.8 unless a real consumer adopts one. Vanilla behaviors remain stable. |
-| Mermaid, D2, Shiki, Figma Variables, and the report-claims schema | Package-proven by generated-data, render, schema, and drift checks. No inspected non-example consumer currently supplies downstream proof for every path. | Keep compatible through 0.8.x, but decide each 1.0 contract from adoption evidence rather than generator coverage alone. |
+Do not maximize a consumer's fraction of the class catalog. Measure repeated
+design decisions avoided and complete tasks improved. Check discoverability
+before interpreting non-adoption, and keep legitimate domain-specific CSS in
+the consumer.
 
 After 1.0, breaking changes move to majors. Until then, the table below is the
 current public-surface matrix and the release policy above still applies.
@@ -158,7 +92,6 @@ current public-surface matrix and the release policy above still applies.
 | Consumer checker (`bronto-ui-check`) | Stable additive | The installed binary lexically validates literal `ui-*` classes and unresolved reserved-token references in supported code, style, and template sources after stripping comments; Markdown prose and generated/vendor directories are excluded. Exit 0 means no findings, exit 1 means contract findings, and exit 2 means invocation/input failure. New checks may be additive; an existing valid literal cannot become an error within a patch unless the corresponding public contract was already invalid. |
 | Glyph registry/renderers (`@ponchia/ui/glyphs`) | Stable additive | Existing glyph names stay valid. New glyphs are additive. Renderer option names and accessibility defaults are public. |
 | `.ui-icon` mask renderer | Stable | Class name, `--icon-size`, currentColor inheritance, and `--icon-mask` contract are public. The internal data URL encoding is not. |
-| Framework lifecycle adapters (`react`/`solid`/`qwik`/`svelte`/`vue`) | Deprecated in 0.7 | Hook/action/directive names, optional peer behavior, root resolver support, and cleanup remain compatible through 0.7. Scheduled for removal no earlier than 0.8 under ADR-0004. Use vanilla behaviors in framework lifecycle code. |
 | Skins (`@ponchia/ui/skins`, `css/skins.css`) | Stable additive | Existing skin names stay valid. New skins are additive. Skins are root-level choices. Skin CSS is opt-in, not in the default bundle. |
 | Charts (`@ponchia/ui/charts`, `charts.json`, `css/dataviz.css`) | Stable additive | Token names, JSON shape, and 8 categorical slots are public. `css/dataviz.css` is opt-in, not in the default bundle. Exact palette values may tune if gates and release notes justify it. |
 | External renderer themes (`@ponchia/ui/mermaid`, `@ponchia/ui/mermaid.json`, `@ponchia/ui/d2`, `@ponchia/ui/d2.json`, `@ponchia/ui/vega`, `@ponchia/ui/vega.json`) | Stable additive | Theme helper names, JSON shapes, and supported renderer theme slots are public. Values are resolved colours because Mermaid, D2, and Vega cannot consume Bronto CSS variables directly. Exact colours may tune with token changes, but `check:mermaid`, `check:d2`, and `check:vega` must prove every exported theme resolves with no `var()` leaks. No renderer runtime ships. |
@@ -182,7 +115,7 @@ current public-surface matrix and the release policy above still applies.
 | Lifecycle state (`css/state.css`, `.ui-state*`, `.ui-syncbar`) | Stable additive | The `.ui-state`/`__label`/`__detail`/`--busy` classes, the canonical lifecycle state modifiers, `.ui-syncbar`, and the `ui.state` recipe are public. Opt-in, not in the default bundle. |
 | Generated / AI-trust (`css/generated.css`, `.ui-generated*`, `.ui-origin-label*`, `.ui-reasoning*`, `.ui-tool-log`, `.ui-tool-call*`) | Stable additive | The generated-content, origin-label (incl. `--ai`), reasoning-trace and tool-log/tool-call class names and the `ui.originLabel` recipe are public. Opt-in, not in the default bundle. Not a chat kit; no confidence widget. |
 | Workbench (`css/workbench.css`, `.ui-splitter*`, `.ui-inspector*`, `.ui-property*`, `.ui-selectionbar*`, `initSplitter`) | Stable additive | Splitter, inspector, property-row and selection-bar class + BEM part names are public (no recipe). `data-bronto-splitter`, `--splitter-pos`, `bronto:splitter:resize`, and the `initSplitter` cleanup contract are public. Opt-in, not in the default bundle. The host owns pane content, persistence, collapse policy, and selection state. |
-| Command palette (`css/command.css`, `.ui-command*`, `initCommand`) | Stable additive | Command class/part names, the `data-bronto-command` attribute, and the event contract — `bronto:command:select` (`detail: { value, label }`) and `bronto:command:close` — are public. Bronto filters + navigates (APG combobox/listbox); the host owns the action registry/execution. Opt-in, not in the default bundle, no global hotkey. The deprecated framework bindings remain compatible only for the 0.7 migration window. |
+| Command palette (`css/command.css`, `.ui-command*`, `initCommand`) | Stable additive | Command class/part names, the `data-bronto-command` attribute, and the event contract — `bronto:command:select` (`detail: { value, label }`) and `bronto:command:close` — are public. Bronto filters + navigates (APG combobox/listbox); the host owns the action registry/execution. Opt-in, not in the default bundle, no global hotkey. |
 | Spark microcharts (`css/spark.css`, `.ui-spark*`) | Stable additive | Spark class names and inline sizing/label slots are public. Opt-in, not in the default bundle. The host owns data reduction and accessible surrounding text. |
 | Bullet graphs (`css/bullet.css`, `.ui-bullet*`) | Stable additive | Bullet class names and measure/target/range custom-property slots are public. Opt-in, not in the default bundle. The host owns thresholds, units, and data mapping. |
 | Diffs (`css/diff.css`, `.ui-diff*`) | Stable additive | Diff container/line/gutter class names and add/remove/highlight state modifiers are public. Opt-in, not in the default bundle. Bronto styles evidence; it does not compute diffs. |
@@ -192,7 +125,6 @@ current public-surface matrix and the release policy above still applies.
 | Terms / glossary (`css/term.css`, `.ui-term`, `.ui-glossary`) | Stable additive | Term and glossary class names plus native-popover definition hooks are public. Opt-in, not in the default bundle. The host owns glossary content and terminology policy. |
 | Contents rail (`css/toc.css`, `.ui-toc*`) | Stable additive | TOC rail class/part names and current-section state classes are public. Opt-in, not in the default bundle. The host owns section observation and active-state updates. |
 | Tree outlines (`css/tree.css`, `.ui-tree*`) | Stable additive | Tree outline class names, depth styling, and native `<details>` composition are public. Opt-in, not in the default bundle. The host owns tree data, lazy loading, and selection state. |
-| Controlled-modal focus trap (`initModal`, adapter `useModal`, `data-bronto-modal`) | Deprecated in 0.7 | The controlled non-`<dialog>` path remains compatible through 0.7 and is scheduled for removal no earlier than 0.8 under ADR-0004. Use native `<dialog>` with `initDialog()`; it remains stable. |
 | Keyboard-shortcut hint (`.ui-shortcut`, `.ui-shortcut__sep`) | Stable additive | Class names for the chord/sequence hint over `.ui-kbd` are public. Ships in the core layer (class-only, no recipe). |
 | Agent and migration data (`llms.txt`, `MIGRATIONS.json`) | Stable additive | `llms.txt` stays shipped as the offline agent entrypoint. `MIGRATIONS.json` stays a machine-readable migration map for breaking renames/removals. New migration entries are additive; removal of a migration record requires the same breaking-change discipline as the surface it describes. |
 | Generated docs shipped in npm | Stable paths | Exported docs paths stay shipped and resolvable within a compatible minor. Markdown/text assets are for reading unless your runtime has a loader. Generated content may change with the source contract. |

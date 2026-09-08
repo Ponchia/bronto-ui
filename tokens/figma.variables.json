@@ -1836,12 +1836,12 @@
           "type": "FLOAT",
           "sourceCssVariable": "--radius-lg",
           "valuesByMode": {
-            "global": 3
+            "global": 6
           },
           "$extensions": {
             "com.ponchia.css": {
               "variable": "--radius-lg",
-              "value": "3px"
+              "value": "6px"
             }
           },
           "unit": "px"
@@ -1851,12 +1851,12 @@
           "type": "FLOAT",
           "sourceCssVariable": "--radius-md",
           "valuesByMode": {
-            "global": 2
+            "global": 4
           },
           "$extensions": {
             "com.ponchia.css": {
               "variable": "--radius-md",
-              "value": "2px"
+              "value": "4px"
             }
           },
           "unit": "px"
@@ -1881,12 +1881,12 @@
           "type": "FLOAT",
           "sourceCssVariable": "--radius-sm",
           "valuesByMode": {
-            "global": 1
+            "global": 2
           },
           "$extensions": {
             "com.ponchia.css": {
               "variable": "--radius-sm",
-              "value": "1px"
+              "value": "2px"
             }
           },
           "unit": "px"
@@ -1896,12 +1896,12 @@
           "type": "FLOAT",
           "sourceCssVariable": "--radius-xl",
           "valuesByMode": {
-            "global": 4
+            "global": 8
           },
           "$extensions": {
             "com.ponchia.css": {
               "variable": "--radius-xl",
-              "value": "4px"
+              "value": "8px"
             }
           },
           "unit": "px"
@@ -2114,12 +2114,12 @@
           "type": "FLOAT",
           "sourceCssVariable": "--text-2xs",
           "valuesByMode": {
-            "global": 0.72
+            "global": 0.75
           },
           "$extensions": {
             "com.ponchia.css": {
               "variable": "--text-2xs",
-              "value": "0.72rem"
+              "value": "0.75rem"
             }
           },
           "unit": "rem"
@@ -2129,12 +2129,12 @@
           "type": "FLOAT",
           "sourceCssVariable": "--text-base",
           "valuesByMode": {
-            "global": 0.95
+            "global": 1
           },
           "$extensions": {
             "com.ponchia.css": {
               "variable": "--text-base",
-              "value": "0.95rem"
+              "value": "1rem"
             }
           },
           "unit": "rem"
@@ -2144,12 +2144,12 @@
           "type": "FLOAT",
           "sourceCssVariable": "--text-lg",
           "valuesByMode": {
-            "global": 1.15
+            "global": 1.125
           },
           "$extensions": {
             "com.ponchia.css": {
               "variable": "--text-lg",
-              "value": "1.15rem"
+              "value": "1.125rem"
             }
           },
           "unit": "rem"
@@ -2159,12 +2159,12 @@
           "type": "FLOAT",
           "sourceCssVariable": "--text-sm",
           "valuesByMode": {
-            "global": 0.86
+            "global": 0.875
           },
           "$extensions": {
             "com.ponchia.css": {
               "variable": "--text-sm",
-              "value": "0.86rem"
+              "value": "0.875rem"
             }
           },
           "unit": "rem"
@@ -2174,12 +2174,12 @@
           "type": "FLOAT",
           "sourceCssVariable": "--text-xl",
           "valuesByMode": {
-            "global": 1.45
+            "global": 1.5
           },
           "$extensions": {
             "com.ponchia.css": {
               "variable": "--text-xl",
-              "value": "1.45rem"
+              "value": "1.5rem"
             }
           },
           "unit": "rem"
@@ -2189,12 +2189,12 @@
           "type": "FLOAT",
           "sourceCssVariable": "--text-xs",
           "valuesByMode": {
-            "global": 0.76
+            "global": 0.8125
           },
           "$extensions": {
             "com.ponchia.css": {
               "variable": "--text-xs",
-              "value": "0.76rem"
+              "value": "0.8125rem"
             }
           },
           "unit": "rem"

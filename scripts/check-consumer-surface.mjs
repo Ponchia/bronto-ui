@@ -5,14 +5,9 @@
  * a file can be missing from `files`, a conditional export can point at the
  * wrong shipped target, or a public module can start touching DOM globals at
  * import time, or an asset/doc/font subpath can fail package resolution in a
- * clean consumer even though the file is present in the tarball. Optional
- * framework peers are another sharp edge: the core package must stay usable in
- * a clean consumer with no React/Solid/Qwik installed, while the adapter
- * subpaths still need a full peer-linked smoke. `check:pack`, publint, ATTW,
- * and example builds cover adjacent concerns; this gate imports public JS/JSON
- * subpaths, exact-compares their named export surfaces with the source modules,
- * and resolves every concrete non-code subpath from the packed tarball itself,
- * first without optional peers and then with adapter peers linked.
+ * clean consumer even though the file is present in the tarball. The package
+ * must work without framework peers. This gate imports every public JS/JSON
+ * subpath, compares named exports with source, and resolves non-code assets.
  *
  * Run: node scripts/check-consumer-surface.mjs
  */
@@ -24,16 +19,11 @@ import {
   readdirSync,
   readFileSync,
   rmSync,
-  symlinkSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import {
-  optionalFrameworkPeerNames,
-  optionalFrameworkPeerTargets,
-} from './lib/framework-peers.mjs';
 import { exportTargets } from './lib/package-targets.mjs';
 import { log } from './lib/stdio.mjs';
 
@@ -41,8 +31,6 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const tempRoot = mkdtempSync(resolve(tmpdir(), 'bronto-ui-consumer-surface-'));
-const peerLinks = optionalFrameworkPeerNames();
-const peerBackedJsTargets = new Set(optionalFrameworkPeerTargets());
 let failed = false;
 
 function run(command, args, options = {}) {
@@ -144,18 +132,6 @@ function walkFiles(dir) {
     else if (entry.isFile()) out.push(path);
   }
   return out;
-}
-
-function linkPeerPackage(name) {
-  const source = resolve(root, 'node_modules', name);
-  if (!existsSync(source)) {
-    throw new Error(`cannot smoke ${pkg.name}/${name}: missing dev peer ${source}`);
-  }
-
-  const target = resolve(tempRoot, 'node_modules', name);
-  if (existsSync(target)) return;
-  mkdirSync(dirname(target), { recursive: true });
-  symlinkSync(source, target, process.platform === 'win32' ? 'junction' : 'dir');
 }
 
 function consumerScript(
@@ -313,15 +289,8 @@ try {
 
   const jsEntries = publicEntries('.js');
   const expectedJsExports = await expectedJsExportNames(jsEntries);
-  const noPeerJsEntries = jsEntries.filter((entry) => !peerBackedJsTargets.has(entry.target));
-  const peerBackedJsEntries = jsEntries.filter((entry) => peerBackedJsTargets.has(entry.target));
   const jsonEntries = publicEntries('.json');
   if (jsEntries.length === 0) throw new Error('no public JS entries found');
-  if (peerBackedJsEntries.length !== peerBackedJsTargets.size) {
-    throw new Error(
-      `expected ${peerBackedJsTargets.size} optional-peer-backed JS entries, found ${peerBackedJsEntries.length}`,
-    );
-  }
   if (jsonEntries.length === 0) throw new Error('no public JSON entries found');
 
   writeFileSync(
@@ -355,25 +324,6 @@ try {
   const assetEntries = publicAssetEntries(installedRoot);
   if (assetEntries.length === 0) throw new Error('no public asset/doc entries found');
 
-  const noPeerOut = run(
-    process.execPath,
-    [
-      '--input-type=module',
-      '--eval',
-      consumerScript(
-        noPeerJsEntries,
-        jsonEntries,
-        assetEntries,
-        expectedBehaviorNoDomNames,
-        expectedJsExports,
-      ),
-    ],
-    { cwd: tempRoot, stdio: ['ignore', 'pipe', 'inherit'] },
-  ).trim();
-  const noPeerCounts = JSON.parse(noPeerOut);
-
-  for (const peer of peerLinks) linkPeerPackage(peer);
-
   const out = run(
     process.execPath,
     [
@@ -391,16 +341,7 @@ try {
   ).trim();
   const counts = JSON.parse(out);
   log(
-    `✓ packed no-peer consumer surface imports and export-matches ${noPeerCounts.js} core JS subpath${
-      noPeerCounts.js === 1 ? '' : 's'
-    }, ${noPeerCounts.json} JSON subpath${noPeerCounts.json === 1 ? '' : 's'}, and resolves ${
-      noPeerCounts.assets
-    } asset/doc subpath${noPeerCounts.assets === 1 ? '' : 's'} without optional peers; ` +
-      `peer-linked full surface imports and export-matches ${counts.js} JS subpath${
-        counts.js === 1 ? '' : 's'
-      }; ${
-        counts.behaviorNoDom
-      } behavior no-DOM call${counts.behaviorNoDom === 1 ? '' : 's'} stay SSR-safe`,
+    `✓ packed consumer: ${counts.js} JS imports, ${counts.json} JSON imports, ${counts.assets} asset/doc paths, ${counts.behaviorNoDom} SSR-safe behaviors; no framework peers`,
   );
 } catch (error) {
   failed = true;

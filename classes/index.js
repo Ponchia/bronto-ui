@@ -55,6 +55,7 @@ export const cls = Object.freeze({
   badgeDot: 'ui-badge--dot',
   chip: 'ui-chip',
   chipAccent: 'ui-chip--accent',
+  chipDense: 'ui-chip--dense',
   link: 'ui-link',
   linkArrow: 'ui-link--arrow',
   linkCta: 'ui-link--cta',
@@ -993,7 +994,7 @@ export const ui = {
   compare: ({ cols } = {}) => j(cls.compare, cols === 2 && cls.compare2up),
   reportFinding: ({ severity } = {}) => j(cls.reportFinding, reportFindingSeverity(severity)),
   claim: ({ status } = {}) => j(cls.claim, claimStatus(status)),
-  chip: ({ accent } = {}) => j(cls.chip, accent && cls.chipAccent),
+  chip: ({ accent, dense } = {}) => j(cls.chip, accent && cls.chipAccent, dense && cls.chipDense),
   link: ({ arrow, cta } = {}) => j(cls.link, arrow && cls.linkArrow, cta && cls.linkCta),
   dot: ({ tone, live } = {}) => j(cls.dot, dotTone(tone), live && cls.dotLive),
   dotgrid: ({ accent, dense } = {}) =>
@@ -1018,7 +1019,7 @@ export const ui = {
   dotspinner: ({ size } = {}) =>
     j(cls.dotspinner, size === 'sm' && cls.dotspinnerSm, size === 'lg' && cls.dotspinnerLg),
   dotbar: ({ indeterminate } = {}) => j(cls.dotbar, indeterminate && cls.dotbarIndeterminate),
-  modal: ({ drawer, open } = {}) => j(cls.modal, drawer && cls.modalDrawer, open && 'is-open'),
+  modal: ({ drawer } = {}) => j(cls.modal, drawer && cls.modalDrawer),
   tab: ({ active } = {}) => j(cls.tab, active && 'is-active'),
   avatar: ({ size } = {}) =>
     j(cls.avatar, size === 'sm' && cls.avatarSm, size === 'lg' && cls.avatarLg),

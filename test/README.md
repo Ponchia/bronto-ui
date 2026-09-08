@@ -21,8 +21,8 @@ contains this README plus 118 suite files:
   [`scripts/test-e2e-nonpixel.mjs`](../scripts/test-e2e-nonpixel.mjs), which
   discovers every `test/e2e/*.spec.mjs` except `visual.spec.mjs`.
 - `npm run test:e2e` uses [`playwright.config.mjs`](../playwright.config.mjs).
-  Playwright starts `node scripts/serve.mjs 8123`, uses
-  `http://127.0.0.1:8123` as `baseURL`, and serves the repo root so `/demo/`
+  Playwright starts `node scripts/serve.mjs 8124`, uses
+  `http://127.0.0.1:8124` as `baseURL`, and serves the repo root so `/demo/`
   resolves like the published demo site.
 - Chromium runs every Playwright spec. Firefox and WebKit use
   `NON_PIXEL_E2E_TEST_MATCH`, so they skip only `visual.spec.mjs`.
@@ -44,3 +44,6 @@ contains this README plus 118 suite files:
 - For kitchen-sink visual coverage, add a stable `data-shot` section in
   [`demo/index.html`](../demo/index.html). `visual.spec.mjs` discovers it and
   maps it to `e2e/__screenshots__/`; do not hand-edit screenshot files.
+
+Set `BRONTO_UI_TEST_PORT` for an isolated checkout. Playwright refuses to reuse
+an existing server, so tests cannot silently inspect another checkout.

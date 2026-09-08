@@ -239,11 +239,11 @@
     },
     {
       "name": "--radius-lg",
-      "description": "Global scale token. Value: `3px`"
+      "description": "Global scale token. Value: `6px`"
     },
     {
       "name": "--radius-md",
-      "description": "Global scale token. Value: `2px`"
+      "description": "Global scale token. Value: `4px`"
     },
     {
       "name": "--radius-pill",
@@ -251,11 +251,11 @@
     },
     {
       "name": "--radius-sm",
-      "description": "Global scale token. Value: `1px`"
+      "description": "Global scale token. Value: `2px`"
     },
     {
       "name": "--radius-xl",
-      "description": "Global scale token. Value: `4px`"
+      "description": "Global scale token. Value: `8px`"
     },
     {
       "name": "--safe-area-bottom",
@@ -371,11 +371,11 @@
     },
     {
       "name": "--text-2xs",
-      "description": "Global scale token. Value: `0.72rem`"
+      "description": "Global scale token. Value: `0.75rem`"
     },
     {
       "name": "--text-base",
-      "description": "Global scale token. Value: `0.95rem`"
+      "description": "Global scale token. Value: `1rem`"
     },
     {
       "name": "--text-dim",
@@ -383,11 +383,11 @@
     },
     {
       "name": "--text-lg",
-      "description": "Global scale token. Value: `1.15rem`"
+      "description": "Global scale token. Value: `1.125rem`"
     },
     {
       "name": "--text-sm",
-      "description": "Global scale token. Value: `0.86rem`"
+      "description": "Global scale token. Value: `0.875rem`"
     },
     {
       "name": "--text-soft",
@@ -395,11 +395,11 @@
     },
     {
       "name": "--text-xl",
-      "description": "Global scale token. Value: `1.45rem`"
+      "description": "Global scale token. Value: `1.5rem`"
     },
     {
       "name": "--text-xs",
-      "description": "Global scale token. Value: `0.76rem`"
+      "description": "Global scale token. Value: `0.8125rem`"
     },
     {
       "name": "--tracking-wide",

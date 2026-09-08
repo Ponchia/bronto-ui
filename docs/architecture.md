@@ -11,9 +11,9 @@ Status: accepted · 2026-05-15 · applies from v0.2.0
 >   gates, opt-in colorways, data-viz, APCA advisory reporting, and the
 >   OKLCH core accent ramp.
 > - [ADR-0004 — Prune unused adapter and controlled-modal surfaces](./adr/0004-prune-unused-adapters.md)
->   (accepted; deprecated in 0.7) — retain the package-only adapters and
->   controlled modal for one migration minor, then remove them unless a real
->   consumer supplies adoption evidence.
+>   (implemented in 0.10) — remove unadopted adapters and the controlled modal.
+> - [ADR-0005 — Productive tools and editorial reports](./adr/0005-productive-tools-and-editorial-reports.md)
+>   (accepted; 0.10) — readable defaults, selective display identity, and task-led composition.
 
 ## Context
 
@@ -44,11 +44,6 @@ on top of the CSS, none of which require a framework commitment**:
 ├── annotations/ pure SVG callout geometry (builds on connectors)     [optional]
 ├── glyphs/      dot-matrix glyph registry/renderers                 [optional]
 ├── schemas/     declarative JSON contracts for report/tooling data   [optional]
-├── react/       deprecated React hooks over behaviors               [remove >=0.8]
-├── solid/       deprecated Solid primitives over behaviors          [remove >=0.8]
-├── qwik/        deprecated Qwik hooks over behaviors                 [remove >=0.8]
-├── svelte/      deprecated Svelte actions over behaviors            [remove >=0.8]
-└── vue/         deprecated Vue directives over behaviors            [remove >=0.8]
 ```
 
 ### Consequences of each layer
@@ -92,11 +87,6 @@ on top of the CSS, none of which require a framework commitment**:
 - **glyphs/** — static bitmap data and SSR-safe render helpers. The
   256-cell DOM renderers are for display and solid inline icons; the `.ui-icon`
   mask renderer is for dense icon-at-scale use.
-- **react/** / **solid/** / **qwik/** / **svelte/** / **vue/** — deprecated
-  lifecycle adapters over `behaviors/`. They remain compatible for the complete
-  0.7 minor, then may be removed in 0.8 under ADR-0004. Ten real-consumer audits
-  found no adapter imports; framework consumers already use the vanilla
-  initializers in their own mount/cleanup lifecycle.
 - **`css/analytical.css` — the analytical roll-up.** This convenience file
   `@import`s exactly **nine** analytical figure/evidence leaves: `figure`,
   `annotations`, `legend`, `marks`, `connectors`, `spotlight`, `crosshair`,
@@ -111,8 +101,7 @@ on top of the CSS, none of which require a framework commitment**:
   `import '@ponchia/ui'` in Vite/Astro/SvelteKit). There is no runtime JS at
   the package root — Node/runtime JS imports of `.` are not supported. All JS
   entrypoints are explicit subpaths (`/behaviors`, `/classes`, `/tokens`,
-  `/glyphs`, `/annotations`, `/connectors`, `/react`, `/solid`, `/qwik`,
-  `/svelte`, `/vue`, `/skins`, `/charts`, `/mermaid`, `/d2`, `/vega`). This is
+  `/glyphs`, `/annotations`, `/connectors`, `/skins`, `/charts`, `/mermaid`, `/d2`, `/vega`). This is
   a permanent, intentional contract.
 
 ### Surface admission rule
@@ -140,7 +129,7 @@ registries, virtualized grids, or framework component APIs.
 The repo root mixes five kinds of directory that look alike but follow very
 different rules. Two distinctions matter most: several are **path-frozen
 published subpaths** — the directory name _is_ the public import specifier
-(`@ponchia/ui/react` resolves to `./react/`), so they cannot be moved or
+(`@ponchia/ui/behaviors` resolves to `./behaviors/`), so they cannot be moved or
 renamed — and several are **generated** and must never be hand-edited (a
 generator overwrites them and a drift gate fails CI).
 
@@ -148,7 +137,7 @@ generator overwrites them and a drift gate fails CI).
 | --- | --- | --- | --- |
 | `css/` | source | yes | The framework. Most leaves are hand-authored `@layer bronto` CSS. The palette blocks in `css/tokens.css`, plus `css/skins.css` and `css/dataviz.css`, are generated. `css/generated.css` is authored trust-surface CSS despite its name. |
 | `tokens/index.js` | source | yes | The single source of truth for token **values** (`cssVars`). |
-| `classes/index.js`, `behaviors/`, `annotations/`, `connectors/`, `react/`, `solid/`, `qwik/`, `svelte/`, `vue/`, `glyphs/`, `shiki/` | source · published-subpath (path-frozen) | yes — but **do not move** | Authored ESM shipped as-is; the dir name is the public import path. The `.d.ts` beside them are generated/drift-checked: `connectors`/`annotations`/`react`/`solid`/`qwik`/`svelte`/`vue`/`behaviors` are emitted from JSDoc by `tsc` (`npm run dts:emit`), `classes`/`tokens`/`glyphs` from the runtime. No leaf `.d.ts` is hand-maintained. |
+| `classes/index.js`, `behaviors/`, `annotations/`, `connectors/`, `glyphs/`, `shiki/` | source · published-subpath (path-frozen) | yes — but **do not move** | Authored ESM shipped as-is; the dir name is the public import path. The `.d.ts` beside them are generated/drift-checked: `connectors`/`annotations`/`behaviors` are emitted from JSDoc by `tsc` (`npm run dts:emit`), `classes`/`tokens`/`glyphs` from the runtime. No leaf `.d.ts` is hand-maintained. |
 | `schemas/*.schema.json` | source · published schema files (path-frozen) | yes — but **do not move exported files** | Declarative JSON Schema contracts for sidecars/tooling data. Each exported schema file path is public; the directory itself is not a wildcard import. No validator runtime ships. |
 | `dist/` | generated | no | Build of `css/` (`npm run dist:build`); byte-checked by `check:dist`. |
 | `tokens/index.json`, `tokens/resolved.json`, `tokens/tokens.dtcg.json`, `tokens/figma.variables.json`, `tokens/charts.json`, `classes/index.d.ts`, `tokens/index.d.ts`, `tokens/{skins,charts}.d.ts`, `glyphs/glyphs.d.ts`, `classes/vscode.css-custom-data.json`, `docs/reference.md` | generated | no | Committed build artifacts; regenerate with `npm run prepack`, never hand-edit. Drift-checked in `npm run check`. |
@@ -184,7 +173,7 @@ are copied into consumer reports.
 | exports / import graph / source CSS `layer(bronto)` imports / layered-vs-unlayered CSS target map / `files` consistent | `check-exports.mjs` |
 | pure generated mirrors fresh — `tokens.css`/`index.json`, `dtcg.json`, `resolved.json`, `figma.variables.json`, `classes`/`tokens` `.d.ts`, `reference.md`, vscode data — each byte-equal to its generator (registry: `scripts/lib/artifacts.mjs`) | `check-fresh.mjs` |
 | `classes` `cls` ⇄ `.ui-*` selectors             | `check-classes.mjs` |
-| `connectors`/`annotations`/`react`/`solid`/`qwik`/`svelte`/`vue`/`behaviors` `.d.ts` (+ maps) == fresh `tsc` emit of their JSDoc | `check-dts-emit.mjs` |
+| `connectors`/`annotations`/`behaviors` `.d.ts` (+ maps) == fresh `tsc` emit of their JSDoc | `check-dts-emit.mjs` |
 | legend swatch colours ⊆ `charts.js` · opt-in   | `check-legend.mjs`  |
 | color tokens tiered · no raw chromatic color in components | `check-color-policy.mjs` |
 | `css/skins.css` ⇄ `tokens/skins.js` · colorways opt-in | `check-skins.mjs` |
@@ -193,14 +182,13 @@ are copied into consumer reports.
 | `shiki/nothing.json` valid + on rationed palette | `check-shiki.mjs`  |
 | `dist/*.css` == fresh single-`@layer bronto` build of `css/` + budget | `check-dist.mjs`    |
 | published tarball == intended `files` only      | `check-pack.mjs`    |
-| packed core JS/JSON public subpaths import without optional framework peers, packed JS named exports exactly match source modules, peer-backed adapters import after peers are linked, concrete CSS/doc/font subpaths resolve, and packed behavior initializers/toast no-op in a clean consumer with no DOM globals | `check-consumer-surface.mjs` |
+| packed JS/JSON public subpaths import without framework peers, packed JS named exports exactly match source modules, concrete CSS/doc/font subpaths resolve, and packed behavior initializers/toast no-op in a clean consumer with no DOM globals | `check-consumer-surface.mjs` |
 | packed typed public subpaths compile through package exports in a clean TypeScript consumer | `check-consumer-types.mjs` |
 | function-level cyclomatic complexity stays ≤12 and function NLOC stays within budget, with no per-function exception list | `check-complexity.mjs` |
 | GitHub Actions workflow syntax and embedded shell snippets lint | `check:workflows` (`github-actionlint`) |
 | every shipped CSS leaf is classified as foundation or has explicit docs/demo/e2e ownership | `check-component-matrix.mjs` |
 | every public behavior export has explicit docs, unit-test, and browser-test ownership | `check-behavior-matrix.mjs` |
 | every public helper export in `classes`/`annotations`/`connectors`/`glyphs` has explicit docs, unit-test, and type-test ownership | `check-helper-matrix.mjs` |
-| every delegated behavior has React/Solid/Qwik hook, Svelte action, Vue directive, docs, example, unit, and type ownership | `check-binding-matrix.mjs` |
 | `@playwright/test` version ⇄ pinned Playwright container image ⇄ visual workflows/docs/local runner | `check-playwright-container.mjs` |
 | every shipped JSON schema is exported, documented, validates its public cookbook example, and rejects malformed sidecars | `check-schemas.mjs` |
 | packed public text contains no private terms, local paths, or secret-looking assignments | `check-public-hygiene.mjs` |
@@ -321,8 +309,7 @@ explained, not surprising.
 - Run `npm pack --dry-run --json` locally or from CI logs and confirm the
   intended file count/payload.
 - Build the packed examples matrix from the tarball, not a workspace link:
-  `npm run test:examples` covers vanilla, Astro, SvelteKit, Vue, React, Solid,
-  Qwik, Tailwind, and report-static, with Chromium browser smokes for runtime
+  `npm run test:examples` covers vanilla, Astro, SvelteKit, React, Tailwind, and report-static, with Chromium browser smokes for runtime
   examples. For a deeper consumer pass, `npm run test:examples:cross-browser`
   runs the same packed smokes in Chromium, Firefox, and WebKit; manual CI
   dispatches pass the same cross-browser flag to the reusable examples workflow.
