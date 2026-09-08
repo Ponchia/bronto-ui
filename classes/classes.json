@@ -1,7 +1,7 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `groups[].base` is null for a parts-only namespace (no standalone base class — do NOT emit it). A modifier whose name contains `__` (e.g. `ui-spark__bar--pos`) attaches to THAT part, not the base host. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `behaviorAttributes` are the `data-bronto-*` wiring hooks the optional behaviors delegate on; `requiredAria` is the role/aria a generator must emit per component. `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 682,
+    "classes": 683,
     "groups": 186
   },
   "groups": {
@@ -295,7 +295,8 @@
     "ui-chip": {
       "base": "ui-chip",
       "modifiers": [
-        "ui-chip--accent"
+        "ui-chip--accent",
+        "ui-chip--dense"
       ],
       "parts": []
     },
@@ -1711,6 +1712,7 @@
     "ui-check",
     "ui-chip",
     "ui-chip--accent",
+    "ui-chip--dense",
     "ui-citation",
     "ui-citation--chip",
     "ui-claim",
@@ -2842,12 +2844,6 @@
       "on": "a <dialog>",
       "behavior": "initDialog",
       "note": "opt into backdrop light-dismiss (click the backdrop to close)"
-    },
-    {
-      "name": "data-bronto-modal",
-      "on": "a controlled (non-<dialog>) .ui-modal overlay",
-      "behavior": "initModal",
-      "note": "inert focus-trap, focus-return, and Escape close signal for a consumer-owned .is-open modal; needs an accessible name"
     },
     {
       "name": "data-bronto-menu",

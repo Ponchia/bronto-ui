@@ -21,7 +21,7 @@ npm run check   # the full integrity suite: lint, format, exports; the
                 #   docs/unit/browser ownership, public hygiene, undefined CSS var refs,
                 #   publint + arethetypeswrong, workflow syntax/shell lint,
                 #   release stamp, migration map, pack-aware shipped-doc links,
-                #   public import snippets, contrast; behaviors / bindings /
+                #   public import snippets, contrast; behaviors /
                 #   glyphs parity; color-policy, skins, charts, visual-baseline
                 #   inventory, report + shipped HTML snippet integrity
 npm test        # faster unit-only loop; already included in npm run check
@@ -54,12 +54,10 @@ edit; a gate will revert you) and which are **path-frozen published subpaths**
 
 ## Conventions
 
-- **Public surface is admitted by evidence, not by judgement.** A new public
-  class, token, behavior, helper, binding, schema, CSS leaf, or package subpath
-  needs a named non-example consumer that already built it by hand, and the PR
-  says who and where. Fixes to an existing contract need no such argument.
-  Package examples prove compatibility; they never establish that anyone needed
-  the surface. See [ROADMAP.md](ROADMAP.md#surface-is-admitted-by-evidence).
+- **Public surface is admitted by task evidence.** Show the task, the current
+  difficulty, and how the proposed composition improves it. A named consumer
+  with a hand-built duplicate is useful evidence, not a prerequisite. Prefer
+  an existing recipe to a new primitive. Package examples prove compatibility.
 - **Surface has to pay rent.** A public class, token, behavior, schema,
   binding, CSS leaf, or docs path is accepted only when it makes the system
   clearer, safer, smaller, or more stable. Prefer a documented recipe over a
@@ -150,6 +148,9 @@ the modern web platform and does **not** ship fallbacks below this floor —
 pin an older tag if you need to. Features that aren't yet cross-engine
 (View Transitions, scroll-driven animations, `interpolate-size`) are used
 only as progressive enhancement and degrade to a static end-state.
+
+The complete browser suite runs in three CI shards. Every shard remains
+required by `ci-gate`; sharding changes feedback time, not coverage.
 
 ## Visual baselines
 

@@ -182,12 +182,34 @@ for (const theme of ['dark', 'light']) {
 // drives the glyph. `--invert` swaps only the tone, so its glyph still matches
 // its direction (up stays ▲) — asserted via the up+invert specimen.
 // ---------------------------------------------------------------------------
+async function addDeltaProbe(page) {
+  await page.evaluate(() => {
+    const host = document.createElement('div');
+    host.id = 'delta-probe';
+    for (const [direction, inverted] of [
+      ['up', false],
+      ['down', false],
+      ['flat', false],
+      ['up', true],
+    ]) {
+      const item = document.createElement('span');
+      item.className = `ui-delta ui-delta--${direction}${inverted ? ' ui-delta--invert' : ''}`;
+      item.textContent = `${direction}${inverted ? ' inverted' : ''}`;
+      host.append(item);
+    }
+    document.body.append(host);
+  });
+}
+
 test('ui-delta injects its arrow glyph via ::before (no JS)', async ({ page }) => {
   await openReport(page, 'light');
+  await addDeltaProbe(page);
 
   const content = await page.evaluate(() => {
     const read = (sel) =>
-      getComputedStyle(document.querySelector(sel), '::before').getPropertyValue('content');
+      getComputedStyle(document.querySelector(`#delta-probe ${sel}`), '::before').getPropertyValue(
+        'content',
+      );
     return {
       up: read('.ui-delta--up:not(.ui-delta--invert)'),
       down: read('.ui-delta--down:not(.ui-delta--invert)'),
@@ -214,8 +236,9 @@ test('ui-delta injects its arrow glyph via ::before (no JS)', async ({ page }) =
 // across themes/token edits.
 test('ui-delta--invert swaps only the tone', async ({ page }) => {
   await openReport(page, 'light');
+  await addDeltaProbe(page);
   const tones = await page.evaluate(() => {
-    const colour = (sel) => getComputedStyle(document.querySelector(sel)).color;
+    const colour = (sel) => getComputedStyle(document.querySelector(`#delta-probe ${sel}`)).color;
     return {
       up: colour('.ui-delta--up:not(.ui-delta--invert)'),
       down: colour('.ui-delta--down:not(.ui-delta--invert)'),

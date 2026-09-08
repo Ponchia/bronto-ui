@@ -1,6 +1,6 @@
 # 0004. Prune unused adapter and controlled-modal surfaces
 
-Status: accepted
+Status: implemented in 0.10.0
 
 ## Context
 
@@ -32,3 +32,7 @@ interaction.
 - Existing adapter users have one full minor to migrate.
 - Package examples continue proving compatibility during 0.7.
 - A future adapter requires real adoption evidence, not catalog symmetry.
+
+The removal is implemented in 0.10.0. See the
+[0.10 migration](../migrations/0.9-to-0.10.md) for the replacement lifecycle
+and native-dialog contracts.

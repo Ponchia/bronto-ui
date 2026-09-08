@@ -490,230 +490,6 @@ test('tabs cleanup restores generated APG state in a real browser', async ({ pag
   await expect(beta).not.toHaveClass(/is-active/);
 });
 
-test('controlled modal and aria-disabled guard work in a real browser', async ({ page }) => {
-  await open(page);
-  await page.evaluate(() => {
-    const wrap = document.createElement('section');
-    wrap.innerHTML = `
-      <button id="controlled-open">Open controlled modal</button>
-      <aside id="controlled-bg"><a href="#background">Background link</a></aside>
-      <div id="controlled-modal" class="ui-modal" data-bronto-modal aria-label="Controlled modal">
-        <button id="controlled-ok">OK</button>
-      </div>
-      <button id="dead-control" aria-disabled="true">Dead action</button>
-      <button id="live-control">Live action</button>`;
-    document.body.append(wrap);
-  });
-  await page.addScriptTag({
-    type: 'module',
-    content: `
-    import { initModal, initDisabledGuard } from '/behaviors/index.js';
-
-    const modal = document.getElementById('controlled-modal');
-    window.__controlledModalCloseRequests = 0;
-    window.__deadClicks = 0;
-    window.__liveClicks = 0;
-    document.getElementById('controlled-open').addEventListener('click', () => {
-      modal.classList.add('is-open');
-    });
-    modal.addEventListener('bronto:modal:close', () => {
-      window.__controlledModalCloseRequests += 1;
-      modal.classList.remove('is-open');
-    });
-    document.getElementById('dead-control').addEventListener('click', () => {
-      window.__deadClicks += 1;
-    });
-    document.getElementById('live-control').addEventListener('click', () => {
-      window.__liveClicks += 1;
-    });
-    window.__controlledStops = [initModal(), initDisabledGuard()];
-    window.__controlledReady = true;
-    `,
-  });
-  await page.waitForFunction(() => window.__controlledReady === true);
-
-  await page.locator('#controlled-open').focus();
-  await page.keyboard.press('Enter');
-  await expect(page.locator('#controlled-modal')).toHaveClass(/is-open/);
-  await expect(page.locator('#controlled-ok')).toBeFocused();
-  await expect.poll(() => page.locator('#controlled-bg').evaluate((el) => el.inert)).toBe(true);
-
-  await page.keyboard.press('Escape');
-  await expect(page.locator('#controlled-modal')).not.toHaveClass(/is-open/);
-  await expect(page.locator('#controlled-open')).toBeFocused();
-  await expect.poll(() => page.locator('#controlled-bg').evaluate((el) => el.inert)).toBe(false);
-  expect(await page.evaluate(() => window.__controlledModalCloseRequests)).toBe(1);
-
-  await page.evaluate(() => {
-    const dead = document.getElementById('dead-control');
-    const event = new MouseEvent('click', { bubbles: true, cancelable: true });
-    window.__deadClickDefaultPrevented = !dead.dispatchEvent(event) || event.defaultPrevented;
-  });
-  await page.locator('#dead-control').focus();
-  await page.keyboard.press('Enter');
-  await page.keyboard.press('Space');
-  expect(await page.evaluate(() => window.__deadClicks)).toBe(0);
-  expect(await page.evaluate(() => window.__deadClickDefaultPrevented)).toBe(true);
-
-  await page.locator('#live-control').focus();
-  await expect(page.locator('#live-control')).toBeFocused();
-  await page.keyboard.press('Enter');
-  expect(await page.evaluate(() => window.__liveClicks)).toBe(1);
-});
-
-test('controlled modal cleanup restores generated state and Escape stays topmost', async ({
-  page,
-}) => {
-  await open(page);
-  await page.evaluate(() => {
-    const cleanupStage = document.createElement('section');
-    cleanupStage.id = 'modal-cleanup-stage';
-    cleanupStage.innerHTML = `
-      <button id="modal-cleanup-opener">Open content modal</button>
-      <aside id="modal-cleanup-bg"><a href="#modal-cleanup-bg">Background</a></aside>
-      <div id="modal-cleanup-panel" class="ui-modal is-open" data-bronto-modal aria-label="Content modal"></div>
-    `;
-    document.body.append(cleanupStage);
-    document.getElementById('modal-cleanup-opener').focus();
-  });
-  await page.addScriptTag({
-    type: 'module',
-    content: `
-    import { initModal } from '/behaviors/index.js';
-    window.__modalCleanupStop = initModal({ root: document.getElementById('modal-cleanup-stage') });
-    window.__modalCleanupReady = true;
-    `,
-  });
-  await page.waitForFunction(() => window.__modalCleanupReady === true);
-
-  const cleanupPanel = page.locator('#modal-cleanup-panel');
-  await expect(cleanupPanel).toHaveAttribute('role', 'dialog');
-  await expect(cleanupPanel).toHaveAttribute('aria-modal', 'true');
-  await expect(cleanupPanel).toHaveAttribute('tabindex', '-1');
-  await expect.poll(() => page.locator('#modal-cleanup-bg').evaluate((el) => el.inert)).toBe(true);
-
-  await page.evaluate(() => {
-    window.__detachedModalCleanupPanel = document.getElementById('modal-cleanup-panel');
-    window.__detachedModalCleanupPanel.remove();
-    window.__modalCleanupStop();
-  });
-  await expect.poll(() => page.locator('#modal-cleanup-bg').evaluate((el) => el.inert)).toBe(false);
-  await expect
-    .poll(() =>
-      page.evaluate(() => ({
-        role: window.__detachedModalCleanupPanel.getAttribute('role'),
-        ariaModal: window.__detachedModalCleanupPanel.getAttribute('aria-modal'),
-        tabindex: window.__detachedModalCleanupPanel.getAttribute('tabindex'),
-      })),
-    )
-    .toEqual({ role: null, ariaModal: null, tabindex: null });
-
-  await page.evaluate(() => {
-    const stackStage = document.createElement('section');
-    stackStage.id = 'modal-stack-stage';
-    stackStage.innerHTML = `
-      <button id="modal-stack-opener">Open stacked modals</button>
-      <div id="modal-outer" class="ui-modal is-open" data-bronto-modal aria-label="Outer">
-        <button id="modal-outer-ok">Outer ok</button>
-        <div id="modal-inner" class="ui-modal is-open" data-bronto-modal aria-label="Inner">
-          <button id="modal-inner-ok">Inner ok</button>
-        </div>
-      </div>
-    `;
-    document.body.append(stackStage);
-    window.__modalOuterCloseRequests = 0;
-    window.__modalInnerCloseRequests = 0;
-    document.getElementById('modal-outer').addEventListener('bronto:modal:close', (event) => {
-      if (event.target.id === 'modal-outer') window.__modalOuterCloseRequests += 1;
-    });
-    document.getElementById('modal-inner').addEventListener('bronto:modal:close', (event) => {
-      if (event.target.id === 'modal-inner') window.__modalInnerCloseRequests += 1;
-    });
-    document.getElementById('modal-stack-opener').focus();
-  });
-  await page.addScriptTag({
-    type: 'module',
-    content: `
-    import { initModal } from '/behaviors/index.js';
-    window.__modalStackStop = initModal({ root: document.getElementById('modal-stack-stage') });
-    window.__modalStackReady = true;
-    `,
-  });
-  await page.waitForFunction(() => window.__modalStackReady === true);
-
-  await expect(page.locator('#modal-inner-ok')).toBeFocused();
-  await page.keyboard.press('Escape');
-  expect(await page.evaluate(() => window.__modalInnerCloseRequests)).toBe(1);
-  expect(await page.evaluate(() => window.__modalOuterCloseRequests)).toBe(0);
-
-  await page.evaluate(() => document.getElementById('modal-inner').classList.remove('is-open'));
-  await expect(page.locator('#modal-outer-ok')).toBeFocused();
-  await page.keyboard.press('Escape');
-  expect(await page.evaluate(() => window.__modalOuterCloseRequests)).toBe(1);
-  await page.evaluate(() => window.__modalStackStop());
-});
-
-test('controlled modal reconciles sibling stacks, owned portals, and late background', async ({
-  page,
-}) => {
-  await open(page);
-  await page.evaluate(() => {
-    const stage = document.createElement('section');
-    stage.id = 'modal-portal-stage';
-    stage.innerHTML = `
-      <button id="portal-stack-opener">Open</button>
-      <aside id="portal-stack-bg">Background</aside>
-      <div id="portal-first" class="ui-modal is-open" data-bronto-modal aria-label="First">
-        <button id="portal-first-ok">First ok</button>
-      </div>
-      <div id="portal-second" class="ui-modal" data-bronto-modal aria-label="Second">
-        <button id="portal-second-trigger" data-bronto-popover="owned-portal">More</button>
-      </div>
-      <div id="owned-portal" class="ui-popover" aria-label="Owned portal">
-        <button id="owned-portal-ok">Portal ok</button>
-      </div>`;
-    document.body.append(stage);
-    document.getElementById('portal-stack-opener').focus();
-  });
-  await page.addScriptTag({
-    type: 'module',
-    content: `
-    import { initModal, initPopover } from '/behaviors/index.js';
-    window.__portalStackStops = [initModal(), initPopover()];
-    window.__portalStackReady = true;
-    `,
-  });
-  await page.waitForFunction(() => window.__portalStackReady === true);
-
-  await expect(page.locator('#portal-first-ok')).toBeFocused();
-  await expect.poll(() => page.locator('#portal-second').evaluate((el) => el.inert)).toBe(true);
-  await page.evaluate(() => document.getElementById('portal-second').classList.add('is-open'));
-  await expect(page.locator('#portal-second-trigger')).toBeFocused();
-  await expect.poll(() => page.locator('#portal-first').evaluate((el) => el.inert)).toBe(true);
-  await expect.poll(() => page.locator('#portal-second').evaluate((el) => el.inert)).toBe(false);
-
-  await page.locator('#portal-second-trigger').click();
-  await expect(page.locator('#owned-portal')).toHaveClass(/is-open/);
-  await expect.poll(() => page.locator('#owned-portal').evaluate((el) => el.inert)).toBe(false);
-  await expect(page.locator('#owned-portal-ok')).toBeFocused();
-  await expect.poll(() => page.locator('#portal-stack-bg').evaluate((el) => el.inert)).toBe(true);
-
-  await page.evaluate(() => {
-    const late = document.createElement('button');
-    late.id = 'portal-stack-late';
-    late.textContent = 'Late background';
-    document.getElementById('modal-portal-stage').append(late);
-  });
-  await expect.poll(() => page.locator('#portal-stack-late').evaluate((el) => el.inert)).toBe(true);
-
-  await page.keyboard.press('Escape');
-  await expect(page.locator('#owned-portal')).not.toHaveClass(/is-open/);
-  await expect(page.locator('#portal-second')).toHaveClass(/is-open/);
-  await page.evaluate(() => document.getElementById('portal-second').classList.remove('is-open'));
-  await expect(page.locator('#portal-first-ok')).toBeFocused();
-  await page.evaluate(() => window.__portalStackStops.forEach((stop) => stop()));
-});
-
 test('Escape on a popover nested in a <dialog> closes only the popover, not the dialog', async ({
   page,
 }) => {
@@ -1286,3 +1062,28 @@ function hexChannels(value) {
   const hex = String(value).replace(/^#/, '');
   return [0, 2, 4].map((i) => Number.parseInt(hex.slice(i, i + 2), 16));
 }
+
+test('aria-disabled guard works in a real browser without a modal', async ({ page }) => {
+  await open(page);
+  await page.addScriptTag({
+    type: 'module',
+    content: `
+      import { initDisabledGuard } from '/behaviors/index.js';
+      const host = document.createElement('section');
+      host.innerHTML = '<button id="dead-control" aria-disabled="true">Dead action</button><button id="live-control">Live action</button>';
+      document.body.append(host);
+      window.__guardCounts = { dead: 0, live: 0 };
+      initDisabledGuard({ root: host });
+      host.querySelector('#dead-control').addEventListener('click', () => window.__guardCounts.dead++);
+      host.querySelector('#live-control').addEventListener('click', () => window.__guardCounts.live++);
+      window.__guardReady = true;
+    `,
+  });
+  await page.waitForFunction(() => window.__guardReady === true);
+  await page.locator('#dead-control').focus();
+  await page.keyboard.press('Enter');
+  await page.keyboard.press('Space');
+  await page.locator('#live-control').focus();
+  await page.keyboard.press('Enter');
+  expect(await page.evaluate(() => window.__guardCounts)).toEqual({ dead: 0, live: 1 });
+});

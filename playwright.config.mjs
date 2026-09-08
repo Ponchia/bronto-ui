@@ -1,6 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 import { NON_PIXEL_E2E_TEST_MATCH } from './scripts/lib/e2e-specs.mjs';
 
+// Never reuse the live specimen bench or another checkout's server.
+const port = Number(process.env.BRONTO_UI_TEST_PORT || 8124);
+const baseURL = `http://127.0.0.1:${port}`;
+
 /**
  * Visual + a11y + cross-engine regression. Runs ONLY in the pinned
  * Playwright container (CI: mcr.microsoft.com/playwright:v1.60.0-jammy,
@@ -38,7 +42,7 @@ export default defineConfig({
     toHaveScreenshot: { maxDiffPixelRatio: 0.01, animations: 'disabled' },
   },
   use: {
-    baseURL: 'http://127.0.0.1:8123',
+    baseURL,
     reducedMotion: 'reduce',
     colorScheme: 'no-preference',
   },
@@ -54,9 +58,9 @@ export default defineConfig({
     { name: 'webkit', use: { ...devices['Desktop Safari'] }, testMatch: NON_PIXEL_E2E_TEST_MATCH },
   ],
   webServer: {
-    command: 'node scripts/serve.mjs 8123',
-    url: 'http://127.0.0.1:8123/demo/',
-    reuseExistingServer: !process.env.CI,
+    command: `node scripts/serve.mjs ${port}`,
+    url: `${baseURL}/demo/`,
+    reuseExistingServer: false,
     stdout: 'ignore',
   },
 });

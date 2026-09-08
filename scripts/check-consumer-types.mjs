@@ -74,11 +74,6 @@ import { initDialog, toast, type Cleanup } from '${pkg.name}/behaviors';
 import { renderGlyph, glyphCells, GLYPH_SIZE, type GlyphName } from '${pkg.name}/glyphs';
 import { connectRects, connectorPath, type ConnectRectsResult } from '${pkg.name}/connectors';
 import { annotationParts, notePlacement, type AnnotationPartsOptions } from '${pkg.name}/annotations';
-import { useDialog as useDialogR } from '${pkg.name}/react';
-import { useTabs as useTabsS } from '${pkg.name}/solid';
-import { useDialog as useDialogQ } from '${pkg.name}/qwik';
-import { disclosure as sDisclosure, type SvelteActionReturn } from '${pkg.name}/svelte';
-import { vDisclosure, directives, brontoVue, type BrontoDirective } from '${pkg.name}/vue';
 import { skins, type SkinName } from '${pkg.name}/skins';
 import chartPalette, { ACCENT, charts, CHART_CATEGORICAL, CHART_PATTERN_COUNT, type ChartTheme, type ChartTokenName } from '${pkg.name}/charts';
 import mermaidTheme, { brontoMermaidTheme, mermaid, type MermaidThemeVariables } from '${pkg.name}/mermaid';
@@ -124,17 +119,6 @@ const note = notePlacement({
   bounds: { width: 240, height: 140 },
   preferred: 'right',
 });
-
-const reactDialog: void = useDialogR({ root: { current: document } });
-const solidTabs: void = useTabsS({ root: () => document });
-const qwikDialog: void = useDialogQ({ root: { value: document } });
-// @ts-expect-error - React roots do not accept the Qwik signal shape.
-useDialogR({ root: { value: document } });
-const svelteAction: SvelteActionReturn = sDisclosure(document.body, { root: document });
-const vueDirective: BrontoDirective = vDisclosure;
-vueDirective.mounted(document.body, { value: { root: document } });
-directives.disclosure.beforeUnmount(document.body);
-brontoVue.install({ directive(_name: string, _directive: BrontoDirective) {} });
 
 const skinName: SkinName = 'phosphor-green';
 const skinLabel: string = skins[skinName].label;
@@ -182,10 +166,6 @@ void [
   path,
   annConnector,
   note,
-  reactDialog,
-  solidTabs,
-  qwikDialog,
-  svelteAction,
   skinLabel,
   chartToken,
   chartColor,

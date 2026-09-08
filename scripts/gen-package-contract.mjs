@@ -427,7 +427,7 @@ semantic versioning contract for the surfaces listed here.
 | --- | --- | --- |
 | CSS root and \`dist/bronto.css\` | Stable | CSS-only default bundle. CSS side-effect imports are supported in CSS-aware bundlers; Node/runtime JS root imports are not. |
 | CSS leaves | Stable additive | Direct leaves are generated as layered \`dist/css/*.css\` exports; raw unlayered source leaves are explicit escape hatches under \`./css/unlayered/*\`. |
-| JS subpaths | Stable | ESM-only public subpaths. Runtime behavior is SSR-safe and dependency-free unless a framework binding declares an optional peer. |
+| JS subpaths | Stable | ESM-only public subpaths. Runtime behavior is SSR-safe and dependency-free; framework lifecycles belong to consumers. |
 | Machine-readable data | Stable additive | JSON/data exports are for non-JS hosts, validators, renderers, and offline agents. Additive fields are allowed within a compatible minor. |
 | Shipped docs | Stable paths | Curated Markdown/text docs ship inside the npm tarball for offline readers. Generated docs are regenerated and drift-checked. |
 | Fonts | Stable path pattern | Doto assets ship under \`fonts/*\` with their OFL license. |

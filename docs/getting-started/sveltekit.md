@@ -46,38 +46,7 @@ Start with the classes and attributes the CSS/behavior contracts expect:
 </main>
 ```
 
-## 4. Deprecated compatibility actions
-
-The `@ponchia/ui/svelte` action entrypoint remains compatible in 0.7 but is
-deprecated for removal no earlier than 0.8. Prefer initializing the vanilla
-behavior on mount and retaining its cleanup, as shown in the next section. The
-old entrypoint exports actions over the same vanilla behavior layer. During
-migration, attach the action to the subtree that owns the markup:
-
-```svelte
-<script>
-  import { themeToggle, dialog } from '@ponchia/ui/svelte';
-</script>
-
-<main class="ui-center ui-stack" use:themeToggle use:dialog>
-  <button class="ui-button" data-bronto-theme-toggle>Toggle theme</button>
-</main>
-```
-
-Actions scope delegated behavior to their node and clean up automatically when
-the component is destroyed or the action parameter changes.
-
-The action surface maps one-for-one to delegated behaviors: `themeToggle`,
-`dismissible`, `disabledGuard`, `disclosure`, `menu`, `formValidation`,
-`combobox`, `popover`, `tableSort`, `tabs`, `dialog`, `modal`, `carousel`,
-`dotGlyph`, `legend`, `connectors`, `spotlight`, `crosshair`, `command`,
-`sources`, and `splitter`. The hook-style aliases (`useThemeToggle`,
-`useDialog`, etc.) point at the same actions. For custom behavior glue, use
-`createBrontoAction(init)` or the generic `brontoBehavior` /
-`useBrontoBehavior` action. `toast()` / `useToast()` expose the imperative
-toast helper.
-
-## 5. Behaviors in `onMount` (with cleanup)
+## 4. Behaviors in `onMount` (with cleanup)
 
 `init*` returns a cleanup; SvelteKit re-runs components on client-side
 navigation, so always return it from `onMount`:

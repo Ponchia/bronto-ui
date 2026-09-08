@@ -15,7 +15,7 @@ semantic versioning contract for the surfaces listed here.
 | --- | --- | --- |
 | CSS root and `dist/bronto.css` | Stable | CSS-only default bundle. CSS side-effect imports are supported in CSS-aware bundlers; Node/runtime JS root imports are not. |
 | CSS leaves | Stable additive | Direct leaves are generated as layered `dist/css/*.css` exports; raw unlayered source leaves are explicit escape hatches under `./css/unlayered/*`. |
-| JS subpaths | Stable | ESM-only public subpaths. Runtime behavior is SSR-safe and dependency-free unless a framework binding declares an optional peer. |
+| JS subpaths | Stable | ESM-only public subpaths. Runtime behavior is SSR-safe and dependency-free; framework lifecycles belong to consumers. |
 | Machine-readable data | Stable additive | JSON/data exports are for non-JS hosts, validators, renderers, and offline agents. Additive fields are allowed within a compatible minor. |
 | Shipped docs | Stable paths | Curated Markdown/text docs ship inside the npm tarball for offline readers. Generated docs are regenerated and drift-checked. |
 | Fonts | Stable path pattern | Doto assets ship under `fonts/*` with their OFL license. |
@@ -197,7 +197,6 @@ semantic versioning contract for the surfaces listed here.
 | `./behaviors/inert` | types: `./behaviors/inert.d.ts`<br>default: `./behaviors/inert.js` | Package subpath | Public | Exported package subpath. See docs/stability.md for semantic stability. |
 | `./behaviors/legend` | types: `./behaviors/legend.d.ts`<br>default: `./behaviors/legend.js` | Package subpath | Public | Exported package subpath. See docs/stability.md for semantic stability. |
 | `./behaviors/menu` | types: `./behaviors/menu.d.ts`<br>default: `./behaviors/menu.js` | Package subpath | Public | Exported package subpath. See docs/stability.md for semantic stability. |
-| `./behaviors/modal` | types: `./behaviors/modal.d.ts`<br>default: `./behaviors/modal.js` | Package subpath | Public | Exported package subpath. See docs/stability.md for semantic stability. |
 | `./behaviors/popover` | types: `./behaviors/popover.d.ts`<br>default: `./behaviors/popover.js` | Package subpath | Public | Exported package subpath. See docs/stability.md for semantic stability. |
 | `./behaviors/sources` | types: `./behaviors/sources.d.ts`<br>default: `./behaviors/sources.js` | Package subpath | Public | Exported package subpath. See docs/stability.md for semantic stability. |
 | `./behaviors/splitter` | types: `./behaviors/splitter.d.ts`<br>default: `./behaviors/splitter.js` | Package subpath | Public | Exported package subpath. See docs/stability.md for semantic stability. |
@@ -209,11 +208,6 @@ semantic versioning contract for the surfaces listed here.
 | `./glyphs` | types: `./glyphs/glyphs.d.ts`<br>default: `./glyphs/glyphs.js` | Geometry/render helper JS | Stable additive | ESM helper surface. Function names, options, and data shapes are public; rendering heuristics may tune. |
 | `./annotations` | types: `./annotations/index.d.ts`<br>default: `./annotations/index.js` | Geometry/render helper JS | Stable additive | ESM helper surface. Function names, options, and data shapes are public; rendering heuristics may tune. |
 | `./connectors` | types: `./connectors/index.d.ts`<br>default: `./connectors/index.js` | Geometry/render helper JS | Stable additive | ESM helper surface. Function names, options, and data shapes are public; rendering heuristics may tune. |
-| `./react` | types: `./react/index.d.ts`<br>default: `./react/index.js` | Framework binding JS | Deprecated in 0.7 | Compatibility wrapper over vanilla behaviors. Scheduled for removal no earlier than 0.8 under ADR-0004; use direct behavior lifecycle cleanup. |
-| `./solid` | types: `./solid/index.d.ts`<br>default: `./solid/index.js` | Framework binding JS | Deprecated in 0.7 | Compatibility wrapper over vanilla behaviors. Scheduled for removal no earlier than 0.8 under ADR-0004; use direct behavior lifecycle cleanup. |
-| `./qwik` | types: `./qwik/index.d.ts`<br>default: `./qwik/index.js` | Framework binding JS | Deprecated in 0.7 | Compatibility wrapper over vanilla behaviors. Scheduled for removal no earlier than 0.8 under ADR-0004; use direct behavior lifecycle cleanup. |
-| `./svelte` | types: `./svelte/index.d.ts`<br>default: `./svelte/index.js` | Framework binding JS | Deprecated in 0.7 | Compatibility wrapper over vanilla behaviors. Scheduled for removal no earlier than 0.8 under ADR-0004; use direct behavior lifecycle cleanup. |
-| `./vue` | types: `./vue/index.d.ts`<br>default: `./vue/index.js` | Framework binding JS | Deprecated in 0.7 | Compatibility wrapper over vanilla behaviors. Scheduled for removal no earlier than 0.8 under ADR-0004; use direct behavior lifecycle cleanup. |
 | `./skins` | types: `./tokens/skins.d.ts`<br>default: `./tokens/skins.js` | Renderer/theme helper JS | Stable additive | ESM theme data/helpers for opt-in skins, chart palettes, and external renderers. |
 | `./charts` | types: `./tokens/charts.d.ts`<br>default: `./tokens/charts.js` | Renderer/theme helper JS | Stable additive | ESM theme data/helpers for opt-in skins, chart palettes, and external renderers. |
 | `./charts.json` | `./tokens/charts.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
@@ -224,6 +218,9 @@ semantic versioning contract for the surfaces listed here.
 | `./vega` | types: `./tokens/vega.d.ts`<br>default: `./tokens/vega.js` | Renderer/theme helper JS | Stable additive | ESM theme data/helpers for opt-in skins, chart palettes, and external renderers. |
 | `./vega.json` | `./tokens/vega.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
 | `./fonts/*` | `./fonts/*` | Vendored font asset glob | Stable path pattern | Doto font files and license. Font file names are shipped assets, not JS APIs. |
+| `./docs/compositions.md` | `./docs/compositions.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/adr/0005-productive-tools-and-editorial-reports.md` | `./docs/adr/0005-productive-tools-and-editorial-reports.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/migrations/0.9-to-0.10.md` | `./docs/migrations/0.9-to-0.10.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 
 ## Shipped Files Allowlist
 
@@ -246,11 +243,6 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `schemas` | Machine-readable schemas | Declarative JSON schemas for package-adjacent report/tooling contracts. |
 | `annotations` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
 | `connectors` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
-| `react` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
-| `solid` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
-| `qwik` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
-| `svelte` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
-| `vue` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
 | `shiki` | Theme data | Shiki theme JSON on the governed palette. |
 | `llms.txt` | Agent entrypoint | Shipped plain-text orientation for offline LLM/agent consumers. |
 | `CHANGELOG.md` | Release record | Shipped historical release notes. |
@@ -307,6 +299,9 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `docs/adr/0002-scope-and-2026-baseline.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/adr/0003-theme-model.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/adr/0004-prune-unused-adapters.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/compositions.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/adr/0005-productive-tools-and-editorial-reports.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/migrations/0.9-to-0.10.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 
 ## Artifact Provenance
 

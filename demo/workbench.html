@@ -24,26 +24,31 @@
       }
 
       .wb-demo__stack {
+        container: workbench / inline-size;
         display: grid;
         gap: 1.5rem;
         margin-block-start: 1.5rem;
       }
 
       .wb-file-list {
+        list-style: none;
         display: grid;
         gap: 0.35rem;
         margin: 0;
         padding: 0;
       }
 
-      .wb-file-list li {
-        align-items: center;
-        border: 1px solid var(--line);
-        border-radius: var(--radius-sm);
-        display: flex;
-        justify-content: space-between;
-        list-style: none;
-        padding: 0.45rem 0.6rem;
+      @container workbench (max-width: 42rem) {
+        .ui-splitter {
+          display: block;
+        }
+        .ui-splitter__handle,
+        [aria-label='Files pane size'] {
+          display: none;
+        }
+        .ui-splitter__pane ~ .ui-splitter__pane {
+          border-block-start: 1px solid var(--line);
+        }
       }
 
       .wb-toolstage {
@@ -62,7 +67,7 @@
   </head>
   <body>
     <main class="wb-demo">
-      <h1 class="ui-display">Workbench</h1>
+      <h1>Workbench</h1>
       <p>
         Split panes, toolstrips, inspector, property rows and a selection bar — the low-risk
         workbench core for real tools. Opt-in; not in the core bundle.
@@ -120,12 +125,40 @@
                 Widen
               </button>
             </div>
-            <ul class="wb-file-list">
-              <li><span>jobs.yaml</span><span class="ui-badge ui-badge--success">clean</span></li>
+            <ul class="wb-file-list" role="list">
               <li>
-                <span>sync-run.json</span><span class="ui-badge ui-badge--warning">draft</span>
+                <button
+                  class="ui-row ui-row--ruled"
+                  type="button"
+                  data-preview-file="jobs.yaml"
+                  aria-current="true"
+                >
+                  <span class="ui-row__title">jobs.yaml</span
+                  ><span class="ui-row__meta"
+                    ><span class="ui-badge ui-badge--success">Clean</span></span
+                  >
+                </button>
               </li>
-              <li><span>deploy.log</span><span class="ui-badge ui-badge--muted">ready</span></li>
+              <li>
+                <button
+                  class="ui-row ui-row--ruled"
+                  type="button"
+                  data-preview-file="sync-run.json"
+                >
+                  <span class="ui-row__title">sync-run.json</span
+                  ><span class="ui-row__meta"
+                    ><span class="ui-badge ui-badge--warning">Draft</span></span
+                  >
+                </button>
+              </li>
+              <li>
+                <button class="ui-row ui-row--ruled" type="button" data-preview-file="deploy.log">
+                  <span class="ui-row__title">deploy.log</span
+                  ><span class="ui-row__meta"
+                    ><span class="ui-badge ui-badge--muted">Ready</span></span
+                  >
+                </button>
+              </li>
             </ul>
           </section>
           <div
@@ -141,6 +174,7 @@
           ></div>
           <section class="ui-splitter__pane" aria-label="Preview">
             <h2 class="ui-eyebrow">Preview</h2>
+            <p id="selected-file" role="status">Selected file: jobs.yaml</p>
             <p class="ui-prose ui-prose--compact">
               The host owns the editor, selection state, persistence and file model. Bronto owns the
               splitter affordance, keyboard path and ARIA value sync.
@@ -189,6 +223,15 @@
       import { initSplitter } from '../behaviors/index.js';
 
       initSplitter();
+      document.querySelector('.wb-file-list').addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-preview-file]');
+        if (!button) return;
+        for (const row of document.querySelectorAll('[data-preview-file]'))
+          row.removeAttribute('aria-current');
+        button.setAttribute('aria-current', 'true');
+        document.getElementById('selected-file').textContent =
+          `Selected file: ${button.dataset.previewFile}`;
+      });
     </script>
   </body>
 </html>

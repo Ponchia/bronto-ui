@@ -1,11 +1,20 @@
 <script>
-  import { dialog, dotGlyph, tabs, themeToggle, toast } from '@ponchia/ui/svelte';
-
+  import { onMount } from 'svelte';
+  import { initDialog, initDotGlyph, initTabs, initThemeToggle, toast } from '@ponchia/ui/behaviors';
+  let root;
   let bindingsEnabled = true;
-  const bindingsDisabled = { root: null };
-
+  let stops = [];
+  function disableBindings() {
+    stops.forEach((stop) => stop());
+    stops = [];
+    bindingsEnabled = false;
+  }
+  onMount(() => {
+    stops = [initThemeToggle({ root }), initDialog({ root }), initTabs({ root }), initDotGlyph({ root })];
+    return disableBindings;
+  });
   function notify() {
-    toast('Hello from @ponchia/ui/svelte', { tone: 'success' });
+    toast('Hello from Svelte', { tone: 'success' });
   }
 </script>
 
@@ -14,14 +23,11 @@
 </button>
 
 <main
+  bind:this={root}
   class="ui-center ui-stack"
   style="padding-block: 3rem"
-  use:themeToggle={bindingsEnabled ? undefined : bindingsDisabled}
-  use:dialog={bindingsEnabled ? undefined : bindingsDisabled}
-  use:tabs={bindingsEnabled ? undefined : bindingsDisabled}
-  use:dotGlyph={bindingsEnabled ? undefined : bindingsDisabled}
 >
-  <button hidden data-bindings-disable type="button" on:click={() => (bindingsEnabled = false)}>
+  <button hidden data-bindings-disable type="button" on:click={disableBindings}>
     Disable bindings
   </button>
   <span hidden data-bindings-state>
@@ -61,8 +67,8 @@
     aria-label="Svelte example dialog"
   >
     <form method="dialog" class="ui-stack">
-      <h2>Svelte action</h2>
-      <p class="ui-muted">Dialog behavior is scoped to the Svelte action root.</p>
+      <h2>Svelte lifecycle</h2>
+      <p class="ui-muted">Dialog behavior is scoped to the Svelte lifecycle root.</p>
       <button class="ui-button" data-bronto-close type="button">Close</button>
     </form>
   </dialog>
