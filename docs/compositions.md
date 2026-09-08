@@ -55,15 +55,15 @@ Use `ui-chip--dense` for static labels inside short pane headers. Dense chips
 on buttons, links, or button roles retain pointer target floors. Use regular
 buttons for actions; a colored chip is not an action registry.
 
-Test the splitter's keyboard and pointer paths at wide sizes, then verify
-that the narrow layout has no hidden focusable resize control and both panes
+Test the resize control’s keyboard and pointer paths at wide sizes, then verify
+that the narrow layout has no hidden keyboard-reachable resize control and both panes
 have a useful reading width. Test the inspector inside a 280px parent while
 the browser itself is wide.
 
 ## Decision report
 
 Use the core stylesheet plus `report-kit.css` for a standalone HTML report.
-Use real asset URLs in HTML; package specifiers resolve only in bundlers.
+Use real asset URLs in HTML; package specifiers resolve only in build tools.
 
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.10.0/dist/bronto.css" />
@@ -98,7 +98,7 @@ claims, captions, and evidence across page boundaries.
 
 `ui-display`, dot glyphs, and readouts preserve the expressive identity.
 Use them for a short hero title or deliberate display moment. Ordinary `h1`
-through `h4`, prose, labels, and controls use sans typography. Monospace is for
+through `h4`, prose, labels, and controls use sans typography. Fixed-width type is for
 code, identifiers, and aligned data; a whole page does not need to be mono to
 look technical.
 

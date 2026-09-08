@@ -40,6 +40,11 @@ test('workbench stacks at narrow container width and inspector adapts inside a w
   await expect(separator).toBeVisible();
   await page.locator('.wb-demo').evaluate((el) => (el.style.width = '360px'));
   await expect(separator).toBeHidden();
+  const file = page.getByRole('button', { name: 'sync-run.json Draft' });
+  await file.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#selected-file')).toHaveText('Selected file: sync-run.json');
+  await expect(file).toHaveAttribute('aria-current', 'true');
   const panes = await page.locator('.ui-splitter__pane').evaluateAll((els) =>
     els.map((el) => {
       const r = el.getBoundingClientRect();
@@ -68,7 +73,7 @@ test('editorial report leads with its decision, preserves reading measure, and o
   await expect(toc).not.toHaveAttribute('open');
   const flow = await page.evaluate(() => {
     const decision = document.querySelector('.ui-report__decision');
-    const toc = document.querySelector('.ui-report__toc');
+    const toc = document.querySelector('details.ui-report__toc');
     return {
       decisionBeforeContents: Boolean(
         decision.compareDocumentPosition(toc) & Node.DOCUMENT_POSITION_FOLLOWING,

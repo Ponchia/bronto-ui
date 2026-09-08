@@ -18,7 +18,7 @@ Prototype freely. Prefer a recipe when existing classes express the result.
 
 Package examples prove compatibility. Real consumer upgrades prove demand and
 practical value. Before retiring an unused surface, check that consumers could
-find it; an unimported leaf does not prove a lack of need.
+find it; an leaf that is not imported does not prove a lack of need.
 
 ## Current direction
 
@@ -51,11 +51,11 @@ visual default merely to reach a version number.
 
 ## Boundaries
 
-No universal framework components, chart engine, virtualized grid, router,
+No universal framework components, chart engine, large data grid, router,
 persistence layer, workflow engine, or global command registry. A consumer may
 adopt a specialist interaction library and style it with the shared tokens.
 There is no requirement to rebuild a complex control to preserve the core's
 zero-dependency property.
 
-Publishing on npm remains a distribution mechanism. Marketing, a theme
+Publishing on `npm` remains a distribution mechanism. Marketing, a theme
 marketplace, and a design-tool workflow are not objectives without a real task.

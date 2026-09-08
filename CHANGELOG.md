@@ -157,7 +157,7 @@ downstream workbench onto 0.8.1 and watching where adoption stalled.
 - **`.ui-menu` no longer welds placement into the surface.** It used to declare
   `position: absolute` plus a trigger-relative offset, so a menu opened at a
   pointer — a canvas context menu, a long-press — could not use it at all, and
-  consumers re-declared the panel, border, radius and shadow to get a surface.
+  consumers redeclared the panel, border, radius and shadow to get a surface.
   The dropdown placement is now `--dropdown` (unchanged behaviour, opted into)
   and `--at-pointer` takes a menu out of flow for a host that computes its own
   position.
@@ -253,7 +253,7 @@ consumer had to write because the framework did not provide it, or got wrong.
   neutral. From 0.8 the ten `SKIN_CANVAS_TOKENS` (`--bg`, `--bg-elevated`,
   `--panel`, `--panel-strong`, `--panel-soft`, `--line`, `--line-strong`,
   `--text`, `--text-soft`, `--text-dim`) are re-pointed per skin per theme.
-  - **If you want the old look**, re-declare those ten tokens after the skin
+  - **If you want the old look**, redeclare those ten tokens after the skin
     import; they are ordinary custom properties on `:root[data-bronto-skin=…]`
     and un-layered app CSS wins.
   - **If you already hand-wrote a canvas** for a skin — the case this change
@@ -285,7 +285,7 @@ consumer had to write because the framework did not provide it, or got wrong.
   text in it and `--icon` decides whether the words are painted; they stay in
   the accessible name and in text-based test selectors either way. One markup
   shape serves both the labelled and icon-only forms, and no `aria-label` can
-  drift out of sync with the visible wording. The slot also ellipsises rather
+  drift out of sync with the visible wording. The slot also ellipsis rather
   than wrapping, so a labelled button in a tight bar shrinks instead of pushing
   its neighbours out. `ui.button()` is unchanged; `cls.buttonLabel` is new.
 - **`.ui-button--dense`** — a size tier for bars whose *height* is the
@@ -1200,7 +1200,7 @@ and D2. The data-viz **palette** (`--chart-*`, `tokens/charts.json`) and the
   (build five real reports across the whole stack, review from every POV). The
   Vega CDN recipe now pins the `/build/*.min.js` UMD bundles and `renderer:'svg'`
   (a bare `cdn.jsdelivr.net/npm/vega@6` tag has no `window.vega`, so the previous
-  recipe rendered nothing); the file://-portable path (inline the config — an
+  recipe rendered nothing); the `file://`-portable path (inline the config — an
   imported/fetched config is CORS-blocked from disk) is now explicit. New
   `docs/reporting.md` recipes: "Theming a live report" (the theme-toggle/re-embed
   foot-guns — clear the host, container-width-while-hidden, Mermaid source vs

@@ -373,7 +373,7 @@ without it these widgets are unlabelled or unannounced:
   ```
 
   Drop `--icon` and the same markup renders glyph + word. The slot also
-  ellipsises rather than wrapping, so a labelled button in a width-constrained
+  ellipsis rather than wrapping, so a labelled button in a width-constrained
   bar shrinks instead of pushing its neighbours out.
 - **`ui-button--dense`** is for bars whose height is the constraint — a pane
   title bar, a packed toolbar, a table row's actions. It lowers only the
@@ -646,7 +646,7 @@ authoring engine.
   code — so put the human label in the `<li>` text and the code in `data-value`.
   The `.ui-combobox__empty` ("No matches") is hidden until a filter empties the
   list. Two intentional single-select APG deviations: ArrowDown on a closed list
-  filters rather than pre-selecting the first option, and Tab closes without
+  filters rather than preselecting the first option, and Tab closes without
   committing a merely-highlighted option (Enter/click commits).
 - **Validation** is opt-in via `data-bronto-validate` on the form plus
   `initFormValidation()`; it surfaces messages into a `ui-error-summary` you

@@ -31,6 +31,7 @@
       }
 
       .wb-file-list {
+        list-style: none;
         display: grid;
         gap: 0.35rem;
         margin: 0;
@@ -45,7 +46,7 @@
         [aria-label='Files pane size'] {
           display: none;
         }
-        .ui-splitter__pane + .ui-splitter__pane {
+        .ui-splitter__pane ~ .ui-splitter__pane {
           border-block-start: 1px solid var(--line);
         }
       }
@@ -124,12 +125,34 @@
                 Widen
               </button>
             </div>
-            <ul class="wb-file-list">
-              <li><span>jobs.yaml</span><span class="ui-badge ui-badge--success">clean</span></li>
-              <li class="ui-row ui-row--ruled">
-                <span>sync-run.json</span><span class="ui-badge ui-badge--warning">draft</span>
+            <ul class="wb-file-list" role="list">
+              <li>
+                <button
+                  class="ui-row ui-row--ruled"
+                  type="button"
+                  data-preview-file="jobs.yaml"
+                  aria-current="true"
+                >
+                  <span class="ui-row__title">jobs.yaml</span
+                  ><span class="ui-row__meta ui-badge ui-badge--success">Clean</span>
+                </button>
               </li>
-              <li><span>deploy.log</span><span class="ui-badge ui-badge--muted">ready</span></li>
+              <li>
+                <button
+                  class="ui-row ui-row--ruled"
+                  type="button"
+                  data-preview-file="sync-run.json"
+                >
+                  <span class="ui-row__title">sync-run.json</span
+                  ><span class="ui-row__meta ui-badge ui-badge--warning">Draft</span>
+                </button>
+              </li>
+              <li>
+                <button class="ui-row ui-row--ruled" type="button" data-preview-file="deploy.log">
+                  <span class="ui-row__title">deploy.log</span
+                  ><span class="ui-row__meta ui-badge ui-badge--muted">Ready</span>
+                </button>
+              </li>
             </ul>
           </section>
           <div
@@ -145,6 +168,7 @@
           ></div>
           <section class="ui-splitter__pane" aria-label="Preview">
             <h2 class="ui-eyebrow">Preview</h2>
+            <p id="selected-file" role="status">Selected file: jobs.yaml</p>
             <p class="ui-prose ui-prose--compact">
               The host owns the editor, selection state, persistence and file model. Bronto owns the
               splitter affordance, keyboard path and ARIA value sync.
@@ -193,6 +217,15 @@
       import { initSplitter } from '../behaviors/index.js';
 
       initSplitter();
+      document.querySelector('.wb-file-list').addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-preview-file]');
+        if (!button) return;
+        for (const row of document.querySelectorAll('[data-preview-file]'))
+          row.removeAttribute('aria-current');
+        button.setAttribute('aria-current', 'true');
+        document.getElementById('selected-file').textContent =
+          `Selected file: ${button.dataset.previewFile}`;
+      });
     </script>
   </body>
 </html>

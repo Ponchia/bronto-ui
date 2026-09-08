@@ -585,7 +585,7 @@ raster).
 > origin. A static report **opened from disk (`file://`) cannot import the module
 > nor fetch `vega.json`** (CORS) — load Vega + Vega-Lite + vega-embed from pinned
 > `/build/*.min.js` CDN tags and **inline the resolved `config` object**
-> (generate it with `npm run emit:theme vega light`), the file://-safe recipe in
+> (generate it with `npm run emit:theme vega light`), the `file://`-safe recipe in
 > [vega.md](./vega.md#from-a-cdn-no-bundler). For a report
 > you intend to **print/PDF**, prefer the frozen inline `<svg>` below — it has no
 > runtime, prints exactly, and sidesteps all of this.
