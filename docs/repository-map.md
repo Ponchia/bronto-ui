@@ -12,7 +12,6 @@ the generators wired through `package.json` scripts.
 | `tokens/` | Token data and resolved theme outputs for CSS, JS, charting, and renderer config. | Mixed. `tokens/index.js`, `tokens/skins.js`, and `tokens/charts.js` are authored sources. JSON, `.d.ts`, and `tokens/{mermaid,d2,vega}.*` outputs are generated. | Use `npm run build:artifacts` for broad token changes. Targeted scripts are `tokens:css:build`, `tokens:build`, `dtcg:build`, `resolved:build`, `figma:variables:build`, `skins:build`, `charts:build`, `mermaid:build`, `d2:build`, `vega:build`, and `contrast:build`. |
 | `classes/` | The public `.ui-*` vocabulary, class recipes, language-neutral class data, and VS Code CSS data. | Mixed. `classes/index.js` is authored. `classes/index.d.ts`, `classes/classes.json`, and `classes/vscode.css-custom-data.json` are generated. | `npm run dts:build`, `npm run classes:json:build`, `npm run vscode:build`, and `npm run reference:build`; `npm run build:artifacts` runs all of them. |
 | `behaviors/` | Vanilla SSR-safe behavior initializers and shared DOM helpers. | Mixed. `.js` files are authored. `.d.ts` and `.d.ts.map` files are generated from JSDoc by `tsc`. | `npm run dts:emit`. |
-| `react/`, `solid/`, `qwik/`, `svelte/`, `vue/` | Thin optional framework bindings over `behaviors/`. | Mixed. `.js` files are authored. `.d.ts` and `.d.ts.map` files are generated from JSDoc. | `npm run dts:emit`. |
 | `connectors/`, `annotations/` | Pure SVG geometry and annotation helpers. | Mixed. `.js` files are authored. `.d.ts` and `.d.ts.map` files are generated from JSDoc. | `npm run dts:emit`. |
 | `schemas/` | Public JSON Schema contracts. | Authored, path-frozen where exported. | No generator; `npm run check:schemas` validates exports, docs, and examples. |
 | `glyphs/` | Dot-matrix glyph runtime data and render helpers. | Mixed. `glyphs/glyphs.js` is authored. `glyphs/glyphs.d.ts` is generated. | `npm run glyphs:build`. |
@@ -27,7 +26,7 @@ the generators wired through `package.json` scripts.
 | `code-quality-audits/` | Historical audit reports and review artifacts. | Authored reports plus ignored scanner output patterns. | No committed generator. |
 
 Root metadata matters too: `package.json` owns `exports`, `files`, `style`,
-`sideEffects`, scripts, and optional peers. New public paths are not public until
+`sideEffects` and scripts. New public paths are not public until
 they are declared there and pass `npm run check:exports` and `npm run check:pack`.
 
 ## Regeneration Map

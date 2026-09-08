@@ -5,7 +5,51 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
-## Unreleased — 0.9.1
+## 0.10.0 — 2026-09-08
+
+### Changed
+
+- **BREAKING: readable tool and report defaults.** The root now respects the
+  browser's default text size. Everyday headings, labels, navigation, tables,
+  and controls use sans typography and sentence case. Explicit `ui-display`,
+  glyphs, and readouts retain the dot-matrix identity. Small text steps become
+  12/13/14px at a 16px root, and corner tokens gain a restrained 2/4/6/8px scale.
+- Service panels remove redundant framing; metrics stay compact and mobile
+  navigation wraps. Inspectors adapt property rows to their container width.
+  The workbench specimen stacks panes when narrow; splitter policy remains
+  host-owned. Reports use 1.125rem prose, a 68ch measure, and 11pt print text.
+- Replace the shipped-duplicate admission rule with demonstrated task evidence.
+  Composition recipes and ADR-0005 explain the productive/editorial direction.
+- The default CSS budget is deliberately raised from 95,600/16,400 bytes to
+  100,000/18,000 bytes raw/gzip to restore maintenance headroom.
+- Playwright owns an isolated server on 8124 (override with
+  `BRONTO_UI_TEST_PORT`) and no longer reuses a live specimen server.
+
+### Removed
+
+- **BREAKING:** the five framework adapter subpaths and optional framework
+  peers, deprecated in 0.7. Initialize vanilla behaviors in the host lifecycle.
+- **BREAKING:** the controlled modal initializer, detail type, data attribute,
+  event, and `ui.modal({ open: true })` option. Use native dialog plus
+  `initDialog`; native modal and drawer styling remain.
+- Unused adapter parity machinery and Solid/Qwik/Vue packed examples. React
+  and SvelteKit examples now verify vanilla behavior mount and cleanup.
+
+See [the migration guide](docs/migrations/0.9-to-0.10.md).
+
+### Added
+
+- `ui-chip--dense` and `ui.chip({ dense: true })` for static pane-header labels,
+  with pointer target floors for interactive chips.
+- A collapsed `details.ui-report__toc` recipe that keeps the decision first.
+
+### Fixed
+
+- The service example now marks a fall in queue delay as favorable using the
+  existing delta inversion modifier.
+
+The following consumer-proven changes were previously unreleased on main:
+
 
 Additive, plus one contract that the docs promised and the CSS did not keep.
 Both come from the same consumer pass that produced 0.8.0 and 0.9.0.

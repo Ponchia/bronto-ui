@@ -21,6 +21,8 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
   [reporting.md](./reporting.md), [sources.md](./sources.md), and
   [generated.md](./generated.md).
 
+- [compositions.md](./compositions.md) — service, inspector, and decision-report recipes.
+
 ## Getting started (frameworks)
 
 - [getting-started/vanilla.md](./getting-started/vanilla.md) · [getting-started/react-solid.md](./getting-started/react-solid.md) · [getting-started/astro.md](./getting-started/astro.md) · [getting-started/sveltekit.md](./getting-started/sveltekit.md) · [getting-started/vue.md](./getting-started/vue.md)
@@ -99,3 +101,6 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 ## Migrations
 
 - [migrations/0.2-to-0.3.md](./migrations/0.2-to-0.3.md) · [migrations/0.3-to-0.4.md](./migrations/0.3-to-0.4.md) · [migrations/0.4-to-0.5.md](./migrations/0.4-to-0.5.md) · [migrations/0.5-to-0.6.md](./migrations/0.5-to-0.6.md) · [migrations/0.6-to-0.7.md](./migrations/0.6-to-0.7.md) · [migrations/0.7-to-0.8.md](./migrations/0.7-to-0.8.md) · [migrations/0.8-to-0.9.md](./migrations/0.8-to-0.9.md)
+
+- [ADR-0005](./adr/0005-productive-tools-and-editorial-reports.md) — productive tools and editorial reports.
+- [0.9 to 0.10](./migrations/0.9-to-0.10.md) — coordinated visual and API migration.

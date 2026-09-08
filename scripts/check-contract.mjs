@@ -109,7 +109,9 @@ function dirDocs(dir) {
 // GitHub-only docs index and getting-started pages that README links.
 const contractDocs = [
   ...new Set([
-    ...shippedDocs(pkg).filter((f) => f !== 'CHANGELOG.md'),
+    // Historical migration instructions and ADRs describe earlier APIs.
+    // Their links remain checked; current authoring recipes must resolve today.
+    ...shippedDocs(pkg).filter((f) => f !== 'CHANGELOG.md' && !/^docs\/(migrations|adr)\//.test(f)),
     'docs/README.md',
     'docs/integration.md',
     ...dirDocs('docs/getting-started'),

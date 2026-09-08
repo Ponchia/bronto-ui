@@ -76,24 +76,8 @@ dialog.ui-modal[open]::backdrop {
   }
 }
 
-/* Controlled (non-<dialog>) usage. A portal/React modal that can't be a
-   native <dialog> wears the same skin + open layout via `.is-open`.
-   Backdrop and top-layer stacking are then the consumer's responsibility
-   (the native <dialog> path gets them free); focus-trapping no longer is —
-   mark the overlay `data-bronto-modal` and run `initModal` for an
-   inert-based trap + focus-return + Escape signal. */
-.ui-modal.is-open {
-  animation: uiToastIn var(--duration-base) var(--ease-spring) both;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-}
-
-/* Background scroll-lock. A native <dialog> top layer does NOT stop the page
-   behind it scrolling, and the no-JS native path can't lock it in script — so
-   lock it in CSS, for both the native [open] dialog and the controlled .is-open
-   overlay (incl. the drawer modifier, same base). */
-html:has(dialog.ui-modal[open]),
-html:has(.ui-modal.is-open) {
+/* Native dialogs lock the document while open. */
+html:has(dialog.ui-modal[open]) {
   overflow: hidden;
 }
 
@@ -108,11 +92,11 @@ html:has(.ui-modal.is-open) {
 
 .ui-modal__title {
   color: var(--text);
-  font-family: var(--display);
+  font-family: var(--sans);
   font-size: var(--text-lg);
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0;
   margin: 0;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-modal__body {
@@ -136,7 +120,7 @@ html:has(.ui-modal.is-open) {
   color: var(--text);
   cursor: pointer;
   flex: 0 0 auto;
-  font-family: var(--mono);
+  font-family: var(--sans);
   line-height: 1;
   padding: 0.34rem 0.5rem;
 }
@@ -283,11 +267,11 @@ html:has(.ui-modal.is-open) {
 
 .ui-menu__label {
   color: var(--text-dim);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0;
   padding: 0.45rem 0.55rem 0.2rem;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 /* Composes `.ui-row` (css/row.css) — a menu item IS a dense selectable row,
@@ -296,7 +280,7 @@ html:has(.ui-modal.is-open) {
    wants, and the leading bullet below. `row.css` is in the core bundle, which
    is what lets a core component compose it. */
 .ui-menu__item {
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-sm);
   padding: 0.5rem 0.55rem;
 }
@@ -394,7 +378,7 @@ html:has(.ui-modal.is-open) {
   border-radius: var(--radius-sm);
   color: var(--text-soft);
   cursor: pointer;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-sm);
   padding: 0.5rem 0.55rem;
 }

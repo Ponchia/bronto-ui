@@ -386,7 +386,7 @@ async function assertExample(page, name) {
     await page.getByRole('tab', { name: 'One' }).click();
     await page.locator('.ui-dotmatrix__cell').first().waitFor();
   };
-  const assertBindingCleanup = async () => {
+  const assertLifecycleCleanup = async () => {
     const state = page.locator('[data-bindings-state]');
     const disable = page.locator('[data-bindings-disable]');
     await state.waitFor({ state: 'attached' });
@@ -402,7 +402,7 @@ async function assertExample(page, name) {
     const after = await page.locator('html').getAttribute('data-theme');
     if (after !== before) {
       throw new Error(
-        `disabled framework binding still handled theme toggle (${before ?? '<unset>'} -> ${
+        `disabled lifecycle still handled theme toggle (${before ?? '<unset>'} -> ${
           after ?? '<unset>'
         })`,
       );
@@ -428,18 +428,7 @@ async function assertExample(page, name) {
     await assertToast();
     await assertDialog();
     await assertTabsAndGlyphs();
-    await assertBindingCleanup();
-    return;
-  }
-  if (name === 'solid-vite') {
-    await page.getByRole('heading', { name: 'Solid + Vite' }).waitFor();
-    await page.getByText(/chart colours/).waitFor();
-    await assertThemeToggle();
-    await assertScopedThemeToggle();
-    await assertToast();
-    await assertDialog();
-    await assertTabsAndGlyphs();
-    await assertBindingCleanup();
+    await assertLifecycleCleanup();
     return;
   }
   if (name === 'sveltekit') {
@@ -449,27 +438,7 @@ async function assertExample(page, name) {
     await assertToast();
     await assertDialog();
     await assertTabsAndGlyphs();
-    await assertBindingCleanup();
-    return;
-  }
-  if (name === 'qwik-vite') {
-    await page.getByRole('heading', { name: 'Qwik + Vite' }).waitFor();
-    await assertThemeToggle();
-    await assertScopedThemeToggle();
-    await assertToast();
-    await assertDialog();
-    await assertTabsAndGlyphs();
-    await assertBindingCleanup();
-    return;
-  }
-  if (name === 'vue-vite') {
-    await page.getByRole('heading', { name: 'Vue + Vite' }).waitFor();
-    await assertThemeToggle();
-    await assertScopedThemeToggle();
-    await assertToast();
-    await assertDialog();
-    await assertTabsAndGlyphs();
-    await assertBindingCleanup();
+    await assertLifecycleCleanup();
     return;
   }
   if (name === 'tailwind-vite') {

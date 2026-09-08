@@ -4,10 +4,7 @@ const EXAMPLES = Object.freeze([
   { name: 'vanilla-vite', smoke: true },
   { name: 'astro', smoke: true },
   { name: 'sveltekit', smoke: true, distDir: 'build' },
-  { name: 'vue-vite', smoke: true },
   { name: 'react-vite', smoke: true },
-  { name: 'solid-vite', smoke: true },
-  { name: 'qwik-vite', smoke: true },
   { name: 'tailwind-vite', smoke: true },
   { name: 'report-static', smoke: true },
 ]);

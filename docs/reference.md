@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 682 classes across 186 component groups
+- 683 classes across 186 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -324,6 +324,7 @@ each one matches a real selector in the stylesheet.
 | --- | --- | --- |
 | `cls.chip` | `ui-chip` | base |
 | `cls.chipAccent` | `ui-chip--accent` | modifier |
+| `cls.chipDense` | `ui-chip--dense` | modifier |
 
 ### `.ui-citation`
 
@@ -1679,13 +1680,9 @@ works in any framework without a binding layer:
   families (`ui-alert`/`ui-toast`/`ui-meter`/`ui-dot`); the builders warn on an
   out-of-set tone (see usage.md). Mapping an app's own variant
   vocabulary onto a tone is application logic, not a framework class.
-- **Modal** — native `<dialog>` gets backdrop + top-layer + focus-trap
-  free. For a controlled/portal modal, add `is-open`
-  (`ui.modal({ open: true })`) for the same skin/layout, mark the overlay
-  `data-bronto-modal`, and run `initModal()` for the inert focus trap,
-  focus-return, and Escape close signal. You still own the `is-open` state,
-  backdrop, and top-layer stacking (`.is-open` is a bare grid — it does not
-  float or stack on its own).
+- **Modal** — style a native `<dialog>` with `ui-modal`; use
+  `initDialog()` for open/close triggers and focus return. Call
+  `showModal()` to open the top layer; a CSS class is not an open state.
 - **Current page** — mark the active link with `aria-current="page"`; it is
   the programmatic cue the navs honour (`ui-sitenav`, `ui-app-nav`). The
   `.is-active` class is the visual-only equivalent on `ui-app-nav`/`ui-tab`;
@@ -1733,10 +1730,10 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 
 | Token | Value |
 | --- | --- |
-| `--radius-xl` | `4px` |
-| `--radius-lg` | `3px` |
-| `--radius-md` | `2px` |
-| `--radius-sm` | `1px` |
+| `--radius-xl` | `8px` |
+| `--radius-lg` | `6px` |
+| `--radius-md` | `4px` |
+| `--radius-sm` | `2px` |
 | `--radius-pill` | `999px` |
 | `--space-2xs` | `0.25rem` |
 | `--space-xs` | `0.5rem` |
@@ -1757,12 +1754,12 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--display` | `var(--dot-font)` |
 | `--display-weight` | `700` |
 | `--display-weight-strong` | `800` |
-| `--text-2xs` | `0.72rem` |
-| `--text-xs` | `0.76rem` |
-| `--text-sm` | `0.86rem` |
-| `--text-base` | `0.95rem` |
-| `--text-lg` | `1.15rem` |
-| `--text-xl` | `1.45rem` |
+| `--text-2xs` | `0.75rem` |
+| `--text-xs` | `0.8125rem` |
+| `--text-sm` | `0.875rem` |
+| `--text-base` | `1rem` |
+| `--text-lg` | `1.125rem` |
+| `--text-xl` | `1.5rem` |
 | `--tracking-wide` | `0.14em` |
 | `--tracking-wider` | `0.22em` |
 | `--ease-standard` | `cubic-bezier(0.2, 0.8, 0.2, 1)` |

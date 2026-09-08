@@ -658,12 +658,6 @@ const behaviorAttributes = [
     note: 'opt into backdrop light-dismiss (click the backdrop to close)',
   },
   {
-    name: 'data-bronto-modal',
-    on: 'a controlled (non-<dialog>) .ui-modal overlay',
-    behavior: 'initModal',
-    note: 'inert focus-trap, focus-return, and Escape close signal for a consumer-owned .is-open modal; needs an accessible name',
-  },
-  {
     name: 'data-bronto-menu',
     on: 'a native <details> dropdown',
     behavior: 'initMenu',

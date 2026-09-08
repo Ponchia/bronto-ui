@@ -45,7 +45,7 @@ the path changes from source `css/` to built `dist/css/`:
 <!-- installed locally -->
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/<leaf>.css" />
 <!-- or from a CDN; pin the version (pre-1.0, breaking changes ship in the minor) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.9.0/dist/css/<leaf>.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.10.0/dist/css/<leaf>.css" />
 ```
 
 The flattened default bundle is `dist/bronto.css` (bundler shorthand
@@ -74,9 +74,7 @@ import { applyStoredTheme } from '@ponchia/ui/behaviors';
 
 Notable behaviors beyond the obvious: `initMenu()` adds close affordances to a
 native `<details data-bronto-menu>` dropdown (outside-click/Escape/select-close);
-`initModal()` wires the controlled `.ui-modal.is-open` path (inert focus-trap +
-role/aria-modal), but is deprecated in 0.7 for removal no earlier than 0.8;
-prefer native `<dialog>` + `initDialog()`. `initDisabledGuard()` makes every `aria-disabled` control
+Native `<dialog>` with `initDialog()` owns modal interaction. `initDisabledGuard()` makes every `aria-disabled` control
 keyboard-inert (CSS alone is only pointer-inert). For the value-bearing fills,
 `attrs.meter(value)` / `attrs.progress(value)` from `@ponchia/ui/classes` return
 `role`+`aria-valuenow/min/max`+the `--value` style to spread onto the host.
@@ -86,20 +84,11 @@ matching `.ui-source-card`, seed lightweight preview metadata, and emit
 `bronto:source:focus`; the host still owns numbering, fetching, trust decisions,
 and any rich preview popover.
 
-Optional lifecycle adapters wrap those behaviors without owning markup or state.
-They remain compatible in 0.7 but are deprecated for removal no earlier than
-0.8; prefer vanilla behavior initialization in the host lifecycle.
-React/Solid/Qwik use hook bindings (peer deps `react` / `solid-js` /
-`@builder.io/qwik`, optional — core stays zero-dep); Svelte uses dependency-free
-actions, and Vue uses dependency-free directives/plugin helpers:
-
-```js
-import { useDialog, useToast } from '@ponchia/ui/react'; // or '@ponchia/ui/solid' or '@ponchia/ui/qwik'
-// React: scope with { root: reactRef } or a resolver, not { root: ref.current } during render.
-// Qwik: hooks run in useVisibleTask$; scope with a Qwik signal — useDialog({ root: useSignal() }).
-// Svelte: import { dialog, toast } from '@ponchia/ui/svelte'.
-// Vue: import { vDialog, useToast } from '@ponchia/ui/vue', or app.use(brontoVue).
-```
+Initialize behaviors in the host framework's mount/cleanup lifecycle. Framework
+adapter subpaths are removed in 0.10. Read `docs/compositions.md` before selecting
+primitives: tools use sans headings and labels, reports prioritize reading,
+and `ui-display` is an explicit brand treatment. The catalog is a lookup, not a
+checklist of components to place on a page.
 
 Optional display glyphs — dot-matrix bitmaps on the `.ui-dotmatrix` primitive
 (decorative by default; `renderGlyph` is SSR-safe, `initDotGlyph` is the DOM form).

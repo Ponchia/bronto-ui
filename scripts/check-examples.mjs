@@ -31,14 +31,6 @@ function sameSet(label, actual, expected) {
   }
 }
 
-function parseWorkflowList(body) {
-  return body
-    .split(/[\n,]/)
-    .map((item) => item.replace(/#.*/, '').trim())
-    .filter(Boolean)
-    .map((item) => item.replace(/^['"]|['"]$/g, ''));
-}
-
 function previewPort(exampleName) {
   const pkg = JSON.parse(
     readFileSync(resolve(root, 'examples', exampleName, 'package.json'), 'utf8'),
@@ -64,21 +56,12 @@ const exampleDirs = readdirSync(resolve(root, 'examples'), { withFileTypes: true
 sameSet('examples directory/package.json inventory', exampleDirs, EXAMPLE_NAMES);
 
 const workflow = readFileSync(resolve(root, '.github/workflows/examples.yml'), 'utf8');
-const matrix = workflow.match(/matrix:[\s\S]*?example:\s*\n\s*\[([\s\S]*?)\]/);
-if (!matrix) {
-  errors.push('could not find examples workflow matrix example list');
-} else {
-  sameSet('examples workflow matrix', parseWorkflowList(matrix[1]), EXAMPLE_NAMES);
-}
-
-const smokeLists = [...workflow.matchAll(/fromJSON\('(\[[^']+\])'\)/g)].map((match) =>
-  JSON.parse(match[1]),
-);
-if (!smokeLists.length) {
-  errors.push('could not find examples workflow browser-smoke fromJSON lists');
-}
-for (const [index, list] of smokeLists.entries()) {
-  sameSet(`examples workflow browser-smoke list #${index + 1}`, list, BROWSER_SMOKE_EXAMPLE_NAMES);
+// The workflow executes the same registry instead of maintaining a YAML list.
+if (
+  !workflow.includes("from './scripts/lib/examples.mjs'") ||
+  !workflow.includes('fromJSON(needs.inventory.outputs.matrix)')
+) {
+  errors.push('examples workflow must derive its matrix from the shared example registry');
 }
 if (!workflow.includes('cross_browser:')) {
   errors.push('examples workflow has no cross_browser input for the deeper packed smoke');

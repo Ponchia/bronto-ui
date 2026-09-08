@@ -24,6 +24,7 @@
       }
 
       .wb-demo__stack {
+        container: workbench / inline-size;
         display: grid;
         gap: 1.5rem;
         margin-block-start: 1.5rem;
@@ -36,14 +37,17 @@
         padding: 0;
       }
 
-      .wb-file-list li {
-        align-items: center;
-        border: 1px solid var(--line);
-        border-radius: var(--radius-sm);
-        display: flex;
-        justify-content: space-between;
-        list-style: none;
-        padding: 0.45rem 0.6rem;
+      @container workbench (max-width: 42rem) {
+        .ui-splitter {
+          display: block;
+        }
+        .ui-splitter__handle,
+        [aria-label='Files pane size'] {
+          display: none;
+        }
+        .ui-splitter__pane + .ui-splitter__pane {
+          border-block-start: 1px solid var(--line);
+        }
       }
 
       .wb-toolstage {
@@ -62,7 +66,7 @@
   </head>
   <body>
     <main class="wb-demo">
-      <h1 class="ui-display">Workbench</h1>
+      <h1>Workbench</h1>
       <p>
         Split panes, toolstrips, inspector, property rows and a selection bar — the low-risk
         workbench core for real tools. Opt-in; not in the core bundle.
@@ -122,7 +126,7 @@
             </div>
             <ul class="wb-file-list">
               <li><span>jobs.yaml</span><span class="ui-badge ui-badge--success">clean</span></li>
-              <li>
+              <li class="ui-row ui-row--ruled">
                 <span>sync-run.json</span><span class="ui-badge ui-badge--warning">draft</span>
               </li>
               <li><span>deploy.log</span><span class="ui-badge ui-badge--muted">ready</span></li>

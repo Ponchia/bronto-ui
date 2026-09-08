@@ -19,10 +19,16 @@ app shells, navigation, forms, tables, feedback, overlays, prose, motion, and
 the token system that lets apps feel related without sharing a component runtime.
 
 The look is deliberately restrained: a mostly neutral canvas, one core accent
-for emphasis, dot-matrix display type, and hairline borders. Status colors,
+for emphasis, selective dot-matrix display type, and restrained borders. Status colors,
 display-expression tokens, and data-viz colors are separate governed tiers, not
 extra brand accents. Opt-in skins re-point the root accent; Mermaid, D2, and
 Vega bridges use resolved renderer theme data instead of live CSS variables.
+
+Everyday tools use readable sans typography and sentence-case labels. Reports
+use a separate reading measure and print treatment. Use `ui-display` when a
+large title should carry the dot-matrix signature; ordinary headings stay quiet.
+[Composition recipes](docs/compositions.md) show a service overview, a narrow
+inspector, and a decision report with their imports and acceptance checks.
 
 ## Start here
 
@@ -87,7 +93,7 @@ Or drop it in with no build step, straight from a CDN (replace the version only
 when deliberately upgrading across a breaking pre-1.0 minor):
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.9.0/dist/bronto.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.10.0/dist/bronto.css">
 ```
 
 ## Quick start
@@ -197,10 +203,9 @@ Not an afterthought — a gate. Every contractual token pairing has a declared W
 The CSS is the framework, so it works with React, Svelte/SvelteKit, Astro, Vue,
 Solid, Qwik or plain HTML — there's no component runtime to adopt. The optional
 `classes` and framework-neutral `behaviors` entrypoints pull in **no** UI
-framework and are SSR-safe. The React, Solid, Qwik, Svelte, and Vue lifecycle
-adapter subpaths remain compatible in 0.7 but are deprecated for removal no
-earlier than 0.8; initialize vanilla behaviors in the framework's ordinary
-mount/cleanup lifecycle instead.
+framework and are SSR-safe. Framework consumers initialize vanilla behaviors in their normal mount/cleanup
+lifecycle. The unadopted framework adapters were removed in 0.10; see the
+[migration guide](docs/migrations/0.9-to-0.10.md).
 
 Per-framework getting-started guides + runnable example apps live in the repo:
 
@@ -209,10 +214,7 @@ Per-framework getting-started guides + runnable example apps live in the repo:
 | Vanilla / Vite / plain HTML | [vanilla.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/vanilla.md) | [`examples/vanilla-vite`](https://github.com/Ponchia/bronto-ui/tree/main/examples/vanilla-vite) |
 | Astro | [astro.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/astro.md) | [`examples/astro`](https://github.com/Ponchia/bronto-ui/tree/main/examples/astro) |
 | SvelteKit | [sveltekit.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/sveltekit.md) | [`examples/sveltekit`](https://github.com/Ponchia/bronto-ui/tree/main/examples/sveltekit) |
-| Vue | [vue.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/vue.md) | [`examples/vue-vite`](https://github.com/Ponchia/bronto-ui/tree/main/examples/vue-vite) |
 | React | [react-solid.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/react-solid.md) | [`examples/react-vite`](https://github.com/Ponchia/bronto-ui/tree/main/examples/react-vite) |
-| Solid | [react-solid.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/react-solid.md) | [`examples/solid-vite`](https://github.com/Ponchia/bronto-ui/tree/main/examples/solid-vite) |
-| Qwik | [react-solid.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/getting-started/react-solid.md) | [`examples/qwik-vite`](https://github.com/Ponchia/bronto-ui/tree/main/examples/qwik-vite) |
 | Tailwind v4 bridge / cascade-layer interop | [tailwind.md](https://github.com/Ponchia/bronto-ui/blob/main/docs/interop/tailwind.md) | [`examples/tailwind-vite`](https://github.com/Ponchia/bronto-ui/tree/main/examples/tailwind-vite) |
 
 ## Extras

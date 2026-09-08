@@ -8,17 +8,29 @@
 
 .ui-report {
   /* Declare override-surface tokens first so authors can set them. */
-  --report-width: 72rem;
+  --report-width: 64rem;
   --report-padding-block: var(--space-2xl);
-  --report-gap: var(--space-lg);
-  --report-measure: 74ch;
+  --report-gap: var(--space-xl);
+  --report-measure: 68ch;
 
   color: var(--text-soft);
   display: grid;
+  font-size: 1.125rem;
+  line-height: 1.65;
   gap: var(--report-gap);
   inline-size: min(100%, var(--report-width));
   margin-inline: auto;
   padding: var(--report-padding-block) var(--space-md);
+}
+
+/* Keep reading measure independent of a wide figure or evidence table. */
+.ui-report p,
+.ui-report__section > :is(ul, ol, blockquote) {
+  max-inline-size: var(--report-measure);
+}
+
+.ui-report .ui-prose {
+  font-size: inherit;
 }
 
 .ui-report--compact {
@@ -74,14 +86,14 @@
 
 .ui-report__title {
   color: var(--text);
-  font-family: var(--display);
-  font-size: calc(var(--text-xl) * 1.35);
-  font-weight: var(--display-weight-strong);
+  font-family: var(--sans);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 650;
   letter-spacing: 0;
-  line-height: 1.05;
+  line-height: 1.15;
   margin: 0;
   max-inline-size: var(--report-measure);
-  text-transform: uppercase;
+  text-transform: none;
   text-wrap: balance;
 }
 
@@ -98,14 +110,14 @@
   color: var(--text-dim);
   display: flex;
   flex-wrap: wrap;
-  font-family: var(--mono);
-  font-size: var(--text-2xs);
+  font-family: var(--sans);
+  font-size: var(--text-xs);
   gap: 0.55rem;
   letter-spacing: 0;
   list-style: none;
   margin: 0;
   padding: 0;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-report__meta > * {
@@ -123,11 +135,22 @@
 }
 
 .ui-report__toc {
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
+  border-block: 1px solid var(--line);
   display: grid;
   gap: var(--space-xs);
-  padding: var(--space-md);
+  padding-block: var(--space-md);
+}
+
+.ui-report__toc > summary {
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  min-block-size: var(--tap-target);
+  padding-block: var(--space-xs);
+}
+
+details.ui-report__toc:not([open]) > :not(summary) {
+  display: none;
 }
 
 .ui-report__toc ol,
@@ -162,7 +185,7 @@
 
 .ui-report__decision {
   background: var(--panel);
-  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line));
+  border: 0;
   border-inline-start: 3px solid var(--accent);
   border-radius: var(--radius-md);
   display: grid;
@@ -172,22 +195,22 @@
 
 .ui-report__decision-kicker {
   color: var(--accent-text);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0;
   margin: 0;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-report__decision-title {
   color: var(--text);
-  font-family: var(--display);
+  font-family: var(--sans);
   font-size: var(--text-lg);
   font-weight: var(--display-weight);
   letter-spacing: 0;
   line-height: 1.18;
   margin: 0;
-  text-transform: uppercase;
+  text-transform: none;
   text-wrap: balance;
 }
 
@@ -202,7 +225,7 @@
   color: var(--text-dim);
   display: flex;
   flex-wrap: wrap;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
   gap: 0.45rem 0.75rem;
   letter-spacing: 0;
@@ -230,10 +253,10 @@
 
 .ui-report__decision-label {
   color: var(--text-dim);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .ui-report__decision-value {
@@ -346,10 +369,10 @@
 .ui-claim__scope,
 .ui-claim__refs {
   color: var(--text-dim);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
   letter-spacing: 0;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-claim__basis,
@@ -386,13 +409,13 @@
 
 .ui-report__section-head {
   color: var(--text);
-  font-family: var(--display);
+  font-family: var(--sans);
   font-size: var(--text-xl);
-  font-weight: var(--display-weight);
+  font-weight: 650;
   letter-spacing: 0;
   line-height: 1.1;
   margin: 0;
-  text-transform: uppercase;
+  text-transform: none;
   text-wrap: balance;
 }
 
@@ -415,11 +438,11 @@
 
 .ui-report__caption {
   color: var(--text-dim);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
   letter-spacing: 0;
   line-height: 1.5;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-evidence-grid {
@@ -446,7 +469,7 @@
 
 .ui-evidence-item__meta {
   color: var(--text-dim);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
   letter-spacing: 0;
 }
@@ -472,10 +495,10 @@
 .ui-evidence-item__window,
 .ui-evidence-item__source {
   color: var(--text-dim);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
   letter-spacing: 0;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-evidence-item__value {
@@ -516,13 +539,13 @@
 
 .ui-report__action-status {
   color: var(--text-dim);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
   grid-column: 2;
   grid-row: 1;
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0;
   place-self: start end;
-  text-transform: uppercase;
+  text-transform: none;
   white-space: nowrap;
 }
 
@@ -546,10 +569,10 @@
 .ui-report__action-priority,
 .ui-report__action-source {
   color: var(--text-dim);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
   letter-spacing: 0;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-report__action-criteria {
@@ -613,10 +636,10 @@
 
 .ui-compare__head {
   color: var(--text-dim);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-2xs);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 /* A chart is NOT a bronto component — it needs scales + data binding, which the
@@ -660,6 +683,7 @@
     --line-strong: #b3b3b3;
 
     inline-size: auto;
+    font-size: 11pt;
     padding: 0;
   }
 

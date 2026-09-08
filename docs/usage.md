@@ -137,8 +137,8 @@ one column inside a slim panel even when the window is wide (island-safe; it
 nests). Two thresholds are built in: `ui-grid` drops to a single column at
 **34rem** and `ui-statgrid`/`ui-app-metrics` at **30rem**, measured on the `ui-cq`
 box. Note `rem` in a container query resolves against the **root** font size, not
-16px — at Bronto's 15px root that's ≈**510px** and ≈**450px**, ~6% tighter than a
-16px mental model. And be aware `ui-grid` already collapses on its own via an
+a fixed device pixel size. At the default 16px root these are **544px** and
+**480px**; they follow the browser text-size preference. And be aware `ui-grid` already collapses on its own via an
 intrinsic `auto-fit` minmax, so `ui-cq` barely changes it — the primitive that
 genuinely *needs* `ui-cq` to collapse by container (not viewport) is
 `ui-statgrid`/`ui-app-metrics`. The container is named `bronto` (hardcoded — there
@@ -255,8 +255,8 @@ sentences at the same weight, a third is a bare `<p>`.
 
 ## Link vs link--cta
 
-Plain `ui-link` for in-flow links. `ui-link--cta` is the eyebrow-faced
-action link (accent · display · uppercase + arrow) — a *navigational
+Plain `ui-link` for in-flow links. `ui-link--cta` is the accent
+action link with an arrow — a *navigational
 call to action*, not a substitute for a button (no form submit, no
 destructive action).
 
@@ -468,28 +468,9 @@ convey identity to AT. Keep initials to ~2 characters — the box is
 
 Prefer the **native `<dialog>`** path — you get top-layer, backdrop and
 focus-trap free (wire it with `initDialog` for open-triggers + focus-return).
-The older `ui-modal.is-open` + `data-bronto-modal` + `initModal()` path remains
-compatible throughout 0.7, but is deprecated for removal no earlier than 0.8.
-It duplicates platform focus, stacking, and inert ownership and no inspected
-real consumer uses it. Migrate portals to a native `<dialog>` where possible;
-if a framework must retain the controlled path during 0.7, keep the existing
-accessible name and `bronto:modal:close` handling unchanged.
-
-Controlled modals share one document-level stack. Opening a sibling portal
-modal makes the previous modal inert and keeps only the new top modal
-interactive; closing it restores focus into the previous modal. An
-`initPopover()` trigger inside the top modal may target a panel portaled
-elsewhere in the document: while that panel is open, it joins the live modal
-tree and owns Escape without releasing unrelated background content. Background
-nodes added after the modal opens are trapped too. If a controlled parent modal
-closes while a descendant still carries `is-open`, the descendant is suspended
-with the parent and resumes if the parent reopens.
-
-**Scroll-lock is not automatic.** A native `<dialog>` does not freeze background
-scroll — the page behind an open modal can
-still scroll. If that matters, toggle a lock yourself while the modal is open
-(`document.documentElement.style.overflow = 'hidden'`, restored on close), or add
-`html:has(dialog[open]) { overflow: hidden }` for the native path.
+Use a native `<dialog>` with `initDialog()` for focus, stacking, and close
+behavior. Application frameworks own the mount/cleanup lifecycle. The removed
+controlled-modal path is covered by the [0.10 migration](migrations/0.9-to-0.10.md).
 
 ## Carousel & lightbox: one primitive, two skins
 
@@ -757,7 +738,7 @@ moves into it, but there is **no focus trap** and the rest of the page stays
 interactive — Tab moves *out* of the panel (it does not cycle), and it closes on
 Escape or outside-click. Don't assume `<dialog>`-modal semantics; if you need a
 trap and an inert backdrop, use a real modal (`<dialog>` + `initDialog`). The
-deprecated `initModal()` path remains available only for 0.7 migration. And the
+controlled-modal path was removed in 0.10. And the
 `is-open` fallback is a plain stacked element, so it sits
 *under* any open native `<dialog>`'s top layer — another reason to prefer the
 native `popover` attribute when a popover and a dialog can be open together.
@@ -792,7 +773,6 @@ These are JS widgets wearing the Bronto look; without the behavior they are iner
 | Popover (`ui-popover`) | `initPopover` | no placement/ARIA — prefer the native `popover` attribute |
 | Carousel (`ui-carousel`) | `initCarousel` | a native scroll-snap track (usable, no controls) |
 | Native dialog/lightbox (`<dialog>`, `ui-lightbox`) | `initDialog` | closed markup stays closed; `data-bronto-open`/close buttons do nothing. Do not use `open` as a modal fallback: it is non-modal and has no trigger/focus-return path |
-| Controlled modal (`ui-modal.is-open`, deprecated) | `initModal` (deprecated) | open skin only — no inert trap, focus-return, or Escape close signal |
 | Menu (`data-bronto-menu`) | `initMenu` | a button next to a list with no open/close, outside-click, or Escape |
 | Dismissible alert/callout (`data-bronto-dismissible`) | `dismissible` | the close affordance is just a button; nothing is removed |
 | Toast | `toast()` | nothing — it is imperative-only |
@@ -826,3 +806,11 @@ the shipped palettes are gated (see [contrast.md](contrast.md)); your
 custom accent is not. Verify primary-button label, `--accent-text`, and
 the focus ring against their backgrounds. Full contract:
 [theming.md](theming.md).
+
+## Dense labels
+
+Use `ui-chip--dense` for a static label in a short pane header.
+`ui.chip({ dense: true })` returns that class. Buttons and links carrying it
+retain pointer target floors; use an actual button for an action.
+
+For complete tool/report layouts, use [composition recipes](compositions.md).

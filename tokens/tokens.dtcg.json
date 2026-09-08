@@ -25,30 +25,43 @@
       "xl": {
         "$type": "dimension",
         "$value": {
-          "value": 4,
+          "value": 8,
           "unit": "px"
         },
         "$extensions": {
           "com.ponchia.css": {
             "variable": "--radius-xl",
-            "authoredValue": "4px"
+            "authoredValue": "8px"
           }
         }
       },
       "lg": {
         "$type": "dimension",
         "$value": {
-          "value": 3,
+          "value": 6,
           "unit": "px"
         },
         "$extensions": {
           "com.ponchia.css": {
             "variable": "--radius-lg",
-            "authoredValue": "3px"
+            "authoredValue": "6px"
           }
         }
       },
       "md": {
+        "$type": "dimension",
+        "$value": {
+          "value": 4,
+          "unit": "px"
+        },
+        "$extensions": {
+          "com.ponchia.css": {
+            "variable": "--radius-md",
+            "authoredValue": "4px"
+          }
+        }
+      },
+      "sm": {
         "$type": "dimension",
         "$value": {
           "value": 2,
@@ -56,21 +69,8 @@
         },
         "$extensions": {
           "com.ponchia.css": {
-            "variable": "--radius-md",
-            "authoredValue": "2px"
-          }
-        }
-      },
-      "sm": {
-        "$type": "dimension",
-        "$value": {
-          "value": 1,
-          "unit": "px"
-        },
-        "$extensions": {
-          "com.ponchia.css": {
             "variable": "--radius-sm",
-            "authoredValue": "1px"
+            "authoredValue": "2px"
           }
         }
       },
@@ -310,78 +310,78 @@
       "2xs": {
         "$type": "dimension",
         "$value": {
-          "value": 0.72,
+          "value": 0.75,
           "unit": "rem"
         },
         "$extensions": {
           "com.ponchia.css": {
             "variable": "--text-2xs",
-            "authoredValue": "0.72rem"
+            "authoredValue": "0.75rem"
           }
         }
       },
       "xs": {
         "$type": "dimension",
         "$value": {
-          "value": 0.76,
+          "value": 0.8125,
           "unit": "rem"
         },
         "$extensions": {
           "com.ponchia.css": {
             "variable": "--text-xs",
-            "authoredValue": "0.76rem"
+            "authoredValue": "0.8125rem"
           }
         }
       },
       "sm": {
         "$type": "dimension",
         "$value": {
-          "value": 0.86,
+          "value": 0.875,
           "unit": "rem"
         },
         "$extensions": {
           "com.ponchia.css": {
             "variable": "--text-sm",
-            "authoredValue": "0.86rem"
+            "authoredValue": "0.875rem"
           }
         }
       },
       "base": {
         "$type": "dimension",
         "$value": {
-          "value": 0.95,
+          "value": 1,
           "unit": "rem"
         },
         "$extensions": {
           "com.ponchia.css": {
             "variable": "--text-base",
-            "authoredValue": "0.95rem"
+            "authoredValue": "1rem"
           }
         }
       },
       "lg": {
         "$type": "dimension",
         "$value": {
-          "value": 1.15,
+          "value": 1.125,
           "unit": "rem"
         },
         "$extensions": {
           "com.ponchia.css": {
             "variable": "--text-lg",
-            "authoredValue": "1.15rem"
+            "authoredValue": "1.125rem"
           }
         }
       },
       "xl": {
         "$type": "dimension",
         "$value": {
-          "value": 1.45,
+          "value": 1.5,
           "unit": "rem"
         },
         "$extensions": {
           "com.ponchia.css": {
             "variable": "--text-xl",
-            "authoredValue": "1.45rem"
+            "authoredValue": "1.5rem"
           }
         }
       }
