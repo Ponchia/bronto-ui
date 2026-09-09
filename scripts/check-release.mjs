@@ -250,11 +250,31 @@ requireJobIncludes(
   'must route stable releases to the latest dist-tag',
   'dist_tag=latest',
 );
+// Trusted publishing (OIDC) replaced the long-lived NPM_TOKEN. Two things
+// have to stay true for it to work, and both fail *at publish time* — the
+// most expensive moment to find out — so they are gated here instead.
 requireJobIncludes(
   'publish-npm',
   publishJob,
-  'must use the npm environment secret only in the publish job',
-  'NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}',
+  'must raise the npm CLI to a version that supports trusted publishing (Node 22 bundles npm 10.x)',
+  'npm install -g npm@^11.5.1',
+);
+
+// A reintroduced token would silently take precedence over OIDC, so the
+// credential-free property is asserted rather than assumed. The 0.10.0
+// release failed here: the stored token had expired and npm reported it
+// as an E404 on an existing package.
+requireJobNotIncludes(
+  'publish-npm',
+  publishJob,
+  'must not reintroduce a stored npm credential (NODE_AUTH_TOKEN)',
+  'NODE_AUTH_TOKEN',
+);
+requireJobNotIncludes(
+  'publish-npm',
+  publishJob,
+  'must not reintroduce a stored npm credential (secrets.NPM_TOKEN)',
+  'secrets.NPM_TOKEN',
 );
 
 const releaseNotesJob = jobBlock('release-notes');

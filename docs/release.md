@@ -31,7 +31,9 @@
 4. Review the `publish-preflight` job summary: generated size report and pack
    manifest.
 5. Approve the protected `npm-publish` environment only after the gates and
-   preflight are green. After publish, the `publish-npm` summary attempts to
+   preflight are green. Approval releases the job; it does not authenticate it
+   — the job authenticates itself to npm by trusted publishing (OIDC), so there
+   is no token to check or renew first. After publish, the `publish-npm` summary attempts to
    record the npm registry view: published version, tarball, integrity, and
    current dist-tags. That observation is best-effort; the irreversible gate is
    the publish itself, not the later `npm view`.

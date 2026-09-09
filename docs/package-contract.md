@@ -221,6 +221,7 @@ semantic versioning contract for the surfaces listed here.
 | `./docs/compositions.md` | `./docs/compositions.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/adr/0005-productive-tools-and-editorial-reports.md` | `./docs/adr/0005-productive-tools-and-editorial-reports.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/migrations/0.9-to-0.10.md` | `./docs/migrations/0.9-to-0.10.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/adr/0006-trusted-publishing.md` | `./docs/adr/0006-trusted-publishing.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 
 ## Shipped Files Allowlist
 
@@ -302,6 +303,7 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `docs/compositions.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/adr/0005-productive-tools-and-editorial-reports.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/migrations/0.9-to-0.10.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/adr/0006-trusted-publishing.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 
 ## Artifact Provenance
 

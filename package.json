@@ -116,7 +116,8 @@
     "docs/adr/0004-prune-unused-adapters.md",
     "docs/compositions.md",
     "docs/adr/0005-productive-tools-and-editorial-reports.md",
-    "docs/migrations/0.9-to-0.10.md"
+    "docs/migrations/0.9-to-0.10.md",
+    "docs/adr/0006-trusted-publishing.md"
   ],
   "style": "./dist/bronto.css",
   "scripts": {
@@ -524,7 +525,8 @@
     "./fonts/*": "./fonts/*",
     "./docs/compositions.md": "./docs/compositions.md",
     "./docs/adr/0005-productive-tools-and-editorial-reports.md": "./docs/adr/0005-productive-tools-and-editorial-reports.md",
-    "./docs/migrations/0.9-to-0.10.md": "./docs/migrations/0.9-to-0.10.md"
+    "./docs/migrations/0.9-to-0.10.md": "./docs/migrations/0.9-to-0.10.md",
+    "./docs/adr/0006-trusted-publishing.md": "./docs/adr/0006-trusted-publishing.md"
   },
   "overrides": {
     "adm-zip": "0.6.0",

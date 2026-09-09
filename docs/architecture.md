@@ -251,7 +251,13 @@ pointer:
   with provenance. Runs in the `npm-publish` **Environment**
   (required-reviewer protection), so after the gates and preflight pass the run
   pauses for a manual approval in the Actions UI before anything reaches npm —
-  a guard against an accidental tag push publishing. Dist-tag is derived from
+  a guard against an accidental tag push publishing. Authentication is
+  **trusted publishing (OIDC)**: no npm token is stored anywhere, and the
+  credential npm mints is short-lived and bound to this repository, this
+  workflow filename, and this environment
+  ([ADR-0006](./adr/0006-trusted-publishing.md)). Renaming `release.yml` or
+  moving the publish to another environment breaks publishing until the
+  npm-side registration is updated. Dist-tag is derived from
   the tag: stable (`v0.4.0`) → `latest`; SemVer prerelease (`v0.4.0-rc.1`, any
   hyphenated identifier) → `next`, so the default `npm i @ponchia/ui` never
   moves onto an unstable build (opt in with `@ponchia/ui@next`). Post-publish
