@@ -73,6 +73,8 @@
 }
 
 .ui-app-nav a {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
   align-items: center;
   border-inline-start: 2px solid transparent;
   color: var(--text-soft);
@@ -354,7 +356,7 @@
     justify-content: center;
     border-inline-start: 0;
     border-block-end: 2px solid transparent;
-    white-space: nowrap;
+    white-space: normal;
   }
 
   .ui-app-nav a.is-active,

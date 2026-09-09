@@ -5,6 +5,39 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## 0.11.0 — 2026-09-09
+
+### Changed
+
+- **BREAKING: complete the supporting typography.** Figure captions, legend
+  text, generated-content labels and command groups use sentence-case sans.
+  Technical log bodies and identifiers retain mono. Caption text is 14px at
+  the default root size; inline citations no longer shrink below 12px.
+- Figure keys and decision/action rows respond to their own available width.
+  Two-up comparisons wrap intrinsically, including outside a report. Named
+  containment on figure, decision-grid and actions wrappers is disabled for
+  print to preserve document flow.
+
+### Fixed
+
+- Narrow evidence panels no longer squeeze a chart into 40px or decision text
+  into 21px on a wide page. Long action status and legend labels wrap.
+- Long mobile navigation labels wrap while keeping every destination reachable.
+- The figure specimen's authored annotation stays inside its viewBox.
+- Generated-content disclosure summaries retain the coarse-pointer target floor.
+
+### Added
+
+- A working service specimen with deterministic loading, empty, error and stale
+  states, environment/search filtering, retry and native-dialog sample creation.
+  Unavailable observations never retain an operational health claim. Product
+  state stays in the specimen; no framework state machine or data dependency.
+- Narrow-parent regression checks, including a comparison outside a report,
+  annotation bounds, long action status, citation text and recovery journeys.
+- A complete-screen migration recipe for explicit consumer typography overrides.
+
+See [the migration guide](docs/migrations/0.10-to-0.11.md).
+
 ## 0.10.0 — 2026-09-08
 
 ### Changed

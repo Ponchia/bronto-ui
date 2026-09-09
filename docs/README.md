@@ -105,3 +105,5 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 
 - [ADR-0005](./adr/0005-productive-tools-and-editorial-reports.md) — productive tools and editorial reports.
 - [0.9 to 0.10](./migrations/0.9-to-0.10.md) — coordinated visual and API migration.
+
+- [0.10 to 0.11](./migrations/0.10-to-0.11.md) — narrow-container layouts and consumer typography roles.

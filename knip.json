@@ -3,5 +3,6 @@
   "ignore": ["**/*.d.ts", "examples/**", "scripts/smoke-example.mjs"],
   "rules": {
     "duplicates": "off"
-  }
+  },
+  "entry": ["demo/service.js"]
 }

@@ -1,6 +1,6 @@
 {
   "name": "@ponchia/ui",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "type": "module",
   "description": "CSS-first identity and UI layer for services, tools, sites, and reports — works in HTML, every framework, and PDF, no component runtime. Shared app shell, forms, tables, workflow chrome, plus opt-in analytical/report primitives. Monochrome with one rationed accent. Zero runtime dependencies.",
   "keywords": [
@@ -117,7 +117,8 @@
     "docs/compositions.md",
     "docs/adr/0005-productive-tools-and-editorial-reports.md",
     "docs/migrations/0.9-to-0.10.md",
-    "docs/adr/0006-trusted-publishing.md"
+    "docs/adr/0006-trusted-publishing.md",
+    "docs/migrations/0.10-to-0.11.md"
   ],
   "style": "./dist/bronto.css",
   "scripts": {
@@ -526,7 +527,8 @@
     "./docs/compositions.md": "./docs/compositions.md",
     "./docs/adr/0005-productive-tools-and-editorial-reports.md": "./docs/adr/0005-productive-tools-and-editorial-reports.md",
     "./docs/migrations/0.9-to-0.10.md": "./docs/migrations/0.9-to-0.10.md",
-    "./docs/adr/0006-trusted-publishing.md": "./docs/adr/0006-trusted-publishing.md"
+    "./docs/adr/0006-trusted-publishing.md": "./docs/adr/0006-trusted-publishing.md",
+    "./docs/migrations/0.10-to-0.11.md": "./docs/migrations/0.10-to-0.11.md"
   },
   "overrides": {
     "adm-zip": "0.6.0",
