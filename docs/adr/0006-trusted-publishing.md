@@ -84,10 +84,9 @@ The `NPM_TOKEN` secret and its password-manager entry are retired after the
 first successful trusted publish, not before, so the previous path stays
 available if the exchange needs debugging.
 
-Unlike ADR-0001 through ADR-0005, this record is deliberately **not** shipped
-in the package. Those decisions govern the public design surface and are
-exported as documentation subpaths a consumer can read. This one governs how
-the maintainer releases; it is of no use to a consumer, and enumerating it in
-`files` and `exports` would add a public subpath that the 1.0 export boundary
-would then have to keep forever. Shipped documents therefore describe the
-publishing mechanism in prose and point here by path rather than by link.
+Like every other ADR, this record ships in the package. `check:pack` enforces
+that: the published documentation points into `docs/adr/`, so an ADR that
+exists but is not in `files` leaves a consumer following that pointer at a
+404. The decision set is published whole or not at all — a release-mechanics
+record is not carved out on the grounds that consumers are unlikely to want
+it.
