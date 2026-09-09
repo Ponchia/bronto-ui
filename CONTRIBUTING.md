@@ -226,8 +226,11 @@ rule) — open the run in the Actions tab and click *Review deployments →
 Approve* to release. Nothing reaches npm until you approve. GitHub also serves the raw tag
 tarball ungated, but that is a legacy/fallback path, not the documented
 install. Publishing runs `npm publish --ignore-scripts` with provenance
-(SLSA); the `@ponchia` scope and the `NPM_TOKEN` secret (scoped to the
-`npm-publish` Environment) are in place, so a pushed `vX.Y.Z` tag plus
-your approval is all a release needs. CI never publishes
+(SLSA) and authenticates by **trusted publishing (OIDC)** — no stored npm
+token, nothing to expire. npm mints a short-lived credential only for a run
+of `release.yml` in the `npm-publish` Environment, so a pushed `vX.Y.Z` tag
+plus your approval is all a release needs
+([ADR-0006](docs/adr/0006-trusted-publishing.md) has the rationale, and the
+npm-side registration this identity depends on). CI never publishes
 from a `main` push — a push to `main` ships nothing. Rationale and
 pre-publish blockers: [`docs/architecture.md`](docs/architecture.md).

@@ -26,9 +26,15 @@
 # moves onto an unstable build. The GitHub Release is flagged prerelease
 # to match. publish-npm derives this from the tag; nothing else to set.
 #
-# Requires the NPM_TOKEN secret (npm automation token for the @ponchia
-# scope) scoped to the `npm-publish` Environment — see publish-npm — plus
-# a committed LICENSE file before the first successful publish.
+# CREDENTIALS: there are none. Publishing uses npm TRUSTED PUBLISHING
+# (OIDC) — GitHub mints a short-lived, workflow-scoped token that npm
+# exchanges at publish time, so nothing long-lived is stored in a secret
+# and there is no expiry to miss. The trusted publisher is registered on
+# npmjs.com against this exact identity: repository `Ponchia/bronto-ui`,
+# workflow filename `release.yml`, environment `npm-publish`. Renaming
+# this file, or moving the publish out of that environment, breaks
+# publishing until the npm-side registration is updated to match.
+# Also requires a committed LICENSE file before the first publish.
 name: Release
 
 on:
@@ -157,12 +163,15 @@ jobs:
     # it runs in the `npm-publish` Environment (required-reviewer protection
     # rule). After the gates and preflight pass, the run pauses here until a
     # maintainer approves in the Actions UI — a deliberate guard against an
-    # accidental tag push publishing. NPM_TOKEN is an Environment secret here,
-    # so no other job (or future workflow) can read it.
+    # accidental tag push publishing. The environment is also half of the
+    # npm trusted-publisher identity (see below), so no other job — or
+    # future workflow — can mint a publish credential for this package.
     environment: npm-publish
     permissions:
       contents: read
-      id-token: write # npm provenance (publishConfig.provenance)
+      # OIDC. This is what npm exchanges for a short-lived publish
+      # credential, and what signs the provenance attestation.
+      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -171,10 +180,17 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
-      # Publish with --ignore-scripts so NODE_AUTH_TOKEN is never exposed
-      # to the prepack/prepublishOnly lifecycle (the whole check+build
-      # surface + devDeps). Safe because the committed artifacts were
-      # already byte-verified by `validate` and summarized by
+      # Trusted publishing needs npm CLI >= 11.5.1; Node 22 still bundles
+      # npm 10.x, so the floor is explicit rather than inherited. Without
+      # it `npm publish` falls back to looking for a token that no longer
+      # exists and fails with a misleading E404/E401.
+      - name: Install an npm CLI that supports trusted publishing
+        run: npm install -g npm@^11.5.1
+
+      # Publish with --ignore-scripts so the OIDC credential is never
+      # exposed to the prepack/prepublishOnly lifecycle (the whole
+      # check+build surface + devDeps). Safe because the committed
+      # artifacts were already byte-verified by `validate` and summarized by
       # `publish-preflight` on this exact commit — so we ship exactly what
       # was validated, not a re-build. prepublishOnly stays the intrinsic
       # guard for any non-CI/manual publish.
@@ -194,8 +210,6 @@ jobs:
           fi
           echo "Publishing $version to dist-tag '$dist_tag'"
           npm publish --ignore-scripts --tag "$dist_tag"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Record npm registry state
         continue-on-error: true

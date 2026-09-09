@@ -97,6 +97,7 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 - [adr/0002-scope-and-2026-baseline.md](./adr/0002-scope-and-2026-baseline.md) — scope, the 2026 browser floor, and CSS-native motion.
 - [adr/0003-theme-model.md](./adr/0003-theme-model.md) — the binary base × one-knob × orthogonal-axes theme model.
 - [adr/0004-prune-unused-adapters.md](./adr/0004-prune-unused-adapters.md) — deprecate unadopted framework adapters and the controlled-modal path.
+- [adr/0006-trusted-publishing.md](./adr/0006-trusted-publishing.md) — publish to npm by OIDC, with no stored credential.
 
 ## Migrations
 

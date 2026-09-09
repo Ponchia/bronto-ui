@@ -58,6 +58,15 @@
   Report annotations leave room for their stroke outside the drawing bounds.
 - Development URI, YAML, and color parsers receive compatible security updates.
 
+### Internal
+
+- Releases publish to npm by trusted publishing (OIDC) instead of a stored
+  access token. The token that authenticated previous releases expired
+  silently and surfaced only as a misleading `E404` after every gate and the
+  publish approval had passed; there is now no credential to expire. The
+  publisher identity is the repository, the workflow filename `release.yml`,
+  and the `npm-publish` environment. No packaged output changes.
+
 See [the migration guide](docs/migrations/0.9-to-0.10.md).
 
 ## 0.9.0 — 2026-08-11
