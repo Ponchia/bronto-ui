@@ -89,6 +89,7 @@ export const EXTRA_LEAVES = [
   'report.css',
   'figure.css',
   'annotations.css',
+  'discussion.css',
   'legend.css',
   'marks.css',
   'connectors.css',

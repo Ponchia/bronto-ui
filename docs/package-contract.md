@@ -222,6 +222,10 @@ semantic versioning contract for the surfaces listed here.
 | `./docs/adr/0005-productive-tools-and-editorial-reports.md` | `./docs/adr/0005-productive-tools-and-editorial-reports.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/migrations/0.9-to-0.10.md` | `./docs/migrations/0.9-to-0.10.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/adr/0006-trusted-publishing.md` | `./docs/adr/0006-trusted-publishing.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/migrations/0.10-to-0.11.md` | `./docs/migrations/0.10-to-0.11.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./css/discussion.css` | `./dist/css/discussion.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
+| `./css/unlayered/discussion.css` | `./css/discussion.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
+| `./docs/discussion.md` | `./docs/discussion.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 
 ## Shipped Files Allowlist
 
@@ -264,6 +268,7 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `docs/vega.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/figure.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/annotations.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/discussion.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/legends.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/marks.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/connectors.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
@@ -304,6 +309,7 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `docs/adr/0005-productive-tools-and-editorial-reports.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/migrations/0.9-to-0.10.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/adr/0006-trusted-publishing.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/migrations/0.10-to-0.11.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 
 ## Artifact Provenance
 
@@ -316,7 +322,7 @@ result. The listed gates are part of `npm run check`.
 | Package manifest | `package.json` | docs/package-contract.md | `npm run package-contract:build` | check:fresh; check:exports; check:pack; check:consumer-surface; check:consumer-types; check:publint; check:attw | The complete export/file matrix in this document is generated from the manifest; packed tarball imports, concrete file resolution, and package-level type resolution are smoke-tested in clean consumers. |
 | Token model | `tokens/index.js` | css/tokens.css; tokens/index.json; tokens/tokens.dtcg.json; tokens/resolved.json; tokens/figma.variables.json; tokens/index.d.ts | `npm run tokens:css:build; tokens:build; dtcg:build; resolved:build; figma:variables:build; dts:build` | check:fresh; check:contrast | Token names/roles are public. Resolved and Figma handoff values are visual tuning before 1.0. |
 | Class registry | `classes/index.js plus css/*.css selectors` | classes/classes.json; classes/index.d.ts; classes/vscode.css-custom-data.json; docs/reference.md | `npm run classes:json:build; dts:build; vscode:build; reference:build` | check:fresh; check:classes; check:contract | The typed registry, JSON vocabulary, and generated reference stay aligned with real selectors. |
-| Authored CSS graph | `css/core.css plus css/*.css leaves` | dist/bronto.css; dist/css/*.css (47 layered outputs) | `npm run dist:build` | check:dist; check:exports; check:component-matrix | Default bundle and direct layered leaf imports are generated from authored CSS, size-gated, and coverage-owned as foundation or component leaves. |
+| Authored CSS graph | `css/core.css plus css/*.css leaves` | dist/bronto.css; dist/css/*.css (48 layered outputs) | `npm run dist:build` | check:dist; check:exports; check:component-matrix | Default bundle and direct layered leaf imports are generated from authored CSS, size-gated, and coverage-owned as foundation or component leaves. |
 | JSDoc-authored public JS | `behaviors/; annotations/; connectors/; react/; solid/; qwik/; svelte/; vue/` | adjacent *.d.ts and *.d.ts.map files | `npm run dts:emit` | check:dts-emit; check:types; check:consumer-surface; check:consumer-types; check:behavior-matrix; check:attw; check:publint | Declarations are emitted from the shipped JS, package subpath imports are compiled from a packed clean consumer, and public behavior exports are docs/unit/browser owned. |
 | Glyph registry | `glyphs/glyphs.js` | glyphs/glyphs.d.ts | `npm run glyphs:build` | check:glyphs; check:unit | Glyph names and render options are public. The registry stays sorted and type-covered. |
 | Display colorways | `tokens/skins.js` | css/skins.css; tokens/skins.d.ts | `npm run skins:build` | check:skins; check:contrast | Skins are opt-in root-level choices and never part of dist/bronto.css. |

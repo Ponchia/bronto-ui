@@ -382,6 +382,18 @@ export declare const cls: {
   readonly legendTrack: 'ui-legend__track';
   readonly legendTicks: 'ui-legend__ticks';
   readonly legendTick: 'ui-legend__tick';
+  readonly discussion: 'ui-discussion';
+  readonly discussionHeader: 'ui-discussion__header';
+  readonly discussionActions: 'ui-discussion__actions';
+  readonly discussionQuote: 'ui-discussion__quote';
+  readonly discussionMessages: 'ui-discussion__messages';
+  readonly discussionList: 'ui-discussion__list';
+  readonly discussionMessage: 'ui-discussion__message';
+  readonly discussionMeta: 'ui-discussion__meta';
+  readonly discussionHint: 'ui-discussion__hint';
+  readonly discussionState: 'ui-discussion__state';
+  readonly discussionItem: 'ui-discussion__item';
+  readonly discussionComposer: 'ui-discussion__composer';
   readonly annotation: 'ui-annotation';
   readonly annotationSubject: 'ui-annotation__subject';
   readonly annotationConnector: 'ui-annotation__connector';

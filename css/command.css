@@ -43,11 +43,11 @@
 
 .ui-command__group {
   color: var(--text-dim);
-  font-family: var(--mono);
-  font-size: var(--text-2xs);
-  letter-spacing: var(--tracking-wide);
+  font-family: var(--sans);
+  font-size: var(--text-xs);
+  letter-spacing: 0;
   padding: 0.5rem 0.6rem 0.25rem;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-command__item {

@@ -61,7 +61,7 @@ when the same stage appears in a dashboard, doc page, or generated artifact.
 | --- | --- | --- |
 | `--figure-max-inline` | `.ui-figure__stage` | Maximum stage width, default `42rem`. |
 | `--figure-min-block` | `.ui-figure__stage` | Reserved stage height for late-rendered media. |
-| `--figure-key-width` | `.ui-figure__body--key-right` | Right key column width before mobile collapse. |
+| `--figure-key-width` | `.ui-figure__body--key-right` | Right key column width before the figure container stacks. |
 
 ## Boundary
 
@@ -76,3 +76,12 @@ when the same stage appears in a dashboard, doc page, or generated artifact.
 
 - [Usage](usage.md#static-reports) shows report figure composition.
 - [Reference](reference.md) lists the generated figure and report classes.
+
+## Narrow containers
+
+The figure establishes the named `bronto-figure` inline-size container. Its
+right-hand key stacks below 44rem of figure width, even in a wide browser.
+Print disables size containment and uses document flow. Keep annotation text
+and strokes within the authored `viewBox`; container layout does not reposition
+chart geometry. Verify a 280px parent with long legend names and a fallback
+table, not just a narrow viewport.

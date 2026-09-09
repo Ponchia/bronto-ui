@@ -27,6 +27,7 @@
 .ui-report p,
 .ui-report__section > :is(ul, ol, blockquote) {
   max-inline-size: var(--report-measure);
+  overflow-wrap: anywhere;
 }
 
 .ui-report .ui-prose {
@@ -232,6 +233,7 @@ details.ui-report__toc:not([open]) > :not(summary) {
 }
 
 .ui-report__decision-grid {
+  container: bronto-decision / inline-size;
   border-block-start: 1px solid var(--line);
   display: grid;
   gap: 0;
@@ -260,6 +262,7 @@ details.ui-report__toc:not([open]) > :not(summary) {
 }
 
 .ui-report__decision-value {
+  overflow-wrap: anywhere;
   color: var(--text-soft);
   line-height: 1.5;
 }
@@ -519,6 +522,7 @@ details.ui-report__toc:not([open]) > :not(summary) {
 }
 
 .ui-report__actions {
+  container: bronto-actions / inline-size;
   border-block-start: 1px solid var(--line);
   display: grid;
   gap: 0;
@@ -546,7 +550,8 @@ details.ui-report__toc:not([open]) > :not(summary) {
   letter-spacing: 0;
   place-self: start end;
   text-transform: none;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .ui-report__action-title,
@@ -581,8 +586,13 @@ details.ui-report__toc:not([open]) > :not(summary) {
   line-height: 1.5;
 }
 
-@media (max-width: 32rem) {
-  .ui-report__decision-item,
+@container bronto-decision (max-width: 32rem) {
+  .ui-report__decision-item {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@container bronto-actions (max-width: 32rem) {
   .ui-report__action {
     grid-template-columns: 1fr;
   }
@@ -611,7 +621,7 @@ details.ui-report__toc:not([open]) > :not(summary) {
    a single stack on a narrow screen via auto-fit, so two panels never
    overflow. `ui-compare__col` is one side, `ui-compare__head` labels it.
    `ui-compare--2up` pins exactly two equal columns for a hard before/after
-   pairing (still collapsing to one column on a phone). */
+   pairing, with a 16rem reading floor per column in any parent. */
 .ui-compare {
   display: grid;
   gap: var(--space-md);
@@ -619,13 +629,12 @@ details.ui-report__toc:not([open]) > :not(summary) {
 }
 
 .ui-compare--2up {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-@media (max-width: 33rem) {
-  .ui-compare--2up {
-    grid-template-columns: 1fr;
-  }
+  /* At most two columns, each at least 16rem unless the whole parent is narrower.
+     Intrinsic wrapping also works outside a report or named query container. */
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, max(16rem, (100% - var(--space-md)) / 2)), 1fr)
+  );
 }
 
 .ui-compare__col {
@@ -685,6 +694,11 @@ details.ui-report__toc:not([open]) > :not(summary) {
     inline-size: auto;
     font-size: 11pt;
     padding: 0;
+  }
+
+  .ui-report__decision-grid,
+  .ui-report__actions {
+    container-type: normal;
   }
 
   .ui-report__cover {

@@ -18,7 +18,7 @@
   color: var(--text-soft);
   display: flex;
   flex-wrap: wrap;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-xs);
   gap: var(--space-2xs) var(--space-md);
   list-style: none;
@@ -37,13 +37,15 @@
 
 .ui-legend__title {
   color: var(--text-dim);
-  font-size: var(--text-2xs);
+  font-size: var(--text-xs);
   letter-spacing: 0;
   margin: 0;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-legend__item {
+  min-inline-size: 0;
+  max-inline-size: 100%;
   align-items: center;
   color: inherit;
   display: inline-flex;
@@ -51,6 +53,8 @@
 }
 
 .ui-legend__label {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
   color: inherit;
 }
 
@@ -62,9 +66,9 @@
 
 .ui-legend__caption {
   color: var(--text-dim);
-  font-size: var(--text-2xs);
+  font-size: var(--text-xs);
   letter-spacing: 0;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 /* Swatch — same token contract as the chart fill: set `--chart-color` (and,
@@ -202,6 +206,8 @@
 }
 
 .ui-legend--with-values .ui-legend__item {
+  min-inline-size: 0;
+  max-inline-size: 100%;
   display: grid;
   grid-column: 1 / -1;
   grid-template-columns: subgrid;
@@ -242,6 +248,8 @@
 
 .ui-legend__item.is-inactive .ui-legend__label,
 .ui-legend__item[aria-pressed='false'] .ui-legend__label {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
   text-decoration: line-through;
 }
 

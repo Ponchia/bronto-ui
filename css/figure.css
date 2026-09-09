@@ -8,6 +8,7 @@
    ========================================================================== */
 
 .ui-figure {
+  container: bronto-figure / inline-size;
   display: grid;
   gap: var(--space-sm);
   margin: 0;
@@ -22,11 +23,11 @@
 
 .ui-figure__caption {
   color: var(--text-dim);
-  font-family: var(--mono);
-  font-size: var(--text-2xs);
+  font-family: var(--sans);
+  font-size: var(--text-sm);
   letter-spacing: 0;
   line-height: 1.5;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-figure__body {
@@ -81,7 +82,7 @@
   margin-block-start: var(--space-xs);
 }
 
-@media (max-width: 44rem) {
+@container bronto-figure (max-width: 44rem) {
   .ui-figure__body--key-right {
     grid-template-columns: 1fr;
   }
@@ -89,6 +90,7 @@
 
 @media print {
   .ui-figure {
+    container-type: normal;
     break-inside: avoid;
   }
 

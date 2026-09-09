@@ -1,7 +1,7 @@
 # Public API stability
 
 `@ponchia/ui` is pre-1.0. Breaking changes ship in the minor (`0.x.0`), and
-patches are non-breaking. In practical terms: **PATCH releases (`0.10.x`) are
+patches are non-breaking. In practical terms: **PATCH releases (`0.11.x`) are
 non-breaking bug-fixes and additive changes — safe to upgrade without review;
 MINOR releases (`0.x.0`) may include breaking changes and consumers should
 review the CHANGELOG before upgrading.** Pin `~0.x` (tilde) to accept only
@@ -100,6 +100,7 @@ current public-surface matrix and the release policy above still applies.
 | Report kit roll-up (`css/report-kit.css`) | Stable additive | A convenience `@import` of the complete static-report vocabulary. The set of leaves it bundles may grow additively; each leaf also stays individually exported. Opt-in, not in the default bundle. |
 | Figure stage (`css/figure.css`, `.ui-figure*`) | Stable additive | Figure class names, overlay/key/fallback-data slots, and report composition hooks are public. Opt-in, not in the default bundle. Bronto owns the figure frame, not chart rendering, scales, or data mapping. |
 | Annotations (`@ponchia/ui/annotations`, `css/annotations.css`, `.ui-annotation*`) | Stable additive | SVG annotation class names, recipe option names, and helper function names are public. Helper internals and exact path-control heuristics may tune before 1.0. Opt-in, not in the default bundle. Rich placement, renderer, editing, and chart/diagram adapter APIs belong to the sibling `@ponchia/annotations` package; `@ponchia/ui` does not depend on it at runtime or through public declarations. |
+| Discussions (`css/discussion.css`, `.ui-discussion*`) | Stable additive | Thread-list, message, quotation and composer class names are public. Opt-in, not in the default bundle. The host owns posting, persistence, identity, resolution, text anchors and focus management. |
 | Legends (`css/legend.css`, `.ui-legend*`, `@ponchia/ui/behaviors` `initLegend`) | Stable additive | Legend class names, recipe option names, and the `bronto:legend:toggle` event contract (`aria-pressed="true"` ⇒ shown) are public. Opt-in, not in the default bundle; swatch colours are gated to the `--chart-*` palette. |
 | Marks (`css/marks.css`, `.ui-mark*`, `.ui-bracket-note*`) | Stable additive | Text-mark and bracket-note class names and recipe option names are public. Opt-in, not in the default bundle. Uses semantic tones only. |
 | Connectors (`@ponchia/ui/connectors`, `css/connectors.css`, `.ui-connector*`, `initConnectors`) | Stable additive | Connector class names, the `data-bronto-connector` attribute contract, geometry helper function names, and recipe options are public. Helper internals/heuristics may tune before 1.0. Opt-in, not in the default bundle. |

@@ -16,6 +16,7 @@ import { attachGuards, blocking, scan, settle, structuralIssues } from './_demo-
 const SHOWCASE = [
   'figure',
   'annotations',
+  'discussion',
   'legends',
   'marks',
   'connectors',

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:," />
+    <title>@ponchia/ui — discussion specimen</title>
+    <meta
+      name="description"
+      content="Readable discussion threads, quotations and narrow-panel composers."
+    />
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/discussion.css" />
+    <style>
+      main {
+        max-inline-size: 68rem;
+        margin-inline: auto;
+        padding: 2rem 1rem;
+      }
+      .discussion-examples {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+        gap: 2rem;
+        align-items: start;
+      }
+      .discussion-example {
+        border: 1px solid var(--line);
+        padding: 1rem;
+        min-inline-size: 0;
+      }
+      .discussion-narrow {
+        max-inline-size: 18rem;
+      }
+    </style>
+    <script type="module" src="./discussion.js"></script>
+  </head>
+  <body>
+    <main>
+      <a class="ui-link" href="./index.html">Component specimens</a>
+      <h1>Discuss the detail</h1>
+      <p class="ui-prose">
+        Local demonstration: replies and resolution reset on reload. A host supplies persistence and
+        document anchors.
+      </p>
+      <div class="discussion-examples">
+        <section
+          class="ui-discussion discussion-example"
+          id="discussion-thread"
+          aria-labelledby="thread-title"
+        >
+          <header class="ui-discussion__header">
+            <div>
+              <h2 id="thread-title">Release discussion</h2>
+              <p>A comment on the rollout guide</p>
+            </div>
+          </header>
+          <nav class="ui-discussion__actions" aria-label="Thread actions">
+            <button class="ui-button ui-button--ghost" type="button" data-resolve>Resolve</button
+            ><a class="ui-link" href="#thread-title">Thread link</a>
+          </nav>
+          <p class="ui-discussion__state" data-thread-state>Open · passage attached</p>
+          <blockquote class="ui-discussion__quote">
+            Upgrade the shared package before updating consumers.
+          </blockquote>
+          <ol class="ui-discussion__messages" data-messages>
+            <li class="ui-discussion__message">
+              <p class="ui-discussion__meta"><strong>Reviewer</strong> · example message</p>
+              <p>Can we show the recovery path if the upgrade fails?</p>
+            </li>
+          </ol>
+          <form class="ui-discussion__composer" data-reply-form>
+            <label for="reply">Reply</label
+            ><textarea id="reply" name="reply" rows="4" maxlength="8000"></textarea>
+            <div class="ui-discussion__actions">
+              <button class="ui-button" type="submit" disabled>Post reply</button>
+            </div>
+            <p class="ui-discussion__hint" role="status" data-post-status>
+              Local preview · no message has been sent
+            </p>
+          </form>
+        </section>
+        <section
+          class="ui-discussion discussion-example discussion-narrow"
+          aria-labelledby="narrow-title"
+        >
+          <header class="ui-discussion__header">
+            <div>
+              <h2 id="narrow-title">A narrow panel</h2>
+              <p>The same grammar in an 18rem container</p>
+            </div>
+          </header>
+          <p class="ui-discussion__state">Open · passage missing</p>
+          <blockquote class="ui-discussion__quote">
+            The original quotation stays here after the document changes.
+          </blockquote>
+          <p>
+            The host can ask the reader to choose a new passage without discarding the discussion.
+          </p>
+          <ul class="ui-discussion__list">
+            <li>
+              <a class="ui-discussion__item" href="#discussion-thread"
+                ><span>Read the release discussion</span
+                ><span
+                  >A long identifier still wraps:
+                  release_0123456789_0123456789_0123456789_0123456789.</span
+                ><small>One message · open</small></a
+              >
+            </li>
+          </ul>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>
