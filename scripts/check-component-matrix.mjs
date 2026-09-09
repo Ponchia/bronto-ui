@@ -144,6 +144,11 @@ const FOUNDATIONS = [
 ];
 
 const SURFACES = [
+  surface('discussion', {
+    docs: ['docs/discussion.md'],
+    demos: ['demo/discussion.html'],
+    specs: [{ file: 'test/e2e/discussion.spec.mjs', includes: ['discussion rows wrap'] }],
+  }),
   surface('annotations', {
     docs: ['docs/annotations.md'],
     demos: ['demo/annotations.html'],

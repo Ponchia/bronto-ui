@@ -11,6 +11,12 @@
     />
     <link rel="stylesheet" href="../dist/bronto.css" />
     <link rel="stylesheet" href="../dist/css/state.css" />
+    <style>
+      [data-service-hidden][hidden] {
+        display: none;
+      }
+    </style>
+    <script type="module" src="./service.js"></script>
   </head>
   <body>
     <div class="ui-app-shell" data-app-shell>
@@ -36,8 +42,12 @@
         <header class="ui-app-topbar">
           <h1 class="ui-app-topbar__title">Service overview</h1>
           <div class="ui-cluster" style="--cluster-gap: var(--space-xs)">
-            <button class="ui-button ui-button--subtle ui-button--sm" type="button">Sync</button>
-            <button class="ui-button ui-button--sm" type="button">New job</button>
+            <button class="ui-button ui-button--subtle ui-button--sm" type="button" id="sync-jobs">
+              Sync
+            </button>
+            <button class="ui-button ui-button--sm" type="button" data-bronto-open="new-job">
+              New job
+            </button>
           </div>
         </header>
 
@@ -46,25 +56,40 @@
             <div class="ui-app-toolbar__group">
               <label class="ui-field">
                 <span class="ui-label">Environment</span>
-                <select class="ui-select">
-                  <option>Production</option>
-                  <option>Staging</option>
+                <select class="ui-select" id="environment">
+                  <option value="production">Production</option>
+                  <option value="staging">Staging</option>
                 </select>
               </label>
               <div class="ui-search">
                 <input type="search" placeholder="Search jobs…" aria-label="Search jobs" />
               </div>
             </div>
-            <span class="ui-state ui-state--reviewed">Reviewed 12 min ago</span>
+            <label class="ui-field"
+              ><span class="ui-label">Demo scenario</span>
+              <select class="ui-select" id="scenario">
+                <option value="ready">Ready</option>
+                <option value="loading">Loading</option>
+                <option value="empty">Empty</option>
+                <option value="error">Error</option>
+                <option value="stale">Stale</option>
+              </select>
+            </label>
+            <span class="ui-state ui-state--reviewed" id="freshness">Reviewed 12 min ago</span>
           </section>
 
-          <section class="ui-app-panel" aria-labelledby="health-title">
+          <section
+            class="ui-app-panel"
+            aria-labelledby="health-title"
+            id="health"
+            data-service-hidden
+          >
             <div class="ui-app-panel__head">
               <div>
                 <h2 class="ui-app-panel__title" id="health-title">Health</h2>
                 <p>Current service posture across jobs, integrations and queue state.</p>
               </div>
-              <span class="ui-badge ui-badge--success">Operational</span>
+              <span class="ui-badge ui-badge--success" id="health-state">Operational</span>
             </div>
             <div class="ui-statgrid">
               <div class="ui-stat">
@@ -85,15 +110,22 @@
             </div>
           </section>
 
-          <section class="ui-app-panel" aria-labelledby="jobs-title" id="jobs">
+          <section class="ui-app-panel" aria-labelledby="jobs-title" id="jobs" aria-busy="false">
             <div class="ui-app-panel__head">
               <div>
                 <h2 class="ui-app-panel__title" id="jobs-title">Recent jobs</h2>
                 <p>The latest runs and their current state.</p>
               </div>
-              <button class="ui-button ui-button--ghost ui-button--sm" type="button">Export</button>
             </div>
-            <div class="ui-table-wrap">
+            <p
+              class="ui-empty-state"
+              id="jobs-message"
+              role="status"
+              aria-live="polite"
+              data-service-hidden
+              hidden
+            ></p>
+            <div class="ui-table-wrap" id="job-results" data-service-hidden>
               <table class="ui-table ui-table--dense">
                 <caption class="ui-visually-hidden">
                   Recent service jobs
@@ -141,8 +173,35 @@
               </table>
             </div>
           </section>
+          <section class="ui-app-panel" id="integrations" aria-labelledby="integrations-title">
+            <h2 class="ui-app-panel__title" id="integrations-title">Integrations</h2>
+            <p>This local specimen uses sample jobs. It does not connect to an external service.</p>
+          </section>
+          <section class="ui-app-panel" id="settings" aria-labelledby="settings-title">
+            <h2 class="ui-app-panel__title" id="settings-title">Settings</h2>
+            <p>
+              Choose a demo scenario to inspect loading, empty, error and stale states. Sync returns
+              to reviewed sample data. New jobs stay in this tab until reload.
+            </p>
+          </section>
         </div>
       </main>
     </div>
+    <dialog class="ui-modal" id="new-job" aria-labelledby="new-job-title">
+      <form class="ui-modal__body" id="new-job-form">
+        <h2 id="new-job-title">Create a sample job</h2>
+        <p>This changes only this specimen. Nothing is scheduled or sent.</p>
+        <label class="ui-field"
+          ><span class="ui-label">Job name</span
+          ><input class="ui-input" name="job" required maxlength="80"
+        /></label>
+        <div class="ui-cluster">
+          <button class="ui-button" type="submit">Create job</button>
+          <button class="ui-button ui-button--subtle" type="button" data-bronto-close>
+            Cancel
+          </button>
+        </div>
+      </form>
+    </dialog>
   </body>
 </html>

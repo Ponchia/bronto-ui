@@ -14,7 +14,7 @@
   --annotation-stroke-width: 1.5;
 
   color: var(--annotation-color);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--text-xs);
   overflow: visible;
 }
@@ -96,7 +96,7 @@
   stroke: var(--annotation-note-bg);
   stroke-linejoin: round;
   stroke-width: 3;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .ui-annotation__label {

@@ -78,7 +78,7 @@
 .ui-citation {
   color: var(--accent-text);
   font-family: var(--mono);
-  font-size: 0.72em;
+  font-size: max(0.72em, var(--text-2xs));
   font-weight: 600;
   text-decoration: none;
   vertical-align: super;

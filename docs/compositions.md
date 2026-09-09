@@ -22,6 +22,11 @@ states; do not present missing observations as success.
 
 The complete specimen is [service.html](https://ponchia.github.io/bronto-ui/demo/service.html). On a phone,
 navigation wraps and the compact metrics leave room for the work queue.
+The specimen owns deterministic loading, empty, error and stale scenarios,
+search/environment filtering and a local sample-job dialog. Unknown observations
+hide operational health claims; stale ones stay visibly qualified. Use Sync to
+recover. These behaviors are sample host logic, not package state management.
+
 Check the main action, every navigation destination, and a long account name
 at 360px and with a coarse pointer. A data table may scroll in its own region.
 
@@ -69,8 +74,8 @@ Use the core stylesheet plus `report-kit.css` for a standalone HTML report.
 Use real asset URLs in HTML; package specifiers resolve only in build tools.
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.10.0/dist/bronto.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.10.0/dist/css/report-kit.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.11.0/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.11.0/dist/css/report-kit.css" />
 <article class="ui-report">
   <header class="ui-report__cover ui-report__cover--compact">
     <h1 class="ui-report__title">Keep the current configuration</h1>
@@ -108,3 +113,19 @@ look technical.
 Use one dominant action per local task. Separate navigation, action, severity,
 and evidence status semantically even when they share a color family. Test
 light and dark together, and keep keyboard focus and reduced motion visible.
+
+## Embedded evidence
+
+Constrain the figure, decision grid or action list inside a wide page. Each
+uses its own available width. A two-up comparison wraps intrinsically even
+outside `ui-report`. Keep value columns readable and source links reachable;
+page overflow is an incomplete test. The container regression suite checks
+280/320/480px parents and a wide layout.
+
+Review long action status, legend names and citation markers. Keep chart
+annotations in their `viewBox` or supply an equivalent narrow fallback. Print
+uses document flow instead of size containment.
+
+For an existing application, review explicit typography overrides with the
+[0.11 migration recipe](migrations/0.10-to-0.11.md). A dependency pin does not
+remove consumer CSS that overrides the shared layer.

@@ -83,7 +83,7 @@
         {
           "old": "hero / project-* / post-card / essay-* / page-* / home-* / signal-panel / worklog-summary",
           "new": "the ui-* content layer",
-          "note": "Long-form content: .ui-prose / .ui-quote. Cards: .ui-card. Layout: .ui-grid / .ui-stack. Site chrome: the ui-site* shell. No 1:1 mapping \u2014 re-compose with the content primitives."
+          "note": "Long-form content: .ui-prose / .ui-quote. Cards: .ui-card. Layout: .ui-grid / .ui-stack. Site chrome: the ui-site* shell. No 1:1 mapping — re-compose with the content primitives."
         },
         {
           "old": "callout",
@@ -98,7 +98,7 @@
         {
           "old": "tag-list / tag",
           "new": "ui-tags / ui-tag",
-          "note": "Compact variant .tag-list--compact \u2192 .ui-tags--compact; verify accent-on-accent contrast (see CHANGELOG 0.3.0 a11y fix)."
+          "note": "Compact variant .tag-list--compact → .ui-tags--compact; verify accent-on-accent contrast (see CHANGELOG 0.3.0 a11y fix)."
         }
       ],
       "codemod": "See docs/migrations/0.2-to-0.3.md for a ready-to-run ripgrep+sed recipe covering the 'safe' rules."
@@ -111,7 +111,7 @@
       "manual": [
         {
           "old": "--orange / --orange-soft",
-          "new": "(removed \u2014 re-declare in a consumer :root override if referenced)",
+          "new": "(removed — re-declare in a consumer :root override if referenced)",
           "note": "Orphan token pair: defined in the token mirrors but referenced by no shipped component and documented nowhere, and untiered under the new colour model. Removed under the CONTRIBUTING 'provably-unreferenced surface' exception. If you used it: :root { --orange: #a85f32; --orange-soft: rgb(168 95 50 / 0.13); }"
         }
       ],
@@ -120,7 +120,7 @@
     {
       "from": "0.4",
       "to": "0.5",
-      "summary": "Adds the analytical-primitives suite (annotations, legend, marks, connectors, spotlight, crosshair, selection + the analytical.css roll-up); all additive/opt-in. Three breaking changes: the chart data key moved out of the report kit into the standalone Legends layer (`.ui-chart__legend`/`.ui-chart__swatch` removed); annotation arrowheads now render via the shared connectors geometry kernel (a small visual path change, no API change); and the marks/bracket-note rationed-accent tone was renamed `evidence`\u2192`accent` to match the annotation/connector tone vocabulary (`.ui-annotation--evidence` stays \u2014 it's a marker variant, not a tone).",
+      "summary": "Adds the analytical-primitives suite (annotations, legend, marks, connectors, spotlight, crosshair, selection + the analytical.css roll-up); all additive/opt-in. Three breaking changes: the chart data key moved out of the report kit into the standalone Legends layer (`.ui-chart__legend`/`.ui-chart__swatch` removed); annotation arrowheads now render via the shared connectors geometry kernel (a small visual path change, no API change); and the marks/bracket-note rationed-accent tone was renamed `evidence`→`accent` to match the annotation/connector tone vocabulary (`.ui-annotation--evidence` stays — it's a marker variant, not a tone).",
       "safe": [
         {
           "old": "ui-chart__swatch",
@@ -139,12 +139,12 @@
         {
           "old": "ui.mark({ tone: 'evidence' }) / ui.bracketNote({ tone: 'evidence' })",
           "new": "tone: 'accent'",
-          "note": "The rationed-accent tone option on the mark/bracket-note recipes is now 'accent' (was 'evidence'), matching ui.connector/ui.annotation. Do NOT rewrite ui.annotation({ variant: 'evidence' }) or the 'evidence' subject marker \u2014 those are a marker shape, not a tone, and are unchanged."
+          "note": "The rationed-accent tone option on the mark/bracket-note recipes is now 'accent' (was 'evidence'), matching ui.connector/ui.annotation. Do NOT rewrite ui.annotation({ variant: 'evidence' }) or the 'evidence' subject marker — those are a marker shape, not a tone, and are unchanged."
         },
         {
           "old": "ui-chart__legend",
           "new": "ui-legend",
-          "note": "Also import '@ponchia/ui/css/legend.css' beside report.css, and wrap each entry's content as <li class=\"ui-legend__item\"> \u2026 <span class=\"ui-legend__label\">\u2026</span>. The swatch's --chart-color/--chart-pattern inline contract is unchanged; the categorical --chart-N colour is also available via .ui-legend__swatch--N. See docs/legends.md."
+          "note": "Also import '@ponchia/ui/css/legend.css' beside report.css, and wrap each entry's content as <li class=\"ui-legend__item\"> … <span class=\"ui-legend__label\">…</span>. The swatch's --chart-color/--chart-pattern inline contract is unchanged; the categorical --chart-N colour is also available via .ui-legend__swatch--N. See docs/legends.md."
         },
         {
           "old": "connectorEndArrow (annotations)",
@@ -157,16 +157,16 @@
     {
       "from": "0.5",
       "to": "0.6",
-      "summary": "Charting realignment. The local static bar-chart renderer (.ui-chart*) is removed \u2014 a chart needs scales + data binding, out of scope for the analytical layer. bronto is now a themeable target for Vega-Lite (@ponchia/ui/vega), the same tokens-as-data path as Mermaid/D2. The --chart-* data-viz palette, tokens/charts.json, and the .ui-legend layer are unchanged.",
+      "summary": "Charting realignment. The local static bar-chart renderer (.ui-chart*) is removed — a chart needs scales + data binding, out of scope for the analytical layer. bronto is now a themeable target for Vega-Lite (@ponchia/ui/vega), the same tokens-as-data path as Mermaid/D2. The --chart-* data-viz palette, tokens/charts.json, and the .ui-legend layer are unchanged.",
       "safe": [],
       "manual": [
         {
           "old": "ui-chart / ui-chart__plot / ui-chart__bar / ui-chart__label / ui-chart__track / ui-chart__fill / ui-chart__fallback / ui-chart__caption",
           "new": "a Vega-Lite chart themed with @ponchia/ui/vega, or a token-themed inline <svg>",
-          "note": "No 1:1 class mapping \u2014 the renderer is removed. For a real chart: import '@ponchia/ui/vega', pass brontoVegaConfig(theme) to vega-embed, and place the result in a <figure class=\"ui-report__figure\"> with a <figcaption class=\"ui-report__caption\"> and a <ul class=\"ui-legend\"> key (see docs/vega.md). For a frozen/print chart: hand-author an inline <svg> using the --chart-N palette tokens for fills. The --chart-value inline knob is gone; --chart-color/--chart-pattern remain on .ui-legend__swatch."
+          "note": "No 1:1 class mapping — the renderer is removed. For a real chart: import '@ponchia/ui/vega', pass brontoVegaConfig(theme) to vega-embed, and place the result in a <figure class=\"ui-report__figure\"> with a <figcaption class=\"ui-report__caption\"> and a <ul class=\"ui-legend\"> key (see docs/vega.md). For a frozen/print chart: hand-author an inline <svg> using the --chart-N palette tokens for fills. The --chart-value inline knob is gone; --chart-color/--chart-pattern remain on .ui-legend__swatch."
         }
       ],
-      "codemod": "No codemod \u2014 the .ui-chart* renderer has no replacement class. rg -l 'ui-chart\\\\b|ui-chart__' to find call sites, then rebuild each as a Vega-Lite chart (@ponchia/ui/vega) or a token-themed inline <svg>. See docs/vega.md."
+      "codemod": "No codemod — the .ui-chart* renderer has no replacement class. rg -l 'ui-chart\\\\b|ui-chart__' to find call sites, then rebuild each as a Vega-Lite chart (@ponchia/ui/vega) or a token-themed inline <svg>. See docs/vega.md."
     },
     {
       "from": "0.6",
@@ -205,6 +205,25 @@
         }
       ],
       "codemod": "See docs/migrations/0.9-to-0.10.md. Changes require consumer lifecycle and visual review; no blanket replacement is safe."
+    },
+    {
+      "from": "0.10",
+      "to": "0.11",
+      "summary": "Readable supporting typography and container-aware evidence layouts.",
+      "safe": [],
+      "manual": [
+        {
+          "old": "viewport-based figure/report layouts",
+          "new": "container-aware figure, decision-grid and actions layouts; intrinsic two-up comparisons",
+          "note": "Keep the documented wrappers, verify narrow parents on wide screens and review print. New inline-size containment can change intrinsic sizing."
+        },
+        {
+          "old": "uppercase mono explanatory labels and unconstrained superscript citations",
+          "new": "sentence-case sans supporting text and a citation size floor",
+          "note": "Review explicit consumer overrides by role, preserving intentional display and technical identifiers."
+        }
+      ],
+      "codemod": "No automatic rewrite: review complete consumer tasks and docs/migrations/0.10-to-0.11.md."
     }
   ]
 }

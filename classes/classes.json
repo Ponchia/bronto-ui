@@ -1,8 +1,8 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `groups[].base` is null for a parts-only namespace (no standalone base class — do NOT emit it). A modifier whose name contains `__` (e.g. `ui-spark__bar--pos`) attaches to THAT part, not the base host. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `behaviorAttributes` are the `data-bronto-*` wiring hooks the optional behaviors delegate on; `requiredAria` is the role/aria a generator must emit per component. `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 683,
-    "groups": 186
+    "classes": 695,
+    "groups": 187
   },
   "groups": {
     "ui-accordion": {
@@ -463,6 +463,23 @@
         "ui-diff__ln",
         "ui-diff__pane",
         "ui-diff__row"
+      ]
+    },
+    "ui-discussion": {
+      "base": "ui-discussion",
+      "modifiers": [],
+      "parts": [
+        "ui-discussion__actions",
+        "ui-discussion__composer",
+        "ui-discussion__header",
+        "ui-discussion__hint",
+        "ui-discussion__item",
+        "ui-discussion__list",
+        "ui-discussion__message",
+        "ui-discussion__messages",
+        "ui-discussion__meta",
+        "ui-discussion__quote",
+        "ui-discussion__state"
       ]
     },
     "ui-display": {
@@ -1799,6 +1816,18 @@
     "ui-diff__row--add",
     "ui-diff__row--context",
     "ui-diff__row--remove",
+    "ui-discussion",
+    "ui-discussion__actions",
+    "ui-discussion__composer",
+    "ui-discussion__header",
+    "ui-discussion__hint",
+    "ui-discussion__item",
+    "ui-discussion__list",
+    "ui-discussion__message",
+    "ui-discussion__messages",
+    "ui-discussion__meta",
+    "ui-discussion__quote",
+    "ui-discussion__state",
     "ui-display",
     "ui-divider",
     "ui-dot",
