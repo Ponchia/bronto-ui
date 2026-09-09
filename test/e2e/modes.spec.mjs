@@ -136,9 +136,13 @@ test('live dots preserve an explicit semantic tone across motion modes', async (
   expect(reduced.warningRingAnimation).toBe('none');
 
   await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
-  const forced = await read();
-  expect(forced.warningRingColor).toBe(forced.warningColor);
-  expect(forced.warningColor).not.toBe(forced.defaultColor);
+  // Emulation changes the media environment before every engine has repainted
+  // system colours. Wait for the rendered contract, retaining both assertions.
+  await expect(async () => {
+    const forced = await read();
+    expect(forced.warningRingColor).toBe(forced.warningColor);
+    expect(forced.warningColor).not.toBe(forced.defaultColor);
+  }).toPass({ timeout: 5000 });
 });
 
 test('print: chrome is hidden, content + link URLs are kept', async ({ page }) => {
