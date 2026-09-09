@@ -53,6 +53,7 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 
 - [reporting.md](./reporting.md) — the static, PDF-first report grammar **and the analytical toolbox available to a report**.
 - [figure.md](./figure.md) — reusable chart/diagram/media figure stage with overlay, key, and fallback-data slots.
+- [discussion.md](./discussion.md) — thread lists, quotations, messages and composers with host-owned state.
 - [annotations.md](./annotations.md) — SVG annotations (subject / connector / note), off-chart use, and the geometry helpers.
 - [legends.md](./legends.md) — standalone data keys / legends.
 - [mermaid.md](./mermaid.md) — theme Mermaid diagrams from bronto tokens, and annotate the rendered SVG.

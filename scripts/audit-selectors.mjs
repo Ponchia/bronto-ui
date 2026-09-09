@@ -27,6 +27,7 @@ const coreFiles = new Set([...CORE_BUNDLE].map((leaf) => `css/${leaf}.css`));
 
 const SELECTOR_OWNERS = [
   owner('app-shell', 'css/app.css', /^ui-app(?:-|$)/),
+  owner('discussion', 'css/discussion.css', /^ui-discussion(?:$|[-_])/),
   owner('annotations', 'css/annotations.css', /^ui-annotation(?:$|[-_])/),
   owner('bullet', 'css/bullet.css', /^ui-bullet(?:$|[-_])/),
   owner('clamp', 'css/clamp.css', /^ui-clamp(?:$|[-_])/),

@@ -28,6 +28,10 @@
 
 ### Added
 
+- Optional `discussion.css` with thread lists, quoted passages, messages and
+  composers. State and posting remain host-owned; includes a local interactive
+  specimen and a narrow-panel example.
+
 - A working service specimen with deterministic loading, empty, error and stale
   states, environment/search filtering, retry and native-dialog sample creation.
   Unavailable observations never retain an operational health claim. Product

@@ -4,5 +4,5 @@
   "rules": {
     "duplicates": "off"
   },
-  "entry": ["demo/service.js"]
+  "entry": ["demo/service.js", "demo/discussion.js"]
 }

@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 683 classes across 186 component groups
+- 695 classes across 187 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -486,6 +486,23 @@ each one matches a real selector in the stylesheet.
 | `cls.diffRowContext` | `ui-diff__row--context` | modifier |
 | `cls.diffRowRemove` | `ui-diff__row--remove` | modifier |
 | `cls.diffSplit` | `ui-diff--split` | modifier |
+
+### `.ui-discussion`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.discussion` | `ui-discussion` | base |
+| `cls.discussionActions` | `ui-discussion__actions` | part |
+| `cls.discussionComposer` | `ui-discussion__composer` | part |
+| `cls.discussionHeader` | `ui-discussion__header` | part |
+| `cls.discussionHint` | `ui-discussion__hint` | part |
+| `cls.discussionItem` | `ui-discussion__item` | part |
+| `cls.discussionList` | `ui-discussion__list` | part |
+| `cls.discussionMessage` | `ui-discussion__message` | part |
+| `cls.discussionMessages` | `ui-discussion__messages` | part |
+| `cls.discussionMeta` | `ui-discussion__meta` | part |
+| `cls.discussionQuote` | `ui-discussion__quote` | part |
+| `cls.discussionState` | `ui-discussion__state` | part |
 
 ### `.ui-display`
 
