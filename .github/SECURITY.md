@@ -8,8 +8,8 @@ the README).
 
 | Version | Supported |
 | ------- | --------- |
-| 0.13.x   | ✅        |
-| < 0.13   | ❌        |
+| 0.14.x   | ✅        |
+| < 0.14   | ❌        |
 
 ## Reporting a vulnerability
 
