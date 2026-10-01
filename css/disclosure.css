@@ -75,8 +75,8 @@
      distinction — colour stays the solid accent used by every other
      control's ring (the --focus-ring token wiring is decided globally,
      not per-component). */
-  outline: 2px solid var(--focus-ring);
-  outline-offset: -3px;
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: calc(-1.5 * var(--focus-ring-offset));
 }
 
 .ui-tabs__panel[hidden] {
@@ -216,8 +216,8 @@
 }
 
 .ui-segmented__option:has(input:focus-visible) {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: -2px;
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: calc(-1 * var(--focus-ring-offset));
 }
 
 @media (hover: hover) {
@@ -439,8 +439,8 @@
 }
 
 .ui-carousel__viewport:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: -2px;
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: calc(-1 * var(--focus-ring-offset));
 }
 
 .ui-carousel__slide {
@@ -519,8 +519,8 @@
 
 .ui-carousel__prev:focus-visible,
 .ui-carousel__next:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
 }
 
 /* Position counter ("3 / 12") — initCarousel fills the text; aria-live. */
@@ -584,8 +584,8 @@
 }
 
 .ui-carousel__thumb:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
 }
 
 @media (prefers-reduced-motion: reduce) {

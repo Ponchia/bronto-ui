@@ -308,6 +308,132 @@
   margin-block-start: var(--space-lg);
 }
 
+/* --- Blocks variant — the block editor's geometry ---
+   For a surface that is both read and edited, where the editor is a block
+   editor (BlockNote's model): the read view has to put every line where the
+   editor will draw it, or the text jumps when the surface switches mode.
+   Blocks carry a small padding instead of flow margins; headings a lead above
+   and a 1.6/1.3/1.15em scale at weight 600; lists a fixed marker column with
+   disc, circle and square; a task row the editor's checkbox geometry. The
+   measure is released: a block surface is as wide as its container. The
+   geometry is the editor's own px, exposed so a host can retune it. */
+
+.ui-prose--blocks {
+  --prose-measure: none;
+  --prose-block: 3px;
+  --prose-heading-lead: 18px;
+  --prose-list-column: 24px;
+
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.ui-prose--blocks > *,
+.ui-prose--blocks > * + *,
+.ui-prose--blocks > * + :is(h1, h2, h3, h4, h5, h6),
+.ui-prose--blocks li,
+.ui-prose--blocks li + li,
+.ui-prose--blocks li > *,
+.ui-prose--blocks :is(ul, ol) :is(ul, ol),
+.ui-prose--blocks blockquote > *,
+.ui-prose--blocks blockquote > * + * {
+  margin-block: 0;
+}
+
+.ui-prose--blocks > :not(ul, ol),
+.ui-prose--blocks li {
+  padding-block: var(--prose-block);
+}
+
+/* An item's own block ends before its nested list, as the editor nests it. */
+.ui-prose--blocks li:has(> :is(ul, ol)) {
+  padding-block-end: 0;
+}
+
+.ui-prose--blocks li > :is(ul, ol) {
+  padding-block-start: var(--prose-block);
+}
+
+.ui-prose--blocks :is(h1, h2, h3, h4, h5, h6) {
+  padding-block: var(--prose-heading-lead) var(--prose-block);
+  border: 0;
+  font-size: 1em;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.ui-prose--blocks h1 {
+  font-size: 1.6em;
+}
+
+.ui-prose--blocks h2 {
+  font-size: 1.3em;
+}
+
+.ui-prose--blocks h3 {
+  font-size: 1.15em;
+}
+
+.ui-prose--blocks :is(ul, ol) {
+  padding-inline-start: var(--prose-list-column);
+}
+
+.ui-prose--blocks ul {
+  list-style: disc;
+}
+
+.ui-prose--blocks ul ul {
+  list-style: circle;
+}
+
+.ui-prose--blocks ul ul ul {
+  list-style: square;
+}
+
+.ui-prose--blocks li::marker {
+  color: inherit;
+}
+
+/* A task row is the editor's: the checkbox centred in a hit area at the text
+   column, the text padded inside the block. A loose list may put the checkbox
+   in the item's paragraph rather than the item. */
+.ui-prose--blocks li:has(> input[type='checkbox'], > p > input[type='checkbox']) {
+  margin-inline-start: calc(-1 * var(--prose-list-column));
+  padding-block: 10px;
+  list-style: none;
+}
+
+.ui-prose--blocks :is(li, li > p):has(> input[type='checkbox']) {
+  display: flex;
+  align-items: flex-start;
+}
+
+.ui-prose--blocks :is(li, li > p) > input[type='checkbox'] {
+  flex: none;
+  inline-size: 20px;
+  block-size: 20px;
+  margin: 2px 6px 0;
+}
+
+@media (pointer: coarse) {
+  .ui-prose--blocks li:has(> input[type='checkbox'], > p > input[type='checkbox']) {
+    padding-block: 16px;
+  }
+
+  .ui-prose--blocks :is(li, li > p) > input[type='checkbox'] {
+    margin-inline: 12px;
+  }
+}
+
+/* A quote is one block: its text on the body's line, its rule at the column. */
+.ui-prose--blocks blockquote {
+  margin-inline: 0;
+}
+
+.ui-prose--blocks blockquote > * {
+  line-height: inherit;
+}
+
 /* ==========================================================================
    ui-quote — pull-quote with attribution. A long-form companion to
    .ui-prose (works inside it or standalone). Emphasis via scale + a

@@ -812,12 +812,11 @@
 
 /* --- Touch: comfortable hit targets on coarse pointers.
 
-   The floor is `--tap-target`, not a bare rem. Bronto's own base sets
-   `html { font-size: 0.9375rem }`, so the 2.9rem this family used to carry
-   resolved to 43.5px — half a pixel under the 44px WCAG 2.5.5 / platform-HIG
-   target, and under any host that shrinks the root further it drifted further
-   still. The token clamps in px against the rem so the standard holds however
-   the root is re-pointed. --- */
+   The floor is `--tap-target`, not a bare rem. Under a 15px root the 2.9rem
+   this family used to carry resolved to 43.5px — half a pixel under the 44px
+   WCAG 2.5.5 / platform-HIG target, and under any host that shrinks the root
+   further it drifted further still. The token clamps in px against the rem so
+   the standard holds however the root is re-pointed. --- */
 
 @media (pointer: coarse) {
   .ui-button {

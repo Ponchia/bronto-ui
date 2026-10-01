@@ -86,6 +86,7 @@ export function leafFiles() {
 export const EXTRA_LEAVES = [
   'skins.css',
   'dataviz.css',
+  'blocknote.css',
   'report.css',
   'figure.css',
   'annotations.css',

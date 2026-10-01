@@ -5,6 +5,44 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased — 0.13.0
+
+### Added
+
+- **`ui-prose--blocks`: prose on a block editor's geometry.** A read view that
+  must put every line where a block editor (BlockNote's model) draws it: 3px
+  block padding instead of flow margins, line-height 1.5, headings with an 18px
+  lead and a 1.6/1.3/1.15em scale at weight 600, a 24px list column with disc,
+  circle and square, and the editor's task-row geometry. The px are exposed as
+  `--prose-block`, `--prose-heading-lead` and `--prose-list-column`.
+  `recipes.prose({ blocks: true })` emits it.
+- **`css/blocknote.css`: BlockNote interop.** Maps BlockNote's `--bn-*` theme
+  variables (editor, menus, tooltips, side menu, selection, border, font,
+  radius) to bronto tokens, and its nine text highlights to the categorical
+  identity inks and tints, so the editor follows theme, skins, contrast and the
+  OLED surface. Import the unlayered build after BlockNote's stylesheet. See
+  [BlockNote interop](docs/interop/blocknote.md).
+- **Half spacing steps for dense tool chrome.** `--space-0-5`, `--space-0-75`,
+  `--space-1-5` and `--space-2-5` (2, 3, 6 and 10px at a 16px root), scaled by
+  the density presets with the rest of the scale.
+- **Workspace layers.** `--z-canvas`, `--z-chrome`, `--z-panel`, `--z-modal`,
+  `--z-menu`, `--z-tooltip` and `--z-navigation` name the stack of a tool drawn
+  over a canvas, aliased to the page layers where they mean the same.
+- **Zoom-aware hairlines and focus rings.** A host that scales bronto UI marks
+  the scaled element `[data-ui-zoom]` and sets `--ui-zoom`; inside it `--ui-px`
+  is one screen pixel and `--hairline`, `--focus-ring-width` and
+  `--focus-ring-offset` are re-declared in it.
+
+### Changed
+
+- Every bronto focus ring reads `--focus-ring-width` and `--focus-ring-offset`
+  instead of literal px. At the default zoom they are the same 2px, so nothing
+  moves; inside a `[data-ui-zoom]` surface a ring keeps its on-screen width.
+- The default bundle grows from 92.8 kB / 16.0 kB gzip to 95.8 kB / 16.6 kB:
+  1.9 kB is the block prose variant, the rest the new tokens and the focus-ring
+  variables. Notes are now the main reading surface, so block prose ships in
+  the core prose vocabulary rather than a leaf.
+
 ## 0.12.0 — 2026-10-01
 
 ### Changed
