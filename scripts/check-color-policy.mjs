@@ -160,7 +160,10 @@ const isDefinitionFile = (f) => f === 'tokens.css' || f === 'dataviz.css' || f.s
 // helpers (legend.css's .ui-legend swatches/ramps — the data key). It is exempt
 // from the charts-only leak check below, but stays under the raw-color scans —
 // so a stray raw hex is still caught (unlike a blanket definition-file exempt).
-const consumesChartTokens = (f) => f === 'legend.css';
+// blocknote.css maps an editor's text highlights (colours a person chose for a
+// span) onto the categorical identity tints and inks, the use ADR-0001 step 7
+// names for --cat-N.
+const consumesChartTokens = (f) => f === 'legend.css' || f === 'blocknote.css';
 const stripUrls = (s) => s.replace(/url\([^)]*\)/gi, 'url()');
 
 // A hex is neutral iff R==G==B (ignoring any alpha). Handles #rgb, #rgba,

@@ -241,6 +241,7 @@ export declare const cls: {
   readonly eyebrowSm: 'ui-eyebrow--sm';
   readonly prose: 'ui-prose';
   readonly proseCompact: 'ui-prose--compact';
+  readonly proseBlocks: 'ui-prose--blocks';
   readonly quote: 'ui-quote';
   readonly quoteCite: 'ui-quote__cite';
   readonly container: 'ui-container';
@@ -822,6 +823,7 @@ export interface AvatarOpts {
 }
 export interface ProseOpts {
   compact?: boolean;
+  blocks?: boolean;
 }
 export interface ContainerOpts {
   narrow?: boolean;

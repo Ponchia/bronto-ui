@@ -202,6 +202,18 @@
       "description": "Theme token. Light: `var(--accent)` · Dark: `var(--accent)`"
     },
     {
+      "name": "--focus-ring-offset",
+      "description": "Global scale token. Value: `2px`"
+    },
+    {
+      "name": "--focus-ring-width",
+      "description": "Global scale token. Value: `2px`"
+    },
+    {
+      "name": "--hairline",
+      "description": "Global scale token. Value: `1px`"
+    },
+    {
       "name": "--info",
       "description": "Theme token. Light: `#1f63c4` · Dark: `#6fb0e6`"
     },
@@ -284,6 +296,22 @@
     {
       "name": "--shadow-raised",
       "description": "Theme token. Light: `0 0 0 1px var(--line-strong)` · Dark: `0 0 0 1px var(--line-strong)`"
+    },
+    {
+      "name": "--space-0-5",
+      "description": "Global scale token. Value: `0.125rem`"
+    },
+    {
+      "name": "--space-0-75",
+      "description": "Global scale token. Value: `0.1875rem`"
+    },
+    {
+      "name": "--space-1-5",
+      "description": "Global scale token. Value: `0.375rem`"
+    },
+    {
+      "name": "--space-2-5",
+      "description": "Global scale token. Value: `0.625rem`"
     },
     {
       "name": "--space-2xl",
@@ -410,6 +438,14 @@
       "description": "Global scale token. Value: `0.22em`"
     },
     {
+      "name": "--ui-px",
+      "description": "Global scale token. Value: `1px`"
+    },
+    {
+      "name": "--ui-zoom",
+      "description": "Global scale token. Value: `1`"
+    },
+    {
       "name": "--warning",
       "description": "Theme token. Light: `#806414` · Dark: `#d8bd72`"
     },
@@ -422,8 +458,32 @@
       "description": "Global scale token. Value: `0`"
     },
     {
+      "name": "--z-canvas",
+      "description": "Global scale token. Value: `var(--z-base)`"
+    },
+    {
+      "name": "--z-chrome",
+      "description": "Global scale token. Value: `var(--z-sticky)`"
+    },
+    {
+      "name": "--z-menu",
+      "description": "Global scale token. Value: `var(--z-popover)`"
+    },
+    {
+      "name": "--z-modal",
+      "description": "Global scale token. Value: `var(--z-overlay)`"
+    },
+    {
+      "name": "--z-navigation",
+      "description": "Global scale token. Value: `80`"
+    },
+    {
       "name": "--z-overlay",
       "description": "Global scale token. Value: `30`"
+    },
+    {
+      "name": "--z-panel",
+      "description": "Global scale token. Value: `25`"
     },
     {
       "name": "--z-popover",
@@ -440,6 +500,10 @@
     {
       "name": "--z-toast",
       "description": "Global scale token. Value: `60`"
+    },
+    {
+      "name": "--z-tooltip",
+      "description": "Global scale token. Value: `70`"
     }
   ],
   "atDirectives": [
