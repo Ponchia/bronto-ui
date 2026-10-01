@@ -309,9 +309,11 @@ you have, so the one-accent discipline holds.
 
 ## Data-viz palette
 
-Opt-in Tier-4 chart colours for dashboards — **charts only, never UI chrome**
-(a build gate fails on `var(--chart-*)` in component CSS), and never in the
-default bundle.
+Opt-in Tier-4 categorical colour — **never UI chrome** (a build gate fails on
+`var(--chart-*)` or `var(--cat-*)` in component CSS), and never in the default
+bundle. One leaf carries eight fixed hues in two namespaces: `--chart-*` for
+data-viz series and ramps, and `--cat-*` for categorical **identity** — a tag,
+a participant, a user-chosen tint.
 
 ```html
 <link rel="stylesheet" href="@ponchia/ui/css/dataviz.css" />
@@ -320,28 +322,36 @@ default bundle.
 ```js
 // resolved hex for canvas / SVG / Chart.js etc.
 import charts from '@ponchia/ui/charts.json' with { type: 'json' };
-const series = charts.dark.categorical; // ['#ff3b41', '#e69f00', …] — series 0 = accent
+const series = charts.dark.categorical; // ['#3987e5', '#d95926', …] — blue first
 ```
 
-- **Categorical `--chart-1..8`** — hybrid accent-led: series 1 is the live
-  `var(--accent)` (your brand leads), series 2–8 are the Okabe-Ito
-  colourblind-safe set. The set is **gated for mutual distinguishability under
-  normal + simulated protanopia/deuteranopia/tritanopia** (OKLab ΔE).
-  **Caveat — the CVD gate measures the SHIPPED default accent.** Series 1 is
-  `var(--accent)`, so if you re-skin `--accent` you change series 1 but not the
-  Okabe-Ito 2–8, and the gate never re-checks your custom hue: a brand close to
-  series 3's orange can collide for a deuteranope. If a re-brand drives data-viz,
-  re-verify your accent against the set, or pin `--chart-1` to a fixed Okabe-Ito
-  value (`--chart-1: #0072b2`) and let your brand lead the UI only.
-- **Sequential `--chart-seq-1..6`** — single-hue light→dark, for
-  heatmaps/intensity. **Diverging `--chart-div-1..7`** — blue↔neutral↔orange,
-  for ±/gains-losses.
+For a page that switches theme, skin, contrast or the OLED surface at runtime,
+read the live values with [`@ponchia/ui/renderer`](renderer.md) instead of the
+static JSON.
+
+- **Categorical `--chart-1..8` = `--cat-1..8`** — blue, orange, aqua, yellow,
+  magenta, green, violet, red, in that fixed order (`CATEGORICAL_HUES` names
+  them). No slot is the accent, so an ordinary first series never reads as an
+  alert. `check:charts` measures each theme against the panel, the page and
+  the OLED surfaces: OKLCH lightness inside the theme's band, chroma above the
+  grey floor, adjacent slots separated under simulated protanopia and
+  deuteranopia and in normal vision. Slots under 3:1 against a surface are
+  reported in the gate output; relief is the pattern fill or a direct label.
+  Any two slots can meet in a scatter or a map, so pair colour with pattern
+  there.
+- **Identity `--cat-N-tint` / `--cat-N-ink`** — a 16% wash of the hue over
+  `--panel` (it follows a skin's or OLED's panel) and a text colour that holds
+  4.5:1 on the panel, the page and its own tint. Use them for a tag chip, a
+  participant's name, or a user-chosen highlight — never for status.
+- **Sequential `--chart-seq-1..5`** — one blue hue; step 1 sits nearest the
+  surface (pale in light, deep in dark), for heatmaps/intensity. **Diverging
+  `--chart-div-1..7`** — blue↔neutral↔orange, for ±/gains-losses.
 - **Pattern fills `--chart-pattern-1..8`** — a dot-matrix second channel so
   colour is never the sole signal (WCAG 1.4.1). Pair colour N with pattern N:
   `background: var(--chart-2); background-image: var(--chart-pattern-2); background-size: var(--chart-pattern-size); --chart-pattern-ink: rgb(0 0 0 / .34);`
 - A chart colour's WCAG ratio vs the background is published **advisory** in
-  [contrast.md](contrast.md) (a fill is not body text) — pick a darker series
-  for thin lines/points, or lean on the pattern.
+  [contrast.md](contrast.md) (a fill is not body text) — for thin lines or
+  points use the slot's `--cat-N-ink`, or lean on the pattern.
 
 ## Accessibility markup contracts
 

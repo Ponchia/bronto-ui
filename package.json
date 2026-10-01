@@ -58,6 +58,7 @@
     "schemas",
     "annotations",
     "connectors",
+    "renderer",
     "shiki",
     "llms.txt",
     "CHANGELOG.md",
@@ -82,6 +83,7 @@
     "docs/legends.md",
     "docs/marks.md",
     "docs/connectors.md",
+    "docs/renderer.md",
     "docs/spotlight.md",
     "docs/crosshair.md",
     "docs/selection.md",
@@ -119,7 +121,8 @@
     "docs/adr/0005-productive-tools-and-editorial-reports.md",
     "docs/migrations/0.9-to-0.10.md",
     "docs/adr/0006-trusted-publishing.md",
-    "docs/migrations/0.10-to-0.11.md"
+    "docs/migrations/0.10-to-0.11.md",
+    "docs/migrations/0.11-to-0.12.md"
   ],
   "style": "./dist/bronto.css",
   "scripts": {
@@ -364,6 +367,7 @@
     "./docs/legends.md": "./docs/legends.md",
     "./docs/marks.md": "./docs/marks.md",
     "./docs/connectors.md": "./docs/connectors.md",
+    "./docs/renderer.md": "./docs/renderer.md",
     "./docs/spotlight.md": "./docs/spotlight.md",
     "./docs/crosshair.md": "./docs/crosshair.md",
     "./docs/selection.md": "./docs/selection.md",
@@ -500,6 +504,10 @@
       "types": "./connectors/index.d.ts",
       "default": "./connectors/index.js"
     },
+    "./renderer": {
+      "types": "./renderer/index.d.ts",
+      "default": "./renderer/index.js"
+    },
     "./skins": {
       "types": "./tokens/skins.d.ts",
       "default": "./tokens/skins.js"
@@ -530,6 +538,7 @@
     "./docs/migrations/0.9-to-0.10.md": "./docs/migrations/0.9-to-0.10.md",
     "./docs/adr/0006-trusted-publishing.md": "./docs/adr/0006-trusted-publishing.md",
     "./docs/migrations/0.10-to-0.11.md": "./docs/migrations/0.10-to-0.11.md",
+    "./docs/migrations/0.11-to-0.12.md": "./docs/migrations/0.11-to-0.12.md",
     "./css/discussion.css": "./dist/css/discussion.css",
     "./css/unlayered/discussion.css": "./css/discussion.css",
     "./docs/discussion.md": "./docs/discussion.md"

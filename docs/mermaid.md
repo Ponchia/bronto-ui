@@ -92,7 +92,7 @@ switch, re-`initialize` with the other palette and re-render.
 - **Chart-like** diagrams carry a categorical series palette — **pie**
   (`pie1`…`pie12`), **git** (`git0`…`git7`), and **user-journey**
   (`fillType0`…`fillType7`) are wired to the CVD-safe
-  [charts palette](./legends.md) (series 1 = the resolved accent).
+  [charts palette](./legends.md) (blue first; no slot is the accent).
 - **Structural** diagrams — flowchart, sequence, class, ER, state — use the
   monochrome node/edge/cluster grammar and spend the accent only on notes.
 - **Not themed: `gantt` and `timeline`.** Their colours come from

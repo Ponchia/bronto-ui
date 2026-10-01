@@ -2,44 +2,66 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import chartPalette, {
   charts,
-  ACCENT,
+  CATEGORICAL_HUES,
   CHART_CATEGORICAL,
   CHART_PATTERN_COUNT,
 } from '../tokens/charts.js';
-import { generated, resolveColor, PATTERNS } from '../scripts/gen-charts.mjs';
-import { deltaOklab, srgbToLinear, linearToSrgb, hexToRgb } from '../scripts/lib/oklch.mjs';
-import { buildResolved } from '../scripts/gen-resolved.mjs';
+import {
+  generated,
+  resolveColor,
+  PATTERNS,
+  inkSurfaces,
+  INK_CONTRAST,
+} from '../scripts/gen-charts.mjs';
+import {
+  contrastRatio,
+  deltaOklab,
+  srgbToLinear,
+  linearToSrgb,
+  hexToRgb,
+  rgbToOklch,
+} from '../scripts/lib/oklch.mjs';
 
 test('default export is the public chart palette map', () => {
   assert.equal(chartPalette, charts);
 });
 
-test('categorical has 8 series and series 1 is the live accent, both themes', () => {
+test('categorical has 8 named hues in fixed order, both themes, and no slot is the accent', () => {
+  assert.deepEqual(
+    [...CATEGORICAL_HUES],
+    ['blue', 'orange', 'aqua', 'yellow', 'magenta', 'green', 'violet', 'red'],
+  );
   for (const theme of ['light', 'dark']) {
     assert.equal(charts[theme].categorical.length, CHART_CATEGORICAL);
-    assert.equal(charts[theme].categorical[0], ACCENT);
+    for (const v of charts[theme].categorical) assert.match(v, /^#[0-9a-f]{6}$/);
+    assert.ok(!charts[theme].categorical.includes('var(--accent)'));
   }
   assert.equal(CHART_CATEGORICAL, 8);
   assert.equal(PATTERNS.length, CHART_PATTERN_COUNT);
 });
 
-test('series 1 resolves to the theme accent', () => {
-  const R = buildResolved();
-  assert.equal(resolveColor(ACCENT, 'light'), R.light['--accent']);
-  assert.equal(resolveColor(ACCENT, 'dark'), R.dark['--accent']);
-});
-
-test('sequential ramps are monotonic in OKLCH lightness', () => {
-  const L = (s) => Number.parseFloat(/oklch\(\s*([\d.]+)%/.exec(s)[1]);
+test('sequential ramps are one hue and monotonic in OKLCH lightness', () => {
   for (const theme of ['light', 'dark']) {
-    const ls = charts[theme].sequential.map(L);
+    const ls = charts[theme].sequential.map((h) => rgbToOklch(hexToRgb(h)).L);
     const mono =
       ls.every((l, i) => i === 0 || l > ls[i - 1]) || ls.every((l, i) => i === 0 || l < ls[i - 1]);
     assert.ok(mono, `${theme} sequential not monotonic: ${ls.join(',')}`);
   }
 });
 
-test('categorical series stay distinguishable under simulated colourblindness', () => {
+test('every --cat-N-ink holds 4.5:1 on each surface and on its own tint', () => {
+  const json = JSON.parse(generated['tokens/charts.json']);
+  for (const theme of ['light', 'dark'])
+    json[theme].ink.forEach((ink, i) => {
+      for (const ground of [...inkSurfaces(theme), json[theme].tint[i]])
+        assert.ok(
+          contrastRatio(hexToRgb(ink), hexToRgb(ground)) >= INK_CONTRAST,
+          `${theme} ink ${i + 1} on ${ground}`,
+        );
+    });
+});
+
+test('adjacent categorical series stay distinguishable under simulated colourblindness', () => {
   // Machado 2009 severity 1.0, linear sRGB.
   const CVD = {
     protan: [
@@ -68,30 +90,39 @@ test('categorical series stay distinguishable under simulated colourblindness', 
       Math.max(0, Math.min(255, delin(m[i][0] * r + m[i][1] * g + m[i][2] * b))),
     );
   };
+  // Adjacent pairs: the order is fixed, so these are the series a legend and a
+  // stacked mark put side by side (all-pairs is reported by check:charts).
   for (const theme of ['light', 'dark']) {
     const cat = charts[theme].categorical.map((v) => hexToRgb(resolveColor(v, theme)));
-    for (const vision of ['normal', 'protan', 'deutan', 'tritan']) {
-      const s = cat.map((c) => sim(c, vision));
-      for (let i = 0; i < s.length; i++)
-        for (let j = i + 1; j < s.length; j++)
-          assert.ok(
-            deltaOklab(s[i], s[j]) >= 0.05,
-            `${theme}/${vision}: series ${i + 1}&${j + 1} too close`,
-          );
+    for (let i = 0; i + 1 < cat.length; i++) {
+      for (const vision of ['protan', 'deutan'])
+        assert.ok(
+          deltaOklab(sim(cat[i], vision), sim(cat[i + 1], vision)) * 100 >= 6,
+          `${theme}/${vision}: series ${i + 1}&${i + 2} too close`,
+        );
+      assert.ok(
+        deltaOklab(cat[i], cat[i + 1]) * 100 >= 15,
+        `${theme}/normal: series ${i + 1}&${i + 2} too close`,
+      );
     }
   }
 });
 
-test('generated charts.json carries 8 resolved hex categorical per theme', () => {
+test('generated charts.json carries 8 resolved hex categorical, tints and inks per theme', () => {
   const json = JSON.parse(generated['tokens/charts.json']);
-  for (const theme of ['light', 'dark']) {
-    assert.equal(json[theme].categorical.length, 8);
-    for (const c of json[theme].categorical) assert.match(c, /^#[0-9a-f]{6}$/);
-  }
+  assert.deepEqual(json.hues, [...CATEGORICAL_HUES]);
+  for (const theme of ['light', 'dark'])
+    for (const set of ['categorical', 'tint', 'ink']) {
+      assert.equal(json[theme][set].length, 8);
+      for (const c of json[theme][set]) assert.match(c, /^#[0-9a-f]{6}$/);
+    }
 });
 
-test('css/dataviz.css is opt-in (defines --chart-* on :root, not imported by core)', () => {
+test('css/dataviz.css defines the identity and series namespaces on :root', () => {
   const css = generated['css/dataviz.css'];
-  assert.match(css, /:root\s*\{[\s\S]*--chart-1:/);
+  assert.match(css, /:root\s*\{[\s\S]*--cat-1: #2a78d6;/);
+  assert.match(css, /--cat-1-tint: color-mix\(in oklch, var\(--cat-1\) 16%, var\(--panel\)\);/);
+  assert.match(css, /--cat-1-ink: #[0-9a-f]{6};/);
+  assert.match(css, /--chart-1: var\(--cat-1\);/);
   assert.match(css, /--chart-pattern-1:/);
 });

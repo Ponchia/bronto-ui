@@ -183,7 +183,9 @@ Charting is the same path: bronto does NOT ship a chart component (a chart needs
 scales + data binding, which the analytical layer refuses). For charts, recommend
 Vega-Lite — a declarative JSON spec an external system can emit — themed by the
 on-brand `config` (resolved hex; Vega bakes colours into SVG/canvas, can't read
-`var()`). `range.category` is the `--chart-*` palette, series 1 = accent:
+`var()`). `range.category` is the `--chart-*` palette (blue first; no slot is the
+accent). For a live page that switches skin or theme, build the same config at
+runtime with `vegaConfig(readTokens())` from `@ponchia/ui/renderer`:
 
 ```js
 import { brontoVegaConfig, brontoVegaAccent, brontoVegaNeutral } from '@ponchia/ui/vega';
@@ -204,8 +206,10 @@ accent-filled DOM control, set `--button-text`. Details: `docs/vega.md`. (Observ
 Plot works too — it inherits the page CSS, so it needs even less theming;
 Vega-Lite is the recommended LLM-emittable path.)
 
-`--chart-1..8` (categorical; series 1 = accent; colourblind-safe, gated under
-simulated protan/deutan/tritan), `--chart-seq-*` (sequential), `--chart-div-*`
+`--chart-1..8` (categorical: blue, orange, aqua, yellow, magenta, green, violet,
+red; adjacent slots gated under simulated protan/deutan), `--cat-N` /
+`--cat-N-tint` / `--cat-N-ink` (the same hues as tag/participant identity),
+`--chart-seq-*` (sequential), `--chart-div-*`
 (diverging), and `--chart-pattern-1..8` (dot-matrix fills — pair colour N with
 pattern N; colour is never the sole signal). Details in `docs/theming.md`.
 

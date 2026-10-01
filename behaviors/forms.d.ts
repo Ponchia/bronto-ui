@@ -37,7 +37,7 @@ export type FormValidationOpts = {
     /**
      * Event-delegation root; default: `document`.
      */
-    root?: Document | Element | null | undefined;
+    root?: Element | Document | null | undefined;
     /**
      * Localized validation-summary title. A summary/form
      * `data-bronto-error-summary-title` attribute overrides it, and an authored

@@ -584,18 +584,22 @@ phosphor-green | e-ink"` — a **root-level** colorway (apply on `<html>`, like
 
 `@ponchia/ui/css/dataviz.css` (opt-in) adds a Tier-4 chart palette for
 dashboards: `--chart-1..8` (categorical), `--chart-seq-*` (sequential),
-`--chart-div-*` (diverging), and `--chart-pattern-1..8` (dot-matrix fills).
+`--chart-div-*` (diverging), and `--chart-pattern-1..8` (dot-matrix fills), plus
+the same eight hues as categorical identity: `--cat-N`, `--cat-N-tint` and
+`--cat-N-ink` for tags, participants and user-chosen tints.
 
-- **Use it for charts only.** These are not UI tokens — a build gate fails if
-  `var(--chart-*)` appears in component CSS. Style buttons/badges with the
-  accent/status tiers, not chart colours.
-- **Series 1 is the accent**, so your brand leads the palette; series 2–8 are a
-  colourblind-safe set (gated for distinctness under protan/deutan/tritan).
+- **Use it for categories, never for chrome or status.** A build gate fails if
+  `var(--chart-*)` or `var(--cat-*)` appears in component CSS. Style buttons
+  and badges with the accent/status tiers.
+- **No slot is the accent.** The order is fixed (blue, orange, aqua, yellow,
+  magenta, green, violet, red) and adjacent slots are gated for separation
+  under simulated protanopia/deuteranopia and in normal vision.
 - **Always pair colour with pattern** (`--chart-pattern-N`) and/or a direct
   label — never colour alone (WCAG 1.4.1):
   `background: var(--chart-3); background-image: var(--chart-pattern-3); background-size: var(--chart-pattern-size);`
 - **In JS** (Chart.js, canvas, SVG): import resolved hex from
-  `@ponchia/ui/charts.json` (`{ light, dark }`, series 1 = the resolved accent).
+  `@ponchia/ui/charts.json` (`{ hues, light, dark }`), or read the live page
+  with [`@ponchia/ui/renderer`](renderer.md) when it can change skin or theme.
   Cap a chart at ~8 series. Full detail in [theming.md](theming.md) →
   "Data-viz palette".
 

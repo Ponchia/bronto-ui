@@ -8,9 +8,12 @@
  *  3. PARITY — light and dark expose the identical leaf-path set.
  *  4. RESOLVABILITY — no value contains an unresolved `var(...)` (Vega bakes
  *     colours into the SVG/canvas scene and cannot read CSS vars), every
- *     colour-valued slot is a real hex/rgb(a) colour, and every `range.*` ramp is
- *     a non-empty array of resolved colours. This is what makes "theme Vega from
- *     bronto tokens" a backed claim rather than an assertion.
+ *     colour-valued slot (`background`, `*color`/`*Color`, `*fill`, `*stroke`)
+ *     is a real hex/rgb(a) colour — `view.stroke` may be null, the frameless
+ *     view — and every `range.*` ramp is a non-empty array of resolved colours.
+ *     Typographic and layout slots (sizes, weights, angles) are numbers or
+ *     keywords. This is what makes "theme Vega from bronto tokens" a backed
+ *     claim rather than an assertion.
  *
  * Structural only — it does NOT render with Vega, so the `check` gate takes on no
  * Vega dependency. The headless render-probe (test/vega-render.test.mjs) proves
@@ -45,6 +48,9 @@ function leaves(obj, prefix = '') {
   return out;
 }
 
+/** A slot whose value Vega paints as a colour. */
+const isColourPath = (path) => /(?:^|\.)(?:background|color|fill|stroke)$|Color$/.test(path);
+
 // --- 2/3/4. Coverage, parity, resolvability ---------------------------------
 const themes = JSON.parse(readFileSync(resolve(root, 'tokens/vega.json'), 'utf8'));
 const pathsOf = (t) =>
@@ -71,6 +77,14 @@ for (const theme of ['light', 'dark']) {
     if (!(path in flat)) errors.push(`${theme}: missing required config slot "${path}"`);
 
   for (const [path, val] of Object.entries(flat)) {
+    if (path === 'view.stroke' && val === null) continue;
+    if (!isColourPath(path) && !isFontPath(path) && !Array.isArray(val)) {
+      if (typeof val === 'string' && val.includes('var('))
+        errors.push(`${theme}.${path}: unresolved "${val}" — Vega cannot read var()`);
+      else if (!['number', 'boolean', 'string'].includes(typeof val))
+        errors.push(`${theme}.${path}: "${val}" is not a number or keyword`);
+      continue;
+    }
     if (isFontPath(path)) {
       if (typeof val !== 'string' || val.includes('var('))
         errors.push(`${theme}.${path}: font "${val}" must be a resolved string with no var()`);

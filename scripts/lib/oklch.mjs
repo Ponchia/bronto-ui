@@ -132,7 +132,7 @@ export function deltaOklab(rgb1, rgb2) {
 }
 
 /** sRGB [r,g,b] (0-255) → OKLCH { L, C, H(deg), achromatic }. */
-function rgbToOklch(rgb) {
+export function rgbToOklch(rgb) {
   const [L, a, b] = rgbToOklab(rgb);
   const C = Math.hypot(a, b);
   // A near-neutral's hue is "powerless" in CSS color-mix (the chromatic
@@ -142,7 +142,7 @@ function rgbToOklch(rgb) {
 }
 
 /** OKLCH (L, C, H deg) → sRGB [r,g,b] (0-255), clamped to gamut (no throw). */
-function oklchToRgbClamp(L, C, H) {
+export function oklchToRgbClamp(L, C, H) {
   const hr = (H * Math.PI) / 180;
   const a = C * Math.cos(hr);
   const b = C * Math.sin(hr);
@@ -178,4 +178,17 @@ export function mixOklch(rgbA, rgbB, wA, wB) {
     H = (a.H + d * wB + 360) % 360;
   }
   return oklchToRgbClamp(L, C, H);
+}
+
+/** WCAG 2.x relative luminance of an sRGB [r,g,b] (0-255). */
+function relativeLuminance([r, g, b]) {
+  const [R, G, B] = [r, g, b].map((c) => srgbToLinear(c / 255));
+  return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+}
+
+/** WCAG 2.x contrast ratio between two opaque sRGB colours. */
+export function contrastRatio(rgbA, rgbB) {
+  const a = relativeLuminance(rgbA);
+  const b = relativeLuminance(rgbB);
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 }

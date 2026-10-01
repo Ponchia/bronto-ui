@@ -224,6 +224,30 @@
         }
       ],
       "codemod": "No automatic rewrite: review complete consumer tasks and docs/migrations/0.10-to-0.11.md."
+    },
+    {
+      "from": "0.11",
+      "to": "0.12",
+      "summary": "Categorical palette with no accent slot, categorical identity tokens, runtime renderer tokens.",
+      "safe": [],
+      "manual": [
+        {
+          "old": "--chart-1 = var(--accent) / ACCENT from @ponchia/ui/charts",
+          "new": "fixed hues; paint an emphasised mark with var(--accent) or brontoVegaAccent(theme)",
+          "note": "ACCENT is removed. Charts that meant 'the brand' need an explicit accent encoding."
+        },
+        {
+          "old": "--chart-seq-6",
+          "new": "--chart-seq-1..5",
+          "note": "Re-map six-bin sequential figures to five bins."
+        },
+        {
+          "old": "brontoVegaConfig() framed plot, accent default mark",
+          "new": "frameless plot, first categorical hue as the default mark",
+          "note": "A spec's own config still wins; review dashboards that relied on the frame."
+        }
+      ],
+      "codemod": "No automatic rewrite: see docs/migrations/0.11-to-0.12.md."
     }
   ]
 }

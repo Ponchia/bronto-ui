@@ -113,18 +113,23 @@ colours are **baked into the output** and parsed by `d3-color`, which understand
 real hex/rgb but **not** `var()` (nor `oklch()`). So the config ships **resolved
 hex per theme**, projected from the same token source as
 [`tokens/resolved.json`](./architecture.md) / [`charts.json`](./theming.md).
-Re-call `brontoVegaConfig()` when the theme toggles and re-embed.
+Re-call `brontoVegaConfig()` when the theme toggles and re-embed. A page that
+switches skin, contrast or the OLED surface at runtime cannot be served by a
+per-theme snapshot: build the config from the live page with
+[`@ponchia/ui/renderer`](./renderer.md) — `vegaConfig(readTokens())` is the
+same mapping these files are generated from.
 
 ### What the slots paint
 
-The config keeps a chart **monochrome by default** — the rationed accent is the
-one chromatic default (series 1 / the lone mark), never the chrome:
+The chrome stays quiet and neutral; colour is spent on data. The plot has no
+frame (a chart already sits on a panel), and a single series takes the first
+categorical hue rather than the alert accent:
 
 | Slot | Paint | bronto token |
 | --- | --- | --- |
-| `background` | Chart canvas | `--bg` |
-| `view.stroke` | Plot frame | `--line` |
-| `mark.color` | Default / single-series mark | `--accent` |
+| `background` | Chart canvas | `--bg` (runtime default: transparent) |
+| `view.stroke` | Plot frame | none (`null`) |
+| `mark.color` | Default / single-series mark | `--chart-1` |
 | `rule.color` | Reference rules, annotations | `--line-strong` |
 | `axis.domainColor` · `tickColor` | Axis line · ticks | `--line-strong` |
 | `axis.gridColor` | Gridlines | `--line` |
@@ -132,7 +137,8 @@ one chromatic default (series 1 / the lone mark), never the chrome:
 | `text.color` | Free `text`/`label` marks | `--text` |
 | `legend.*` · `header.*` · `title.*` | Legend, facet headers, title | `--text-soft` / `--text` / `--text-dim` |
 | `*.font` / `*Font` | All text | `--sans` |
-| `range.category` | 8-series categorical palette | `charts.json` categorical (series 1 = accent) |
+| `rect`/`arc`/`area` `.stroke` | Gap between adjacent fills | `--panel` |
+| `range.category` | 8-series categorical palette | `charts.json` categorical (blue first) |
 | `range.ordinal` · `ramp` · `heatmap` | Single-hue sequential ramp | `charts.json` sequential |
 | `range.diverging` | − … neutral … + ramp | `charts.json` diverging |
 
@@ -143,14 +149,12 @@ series needs the redundant second channel, drive the mark's fill from the
 
 ### Spending the accent
 
-Series 1 of `range.category` resolves to the accent (per theme), so a single-series
-chart and the first category carry the accent automatically — baked into the
-generated `config`, so regenerate the config and re-render to change it (Vega output
-does not live-reskin from `--accent`). To emphasise one mark in a
-multi-series chart, paint just that mark with the accent and leave the rest
-neutral — the same "reserve the accent for the one thing a reader must not miss"
-rule the rest of the system follows. Two small helpers hand you the exact
-per-theme hexes so you never hard-code a palette array index:
+No categorical slot is the accent, so an ordinary chart never reads as an
+alert. To emphasise one mark, paint just that mark with the accent and leave
+the rest neutral — the same "reserve the accent for the one thing a reader must
+not miss" rule the rest of the system follows. Two small helpers hand you the
+exact per-theme hexes (baked into the generated files; Vega output does not
+live-reskin from `--accent`):
 
 ```js
 import { brontoVegaAccent, brontoVegaNeutral } from '@ponchia/ui/vega';
@@ -171,14 +175,11 @@ const spec = {
 };
 ```
 
-`brontoVegaAccent(theme)` is `range.category[0]` (the resolved accent) and
-`brontoVegaNeutral(theme)` is the last category (the quiet neutral); re-read both
-when the theme toggles. Prefer them over digging the hex out of
-`tokens/resolved.json` — they are guaranteed to match the palette the config
-already ships. In token terms the accent is `--chart-1` and the neutral is
-`--chart-8`, so a [legend](./legends.md#swatch-colour) for an accent-rationed
-chart keys those two series with `ui-legend__swatch--1` and
-`ui-legend__swatch--8` — the swatches mirror the marks exactly.
+`brontoVegaAccent(theme)` is the resolved `--accent` and `brontoVegaNeutral(theme)`
+the resolved `--text-dim`; re-read both when the theme toggles. A
+[legend](./legends.md#swatch-colour) for an accent-rationed chart keys the two
+with inline swatch colours (`style="--chart-color: …"`), not with categorical
+slots.
 
 ### Selecting the themed ramp in a spec
 

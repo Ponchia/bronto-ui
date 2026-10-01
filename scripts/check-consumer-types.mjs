@@ -75,7 +75,8 @@ import { renderGlyph, glyphCells, GLYPH_SIZE, type GlyphName } from '${pkg.name}
 import { connectRects, connectorPath, type ConnectRectsResult } from '${pkg.name}/connectors';
 import { annotationParts, notePlacement, type AnnotationPartsOptions } from '${pkg.name}/annotations';
 import { skins, type SkinName } from '${pkg.name}/skins';
-import chartPalette, { ACCENT, charts, CHART_CATEGORICAL, CHART_PATTERN_COUNT, type ChartTheme, type ChartTokenName } from '${pkg.name}/charts';
+import chartPalette, { CATEGORICAL_HUES, charts, CHART_CATEGORICAL, CHART_PATTERN_COUNT, type CategoricalHue, type ChartTheme, type ChartTokenName } from '${pkg.name}/charts';
+import { readTokens, vegaConfig as liveVegaConfig, xtermTheme, type RendererTokens } from '${pkg.name}/renderer';
 import mermaidTheme, { brontoMermaidTheme, mermaid, type MermaidThemeVariables } from '${pkg.name}/mermaid';
 import d2Vars, { brontoD2Overrides, brontoD2Vars, d2 as d2Themes, type D2ThemeOverrides } from '${pkg.name}/d2';
 import vegaConfig, { brontoVegaAccent, brontoVegaConfig, brontoVegaNeutral, vega as vegaThemes, type VegaConfig } from '${pkg.name}/vega';
@@ -125,7 +126,10 @@ const skinLabel: string = skins[skinName].label;
 const chartToken: ChartTokenName = '--chart-1';
 const chartColor: string = charts.light.categorical[0];
 const chartTheme: ChartTheme = chartPalette.dark;
-const chartAccent: 'var(--accent)' = ACCENT;
+const chartHue: CategoricalHue = CATEGORICAL_HUES[0];
+const live: RendererTokens = readTokens(undefined, { scheme: 'dark' });
+const liveVega: Record<string, any> = liveVegaConfig(live, { narrow: true });
+const liveTerm: Record<string, string> = xtermTheme(live);
 const chartCount: 8 = CHART_CATEGORICAL;
 const chartPatternCount: 8 = CHART_PATTERN_COUNT;
 const mermaidConfig = brontoMermaidTheme('dark');
@@ -170,7 +174,10 @@ void [
   chartToken,
   chartColor,
   chartTheme,
-  chartAccent,
+  chartHue,
+  live,
+  liveVega,
+  liveTerm,
   chartCount,
   chartPatternCount,
   mermaidConfig,

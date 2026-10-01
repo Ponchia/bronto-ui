@@ -188,7 +188,7 @@ are copied into consumer reports.
 | GitHub Actions workflow syntax and embedded shell snippets lint | `check:workflows` (`github-actionlint`) |
 | every shipped CSS leaf is classified as foundation or has explicit docs/demo/e2e ownership | `check-component-matrix.mjs` |
 | every public behavior export has explicit docs, unit-test, and browser-test ownership | `check-behavior-matrix.mjs` |
-| every public helper export in `classes`/`annotations`/`connectors`/`glyphs` has explicit docs, unit-test, and type-test ownership | `check-helper-matrix.mjs` |
+| every public helper export in `classes`/`annotations`/`connectors`/`renderer`/`glyphs` has explicit docs, unit-test, and type-test ownership | `check-helper-matrix.mjs` |
 | `@playwright/test` version ⇄ pinned Playwright container image ⇄ visual workflows/docs/local runner | `check-playwright-container.mjs` |
 | every shipped JSON schema is exported, documented, validates its public cookbook example, and rejects malformed sidecars | `check-schemas.mjs` |
 | packed public text contains no private terms, local paths, or secret-looking assignments | `check-public-hygiene.mjs` |
