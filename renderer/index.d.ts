@@ -41,11 +41,13 @@ export function readTokens(element?: Element, options?: {
     scheme?: "light" | "dark";
 }): RendererTokens;
 /**
- * Call `callback` with fresh tokens whenever something that can move them
- * changes: an attribute on the root (`data-theme`, `data-bronto-skin`,
- * `data-contrast`, `data-surface`, `class`, `style`) or the system colour
- * scheme or contrast preference. Calls are coalesced to one per animation
- * frame. Returns a function that stops observing.
+ * Call `callback` with fresh tokens whenever they change: after an attribute
+ * on the root changes (`data-theme`, `data-bronto-skin`, `data-contrast`,
+ * `data-surface`, `data-density`, `class`, `style`) and a token's value moved
+ * with it, or when the system colour scheme or contrast preference changes.
+ * A host that writes unrelated inline styles on the root every frame costs one
+ * computed-style read per frame, not a re-resolution. Calls are coalesced to
+ * one per animation frame. Returns a function that stops observing.
  * @param {(tokens: RendererTokens) => void} callback
  * @param {{ element?: Element, signal?: AbortSignal }} [options]
  * @returns {() => void}

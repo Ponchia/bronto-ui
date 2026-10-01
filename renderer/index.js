@@ -415,12 +415,58 @@ function countDeclared(raw, prefix) {
   return n;
 }
 
+const FINGERPRINTED = [
+  '--bg',
+  '--bg-elevated',
+  '--panel',
+  '--panel-strong',
+  '--text',
+  '--text-soft',
+  '--text-dim',
+  '--line',
+  '--line-strong',
+  '--accent',
+  '--accent-text',
+  '--on-accent',
+  '--focus-ring',
+  '--success',
+  '--warning',
+  '--danger',
+  '--info',
+  '--sans',
+  '--mono',
+];
+
 /**
- * Call `callback` with fresh tokens whenever something that can move them
- * changes: an attribute on the root (`data-theme`, `data-bronto-skin`,
- * `data-contrast`, `data-surface`, `class`, `style`) or the system colour
- * scheme or contrast preference. Calls are coalesced to one per animation
- * frame. Returns a function that stops observing.
+ * The unresolved strings `readTokens` starts from. Equal strings resolve to
+ * equal tokens, so comparing them costs no probe element.
+ * @param {Element} target
+ */
+function fingerprint(target) {
+  const style = getComputedStyle(target);
+  const raw = (name) => style.getPropertyValue(name).trim();
+  const series = (prefix) =>
+    Array.from({ length: countDeclared(raw, prefix) }, (_, i) => raw(`${prefix}${i + 1}`));
+  return [
+    ...FINGERPRINTED.map(raw),
+    ...series('--cat-'),
+    ...Array.from(
+      { length: CATEGORICAL },
+      (_, i) => `${raw(`--cat-${i + 1}-tint`)}|${raw(`--cat-${i + 1}-ink`)}`,
+    ),
+    ...series('--chart-seq-'),
+    ...series('--chart-div-'),
+  ].join('\n');
+}
+
+/**
+ * Call `callback` with fresh tokens whenever they change: after an attribute
+ * on the root changes (`data-theme`, `data-bronto-skin`, `data-contrast`,
+ * `data-surface`, `data-density`, `class`, `style`) and a token's value moved
+ * with it, or when the system colour scheme or contrast preference changes.
+ * A host that writes unrelated inline styles on the root every frame costs one
+ * computed-style read per frame, not a re-resolution. Calls are coalesced to
+ * one per animation frame. Returns a function that stops observing.
  * @param {(tokens: RendererTokens) => void} callback
  * @param {{ element?: Element, signal?: AbortSignal }} [options]
  * @returns {() => void}
@@ -429,17 +475,28 @@ export function observeTokens(callback, options = {}) {
   const doc = options.element?.ownerDocument ?? globalThis.document;
   if (!doc?.documentElement) return () => {};
   const view = doc.defaultView ?? globalThis;
+  const target = options.element ?? doc.documentElement;
+  let seen = fingerprint(target);
   let frame = 0;
+  let forced = false;
   let stopped = false;
-  const schedule = () => {
-    if (stopped || frame) return;
+  const schedule = (force) => {
+    if (stopped) return;
+    forced ||= force;
+    if (frame) return;
     const run = () => {
       frame = 0;
-      if (!stopped) callback(readTokens(options.element));
+      if (stopped) return;
+      const next = fingerprint(target);
+      // A media change can move a computed colour under an unchanged string.
+      if (next === seen && !forced) return;
+      seen = next;
+      forced = false;
+      callback(readTokens(options.element));
     };
     frame = view.requestAnimationFrame ? view.requestAnimationFrame(run) : (setTimeout(run, 16), 1);
   };
-  const observer = new MutationObserver(schedule);
+  const observer = new MutationObserver(() => schedule(false));
   observer.observe(doc.documentElement, {
     attributes: true,
     attributeFilter: [
@@ -455,11 +512,12 @@ export function observeTokens(callback, options = {}) {
   const queries = ['(prefers-color-scheme: dark)', '(prefers-contrast: more)']
     .map((q) => view.matchMedia?.(q))
     .filter(Boolean);
-  for (const q of queries) q.addEventListener('change', schedule);
+  const media = () => schedule(true);
+  for (const q of queries) q.addEventListener('change', media);
   const stop = () => {
     stopped = true;
     observer.disconnect();
-    for (const q of queries) q.removeEventListener('change', schedule);
+    for (const q of queries) q.removeEventListener('change', media);
     if (frame && view.cancelAnimationFrame) view.cancelAnimationFrame(frame);
   };
   options.signal?.addEventListener('abort', stop, { once: true });

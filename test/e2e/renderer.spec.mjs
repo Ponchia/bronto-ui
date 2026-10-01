@@ -25,7 +25,8 @@ async function openPage(page, attrs = {}) {
 
 const read = (page) =>
   page.evaluate(async () => {
-    const { readTokens } = await import('/renderer/index.js');
+    const rendererPath = `/renderer/${'index.js'}`;
+    const { readTokens } = await import(rendererPath);
     return readTokens();
   });
 
@@ -68,26 +69,37 @@ test('readTokens follows dark, the OLED surface and a skin without a snapshot', 
   expect(amber.accent).not.toBe(dark.accent);
 });
 
-test('observeTokens calls back once per change with the new tokens', async ({ page }) => {
+test('observeTokens calls back once per token change, not per root style write', async ({
+  page,
+}) => {
   await openPage(page, { 'data-theme': 'light' });
-  const schemes = await page.evaluate(async () => {
-    const { observeTokens } = await import('/renderer/index.js');
-    const seen = [];
-    const stop = observeTokens((t) => seen.push(t.scheme));
-    document.documentElement.setAttribute('data-theme', 'dark');
-    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+  const seen = await page.evaluate(async () => {
+    const rendererPath = `/renderer/${'index.js'}`;
+    const { observeTokens } = await import(rendererPath);
+    const root = document.documentElement;
+    const frames = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const calls = [];
+    const stop = observeTokens((t) => calls.push(`${t.scheme} ${t.accent}`));
+    // A host writing its own inline property (a canvas zoom, say) moves no token.
+    root.style.setProperty('--canvas-zoom', '2');
+    await frames();
+    root.setAttribute('data-theme', 'dark');
+    await frames();
+    root.style.setProperty('--accent', '#00ff00');
+    await frames();
     stop();
-    document.documentElement.setAttribute('data-theme', 'light');
-    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-    return seen;
+    root.setAttribute('data-theme', 'light');
+    await frames();
+    return calls;
   });
-  expect(schemes).toEqual(['dark']);
+  expect(seen).toEqual(['dark #ff3b41', 'dark #00ff00']);
 });
 
 test('resolveColor computes var() and color-mix() through the page', async ({ page }) => {
   await openPage(page, { 'data-theme': 'light' });
   const out = await page.evaluate(async () => {
-    const { resolveColor } = await import('/renderer/index.js');
+    const rendererPath = `/renderer/${'index.js'}`;
+    const { resolveColor } = await import(rendererPath);
     return {
       accent: resolveColor('var(--accent)'),
       mixed: resolveColor('color-mix(in oklch, var(--cat-1) 16%, var(--panel))'),

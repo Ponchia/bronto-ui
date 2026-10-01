@@ -45,7 +45,7 @@
   CSS. `readTokens()` resolves the bronto roles a renderer needs (surfaces,
   inks, lines, accent, status, fonts, categorical set and ramps) to `#rrggbb`
   or `rgba()` literals, following skins, contrast and the OLED surface.
-  `observeTokens()` calls back when any of them can change. `vegaConfig()` and
+  `observeTokens()` calls back when one of them changed. `vegaConfig()` and
   `xtermTheme()` map tokens to those renderers' configuration; `parseColor()`,
   `formatColor()` and `resolveColor()` convert any CSS colour, including
   `oklch()`, `lab()` and `color(display-p3 …)`.

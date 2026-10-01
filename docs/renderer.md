@@ -56,9 +56,15 @@ choose.
 
 `observeTokens(callback, { element, signal })` calls back with fresh tokens
 when the root's `data-theme`, `data-bronto-skin`, `data-contrast`,
-`data-surface`, `data-density`, `class` or `style` changes, or the system
-colour-scheme or contrast preference flips. Calls are coalesced to one per
-animation frame. It returns a stop function; an `AbortSignal` also stops it.
+`data-surface`, `data-density`, `class` or `style` changes and a token's value
+moved with it, or when the system colour-scheme or contrast preference flips.
+A host that writes its own inline properties on the root every frame (a canvas
+zoom, say) costs one computed-style read per frame and no callback. Calls are
+coalesced to one per animation frame. It returns a stop function; an
+`AbortSignal` also stops it.
+
+A host that already announces its own settled appearance change can read
+`readTokens()` on that event instead and skip the observer.
 
 ## Mappings
 
