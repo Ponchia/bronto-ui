@@ -129,7 +129,10 @@ you change CSS `--accent` later.
 
 - **Spacing** — override the `--space-2xs … --space-2xl` scale, or use a
   preset: `data-density="compact"` / `data-density="comfortable"` on any
-  element (defaults to the middle scale).
+  element (defaults to the middle scale). Dense tool chrome also gets four half
+  steps on the 0.25rem unit that the t-shirt scale skips: `--space-0-5`,
+  `--space-0-75`, `--space-1-5` and `--space-2-5` (2, 3, 6 and 10px at a 16px
+  root). The density presets scale them with the rest.
 
   **Read this before relying on the preset.** It re-points the `--space-*`
   scale, and only components whose padding is *expressed in that scale* move
@@ -188,6 +191,50 @@ you change CSS `--accent` later.
   contrast. If you re-brand to a light hue, verify native controls or
   set `accent-color` yourself on them — this is the one accent surface
   the framework can't tune for you.
+
+## A tool over a canvas: layers and zoom
+
+**Layers.** A page needs six stacking layers (`--z-base`, `--z-raised`,
+`--z-sticky`, `--z-overlay`, `--z-popover`, `--z-toast`). A tool drawn over a
+canvas needs named ones, lowest first:
+
+| Token | Value | For |
+| --- | --- | --- |
+| `--z-canvas` | `--z-base` | the canvas plane; its nodes stack locally inside it |
+| `--z-chrome` | `--z-sticky` | toolbars, headers and rails over the canvas |
+| `--z-panel` | 25 | docked and floating panels |
+| `--z-modal` | `--z-overlay` | dialogs and their scrim |
+| `--z-menu` | `--z-popover` | menus and popovers, including those a dialog opens |
+| `--z-toast` | 60 | toasts |
+| `--z-tooltip` | 70 | tooltips |
+| `--z-navigation` | 80 | presentation and tour chrome that drives the whole surface |
+
+Where a workspace layer means the same as a page layer it is an alias, so the
+two scales cannot disagree.
+
+**Zoom.** A host that draws bronto UI inside a scaled surface, such as a
+zoomable canvas, marks the scaled element with `data-ui-zoom` and sets
+`--ui-zoom` to its scale there:
+
+```css
+.canvas-viewport {
+  --ui-zoom: var(--my-canvas-zoom);
+}
+```
+
+```html
+<div class="canvas-viewport" data-ui-zoom>…</div>
+```
+
+Inside it `--ui-px` is one screen pixel (1px divided by the zoom, with the zoom
+floored at 0.15), and `--hairline`, `--focus-ring-width` and
+`--focus-ring-offset` are re-declared in it. Every bronto focus ring uses those
+tokens, so a control inside a zoomed-out canvas keeps a 2px ring on screen.
+Size your own canvas overlays the same way: `width: calc(1.5 * var(--ui-px))`.
+
+The scope is an attribute rather than an inherited value on purpose. A custom
+property that reads `--ui-zoom` resolves where it is declared, so a value set on
+`:root` could not follow a zoomed subtree.
 
 ## Beyond accent: full re-skins
 

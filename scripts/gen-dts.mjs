@@ -159,6 +159,7 @@ export interface AvatarOpts {
 }
 export interface ProseOpts {
   compact?: boolean;
+  blocks?: boolean;
 }
 export interface ContainerOpts {
   narrow?: boolean;

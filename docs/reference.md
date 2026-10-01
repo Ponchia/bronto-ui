@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 695 classes across 187 component groups
+- 696 classes across 187 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -1035,6 +1035,7 @@ each one matches a real selector in the stylesheet.
 | Registry key | Class | Kind |
 | --- | --- | --- |
 | `cls.prose` | `ui-prose` | base |
+| `cls.proseBlocks` | `ui-prose--blocks` | modifier |
 | `cls.proseCompact` | `ui-prose--compact` | modifier |
 
 ### `.ui-provenance`
@@ -1759,6 +1760,10 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--space-lg` | `1.35rem` |
 | `--space-xl` | `1.75rem` |
 | `--space-2xl` | `2.5rem` |
+| `--space-0-5` | `0.125rem` |
+| `--space-0-75` | `0.1875rem` |
+| `--space-1-5` | `0.375rem` |
+| `--space-2-5` | `0.625rem` |
 | `--tap-target` | `max(44px, 2.9rem)` |
 | `--tap-target-min` | `max(24px, 1.6rem)` |
 | `--safe-area-top` | `env(safe-area-inset-top, 0px)` |
@@ -1793,6 +1798,18 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--z-overlay` | `30` |
 | `--z-popover` | `50` |
 | `--z-toast` | `60` |
+| `--z-canvas` | `var(--z-base)` |
+| `--z-chrome` | `var(--z-sticky)` |
+| `--z-panel` | `25` |
+| `--z-modal` | `var(--z-overlay)` |
+| `--z-menu` | `var(--z-popover)` |
+| `--z-tooltip` | `70` |
+| `--z-navigation` | `80` |
+| `--ui-zoom` | `1` |
+| `--ui-px` | `1px` |
+| `--hairline` | `1px` |
+| `--focus-ring-width` | `2px` |
+| `--focus-ring-offset` | `2px` |
 | `--accent-1` | `color-mix(in oklch, var(--accent) 8%, var(--accent-ramp-end))` |
 | `--accent-2` | `color-mix(in oklch, var(--accent) 16%, var(--accent-ramp-end))` |
 | `--accent-3` | `color-mix(in oklch, var(--accent) 32%, var(--accent-ramp-end))` |
