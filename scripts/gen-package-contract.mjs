@@ -217,6 +217,13 @@ function cssExportClass(key) {
       'Generated layered roll-up of the analytical leaves. Not included in the default bundle.',
     ];
   }
+  if (key === './css/tool.css') {
+    return [
+      'CSS roll-up',
+      'Stable additive',
+      'Generated layered roll-up: the default bundle without the navigation, site, table and app leaves. Import it instead of the default bundle.',
+    ];
+  }
   if (key === './css/report-kit.css') {
     return [
       'Opt-in CSS roll-up',

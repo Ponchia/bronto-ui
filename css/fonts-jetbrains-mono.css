@@ -1,0 +1,49 @@
+/* ==========================================================================
+   fonts-jetbrains-mono — JetBrains Mono, the face `--mono` names first.
+
+   OPT-IN LEAF. Code, terminals, numbers in tables and readouts are `--mono`,
+   and a terminal measures its cells in it, so a fallback monospace changes
+   layout as well as looks. Import this leaf and JetBrains Mono is what
+   renders everywhere.
+
+     @import '@ponchia/ui/css/fonts-jetbrains-mono.css';
+
+   Four faces: regular and bold, upright and italic, the ones terminal output
+   uses. A browser downloads a face only when text on the page needs it.
+
+   JetBrains Mono 2.304 (JetBrains/JetBrainsMono, fonts/webfonts), unmodified.
+   License: SIL OFL 1.1, fonts/OFL-JetBrainsMono.txt. URLs are relative to
+   this file; a bundler rewrites them and emits the files.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/jetbrains-mono-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/jetbrains-mono-700.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/jetbrains-mono-400-italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/jetbrains-mono-700-italic.woff2') format('woff2');
+}

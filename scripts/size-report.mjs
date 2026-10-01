@@ -23,7 +23,11 @@ const bundles = buildBundles();
 const cssSizeByRel = new Map(
   Object.entries(bundles).map(([rel, content]) => [rel, cssSizes(content)]),
 );
-const cssRollups = new Set(['dist/css/analytical.css', 'dist/css/report-kit.css']);
+const cssRollups = new Set([
+  'dist/css/analytical.css',
+  'dist/css/report-kit.css',
+  'dist/css/tool.css',
+]);
 const addCssRow = (label, rel) => {
   const size = cssSizeByRel.get(rel);
   if (!size) throw new Error(`missing generated CSS bundle ${rel}`);
@@ -35,6 +39,7 @@ addCssRow('base CSS leaf', 'dist/css/base.css');
 addCssRow('analytical CSS roll-up', 'dist/css/analytical.css');
 addCssRow('report CSS leaf', 'dist/css/report.css');
 addCssRow('report kit CSS roll-up', 'dist/css/report-kit.css');
+addCssRow('tool CSS roll-up', 'dist/css/tool.css');
 
 const cssLeaves = [...cssSizeByRel.entries()].filter(
   ([rel]) => rel.startsWith('dist/css/') && !cssRollups.has(rel),

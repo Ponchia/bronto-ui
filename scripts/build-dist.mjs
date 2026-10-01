@@ -87,6 +87,8 @@ export const EXTRA_LEAVES = [
   'skins.css',
   'dataviz.css',
   'blocknote.css',
+  'fonts-inter.css',
+  'fonts-jetbrains-mono.css',
   'report.css',
   'figure.css',
   'annotations.css',
@@ -124,6 +126,8 @@ export function buildBundles() {
   out['dist/css/analytical.css'] = bundle('analytical.css');
   // Convenience roll-up for static reports: default bundle + one opt-in leaf.
   out['dist/css/report-kit.css'] = bundle('report-kit.css');
+  // The default bundle for a tool, without site and app chrome.
+  out['dist/css/tool.css'] = bundle('tool.css');
   return out;
 }
 

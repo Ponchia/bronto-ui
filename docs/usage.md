@@ -165,6 +165,17 @@ data-viz palette tokens. Always wrap it in a `ui-report__figure` with a caption,
 a `.ui-legend` key, and fallback data. Full LLM/static report cookbook:
 [reporting.md](reporting.md).
 
+## A tool: `@ponchia/ui/css/tool.css` instead of the default bundle
+
+An application that draws on its own surface (a canvas, an editor, a
+workbench) renders none of the site and app chrome: the theme toggle, the
+content-site shell, data tables and the admin service shell. Import
+`@ponchia/ui/css/tool.css` **instead of** `@ponchia/ui`. It is the default
+bundle in the same cascade order without the `navigation`, `site`, `table` and
+`app` leaves. Everything else, including the dot-matrix glyphs, motion and the
+feedback, overlay and disclosure primitives, is unchanged. Add one of the four
+back as its own leaf (`@ponchia/ui/css/table.css`) if a screen needs it.
+
 ## Buttons: variant and size
 
 - **primary is the bare `ui-button`.** There is no `--primary` and no

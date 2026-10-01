@@ -1,0 +1,29 @@
+/* ==========================================================================
+   tool — the default bundle for a tool, without site and app chrome.
+
+   Import it INSTEAD of the default bundle, not after it:
+
+     @import '@ponchia/ui/css/tool.css';
+
+   Everything in the default bundle except four leaves a tool on its own
+   canvas never renders: navigation (the theme toggle), site (the
+   marketing/content shell), table (data tables) and app (the admin service
+   shell). Tokens, fonts, base, motion, the dot-matrix and glyph primitives,
+   content, primitives, rows, forms, feedback, overlay and disclosure stay, in
+   the default bundle's cascade order. Need one of the four after all? Import
+   its leaf as well (`@ponchia/ui/css/table.css`).
+   ========================================================================== */
+@layer bronto;
+
+@import url('./tokens.css') layer(bronto);
+@import url('./fonts.css') layer(bronto);
+@import url('./base.css') layer(bronto);
+@import url('./motion.css') layer(bronto);
+@import url('./dots.css') layer(bronto);
+@import url('./content.css') layer(bronto);
+@import url('./primitives.css') layer(bronto);
+@import url('./row.css') layer(bronto);
+@import url('./forms.css') layer(bronto);
+@import url('./feedback.css') layer(bronto);
+@import url('./overlay.css') layer(bronto);
+@import url('./disclosure.css') layer(bronto);
