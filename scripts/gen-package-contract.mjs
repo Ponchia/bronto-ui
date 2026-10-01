@@ -18,16 +18,14 @@ import { isMain, repoRoot as root, writeGenerated } from './lib/emit.mjs';
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const coreLeaves = new Set(leafFiles());
 const optInLeaves = new Set(EXTRA_LEAVES);
+// The authored-JS directories are the ones dts:emit compiles, read from its
+// tsconfig, so the contract cannot name a directory the package no longer has.
 const jsDtsDirs = [
-  'behaviors',
-  'annotations',
-  'connectors',
-  'renderer',
-  'react',
-  'solid',
-  'qwik',
-  'svelte',
-  'vue',
+  ...new Set(
+    JSON.parse(readFileSync(resolve(root, 'tsconfig.dts.json'), 'utf8')).include.map(
+      (path) => path.split('/')[0],
+    ),
+  ),
 ];
 
 const code = (value) => `\`${String(value).replaceAll('`', '\\`')}\``;
