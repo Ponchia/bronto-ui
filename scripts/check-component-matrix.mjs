@@ -63,7 +63,9 @@ const FOUNDATIONS = [
   }),
   foundation('blocknote', {
     docs: ['docs/interop/blocknote.md'],
-    proofs: [{ file: 'test/blocknote.test.mjs', includes: ['maps every BlockNote colour variable'] }],
+    proofs: [
+      { file: 'test/blocknote.test.mjs', includes: ['maps every BlockNote colour variable'] },
+    ],
   }),
   foundation('dataviz', {
     docs: ['docs/usage.md'],

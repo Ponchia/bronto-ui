@@ -42,8 +42,10 @@ const GLOBAL_SECTIONS = {
   '--ease-standard': 'Motion — restrained, spring-tipped.',
   '--dot-size': 'Dot-matrix motif sizing.',
   '--z-base': 'Stacking-context scale (values match the prior literals — pure refactor).',
-  '--z-canvas': 'Workspace layers over a canvas, aliased to the page layer where they mean the same.',
-  '--ui-zoom': 'Zoom — --ui-px is one screen pixel; [data-ui-zoom] re-declares it for a scaled surface.',
+  '--z-canvas':
+    'Workspace layers over a canvas, aliased to the page layer where they mean the same.',
+  '--ui-zoom':
+    'Zoom — --ui-px is one screen pixel; [data-ui-zoom] re-declares it for a scaled surface.',
   '--accent-1':
     'Accent ramp — a stepped family for charts / data-viz, derived from the single --accent knob via OKLCH color-mix against a per-theme white/black endpoint.',
   '--surface-1': 'Neutral surface ramp (low → high contrast against --bg).',
