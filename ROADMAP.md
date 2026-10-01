@@ -9,6 +9,14 @@ The [changelog](CHANGELOG.md) records releases. The
 [stability contract](docs/stability.md) defines compatibility. The
 [composition recipes](docs/compositions.md) show the current design direction.
 
+## North star
+
+Objects on a canvas that explain themselves. The main consumer is a zoomable
+workspace whose surfaces are notes, visual models and decks, themed live across
+skins and read at any zoom. A report is one of those objects, printed, and stays
+a supported lane. A change earns its place when that workspace can delete its
+own code because of it.
+
 ## Surface is admitted by evidence
 
 A public addition needs a demonstrated task and evidence that the proposed
@@ -47,7 +55,13 @@ return to consumer work.
 
 1.0 is a compatibility promise, not a design milestone. Choose it after the
 new compositions and coordinated upgrades are proven. Do not freeze an awkward
-visual default merely to reach a version number.
+visual default merely to reach a version number. Not yet: 0.12 to 0.14 still
+reshape public tokens (the categorical palette, renderer tokens, note prose,
+density, layers and zoom).
+
+**Releases follow deletions.** Cut a release when a consumer change is ready to
+delete what it replaces, and land that deletion as the upgrade. A release that
+nothing is waiting to consume waits too.
 
 ## Boundaries
 
