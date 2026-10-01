@@ -46,7 +46,14 @@ test('the tool bundle drops the chrome selectors and keeps what a tool draws', (
       `${cls} should not be defined in the tool bundle`,
     );
   }
-  for (const cls of ['ui-button', 'ui-icon', 'ui-empty-state', 'ui-alert', 'ui-prose--blocks']) {
+  for (const cls of [
+    'ui-button',
+    'ui-icon',
+    'ui-empty-state',
+    'ui-alert',
+    'ui-prose--blocks',
+    'ui-meta',
+  ]) {
     assert.ok(new RegExp(`\\.${cls}\\b`).test(css), `${cls} should ship in the tool bundle`);
   }
   assert.ok(css.length < buildBundles()['dist/bronto.css'].length);

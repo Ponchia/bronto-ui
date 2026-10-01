@@ -340,34 +340,3 @@
   border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
   color: var(--text-soft);
 }
-
-/* --- Meta row — date · author · read-time, dot-separated --- */
-
-.ui-meta {
-  align-items: center;
-  color: var(--text-dim);
-  display: flex;
-  flex-wrap: wrap;
-  font-family: var(--mono);
-  font-size: var(--text-2xs);
-  gap: 0.55rem;
-  letter-spacing: var(--tracking-wide);
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  text-transform: uppercase;
-}
-
-.ui-meta__item {
-  align-items: center;
-  display: inline-flex;
-  gap: 0.55rem;
-}
-
-.ui-meta__item:not(:last-child)::after {
-  background: var(--line-strong);
-  border-radius: 50%;
-  block-size: 0.22rem;
-  content: '';
-  inline-size: 0.22rem;
-}

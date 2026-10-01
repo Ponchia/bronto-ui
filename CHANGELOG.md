@@ -5,6 +5,46 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased — 0.14.0
+
+### Added
+
+- **`initCommand({ match })` and `initCommand({ headless: true })`.** `match(row,
+  query)` replaces the substring test, so a row can match on keywords it does
+  not show, or stay visible for every query (a "Search everything" row inside
+  the list, where the keyboard reaches it). Headless mode leaves the result set
+  to the host: Bronto hides nothing and reads the list live, so the host can
+  render new rows on every keystroke without re-running `initCommand`, and
+  Bronto keeps ids, roles, the active row, the keyboard and the empty state's
+  live region. Cleanup restores rows added after init as well.
+- **`@ponchia/ui/css/tool.css`**, the default bundle for a tool, imported
+  instead of `@ponchia/ui`. It is core in core's order without the
+  `navigation`, `site`, `table` and `app` leaves, about 15 kB less.
+- **`css/fonts-inter.css` and `css/fonts-jetbrains-mono.css`**, opt-in leaves
+  that ship the faces `--sans` and `--mono` name first. Before, the package
+  shipped Doto only and every OS drew its own fallback. Inter 4.1 is one
+  variable face per style, and JetBrains Mono 2.304 comes in regular, bold and
+  their italics. Both are unmodified upstream files under the SIL OFL 1.1, with
+  their licenses in `fonts/`.
+- **`ui-body-state` and `ui-alert--band`** for node, panel and card bodies of
+  200–400px. A body state replaces the content: it fills the body and centres
+  one sentence. Use `ui.bodyState()` when empty or loading (`aria-busy` says
+  loading) and `ui.bodyState({ state: 'error' | 'stale' })` for a tone dot. A
+  band is a full-bleed, one-line alert above content the body still shows
+  (`ui.alert({ tone, band: true })`). See usage.md → "Small bodies".
+
+### Changed
+
+- The default bundle grows from 95.8 kB / 16.6 kB gzip to 97.1 kB / 16.8 kB,
+  for the body state, the band and `--alert-tone`. `css/tool.css` is 81.8 kB /
+  14.7 kB.
+- Each `ui-alert--<tone>` also sets `--alert-tone`, which the band variant
+  tints with.
+- `.ui-meta` (the date · author line) moved from `css/site.css` to
+  `css/content.css`, so the tool entry keeps it. The default bundle is
+  unchanged, since content follows site in its cascade. A direct import of
+  `css/site.css` that used `.ui-meta` also needs `css/content.css`.
+
 ## 0.13.0 — 2026-10-01
 
 ### Added

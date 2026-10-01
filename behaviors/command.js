@@ -53,6 +53,60 @@ const lowerForSearch = (value, locale) => {
  *   active.
  */
 
+const ITEM = '.ui-command__item, [role="option"]';
+
+/** The first non-blank text node under `el`, depth first. */
+function firstTextNode(el) {
+  for (const node of el.childNodes) {
+    if (node.nodeType === 3 && node.nodeValue.trim()) return node;
+    if (node.nodeType === 1) {
+      const child = firstTextNode(node);
+      if (child) return child;
+    }
+  }
+  return null;
+}
+
+/** Re-set an element's first text so a live region announces it again. */
+function refreshLiveText(el) {
+  const node = firstTextNode(el);
+  if (!node) return;
+  const text = node.nodeValue;
+  node.nodeValue = '';
+  node.nodeValue = text;
+}
+
+/**
+ * Records everything a palette changes the first time it is touched, so
+ * cleanup restores rows the host added after init as well.
+ */
+function changeRecorder() {
+  const touched = new Map();
+  const touch = (el, names) => {
+    let saved = touched.get(el);
+    if (!saved) {
+      saved = { hidden: el.hidden, active: el.classList.contains('is-active'), attrs: {} };
+      touched.set(el, saved);
+    }
+    for (const name of names) {
+      if (name in saved.attrs) continue;
+      saved.attrs[name] = { had: el.hasAttribute(name), value: el.getAttribute(name) };
+    }
+  };
+  const restore = () => {
+    for (const [el, saved] of touched) {
+      el.hidden = saved.hidden;
+      el.classList.toggle('is-active', saved.active);
+      for (const [name, attr] of Object.entries(saved.attrs)) {
+        if (attr.had) el.setAttribute(name, attr.value);
+        else el.removeAttribute(name);
+      }
+    }
+    touched.clear();
+  };
+  return { touch, restore };
+}
+
 /**
  * Command palette — filter + keyboard-navigate a DOM-authored command list.
  * The CSS shell (`.ui-command`) is opt-in; this wires the listbox behavior the
@@ -85,26 +139,6 @@ export function initCommand({ root, match, headless = false } = {}) {
   if (!host) return noop;
   const palettes = collectHosts(host, '[data-bronto-command]');
   const cleanups = [];
-  const ITEM = '.ui-command__item, [role="option"]';
-
-  const firstTextNode = (el) => {
-    for (const node of el.childNodes) {
-      if (node.nodeType === 3 && node.nodeValue.trim()) return node;
-      if (node.nodeType === 1) {
-        const child = firstTextNode(node);
-        if (child) return child;
-      }
-    }
-    return null;
-  };
-
-  const refreshLiveText = (el) => {
-    const node = firstTextNode(el);
-    if (!node) return;
-    const text = node.nodeValue;
-    node.nodeValue = '';
-    node.nodeValue = text;
-  };
 
   for (const box of palettes) {
     const input = box.querySelector('.ui-command__input, input');
@@ -119,35 +153,7 @@ export function initCommand({ root, match, headless = false } = {}) {
       headless ? [...list.querySelectorAll('.ui-command__group')] : initialGroups;
     const emptyNow = () => box.querySelector('.ui-command__empty');
 
-    // Everything this instance changes is recorded the first time it is
-    // touched, so cleanup restores rows the host added after init as well.
-    const touched = new Map();
-    const touch = (el, names) => {
-      let saved = touched.get(el);
-      if (!saved) {
-        saved = {
-          hidden: el.hidden,
-          active: el.classList.contains('is-active'),
-          attrs: {},
-        };
-        touched.set(el, saved);
-      }
-      for (const name of names) {
-        if (name in saved.attrs) continue;
-        saved.attrs[name] = { had: el.hasAttribute(name), value: el.getAttribute(name) };
-      }
-    };
-    const restore = () => {
-      for (const [el, saved] of touched) {
-        el.hidden = saved.hidden;
-        el.classList.toggle('is-active', saved.active);
-        for (const [name, attr] of Object.entries(saved.attrs)) {
-          if (attr.had) el.setAttribute(name, attr.value);
-          else el.removeAttribute(name);
-        }
-      }
-      touched.clear();
-    };
+    const { touch, restore } = changeRecorder();
 
     const optionIdBase = `bronto-cmd-opt-${nextFieldUid()}`;
     let nextOption = 0;

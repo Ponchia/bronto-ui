@@ -9,7 +9,7 @@ rendering of every class is the kitchen-sink demo:
 **<https://ponchia.github.io/bronto-ui/>**. Theming knobs and the token
 contract: [docs/theming.md](theming.md).
 
-- 696 classes across 187 component groups
+- 700 classes across 188 component groups
 - Import the typed registry: `import { cls, ui, cx } from '@ponchia/ui/classes'`
 - Validate markup as data (no JS/TS): `@ponchia/ui/classes.json` — the same
   vocabulary as language-neutral JSON (`groups`, `classes`, `states`,
@@ -46,6 +46,7 @@ each one matches a real selector in the stylesheet.
 | `cls.alertClose` | `ui-alert__close` | part |
 | `cls.alertTitle` | `ui-alert__title` | part |
 | `cls.alertAccent` | `ui-alert--accent` | modifier |
+| `cls.alertBand` | `ui-alert--band` | modifier |
 | `cls.alertDanger` | `ui-alert--danger` | modifier |
 | `cls.alertInfo` | `ui-alert--info` | modifier |
 | `cls.alertSuccess` | `ui-alert--success` | modifier |
@@ -219,6 +220,14 @@ each one matches a real selector in the stylesheet.
 | `cls.badgeMuted` | `ui-badge--muted` | modifier |
 | `cls.badgeSuccess` | `ui-badge--success` | modifier |
 | `cls.badgeWarning` | `ui-badge--warning` | modifier |
+
+### `.ui-body-state`
+
+| Registry key | Class | Kind |
+| --- | --- | --- |
+| `cls.bodyState` | `ui-body-state` | base |
+| `cls.bodyStateError` | `ui-body-state--error` | modifier |
+| `cls.bodyStateStale` | `ui-body-state--stale` | modifier |
 
 ### `.ui-bracket-note`
 

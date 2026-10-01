@@ -264,6 +264,50 @@ Without the slots, every empty surface in an app re-invents these three parts
 under a different name and they drift — one has a glyph, the next has two
 sentences at the same weight, a third is a bare `<p>`.
 
+## Small bodies: body state and band
+
+A node, panel or card body of 200–400px has four things to say besides its
+content: nothing is here, it is loading, it failed, it is out of date. A
+page-level empty state or a boxed alert spends a third of such a body on its
+frame, so a small body uses two compact shapes:
+
+- **`ui-body-state`** *replaces the content*. It fills the body and centres
+  one short sentence, with an optional `ui-empty-state__hint` or an action. Use
+  `ui.bodyState()` for empty and loading, the plain state (put
+  `aria-busy="true"` on a loading region, and a `ui-dotspinner` or `ui-skeleton`
+  inside if you like); `ui.bodyState({ state: 'error' | 'stale' })` leads with a
+  tone dot.
+- **`ui-alert--band`** *sits above content the body still shows*: a full-bleed
+  line of small type, the tone as a tint. Use `ui.alert({ tone, band: true })`
+  as the body's first child.
+
+| State | Content gone | Content still shown |
+| --- | --- | --- |
+| empty | `ui.bodyState()` | — |
+| loading | `ui.bodyState()` + `aria-busy` | `ui-skeleton` rows in place |
+| error | `ui.bodyState({ state: 'error' })` | `ui.alert({ tone: 'danger', band: true })` |
+| stale | `ui.bodyState({ state: 'stale' })` | `ui.alert({ tone: 'warning', band: true })` |
+
+```html
+<div class="node-body ui-cq">
+  <p class="ui-alert ui-alert--warning ui-alert--band" role="status">
+    Last synced 2 h ago
+  </p>
+  …the content, still readable…
+</div>
+
+<div class="node-body ui-cq">
+  <div class="ui-body-state ui-body-state--error" role="alert">
+    <p>Could not load the run</p>
+    <button class="ui-button ui-button--subtle ui-button--dense" type="button">Retry</button>
+  </div>
+</div>
+```
+
+Make the body a `ui-cq` container: below 15rem the body state tightens to the
+smallest type and padding. The body itself should be a flex column or have a
+height, so the state can fill it.
+
 ## Link vs link--cta
 
 Plain `ui-link` for in-flow links. `ui-link--cta` is the accent
