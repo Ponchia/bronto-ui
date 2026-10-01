@@ -66,8 +66,8 @@
 .ui-input:focus-visible,
 .ui-select:focus-visible,
 .ui-textarea:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 1px;
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: calc(var(--focus-ring-offset) / 2);
 }
 
 .ui-input:disabled,
@@ -292,8 +292,8 @@
 }
 
 .ui-range:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 4px;
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: calc(2 * var(--focus-ring-offset));
 }
 
 /* --- Error summary: one focusable, assertive list of form errors --- */
@@ -358,8 +358,8 @@
    border-colour shift alone read markedly fainter on this one control. Keyed to
    :focus-visible on the inner input so it stays keyboard-only. */
 .ui-search:has(input:focus-visible) {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 1px;
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: calc(var(--focus-ring-offset) / 2);
 }
 
 .ui-search:focus-within::before {
@@ -429,8 +429,8 @@
 }
 
 .ui-switch input:focus-visible + .ui-switch__track {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
 }
 
 /* ARIA contract: `.ui-switch` is a visually-styled checkbox. Author

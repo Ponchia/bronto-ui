@@ -25,6 +25,10 @@
   --space-lg: 1.35rem;
   --space-xl: 1.75rem;
   --space-2xl: 2.5rem;
+  --space-0-5: 0.125rem;
+  --space-0-75: 0.1875rem;
+  --space-1-5: 0.375rem;
+  --space-2-5: 0.625rem;
   --tap-target: max(44px, 2.9rem);
   --tap-target-min: max(24px, 1.6rem);
   --safe-area-top: env(safe-area-inset-top, 0px);
@@ -67,6 +71,22 @@
   --z-overlay: 30;
   --z-popover: 50;
   --z-toast: 60;
+
+  /* Workspace layers over a canvas, aliased to the page layer where they mean the same. */
+  --z-canvas: var(--z-base);
+  --z-chrome: var(--z-sticky);
+  --z-panel: 25;
+  --z-modal: var(--z-overlay);
+  --z-menu: var(--z-popover);
+  --z-tooltip: 70;
+  --z-navigation: 80;
+
+  /* Zoom — --ui-px is one screen pixel; [data-ui-zoom] re-declares it for a scaled surface. */
+  --ui-zoom: 1;
+  --ui-px: 1px;
+  --hairline: 1px;
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
 
   /* Accent ramp — a stepped family for charts / data-viz, derived from the single --accent knob via OKLCH color-mix against a per-theme white/black endpoint. */
   --accent-1: color-mix(in oklch, var(--accent) 8%, var(--accent-ramp-end));
@@ -259,6 +279,10 @@
    -------------------------------------------------------------------------- */
 
 [data-density='compact'] {
+  --space-0-5: 0.1rem;
+  --space-0-75: 0.15rem;
+  --space-1-5: 0.3rem;
+  --space-2-5: 0.5rem;
   --space-2xs: 0.2rem;
   --space-xs: 0.4rem;
   --space-sm: 0.6rem;
@@ -269,6 +293,10 @@
 }
 
 [data-density='comfortable'] {
+  --space-0-5: 0.15rem;
+  --space-0-75: 0.225rem;
+  --space-1-5: 0.45rem;
+  --space-2-5: 0.75rem;
   --space-2xs: 0.3rem;
   --space-xs: 0.6rem;
   --space-sm: 0.95rem;
@@ -276,6 +304,21 @@
   --space-lg: 1.7rem;
   --space-xl: 2.2rem;
   --space-2xl: 3.1rem;
+}
+
+/* Zoom — a host that draws bronto UI inside a scaled surface (a zoomable
+   canvas) marks the scaled element [data-ui-zoom] and sets --ui-zoom to its
+   scale there. Inside it --ui-px is one SCREEN pixel, so hairlines, focus rings
+   and anything the host sizes in --ui-px keep their on-screen size at any zoom.
+   Re-declared here, not inherited, because a custom property that reads
+   --ui-zoom resolves where it is declared: the :root values cannot follow a
+   zoomed subtree. The 0.15 floor stops a far-out zoom inflating a ring past
+   the thing it rings. */
+[data-ui-zoom] {
+  --ui-px: calc(1px / max(var(--ui-zoom, 1), 0.15));
+  --hairline: var(--ui-px);
+  --focus-ring-width: calc(2 * var(--ui-px));
+  --focus-ring-offset: calc(2 * var(--ui-px));
 }
 
 /* High contrast — manual opt-in and the OS `prefers-contrast` signal.

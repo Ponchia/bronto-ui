@@ -39,8 +39,8 @@
 }
 
 .ui-textref:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
 }
 
 /* The browser-painted highlight on the matched fragment. Scoped to the page

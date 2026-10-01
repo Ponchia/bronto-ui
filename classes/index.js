@@ -255,6 +255,7 @@ export const cls = Object.freeze({
   eyebrowSm: 'ui-eyebrow--sm',
   prose: 'ui-prose',
   proseCompact: 'ui-prose--compact',
+  proseBlocks: 'ui-prose--blocks',
   quote: 'ui-quote',
   quoteCite: 'ui-quote__cite',
   // site shell
@@ -1036,7 +1037,8 @@ export const ui = {
   tab: ({ active } = {}) => j(cls.tab, active && 'is-active'),
   avatar: ({ size } = {}) =>
     j(cls.avatar, size === 'sm' && cls.avatarSm, size === 'lg' && cls.avatarLg),
-  prose: ({ compact } = {}) => j(cls.prose, compact && cls.proseCompact),
+  prose: ({ compact, blocks } = {}) =>
+    j(cls.prose, compact && cls.proseCompact, blocks && cls.proseBlocks),
   container: ({ narrow, wide } = {}) =>
     j(cls.container, narrow && cls.containerNarrow, wide && cls.containerWide),
   tag: ({ accent } = {}) => j(cls.tag, accent && cls.tagAccent),

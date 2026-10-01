@@ -61,6 +61,12 @@ const FOUNDATIONS = [
       { file: 'scripts/check-exports.mjs', includes: ['package.json "style"'] },
     ],
   }),
+  foundation('blocknote', {
+    docs: ['docs/interop/blocknote.md'],
+    proofs: [
+      { file: 'test/blocknote.test.mjs', includes: ['maps every BlockNote colour variable'] },
+    ],
+  }),
   foundation('dataviz', {
     docs: ['docs/usage.md'],
     demos: ['demo/index.html'],

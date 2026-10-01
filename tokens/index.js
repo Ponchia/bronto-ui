@@ -33,10 +33,17 @@ export const cssVars = {
     '--space-lg': '1.35rem',
     '--space-xl': '1.75rem',
     '--space-2xl': '2.5rem',
+    // Half steps on the 0.25rem unit, for dense tool chrome: 2, 3, 6 and 10px
+    // at a 16px root, the gaps a toolbar, a row or a node header needs and the
+    // t-shirt scale skips. Named by units, so --space-1-5 is 1.5 x --space-2xs.
+    '--space-0-5': '0.125rem',
+    '--space-0-75': '0.1875rem',
+    '--space-1-5': '0.375rem',
+    '--space-2-5': '0.625rem',
     // Tap targets. Both floors are clamped in px against the rem so they cannot
     // shrink below the standard when a host re-points the root font size —
-    // Bronto's own base sets `html { font-size: 0.9375rem }`, under which a bare
-    // 2.9rem is 43.5px, half a pixel short of the target floor.
+    // under a 15px root a bare 2.9rem is 43.5px, half a pixel short of the
+    // target floor.
     // `--tap-target` is the WCAG 2.5.5 (AAA) / iOS-HIG / Material 44px target
     // every coarse-pointer control floats to. `--tap-target-min` is the WCAG
     // 2.5.8 (AA) 24px minimum, for controls that only have to clear the smaller
@@ -85,6 +92,27 @@ export const cssVars = {
     '--z-overlay': '30',
     '--z-popover': '50',
     '--z-toast': '60',
+    // A workspace's named layers: a tool drawn over a canvas stacks chrome,
+    // panels, dialogs, menus, toasts, tooltips and presentation chrome. Where a
+    // page layer already means the same thing the workspace name aliases it,
+    // so the two scales cannot disagree. A menu sits above a dialog because a
+    // dialog opens menus; presentation chrome sits above everything it drives.
+    '--z-canvas': 'var(--z-base)',
+    '--z-chrome': 'var(--z-sticky)',
+    '--z-panel': '25',
+    '--z-modal': 'var(--z-overlay)',
+    '--z-menu': 'var(--z-popover)',
+    '--z-tooltip': '70',
+    '--z-navigation': '80',
+    // Zoom. --ui-px is one screen pixel. On a page these are plain px; inside
+    // a scaled surface marked [data-ui-zoom] (css/tokens.css) they are
+    // re-declared in --ui-px, 1px divided by the host's --ui-zoom, so hairlines
+    // and focus rings stay visible zoomed out and crisp zoomed in.
+    '--ui-zoom': '1',
+    '--ui-px': '1px',
+    '--hairline': '1px',
+    '--focus-ring-width': '2px',
+    '--focus-ring-offset': '2px',
     '--accent-1': 'color-mix(in oklch, var(--accent) 8%, var(--accent-ramp-end))',
     '--accent-2': 'color-mix(in oklch, var(--accent) 16%, var(--accent-ramp-end))',
     '--accent-3': 'color-mix(in oklch, var(--accent) 32%, var(--accent-ramp-end))',
