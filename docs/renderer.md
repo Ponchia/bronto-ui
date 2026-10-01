@@ -33,7 +33,7 @@ accept both.
 | Field | Token | Use |
 | --- | --- | --- |
 | `scheme` | luminance of `--bg` | `'light'` or `'dark'` |
-| `bg`, `panel`, `panelStrong` | `--bg`, `--panel`, `--panel-strong` | Backgrounds; draw on `panel` |
+| `bg`, `bgElevated`, `panel`, `panelStrong` | `--bg`, `--bg-elevated`, `--panel`, `--panel-strong` | Backgrounds; draw on `panel` |
 | `text`, `textSoft`, `textDim` | `--text`, `--text-soft`, `--text-dim` | Labels, secondary and tertiary ink |
 | `line`, `lineStrong` | `--line`, `--line-strong` | Grid and hairlines; axes and rules |
 | `accent`, `accentText`, `onAccent`, `focus` | accent family | The one emphasis, its text forms, focus |

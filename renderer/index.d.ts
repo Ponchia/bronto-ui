@@ -102,6 +102,10 @@ export type RendererTokens = {
      */
     bg: string;
     /**
+     * A lifted page background (`--bg-elevated`).
+     */
+    bgElevated: string;
+    /**
      * The surface a renderer usually draws on (`--panel`).
      */
     panel: string;

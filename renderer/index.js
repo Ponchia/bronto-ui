@@ -31,6 +31,7 @@ import { cssVars } from '../tokens/index.js';
  * @typedef {object} RendererTokens
  * @property {'light' | 'dark'} scheme The resolved scheme of the page background.
  * @property {string} bg Page background (`--bg`).
+ * @property {string} bgElevated A lifted page background (`--bg-elevated`).
  * @property {string} panel The surface a renderer usually draws on (`--panel`).
  * @property {string} panelStrong A raised surface (`--panel-strong`).
  * @property {string} text Primary ink (`--text`).
@@ -378,6 +379,7 @@ export function readTokens(element, options = {}) {
   return {
     scheme,
     bg,
+    bgElevated: token('--bg-elevated', bg),
     panel,
     panelStrong: token('--panel-strong', panel),
     text,

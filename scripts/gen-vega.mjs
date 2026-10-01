@@ -52,6 +52,7 @@ export function staticTokens(theme) {
   return {
     scheme: t,
     bg: r['--bg'],
+    bgElevated: r['--bg-elevated'],
     panel: r['--panel'],
     panelStrong: r['--panel-strong'],
     text: r['--text'],
