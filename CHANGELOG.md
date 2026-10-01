@@ -5,6 +5,53 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased — 0.12.0
+
+### Changed
+
+- **BREAKING: a categorical palette with no accent slot.** `--chart-1..8` are
+  now eight fixed hues — blue, orange, aqua, yellow, magenta, green, violet,
+  red — authored as measured sRGB per theme. Series 1 is no longer
+  `var(--accent)`, so an ordinary first series stops reading as an alert, and
+  the `ACCENT` export of `@ponchia/ui/charts` is removed. The 0.11 set failed
+  the measurable palette checks on the package's own surfaces (Okabe-Ito
+  yellow and the slate outside the lightness band, the slate under the chroma
+  floor). The values come from a consumer that validated and shipped them as a
+  recorded divergence. `CATEGORICAL_HUES` names the slots.
+- **BREAKING: `--chart-seq-*` is one blue hue in five steps.** `--chart-seq-6`
+  is removed. Step 1 sits nearest the surface in both themes.
+- **BREAKING: the static Vega config is frameless.** `brontoVegaConfig()` sets
+  no plot frame, draws a single series in the first categorical hue, keeps a
+  `--panel` gap between adjacent fills and sets readable label sizes. It is now
+  generated from `@ponchia/ui/renderer`'s `vegaConfig()`, so the static and
+  runtime configs share one mapping. `brontoVegaAccent()` returns `--accent`
+  and `brontoVegaNeutral()` returns `--text-dim`.
+- `check:charts` measures what a reader sees: per theme and against the panel,
+  the page and the OLED surfaces, each slot sits inside the OKLCH lightness
+  band and above the chroma floor, and adjacent slots stay apart under
+  simulated protanopia/deuteranopia (ΔE×100 ≥ 6) and normal vision (≥ 15).
+  All-pairs separation and sub-3:1 contrast are reported, not gated; the
+  pattern fill remains the second channel. ADR-0001 step 7 records the
+  amendment.
+
+### Added
+
+- **Categorical identity tokens** in `css/dataviz.css`: `--cat-1..8` (the same
+  hues), `--cat-N-tint` (a 16% wash over `--panel`, so it follows skins and
+  OLED) and `--cat-N-ink` (text that holds 4.5:1 on the panel, the page and its
+  own tint, gated). For tags, participants and user-chosen tints — never
+  status. `charts.json` gains `hues`, `tint` and `ink`.
+- **`@ponchia/ui/renderer`** — the live theme for renderers that cannot read
+  CSS. `readTokens()` resolves the bronto roles a renderer needs (surfaces,
+  inks, lines, accent, status, fonts, categorical set and ramps) to `#rrggbb`
+  or `rgba()` literals, following skins, contrast and the OLED surface.
+  `observeTokens()` calls back when one of them changed. `vegaConfig()` and
+  `xtermTheme()` map tokens to those renderers' configuration; `parseColor()`,
+  `formatColor()` and `resolveColor()` convert any CSS colour, including
+  `oklch()`, `lab()` and `color(display-p3 …)`.
+
+See [the migration guide](docs/migrations/0.11-to-0.12.md).
+
 ## 0.11.0 — 2026-09-09
 
 ### Changed

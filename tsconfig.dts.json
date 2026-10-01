@@ -15,6 +15,7 @@
   },
   "include": [
     "connectors/index.js",
+    "renderer/index.js",
     "annotations/index.js",
     "behaviors/index.js",
     "behaviors/internal.js",

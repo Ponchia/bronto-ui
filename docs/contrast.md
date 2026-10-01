@@ -283,40 +283,40 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 
 ## Data-viz palette (advisory)
 
-The opt-in Tier-4 chart palette (`@ponchia/ui/css/dataviz.css`, authored in
-`tokens/charts.js`) is gated differently: categorical series are held to
-**mutual distinguishability under normal + simulated protan/deutan/tritan
-vision** (`check:charts`, OKLab ΔE), and colour is **never the sole signal** —
-each series ships a matching `--chart-pattern-*` dot-matrix fill. So the
-WCAG ratios below are **advisory** (a chart fill is not body text); use them to
-pick a darker series for thin lines/points, or rely on the pattern. Series 1 is
-the brand accent.
+The opt-in Tier-4 categorical palette (`@ponchia/ui/css/dataviz.css`, authored
+in `tokens/charts.js`) is gated differently: each slot sits inside the theme's
+OKLCH lightness band and above the chroma floor, and **adjacent slots stay apart
+under simulated protanopia/deuteranopia and in normal vision** (`check:charts`,
+OKLab ΔE). Colour is **never the sole signal** — each series ships a matching
+`--chart-pattern-*` dot-matrix fill. So the WCAG ratios below are **advisory**
+(a chart fill is not body text); for thin lines, points or text use the slot's
+`--cat-N-ink`, which `check:charts` holds to 4.5:1. No slot is the accent.
 
 ### Light theme — categorical vs `--bg`
 
 | Series | Colour | Ratio _(advisory)_ | APCA _(advisory)_ |
 | --- | --- | --- | --- |
-| 1 _(accent)_ | `#d71921` | 4.71:1 | Lc 66.8 |
-| 2 | `#e69f00` | 2.05:1 | Lc 37.4 |
-| 3 | `#56b4e9` | 2.10:1 | Lc 38.6 |
-| 4 | `#009e73` | 3.11:1 | Lc 54.4 |
-| 5 | `#f0e442` | 1.20:1 | Lc 9.1 |
-| 6 | `#0072b2` | 4.71:1 | Lc 68.4 |
-| 7 | `#cc79a7` | 2.78:1 | Lc 50.6 |
-| 8 | `#4d5358` | 7.08:1 | Lc 80.4 |
+| 1 _(accent)_ | `#2a78d6` | 4.01:1 | Lc 63.5 |
+| 2 | `#eb6834` | 2.91:1 | Lc 51.8 |
+| 3 | `#1baf7a` | 2.56:1 | Lc 46.9 |
+| 4 | `#eda100` | 1.97:1 | Lc 35.5 |
+| 5 | `#e87ba4` | 2.44:1 | Lc 45.2 |
+| 6 | `#008300` | 4.49:1 | Lc 66.8 |
+| 7 | `#4a3aa7` | 7.77:1 | Lc 82.3 |
+| 8 | `#e34948` | 3.59:1 | Lc 59.1 |
 
 ### Dark theme — categorical vs `--bg`
 
 | Series | Colour | Ratio _(advisory)_ | APCA _(advisory)_ |
 | --- | --- | --- | --- |
-| 1 _(accent)_ | `#ff3b41` | 5.31:1 | Lc 40.0 |
-| 2 | `#e69f00` | 8.32:1 | Lc 57.5 |
-| 3 | `#56b4e9` | 8.12:1 | Lc 56.3 |
-| 4 | `#009e73` | 5.48:1 | Lc 40.0 |
-| 5 | `#f0e442` | 14.17:1 | Lc 87.4 |
-| 6 | `#0072b2` | 3.61:1 | Lc 26.1 |
-| 7 | `#cc79a7` | 6.12:1 | Lc 43.9 |
-| 8 | `#4d5358` | 2.40:1 | Lc 14.4 |
+| 1 _(accent)_ | `#3987e5` | 5.15:1 | Lc 37.5 |
+| 2 | `#d95926` | 4.82:1 | Lc 35.6 |
+| 3 | `#199e70` | 5.50:1 | Lc 40.1 |
+| 4 | `#c98500` | 6.10:1 | Lc 43.9 |
+| 5 | `#d55181` | 4.75:1 | Lc 35.0 |
+| 6 | `#008300` | 3.79:1 | Lc 27.7 |
+| 7 | `#9085e9` | 5.99:1 | Lc 43.0 |
+| 8 | `#e66767` | 5.80:1 | Lc 42.2 |
 
 ## Scope & caveats
 

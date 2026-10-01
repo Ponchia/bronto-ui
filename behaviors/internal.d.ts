@@ -21,6 +21,6 @@ export type DelegateOpts = {
      * Event-delegation root; also scopes which controls are queried. Default: `document`.
      * `null` means a scope was requested but is not ready yet, so the behavior no-ops.
      */
-    root?: Document | Element | null | undefined;
+    root?: Element | Document | null | undefined;
 };
 //# sourceMappingURL=internal.d.ts.map

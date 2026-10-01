@@ -76,6 +76,7 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 - [toc.md](./toc.md) — sticky scrollspy table-of-contents rail (`ui-toc`, `aria-current` active section).
 - [tree.md](./tree.md) — hierarchy outline on nested `<details>` (`ui-tree` branches/leaves; disclosure group, not an ARIA tree).
 - [connectors.md](./connectors.md) — leader lines between DOM elements.
+- [renderer.md](./renderer.md) — the live theme resolved for canvas, WebGL and SVG renderers.
 - [spotlight.md](./spotlight.md) — guided-focus overlay.
 - [crosshair.md](./crosshair.md) — plot ruler + pinned readout.
 - [selection.md](./selection.md) — cross-cutting selection-emphasis vocabulary.
@@ -108,3 +109,4 @@ published from [`index.html`](https://ponchia.github.io/bronto-ui/).
 - [0.9 to 0.10](./migrations/0.9-to-0.10.md) — coordinated visual and API migration.
 
 - [0.10 to 0.11](./migrations/0.10-to-0.11.md) — narrow-container layouts and consumer typography roles.
+- [0.11 to 0.12](./migrations/0.11-to-0.12.md) — the categorical palette, identity tokens and runtime renderer tokens.

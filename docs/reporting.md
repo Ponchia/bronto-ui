@@ -649,7 +649,7 @@ directly; for a Vega chart, the same colours arrive through
 `brontoVegaConfig`'s `range.*` ramps, projected from `@ponchia/ui/charts.json`.
 
 For a **sequential** figure (a heatmap, a choropleth, a magnitude ramp) fill the
-cells from the single-hue ramp tokens `--chart-seq-1` … `--chart-seq-6`
+cells from the single-hue ramp tokens `--chart-seq-1` … `--chart-seq-5`
 (low → high); for a **diverging** figure (−…0…+) use `--chart-div-1` …
 `--chart-div-7` (the middle band is the neutral midpoint). Both ramps live in
 `css/dataviz.css`, and their resolved per-theme hexes are in
