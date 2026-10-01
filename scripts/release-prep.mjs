@@ -114,6 +114,19 @@ function main(argv) {
     log('✓ bumped the bug-report version placeholder');
   }
 
+  // 5. The stability contract's patch-release example (check:public-metadata gates it).
+  const minorOf = (v) => v.split('-')[0].split('.').slice(0, 2).join('.');
+  const stabilityPath = resolve(root, 'docs/stability.md');
+  const stability = readFileSync(stabilityPath, 'utf8');
+  const repointed = stability.replace(
+    `PATCH releases (\`${minorOf(from)}.x\`)`,
+    `PATCH releases (\`${minorOf(version)}.x\`)`,
+  );
+  if (repointed !== stability) {
+    writeFileSync(stabilityPath, repointed);
+    log('✓ re-pointed the stability patch-release example');
+  }
+
   log('\nNext: review the diff, run `npm run check && npm test`, then follow docs/release.md.');
 }
 

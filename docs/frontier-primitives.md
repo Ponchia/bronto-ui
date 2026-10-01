@@ -235,6 +235,11 @@ consumer since**; their follow-ons are demand-gated, not queued. Active work
 is therefore consolidation of the report lane (hub routing, print/PDF
 fidelity, consumer-contract gates), not new surfaces.
 
+> **Superseded (2026-10-01).** A canvas workspace now consumes the command,
+> workbench and state leaves daily, and its notes and visual models carry more
+> agent-authored prose than reports do. The north star moved to objects on a
+> canvas that explain themselves; see the [roadmap](https://github.com/Ponchia/bronto-ui/blob/main/ROADMAP.md#north-star).
+
 ### Report-lane primitives shipped in 0.6.7
 
 From the 2026-06-09 local scout. These were kept on merit, then shipped only

@@ -74,8 +74,8 @@ Use the core stylesheet plus `report-kit.css` for a standalone HTML report.
 Use real asset URLs in HTML; package specifiers resolve only in build tools.
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.11.0/dist/bronto.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.11.0/dist/css/report-kit.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.12.0/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.12.0/dist/css/report-kit.css" />
 <article class="ui-report">
   <header class="ui-report__cover ui-report__cover--compact">
     <h1 class="ui-report__title">Keep the current configuration</h1>
