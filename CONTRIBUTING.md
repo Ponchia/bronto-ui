@@ -183,7 +183,9 @@ in one deliberate PR.
 
 ## Release
 
-Releases publish to npm and are tag-driven:
+A release follows a deletion: cut one when a consumer change is ready to delete
+what it replaces ([roadmap](ROADMAP.md#investment-test)). Releases publish to
+npm and are tag-driven:
 
 ```bash
 # bump version + lock, date the CHANGELOG section, re-pin doc/demo
