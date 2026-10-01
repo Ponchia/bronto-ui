@@ -23,7 +23,9 @@ npm run check   # the full integrity suite: lint, format, exports; the
                 #   release stamp, migration map, pack-aware shipped-doc links,
                 #   public import snippets, contrast; behaviors /
                 #   glyphs parity; color-policy, skins, charts, visual-baseline
-                #   inventory, report + shipped HTML snippet integrity
+                #   inventory, report + shipped HTML snippet integrity.
+                #   Every check:* script runs, and the summary names each
+                #   one that failed; add -- --bail to stop at the first
 npm test        # faster unit-only loop; already included in npm run check
 npm run test:e2e:nonpixel
                 # local-safe Playwright: chromium + firefox + webkit for every
