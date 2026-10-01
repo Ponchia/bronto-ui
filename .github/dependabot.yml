@@ -25,6 +25,12 @@ updates:
       # silently via Dependabot.
       - dependency-name: '@playwright/test'
       - dependency-name: '@axe-core/playwright'
+      # TypeScript 7 is the native compiler and ships no JavaScript compiler
+      # API, which scripts/lib/import-policy.mjs, check-complexity and the
+      # d.ts emit call (#206 failed check:exports on it). Move those scripts
+      # first, then bump the major by hand.
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
       # examples/* are disposable, illustrative consumer apps — NOT part
       # of the published package (zero runtime deps; examples excluded
       # from the tarball) and rebuilt from scratch in CI. Their build
