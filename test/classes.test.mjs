@@ -147,6 +147,9 @@ test('unknown option values are ignored, not emitted', () => {
 test('empty-state, toolstrip and selectionbar recipes emit only registry classes', () => {
   assert.equal(ui.emptyState(), 'ui-empty-state');
   assert.equal(ui.emptyState({ invite: true }), 'ui-empty-state ui-empty-state--invite');
+  assert.equal(ui.bodyState(), 'ui-body-state');
+  assert.equal(ui.bodyState({ state: 'error' }), 'ui-body-state ui-body-state--error');
+  assert.equal(ui.bodyState({ state: 'stale' }), 'ui-body-state ui-body-state--stale');
   assert.equal(ui.toolstrip({ variant: 'pane' }), 'ui-toolstrip ui-toolstrip--pane');
   assert.equal(
     ui.toolstrip({ variant: 'floating', anchor: 'block-start' }),
@@ -203,6 +206,10 @@ test('the CSS severity tiers and SEVERITY_LEVELS are the same set', async () => 
 test('the recipes added this cycle emit only registry classes', () => {
   assert.equal(ui.alert(), 'ui-alert');
   assert.equal(ui.alert({ tone: 'danger' }), 'ui-alert ui-alert--danger');
+  assert.equal(
+    ui.alert({ tone: 'warning', band: true }),
+    'ui-alert ui-alert--warning ui-alert--band',
+  );
   assert.equal(ui.toast({ tone: 'success' }), 'ui-toast ui-toast--success');
   assert.equal(ui.progress({ indeterminate: true }), 'ui-progress ui-progress--indeterminate');
   assert.equal(ui.dotspinner({ size: 'lg' }), 'ui-dotspinner ui-dotspinner--lg');

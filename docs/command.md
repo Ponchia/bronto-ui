@@ -24,7 +24,52 @@ Cmd/Ctrl+K**; you open the palette yourself (e.g. a `<dialog>` opened by a butto
 or your own shortcut). Pairs with the [`ui-shortcut`](./reference.md) hint. Not in
 the core bundle.
 
-## Controlled host mode
+## Three ways to own a palette
+
+| Mode | Bronto owns | The host owns |
+| --- | --- | --- |
+| `initCommand()` | filtering, ids, roles, active row, keyboard, pointer, empty state | the rows in the DOM, the actions |
+| `initCommand({ headless: true })` | ids, roles, active row, keyboard, pointer, the empty state's live region | which rows exist, rendered per query; the actions |
+| controlled host mode (CSS only) | nothing | the whole combobox/listbox contract |
+
+### Matching
+
+Filtering is a substring match on each row's text. Pass `match` to decide it
+yourself: it receives the row and the query (trimmed, lower-cased in the
+palette's locale) and returns whether the row stays. An empty query always
+shows every row.
+
+```js
+initCommand({
+  match: (row, query) =>
+    row.hasAttribute('data-always') || // e.g. a "Search everything" row
+    `${row.textContent} ${row.dataset.keywords ?? ''}`.toLowerCase().includes(query),
+});
+```
+
+That covers keywords a row should match without showing them, and a row that
+must stay reachable for every query (escalating to a full search, say) inside
+the list, where the keyboard reaches it.
+
+### Headless mode
+
+When the host computes the results itself (search over a corpus, ranked
+matches, results that arrive asynchronously), pass `headless: true` and render
+the rows on every query. Bronto never hides a row or group in this mode. It reads
+the list live, so replacing rows needs no second `initCommand()`. New rows get
+ids and `role="option"`. After the query changes, the first row the host renders
+becomes active, and a row that disappears hands the active state to the first
+row left. Keep `.ui-command__empty` mounted and toggle its `hidden`; Bronto
+announces it when it appears.
+
+```js
+const box = document.querySelector('[data-bronto-command]');
+const input = box.querySelector('.ui-command__input');
+input.addEventListener('input', () => renderRows(search(input.value))); // yours
+initCommand({ root: box.parentElement, headless: true });
+```
+
+### Controlled host mode
 
 When React or another host already owns the query, filtered results, active
 item, and selection, use only the `ui-command*` CSS shell and do not call
@@ -75,7 +120,7 @@ a DOM-authored list, or controlled host mode when the framework owns the widget.
 ## Behavior & events
 
 `initCommand()` owns ids, `role`/`aria-activedescendant`, a roving active item,
-substring filtering, the keyboard (Down/Up to move, Enter to run, Escape to
+filtering (substring, or your `match`; none in headless mode), the keyboard (Down/Up to move, Enter to run, Escape to
 close — Home/End stay with the query input's native text caret), and pointer
 select. It emits:
 
@@ -97,11 +142,6 @@ document.querySelector('[data-bronto-command]').addEventListener('bronto:command
   dialog.close(),
 );
 ```
-
-Deprecated compatibility adapters in 0.7: `useCommand()` in
-`@ponchia/ui/react`, `/solid`, and `/qwik`; the `command` / `useCommand` action
-in `@ponchia/ui/svelte`; and `vCommand` (or `v-bronto-command`) in
-`@ponchia/ui/vue`. Migrate before 0.8.
 
 ## Accessibility
 

@@ -45,7 +45,7 @@ for (const [key, target] of exportTargets(pkg)) {
 
 // 2. @import graph of the entrypoints. Use the same parser as build-dist so a
 // valid import form cannot build differently from what this gate checks.
-for (const entry of ['css/core.css', 'css/analytical.css', 'css/report-kit.css']) {
+for (const entry of ['css/core.css', 'css/analytical.css', 'css/report-kit.css', 'css/tool.css']) {
   const abs = resolve(root, entry);
   if (!existsSync(abs)) {
     errors.push(`entrypoint ${entry} missing`);
@@ -77,13 +77,14 @@ for (const [key, target] of exportTargets(pkg)) {
 // in both layered and unlayered form, and the public keys point at the correct
 // side of the contract. `./css/<leaf>.css` is always the safe layered direct
 // import; `./css/unlayered/<leaf>.css` is always the raw authored escape hatch.
-// Roll-ups (`analytical.css`, `report-kit.css`) and source fan-out
+// Roll-ups (`analytical.css`, `report-kit.css`, `tool.css`) and source fan-out
 // (`./css/core.css`) deliberately have no unlayered twin.
 const exportKeys = new Set(Object.keys(pkg.exports ?? {}));
 const cssLeaves = new Set([...leafFiles(), ...EXTRA_LEAVES]);
 const cssRollups = new Map([
   ['./css/analytical.css', './dist/css/analytical.css'],
   ['./css/report-kit.css', './dist/css/report-kit.css'],
+  ['./css/tool.css', './dist/css/tool.css'],
 ]);
 const cssFanout = new Map([
   ['./css', './css/core.css'],

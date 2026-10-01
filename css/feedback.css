@@ -79,6 +79,8 @@
 }
 
 .ui-alert--accent {
+  --alert-tone: var(--accent);
+
   border-inline-start-color: var(--accent);
 }
 
@@ -87,6 +89,8 @@
 }
 
 .ui-alert--success {
+  --alert-tone: var(--success);
+
   border-inline-start-color: var(--success);
 }
 
@@ -95,6 +99,8 @@
 }
 
 .ui-alert--warning {
+  --alert-tone: var(--warning);
+
   border-inline-start-color: var(--warning);
 }
 
@@ -103,6 +109,8 @@
 }
 
 .ui-alert--danger {
+  --alert-tone: var(--danger);
+
   border-inline-start-color: var(--danger);
 }
 
@@ -111,11 +119,91 @@
 }
 
 .ui-alert--info {
+  --alert-tone: var(--info);
+
   border-inline-start-color: var(--info);
 }
 
 .ui-alert--info::before {
   background: var(--info);
+}
+
+/* --- Band: an alert across the edge of a small surface ---
+   A node, panel or card body that must say "this failed" or "this is out of
+   date" above content it still shows. Full-bleed, one line of small type, the
+   tone as a tint: at 200–400px a boxed alert spends a third of the body on its
+   frame. Put it first in the body; the tone modifiers work as on any alert. */
+.ui-alert--band {
+  background: color-mix(in oklch, var(--alert-tone, var(--text-dim)) 10%, var(--panel));
+  border: 0;
+  border-block-end: 1px solid var(--line);
+  border-radius: 0;
+  font-size: var(--text-2xs);
+  gap: var(--space-1-5);
+  padding: var(--space-1-5) var(--space-sm);
+}
+
+.ui-alert--band::before {
+  block-size: 0.4rem;
+  inline-size: 0.4rem;
+  margin-block-start: 0.3em;
+}
+
+/* --- Body state: what a small surface shows instead of its content ---
+   Empty, loading, failed or out of date, for a node, panel or card body of
+   200–400px. It fills the body and centres one short sentence (with an
+   optional `ui-empty-state__hint` or an action), without the dashed frame a
+   page-level `ui-empty-state` draws. Error and stale lead with a tone dot;
+   loading takes `aria-busy="true"` on the region and an optional
+   `ui-dotspinner` or `ui-skeleton` inside. In a `ui-cq` body narrower than
+   15rem the state tightens to the smallest type. */
+.ui-body-state {
+  align-items: center;
+  box-sizing: border-box;
+  color: var(--text-dim);
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  font-size: var(--text-xs);
+  gap: var(--space-2xs);
+  justify-content: center;
+  margin: 0;
+  min-block-size: 100%;
+  padding: var(--space-md);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.ui-body-state > * {
+  margin: 0;
+}
+
+.ui-body-state--error,
+.ui-body-state--stale {
+  --body-state-tone: var(--danger);
+
+  color: var(--text-soft);
+}
+
+.ui-body-state--stale {
+  --body-state-tone: var(--warning);
+}
+
+.ui-body-state--error::before,
+.ui-body-state--stale::before {
+  background: var(--body-state-tone);
+  border-radius: 50%;
+  block-size: 0.5rem;
+  content: '';
+  inline-size: 0.5rem;
+  print-color-adjust: exact;
+}
+
+@container bronto (max-inline-size: 15rem) {
+  .ui-body-state {
+    font-size: var(--text-2xs);
+    padding: var(--space-xs);
+  }
 }
 
 @media (hover: hover) {
@@ -277,7 +365,9 @@
    inherited via --tone-glyph so one rule covers both alert and toast. */
 @media (forced-colors: active) {
   .ui-alert::before,
-  .ui-toast::before {
+  .ui-toast::before,
+  .ui-body-state--error::before,
+  .ui-body-state--stale::before {
     background: none;
     border-radius: 0;
     content: var(--tone-glyph, '\2022'); /* • neutral default */
@@ -300,12 +390,14 @@
   }
 
   .ui-alert--warning,
-  .ui-toast--warning {
+  .ui-toast--warning,
+  .ui-body-state--stale {
     --tone-glyph: '\0021'; /* ! */
   }
 
   .ui-alert--danger,
-  .ui-toast--danger {
+  .ui-toast--danger,
+  .ui-body-state--error {
     --tone-glyph: '\2715'; /* ✕ */
   }
 

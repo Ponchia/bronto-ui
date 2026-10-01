@@ -26,6 +26,13 @@ const FOUNDATIONS = [
       { file: 'scripts/check-dist.mjs', includes: ['analytical.css'] },
     ],
   }),
+  foundation('tool', {
+    docs: [doc('docs/usage.md', ['@ponchia/ui/css/tool.css'])],
+    proofs: [
+      { file: 'test/tool-entry.test.mjs', includes: ['core without the site and app chrome'] },
+      { file: 'scripts/check-dist.mjs', includes: ['tool.css'] },
+    ],
+  }),
   foundation('row', {
     docs: [doc('docs/usage.md', ['ui-row'])],
     demos: ['demo/index.html'],
@@ -92,6 +99,14 @@ const FOUNDATIONS = [
       { file: 'scripts/check-pack.mjs', includes: ['expected exported package file missing'] },
       { file: 'test/resolved.test.mjs', includes: ['Doto'] },
     ],
+  }),
+  foundation('fonts-inter', {
+    docs: [doc('docs/theming.md', ['@ponchia/ui/css/fonts-inter.css'])],
+    proofs: [{ file: 'test/font-leaves.test.mjs', includes: ['names first, from shipped files'] }],
+  }),
+  foundation('fonts-jetbrains-mono', {
+    docs: [doc('docs/theming.md', ['@ponchia/ui/css/fonts-jetbrains-mono.css'])],
+    proofs: [{ file: 'test/font-leaves.test.mjs', includes: ['names first, from shipped files'] }],
   }),
   foundation('forms', {
     docs: ['docs/package-contract.md'],

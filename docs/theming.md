@@ -179,7 +179,14 @@ you change CSS `--accent` later.
   convention: `inset-block-end: max(<your offset>, var(--safe-area-bottom))`.
 - **Type** — `--display` (dot-matrix face), `--mono`, `--sans`. Override
   to drop Doto or swap the body face; the token layer keeps working even
-  if you self-host fonts (see the `fonts.css` note in the README).
+  if you self-host fonts (see the `fonts.css` note in the README). The
+  default bundle ships Doto only. `--sans` names Inter first and `--mono`
+  JetBrains Mono, so without those faces each OS draws its own fallback.
+  Import `@ponchia/ui/css/fonts-inter.css` and
+  `@ponchia/ui/css/fonts-jetbrains-mono.css` to ship both (Inter 4.1 as
+  one variable face per style; JetBrains Mono 2.304 in regular, bold and
+  their italics; SIL OFL 1.1, licenses in `fonts/`). A browser downloads a
+  face only when text needs it.
 - **Surfaces / lines / text** — the `--bg*`, `--panel*`, `--line*`,
   `--text*` tokens are overridable for a bespoke palette, but you then
   own their contrast. Prefer just `--accent` unless you need a full

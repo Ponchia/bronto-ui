@@ -3179,6 +3179,132 @@ test('initCommand: ArrowUp wraps to last, Home/End edit query text natively', ()
   stop();
 });
 
+test('initCommand match: keywords decide, a persistent row survives every query', () => {
+  const d = mount(`
+    <div class="ui-command" data-bronto-command>
+      <input class="ui-command__input" aria-label="Command" />
+      <ul class="ui-command__list">
+        <li class="ui-command__item" data-value="ctx" data-keywords="context-9f2 board">Roadmap</li>
+        <li class="ui-command__item" data-value="theme">Toggle theme</li>
+        <li class="ui-command__item" data-value="search" data-persistent>Search everything</li>
+      </ul>
+    </div>`);
+  const seen = [];
+  const stop = initCommand({
+    match: (item, query) => {
+      seen.push(query);
+      return (
+        item.hasAttribute('data-persistent') ||
+        `${item.textContent} ${item.dataset.keywords ?? ''}`.toLowerCase().includes(query)
+      );
+    },
+  });
+  const input = d.querySelector('.ui-command__input');
+  const items = [...d.querySelectorAll('.ui-command__item')];
+  const shown = () => items.filter((it) => !it.hidden).map((it) => it.dataset.value);
+
+  assert.deepEqual(shown(), ['ctx', 'theme', 'search'], 'an empty query shows every row');
+  assert.deepEqual(seen, [], 'match is not asked about an empty query');
+
+  input.value = '  CONTEXT-9F2 ';
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  assert.deepEqual(seen.at(-1), 'context-9f2', 'query is trimmed and lower-cased');
+  assert.deepEqual(shown(), ['ctx', 'search'], 'a keyword match plus the persistent row');
+  assert.ok(items[0].classList.contains('is-active'));
+
+  input.value = 'nothing like it';
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  assert.deepEqual(shown(), ['search'], 'the persistent row is the one left to choose');
+  assert.equal(input.getAttribute('aria-activedescendant'), items[2].id);
+  stop();
+});
+
+test('initCommand headless: the host renders rows; bronto keeps ids, roles, keys and cleanup', async () => {
+  const d = mount(`
+    <div class="ui-command" data-bronto-command>
+      <input class="ui-command__input" aria-label="Command" />
+      <ul class="ui-command__list">
+        <li class="ui-command__item" data-value="a">Alpha</li>
+        <li class="ui-command__item" data-value="b" hidden>Beta, hidden by the host</li>
+      </ul>
+      <p class="ui-command__empty" hidden>No results</p>
+    </div>`);
+  const box = d.querySelector('[data-bronto-command]');
+  const input = d.querySelector('.ui-command__input');
+  const list = d.querySelector('.ui-command__list');
+  const empty = d.querySelector('.ui-command__empty');
+  const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
+  const render = (values) => {
+    list.replaceChildren(
+      ...values.map((value) => {
+        const li = d.createElement('li');
+        li.className = 'ui-command__item';
+        li.dataset.value = value;
+        li.textContent = `Row ${value}`;
+        return li;
+      }),
+    );
+  };
+  const stop = initCommand({ headless: true });
+  const first = list.querySelector('[data-value="a"]');
+  assert.equal(first.getAttribute('role'), 'option');
+  assert.equal(input.getAttribute('aria-activedescendant'), first.id);
+  assert.equal(list.querySelector('[data-value="b"]').hidden, true, 'bronto leaves hidden alone');
+  assert.equal(empty.getAttribute('role'), 'status');
+
+  // The query changes; bronto filters nothing, the host renders new rows.
+  input.value = 'r';
+  input.dispatchEvent(new dom.window.Event('input', { bubbles: true }));
+  assert.equal(first.hidden, false, 'no filtering in headless mode');
+  render(['x', 'y', 'z']);
+  await settle();
+  const rows = [...list.querySelectorAll('.ui-command__item')];
+  assert.ok(
+    rows.every((row) => row.id && row.getAttribute('role') === 'option'),
+    'new rows get ids and roles',
+  );
+  assert.equal(input.getAttribute('aria-activedescendant'), rows[0].id, 'first new row active');
+
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+  assert.equal(input.getAttribute('aria-activedescendant'), rows[1].id);
+  // A live update that keeps the active row keeps it active.
+  rows[2].textContent = 'Row z, renamed';
+  list.append(d.createElement('span'));
+  await settle();
+  assert.equal(input.getAttribute('aria-activedescendant'), rows[1].id, 'active row kept');
+  // Removing the active row hands its place to the first row left.
+  rows[1].remove();
+  await settle();
+  assert.equal(input.getAttribute('aria-activedescendant'), rows[0].id);
+
+  let picked;
+  box.addEventListener('bronto:command:select', (e) => (picked = e.detail));
+  input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  assert.equal(picked.value, 'x');
+
+  // No rows: the host reveals its empty state.
+  render([]);
+  empty.hidden = false;
+  await settle();
+  assert.equal(input.hasAttribute('aria-activedescendant'), false);
+
+  render(['late']);
+  await settle();
+  const late = list.querySelector('[data-value="late"]');
+  assert.equal(late.getAttribute('role'), 'option');
+  stop();
+  assert.equal(late.hasAttribute('role'), false, 'cleanup restores rows added after init');
+  assert.equal(late.hasAttribute('id'), false);
+  assert.equal(late.classList.contains('is-active'), false);
+  assert.equal(empty.hasAttribute('role'), false);
+  assert.equal(input.hasAttribute('role'), false);
+
+  // After cleanup, nothing observes the list any more.
+  render(['after']);
+  await settle();
+  assert.equal(list.querySelector('[data-value="after"]').hasAttribute('role'), false);
+});
+
 test('initCommand resolves text-node item clicks', () => {
   const d = mount(CMD);
   const box = d.querySelector('[data-bronto-command]');

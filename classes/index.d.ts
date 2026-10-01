@@ -133,6 +133,10 @@ export declare const cls: {
   readonly alertWarning: 'ui-alert--warning';
   readonly alertDanger: 'ui-alert--danger';
   readonly alertInfo: 'ui-alert--info';
+  readonly alertBand: 'ui-alert--band';
+  readonly bodyState: 'ui-body-state';
+  readonly bodyStateError: 'ui-body-state--error';
+  readonly bodyStateStale: 'ui-body-state--stale';
   readonly toastStack: 'ui-toast-stack';
   readonly toastStackAssertive: 'ui-toast-stack--assertive';
   readonly toast: 'ui-toast';
@@ -723,6 +727,10 @@ export interface ButtonOpts {
 export interface EmptyStateOpts {
   invite?: boolean;
 }
+export interface BodyStateOpts {
+  /** Omit for empty and loading (mark a loading region aria-busy). */
+  state?: 'error' | 'stale';
+}
 export interface ToolstripOpts {
   variant?: 'floating' | 'compact' | 'pane';
   anchor?: 'block-start' | 'block-end';
@@ -796,6 +804,7 @@ export interface StaggerOpts {
 export type Tone = 'accent' | 'success' | 'warning' | 'danger' | 'info';
 export interface AlertOpts {
   tone?: Tone;
+  band?: boolean;
 }
 export interface ToastOpts {
   tone?: Tone;
@@ -1015,6 +1024,7 @@ export interface Ui {
   job(opts?: JobOpts): string;
   originLabel(opts?: OriginLabelOpts): string;
   emptyState(opts?: EmptyStateOpts): string;
+  bodyState(opts?: BodyStateOpts): string;
   toolstrip(opts?: ToolstripOpts): string;
   selectionbar(opts?: SelectionbarOpts): string;
 }

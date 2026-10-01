@@ -165,6 +165,17 @@ data-viz palette tokens. Always wrap it in a `ui-report__figure` with a caption,
 a `.ui-legend` key, and fallback data. Full LLM/static report cookbook:
 [reporting.md](reporting.md).
 
+## A tool: `@ponchia/ui/css/tool.css` instead of the default bundle
+
+An application that draws on its own surface (a canvas, an editor, a
+workbench) renders none of the site and app chrome: the theme toggle, the
+content-site shell, data tables and the admin service shell. Import
+`@ponchia/ui/css/tool.css` **instead of** `@ponchia/ui`. It is the default
+bundle in the same cascade order without the `navigation`, `site`, `table` and
+`app` leaves. Everything else, including the dot-matrix glyphs, motion and the
+feedback, overlay and disclosure primitives, is unchanged. Add one of the four
+back as its own leaf (`@ponchia/ui/css/table.css`) if a screen needs it.
+
 ## Buttons: variant and size
 
 - **primary is the bare `ui-button`.** There is no `--primary` and no
@@ -252,6 +263,50 @@ differs is the job:
 Without the slots, every empty surface in an app re-invents these three parts
 under a different name and they drift — one has a glyph, the next has two
 sentences at the same weight, a third is a bare `<p>`.
+
+## Small bodies: body state and band
+
+A node, panel or card body of 200–400px has four things to say besides its
+content: nothing is here, it is loading, it failed, it is out of date. A
+page-level empty state or a boxed alert spends a third of such a body on its
+frame, so a small body uses two compact shapes:
+
+- **`ui-body-state`** *replaces the content*. It fills the body and centres
+  one short sentence, with an optional `ui-empty-state__hint` or an action. Use
+  `ui.bodyState()` for empty and loading, the plain state (put
+  `aria-busy="true"` on a loading region, and a `ui-dotspinner` or `ui-skeleton`
+  inside if you like); `ui.bodyState({ state: 'error' | 'stale' })` leads with a
+  tone dot.
+- **`ui-alert--band`** *sits above content the body still shows*: a full-bleed
+  line of small type, the tone as a tint. Use `ui.alert({ tone, band: true })`
+  as the body's first child.
+
+| State | Content gone | Content still shown |
+| --- | --- | --- |
+| empty | `ui.bodyState()` | — |
+| loading | `ui.bodyState()` + `aria-busy` | `ui-skeleton` rows in place |
+| error | `ui.bodyState({ state: 'error' })` | `ui.alert({ tone: 'danger', band: true })` |
+| stale | `ui.bodyState({ state: 'stale' })` | `ui.alert({ tone: 'warning', band: true })` |
+
+```html
+<div class="node-body ui-cq">
+  <p class="ui-alert ui-alert--warning ui-alert--band" role="status">
+    Last synced 2 h ago
+  </p>
+  …the content, still readable…
+</div>
+
+<div class="node-body ui-cq">
+  <div class="ui-body-state ui-body-state--error" role="alert">
+    <p>Could not load the run</p>
+    <button class="ui-button ui-button--subtle ui-button--dense" type="button">Retry</button>
+  </div>
+</div>
+```
+
+Make the body a `ui-cq` container: below 15rem the body state tightens to the
+smallest type and padding. The body itself should be a flex column or have a
+height, so the state can fill it.
 
 ## Link vs link--cta
 

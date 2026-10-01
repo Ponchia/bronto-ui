@@ -3,7 +3,7 @@
 [![npm](https://img.shields.io/npm/v/@ponchia/ui?logo=npm)](https://www.npmjs.com/package/@ponchia/ui)
 [![npm provenance](https://img.shields.io/badge/npm-provenance-blue?logo=npm)](https://www.npmjs.com/package/@ponchia/ui#provenance)
 [![runtime deps](https://img.shields.io/badge/runtime%20deps-0-brightgreen)](https://github.com/Ponchia/bronto-ui/blob/main/package.json)
-[![default CSS](https://img.shields.io/badge/default%20CSS-~96kB%20%2F%20~17kB%20gzip-informational)](https://github.com/Ponchia/bronto-ui/blob/main/scripts/check-dist.mjs)
+[![default CSS](https://img.shields.io/badge/default%20CSS-~97kB%20%2F%20~17kB%20gzip-informational)](https://github.com/Ponchia/bronto-ui/blob/main/scripts/check-dist.mjs)
 [![CI](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Ponchia/bronto-ui/badge)](https://scorecard.dev/viewer/?uri=github.com/Ponchia/bronto-ui)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE)
@@ -98,7 +98,7 @@ when deliberately upgrading across a breaking pre-1.0 minor):
 
 ## Quick start
 
-**1. Load the CSS.** One flattened, minified default CSS bundle — the standard component set, one request (~96 kB raw / ~17 kB gzip) — that is `dist/bronto.css`, not the whole package tarball:
+**1. Load the CSS.** One flattened, minified default CSS bundle — the standard component set, one request (~97 kB raw / ~17 kB gzip) — that is `dist/bronto.css`, not the whole package tarball:
 
 ```css
 @import '@ponchia/ui';            /* via a bundler */
@@ -256,4 +256,4 @@ Release candidates publish to the `next` dist-tag, never to `latest` — opt in 
 
 [MIT](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE) © Ponchia.
 
-The bundled **Doto** font (`fonts/*.woff2`) is © 2024 The Doto Project Authors and licensed separately under the [SIL Open Font License 1.1](https://github.com/Ponchia/bronto-ui/blob/main/fonts/OFL.txt) — see `fonts/OFL.txt`.
+The bundled fonts are licensed separately under the [SIL Open Font License 1.1](https://github.com/Ponchia/bronto-ui/blob/main/fonts/OFL.txt): **Doto** (`fonts/doto-*.woff2`, © 2024 The Doto Project Authors, `fonts/OFL.txt`), and the opt-in **Inter** (`fonts/inter-*.woff2`, © 2016 The Inter Project Authors, `fonts/OFL-Inter.txt`) and **JetBrains Mono** (`fonts/jetbrains-mono-*.woff2`, © 2020 The JetBrains Mono Project Authors, `fonts/OFL-JetBrainsMono.txt`).
