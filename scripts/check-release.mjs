@@ -126,9 +126,9 @@ requireJobIncludes(
   'must run npm run check, which includes check:unit',
   '- run: npm run check',
 );
-if (!(pkg.scripts?.check ?? '').includes('npm run check:unit')) {
+if (pkg.scripts?.check !== 'node scripts/run-checks.mjs' || !pkg.scripts?.['check:unit']) {
   errors.push(
-    'package.json check script must include check:unit because release validate relies on it',
+    'package.json check must be scripts/run-checks.mjs with a check:unit script, because release validate relies on it running the unit suite',
   );
 }
 requireJobNotIncludes(

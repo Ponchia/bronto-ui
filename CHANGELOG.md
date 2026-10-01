@@ -43,6 +43,19 @@
   variables. Notes are now the main reading surface, so block prose ships in
   the core prose vocabulary rather than a leaf.
 
+### Internal
+
+- `npm run check` runs every gate and ends with one line naming each gate
+  that failed; `npm run check -- --bail` stops at the first. It was an `&&`
+  chain that stopped at the first failure: since 0.8, 13 of the 20 failed CI
+  runs were the Dependabot dev-dependency group stopping at `check:exports`
+  on TypeScript 7, so no run measured the rest of the group. The gate list is
+  the `check:*` scripts themselves, so `check:chain`, which checked that the
+  hand-kept chain named every gate, is gone.
+- The package contract no longer lists `react/`, `solid/`, `qwik/`,
+  `svelte/` and `vue/` as authored JS directories; the package has none. The
+  list is now read from `tsconfig.dts.json`.
+
 ## 0.12.0 — 2026-10-01
 
 ### Changed
