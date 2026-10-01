@@ -38,6 +38,10 @@
 - Every bronto focus ring reads `--focus-ring-width` and `--focus-ring-offset`
   instead of literal px. At the default zoom they are the same 2px, so nothing
   moves; inside a `[data-ui-zoom]` surface a ring keeps its on-screen width.
+- The default bundle grows from 92.8 kB / 16.0 kB gzip to 95.8 kB / 16.6 kB:
+  1.9 kB is the block prose variant, the rest the new tokens and the focus-ring
+  variables. Notes are now the main reading surface, so block prose ships in
+  the core prose vocabulary rather than a leaf.
 
 ## 0.12.0 — 2026-10-01
 
