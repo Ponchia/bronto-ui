@@ -1,8 +1,8 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `groups[].base` is null for a parts-only namespace (no standalone base class — do NOT emit it). A modifier whose name contains `__` (e.g. `ui-spark__bar--pos`) attaches to THAT part, not the base host. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `behaviorAttributes` are the `data-bronto-*` wiring hooks the optional behaviors delegate on; `requiredAria` is the role/aria a generator must emit per component. `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 696,
-    "groups": 187
+    "classes": 700,
+    "groups": 188
   },
   "groups": {
     "ui-accordion": {
@@ -23,6 +23,7 @@
       "base": "ui-alert",
       "modifiers": [
         "ui-alert--accent",
+        "ui-alert--band",
         "ui-alert--danger",
         "ui-alert--info",
         "ui-alert--success",
@@ -192,6 +193,14 @@
         "ui-badge--muted",
         "ui-badge--success",
         "ui-badge--warning"
+      ],
+      "parts": []
+    },
+    "ui-body-state": {
+      "base": "ui-body-state",
+      "modifiers": [
+        "ui-body-state--error",
+        "ui-body-state--stale"
       ],
       "parts": []
     },
@@ -1604,6 +1613,7 @@
     "ui-activity",
     "ui-alert",
     "ui-alert--accent",
+    "ui-alert--band",
     "ui-alert--danger",
     "ui-alert--info",
     "ui-alert--success",
@@ -1685,6 +1695,9 @@
     "ui-badge--muted",
     "ui-badge--success",
     "ui-badge--warning",
+    "ui-body-state",
+    "ui-body-state--error",
+    "ui-body-state--stale",
     "ui-bracket-note",
     "ui-bracket-note--accent",
     "ui-bracket-note--danger",

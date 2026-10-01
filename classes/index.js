@@ -141,6 +141,10 @@ export const cls = Object.freeze({
   alertWarning: 'ui-alert--warning',
   alertDanger: 'ui-alert--danger',
   alertInfo: 'ui-alert--info',
+  alertBand: 'ui-alert--band',
+  bodyState: 'ui-body-state',
+  bodyStateError: 'ui-body-state--error',
+  bodyStateStale: 'ui-body-state--stale',
   toastStack: 'ui-toast-stack',
   toastStackAssertive: 'ui-toast-stack--assertive',
   toast: 'ui-toast',
@@ -875,6 +879,11 @@ const dotTone = (tone) =>
     tone,
   );
 
+// A body state's tone. Empty and loading are the plain state (no option); a
+// loading region says so with aria-busy, not a class.
+const bodyStateTone = (state) =>
+  valueClass({ error: cls.bodyStateError, stale: cls.bodyStateStale }, state);
+
 const alertTone = (tone) =>
   toneClass(
     'alert',
@@ -1026,7 +1035,7 @@ export const ui = {
   hint: ({ error } = {}) => j(cls.hint, error && cls.hintError),
   cluster: ({ between } = {}) => j(cls.cluster, between && cls.clusterBetween),
   stagger: ({ auto } = {}) => j(cls.stagger, auto && cls.staggerAuto),
-  alert: ({ tone } = {}) => j(cls.alert, alertTone(tone)),
+  alert: ({ tone, band } = {}) => j(cls.alert, alertTone(tone), band && cls.alertBand),
   toast: ({ tone } = {}) => j(cls.toast, toastTone(tone)),
   progress: ({ indeterminate } = {}) => j(cls.progress, indeterminate && cls.progressIndeterminate),
   meter: ({ tone } = {}) => j(cls.meter, meterTone(tone)),
@@ -1152,6 +1161,7 @@ export const ui = {
   job: ({ state, compact } = {}) => j(cls.job, jobTone(state), compact && cls.jobCompact),
   originLabel: ({ ai } = {}) => j(cls.originLabel, ai && cls.originLabelAi),
   emptyState: ({ invite } = {}) => j(cls.emptyState, invite && cls.emptyStateInvite),
+  bodyState: ({ state } = {}) => j(cls.bodyState, bodyStateTone(state)),
   toolstrip: ({ variant, anchor } = {}) =>
     j(
       cls.toolstrip,

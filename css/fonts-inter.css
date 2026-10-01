@@ -1,0 +1,35 @@
+/* ==========================================================================
+   fonts-inter — Inter, the face `--sans` names first.
+
+   OPT-IN LEAF. Since 0.10 ordinary text is `--sans`, and the stack names
+   Inter first, but nothing shipped it: each OS fell through to its own
+   system face, so the same screen set differently on every device. Import
+   this leaf and Inter is what renders everywhere.
+
+     @import '@ponchia/ui/css/fonts-inter.css';
+
+   One variable face per style covers every weight the tokens use (400 to 700,
+   and the in-between ones a heading or a readout asks for). A browser
+   downloads a face only when text on the page needs it, so the italic costs
+   nothing until something is italic.
+
+   Inter 4.1 (rsms/inter, web/InterVariable*.woff2), unmodified. License: SIL
+   OFL 1.1, fonts/OFL-Inter.txt. URLs are relative to this file; a bundler
+   rewrites them and emits the files.
+   ========================================================================== */
+
+@font-face {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../fonts/inter-variable.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: Inter;
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../fonts/inter-variable-italic.woff2') format('woff2');
+}

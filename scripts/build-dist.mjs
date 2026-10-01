@@ -50,29 +50,32 @@ function minify(css) {
     .trim();
 }
 
-function bundle(entry) {
-  const body = leaves(entry)
-    .map((f) => readFileSync(resolve(cssDir, f), 'utf8'))
-    .join('\n');
-  return `@layer bronto{${minify(body)}}\n`;
+/** Depth fix: source leaves live at `css/` and reference assets as
+ *  `../fonts/*` (→ package root). A generated file under `dist/css/` sits one
+ *  level deeper, so the relative asset path must gain one `../` or it 404s
+ *  (`dist/css/../fonts` = `dist/fonts`, which is not shipped). */
+function deepenAssets(css) {
+  return css.replace(/url\((['"]?)\.\.\/fonts\//g, 'url($1../../fonts/');
+}
+
+/** A flattened roll-up of an entrypoint. `dist/bronto.css` sits at `dist/`,
+ *  where the original `../fonts/*` already resolves; a roll-up written under
+ *  `dist/css/` passes `nested`. */
+function bundle(entry, { nested = false } = {}) {
+  const body = minify(
+    leaves(entry)
+      .map((f) => readFileSync(resolve(cssDir, f), 'utf8'))
+      .join('\n'),
+  );
+  return `@layer bronto{${nested ? deepenAssets(body) : body}}\n`;
 }
 
 /** One self-layered file per leaf, so a *direct* leaf import is layered
  *  by default (safe to mix with the bundle). The raw, unlayered source
  *  stays the explicit escape hatch, exported under `./css/unlayered/*`.
- *
- *  Depth fix: source leaves live at `css/` and reference assets as
- *  `../fonts/*` (→ package root). These generated copies live one level
- *  deeper at `dist/css/`, so the relative asset path must gain one `../`
- *  or it 404s (`dist/css/../fonts` = `dist/fonts`, which is not shipped).
- *  The flattened bundle is exempt — it sits at `dist/`, where the
- *  original `../fonts/*` already resolves to the package root. */
+ *  These copies live at `dist/css/`, so their asset paths are deepened. */
 function layeredLeaf(f) {
-  const css = minify(readFileSync(resolve(cssDir, f), 'utf8')).replace(
-    /url\((['"]?)\.\.\/fonts\//g,
-    'url($1../../fonts/',
-  );
-  return `@layer bronto{${css}}\n`;
+  return `@layer bronto{${deepenAssets(minify(readFileSync(resolve(cssDir, f), 'utf8')))}}\n`;
 }
 
 /** The leaves a direct import can target (core.css's import order). */
@@ -87,6 +90,8 @@ export const EXTRA_LEAVES = [
   'skins.css',
   'dataviz.css',
   'blocknote.css',
+  'fonts-inter.css',
+  'fonts-jetbrains-mono.css',
   'report.css',
   'figure.css',
   'annotations.css',
@@ -121,9 +126,11 @@ export function buildBundles() {
   for (const f of leafFiles()) out[`dist/css/${f}`] = layeredLeaf(f);
   for (const f of EXTRA_LEAVES) out[`dist/css/${f}`] = layeredLeaf(f);
   // Convenience roll-up of the analytical leaves into one flattened bundle.
-  out['dist/css/analytical.css'] = bundle('analytical.css');
+  out['dist/css/analytical.css'] = bundle('analytical.css', { nested: true });
   // Convenience roll-up for static reports: default bundle + one opt-in leaf.
-  out['dist/css/report-kit.css'] = bundle('report-kit.css');
+  out['dist/css/report-kit.css'] = bundle('report-kit.css', { nested: true });
+  // The default bundle for a tool, without site and app chrome.
+  out['dist/css/tool.css'] = bundle('tool.css', { nested: true });
   return out;
 }
 

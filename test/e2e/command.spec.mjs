@@ -121,3 +121,69 @@ test('forced-colors: active command item keeps selected system colors', async ({
   expect(active.background).not.toBe(active.hostBackground);
   expect(active.color).not.toBe(active.background);
 });
+
+test('headless: host-rendered rows take the keyboard without a re-init', async ({ page }) => {
+  await open(page);
+  await page.evaluate(async () => {
+    const behaviorPath = `/behaviors/${'index.js'}`;
+    const { initCommand } = await import(behaviorPath);
+    const scope = document.createElement('div');
+    scope.innerHTML = `
+      <div class="ui-command" data-bronto-command id="headless">
+        <input class="ui-command__input" aria-label="Search" />
+        <ul class="ui-command__list"></ul>
+        <p class="ui-command__empty" hidden>Nothing found</p>
+      </div>`;
+    document.body.append(scope);
+    const box = scope.querySelector('#headless');
+    const input = box.querySelector('input');
+    const list = box.querySelector('ul');
+    const empty = box.querySelector('.ui-command__empty');
+    const corpus = ['alpha report', 'beta board', 'alpha notes', 'gamma deck'];
+    // The host owns the results: it renders them on every keystroke.
+    const render = () => {
+      const q = input.value.trim().toLowerCase();
+      const rows = corpus.filter((entry) => entry.includes(q));
+      list.replaceChildren(
+        ...rows.map((entry) => {
+          const li = document.createElement('li');
+          li.className = 'ui-command__item';
+          li.dataset.value = entry;
+          li.textContent = entry;
+          return li;
+        }),
+      );
+      empty.hidden = rows.length > 0;
+    };
+    input.addEventListener('input', render);
+    render();
+    box.addEventListener('bronto:command:select', (e) => {
+      box.dataset.picked = e.detail.value;
+    });
+    window.__headlessStop = initCommand({ root: scope, headless: true });
+  });
+
+  const box = page.locator('#headless');
+  const input = box.locator('.ui-command__input');
+  const active = () =>
+    input.evaluate(
+      (el) => document.getElementById(el.getAttribute('aria-activedescendant'))?.textContent,
+    );
+  await expect(box.locator('.ui-command__item')).toHaveCount(4);
+  await expect(input).toHaveAttribute('role', 'combobox');
+
+  await input.fill('alpha');
+  await expect(box.locator('.ui-command__item')).toHaveCount(2);
+  await expect.poll(active).toBe('alpha report');
+  await input.press('ArrowDown');
+  await expect.poll(active).toBe('alpha notes');
+  await input.press('Enter');
+  await expect(box).toHaveAttribute('data-picked', 'alpha notes');
+
+  await input.fill('zzz');
+  await expect(box.locator('.ui-command__empty')).toBeVisible();
+  await expect(input).not.toHaveAttribute('aria-activedescendant', /.+/);
+
+  await page.evaluate(() => window.__headlessStop());
+  await expect(input).not.toHaveAttribute('role', /.+/);
+});

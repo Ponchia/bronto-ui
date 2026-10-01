@@ -5,8 +5,41 @@
    and the document is styled in the Nothing aesthetic while the markup
    stays semantic and machine-readable (no class-soup). Everything here
    is an element selector scoped under `.ui-prose`, so it never leaks
-   into app UI.
+   into app UI. The one exception is `.ui-meta`, the date · author line
+   that sits beside long-form text, a tool's remarks included (it lived in
+   site.css until 0.14, so css/tool.css can keep it without the site shell).
    ========================================================================== */
+
+/* --- Meta row — date · author · read-time, dot-separated --- */
+
+.ui-meta {
+  align-items: center;
+  color: var(--text-dim);
+  display: flex;
+  flex-wrap: wrap;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  gap: 0.55rem;
+  letter-spacing: var(--tracking-wide);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-transform: uppercase;
+}
+
+.ui-meta__item {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.55rem;
+}
+
+.ui-meta__item:not(:last-child)::after {
+  background: var(--line-strong);
+  border-radius: 50%;
+  block-size: 0.22rem;
+  content: '';
+  inline-size: 0.22rem;
+}
 
 .ui-prose {
   /* A prose block must shrink as a grid/flex item; its pre blocks scroll locally. */
