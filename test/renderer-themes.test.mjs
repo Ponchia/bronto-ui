@@ -61,19 +61,21 @@ test('D2 helpers expose both override maps and a resolved source vars block', ()
   }
 });
 
-test('Vega helpers select configs, accent, and quiet neutral from the resolved palette', () => {
+test('Vega helpers select configs, the resolved accent, and the quiet neutral', () => {
   assert.equal(brontoVegaConfig(), vega.light);
   assert.equal(brontoVegaConfig('dark'), vega.dark);
   assert.equal(brontoVegaConfig('midnight'), vega.light);
   assert.equal(vegaConfig('light'), vega.light);
 
-  assert.equal(brontoVegaAccent(), vega.light.range.category[0]);
-  assert.equal(brontoVegaAccent('dark'), vega.dark.range.category[0]);
-  assert.equal(brontoVegaAccent('midnight'), vega.light.range.category[0]);
+  // The accent is spent explicitly; no categorical slot is the accent.
+  assert.equal(brontoVegaAccent(), '#d71921');
+  assert.equal(brontoVegaAccent('dark'), '#ff3b41');
+  assert.equal(brontoVegaAccent('midnight'), '#d71921');
+  assert.ok(!vega.light.range.category.includes(brontoVegaAccent()));
 
-  assert.equal(brontoVegaNeutral(), vega.light.range.category.at(-1));
-  assert.equal(brontoVegaNeutral('dark'), vega.dark.range.category.at(-1));
-  assert.equal(brontoVegaNeutral('midnight'), vega.light.range.category.at(-1));
+  assert.equal(brontoVegaNeutral(), '#686863');
+  assert.equal(brontoVegaNeutral('dark'), '#a0a0a0');
+  assert.equal(brontoVegaNeutral('midnight'), '#686863');
   assertNoVarReferences(vega.light, 'vega.light');
   assertNoVarReferences(vega.dark, 'vega.dark');
 });

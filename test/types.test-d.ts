@@ -39,13 +39,25 @@ import {
 } from '../glyphs/glyphs.js';
 import { skins, SKIN_NAMES, type SkinName } from '../tokens/skins.js';
 import chartPalette, {
-  ACCENT,
+  CATEGORICAL_HUES,
   charts,
   CHART_CATEGORICAL,
   CHART_PATTERN_COUNT,
+  type CategoricalHue,
   type ChartTheme,
   type ChartTokenName,
 } from '../tokens/charts.js';
+import {
+  formatColor,
+  observeTokens,
+  parseColor,
+  readTokens,
+  resolveColor,
+  vegaConfig as rendererVegaConfig,
+  xtermTheme,
+  type Rgba,
+  type RendererTokens,
+} from '../renderer/index.js';
 import mermaidTheme, {
   brontoMermaidTheme,
   mermaid,
@@ -398,7 +410,9 @@ const chartTok: ChartTokenName = '--chart-1';
 const series1: string = charts.light.categorical[0];
 const chartLight: ChartTheme = charts.light;
 const chartDark: ChartTheme = chartPalette.dark;
-const chartAccent: 'var(--accent)' = ACCENT;
+const firstHue: CategoricalHue = CATEGORICAL_HUES[0];
+// @ts-expect-error — not a categorical hue.
+const badHue: CategoricalHue = 'teal';
 const chartCount: 8 = CHART_CATEGORICAL;
 const chartPatternCount: 8 = CHART_PATTERN_COUNT;
 // @ts-expect-error — not a categorical chart token.
@@ -408,7 +422,8 @@ void [
   series1,
   chartLight,
   chartDark,
-  chartAccent,
+  firstHue,
+  badHue,
   chartCount,
   chartPatternCount,
   badChart,
@@ -583,3 +598,17 @@ void [
 ui.chip({ dense: true });
 // @ts-expect-error — a native dialog opens through showModal(), not a recipe flag.
 ui.modal({ open: true });
+
+// Renderer: live tokens resolve to literals; the mappers are pure.
+const live: RendererTokens = readTokens(undefined, { scheme: 'dark' });
+const liveScheme: 'light' | 'dark' = live.scheme;
+const liveHues: string[] = live.categorical;
+const parsed: Rgba | null = parseColor('#2a78d6');
+const formatted: string = formatColor({ r: 0, g: 0, b: 0, alpha: 1 });
+const resolvedLiteral: string | null = resolveColor('var(--accent)');
+const stopObserving: () => void = observeTokens((t: RendererTokens) => t.accent);
+const liveVega: Record<string, any> = rendererVegaConfig(live, { mode: 'vega', narrow: true });
+const liveTerm: Record<string, string> = xtermTheme(live);
+// @ts-expect-error — a scheme is light or dark.
+readTokens(undefined, { scheme: 'sepia' });
+void [liveScheme, liveHues, parsed, formatted, resolvedLiteral, stopObserving, liveVega, liveTerm];

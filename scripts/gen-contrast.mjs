@@ -395,14 +395,14 @@ ${skinAudits.map((s) => `### ${s.label} — ${s.theme}\n\n${themeTable(s.rows)}`
 
 ## Data-viz palette (advisory)
 
-The opt-in Tier-4 chart palette (\`@ponchia/ui/css/dataviz.css\`, authored in
-\`tokens/charts.js\`) is gated differently: categorical series are held to
-**mutual distinguishability under normal + simulated protan/deutan/tritan
-vision** (\`check:charts\`, OKLab ΔE), and colour is **never the sole signal** —
-each series ships a matching \`--chart-pattern-*\` dot-matrix fill. So the
-WCAG ratios below are **advisory** (a chart fill is not body text); use them to
-pick a darker series for thin lines/points, or rely on the pattern. Series 1 is
-the brand accent.
+The opt-in Tier-4 categorical palette (\`@ponchia/ui/css/dataviz.css\`, authored
+in \`tokens/charts.js\`) is gated differently: each slot sits inside the theme's
+OKLCH lightness band and above the chroma floor, and **adjacent slots stay apart
+under simulated protanopia/deuteranopia and in normal vision** (\`check:charts\`,
+OKLab ΔE). Colour is **never the sole signal** — each series ships a matching
+\`--chart-pattern-*\` dot-matrix fill. So the WCAG ratios below are **advisory**
+(a chart fill is not body text); for thin lines, points or text use the slot's
+\`--cat-N-ink\`, which \`check:charts\` holds to 4.5:1. No slot is the accent.
 
 ${datavizSection(buildResolved())}
 

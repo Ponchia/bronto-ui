@@ -158,8 +158,7 @@
     var(--chart-seq-2),
     var(--chart-seq-3),
     var(--chart-seq-4),
-    var(--chart-seq-5),
-    var(--chart-seq-6)
+    var(--chart-seq-5)
   );
   block-size: 0.7rem;
   border: 1px solid var(--line);

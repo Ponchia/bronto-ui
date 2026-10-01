@@ -1,23 +1,52 @@
 {
-  "$comment": "@ponchia/ui data-viz palette resolved to static hex per theme, for non-CSS render targets (canvas/SVG/charting libs). Series 1 = the resolved brand accent. Generated from tokens/charts.js — do not edit by hand; run `npm run charts:build`. Drift-checked in CI.",
+  "$comment": "@ponchia/ui categorical + data-viz palette resolved to static hex per theme, for non-CSS render targets (canvas/SVG/charting libs). `tint` is resolved over the theme --panel; a page that re-points --panel (a skin, OLED) should read the live --cat-N-tint instead, or use @ponchia/ui/renderer. Generated from tokens/charts.js — do not edit by hand; run `npm run charts:build`. Drift-checked in CI.",
+  "hues": [
+    "blue",
+    "orange",
+    "aqua",
+    "yellow",
+    "magenta",
+    "green",
+    "violet",
+    "red"
+  ],
   "light": {
     "categorical": [
-      "#d71921",
-      "#e69f00",
-      "#56b4e9",
-      "#009e73",
-      "#f0e442",
-      "#0072b2",
-      "#cc79a7",
-      "#4d5358"
+      "#2a78d6",
+      "#eb6834",
+      "#1baf7a",
+      "#eda100",
+      "#e87ba4",
+      "#008300",
+      "#4a3aa7",
+      "#e34948"
+    ],
+    "tint": [
+      "#ddeafa",
+      "#ffe8e0",
+      "#e1f3e9",
+      "#fdf1e0",
+      "#feeaf0",
+      "#dcebda",
+      "#dedff3",
+      "#ffe4e1"
+    ],
+    "ink": [
+      "#1467c3",
+      "#bf3f00",
+      "#007d4c",
+      "#a45d00",
+      "#b04972",
+      "#007800",
+      "#4a3aa7",
+      "#c62b30"
     ],
     "sequential": [
-      "#ffe4e1",
-      "#f9bdb7",
-      "#ed8c84",
-      "#d55753",
-      "#ac3031",
-      "#79191b"
+      "#80b0e8",
+      "#5598e7",
+      "#2a78d6",
+      "#1c5cab",
+      "#104281"
     ],
     "diverging": [
       "#0c54a0",
@@ -31,22 +60,41 @@
   },
   "dark": {
     "categorical": [
-      "#ff3b41",
-      "#e69f00",
-      "#56b4e9",
-      "#009e73",
-      "#f0e442",
-      "#0072b2",
-      "#cc79a7",
-      "#4d5358"
+      "#3987e5",
+      "#d95926",
+      "#199e70",
+      "#c98500",
+      "#d55181",
+      "#008300",
+      "#9085e9",
+      "#e66767"
+    ],
+    "tint": [
+      "#232c38",
+      "#372721",
+      "#222f28",
+      "#342c21",
+      "#37262a",
+      "#1f2b1e",
+      "#2c2c38",
+      "#392827"
+    ],
+    "ink": [
+      "#4694f3",
+      "#e86f42",
+      "#27a677",
+      "#cb8705",
+      "#e46792",
+      "#38a433",
+      "#9187eb",
+      "#eb6c6c"
     ],
     "sequential": [
-      "#551112",
-      "#8d1a1e",
-      "#c13c3b",
-      "#e66e68",
-      "#f8a49d",
-      "#fed2cd"
+      "#1b5298",
+      "#256abf",
+      "#3987e5",
+      "#6da7ec",
+      "#9ec5f4"
     ],
     "diverging": [
       "#5aa3ec",

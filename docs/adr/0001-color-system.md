@@ -223,6 +223,35 @@ Hard acceptance criteria for every step below:
    safety, which the gate caught); the ramps are OKLCH. A chart colour's WCAG
    ratio vs the background is reported **advisory** (a fill is not body text;
    the pattern + ΔE gate carry distinguishability).
+
+   **Amended in 0.12 — categorical, not accent-led; measured, not inherited.**
+   The accent-led set failed the measurable palette checks on the package's own
+   surfaces: Okabe-Ito's yellow and the slate fell outside the lightness band,
+   the slate read as grey under the chroma floor, and spending slot 1 on the
+   alert red made every ordinary first series look like an error. A consumer
+   that draws charts, timeline lanes, graph colours and participant presence
+   from one palette shipped validated values and recorded the divergence; 0.12
+   adopts them. The order is fixed (blue, orange, aqua, yellow, magenta, green,
+   violet, red) and no slot is the accent, which keeps rule 5's single
+   interactive accent intact.
+
+   The gate changed with it. A fixed order means adjacent slots are the pairs a
+   legend or a stacked mark puts side by side, so `check:charts` holds
+   *adjacent* pairs apart under simulated protanopia/deuteranopia (OKLab
+   ΔE×100 ≥ 6) and in normal vision (≥ 15), with every slot inside the theme's
+   OKLCH lightness band and above the chroma floor, measured per theme against
+   the panel, the page and the OLED surfaces. All-pairs separation is reported,
+   not gated: no eight-hue set clears it, which is why the pattern fill stays
+   the mandated second channel for scatter and map use. Contrast under 3:1 is
+   reported for the same reason.
+
+   The tier also gains its second use, which the Context above names as a
+   monochrome restriction: **categorical identity**. `--cat-N` carries the same
+   hue for a tag, a participant or a user-chosen tint, with `--cat-N-tint` (a
+   16% wash over `--panel`, so it follows skins) and `--cat-N-ink` (text that
+   holds 4.5:1 on the panel, the page and its own tint, gated). Rule 4 still
+   holds: neither namespace may appear in core component CSS, and identity
+   colour is never status.
 8. **OKLCH `--accent-1..6` ramp migration.** *(done in 0.4.0)* Steps 1–4 mix
    the accent toward `--accent-ramp-end` (white in light, black in dark)
    `in oklch` (perceptually even). The explicit endpoint avoids low-chroma

@@ -150,6 +150,7 @@ semantic versioning contract for the surfaces listed here.
 | `./docs/legends.md` | `./docs/legends.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/marks.md` | `./docs/marks.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/connectors.md` | `./docs/connectors.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/renderer.md` | `./docs/renderer.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/spotlight.md` | `./docs/spotlight.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/crosshair.md` | `./docs/crosshair.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/selection.md` | `./docs/selection.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
@@ -208,6 +209,7 @@ semantic versioning contract for the surfaces listed here.
 | `./glyphs` | types: `./glyphs/glyphs.d.ts`<br>default: `./glyphs/glyphs.js` | Geometry/render helper JS | Stable additive | ESM helper surface. Function names, options, and data shapes are public; rendering heuristics may tune. |
 | `./annotations` | types: `./annotations/index.d.ts`<br>default: `./annotations/index.js` | Geometry/render helper JS | Stable additive | ESM helper surface. Function names, options, and data shapes are public; rendering heuristics may tune. |
 | `./connectors` | types: `./connectors/index.d.ts`<br>default: `./connectors/index.js` | Geometry/render helper JS | Stable additive | ESM helper surface. Function names, options, and data shapes are public; rendering heuristics may tune. |
+| `./renderer` | types: `./renderer/index.d.ts`<br>default: `./renderer/index.js` | Renderer/theme helper JS | Stable additive | ESM theme data/helpers for opt-in skins, chart palettes, and external renderers. |
 | `./skins` | types: `./tokens/skins.d.ts`<br>default: `./tokens/skins.js` | Renderer/theme helper JS | Stable additive | ESM theme data/helpers for opt-in skins, chart palettes, and external renderers. |
 | `./charts` | types: `./tokens/charts.d.ts`<br>default: `./tokens/charts.js` | Renderer/theme helper JS | Stable additive | ESM theme data/helpers for opt-in skins, chart palettes, and external renderers. |
 | `./charts.json` | `./tokens/charts.json` | Machine-readable data | Stable additive | JSON package data for non-JS/tooling consumers. Shape is public unless the paired doc marks a field internal. |
@@ -223,6 +225,7 @@ semantic versioning contract for the surfaces listed here.
 | `./docs/migrations/0.9-to-0.10.md` | `./docs/migrations/0.9-to-0.10.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/adr/0006-trusted-publishing.md` | `./docs/adr/0006-trusted-publishing.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/migrations/0.10-to-0.11.md` | `./docs/migrations/0.10-to-0.11.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/migrations/0.11-to-0.12.md` | `./docs/migrations/0.11-to-0.12.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./css/discussion.css` | `./dist/css/discussion.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
 | `./css/unlayered/discussion.css` | `./css/discussion.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
 | `./docs/discussion.md` | `./docs/discussion.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
@@ -248,6 +251,7 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `schemas` | Machine-readable schemas | Declarative JSON schemas for package-adjacent report/tooling contracts. |
 | `annotations` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
 | `connectors` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
+| `renderer` | Authored public JS directory | ESM source shipped as-is; adjacent declarations/maps are generated. |
 | `shiki` | Theme data | Shiki theme JSON on the governed palette. |
 | `llms.txt` | Agent entrypoint | Shipped plain-text orientation for offline LLM/agent consumers. |
 | `CHANGELOG.md` | Release record | Shipped historical release notes. |
@@ -272,6 +276,7 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `docs/legends.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/marks.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/connectors.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/renderer.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/spotlight.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/crosshair.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/selection.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
@@ -310,6 +315,7 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `docs/migrations/0.9-to-0.10.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/adr/0006-trusted-publishing.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/migrations/0.10-to-0.11.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/migrations/0.11-to-0.12.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 
 ## Artifact Provenance
 
@@ -323,7 +329,7 @@ result. The listed gates are part of `npm run check`.
 | Token model | `tokens/index.js` | css/tokens.css; tokens/index.json; tokens/tokens.dtcg.json; tokens/resolved.json; tokens/figma.variables.json; tokens/index.d.ts | `npm run tokens:css:build; tokens:build; dtcg:build; resolved:build; figma:variables:build; dts:build` | check:fresh; check:contrast | Token names/roles are public. Resolved and Figma handoff values are visual tuning before 1.0. |
 | Class registry | `classes/index.js plus css/*.css selectors` | classes/classes.json; classes/index.d.ts; classes/vscode.css-custom-data.json; docs/reference.md | `npm run classes:json:build; dts:build; vscode:build; reference:build` | check:fresh; check:classes; check:contract | The typed registry, JSON vocabulary, and generated reference stay aligned with real selectors. |
 | Authored CSS graph | `css/core.css plus css/*.css leaves` | dist/bronto.css; dist/css/*.css (48 layered outputs) | `npm run dist:build` | check:dist; check:exports; check:component-matrix | Default bundle and direct layered leaf imports are generated from authored CSS, size-gated, and coverage-owned as foundation or component leaves. |
-| JSDoc-authored public JS | `behaviors/; annotations/; connectors/; react/; solid/; qwik/; svelte/; vue/` | adjacent *.d.ts and *.d.ts.map files | `npm run dts:emit` | check:dts-emit; check:types; check:consumer-surface; check:consumer-types; check:behavior-matrix; check:attw; check:publint | Declarations are emitted from the shipped JS, package subpath imports are compiled from a packed clean consumer, and public behavior exports are docs/unit/browser owned. |
+| JSDoc-authored public JS | `behaviors/; annotations/; connectors/; renderer/; react/; solid/; qwik/; svelte/; vue/` | adjacent *.d.ts and *.d.ts.map files | `npm run dts:emit` | check:dts-emit; check:types; check:consumer-surface; check:consumer-types; check:behavior-matrix; check:attw; check:publint | Declarations are emitted from the shipped JS, package subpath imports are compiled from a packed clean consumer, and public behavior exports are docs/unit/browser owned. |
 | Glyph registry | `glyphs/glyphs.js` | glyphs/glyphs.d.ts | `npm run glyphs:build` | check:glyphs; check:unit | Glyph names and render options are public. The registry stays sorted and type-covered. |
 | Display colorways | `tokens/skins.js` | css/skins.css; tokens/skins.d.ts | `npm run skins:build` | check:skins; check:contrast | Skins are opt-in root-level choices and never part of dist/bronto.css. |
 | Chart palette | `tokens/charts.js` | css/dataviz.css; tokens/charts.json; tokens/charts.d.ts | `npm run charts:build` | check:charts | Data-viz colors are opt-in, CVD-gated, and never UI chrome. |

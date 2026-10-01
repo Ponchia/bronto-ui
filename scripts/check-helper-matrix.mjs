@@ -84,6 +84,21 @@ const MODULES = [
       'straightPath',
     ],
   }),
+  helperModule('renderer', {
+    source: 'renderer/index.js',
+    docs: 'docs/renderer.md',
+    unit: 'test/renderer.test.mjs',
+    types: 'test/types.test-d.ts',
+    helpers: [
+      'formatColor',
+      'observeTokens',
+      'parseColor',
+      'readTokens',
+      'resolveColor',
+      'vegaConfig',
+      'xtermTheme',
+    ],
+  }),
   helperModule('glyphs', {
     source: 'glyphs/glyphs.js',
     docs: 'docs/glyphs.md',
@@ -105,7 +120,7 @@ const MODULES = [
 ];
 
 const ARCHITECTURE_ROW =
-  'every public helper export in `classes`/`annotations`/`connectors`/`glyphs` has explicit docs, unit-test, and type-test ownership';
+  'every public helper export in `classes`/`annotations`/`connectors`/`renderer`/`glyphs` has explicit docs, unit-test, and type-test ownership';
 
 function helperModule(name, options) {
   return { name, ...options };

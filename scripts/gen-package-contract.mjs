@@ -22,6 +22,7 @@ const jsDtsDirs = [
   'behaviors',
   'annotations',
   'connectors',
+  'renderer',
   'react',
   'solid',
   'qwik',
@@ -126,7 +127,7 @@ const EXACT_EXPORT_CLASSES = new Map([
 
 const FRAMEWORK_EXPORTS = new Set(['./react', './solid', './qwik', './svelte', './vue']);
 const GEOMETRY_EXPORTS = new Set(['./glyphs', './annotations', './connectors']);
-const THEME_EXPORTS = new Set(['./skins', './charts', './mermaid', './d2', './vega']);
+const THEME_EXPORTS = new Set(['./skins', './charts', './mermaid', './d2', './vega', './renderer']);
 
 const EXACT_FILE_CLASSES = new Map([
   [

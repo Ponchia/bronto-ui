@@ -1,19 +1,22 @@
 /** @ponchia/ui — GENERATED from tokens/charts.js by scripts/gen-charts.mjs.
  *  Do not edit by hand; run `npm run charts:build`. Drift-checked in CI. */
 
-/** A theme's data-viz palette. Values are CSS colour strings (OKLCH for the
- *  authored series; `var(--accent)` for series 1). For resolved sRGB **hex**
- *  (canvas/SVG/charting libs), import `@ponchia/ui/charts.json` instead. */
+/** A theme's categorical + data-viz palette, as authored. Values are CSS
+ *  colour strings (sRGB hex for the measured categorical and sequential sets,
+ *  OKLCH for the diverging ramp). For resolved sRGB **hex** of every set,
+ *  including the derived tints and inks, import `@ponchia/ui/charts.json`;
+ *  for values that follow a live page (skins, OLED, contrast) use
+ *  `@ponchia/ui/renderer`. */
 export interface ChartTheme {
-  /** 8 distinct series colours (index 0 = `var(--accent)`, the brand). */
+  /** 8 categorical hues in fixed order: blue, orange, aqua, yellow, magenta, green, violet, red. */
   categorical: string[];
-  /** Single-hue sequential ramp (light→dark), for heatmaps/intensity. */
+  /** Single-hue sequential ramp; step 1 sits nearest the theme surface. */
   sequential: string[];
   /** Diverging ramp (− … neutral … +), for gains/losses. */
   diverging: string[];
 }
 
-/** The categorical CSS custom-property names (1-based; `--chart-1` = the accent). */
+/** The categorical series custom-property names (1-based). */
 export type ChartTokenName =
   | '--chart-1'
   | '--chart-2'
@@ -24,11 +27,14 @@ export type ChartTokenName =
   | '--chart-7'
   | '--chart-8';
 
-/** The opt-in data-viz palette source, per theme (CSS colour strings). */
-export declare const charts: { light: ChartTheme; dark: ChartTheme };
+/** A categorical slot's hue name. */
+export type CategoricalHue = 'blue' | 'orange' | 'aqua' | 'yellow' | 'magenta' | 'green' | 'violet' | 'red';
 
-/** Series 1 sentinel — the live brand accent. */
-export declare const ACCENT: 'var(--accent)';
+/** The hue each categorical slot carries, in slot order. */
+export declare const CATEGORICAL_HUES: readonly ['blue', 'orange', 'aqua', 'yellow', 'magenta', 'green', 'violet', 'red'];
+
+/** The opt-in categorical + data-viz palette source, per theme. */
+export declare const charts: { light: ChartTheme; dark: ChartTheme };
 
 export declare const CHART_CATEGORICAL: 8;
 export declare const CHART_PATTERN_COUNT: 8;
