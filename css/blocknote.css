@@ -59,3 +59,17 @@
   --bn-colors-highlights-pink-text: var(--cat-5-ink, var(--danger));
   --bn-colors-highlights-pink-background: var(--cat-5-tint, var(--panel-soft));
 }
+
+/* The rule beside a nested block. BlockNote draws it in --bn-colors-side-menu,
+   the drag handle's ink, which is --text-dim here: a structural hairline as
+   dark as a control. The guide takes the border token instead and the handle
+   keeps its colour. The selector is BlockNote 0.54's own (packages/react
+   editor/styles.css) under .bn-root, so it outranks it in either order. */
+.bn-root
+  .bn-block-group
+  .bn-block:not(:has(.bn-toggle-wrapper))
+  .bn-block-group
+  .bn-block-outer:not([data-prev-depth-changed])::before {
+  /* stylelint-disable-next-line csstools/use-logical -- BlockNote draws a physical border-left; a logical override would miss it in RTL. */
+  border-left-color: var(--line);
+}

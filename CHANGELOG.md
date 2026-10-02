@@ -5,6 +5,26 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased — 0.15.0
+
+### Added
+
+- **`ui-eyebrow--caps` and `ui-eyebrow--mono`**, the label voice of a tool
+  surface, taken from Spatial. `--caps` sets capitals on the wide tracking step,
+  for a label that names a region (a panel, a section, a gate); `--mono` sets the
+  mono face, for a label over data, code or a readout. Both compose with
+  `--muted` and `--sm`, and `ui.eyebrow({ caps, mono })` emits them. A tool that
+  restated this voice by hand can use the base eyebrow and keep only its spacing.
+
+### Changed
+
+- **`css/blocknote.css` draws the nested-block guide in `--line`.** BlockNote
+  draws the rule beside a nested block in its side-menu colour, which the leaf
+  maps to `--text-dim` for the drag handle. In 0.13 that made the guide as dark as
+  a control: light mode went from BlockNote's `#cfcfcf` to `#686863`. The guide
+  now takes the border token and the handle keeps `--text-dim`. The rule mirrors
+  BlockNote 0.54's selector under `.bn-root`, and a test pins that shape.
+
 ## 0.14.0 — 2026-10-01
 
 ### Added

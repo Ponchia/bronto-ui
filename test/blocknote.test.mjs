@@ -49,3 +49,18 @@ test('css/blocknote.css overrides both of BlockNote scheme blocks', () => {
   // equal specificity imported after it is what replaces them.
   assert.match(css, /^\.bn-root,\n\.bn-root\[data-color-scheme\] \{/m);
 });
+
+test('css/blocknote.css draws the nested-block guide in the border token, not the side-menu ink', () => {
+  // BlockNote 0.54's guide rule, under .bn-root so it outranks BlockNote's
+  // `border-left: 1px solid var(--bn-colors-side-menu)` whatever the order.
+  const guide =
+    /\.bn-root\s+\.bn-block-group\s+\.bn-block:not\(:has\(\.bn-toggle-wrapper\)\)\s+\.bn-block-group\s+\.bn-block-outer:not\(\[data-prev-depth-changed\]\)::before\s*\{\s*(?:\/\*[\s\S]*?\*\/\s*)?border-left-color:\s*(var\(--[\w-]+\));\s*\}/;
+  const match = css.match(guide);
+  assert.ok(match, 'the nested-block guide rule is missing or no longer mirrors BlockNote');
+  assert.equal(match[1], 'var(--line)');
+  assert.equal(
+    declared.get('--bn-colors-side-menu'),
+    'var(--text-dim)',
+    'the handle keeps its ink',
+  );
+});

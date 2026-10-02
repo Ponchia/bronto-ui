@@ -218,6 +218,11 @@ test('the recipes added this cycle emit only registry classes', () => {
   assert.equal(ui.tab({ active: true }), 'ui-tab is-active');
   assert.equal(ui.avatar({ size: 'sm' }), 'ui-avatar ui-avatar--sm');
   assert.equal(ui.prose({ compact: true }), 'ui-prose ui-prose--compact');
+  assert.equal(ui.eyebrow({ caps: true }), 'ui-eyebrow ui-eyebrow--caps');
+  assert.equal(
+    ui.eyebrow({ muted: true, sm: true, caps: true, mono: true }),
+    'ui-eyebrow ui-eyebrow--muted ui-eyebrow--sm ui-eyebrow--caps ui-eyebrow--mono',
+  );
   assert.equal(ui.alert({ tone: 'bogus' }), 'ui-alert');
   assert.equal(ui.dotspinner({ size: 'bogus' }), 'ui-dotspinner');
   assert.equal(ui.meter(), 'ui-meter');
