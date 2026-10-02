@@ -136,6 +136,11 @@ export type RendererTokens = {
      */
     lineStrong: string;
     /**
+     * A line that carries meaning: a relationship,
+     * connector or leader (`--edge`). 3:1 against the surface, unlike `line`.
+     */
+    edge: string;
+    /**
      * The one accent (`--accent`).
      */
     accent: string;

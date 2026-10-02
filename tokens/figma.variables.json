@@ -904,6 +904,32 @@
           }
         },
         {
+          "name": "edge",
+          "type": "COLOR",
+          "sourceCssVariable": "--edge",
+          "valuesByMode": {
+            "light": {
+              "r": 0.407843,
+              "g": 0.407843,
+              "b": 0.388235,
+              "a": 1
+            },
+            "dark": {
+              "r": 0.627451,
+              "g": 0.627451,
+              "b": 0.627451,
+              "a": 1
+            }
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--edge",
+              "value": "#686863",
+              "darkValue": "#a0a0a0"
+            }
+          }
+        },
+        {
           "name": "field/dot",
           "type": "COLOR",
           "sourceCssVariable": "--field-dot",

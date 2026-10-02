@@ -144,6 +144,12 @@ export const cssVars = {
     '--surface-muted': 'var(--panel-soft)',
     '--border': 'var(--line)',
     '--border-strong': 'var(--line-strong)',
+    // A line that carries meaning: a relationship between nodes, a connector
+    // or annotation leader, a bracket mark. The hairlines (--line,
+    // --line-strong) are decorative borders that WCAG 1.4.11 exempts; this is
+    // a graphical object it holds to 3:1, so it rides the dim-text ink, which
+    // clears that on every surface and takes the high-contrast step with it.
+    '--edge': 'var(--text-dim)',
   },
   // Light palette — :root, :root[data-theme='light'].
   light: {

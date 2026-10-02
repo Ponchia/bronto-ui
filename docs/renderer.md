@@ -36,6 +36,7 @@ accept both.
 | `bg`, `bgElevated`, `panel`, `panelStrong` | `--bg`, `--bg-elevated`, `--panel`, `--panel-strong` | Backgrounds; draw on `panel` |
 | `text`, `textSoft`, `textDim` | `--text`, `--text-soft`, `--text-dim` | Labels, secondary and tertiary ink |
 | `line`, `lineStrong` | `--line`, `--line-strong` | Grid and hairlines; axes and rules |
+| `edge` | `--edge` | A line that carries meaning: a relationship, connector or leader. 3:1 against the surface; `line` and `lineStrong` are decorative and are not |
 | `accent`, `accentText`, `onAccent`, `focus` | accent family | The one emphasis, its text forms, focus |
 | `selection` | `--accent` at 27% | A translucent selection wash |
 | `success`, `warning`, `danger`, `info` | status tier | Status only, never categories |

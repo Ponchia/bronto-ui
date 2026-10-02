@@ -39,6 +39,8 @@ import { cssVars } from '../tokens/index.js';
  * @property {string} textDim Tertiary ink (`--text-dim`).
  * @property {string} line Hairline and grid (`--line`).
  * @property {string} lineStrong Axis, domain and rule (`--line-strong`).
+ * @property {string} edge A line that carries meaning: a relationship,
+ *   connector or leader (`--edge`). 3:1 against the surface, unlike `line`.
  * @property {string} accent The one accent (`--accent`).
  * @property {string} accentText Accent as text on the page (`--accent-text`).
  * @property {string} onAccent Ink on an accent fill (`--on-accent`).
@@ -357,6 +359,7 @@ export function readTokens(element, options = {}) {
   const bg = bgValue || packaged('--bg');
   const panel = token('--panel', bg);
   const text = token('--text', scheme === 'dark' ? '#ffffff' : '#000000');
+  const textDim = token('--text-dim', text);
   const accent = token('--accent', text);
   const line = token('--line', text);
   const list = (prefix, count, fallback) => {
@@ -384,9 +387,10 @@ export function readTokens(element, options = {}) {
     panelStrong: token('--panel-strong', panel),
     text,
     textSoft: token('--text-soft', text),
-    textDim: token('--text-dim', text),
+    textDim,
     line,
     lineStrong: token('--line-strong', line),
+    edge: token('--edge', textDim),
     accent,
     accentText: token('--accent-text', accent),
     onAccent: token('--on-accent', scheme === 'dark' ? '#000000' : '#ffffff'),
@@ -425,6 +429,7 @@ const FINGERPRINTED = [
   '--text-dim',
   '--line',
   '--line-strong',
+  '--edge',
   '--accent',
   '--accent-text',
   '--on-accent',

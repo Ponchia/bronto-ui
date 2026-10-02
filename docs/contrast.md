@@ -65,6 +65,8 @@ Overall: **all contractual pairings meet their floor ✅**.
 | `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 5.60:1 | Lc 77.8 | ✅ pass |
 | `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 6.21:1 | Lc 78.9 | ✅ pass |
 | `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 5.77:1 | Lc 78.3 | ✅ pass |
+| `--edge` | `--bg` | Relationship line vs page background | UI / large (3:1) | 5.09:1 | Lc 71.4 | ✅ pass |
+| `--edge` | `--surface` | Relationship line vs a card | UI / large (3:1) | 5.60:1 | Lc 78.0 | ✅ pass |
 | `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.39:1 | Lc 47.1 | ℹ️ not gated |
 
 ## Dark theme
@@ -94,6 +96,8 @@ Overall: **all contractual pairings meet their floor ✅**.
 | `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 9.29:1 | Lc 66.6 | ✅ pass |
 | `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 5.23:1 | Lc 41.5 | ✅ pass |
 | `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 7.33:1 | Lc 54.8 | ✅ pass |
+| `--edge` | `--bg` | Relationship line vs page background | UI / large (3:1) | 7.16:1 | Lc 50.3 | ✅ pass |
+| `--edge` | `--surface` | Relationship line vs a card | UI / large (3:1) | 6.52:1 | Lc 49.3 | ✅ pass |
 | `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.29:1 | Lc 14.5 | ℹ️ not gated |
 
 ## Display colorways (skins)
@@ -134,6 +138,8 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 5.60:1 | Lc 77.8 | ✅ pass |
 | `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 6.21:1 | Lc 78.9 | ✅ pass |
 | `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 5.77:1 | Lc 78.3 | ✅ pass |
+| `--edge` | `--bg` | Relationship line vs page background | UI / large (3:1) | 5.07:1 | Lc 71.2 | ✅ pass |
+| `--edge` | `--surface` | Relationship line vs a card | UI / large (3:1) | 5.60:1 | Lc 78.0 | ✅ pass |
 | `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.41:1 | Lc 47.4 | ℹ️ not gated |
 
 ### Amber CRT — dark
@@ -163,6 +169,8 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 9.29:1 | Lc 66.6 | ✅ pass |
 | `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 5.23:1 | Lc 41.5 | ✅ pass |
 | `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 7.33:1 | Lc 54.8 | ✅ pass |
+| `--edge` | `--bg` | Relationship line vs page background | UI / large (3:1) | 7.17:1 | Lc 50.3 | ✅ pass |
+| `--edge` | `--surface` | Relationship line vs a card | UI / large (3:1) | 6.52:1 | Lc 49.3 | ✅ pass |
 | `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.28:1 | Lc 14.5 | ℹ️ not gated |
 
 ### E-ink — light
@@ -192,6 +200,8 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 5.60:1 | Lc 77.8 | ✅ pass |
 | `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 6.21:1 | Lc 78.9 | ✅ pass |
 | `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 5.77:1 | Lc 78.3 | ✅ pass |
+| `--edge` | `--bg` | Relationship line vs page background | UI / large (3:1) | 5.09:1 | Lc 71.4 | ✅ pass |
+| `--edge` | `--surface` | Relationship line vs a card | UI / large (3:1) | 5.60:1 | Lc 78.0 | ✅ pass |
 | `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.39:1 | Lc 47.1 | ℹ️ not gated |
 
 ### E-ink — dark
@@ -221,6 +231,8 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 9.29:1 | Lc 66.6 | ✅ pass |
 | `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 5.23:1 | Lc 41.5 | ✅ pass |
 | `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 7.33:1 | Lc 54.8 | ✅ pass |
+| `--edge` | `--bg` | Relationship line vs page background | UI / large (3:1) | 7.16:1 | Lc 50.3 | ✅ pass |
+| `--edge` | `--surface` | Relationship line vs a card | UI / large (3:1) | 6.52:1 | Lc 49.3 | ✅ pass |
 | `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.29:1 | Lc 14.6 | ℹ️ not gated |
 
 ### Phosphor Green — light
@@ -250,6 +262,8 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 5.60:1 | Lc 77.8 | ✅ pass |
 | `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 6.21:1 | Lc 78.9 | ✅ pass |
 | `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 5.77:1 | Lc 78.3 | ✅ pass |
+| `--edge` | `--bg` | Relationship line vs page background | UI / large (3:1) | 5.12:1 | Lc 71.8 | ✅ pass |
+| `--edge` | `--surface` | Relationship line vs a card | UI / large (3:1) | 5.60:1 | Lc 78.0 | ✅ pass |
 | `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.35:1 | Lc 46.4 | ℹ️ not gated |
 
 ### Phosphor Green — dark
@@ -279,6 +293,8 @@ palette untouched). Accents are authored in OKLCH; `--accent-text` is the
 | `--warning` | `--surface` | Warning indicator vs a card | UI / large (3:1) | 9.29:1 | Lc 66.6 | ✅ pass |
 | `--danger` | `--surface` | Danger indicator vs a card | UI / large (3:1) | 5.23:1 | Lc 41.5 | ✅ pass |
 | `--info` | `--surface` | Info indicator vs a card | UI / large (3:1) | 7.33:1 | Lc 54.8 | ✅ pass |
+| `--edge` | `--bg` | Relationship line vs page background | UI / large (3:1) | 7.14:1 | Lc 50.2 | ✅ pass |
+| `--edge` | `--surface` | Relationship line vs a card | UI / large (3:1) | 6.52:1 | Lc 49.3 | ✅ pass |
 | `--line-strong` | `--surface` | Strong hairline vs a card | Decorative (1.4.11-exempt) | 2.33:1 | Lc 15.1 | ℹ️ not gated |
 
 ## Data-viz palette (advisory)

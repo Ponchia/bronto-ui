@@ -56,7 +56,7 @@ export const MAP = {
   tertiaryBorderColor: 'var(--line)',
 
   // Shared node / edge / cluster grammar.
-  lineColor: 'var(--line-strong)',
+  lineColor: 'var(--edge)',
   textColor: 'var(--text)',
   mainBkg: 'var(--panel)',
   nodeBorder: 'var(--line-strong)',
