@@ -552,7 +552,7 @@
     "./docs/discussion.md": "./docs/discussion.md"
   },
   "overrides": {
-    "adm-zip": "0.6.0",
+    "adm-zip": "0.6.1",
     "esbuild": "0.28.1"
   }
 }
