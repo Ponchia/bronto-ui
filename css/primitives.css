@@ -355,6 +355,19 @@
   font-size: var(--text-2xs);
 }
 
+/* The label voice of a tool surface: capitals on the wide tracking step, for a
+   section or panel label that names a region rather than introducing prose.
+   Composes with --muted, --sm and --mono. */
+.ui-eyebrow--caps {
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+/* The same label in the mono face, for a label over data, code or a readout. */
+.ui-eyebrow--mono {
+  font-family: var(--mono);
+}
+
 /* --- Buttons --- */
 
 .ui-button {

@@ -123,6 +123,10 @@ export interface TableOpts {
 export interface EyebrowOpts {
   muted?: boolean;
   sm?: boolean;
+  /** Capitals on the wide tracking step: a label that names a region. */
+  caps?: boolean;
+  /** The mono face: a label over data, code or a readout. */
+  mono?: boolean;
 }
 export interface HintOpts {
   error?: boolean;
