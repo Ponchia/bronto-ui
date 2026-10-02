@@ -94,7 +94,8 @@
       "--surface-raised": "var(--panel-strong)",
       "--surface-muted": "var(--panel-soft)",
       "--border": "var(--line)",
-      "--border-strong": "var(--line-strong)"
+      "--border-strong": "var(--line-strong)",
+      "--edge": "var(--text-dim)"
     },
     "light": {
       "--bg": "#f4f4f2",
@@ -261,7 +262,8 @@
       "surface-raised": "var(--panel-strong)",
       "surface-muted": "var(--panel-soft)",
       "border": "var(--line)",
-      "border-strong": "var(--line-strong)"
+      "border-strong": "var(--line-strong)",
+      "edge": "var(--text-dim)"
     },
     "color": {
       "light": {

@@ -193,6 +193,10 @@ const PAIRS = [
   ['--warning', '--surface', 'Warning indicator vs a card', 'ui'],
   ['--danger', '--surface', 'Danger indicator vs a card', 'ui'],
   ['--info', '--surface', 'Info indicator vs a card', 'ui'],
+  // A line that carries meaning (a graph relationship, a connector or
+  // annotation leader, a bracket mark) is a graphical object, not a border.
+  ['--edge', '--bg', 'Relationship line vs page background', 'ui'],
+  ['--edge', '--surface', 'Relationship line vs a card', 'ui'],
   // Hairlines are a deliberate identity choice and WCAG 1.4.11 exempts
   // decorative borders that are not the sole identifier of a control
   // (the framework re-asserts boundaries under forced-colors /

@@ -186,6 +186,10 @@
       "description": "Global scale token. Value: `cubic-bezier(0.2, 0.8, 0.2, 1)`"
     },
     {
+      "name": "--edge",
+      "description": "Global scale token. Value: `var(--text-dim)`"
+    },
+    {
       "name": "--field-dot",
       "description": "Theme token. Light: `rgb(10, 10, 10, 0.16)` · Dark: `rgb(242, 242, 242, 0.14)`"
     },

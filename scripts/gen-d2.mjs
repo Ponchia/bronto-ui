@@ -51,7 +51,10 @@ export const MAP = {
   N7: 'var(--bg)',
 
   // Base — borders, edges, and container fills. Neutral, to stay monochrome.
-  B1: 'var(--line-strong)', // shape borders + connections
+  // Shape borders + connections. A connection carries meaning, so B1 is
+  // `--edge` (3:1 against the canvas, WCAG 1.4.11); D2 draws borders from the
+  // same slot.
+  B1: 'var(--edge)',
   B2: 'var(--line)',
   B3: 'var(--line)',
   B4: 'var(--panel-soft)', // outer container fill
