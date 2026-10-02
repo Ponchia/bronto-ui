@@ -243,6 +243,8 @@ export declare const cls: {
   readonly eyebrow: 'ui-eyebrow';
   readonly eyebrowMuted: 'ui-eyebrow--muted';
   readonly eyebrowSm: 'ui-eyebrow--sm';
+  readonly eyebrowCaps: 'ui-eyebrow--caps';
+  readonly eyebrowMono: 'ui-eyebrow--mono';
   readonly prose: 'ui-prose';
   readonly proseCompact: 'ui-prose--compact';
   readonly proseBlocks: 'ui-prose--blocks';
@@ -791,6 +793,10 @@ export interface TableOpts {
 export interface EyebrowOpts {
   muted?: boolean;
   sm?: boolean;
+  /** Capitals on the wide tracking step: a label that names a region. */
+  caps?: boolean;
+  /** The mono face: a label over data, code or a readout. */
+  mono?: boolean;
 }
 export interface HintOpts {
   error?: boolean;

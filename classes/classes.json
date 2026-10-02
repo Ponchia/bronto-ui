@@ -1,7 +1,7 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `groups[].base` is null for a parts-only namespace (no standalone base class — do NOT emit it). A modifier whose name contains `__` (e.g. `ui-spark__bar--pos`) attaches to THAT part, not the base host. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `behaviorAttributes` are the `data-bronto-*` wiring hooks the optional behaviors delegate on; `requiredAria` is the role/aria a generator must emit per component. `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 700,
+    "classes": 702,
     "groups": 188
   },
   "groups": {
@@ -620,6 +620,8 @@
     "ui-eyebrow": {
       "base": "ui-eyebrow",
       "modifiers": [
+        "ui-eyebrow--caps",
+        "ui-eyebrow--mono",
         "ui-eyebrow--muted",
         "ui-eyebrow--sm"
       ],
@@ -1891,6 +1893,8 @@
     "ui-evidence-item__window",
     "ui-evidence-ledger",
     "ui-eyebrow",
+    "ui-eyebrow--caps",
+    "ui-eyebrow--mono",
     "ui-eyebrow--muted",
     "ui-eyebrow--sm",
     "ui-field",

@@ -33,7 +33,12 @@ win.
 | disabled text | `--text-dim` |
 | border, shadow | `--line` |
 | side menu (drag handle, add) | `--text-dim` |
+| nested-block guide | `--line` |
 | font, radius | `--sans`, `--radius-lg` |
+
+BlockNote draws the rule beside a nested block in the side-menu colour. The leaf
+gives that rule the border token instead, so the guide stays a hairline while
+the drag handle keeps `--text-dim`.
 
 Text and background highlights are categorical identity: a colour someone chose
 for a span. They take `--cat-N-ink` (text, 4.5:1 on its tint and the panel) and
