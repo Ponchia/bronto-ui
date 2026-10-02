@@ -109,9 +109,10 @@
 }
 
 /* A passage bracket: a tick down the inline-start with an optional label.
-   The prose analogue of `ui-annotation--bracket`. */
+   The prose analogue of `ui-annotation--bracket`. The tick marks a passage and
+   its label is text, so both take `--edge` (the dim-text ink), not a hairline. */
 .ui-bracket-note {
-  --mark-color: var(--line-strong);
+  --mark-color: var(--edge);
 
   border-inline-start: 2px solid var(--mark-color);
   display: block;

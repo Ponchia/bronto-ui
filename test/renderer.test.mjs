@@ -59,6 +59,9 @@ test('readTokens without a DOM returns the packaged palette for the scheme', () 
     assert.deepEqual(t.sequential, charts[scheme].sequential);
     assert.equal(t.categoricalTint.length, 8);
     for (const c of [...t.categoricalTint, ...t.diverging]) assert.match(c, /^#[0-9a-f]{6}$/);
+    // A line that carries meaning rides the dim-text ink, never a hairline.
+    assert.equal(t.edge, t.textDim);
+    assert.notEqual(t.edge, t.lineStrong);
   }
 });
 

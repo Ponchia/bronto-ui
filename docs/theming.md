@@ -431,11 +431,20 @@ semantics — the CSS can't add ARIA for you:
 
 ## Contrast
 
+- **Lines that carry meaning use `--edge`, not a hairline.** `--line` and
+  `--line-strong` are decorative borders, which WCAG 1.4.11 exempts and the
+  contrast gate reports without enforcing. A relationship between nodes, a
+  connector or annotation leader, or a bracket mark is a graphical object
+  the reader needs, so it must hold 3:1 against its surface. `--edge` is the
+  dim-text ink (`var(--text-dim)`), gated at 3:1 on the page and on a card in
+  every theme and colorway. Connectors, annotations, the bracket note, Mermaid
+  edges and D2 connections draw in it; renderers read it as `edge`.
 - `data-contrast="high"` on any element, **and** the OS
   `prefers-contrast: more` signal, collapse the soft greys toward the
   strong end (hairlines → `--line-strong`, dim text → `--text-soft`,
   solid focus ring). Theme-agnostic — they reference the per-theme
-  `*-strong` tokens, so they work under light and dark.
+  `*-strong` tokens, so they work under light and dark. `--edge` follows the
+  dim text up with them.
 - Windows High Contrast / `forced-colors: active` is handled in
   `base.css`: state that was signalled only by a fill (progress, status
   dots, switch, segmented) is re-asserted with system colors.

@@ -5,6 +5,32 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased — 0.16.0
+
+### Added
+
+- **`--edge`, the token for lines that carry meaning.** A relationship between
+  nodes, a connector or annotation leader, or a bracket mark is a graphical
+  object WCAG 1.4.11 holds to 3:1 against its surface. The hairlines
+  (`--line`, `--line-strong`) are decorative and exempt, and `--line-strong`
+  measures 2.39:1 on a light card and 2.29:1 on a dark one. `--edge` is the
+  dim-text ink (`var(--text-dim)`): 5.60:1 light and 6.52:1 dark on a card,
+  and it follows the high-contrast step. The contrast gate now enforces it on
+  the page and on a card in every theme and colorway.
+- **`edge` in `readTokens()`**, for renderers that draw relationships on a
+  canvas (graph and network views).
+
+### Changed
+
+- Connectors, annotation leaders (default and `--accent`) and the bracket note
+  draw in `--edge` instead of `--line-strong`. The `--muted` connector and
+  annotation keep the decorative `--line`.
+- The bracket note's label was text in `--line-strong` (2.39:1). It is now
+  `--edge`, which clears the 4.5:1 text floor.
+- Mermaid `lineColor` and D2's `B1` slot (connections, and the shape borders D2
+  draws from the same slot) resolve to `--edge`: `#686863` light, `#a0a0a0`
+  dark.
+
 ## 0.15.0 — 2026-10-02
 
 ### Added

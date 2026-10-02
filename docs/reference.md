@@ -1852,6 +1852,7 @@ Exact mirror of the `:root` blocks in `css/tokens.css`
 | `--surface-muted` | `var(--panel-soft)` |
 | `--border` | `var(--line)` |
 | `--border-strong` | `var(--line-strong)` |
+| `--edge` | `var(--text-dim)` |
 
 ### Light theme
 

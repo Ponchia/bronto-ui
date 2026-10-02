@@ -7,11 +7,13 @@
    `initConnectors`) draws/tracks the line; the geometry helpers in
    `@ponchia/ui/connectors` compute the path. Not imported by core.css.
 
-   Monochrome by default; the rationed accent and status tones are opt-in.
+   Monochrome by default, in `--edge`: a leader line carries meaning, so it
+   holds 3:1 against the surface (WCAG 1.4.11). `--muted` drops to the
+   decorative hairline; the rationed accent and status tones are opt-in.
    ========================================================================== */
 
 .ui-connector {
-  --connector-color: var(--line-strong);
+  --connector-color: var(--edge);
 
   color: var(--connector-color);
   inset: 0;

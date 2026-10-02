@@ -95,6 +95,8 @@ switch, re-`initialize` with the other palette and re-render.
   [charts palette](./legends.md) (blue first; no slot is the accent).
 - **Structural** diagrams — flowchart, sequence, class, ER, state — use the
   monochrome node/edge/cluster grammar and spend the accent only on notes.
+  Edges (`lineColor`) are `--edge`, which holds 3:1 against the canvas; node
+  borders stay on the `--line-strong` hairline.
 - **Not themed: `gantt` and `timeline`.** Their colours come from
   diagram-specific slots (`taskBkgColor`, `sectionBkgColor*`, `gridColor`,
   `todayLineColor`, …) that the base `themeVariables` map does **not** set, so a

@@ -63,8 +63,10 @@ relationship it depicts is also clear from the content/DOM order.
 | `data-end` | `arrow` (default), `dot`, `none`. |
 
 Tones: `ui-connector--accent` / `--muted` / `--success` / `--warning` /
-`--danger` / `--info` (monochrome by default). `ui-connector--dashed` for a
-dashed line; `ui-connector--draw` strokes it in once (reduced-motion-safe).
+`--danger` / `--info`. By default the line is monochrome, in `--edge`, which
+holds 3:1 against the surface; `--muted` drops to the decorative `--line`
+hairline. `ui-connector--dashed` for a dashed line; `ui-connector--draw`
+strokes it in once (reduced-motion-safe).
 `ui.connector({ tone, dashed, motion })` builds the class string.
 
 ## Geometry helpers (no DOM)

@@ -1420,6 +1420,27 @@
           }
         }
       },
+      "edge": {
+        "DEFAULT": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.407843,
+              0.407843,
+              0.388235
+            ],
+            "alpha": 1,
+            "hex": "#686863"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--edge",
+              "authoredValue": "var(--text-dim)"
+            }
+          }
+        }
+      },
       "bg": {
         "DEFAULT": {
           "$type": "color",
@@ -2620,6 +2641,27 @@
             "com.ponchia.css": {
               "variable": "--border-strong",
               "authoredValue": "var(--line-strong)"
+            }
+          }
+        }
+      },
+      "edge": {
+        "DEFAULT": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.627451,
+              0.627451,
+              0.627451
+            ],
+            "alpha": 1,
+            "hex": "#a0a0a0"
+          },
+          "$extensions": {
+            "com.ponchia.css": {
+              "variable": "--edge",
+              "authoredValue": "var(--text-dim)"
             }
           }
         }

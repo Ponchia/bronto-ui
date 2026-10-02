@@ -64,7 +64,8 @@ Brackets a whole block and optionally labels it — the prose analogue of
 ```
 
 Tones: `--accent` (the rationed accent), `--success`, `--warning`, `--danger`,
-`--info`. The default is a neutral bracket.
+`--info`. The default is a neutral bracket in `--edge`, the dim-text ink, so the
+tick holds 3:1 and its label holds text contrast.
 
 ## Recipes
 
