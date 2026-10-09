@@ -135,6 +135,37 @@ try {
     snippet.window.close();
   }
 
+  // Public copyable snippets need their own accessible navigation and table
+  // names: the website cannot supply missing context after copy/paste.
+  for (const component of components) {
+    const snippet = new JSDOM(component.markup);
+    for (const breadcrumb of snippet.window.document.querySelectorAll('.ui-breadcrumb')) {
+      assert(
+        breadcrumb.closest('nav[aria-label], nav[aria-labelledby]'),
+        'Copyable component ' + component.name + ' has an unnamed breadcrumb navigation',
+      );
+    }
+    for (const table of snippet.window.document.querySelectorAll('table')) {
+      assert(
+        table.querySelector('caption')?.textContent.trim() ||
+          table.hasAttribute('aria-label') ||
+          table.hasAttribute('aria-labelledby'),
+        'Copyable component ' + component.name + ' contains an unnamed table',
+      );
+    }
+    snippet.window.close();
+  }
+
+  for (const example of ['operations', 'reports', 'theming']) {
+    const path = `examples/${example}/index.html`;
+    const html = new JSDOM(await readFile(join(built, path), 'utf8'));
+    const preview = html.window.document.querySelector('.example-mobile-preview');
+    assert(
+      preview?.querySelector('img[alt]') && preview.getAttribute('href')?.includes('demo/'),
+      'Mobile example ' + example + ' requires a real screenshot linked to its interactive demo',
+    );
+    html.window.close();
+  }
   const docs = JSON.parse(await readFile(join(built, 'docs/search-index.json'), 'utf8'));
   assert(docs.length >= 70, `Missing reference docs: ${docs.length}`);
   assert(

@@ -803,6 +803,11 @@ summary:focus-visible {
   border: 0;
   background: #fff;
 }
+/* A responsive screenshot links to the full demo on narrow screens.
+   On desktop the actual interactive embedded fixture remains visible. */
+.example-mobile-preview {
+  display: none;
+}
 .example-notes {
   padding: 48px 0 100px;
   display: grid;
@@ -1533,10 +1538,29 @@ summary:focus-visible {
     flex-basis: 100%;
   }
   .iframe-frame iframe {
-    min-width: 750px;
+    display: none;
   }
-  .iframe-frame {
-    overflow-x: auto;
+  .example-mobile-preview {
+    display: block;
+    text-decoration: none;
+    background: #202224;
+    color: #f3f4f1;
+  }
+  .example-mobile-preview img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .example-mobile-preview > span {
+    display: block;
+    padding: 15px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  .example-mobile-preview:hover > span {
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
   .example-notes,
   .example-process {
