@@ -126,16 +126,24 @@
   </div>
   <div class="code-showcase">
     <div class="code-header">
-      <span>01 / BASIC USAGE</span><button type="button" class="copy-button" data-copy>Copy</button>
+      <span>01 / INSTALL</span><button type="button" class="copy-button" data-copy>Copy</button>
     </div>
     <pre><code>npm install @ponchia/ui</code></pre>
     <div class="code-header code-header--secondary">
-      <span>02 / YOUR HTML</span><button type="button" class="copy-button" data-copy>Copy</button>
+      <span>02 / IMPORT · MAIN.JS</span
+      ><button type="button" class="copy-button" data-copy>Copy</button>
     </div>
-    <pre><code>&lt;link rel="stylesheet" href="bronto.css"&gt;
-
-&lt;button class="ui-button"&gt;Continue&lt;/button&gt;
+    <pre><code>import '@ponchia/ui';</code></pre>
+    <div class="code-header code-header--secondary">
+      <span>03 / MARKUP · INDEX.HTML</span
+      ><button type="button" class="copy-button" data-copy>Copy</button>
+    </div>
+    <pre><code>&lt;button class="ui-button"&gt;Continue&lt;/button&gt;
 &lt;span class="ui-badge ui-badge--success"&gt;Ready&lt;/span&gt;</code></pre>
+    <p class="code-showcase__note">
+      Plain HTML without a bundler?
+      <a href="{{root}}docs/getting-started/vanilla.html">Use the CDN stylesheet guide ↗</a>
+    </p>
   </div>
 </section>
 <section class="section page-container final-cta">

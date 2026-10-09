@@ -183,8 +183,12 @@ async function walk(base, path = '') {
         category: categoryFor(stem),
         markdown,
         excerpt: markdown
+          .replace(/<!--[\s\S]*?-->/g, ' ')
+          .replace(/```[\s\S]*?```/g, ' ')
+          .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
           .replace(/[#*_`>\[\]()]/g, ' ')
           .replace(/\s+/g, ' ')
+          .trim()
           .slice(0, 240),
       });
     }

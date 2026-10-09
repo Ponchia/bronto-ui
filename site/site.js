@@ -163,8 +163,12 @@ if (docsSearchInput) {
   };
   docsSearchInput.addEventListener('input', search);
 }
-// Old README and demo links used /docs/#reporting.md. Keep those deep links alive.
-if (location.pathname.endsWith('/docs/')) {
+// Previous demo/README links used /docs/#reporting.md. This needs to
+// handle both direct loads and same-document hash changes from the docs index.
+function redirectLegacyDocHash() {
+  if (!location.pathname.endsWith('/docs/')) return;
   const legacy = /^#([A-Za-z0-9_\/-]+)\.md(#.*)?$/.exec(location.hash);
   if (legacy) location.replace(`${root}docs/${legacy[1]}.html${legacy[2] || ''}`);
 }
+window.addEventListener('hashchange', redirectLegacyDocHash);
+redirectLegacyDocHash();
