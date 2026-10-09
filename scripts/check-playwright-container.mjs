@@ -38,7 +38,11 @@ if (!/^\d+\.\d+\.\d+$/.test(playwrightVersion ?? '')) {
 
 const image = `mcr.microsoft.com/playwright:v${playwrightVersion}-jammy`;
 
-for (const rel of ['.github/workflows/e2e.yml', '.github/workflows/visual-baselines.yml']) {
+for (const rel of [
+  '.github/workflows/e2e.yml',
+  '.github/workflows/visual-baselines.yml',
+  '.github/workflows/examples.yml',
+]) {
   const body = read(rel);
   const images = [...body.matchAll(/mcr\.microsoft\.com\/playwright:v[\d.]+-jammy/g)].map(
     (match) => match[0],
@@ -51,6 +55,25 @@ for (const rel of ['.github/workflows/e2e.yml', '.github/workflows/visual-baseli
     if (found !== image) errors.push(`${rel} pins ${found}, expected ${image}`);
   }
 }
+
+// Example consumers run against the same preinstalled browser binaries.
+// Reintroducing npx playwright install on hosted runners burns minutes and
+// previously cancelled an otherwise green tagged release.
+const exampleWorkflow = read('.github/workflows/examples.yml');
+if (/^\s*run:\s*npx playwright install/m.test(exampleWorkflow)) {
+  errors.push('examples.yml must not download browsers independently of its pinned container');
+}
+requireIncludes('.github/workflows/examples.yml', 'HOME: /root', 'Firefox HOME ownership');
+requireIncludes(
+  '.github/workflows/examples.yml',
+  'shell: bash',
+  'Bash array syntax in the example smoke',
+);
+requireIncludes(
+  '.github/workflows/examples.yml',
+  'PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD',
+  'packed example browser-download skip',
+);
 
 if (pkg.scripts?.['test:e2e:visual:container'] !== 'node scripts/test-visual-container.mjs') {
   errors.push(
@@ -79,5 +102,5 @@ requireIncludes('playwright.config.mjs', image, 'the pinned image in the visual 
 
 reportAndExit(errors, {
   label: 'playwright container',
-  ok: `@playwright/test ${playwrightVersion}, ${image}, visual workflows, docs, and local runner are aligned`,
+  ok: `@playwright/test ${playwrightVersion}, ${image}, visual/example workflows, docs, and local runner are aligned`,
 });

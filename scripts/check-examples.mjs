@@ -55,6 +55,7 @@ const exampleDirs = readdirSync(resolve(root, 'examples'), { withFileTypes: true
   .filter((name) => existsSync(resolve(root, 'examples', name, 'package.json')));
 sameSet('examples directory/package.json inventory', exampleDirs, EXAMPLE_NAMES);
 
+const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const workflow = readFileSync(resolve(root, '.github/workflows/examples.yml'), 'utf8');
 // The workflow executes the same registry instead of maintaining a YAML list.
 if (
@@ -69,8 +70,17 @@ if (!workflow.includes('cross_browser:')) {
 if (!workflow.includes('visual_smoke:')) {
   errors.push('examples workflow has no visual_smoke input for packed example visual smoke');
 }
-if (!workflow.includes('npx playwright install --with-deps chromium firefox webkit')) {
-  errors.push('examples workflow does not install chromium, firefox, and webkit for cross_browser');
+// Cross-browser example smokes must have all three engines available. The
+// pinned container includes their binaries and OS dependencies without the
+// per-run download step that previously timed out during a tagged release.
+const browserImage = `mcr.microsoft.com/playwright:v${pkg.devDependencies?.['@playwright/test']}-jammy`;
+if (
+  !workflow.includes(`image: ${browserImage}`) ||
+  !workflow.includes("PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'")
+) {
+  errors.push(
+    `examples workflow must use ${browserImage} with preinstalled chromium, firefox and webkit`,
+  );
 }
 if (!workflow.includes('npm run test:examples:cross-browser -- "${args[@]}"')) {
   errors.push(
@@ -149,7 +159,6 @@ for (const name of EXAMPLE_NAMES) {
   }
 }
 
-const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const crossBrowserScript = pkg.scripts?.['test:examples:cross-browser'];
 if (crossBrowserScript !== 'node scripts/test-examples.mjs --browsers=chromium,firefox,webkit') {
   errors.push(
