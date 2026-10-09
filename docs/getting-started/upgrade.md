@@ -9,7 +9,7 @@ Record the current Bronto UI version and its CSS/behavior imports.
 Install the target release (the example below uses the current published version):
 
 ```bash
-npm install @ponchia/ui@0.16.0
+npm install @ponchia/ui@0.16.1
 ```
 
 For projects coming from 0.9 or 0.11, review the migration steps in order:

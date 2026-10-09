@@ -5,6 +5,22 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## 0.16.1 — 2026-10-09
+
+### Changed
+
+- **npm package presentation:** the published README, maintainer identity, description, homepage and discovery keywords now match the live Bronto UI website, so a developer arriving from npm gets the same product explanation and links as on GitHub.
+- **Onboarding and examples:** a working one-file HTML specimen, an npm/Vite first-component walkthrough, a consumer upgrade checklist, source-linked application/report/theme demos, and a curated 20-pattern copyable catalog. The website remains separate from the npm runtime package.
+- **Documentation experience:** an active-category sidebar and article-first mobile reading order, copyable Markdown code blocks, and direct source links. Browser regression tests now exercise the built public website alongside the existing demo matrix.
+
+### Fixed
+
+- Theme playground light-theme label contrast and swatches that update when an embedding host changes the root theme.
+
+### Compatibility
+
+- Metadata and documentation maintenance release. CSS/JS runtime assets, tokens, and public exports are unchanged from 0.16.0.
+
 ## 0.16.0 — 2026-10-02
 
 ### Added
