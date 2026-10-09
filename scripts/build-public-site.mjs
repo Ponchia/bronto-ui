@@ -6,6 +6,7 @@
 import { readFile, readdir, mkdir, rm, cp, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve, relative, sep, extname } from 'node:path';
+import { existsSync } from 'node:fs';
 import { marked } from 'marked';
 import { components } from '../site/components.mjs';
 
@@ -332,12 +333,26 @@ for (const folder of [
   'annotations',
   'connectors',
   'renderer',
-  'site',
+  'shiki',
 ]) {
   await cp(join(repo, folder), join(output, folder), { recursive: true });
 }
+// Publish only the compiled public shell. Hand-authored page templates and
+// component source definitions belong in Git, not at public raw HTML URLs.
+await mkdir(join(output, 'site'), { recursive: true });
+for (const file of ['site.css', 'site.js', 'favicon.svg']) {
+  await cp(join(repo, 'site', file), join(output, 'site', file));
+}
+await cp(join(repo, 'site/assets'), join(output, 'site/assets'), { recursive: true });
 await cp(join(repo, 'llms.txt'), join(output, 'llms.txt'));
-for (const file of ['README.md', 'CHANGELOG.md', 'MIGRATIONS.json', 'ROADMAP.md', 'LICENSE']) {
+for (const file of [
+  'README.md',
+  'CHANGELOG.md',
+  'CONTRIBUTING.md',
+  'MIGRATIONS.json',
+  'ROADMAP.md',
+  'LICENSE',
+]) {
   await cp(join(repo, file), join(output, file));
 }
 for (const [outFile, id, title, desc] of files) {
@@ -364,9 +379,19 @@ for (const doc of docs) {
   const p = prefix(outFile);
   const renderedMd = marked
     .parse(doc.markdown)
+    .replace(/href="([^"]+?)\.md(#[^"]*)?"/g, (_full, file, hash = '') => {
+      // Only files owned by docs/ become generated HTML. Root README,
+      // CONTRIBUTING and CHANGELOG remain Markdown in the Pages artifact.
+      const source = resolve(join(repo, 'docs'), doc.stem + '.md');
+      const target = resolve(dirname(source), file + '.md');
+      const inside = relative(join(repo, 'docs'), target);
+      const inDocs = inside !== '..' && !inside.startsWith('..' + sep);
+      return 'href="' + file + (inDocs && existsSync(target) ? '.html' : '.md') + hash + '"';
+    })
     .replace(
-      /href="([^"]+?)\.md(#[^"]*)?"/g,
-      (_full, file, hash = '') => `href="${file}.html${hash}"`,
+      /href="\.\.\/\.\.\/examples\/([^"]+)"/g,
+      (_full, example) =>
+        'href="https://github.com/Ponchia/bronto-ui/tree/main/examples/' + example + '"',
     );
   const contents = `<div class="docs-layout page-container">
     ${docsSidebar(doc.stem, p)}
@@ -388,6 +413,42 @@ for (const doc of docs) {
     ),
   );
 }
+// Authored Markdown links to these documentation directories should have
+// usable index pages instead of returning a GitHub Pages 404.
+for (const [folder, title] of [
+  ['adr', 'Architecture decisions'],
+  ['migrations', 'Migration guides'],
+]) {
+  const entries = docs.filter((doc) => doc.stem.startsWith(folder + '/'));
+  const file = 'docs/' + folder + '/index.html';
+  const p = prefix(file);
+  const content =
+    '<section class="page-container section-intro"><p class="kicker">DOCUMENTATION / REFERENCE</p><h1>' +
+    esc(title) +
+    '</h1><p class="page-lede">Browse the reference documents individually.</p></section>' +
+    '<section class="page-container lab-grid">' +
+    entries
+      .map(
+        (doc) =>
+          '<a class="lab-card" href="' +
+          p +
+          'docs/' +
+          doc.stem +
+          '.html"><span class="kicker">BRONTO UI</span><h2>' +
+          esc(doc.title) +
+          '</h2><p>' +
+          esc(doc.excerpt.slice(0, 140)) +
+          '</p><span class="text-link">Read document ↗</span></a>',
+      )
+      .join('') +
+    '</section>';
+  const target = join(output, file);
+  await mkdir(dirname(target), { recursive: true });
+  await writeFile(
+    target,
+    rendered(file, 'docs', title + ' — Bronto UI', title + ' for Bronto UI.', content),
+  );
+}
 await writeFile(
   join(output, 'docs/search-index.json'),
   JSON.stringify(
@@ -401,6 +462,8 @@ await writeFile(
   ),
 );
 const sitemap = [
+  'docs/adr/',
+  'docs/migrations/',
   ...files.map(([path]) => path.replace(/index\.html$/, '')),
   ...examples.map((ex) => `examples/${ex.key}/`),
   ...docs.map((d) => `docs/${d.stem}.html`),

@@ -6,6 +6,7 @@ import { resolve, join, dirname, extname, relative } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
+import { components } from '../site/components.mjs';
 
 const repo = resolve(import.meta.dirname, '..');
 const temp = await mkdtemp(join(tmpdir(), 'brontoui-pages-check-'));
@@ -116,11 +117,58 @@ try {
     'Component explorer unexpectedly small',
   );
   assert(catalog.includes('data-component-query'), 'Component search missing');
+  // Curated copyable specimens must use classes present in the default CSS,
+  // rather than silently relying on optional layers loaded by other demos.
+  const bundledCSS = await readFile(join(built, 'dist/bronto.css'), 'utf8');
+  for (const component of components) {
+    const snippet = new JSDOM(component.markup);
+    for (const node of snippet.window.document.querySelectorAll('[class]')) {
+      for (const cls of node.classList) {
+        if (cls.startsWith('ui-')) {
+          assert(
+            bundledCSS.includes('.' + cls),
+            'Copyable component ' + component.name + ' references unbundled class ' + cls,
+          );
+        }
+      }
+    }
+    snippet.window.close();
+  }
+
   const docs = JSON.parse(await readFile(join(built, 'docs/search-index.json'), 'utf8'));
   assert(docs.length >= 70, `Missing reference docs: ${docs.length}`);
   assert(
     docs.every((d) => existsSync(join(built, d.url))),
     'Search results point to unavailable docs',
+  );
+  // Verify the complete generated documentation link graph, not just the
+  // homepage and one guide. Regression coverage for root Markdown links,
+  // directory index pages and linked data assets.
+  let verifiedDocLinks = 0;
+  for (const doc of docs) {
+    const html = await readFile(join(built, doc.url), 'utf8');
+    const parsed = new JSDOM(html);
+    for (const link of parsed.window.document.querySelectorAll('a[href]')) {
+      await checkLocalResource(doc.url, link.getAttribute('href'));
+      verifiedDocLinks += 1;
+    }
+    parsed.window.close();
+  }
+  for (const route of [
+    'docs/adr/index.html',
+    'docs/migrations/index.html',
+    'shiki/nothing.json',
+    'CONTRIBUTING.md',
+  ]) {
+    assert(existsSync(join(built, route)), 'Missing referenced artifact: ' + route);
+  }
+  assert(
+    !existsSync(join(built, 'site/pages/home.html')),
+    'Unrendered public-site templates must not be published',
+  );
+  assert(
+    !existsSync(join(built, 'site/components.mjs')),
+    'Authoring-only component metadata must not be published',
   );
   const sitemap = await readFile(join(built, 'sitemap.xml'), 'utf8');
   assert(
@@ -129,7 +177,7 @@ try {
   );
   assert(sitemap.includes('examples/operations/'), 'Examples missing from sitemap');
   console.log(
-    `✓ Public Pages: ${pages.length} critical HTML pages, ${checked.size} JS modules, ${docs.length} searchable docs, component catalog and assets present`,
+    `✓ Public Pages: ${pages.length} critical HTML pages, ${checked.size} JS modules, ${docs.length} searchable docs, documentation links, component catalog and assets present`,
   );
 } finally {
   await rm(temp, { recursive: true, force: true });
