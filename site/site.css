@@ -1569,3 +1569,20 @@ summary:focus-visible {
 .doc-prose pre :is(span, a) {
   color: inherit;
 }
+
+/* Keep the install modes explicit: npm import versus a plain HTML CDN path. */
+.code-showcase__note {
+  margin: 0;
+  padding: 13px 17px;
+  border-top: 1px solid #35373b;
+  color: #c2c4c4;
+  font-size: 0.74rem;
+  line-height: 1.6;
+}
+.code-showcase__note a {
+  color: #f0f1ef;
+  text-underline-offset: 3px;
+}
+.code-showcase__note a:hover {
+  color: #fa6d76;
+}
