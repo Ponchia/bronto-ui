@@ -11,6 +11,12 @@ only carries maintainer doctrine that fits nowhere else.
   worthwhile fix, default to fixing it now — do not propose deferring to
   post-release backlogs unless asked.
 
+- Maintainer-directed coding-agent commits use the configured Zeno
+  Trevisan / @Ponchia Git identity. Do not add AI-assistant
+  `Co-authored-by` trailers. Keep genuine human collaborators and
+  independently authored bot changes properly attributed (see
+  CONTRIBUTING.md → Commit attribution).
+
 ## House check
 
 Run `repo-instruction-audit --repo .` after changing agent instructions or
