@@ -318,7 +318,11 @@ const renderExample = (ex, p) => `<section class="page-container example-detail"
     <a class="button button--outline" href="${p}docs/${ex.docs}">Read related docs ↗</a>
   </div>
   <div class="iframe-frame"><div class="frame-chrome"><span aria-hidden="true">● ● ●</span><span>${ex.key}.bronto-ui.demo</span><span>HTML + CSS</span></div>
-  <iframe title="${esc(ex.name)} interactive preview" loading="lazy" src="${p}demo/${ex.demo}"></iframe></div>
+  <iframe title="${esc(ex.name)} interactive preview" loading="lazy" src="${p}demo/${ex.demo}"></iframe>
+  <a class="example-mobile-preview" href="${p}demo/${ex.demo}" target="_blank" rel="noopener">
+    <img src="${p}site/assets/${ex.image}" alt="${esc(ex.name)} screenshot preview" width="1200" height="720" />
+    <span>Open the interactive ${esc(ex.name)} example <span aria-hidden="true">↗</span></span>
+  </a></div>
   <div class="example-notes"><h2>${esc(ex.accent)}</h2><p>${esc(ex.desc)}</p>
   <ul class="tech-list">${ex.tech.map((v) => `<li>${esc(v)}</li>`).join('')}</ul></div>
 </section>`;

@@ -59,7 +59,7 @@
           derived <code>--accent-text</code> (used for accent <em>text</em>) and
           raw <code>--accent</code> against the current surface, and emits a
           ready-to-paste override + DTCG fragment. The instruction in
-          <a href="../docs/theming.md">docs/theming.md</a> to "verify your hue" —
+          <a href="../docs/#theming.md">the theming guide</a> to "verify your hue" —
           this is the instrument.
         </p>
       </header>
@@ -112,7 +112,7 @@
         c /= 255;
         return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
       };
-      const parse = (s) => {
+      const parse = (s, backdrop) => {
         // Paint onto a 1x1 surface and read the pixel back. This resolves ANY
         // CSS colour syntax (color-mix(), oklch(), color(srgb …), named) to
         // integer 0–255 RGBA. Scraping ctx.fillStyle is unsafe: modern engines
@@ -121,6 +121,11 @@
         // --accent-text is exactly such a color-mix value.
         const cv = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
         cv.clearRect(0, 0, 1, 1);
+        // Compose semitransparent colors against the actual theme surface.
+        if (backdrop) {
+          cv.fillStyle = backdrop;
+          cv.fillRect(0, 0, 1, 1);
+        }
         cv.fillStyle = s;
         cv.fillRect(0, 0, 1, 1);
         const [r, g, b] = cv.getImageData(0, 0, 1, 1).data;
@@ -161,11 +166,14 @@
           const swatch = document.createElement('div');
           swatch.className = 'pg__sw';
           swatch.style.background = v;
-          swatch.style.color = v;
           swatch.title = `${k}: ${v}`;
           const label = document.createElement('span');
-          label.style.mixBlendMode = 'difference';
-          label.style.color = '#fff';
+          // A difference blend looks appealing but is not reliably readable,
+          // and accessibility tooling cannot infer its final mixed colour.
+          // Choose text against the painted result, not the uncomposited
+          // color-mix(); --accent-soft can carry just 10–14% opacity.
+          const paintedLum = lum(parse(v, bg));
+          label.style.color = 1.05 / (paintedLum + 0.05) >= (paintedLum + 0.05) / 0.05 ? '#fff' : '#000';
           label.textContent = k.replace('--accent', 'a');
           swatch.append(label);
           return swatch;

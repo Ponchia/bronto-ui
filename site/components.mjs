@@ -96,6 +96,7 @@ export const components = [
     summary: 'Compare rows and status without introducing a table framework.',
     markup: `<div class="ui-table-wrap">
   <table class="ui-table ui-table--dense">
+    <caption class="ui-visually-hidden">Recent job status</caption>
     <thead><tr><th>Job</th><th>Status</th></tr></thead>
     <tbody>
       <tr><td>daily-sync</td><td><span class="ui-badge ui-badge--success">Ready</span></td></tr>
@@ -120,11 +121,13 @@ export const components = [
     category: 'Composition',
     doc: 'usage',
     summary: 'Indicate position in an interface hierarchy.',
-    markup: `<ol class="ui-breadcrumb">
-  <li class="ui-breadcrumb__item"><a href="#main">Projects</a></li>
-  <li class="ui-breadcrumb__item"><a href="#main">Team</a></li>
-  <li class="ui-breadcrumb__item" aria-current="page">Overview</li>
-</ol>`,
+    markup: `<nav aria-label="Breadcrumb">
+  <ol class="ui-breadcrumb">
+    <li class="ui-breadcrumb__item"><a href="#main">Projects</a></li>
+    <li class="ui-breadcrumb__item"><a href="#main">Team</a></li>
+    <li class="ui-breadcrumb__item" aria-current="page">Overview</li>
+  </ol>
+</nav>`,
   },
   {
     name: 'Chips',
