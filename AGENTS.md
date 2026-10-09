@@ -13,9 +13,10 @@ only carries maintainer doctrine that fits nowhere else.
 
 - Maintainer-directed coding-agent commits use the configured Zeno
   Trevisan / @Ponchia Git identity. Do not add AI-assistant
-  `Co-authored-by` trailers. Keep genuine human collaborators and
-  independently authored bot changes properly attributed (see
-  CONTRIBUTING.md → Commit attribution).
+  `Co-authored-by` trailers. Preserve genuine human authorship. Integrate
+  reviewed Dependabot / GitHub Actions proposals on maintainer-authored
+  branches, keeping links to their source PRs (see CONTRIBUTING.md →
+  Commit attribution).
 
 ## House check
 

@@ -117,9 +117,16 @@ and open the PR as `@Ponchia`. AI assistants are development tools, not
 additional authors: do not add `Co-authored-by` trailers for Claude, Codex,
 or other AI assistants. Credit actual human collaborators when applicable.
 
-Keep independently generated Dependabot and GitHub Actions updates attributed
-to their bot accounts. Do not impersonate the maintainer from automation.
-Do not rewrite existing release commits or tags for cosmetic attribution.
+Dependabot and GitHub Actions may propose changes under their own identities.
+To keep the active project history maintainer-authored, review and integrate
+accepted automated changes on a maintainer-created branch and PR. Reference
+and close the original bot PR rather than merging a bot-authored PR directly;
+never impersonate the maintainer in unattended automation. Retain meaningful
+source and security-review references.
+
+The active history was consolidated for maintainer attribution in October 2026.
+Original automation is identified in the relevant commit messages, while
+published release tags retain their original commits and provenance.
 
 ## Deprecation policy
 
