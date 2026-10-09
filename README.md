@@ -246,6 +246,10 @@ Contractual (changes are breaking): token **names** and documented token roles, 
 
 Release candidates publish to the `next` dist-tag, never to `latest` — opt in with `npm i @ponchia/ui@next` to try an upcoming version early. A plain `npm i @ponchia/ui` only ever resolves a stable release.
 
+## Maintainer
+
+Created and maintained by **[Zeno Trevisan (@Ponchia)](https://github.com/Ponchia)**.
+
 ## Links
 
 - **[Live demo](https://ponchia.github.io/bronto-ui/)** · **[Theme playground](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)**
@@ -254,6 +258,6 @@ Release candidates publish to the `next` dist-tag, never to `latest` — opt in 
 
 ## License
 
-[MIT](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE) © Ponchia.
+[MIT](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE) © Zeno Trevisan (Ponchia).
 
 The bundled fonts are licensed separately under the [SIL Open Font License 1.1](https://github.com/Ponchia/bronto-ui/blob/main/fonts/OFL.txt): **Doto** (`fonts/doto-*.woff2`, © 2024 The Doto Project Authors, `fonts/OFL.txt`), and the opt-in **Inter** (`fonts/inter-*.woff2`, © 2016 The Inter Project Authors, `fonts/OFL-Inter.txt`) and **JetBrains Mono** (`fonts/jetbrains-mono-*.woff2`, © 2020 The JetBrains Mono Project Authors, `fonts/OFL-JetBrainsMono.txt`).
