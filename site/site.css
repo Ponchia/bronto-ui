@@ -814,6 +814,43 @@ summary:focus-visible {
   grid-template-columns: 1fr 1fr;
   gap: 12px 8%;
 }
+/* Show the actual source files alongside each rendered specimen. */
+.example-source {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 8%;
+  border-top: 1px solid var(--site-rule);
+  padding: 39px 0 90px;
+}
+.example-source h2 {
+  font-size: clamp(1.7rem, 3vw, 2.8rem);
+  line-height: 1.16;
+  letter-spacing: -0.05em;
+  margin: 12px 0 0;
+}
+.example-source p:not(.kicker) {
+  color: var(--site-muted);
+  line-height: 1.8;
+  margin: 0 0 14px;
+}
+.example-source ul {
+  padding-left: 21px;
+  margin: 14px 0;
+}
+.example-source li {
+  margin-block: 9px;
+  font-size: 0.85rem;
+}
+.example-source a {
+  color: var(--site-ink);
+  text-decoration-line: underline;
+  text-decoration-color: var(--site-brand);
+  text-underline-offset: 4px;
+  overflow-wrap: anywhere;
+}
+.example-source a:hover {
+  color: var(--site-brand);
+}
 .example-notes h2 {
   font-size: clamp(1.8rem, 3vw, 3rem);
   line-height: 1.15;
@@ -1001,6 +1038,22 @@ summary:focus-visible {
 .catalog-footer p:not(.kicker) {
   color: var(--site-muted);
 }
+.catalog-extra-guides {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.catalog-extra-guides > a:not(.button) {
+  color: var(--site-ink);
+  font-size: 0.85rem;
+  text-decoration-line: underline;
+  text-decoration-color: var(--site-brand);
+  text-underline-offset: 4px;
+}
+.catalog-extra-guides > a:not(.button):hover {
+  color: var(--site-brand);
+}
 .docs-layout {
   display: grid;
   grid-template-columns: 252px minmax(0, 1fr);
@@ -1023,9 +1076,13 @@ summary:focus-visible {
   gap: 10px;
   margin-bottom: 15px;
 }
-.docs-sidebar__top strong {
+/* Semantic heading reset for the documentation navigation landmark. */
+.docs-sidebar__title {
+  margin: 0;
   font-size: 0.96rem;
+  line-height: 1.35;
   letter-spacing: -0.02em;
+  color: var(--site-ink);
 }
 .docs-sidebar__top a {
   color: var(--site-muted);
@@ -1178,6 +1235,27 @@ summary:focus-visible {
 .doc-prose pre code {
   white-space: pre;
 }
+/* Copy buttons are a progressive enhancement of Markdown code fences.
+   The underlying focusable pre/code is still fully usable without JS. */
+.doc-code-example {
+  position: relative;
+  margin-block: 20px;
+}
+.doc-code-example pre {
+  margin: 0;
+  padding-top: 57px;
+}
+.doc-code-example__copy {
+  position: absolute;
+  z-index: 1;
+  top: 12px;
+  right: 12px;
+  background: #292b2d;
+  color: #f0f1ef;
+}
+.doc-code-example__copy:hover {
+  border-color: #fa6d76;
+}
 .doc-prose :is(table) {
   border-collapse: collapse;
   display: block;
@@ -1260,6 +1338,9 @@ summary:focus-visible {
 }
 .docs-quick-grid a:hover {
   border-color: var(--site-brand);
+}
+a[href='#docs-navigation'] {
+  text-underline-offset: 4px;
 }
 .docs-home-foot {
   margin-top: 30px;
@@ -1411,8 +1492,19 @@ summary:focus-visible {
     padding-block: 75px;
   }
   .docs-layout {
-    grid-template-columns: 1fr;
-    gap: 25px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+  /* Read the selected guide first. The large navigation tree comes after
+     the article on small screens, with a direct in-page jump to it. */
+  .docs-layout > .docs-article-wrap {
+    order: 1;
+  }
+  .docs-layout > .docs-sidebar {
+    order: 2;
+    border-top: 1px solid var(--site-rule);
+    padding-top: 28px;
+    scroll-margin-top: 95px;
   }
   .docs-sidebar {
     position: relative;
@@ -1563,8 +1655,9 @@ summary:focus-visible {
     text-underline-offset: 3px;
   }
   .example-notes,
+  .example-source,
   .example-process {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .example-process > a,
   .tech-list {

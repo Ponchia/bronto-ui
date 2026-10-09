@@ -58,7 +58,10 @@ export default defineConfig({
     { name: 'webkit', use: { ...devices['Desktop Safari'] }, testMatch: NON_PIXEL_E2E_TEST_MATCH },
   ],
   webServer: {
-    command: `node scripts/serve.mjs ${port}`,
+    // Serve the *generated* public Pages artifact as well as repo fixtures,
+    // so static navigation, searchable docs and example links get real
+    // browser coverage rather than only filesystem checks.
+    command: `npm run site:build && node scripts/serve.mjs ${port}`,
     url: `${baseURL}/demo/`,
     reuseExistingServer: false,
     stdout: 'ignore',

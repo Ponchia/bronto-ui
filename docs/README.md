@@ -26,6 +26,7 @@ The original Markdown remains available for offline agents and direct reading.
 
 ## Getting started (frameworks)
 
+- **First component:** [getting-started/first-component.md](./getting-started/first-component.md) — a complete, working HTML page; [getting-started/upgrade.md](./getting-started/upgrade.md) — coordinated consumer-upgrade checklist.
 - [getting-started/vanilla.md](./getting-started/vanilla.md) · [getting-started/react-solid.md](./getting-started/react-solid.md) · [getting-started/astro.md](./getting-started/astro.md) · [getting-started/sveltekit.md](./getting-started/sveltekit.md) · [getting-started/vue.md](./getting-started/vue.md)
 - [integration.md](./integration.md) — framework integration overview.
 - [interop/tailwind.md](./interop/tailwind.md) — Tailwind interop recipe.

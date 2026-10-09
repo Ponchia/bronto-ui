@@ -47,14 +47,34 @@ const copyText = async (value) => {
   }
   return false;
 };
+// Generated Markdown guides contain real code blocks. Make their original
+// source text copyable without changing the canonical Markdown or HTML
+// semantics. The enhancement is optional: plain code still renders without JS.
+for (const pre of document.querySelectorAll('.doc-prose pre')) {
+  if (!pre.querySelector('code')) continue;
+  const wrapper = document.createElement('div');
+  wrapper.className = 'doc-code-example';
+  const copy = document.createElement('button');
+  copy.type = 'button';
+  copy.className = 'copy-button doc-code-example__copy';
+  copy.setAttribute('data-copy', '');
+  copy.textContent = 'Copy code';
+  pre.before(wrapper);
+  wrapper.append(copy, pre);
+}
 for (const btn of document.querySelectorAll('[data-copy]')) {
   btn.addEventListener('click', async () => {
     const code =
       btn.closest('.code-header')?.nextElementSibling?.querySelector('code') ||
-      btn.closest('.component-code')?.querySelector('pre code');
+      btn.closest('.component-code, .doc-code-example')?.querySelector('pre code');
     if (!code) return;
     try {
-      await copyText(code.textContent);
+      const copied = await copyText(code.textContent);
+      if (!copied) {
+        btn.textContent = 'Select to copy';
+        code.closest('pre')?.focus();
+        return;
+      }
       const prior = btn.textContent;
       btn.textContent = 'Copied';
       setTimeout(() => {

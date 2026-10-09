@@ -23,3 +23,23 @@ publishes `_site/` only after the protected main CI succeeds.
 
 When updating a public example, keep the screenshot in `site/assets/` in sync.
 Screenshots are made from the real example routes, not independent mockups.
+
+
+**Browser verification**
+
+The Playwright web server assembles the Pages output before starting. Public
+site regression tests use the local `/_site/` path and run in the existing
+pinned Chromium/Firefox/WebKit CI matrix. They cover docs navigation, starter
+and example routes, and the searchable, copyable catalog without querying the
+live GitHub Pages deployment.
+
+
+**What uses the library versus site-specific CSS**
+
+The static shell imports the committed default Bronto UI bundle.
+Component specimens and application demos use the real public `ui-*` classes.
+`site/site.css` supplies a separate editorial/navigation layout and
+website-specific spacing and colors, deliberately kept out of the npm package.
+Do not cite the custom site shell as proof that a Bronto UI consumer needs no
+application CSS. Prefer the actual runnable specimens to demonstrate the
+library's reusable component contract.

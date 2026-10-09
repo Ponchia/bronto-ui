@@ -46,7 +46,9 @@ the technical lab retains the full testing specimens.
   [docs/architecture.md](docs/architecture.md),
   [docs/stability.md](docs/stability.md), and `llms.txt`.
 
-### [Explore examples →](https://ponchia.github.io/bronto-ui/examples/) · [Browse components →](https://ponchia.github.io/bronto-ui/components/) · [Get started →](https://ponchia.github.io/bronto-ui/docs/getting-started/vanilla.html)
+### [Explore examples →](https://ponchia.github.io/bronto-ui/examples/) · [Browse components →](https://ponchia.github.io/bronto-ui/components/) · [Build your first component →](https://ponchia.github.io/bronto-ui/docs/getting-started/first-component.html)
+
+New to Bronto UI? Start with the [one-file working specimen](https://ponchia.github.io/bronto-ui/demo/first-steps.html), then follow the step-by-step guide and open the [source files behind each curated example](https://ponchia.github.io/bronto-ui/examples/). Existing consumers can use the [pre-1.0 upgrade checklist](https://ponchia.github.io/bronto-ui/docs/getting-started/upgrade.html) before changing package versions.
 
 The component gallery and focused test fixtures remain in the
 [Laboratory](https://ponchia.github.io/bronto-ui/lab/) for detailed inspection.
