@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="A small Bronto UI example built with semantic HTML and the default stylesheet."
+    />
+    <title>First steps — Bronto UI</title>
+    <!-- In an npm/Vite project use the CSS import in main.js instead. -->
+    <link rel="stylesheet" href="../dist/bronto.css" />
+  </head>
+  <body>
+    <main class="ui-container" id="main">
+      <div class="ui-stack" style="max-inline-size: 40rem; margin-block: var(--space-2xl)">
+        <p class="ui-eyebrow">Bronto UI / Getting started</p>
+        <h1>One stylesheet. Ordinary HTML.</h1>
+        <p>
+          This uses the default Bronto UI CSS. No application framework or JavaScript is required.
+        </p>
+        <article class="ui-card">
+          <span class="ui-eyebrow">Deployment</span>
+          <h2>Production service</h2>
+          <p>Infrastructure rollout completed and checks passed.</p>
+          <span class="ui-badge ui-badge--success">Healthy</span>
+        </article>
+        <nav aria-label="Next steps" class="ui-cluster">
+          <a class="ui-button" href="../docs/getting-started/first-component.html"
+            >Read the walkthrough →</a
+          >
+          <a class="ui-button ui-button--ghost" href="../components/">Browse components</a>
+        </nav>
+      </div>
+    </main>
+  </body>
+</html>

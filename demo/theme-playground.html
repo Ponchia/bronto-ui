@@ -28,6 +28,11 @@
         gap: 1px;
         grid-template-columns: repeat(auto-fit, minmax(3.5rem, 1fr));
       }
+      /* Small eyebrow text uses a guaranteed readable ink, even when an
+         accent is near the WCAG 4.5 boundary on a light surface. */
+      .pg .ui-eyebrow {
+        color: var(--text-dim);
+      }
       .pg__sw {
         aspect-ratio: 2 / 1;
         display: grid;
@@ -215,6 +220,12 @@
       document.getElementById('swap').addEventListener('click', () => {
         root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
         render();
+      });
+      // An embedding host may change data-theme directly. Keep the swatch
+      // labels in sync even when a theme is changed outside our button.
+      new MutationObserver(render).observe(root, {
+        attributes: true,
+        attributeFilter: ['data-theme'],
       });
       render();
     </script>

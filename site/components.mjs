@@ -170,4 +170,55 @@ export const components = [
   <p style="margin:.5rem 0 0">One focused area of related information.</p>
 </div>`,
   },
+  {
+    name: 'Key/value details',
+    category: 'Data',
+    doc: 'compositions',
+    summary: 'Concise labels and values for an inspector or report.',
+    markup: `<dl class="ui-key-value">
+  <div><dt>Runtime</dt><dd>Containers</dd></div>
+  <div><dt>Status</dt><dd>Reconciled</dd></div>
+</dl>`,
+  },
+  {
+    name: 'Measured values',
+    category: 'Data',
+    doc: 'usage',
+    summary: 'Use a meter for a measurement, not for task progress.',
+    markup: `<div class="ui-meter ui-meter--success" role="meter" aria-label="Coverage"
+  aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"
+  style="width:100%;max-width:330px">
+  <span class="ui-meter__fill" style="--value:72"></span>
+</div>`,
+  },
+  {
+    name: 'Process steps',
+    category: 'Composition',
+    doc: 'compositions',
+    summary: 'Show the current step in a short ordered process.',
+    markup: `<ol class="ui-steps" style="width:100%;max-width:360px">
+  <li class="ui-steps__item ui-steps__item--done">Connect</li>
+  <li class="ui-steps__item" aria-current="step">Review</li>
+  <li class="ui-steps__item">Confirm</li>
+</ol>`,
+  },
+  {
+    name: 'Identity avatars',
+    category: 'Foundations',
+    doc: 'usage',
+    summary: 'Small operator initials without requiring an image asset.',
+    markup: `<span class="ui-avatar" role="img" aria-label="Platform operator">PO</span>
+<span class="ui-avatar ui-avatar--sm" role="img" aria-label="Service owner">SO</span>`,
+  },
+  {
+    name: 'Keyboard shortcuts',
+    category: 'Foundations',
+    doc: 'usage',
+    summary: 'Render keyboard hints with semantic keycap elements.',
+    markup: `<span class="ui-shortcut">
+  <kbd class="ui-kbd">Ctrl</kbd>
+  <span class="ui-shortcut__sep">+</span>
+  <kbd class="ui-kbd">K</kbd>
+</span>`,
+  },
 ];

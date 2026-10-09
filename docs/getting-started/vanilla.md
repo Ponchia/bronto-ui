@@ -1,5 +1,7 @@
 # Vanilla / Vite / plain HTML
 
+**First time here?** Follow the [first-component walkthrough](first-component.md) for a complete working page, then return for behavior imports and CDN options.
+
 ```bash
 npm i @ponchia/ui
 ```

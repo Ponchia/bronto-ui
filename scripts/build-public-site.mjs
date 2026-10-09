@@ -71,6 +71,9 @@ const examples = [
     image: 'operations.jpg',
     demo: 'service.html',
     docs: 'usage.html',
+    source: ['demo/service.html', 'demo/service.js'],
+    implementation:
+      'Uses the standard Bronto UI app shell, metric and table classes, plus a short local script that changes demo states. Sample job data belongs to the fixture; the library does not supply an API or backend.',
     accent: 'A functioning interface, not just a collection of buttons.',
   },
   {
@@ -84,6 +87,9 @@ const examples = [
     image: 'report.jpg',
     demo: 'report-standalone.html',
     docs: 'reporting.html',
+    source: ['demo/report-standalone.html'],
+    implementation:
+      'Uses semantic headings, report-oriented CSS, tables and evidence sections in a single HTML document. The report content is sample data and remains printable without running JavaScript.',
     accent: 'One HTML document can be a readable webpage and a report.',
   },
   {
@@ -97,6 +103,9 @@ const examples = [
     image: 'theming.jpg',
     demo: 'theme-playground.html',
     docs: 'theming.html',
+    source: ['demo/theme-playground.html'],
+    implementation:
+      'A plain HTML page sets the accent token and computes contrast in a local script. The example shows how the Bronto UI theme tokens project into light, dark and accent surfaces.',
     accent: 'Change a token and understand what changes with it.',
   },
 ];
@@ -156,7 +165,9 @@ const groupsOrder = [
   'Reference & maintenance',
 ];
 const primaryDoc = [
+  'getting-started/first-component',
   'getting-started/vanilla',
+  'getting-started/upgrade',
   'concepts',
   'usage',
   'theming',
@@ -232,7 +243,7 @@ const sharedFooter = (p) => `<footer class="site-footer"><div class="site-footer
   <div><a class="footer-mark" href="${p}">bronto<span>ui</span>.</a><p>Interfaces for work that needs to be understood.</p></div>
   <div class="footer-links"><a href="${p}examples/">Examples</a><a href="${p}components/">Components</a><a href="${p}docs/">Docs</a><a href="${p}lab/">Lab</a></div>
   <div class="footer-links"><a href="https://github.com/Ponchia/bronto-ui">GitHub ↗</a><a href="https://www.npmjs.com/package/@ponchia/ui">npm ↗</a><a href="https://brontolotto.observer/projects/bronto-ui/">About the project ↗</a></div>
-  <div class="footer-bottom"><span>MIT licensed · Created by <a href="https://brontolotto.observer/">Zeno Trevisan</a></span><span>Built with Bronto UI itself · No frontend runtime</span></div>
+  <div class="footer-bottom"><span>MIT licensed · Created by <a href="https://brontolotto.observer/">Zeno Trevisan</a></span><span>Static HTML · Bronto UI CSS · No frontend runtime</span></div>
 </div></footer>`;
 const rendered = (outFile, current, title, description, inner) => {
   const p = prefix(outFile);
@@ -266,21 +277,21 @@ ${sharedFooter(p)}
 </body></html>\n`;
 };
 const docLink = (stem, p, label) => `<a href="${p}docs/${stem}.html">${esc(label)}</a>`;
-const docsSidebar = (
-  current,
-  p,
-) => `<aside class="docs-sidebar" aria-label="Documentation contents">
-  <div class="docs-sidebar__top"><strong>Documentation</strong><a href="${p}docs/">Index ↗</a></div>
+const docsSidebar = (current, p) => {
+  const activeCategory = docs.find((doc) => doc.stem === current)?.category;
+  return `<aside class="docs-sidebar" id="docs-navigation" aria-label="Documentation contents">
+  <div class="docs-sidebar__top"><h2 class="docs-sidebar__title">Browse documentation</h2><a href="${p}docs/">Index ↗</a></div>
   <label class="search-box"><span class="visually-hidden">Search documentation</span><span aria-hidden="true">⌕</span><input type="search" placeholder="Search all documentation" autocomplete="off" data-doc-search /></label>
   <div class="doc-search-results" data-doc-results aria-live="polite" hidden></div>
   <div data-doc-groups>${groupsOrder
     .map((group) => {
       const entries = docs.filter((d) => d.category === group);
-      return `<details class="docs-nav-group" ${current === group || (current === 'index' && group === groupsOrder[0]) ? 'open' : ''}><summary>${esc(group)} <span>${entries.length}</span></summary>
+      return `<details class="docs-nav-group" ${activeCategory === group || (current === 'index' && group === groupsOrder[0]) ? 'open' : ''}><summary>${esc(group)} <span>${entries.length}</span></summary>
     <div class="docs-nav-links">${entries.map((d) => `<a href="${p}docs/${d.stem}.html" ${d.stem === current ? 'aria-current="page"' : ''}>${esc(d.title)}</a>`).join('')}</div></details>`;
     })
     .join('')}</div>
 </aside>`;
+};
 const categories = ['All', ...new Set(components.map((c) => c.category))];
 const componentCard = (
   c,
@@ -310,12 +321,33 @@ const exampleCard = (ex, p) => `<article class="example-card">
 <a class="example-card__image" href="${p}examples/${ex.key}/"><img src="${p}site/assets/${ex.image}" alt="${esc(ex.name)} example" loading="lazy" width="1200" height="720" /></a>
 <div class="example-card__body"><span class="kicker">${ex.eyebrow}</span><h3><a href="${p}examples/${ex.key}/">${esc(ex.name)} <span aria-hidden="true">↗</span></a></h3><p>${esc(ex.desc)}</p></div>
 </article>`;
+const sourceUrl = (file) => 'https://github.com/Ponchia/bronto-ui/blob/main/' + file;
+const renderSourceSection = (ex) =>
+  '<section class="example-source" aria-label="Example implementation">' +
+  '<div><p class="kicker">READ THE SOURCE</p><h2>Reuse the pattern, not the sample data.</h2></div>' +
+  '<div><p>' +
+  esc(ex.implementation) +
+  '</p><ul>' +
+  ex.source
+    .map(
+      (file) =>
+        '<li><a href="' +
+        sourceUrl(file) +
+        '" target="_blank" rel="noopener">' +
+        esc(file) +
+        ' ↗</a></li>',
+    )
+    .join('') +
+  '</ul><p>Use the <a href="https://github.com/Ponchia/bronto-ui/tree/main/examples/vanilla-vite">packed Vanilla Vite starter</a> for a runnable npm-based project.</p></div>' +
+  '</section>';
 const renderExample = (ex, p) => `<section class="page-container example-detail">
   <a class="back-link" href="${p}examples/">← All examples</a>
   <div class="page-intro"><p class="kicker">${ex.eyebrow} / EXAMPLE</p><h1>${esc(ex.name)}</h1><p class="page-lede">${esc(ex.story)}</p></div>
   <div class="example-controls"><span class="specimen-pill"><span class="signal" aria-hidden="true"></span> Live specimen</span>
     <a class="button button--primary" href="${p}demo/${ex.demo}" target="_blank" rel="noopener">Open full demo ↗</a>
     <a class="button button--outline" href="${p}docs/${ex.docs}">Read related docs ↗</a>
+    <a class="button button--outline" href="${sourceUrl(ex.source[0])}"
+       target="_blank" rel="noopener">View HTML source ↗</a>
   </div>
   <div class="iframe-frame"><div class="frame-chrome"><span aria-hidden="true">● ● ●</span><span>${ex.key}.bronto-ui.demo</span><span>HTML + CSS</span></div>
   <iframe title="${esc(ex.name)} interactive preview" loading="lazy" src="${p}demo/${ex.demo}"></iframe>
@@ -325,6 +357,7 @@ const renderExample = (ex, p) => `<section class="page-container example-detail"
   </a></div>
   <div class="example-notes"><h2>${esc(ex.accent)}</h2><p>${esc(ex.desc)}</p>
   <ul class="tech-list">${ex.tech.map((v) => `<li>${esc(v)}</li>`).join('')}</ul></div>
+  ${renderSourceSection(ex)}
 </section>`;
 await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
@@ -409,7 +442,12 @@ for (const doc of docs) {
     <div class="docs-article-wrap">
       <div class="doc-breadcrumb"><a href="${p}docs/">Docs</a> <span aria-hidden="true">/</span> ${esc(doc.category)}</div>
       <article class="doc-prose" data-doc-body>${renderedMd}</article>
-      <nav class="doc-bottom-nav" aria-label="Related documentation"><a href="${p}docs/">← Documentation index</a><a href="${p}components/">Component catalog ↗</a></nav>
+      <nav class="doc-bottom-nav" aria-label="Related documentation">
+        <a href="${p}docs/">← Documentation index</a>
+        <a href="#docs-navigation">Browse all docs ↓</a>
+        <a href="${p}components/">Component catalog ↗</a>
+        <a href="https://github.com/Ponchia/bronto-ui/blob/main/docs/${doc.stem}.md">View Markdown source ↗</a>
+      </nav>
     </div></div>`;
   const target = join(output, outFile);
   await mkdir(dirname(target), { recursive: true });

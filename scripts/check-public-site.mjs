@@ -21,10 +21,13 @@ const required = [
   'components/index.html',
   'docs/index.html',
   'docs/getting-started/vanilla.html',
+  'docs/getting-started/first-component.html',
+  'docs/getting-started/upgrade.html',
   'docs/reporting.html',
   'docs/reference.html',
   'lab/index.html',
   'demo/index.html',
+  'demo/first-steps.html',
   'demo/index.js',
   'glyphs/glyphs.js',
   'annotations/index.js',
@@ -94,6 +97,8 @@ try {
     'examples/reports/index.html',
     'examples/theming/index.html',
     'docs/getting-started/vanilla.html',
+    'docs/getting-started/first-component.html',
+    'docs/getting-started/upgrade.html',
     'docs/reporting.html',
   ];
   for (const path of pages) {
@@ -159,6 +164,19 @@ try {
   for (const example of ['operations', 'reports', 'theming']) {
     const path = `examples/${example}/index.html`;
     const html = new JSDOM(await readFile(join(built, path), 'utf8'));
+    const sourceLinks = [
+      ...html.window.document.querySelectorAll(
+        'a[href^="https://github.com/Ponchia/bronto-ui/blob/main/demo/"]',
+      ),
+    ];
+    assert(sourceLinks.length >= 1, 'Example ' + example + ' must link to actual source');
+    for (const link of sourceLinks) {
+      const rel = link.href.split('/blob/main/')[1];
+      assert(
+        rel.startsWith('demo/') && !rel.includes('..') && existsSync(join(repo, rel)),
+        'Example ' + example + ' has missing/unsafe source file ' + rel,
+      );
+    }
     const preview = html.window.document.querySelector('.example-mobile-preview');
     assert(
       preview?.querySelector('img[alt]') && preview.getAttribute('href')?.includes('demo/'),
@@ -179,6 +197,10 @@ try {
   for (const doc of docs) {
     const html = await readFile(join(built, doc.url), 'utf8');
     const parsed = new JSDOM(html);
+    const active = parsed.window.document.querySelector('.docs-sidebar a[aria-current="page"]');
+    assert(active, 'Current documentation page is not identified in sidebar: ' + doc.url);
+    const activeGroup = active.closest('details.docs-nav-group');
+    assert(activeGroup?.open, 'Current documentation category is collapsed: ' + doc.url);
     for (const link of parsed.window.document.querySelectorAll('a[href]')) {
       await checkLocalResource(doc.url, link.getAttribute('href'));
       verifiedDocLinks += 1;
@@ -201,6 +223,35 @@ try {
     !existsSync(join(built, 'site/components.mjs')),
     'Authoring-only component metadata must not be published',
   );
+  // A zero-JS first example must be served in the Pages artifact and use
+  // only the default Bronto stylesheet, like an actual minimal consumer.
+  const firstPage = new JSDOM(await readFile(join(built, 'demo/first-steps.html'), 'utf8'));
+  assert(
+    firstPage.window.document.querySelector('link[href="../dist/bronto.css"]'),
+    'First example must load the shipped default CSS',
+  );
+  assert(
+    firstPage.window.document.querySelector('main .ui-card .ui-badge--success'),
+    'First example is missing its card and status',
+  );
+  assert(
+    !firstPage.window.document.querySelector('script'),
+    'First example must remain a no-JS HTML specimen',
+  );
+  for (const node of firstPage.window.document.querySelectorAll('[href],[src]'))
+    await checkLocalResource(
+      'demo/first-steps.html',
+      node.getAttribute('href') || node.getAttribute('src'),
+    );
+  firstPage.window.close();
+  const intro = new JSDOM(
+    await readFile(join(built, 'docs/getting-started/first-component.html'), 'utf8'),
+  );
+  assert(
+    intro.window.document.querySelector('.doc-prose pre code'),
+    'First component walkthrough needs a copyable code sample',
+  );
+  intro.window.close();
   const sitemap = await readFile(join(built, 'sitemap.xml'), 'utf8');
   assert(
     sitemap.includes('docs/getting-started/vanilla.html'),

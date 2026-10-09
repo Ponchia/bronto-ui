@@ -14,6 +14,8 @@ import { attachGuards, blocking, scan, settle, structuralIssues } from './_demo-
 
 // Pages that are component/figure showcases — full console + axe sweep.
 const SHOWCASE = [
+  'first-steps',
+  'theme-playground',
   'figure',
   'annotations',
   'discussion',
@@ -47,11 +49,10 @@ const SHOWCASE = [
   'version-history-report',
 ];
 
-// The theme playground is a dev instrument whose colour swatches paint white
-// labels with `mix-blend-mode: difference` — a contrast channel axe cannot
-// evaluate (it would read white-on-swatch and false-fail). Guard it for
-// errors/404s, but don't axe-scan it.
-const GUARD_ONLY = ['theme-playground'];
+// Keep a named guard-only bucket for dynamic/visual-only fixtures in future.
+// The theme playground now computes actual swatch text contrast and can be
+// held to the same full accessibility gate as the rest of the demos.
+const GUARD_ONLY = [];
 const ALL_DEMOS = readdirSync(new URL('../../demo/', import.meta.url))
   .filter((name) => name.endsWith('.html'))
   .map((name) => name.replace(/\.html$/, ''))
