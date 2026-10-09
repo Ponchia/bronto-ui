@@ -29,7 +29,7 @@
     "type": "git",
     "url": "git+https://github.com/Ponchia/bronto-ui.git"
   },
-  "homepage": "https://github.com/Ponchia/bronto-ui#readme",
+  "homepage": "https://ponchia.github.io/bronto-ui/",
   "bugs": "https://github.com/Ponchia/bronto-ui/issues",
   "publishConfig": {
     "access": "public",
@@ -215,7 +215,9 @@
     "build:artifacts": "npm run tokens:css:build && npm run tokens:build && npm run dtcg:build && npm run resolved:build && npm run figma:variables:build && npm run dts:build && npm run dts:emit && npm run reference:build && npm run package-contract:build && npm run classes:json:build && npm run contrast:build && npm run vscode:build && npm run skins:build && npm run charts:build && npm run mermaid:build && npm run d2:build && npm run vega:build && npm run dist:build && npm run glyphs:build",
     "verify:artifacts": "npm run check:fresh && npm run check:dist && npm run check:dts-emit && npm run check:glyphs && npm run check:skins && npm run check:charts && npm run check:mermaid && npm run check:d2 && npm run check:vega && npm run check:pack",
     "prepack": "npm run build:artifacts && npm run verify:artifacts",
-    "prepublishOnly": "npm run build:artifacts && npm run check"
+    "prepublishOnly": "npm run build:artifacts && npm run check",
+    "site:build": "node scripts/build-public-site.mjs",
+    "check:site": "node scripts/check-public-site.mjs"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
@@ -224,6 +226,7 @@
     "github-actionlint": "^1.7.12",
     "jsdom": "^30.1.1",
     "knip": "^6.39.0",
+    "marked": "18.0.4",
     "pdfjs-dist": "^6.3.289",
     "prettier": "^3.9.9",
     "publint": "^0.3.24",
