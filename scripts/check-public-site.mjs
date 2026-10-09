@@ -122,6 +122,35 @@ try {
     docs.every((d) => existsSync(join(built, d.url))),
     'Search results point to unavailable docs',
   );
+  // Verify the complete generated documentation link graph, not just the
+  // homepage and one guide. Regression coverage for root Markdown links,
+  // directory index pages and linked data assets.
+  let verifiedDocLinks = 0;
+  for (const doc of docs) {
+    const html = await readFile(join(built, doc.url), 'utf8');
+    const parsed = new JSDOM(html);
+    for (const link of parsed.window.document.querySelectorAll('a[href]')) {
+      await checkLocalResource(doc.url, link.getAttribute('href'));
+      verifiedDocLinks += 1;
+    }
+    parsed.window.close();
+  }
+  for (const route of [
+    'docs/adr/index.html',
+    'docs/migrations/index.html',
+    'shiki/nothing.json',
+    'CONTRIBUTING.md',
+  ]) {
+    assert(existsSync(join(built, route)), 'Missing referenced artifact: ' + route);
+  }
+  assert(
+    !existsSync(join(built, 'site/pages/home.html')),
+    'Unrendered public-site templates must not be published',
+  );
+  assert(
+    !existsSync(join(built, 'site/components.mjs')),
+    'Authoring-only component metadata must not be published',
+  );
   const sitemap = await readFile(join(built, 'sitemap.xml'), 'utf8');
   assert(
     sitemap.includes('docs/getting-started/vanilla.html'),
@@ -129,7 +158,7 @@ try {
   );
   assert(sitemap.includes('examples/operations/'), 'Examples missing from sitemap');
   console.log(
-    `✓ Public Pages: ${pages.length} critical HTML pages, ${checked.size} JS modules, ${docs.length} searchable docs, component catalog and assets present`,
+    `✓ Public Pages: ${pages.length} critical HTML pages, ${checked.size} JS modules, ${docs.length} searchable docs, documentation links, component catalog and assets present`,
   );
 } finally {
   await rm(temp, { recursive: true, force: true });
