@@ -288,7 +288,7 @@ const componentCard = (
 ) => `<article class="component-card" data-component-card data-category="${esc(c.category)}" data-search="${esc((c.name + ' ' + c.category + ' ' + c.summary).toLowerCase())}">
  <div class="component-card__head"><p class="kicker">${esc(c.category.toUpperCase())}</p><h2>${esc(c.name)}</h2><p>${esc(c.summary)}</p></div>
  <div class="component-preview">${c.markup}</div>
- <div class="component-code"><div class="component-code__bar"><span>HTML / CSS</span><button class="copy-button" data-copy type="button">Copy markup</button></div><pre><code>${esc(c.markup)}</code></pre></div>
+ <div class="component-code"><div class="component-code__bar"><span>HTML / CSS</span><button class="copy-button" data-copy type="button">Copy markup</button></div><pre tabindex="0"><code>${esc(c.markup)}</code></pre></div>
  <a class="component-more" href="${p}docs/${c.doc}.html">Read usage guide ↗</a>
  </article>`;
 const pageSource = async (filename, p) =>
@@ -383,6 +383,9 @@ for (const doc of docs) {
   const p = prefix(outFile);
   const renderedMd = marked
     .parse(doc.markdown)
+    // Some code fences scroll horizontally on narrow screens. Make them
+    // independently keyboard-focusable so all of their text remains reachable.
+    .replace(/<pre>/g, '<pre tabindex="0">')
     .replace(/href="([^"]+?)\.md(#[^"]*)?"/g, (_full, file, hash = '') => {
       // Only files owned by docs/ become generated HTML. Root README,
       // CONTRIBUTING and CHANGELOG remain Markdown in the Pages artifact.

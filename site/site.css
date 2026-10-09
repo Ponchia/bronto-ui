@@ -23,7 +23,7 @@
   --site-muted: #a9adb1;
   --site-rule: #36393a;
   --site-brand: #fb4752;
-  --site-brand-strong: #fb4752;
+  --site-brand-strong: #c11e2d;
   --site-deep: #202224;
   --site-deep-text: #f4f4f0;
   color-scheme: dark;
@@ -167,7 +167,7 @@ summary:focus-visible {
 .site-nav .site-nav__lab {
   font-family: var(--mono, monospace);
   font-size: 0.72rem;
-  opacity: 0.78;
+  opacity: 1;
 }
 .header-actions {
   display: flex;
@@ -321,6 +321,10 @@ summary:focus-visible {
 }
 .button--primary:hover {
   background: var(--site-brand-strong);
+}
+:root[data-theme='dark'] .button--primary {
+  background: var(--site-brand-strong);
+  border-color: var(--site-brand-strong);
 }
 .button--outline {
   background: transparent;
@@ -525,6 +529,11 @@ summary:focus-visible {
 }
 .section--ink {
   background: var(--site-deep);
+  color: var(--site-deep-text);
+}
+/* Bronto's h2/h3 elements have explicit token colors; inheritance alone
+   would otherwise make them dark-on-dark in this editorial section. */
+.section--ink :is(h2, h3) {
   color: var(--site-deep-text);
 }
 .section--ink .kicker {
@@ -948,6 +957,16 @@ summary:focus-visible {
   max-height: 205px;
   color: #e8e9e7;
 }
+.component-code pre code,
+.code-showcase pre code {
+  color: inherit;
+  background: transparent;
+  border: 0;
+}
+:where(.component-code pre, .code-showcase pre, .doc-prose pre):focus-visible {
+  outline: 2px solid var(--site-brand);
+  outline-offset: -2px;
+}
 .component-more {
   display: inline-flex;
   padding: 13px 20px;
@@ -1129,6 +1148,7 @@ summary:focus-visible {
 }
 .doc-prose :is(p, li) a {
   color: var(--site-ink);
+  text-decoration-line: underline;
   text-decoration-color: var(--site-brand);
   text-underline-offset: 3px;
 }
@@ -1280,6 +1300,12 @@ summary:focus-visible {
   background: var(--site-deep);
   color: var(--site-deep-text);
 }
+.lab-card--featured h2 {
+  color: var(--site-deep-text);
+}
+.lab-card--featured .kicker {
+  color: #ff9398;
+}
 .lab-card--featured p {
   color: #b9babc;
 }
@@ -1295,6 +1321,7 @@ summary:focus-visible {
 }
 .lab-footer a {
   color: var(--site-ink);
+  text-decoration-line: underline;
 }
 @media (max-width: 1120px) {
   .hero {
@@ -1571,7 +1598,7 @@ summary:focus-visible {
 }
 
 /* Keep the install modes explicit: npm import versus a plain HTML CDN path. */
-.code-showcase__note {
+.quickstart-layout .code-showcase > .code-showcase__note {
   margin: 0;
   padding: 13px 17px;
   border-top: 1px solid #35373b;
