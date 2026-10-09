@@ -4,6 +4,8 @@
 # release can ship it. validate's check:pack only inspects the file
 # allowlist; it does not build a consumer, so this is a distinct gate.
 #
+# Runs packed examples in the same pinned Playwright container as E2E,
+# avoiding repeat browser downloads on each example runner.
 # Called by BOTH ci.yml and release.yml via `workflow_call` — one matrix
 # definition, no drift between the merge path and the release path. Manual
 # runs always take the deeper chromium+firefox+webkit packed smoke without
@@ -57,6 +59,20 @@ jobs:
     needs: inventory
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # The pinned Playwright image already includes chromium, firefox, webkit,
+    # system dependencies and fonts. Installing all browsers separately in
+    # every example leg intermittently stalls until the 15-minute job timeout.
+    # Reuse the same browser build as the E2E/visual jobs instead.
+    container:
+      image: mcr.microsoft.com/playwright:v1.60.0-jammy
+    env:
+      # Firefox needs HOME owned by the root user inside this job container.
+      HOME: /root
+    # Container jobs default to /bin/sh. The example smoke uses Bash arrays
+    # for optional visual/cross-browser arguments, so explicitly keep Bash.
+    defaults:
+      run:
+        shell: bash
     strategy:
       fail-fast: false
       matrix:
@@ -64,22 +80,15 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      # cache: npm warms the global download cache across the matrix legs
-      # (each leg installs vite/astro/etc. for its example).
+      # Like the existing E2E container job, setup-node's npm cache cannot
+      # restore reliably inside the container. Avoid the wasted cache step.
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
-          cache: npm
 
       - run: npm ci
-
-      - name: Install Playwright browsers for cross-browser smoke
-        if: matrix.smoke && (github.event_name == 'workflow_dispatch' || inputs.cross_browser)
-        run: npx playwright install --with-deps chromium firefox webkit
-
-      - name: Install Chromium for default browser smoke
-        if: matrix.smoke && github.event_name != 'workflow_dispatch' && !inputs.cross_browser
-        run: npx playwright install --with-deps chromium
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
 
       - name: Build and smoke the ${{ matrix.example }} packed example
         env:
