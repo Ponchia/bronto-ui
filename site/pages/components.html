@@ -1,0 +1,41 @@
+<section class="page-container section-intro section-intro--compact">
+  <p class="kicker">VISUAL REFERENCE / COPYABLE HTML</p>
+  <h1>Start with a pattern.</h1>
+  <p class="page-lede">
+    Browse real components rendered with Bronto UI itself. Filter by purpose, inspect the result,
+    and copy the markup. This is a curated entry point; the full API remains in the documentation.
+  </p>
+</section>
+<section class="page-container component-catalog" data-component-catalog>
+  <div class="catalog-controls">
+    <label class="catalog-search"
+      ><span class="visually-hidden">Search components</span><span aria-hidden="true">⌕</span
+      ><input
+        type="search"
+        placeholder="Search components…"
+        data-component-query
+        autocomplete="off"
+    /></label>
+    <div class="catalog-categories" role="group" aria-label="Filter components">
+      {{componentChips}}
+    </div>
+  </div>
+  <div class="catalog-count" role="status" aria-live="polite" data-component-count></div>
+  <div class="catalog-grid">{{components}}</div>
+  <p class="catalog-empty" hidden data-component-empty>
+    No matching components. Try a broader search or choose All.
+  </p>
+</section>
+<section class="page-container section catalog-footer">
+  <div>
+    <p class="kicker">GO DEEPER</p>
+    <h2>Every class has a documented contract.</h2>
+    <p>
+      The complete class inventory, advanced primitives, and usage constraints live in the technical
+      reference.
+    </p>
+  </div>
+  <a href="{{root}}docs/reference.html" class="button button--outline"
+    >Open full class reference ↗</a
+  >
+</section>

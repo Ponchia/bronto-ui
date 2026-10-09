@@ -1,0 +1,150 @@
+<section class="hero page-container" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <p class="kicker"><span class="signal" aria-hidden="true"></span> OPEN SOURCE / CSS-FIRST</p>
+    <h1 id="hero-title">Interfaces for work that needs to be <em>understood.</em></h1>
+    <p class="hero-lede">
+      Building blocks for developer tools, operational dashboards, and evidence-rich reports. Use
+      plain HTML and CSS — keep your framework, your data, and your runtime.
+    </p>
+    <div class="hero-actions">
+      <a class="button button--primary" href="{{root}}examples/"
+        >Explore real examples <span aria-hidden="true">↗</span></a
+      >
+      <a class="button button--outline" href="{{root}}docs/getting-started/vanilla.html"
+        >Get started <span aria-hidden="true">→</span></a
+      >
+    </div>
+    <div class="hero-meta">
+      <span><strong>0</strong> runtime dependencies</span
+      ><span><strong>1</strong> CSS foundation</span><span><strong>MIT</strong> licensed</span>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="browser-frame browser-frame--hero">
+      <div class="browser-bar">
+        <span aria-hidden="true" class="browser-dots">● ● ●</span
+        ><span>service overview / bronto ui</span><span class="browser-badge">LIVE EXAMPLE</span>
+      </div>
+      <a
+        href="{{root}}examples/operations/"
+        class="browser-capture"
+        aria-label="Explore the operations dashboard example"
+        ><img
+          src="{{root}}site/assets/operations.jpg"
+          alt="Operations dashboard built with Bronto UI: status, navigation, workload metrics, and tables"
+          width="1200"
+          height="720"
+          fetchpriority="high"
+      /></a>
+    </div>
+    <div class="hero-visual-foot">
+      <span
+        ><span class="signal" aria-hidden="true"></span> A complete interface built from the same
+        CSS primitives</span
+      ><a href="{{root}}examples/operations/">Inspect the example ↗</a>
+    </div>
+  </div>
+</section>
+
+<section class="proof-strip" aria-label="Core characteristics">
+  <div class="page-container proof-strip__inner">
+    <div><strong>CSS FIRST</strong><span>A design system, not a component runtime</span></div>
+    <div><strong>FRAMEWORK AGNOSTIC</strong><span>HTML, React, Astro, Vue, and more</span></div>
+    <div>
+      <strong>FROM SCREEN TO PRINT</strong
+      ><span>One visual grammar for interfaces and reports</span>
+    </div>
+  </div>
+</section>
+
+<section class="section page-container" aria-labelledby="examples-title">
+  <div class="section-heading">
+    <div>
+      <p class="kicker">01 / IN PRACTICE</p>
+      <h2 id="examples-title">See what it builds.</h2>
+    </div>
+    <p>
+      Components make more sense when they are doing real work. Start with complete compositions,
+      then inspect the pieces.
+    </p>
+  </div>
+  <div class="example-grid">{{examples}}</div>
+  <p class="section-foot">
+    <a class="text-link" href="{{root}}examples/"
+      >See all examples and open the interactive previews <span aria-hidden="true">↗</span></a
+    >
+  </p>
+</section>
+
+<section class="section section--ink" aria-labelledby="foundation-title">
+  <div class="page-container foundation-layout">
+    <div>
+      <p class="kicker">02 / THE APPROACH</p>
+      <h2 id="foundation-title">A small layer between your product and the browser.</h2>
+    </div>
+    <div class="foundation-copy">
+      <p>
+        Bronto UI supplies the tokens, accessible visual patterns, and narrow behaviors. The
+        application keeps ownership of its state and business logic.
+      </p>
+      <div class="foundation-points">
+        <div>
+          <span class="foundation-number">01</span>
+          <h3>Bring your own framework</h3>
+          <p>Composable classes and optional JavaScript behaviors. No app architecture to adopt.</p>
+        </div>
+        <div>
+          <span class="foundation-number">02</span>
+          <h3>One visual language</h3>
+          <p>
+            Shared typography, density, navigation, and semantic states across tools and reports.
+          </p>
+        </div>
+        <div>
+          <span class="foundation-number">03</span>
+          <h3>Explain the data</h3>
+          <p>
+            Opt-in presentation primitives for annotations, evidence, charts, and printable reports.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section page-container quickstart-layout" aria-labelledby="quickstart-title">
+  <div>
+    <p class="kicker">03 / GET STARTED</p>
+    <h2 id="quickstart-title">Start with a stylesheet.</h2>
+    <p>
+      Install the package, import the styles, and write ordinary semantic markup. Bring in a
+      behavior only when you need one.
+    </p>
+    <a href="{{root}}docs/getting-started/vanilla.html" class="text-link"
+      >Full installation guide <span aria-hidden="true">↗</span></a
+    >
+  </div>
+  <div class="code-showcase">
+    <div class="code-header">
+      <span>01 / BASIC USAGE</span><button type="button" class="copy-button" data-copy>Copy</button>
+    </div>
+    <pre><code>npm install @ponchia/ui</code></pre>
+    <div class="code-header code-header--secondary">
+      <span>02 / YOUR HTML</span><button type="button" class="copy-button" data-copy>Copy</button>
+    </div>
+    <pre><code>&lt;link rel="stylesheet" href="bronto.css"&gt;
+
+&lt;button class="ui-button"&gt;Continue&lt;/button&gt;
+&lt;span class="ui-badge ui-badge--success"&gt;Ready&lt;/span&gt;</code></pre>
+  </div>
+</section>
+<section class="section page-container final-cta">
+  <div>
+    <p class="kicker">STILL EXPLORING?</p>
+    <h2>Inspect the system behind the examples.</h2>
+  </div>
+  <div class="final-cta-links">
+    <a class="button button--primary" href="{{root}}components/">Browse components ↗</a
+    ><a class="button button--outline" href="{{root}}docs/">Read documentation →</a>
+  </div>
+</section>

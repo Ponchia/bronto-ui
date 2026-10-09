@@ -2,8 +2,9 @@
 
 The full docs set for `@ponchia/ui`. The curated subset listed in
 `package.json` `files` also ships inside the npm tarball, so an offline agent or
-consumer gets it under `node_modules/@ponchia/ui/docs/`. A rendered site is
-published from [`index.html`](https://ponchia.github.io/bronto-ui/).
+consumer gets it under `node_modules/@ponchia/ui/docs/`. A navigable static documentation site with individual, shareable pages is
+published at [Bronto UI documentation](https://ponchia.github.io/bronto-ui/docs/).
+The original Markdown remains available for offline agents and direct reading.
 
 > New to the repo? Start with **[architecture.md → Repository layout](./architecture.md#repository-layout)**
 > for what each top-level directory is and which files are generated.

@@ -1,4 +1,6 @@
-# @ponchia/ui
+# Bronto UI
+
+`@ponchia/ui` — a CSS-first interface system
 
 [![npm](https://img.shields.io/npm/v/@ponchia/ui?logo=npm)](https://www.npmjs.com/package/@ponchia/ui)
 [![npm provenance](https://img.shields.io/badge/npm-provenance-blue?logo=npm)](https://www.npmjs.com/package/@ponchia/ui#provenance)
@@ -8,27 +10,30 @@
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Ponchia/bronto-ui/badge)](https://scorecard.dev/viewer/?uri=github.com/Ponchia/bronto-ui)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE)
 
-**A CSS-first identity layer for services, tools, and reports that need
-provenance.** It works in plain HTML, modern frameworks, and print/PDF, with no
-component runtime to adopt and zero runtime dependencies.
+**Building blocks for tools, dashboards, and reports.** Bronto UI provides accessible
+CSS patterns, design tokens, and opt-in JavaScript behaviors for applications
+that need to present complex information clearly — without adopting another
+component runtime.
 
-The sharpest lane is report and tooling UI: static/PDF reports, evidence,
-provenance, system state, dense workbenches, and explanatory figures. The
-default CSS bundle stays the shared service identity, not the whole package:
-app shells, navigation, forms, tables, feedback, overlays, prose, motion, and
-the token system that lets apps feel related without sharing a component runtime.
+**[Website](https://ponchia.github.io/bronto-ui/)** ·
+**[Examples](https://ponchia.github.io/bronto-ui/examples/)** ·
+**[Components](https://ponchia.github.io/bronto-ui/components/)** ·
+**[Documentation](https://ponchia.github.io/bronto-ui/docs/)** ·
+[Lab / full showcase](https://ponchia.github.io/bronto-ui/lab/)
 
-The look is deliberately restrained: a mostly neutral canvas, one core accent
-for emphasis, selective dot-matrix display type, and restrained borders. Status colors,
-display-expression tokens, and data-viz colors are separate governed tiers, not
-extra brand accents. Opt-in skins re-point the root accent; Mermaid, D2, and
-Vega bridges use resolved renderer theme data instead of live CSS variables.
+[![An operations dashboard built using Bronto UI](https://raw.githubusercontent.com/Ponchia/bronto-ui/main/site/assets/operations.jpg)](https://ponchia.github.io/bronto-ui/examples/operations/)
 
-Everyday tools use readable sans typography and sentence-case labels. Reports
-use a separate reading measure and print treatment. Use `ui-display` when a
-large title should carry the dot-matrix signature; ordinary headings stay quiet.
-[Composition recipes](docs/compositions.md) show a service overview, a narrow
-inspector, and a decision report with their imports and acceptance checks.
+Use it from a bundler or drop a stylesheet into an HTML document:
+
+```bash
+npm i @ponchia/ui
+```
+
+The default stylesheet covers application structure, forms, tables, feedback,
+overlays, and shared typography. Optional layers provide report composition,
+annotations, visual explanations, and printable evidence surfaces. The package
+has **zero runtime dependencies**. The live examples use real Bronto UI markup;
+the technical lab retains the full testing specimens.
 
 ## Start here
 
@@ -41,16 +46,10 @@ inspector, and a decision report with their imports and acceptance checks.
   [docs/architecture.md](docs/architecture.md),
   [docs/stability.md](docs/stability.md), and `llms.txt`.
 
-### [Live demo →](https://ponchia.github.io/bronto-ui/) &nbsp;·&nbsp; [Service shell →](https://ponchia.github.io/bronto-ui/demo/service.html) &nbsp;·&nbsp; [Static report →](https://ponchia.github.io/bronto-ui/demo/report-standalone.html) &nbsp;·&nbsp; [Theme playground →](https://ponchia.github.io/bronto-ui/demo/theme-playground.html)
+### [Explore examples →](https://ponchia.github.io/bronto-ui/examples/) · [Browse components →](https://ponchia.github.io/bronto-ui/components/) · [Get started →](https://ponchia.github.io/bronto-ui/docs/getting-started/vanilla.html)
 
-The demo is the kitchen sink — every component, light/dark, RTL, live theming.
-The service shell shows the shared app identity; the static report shows the
-same system under a no-build, no-JS, Chromium-PDF-ready constraint.
-
-<p>
-  <img alt="A research report built with the @ponchia/ui report layer" src="https://raw.githubusercontent.com/Ponchia/bronto-ui/main/demo/_preview-report-research.png" width="49%" />
-  <img alt="The same report grammar printed to PDF" src="https://raw.githubusercontent.com/Ponchia/bronto-ui/main/demo/_preview-report-print.png" width="49%" />
-</p>
+The component gallery and focused test fixtures remain in the
+[Laboratory](https://ponchia.github.io/bronto-ui/lab/) for detailed inspection.
 
 ---
 
