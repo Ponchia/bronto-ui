@@ -108,6 +108,19 @@ edit; a gate will revert you) and which are **path-frozen published subpaths**
   **dated** changelog heading (the `check:release` gate enforces this —
   a published version can never be left marked `unreleased`).
 
+## Commit attribution
+
+Commits must identify the person or automation that actually authored them.
+For maintainer-directed changes (including coding-agent-assisted work), use
+Zeno Trevisan's GitHub-linked identity `Ponchia@users.noreply.github.com`
+and open the PR as `@Ponchia`. AI assistants are development tools, not
+additional authors: do not add `Co-authored-by` trailers for Claude, Codex,
+or other AI assistants. Credit actual human collaborators when applicable.
+
+Keep independently generated Dependabot and GitHub Actions updates attributed
+to their bot accounts. Do not impersonate the maintainer from automation.
+Do not rewrite existing release commits or tags for cosmetic attribution.
+
 ## Deprecation policy
 
 From 0.3.1 onward, public surface (`.ui-*` classes, `data-bronto-*`
