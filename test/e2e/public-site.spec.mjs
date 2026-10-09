@@ -104,6 +104,17 @@ test('public site — component search and categorization are functional', async
   await expect(page.locator('.component-preview table caption')).toContainText('Recent job status');
 });
 
+test('public site — first-component instructions use the actual Vite vanilla entry', async ({
+  page,
+}) => {
+  await page.goto(publicRoot + 'docs/getting-started/first-component.html');
+  const snippets = await page.locator('.doc-prose pre code').allTextContents();
+  expect(snippets.some((code) => code.trim() === "import '@ponchia/ui';")).toBe(true);
+  expect(snippets.some((code) => code.includes('src="/src/main.js"'))).toBe(true);
+  expect(snippets.some((code) => code.includes('src="/main.js"'))).toBe(false);
+  await expect(page.locator('.doc-prose')).toContainText('Replace the contents of src/main.js');
+});
+
 test('public site — documentation code blocks copy their actual source', async ({ page }) => {
   await page.addInitScript(() => {
     // Deterministic clipboard contract in the browser matrix; permissions
