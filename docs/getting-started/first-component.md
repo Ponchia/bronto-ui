@@ -17,7 +17,7 @@ npm install @ponchia/ui
 
 ## 2. Import the default stylesheet
 
-Put this at the top of *main.js*, the file Vite already loads from *index.html*:
+Replace the contents of *src/main.js* with the following one-line entry. The default Vite starter JavaScript expects a `#app` element and imports its own stylesheet; remove those starter imports and DOM updates when replacing the HTML in the next step:
 
 ```js
 import '@ponchia/ui';
@@ -48,7 +48,7 @@ Replace the contents of *index.html* with:
         <span class="ui-badge ui-badge--success">Healthy</span>
       </article>
     </main>
-    <script type="module" src="/main.js"></script>
+    <script type="module" src="/src/main.js"></script>
   </body>
 </html>
 ```
