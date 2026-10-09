@@ -158,16 +158,6 @@ export const components = [
 </ul>`,
   },
   {
-    name: 'States with evidence',
-    category: 'Composition',
-    doc: 'generated',
-    summary: 'Separate saved state from the time and source of an update.',
-    markup: `<span class="ui-state ui-state--saved">
-  <span class="ui-state__label">All changes saved</span>
-  <span class="ui-state__detail">just now</span>
-</span>`,
-  },
-  {
     name: 'Panels',
     category: 'Composition',
     doc: 'compositions',

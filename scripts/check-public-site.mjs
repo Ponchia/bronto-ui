@@ -6,6 +6,7 @@ import { resolve, join, dirname, extname, relative } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
+import { components } from '../site/components.mjs';
 
 const repo = resolve(import.meta.dirname, '..');
 const temp = await mkdtemp(join(tmpdir(), 'brontoui-pages-check-'));
@@ -116,6 +117,24 @@ try {
     'Component explorer unexpectedly small',
   );
   assert(catalog.includes('data-component-query'), 'Component search missing');
+  // Curated copyable specimens must use classes present in the default CSS,
+  // rather than silently relying on optional layers loaded by other demos.
+  const bundledCSS = await readFile(join(built, 'dist/bronto.css'), 'utf8');
+  for (const component of components) {
+    const snippet = new JSDOM(component.markup);
+    for (const node of snippet.window.document.querySelectorAll('[class]')) {
+      for (const cls of node.classList) {
+        if (cls.startsWith('ui-')) {
+          assert(
+            bundledCSS.includes('.' + cls),
+            'Copyable component ' + component.name + ' references unbundled class ' + cls,
+          );
+        }
+      }
+    }
+    snippet.window.close();
+  }
+
   const docs = JSON.parse(await readFile(join(built, 'docs/search-index.json'), 'utf8'));
   assert(docs.length >= 70, `Missing reference docs: ${docs.length}`);
   assert(
