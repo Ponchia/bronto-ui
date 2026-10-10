@@ -242,7 +242,7 @@ const sharedHeader = (current, p) => `<a class="skip-link" href="#main">Skip to 
 const sharedFooter = (p) => `<footer class="site-footer"><div class="site-footer__inner">
   <div><a class="footer-mark" href="${p}">bronto<span>ui</span>.</a><p>Interfaces for work that needs to be understood.</p></div>
   <div class="footer-links"><a href="${p}examples/">Examples</a><a href="${p}components/">Components</a><a href="${p}docs/">Docs</a><a href="${p}lab/">Lab</a></div>
-  <div class="footer-links"><a href="https://github.com/Ponchia/bronto-ui">GitHub ↗</a><a href="https://www.npmjs.com/package/@ponchia/ui">npm ↗</a><a href="https://brontolotto.observer/projects/bronto-ui/">About the project ↗</a></div>
+  <div class="footer-links"><a href="https://github.com/Ponchia/bronto-ui">GitHub ↗</a><a href="https://www.npmjs.com/package/@ponchia/ui">npm ↗</a><a href="https://ponchia.github.io/bronto-annotations/">Annotation engine ↗</a><a href="https://brontolotto.observer/projects/bronto-ui/">About the project ↗</a></div>
   <div class="footer-bottom"><span>MIT licensed · Created by <a href="https://brontolotto.observer/">Zeno Trevisan</a></span><span>Static HTML · Bronto UI CSS · No frontend runtime</span></div>
 </div></footer>`;
 const rendered = (outFile, current, title, description, inner) => {

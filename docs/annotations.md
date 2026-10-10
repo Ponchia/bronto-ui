@@ -13,9 +13,12 @@ points away from it, and a **note** carries the visible explanation.
 Use it with any SVG renderer. Bronto supplies classes and tiny geometry helpers;
 it does not own chart scales, mutate the DOM, or provide draggable edit mode.
 
-For new annotation-engine work, use the sibling `@ponchia/annotations` package:
-it owns placement, collision handling, SVG/React renderers, editable layers, and
-Mermaid/D2/Vega/React Flow adapters. This `@ponchia/ui/annotations` subpath
+For new annotation-engine work, use the independent
+[`@ponchia/annotations`](https://ponchia.github.io/bronto-annotations/) package.
+Its [interactive playground](https://ponchia.github.io/bronto-annotations/#playground)
+and [real examples](https://ponchia.github.io/bronto-annotations/#examples) show
+placement, collision handling, SVG/React renderers, edit helpers, and the
+Mermaid/D2/Vega/React Flow adapters in action. This `@ponchia/ui/annotations` subpath
 stays a dependency-free compatibility surface for static Bronto SVG helpers, so
 installing the UI package never pulls in the annotation engine and public
 declarations never type-reference it. Combine the two by using Bronto's
