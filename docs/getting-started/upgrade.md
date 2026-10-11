@@ -34,6 +34,10 @@ A release without a separate migration page may still affect appearance.
    ```
 
    It catches unknown literal Bronto classes and token references, not dynamic class strings or visual regressions.
+   When the shipped class manifest provides an unambiguous correction, the
+   checker suggests a valid same-component modifier (also included as
+   `suggestion` in `--json`). Suggestions are advisory: no alias is
+   introduced and consumer markup is never rewritten.
 6. Record how much duplicate CSS and behavior code the shared library can replace. Prefer deletion over another abstraction.
 
 The [stability contract](../stability.md) defines compatibility policy.

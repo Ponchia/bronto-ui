@@ -140,3 +140,47 @@ test('consumer checker CLI pins clean, finding, JSON, and invocation exit contra
     rmSync(root, { recursive: true, force: true });
   }
 });
+
+test('consumer checker suggests same-component modifier repairs without accepting aliases', () => {
+  const root = mkdtempSync(resolve(tmpdir(), 'bronto-ui-check-hints-'));
+  try {
+    const file = resolve(root, 'page.html');
+    writeFileSync(
+      file,
+      '<table class="ui-table ui-table--compact"></table>' +
+        '<article class="ui-prose ui-prose--dense"></article>' +
+        '<button class="ui-button ui-button--ghots">Cancel</button>' +
+        '<div class="ui-unknown-part--dense"></div>',
+    );
+    const result = checkPaths([file]);
+    assert.deepEqual(
+      result.findings.map(({ name, suggestion }) => [name, suggestion || null]),
+      [
+        ['ui-table--compact', 'ui-table--dense'],
+        ['ui-prose--dense', 'ui-prose--compact'],
+        ['ui-button--ghots', 'ui-button--ghost'],
+        ['ui-unknown-part--dense', null],
+      ],
+    );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('consumer checker hints are visible in text and optional in JSON', () => {
+  const root = mkdtempSync(resolve(tmpdir(), 'bronto-ui-check-hints-cli-'));
+  try {
+    const file = resolve(root, 'page.html');
+    writeFileSync(file, '<table class="ui-table ui-table--compact"></table>');
+    const run = (...args) =>
+      spawnSync(process.execPath, [checkerPath, ...args], { encoding: 'utf8', cwd: root });
+    const textResult = run(file);
+    assert.equal(textResult.status, 1);
+    assert.match(textResult.stderr, /did you mean ui-table--dense\?/);
+    const jsonResult = run('--json', file);
+    assert.equal(jsonResult.status, 1);
+    assert.equal(JSON.parse(jsonResult.stdout).findings[0].suggestion, 'ui-table--dense');
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});

@@ -153,6 +153,65 @@ function tokenPrefix(name) {
   return `--${name.slice(2).split('-')[0]}`;
 }
 
+// Suggestions are advisory, derived from the shipped manifest. Never add a
+// silent alias or guess a different widget's modifier in order to hide a typo.
+function editDistance(a, b, limit = 2) {
+  if (Math.abs(a.length - b.length) > limit) return limit + 1;
+  let previous = Array.from({ length: b.length + 1 }, (_, index) => index);
+  for (let i = 1; i <= a.length; i += 1) {
+    const current = [i];
+    let minimum = i;
+    for (let j = 1; j <= b.length; j += 1) {
+      const distance = Math.min(
+        current[j - 1] + 1,
+        previous[j] + 1,
+        previous[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1),
+      );
+      current.push(distance);
+      minimum = Math.min(minimum, distance);
+    }
+    if (minimum > limit) return limit + 1;
+    previous = current;
+  }
+  return previous[b.length];
+}
+
+function closestClass(name, candidates) {
+  let best = null;
+  let bestDistance = 3;
+  let tied = false;
+  for (const candidate of candidates) {
+    const distance = editDistance(name, candidate);
+    if (distance < bestDistance) {
+      best = candidate;
+      bestDistance = distance;
+      tied = false;
+    } else if (distance === bestDistance) {
+      tied = true;
+    }
+  }
+  return tied ? null : best;
+}
+
+function suggestClass(name) {
+  const modifierIndex = name.indexOf('--');
+  if (modifierIndex !== -1) {
+    const base = name.slice(0, modifierIndex);
+    const group = classesManifest.groups[base];
+    if (group) {
+      const modifier = name.slice(modifierIndex + 2);
+      const densityCounterparts = { dense: 'compact', compact: 'dense' };
+      const counterpart = densityCounterparts[modifier];
+      if (counterpart) {
+        const candidate = base + '--' + counterpart;
+        if (group.modifiers.includes(candidate)) return candidate;
+      }
+      return closestClass(name, group.modifiers);
+    }
+  }
+  return closestClass(name, knownClasses);
+}
+
 export function checkPaths(inputs, { allowClasses = [], allowTokens = [] } = {}) {
   const allowedClasses = new Set([...knownClasses, ...allowClasses]);
   const allowedTokens = new Set([...knownTokens, ...allowTokens]);
@@ -180,7 +239,14 @@ export function checkPaths(inputs, { allowClasses = [], allowTokens = [] } = {})
   for (const { file, text, scanned } of documents) {
     for (const match of scanned.matchAll(/(?<![/\w-])ui-[a-z0-9](?:[\w-]*[a-z0-9])?(?![\w/-])/gi)) {
       if (!allowedClasses.has(match[0]) && !nonClassIdentifiers.has(match[0])) {
-        add({ kind: 'class', file, line: lineAt(text, match.index), name: match[0] });
+        const suggestion = suggestClass(match[0]);
+        add({
+          kind: 'class',
+          file,
+          line: lineAt(text, match.index),
+          name: match[0],
+          ...(suggestion ? { suggestion } : {}),
+        });
       }
     }
     for (const match of scanned.matchAll(/var\(\s*(--[a-z][\w-]*)/gi)) {
@@ -269,7 +335,7 @@ function main() {
   else if (output.findings.length) {
     for (const finding of output.findings) {
       console.error(
-        `${finding.file}:${finding.line} unknown Bronto ${finding.kind} ${finding.name}`,
+        `${finding.file}:${finding.line} unknown Bronto ${finding.kind} ${finding.name}${finding.suggestion ? ` (did you mean ${finding.suggestion}?)` : ''}`,
       );
     }
     console.error(
