@@ -16,7 +16,12 @@ frame around every metric and table.
 ```
 
 Use sentence-case labels. Keep the main action distinguishable from destructive
-actions through wording and placement. Use `ui-delta--invert` when a decrease
+actions through wording and placement. The default accent may itself be red,
+so `ui-button` and `ui-button--danger` can have similar filled colors.
+Use explicit labels (for example, "Save changes" versus "Delete workspace"),
+separate their placement, and let the host own confirmation/undo when relevant:
+color alone does not communicate destructive intent.
+Use `ui-delta--invert` when a decrease
 is favorable, such as queue delay. Unknown, stale, and failed are distinct
 states; do not present missing observations as success.
 
