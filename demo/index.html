@@ -1824,8 +1824,9 @@ ui.originLabel({ ai: true });</code></pre>
   &lt;ul class="ui-command__list"&gt;&lt;li class="ui-command__item" data-value="…"&gt;…&lt;/li&gt;&lt;/ul&gt;
 &lt;/div&gt;
 
-initCommand(); // emits bronto:command:select { value, label } — host runs it
-useCommand();  // react/solid/qwik</code></pre>
+import { initCommand } from '@ponchia/ui/behaviors';
+const stop = initCommand(); // emits bronto:command:select { value, label }
+// The host runs the action; call stop() when this view is disposed.</code></pre>
           </details>
           <p class="spec__meta">
             <span class="ui-badge ui-badge--muted">opt-in</span>
@@ -1844,11 +1845,12 @@ useCommand();  // react/solid/qwik</code></pre>
       <div class="tier" id="frontier">
         <div class="tier__head">
           <p class="tier__n">04 — On the frontier</p>
-          <h2 class="tier__title">What the system owns next</h2>
+          <h2 class="tier__title">Potential extensions</h2>
           <p class="tier__blurb">
-            The same boundary, applied to more of the "interfaces that explain themselves" surface.
-            Planned, not yet built — the full rationale is in
-            <a href="../docs/#frontier-primitives.md">the frontier-primitives thesis</a>.
+            These directions need a concrete consumer and a clear ownership boundary before they
+            become public APIs. Start with existing compositions; the
+            <a href="../docs/#frontier-primitives.md">frontier-primitives guide</a> explains the
+            shipped surfaces and the evidence required for an addition.
           </p>
         </div>
         <div class="frontier">

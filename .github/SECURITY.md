@@ -50,7 +50,9 @@ step runs with `--ignore-scripts`. The realistic project surface is
 supply-chain (dev dependencies, Actions, docs-site CDN dependencies) —
 kept current via Dependabot and locked CI.
 
-## Development tooling advisory
+## Tooling advisories
+
+### Lint dependencies
 
 As of 12 October 2026, the development lockfile includes `braces@3.0.3`
 through Stylelint's `micromatch` and glob dependencies.
@@ -63,3 +65,16 @@ the `lint` and `lint:fix` scripts pass the fixed `css/**/*.css` pattern.
 The published package has zero runtime dependencies and does not include
 this tooling stack. The development advisory remains open. Recheck
 upstream releases and the lockfile audit when updating the lint toolchain.
+
+### Release CLI
+
+The isolated `npm@11.21.0` publisher project was also audited on 12 October
+2026. Its bundled dependencies report **five affected packages** (three high
+and two moderate) across 12 advisory records. This is a separate dependency
+graph from the root development tools and the published UI package.
+
+The [CI tooling advisory review](tooling/README.md#current-npm-bundle-advisory-review)
+records exact versions, advisory links, the reproducible audit command, and
+why the reviewed npm major update and overrides did not remove these findings.
+Keep this review current when updating the upstream CLI; integrity locking
+and protected publishing controls do not remediate the bundled advisories.

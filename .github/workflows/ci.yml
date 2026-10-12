@@ -105,12 +105,18 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           cache: npm
 
       - run: npm ci
+
+      - name: Verify the locked release CLI
+        run: |
+          npm ci --prefix .github/tooling/npm --ignore-scripts --no-audit --no-fund
+          node .github/tooling/npm/node_modules/npm/bin/npm-cli.js --version
+          node .github/tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json > "${RUNNER_TEMP}/release-tooling-pack.json"
 
       # Stylelint + integrity checks + node:test unit/contract suite.
       - run: npm run check
@@ -142,34 +148,40 @@ jobs:
   sast:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # The image digest locks Semgrep and its Python/system dependencies.
+    # Update instructions and the deliberately current rule feed are documented
+    # in .github/tooling/README.md.
+    container:
+      image: semgrep/semgrep:1.166.0@sha256:c180f0c93a17b420c0af5006214a29d3c747c5459c732b740191adf657dd0068
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
-      - name: Install Semgrep
-        run: python3 -m pip install --user --disable-pip-version-check 'semgrep==1.166.0'
-
-      # Advisory lightweight SAST — NOT yet a required gate. Semgrep respects
-      # .semgrepignore by default. `p/default` currently flags pre-existing,
-      # intentional non-literal-RegExp patterns in dev scripts (e.g.
-      # scripts/lib/ownership-proof.mjs, scripts/check-schemas.mjs) that are
-      # not user-input-facing. Triage / suppress those, then promote to
-      # required by removing `continue-on-error` and adding `sast` back to the
-      # ci-gate `needs`.
+      # Keep the full, current p/default feed and .semgrepignore behavior.
+      # Findings remain advisory while they are triaged; execution/configuration
+      # errors must fail the job instead of masquerading as a successful scan.
       - name: Run Semgrep SAST
-        continue-on-error: true
         run: |
-          "$HOME/.local/bin/semgrep" scan \
+          status=0
+          semgrep scan \
             --config p/default \
             --error \
             --metrics=off \
-            .
+            --disable-version-check \
+            . || status=$?
+          case "$status" in
+            0) ;;
+            1) echo "::warning::Semgrep reported advisory findings; review the scan output." ;;
+            *) exit "$status" ;;
+          esac
 
   # The single required status check on main owns the complete job graph.
   # A failed classifier must not turn skipped browser jobs into a green gate.
   # Only a successful docs-only classification may skip examples or e2e.
   ci-gate:
     if: always()
-    needs: [changes, check, examples, e2e]
+    needs: [changes, check, examples, e2e, sast]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -180,12 +192,13 @@ jobs:
           R_CHECK: ${{ needs.check.result }}
           R_EXAMPLES: ${{ needs.examples.result }}
           R_E2E: ${{ needs.e2e.result }}
+          R_SAST: ${{ needs.sast.result }}
         run: |
           set -euo pipefail
-          echo "changes=$R_CHANGES heavy=$HEAVY check=$R_CHECK examples=$R_EXAMPLES e2e=$R_E2E"
-          for r in "$R_CHANGES" "$R_CHECK"; do
+          echo "changes=$R_CHANGES heavy=$HEAVY check=$R_CHECK examples=$R_EXAMPLES e2e=$R_E2E sast=$R_SAST"
+          for r in "$R_CHANGES" "$R_CHECK" "$R_SAST"; do
             if [ "$r" != "success" ]; then
-              echo "::error::change classification and integrity checks must succeed (got '$r')"
+              echo "::error::change classification, integrity checks, and SAST execution must succeed (got '$r')"
               exit 1
             fi
           done

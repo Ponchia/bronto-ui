@@ -330,15 +330,18 @@ five-tier colour model and its rules live in
 Opt-in single-hue colorways, shipped as a **separate** entrypoint (never in
 the default bundle):
 
+```css
+@import '@ponchia/ui/css/skins.css';
+```
+
 ```html
-<link rel="stylesheet" href="@ponchia/ui/css/skins.css" />
 <html data-theme="dark" data-bronto-skin="phosphor-green">
   …
 </html>
 ```
 
-`data-bronto-skin="amber-crt | phosphor-green | e-ink"` is a **root-level**
-choice, like `data-theme` — put it on `:root`/`<html>`. It re-points the one
+Set `data-bronto-skin` to `amber-crt`, `phosphor-green`, or `e-ink` on
+`:root`/`<html>`. It is a **root-level** choice, like `data-theme`, and re-points the one
 `--accent` (per theme, authored in OKLCH); the derived family, focus ring,
 dot-matrix and glyphs follow automatically, and status colours + the neutral
 canvas are untouched. A colorway is _not_ a second accent — it swaps the one
@@ -369,8 +372,8 @@ bundle. One leaf carries eight fixed hues in two namespaces: `--chart-*` for
 data-viz series and ramps, and `--cat-*` for categorical **identity** — a tag,
 a participant, a user-chosen tint.
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/dataviz.css" />
+```css
+@import '@ponchia/ui/css/dataviz.css';
 ```
 
 ```js

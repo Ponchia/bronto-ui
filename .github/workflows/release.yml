@@ -16,8 +16,8 @@
 # (.github/workflows/{e2e,examples}.yml) — one definition, never a drifted
 # copy. The release runs them at full strength: examples adds the packed
 # chromium/firefox/webkit smoke plus desktop/mobile visual health, and e2e adds
-# the firefox/webkit cross-engine pass that PRs skip for speed — so the publish
-# is gated on cross-engine + packed-example health even though merges aren't.
+# full firefox/webkit coverage regardless of the change classifier — so every
+# publish is gated on all engines plus packed-example health.
 #
 # DIST-TAG ROUTING: a stable tag (`v0.4.0`) publishes to `latest`, so
 # `npm i @ponchia/ui` resolves it. A SemVer prerelease tag (`v0.4.0-rc.1`,
@@ -67,7 +67,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           cache: npm
@@ -83,6 +83,12 @@ jobs:
 
       - run: npm ci
 
+      - name: Verify the locked release CLI
+        run: |
+          npm ci --prefix .github/tooling/npm --ignore-scripts --no-audit --no-fund
+          node .github/tooling/npm/node_modules/npm/bin/npm-cli.js --version
+          node .github/tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json > "${RUNNER_TEMP}/release-tooling-pack.json"
+
       - run: npm run check
 
       - name: Verify tag matches package.json version
@@ -97,7 +103,7 @@ jobs:
   # Reused, not re-implemented (these jobs used to be duplicated here and
   # had drifted — the release copies lacked the registry retry CI had).
   # publish-preflight needs these; a release must not skip what merge-to-main
-  # runs, and adds the cross-engine e2e pass PRs defer.
+  # runs, with full cross-engine coverage on every release.
   e2e:
     needs: validate
     # Full cross-engine pass gates every publish.
@@ -119,17 +125,20 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           cache: npm
 
       - run: npm ci --ignore-scripts
 
+      - name: Install the integrity-locked npm CLI
+        run: npm ci --prefix .github/tooling/npm --ignore-scripts --no-audit --no-fund
+
       - name: Capture publish preflight summary
         run: |
           set -euo pipefail
-          npm pack --dry-run --json --ignore-scripts > "${RUNNER_TEMP}/pack.json"
+          node .github/tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json > "${RUNNER_TEMP}/pack.json"
           npm run size:report > "${RUNNER_TEMP}/size-report.txt"
           node <<'NODE' >> "$GITHUB_STEP_SUMMARY"
           const fs = require('node:fs');
@@ -174,18 +183,21 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
+          # Publish must not restore dependency caches into an OIDC-enabled job.
+          package-manager-cache: false
 
-      # Trusted publishing needs npm CLI >= 11.5.1; Node 22 still bundles
-      # npm 10.x, so the floor is explicit rather than inherited. Without
-      # it `npm publish` falls back to looking for a token that no longer
-      # exists and fails with a misleading E404/E401.
-      - name: Install an npm CLI that supports trusted publishing
-        run: npm install -g npm@^11.5.1
+      # Install only the private CLI project, using its committed integrity
+      # lock. No global install, project devDependencies, or lifecycle scripts
+      # execute in this privileged job. See .github/tooling/README.md.
+      - name: Install the integrity-locked npm CLI
+        run: npm ci --prefix .github/tooling/npm --ignore-scripts --no-audit --no-fund
 
       # Publish with --ignore-scripts so the OIDC credential is never
       # exposed to the prepack/prepublishOnly lifecycle (the whole
@@ -209,7 +221,7 @@ jobs:
             dist_tag=latest
           fi
           echo "Publishing $version to dist-tag '$dist_tag'"
-          npm publish --ignore-scripts --tag "$dist_tag"
+          node .github/tooling/npm/node_modules/npm/bin/npm-cli.js publish --ignore-scripts --tag "$dist_tag"
 
       - name: Record npm registry state
         continue-on-error: true
@@ -219,7 +231,7 @@ jobs:
           view_ok=false
           attempts_remaining=5
           while [ "$attempts_remaining" -gt 0 ]; do
-            if npm view "@ponchia/ui@$version" version dist.integrity dist.tarball --json > "${RUNNER_TEMP}/npm-view.json"; then
+            if node .github/tooling/npm/node_modules/npm/bin/npm-cli.js view "@ponchia/ui@$version" version dist.integrity dist.tarball --json > "${RUNNER_TEMP}/npm-view.json"; then
               view_ok=true
               break
             fi
@@ -227,7 +239,7 @@ jobs:
             sleep 5
           done
           tags_ok=false
-          if npm view @ponchia/ui dist-tags --json > "${RUNNER_TEMP}/npm-dist-tags.json"; then
+          if node .github/tooling/npm/node_modules/npm/bin/npm-cli.js view @ponchia/ui dist-tags --json > "${RUNNER_TEMP}/npm-dist-tags.json"; then
             tags_ok=true
           fi
 

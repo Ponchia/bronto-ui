@@ -34,18 +34,17 @@ this is the intended override mechanism. Do not fight normal component styling
 with `!important`; the framework reserves `!important` for print and
 reduced-motion safeguards.
 
-Loading a stylesheet — read before copying a `<link>` below. The opt-in
-leaves are written as `@ponchia/ui/css/<leaf>.css` for brevity. That
-package-specifier form resolves ONLY inside a CSS-aware bundler
-(Vite/webpack); in a standalone `.html` file it does not resolve. For plain
-HTML (the usual case when an LLM emits a report) use a real URL — and note
-the path changes from source `css/` to built `dist/css/`:
+The CSS `@import` recipes below use package specifiers, which resolve inside a
+CSS-aware bundler (Vite/webpack). In standalone HTML, load a real stylesheet
+URL instead: a browser cannot resolve `@ponchia/ui/css/<leaf>.css` as a
+`<link href>`. The built leaf path is `dist/css/<leaf>.css`. For example,
+choose one of these ways to add the report layer:
 
 ```html
-<!-- installed locally -->
-<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/<leaf>.css" />
-<!-- or from a CDN; pin the version (pre-1.0, breaking changes ship in the minor) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.16.1/dist/css/<leaf>.css" />
+<!-- installed locally; serve node_modules beside this page -->
+<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/report.css" />
+<!-- or use a pinned CDN version (pre-1.0, breaking changes ship in the minor) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.16.1/dist/css/report.css" />
 ```
 
 The flattened default bundle is `dist/bronto.css` (bundler shorthand
@@ -138,10 +137,15 @@ Prefer `ui-scroll-reveal` over `ui-reveal` when no JS will run. Details:
 Optional display colorways — opt-in, never in the default bundle. Root-level,
 like `data-theme` (the derived accent family only recomputes at `:root`):
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/skins.css" />
-<html data-bronto-skin="amber-crt | phosphor-green | e-ink"></html>
+```css
+@import '@ponchia/ui/css/skins.css';
 ```
+
+```html
+<html data-bronto-skin="amber-crt"></html>
+```
+
+Choose `amber-crt`, `phosphor-green`, or `e-ink`.
 
 Each re-points the one `--accent` (OKLCH, per-theme, contrast-gated); status
 colours and the neutral canvas are untouched. Details in `docs/theming.md`.
@@ -149,13 +153,13 @@ colours and the neutral canvas are untouched. Details in `docs/theming.md`.
 Optional data-viz palette for dashboards — opt-in, charts-only (never UI
 chrome), never in the default bundle:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/dataviz.css" />
+```css
+@import '@ponchia/ui/css/dataviz.css';
 ```
 
 ```js
 import charts from '@ponchia/ui/charts.json' with { type: 'json' };
-// charts.dark.categorical → ['#ff3b41', …] (series 0 = the resolved accent)
+// charts.dark.categorical → ['#3987e5', …] (fixed categorical hues; blue first)
 ```
 
 On-brand Mermaid diagrams use the same tokens-as-data path — Mermaid is the
@@ -227,8 +231,8 @@ Optional figure stage for charts, diagrams, screenshots, and annotated media —
 opt-in, never in the default bundle. It composes with `ui-report__figure` but
 does not replace it:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/figure.css" />
+```css
+@import '@ponchia/ui/css/figure.css';
 ```
 
 Use `ui-figure` on the `<figure>`, `ui-figure__caption` on the caption,
@@ -248,8 +252,8 @@ renderers, editing, and chart/diagram adapters, use the sibling
 `@ponchia/annotations` package; `@ponchia/ui/annotations` stays a
 dependency-free Bronto static-helper compatibility surface:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/annotations.css" />
+```css
+@import '@ponchia/ui/css/annotations.css';
 ```
 
 ```js
@@ -276,8 +280,8 @@ Optional legends / data keys for charts and figures — opt-in, never in the
 default bundle. Reads the `--chart-*` tokens, so a key never drifts from its
 series:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/legend.css" />
+```css
+@import '@ponchia/ui/css/legend.css';
 ```
 
 Use a `ui-legend` container with `ui-legend__item` rows, each holding a
@@ -290,7 +294,7 @@ index helper. Variants: `ui-legend--vertical`/`--compact`/`--with-values`,
 and `ui-legend--threshold`. `ui.legend()`/`ui.legendItem()`/`ui.legendSwatch()`
 build the class strings. Interactive (series-toggling) legends are opt-in:
 author entries as `<button aria-pressed>` under `[data-bronto-legend]`, run
-`initLegend()` (or `useLegend()`), and listen for `bronto:legend:toggle`
+`initLegend()`, and listen for `bronto:legend:toggle`
 (`{ series, active }`) — Bronto flips the control state; you hide the series and
 own the `aria-live` announcement. Details: `docs/legends.md`.
 
@@ -298,8 +302,8 @@ Optional text marks / evidence emphasis for running prose — opt-in, never in
 the default bundle. The prose counterpart to annotations (annotations call out a
 figure; marks call out a sentence):
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/marks.css" />
+```css
+@import '@ponchia/ui/css/marks.css';
 ```
 
 Put `ui-mark` on a `<mark>` for inline emphasis (semantic, not just visual).
@@ -317,15 +321,15 @@ Optional connectors / leader lines between two DOM elements — opt-in, never in
 the default bundle. Pure geometry + an optional draw/track behavior; owns no
 layout:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/connectors.css" />
+```css
+@import '@ponchia/ui/css/connectors.css';
 ```
 
 Place a `ui-connector` SVG (`data-bronto-connector`, `aria-hidden`) as an
 overlay inside a `position: relative` container holding both endpoints; set
 `data-from`/`data-to` (element ids), optional `data-shape`
 (straight|elbow|curve), `data-from-side`/`data-to-side`, and `data-end`
-(arrow|dot|none). `initConnectors()` (or `useConnectors()`) draws the path and
+(arrow|dot|none). `initConnectors()` draws the path and
 redraws on resize/scroll. Tones `ui-connector--accent`/`--muted`/status,
 `ui-connector--dashed`, `ui-connector--draw`. Pure helpers from
 `@ponchia/ui/connectors` (`connectRects`, `connectorPath`, `arrowHead`,
@@ -335,14 +339,14 @@ Optional spotlight / guided-focus overlay — opt-in, never in the default
 bundle. The visual language of a tour, NOT a tour engine (the host owns step
 order/advancing/visibility):
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/spotlight.css" />
+```css
+@import '@ponchia/ui/css/spotlight.css';
 ```
 
 A `ui-spotlight` overlay (`data-bronto-spotlight`, `data-target=<element id>`)
 contains a `ui-spotlight__hole` (the box-shadow cutout) and a `ui-tour-note`
-callout (`__step`/`__title`/`__body`/`__actions`). `initSpotlight()` (or
-`useSpotlight()`) measures the target and sets `--spot-x/y/w/h`, re-placing on
+callout (`__step`/`__title`/`__body`/`__actions`). `initSpotlight()` measures
+the target and sets `--spot-x/y/w/h`, re-placing on
 resize/scroll and when `data-target` changes — so advance a tour by updating
 `data-target`. `ui-spotlight--ring` adds a ring. The overlay is non-blocking by
 design; put the real guidance text in the focusable `ui-tour-note`. Details:
@@ -351,14 +355,14 @@ design; put the real guidance text in the focusable `ui-tour-note`. Details:
 Optional crosshair / readout for reading a value off a plot — opt-in, never in
 the default bundle. Reports the pointer position; the host maps it to data:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/crosshair.css" />
+```css
+@import '@ponchia/ui/css/crosshair.css';
 ```
 
 Mark the plot `[data-bronto-crosshair]` (position: relative) and put a
 `ui-crosshair` overlay inside it with `ui-crosshair__line ui-crosshair__line--x`
 and/or `--y`, optional `ui-crosshair__badge`, and a `ui-readout` chip.
-`initCrosshair()` (or `useCrosshair()`) sets `--crosshair-x/y` (px) on pointer
+`initCrosshair()` sets `--crosshair-x/y` (px) on pointer
 move, toggles `is-active`, and dispatches `bronto:crosshair:move`
 ({ x, y, fx, fy } — px + 0..1 fractions) / `bronto:crosshair:leave`. It does NOT
 find the nearest datum or map pixels→data (that needs your scales). `ui.crosshair({ muted })`.
@@ -368,8 +372,8 @@ Optional selection-state vocabulary — opt-in, cross-cutting, CSS only. The car
 from brush/lasso: Bronto does not do region selection/hit-testing; it ships only
 the states an item can be in:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/selection.css" />
+```css
+@import '@ponchia/ui/css/selection.css';
 ```
 
 Apply `ui-sel` + `ui-sel--on` (selected), `ui-sel--off` (excluded), or
@@ -381,8 +385,8 @@ Optional Custom Highlight API paint — opt-in, CSS only, never in the default
 bundle. For cited evidence, search hits, and current match ranges without
 wrapping text nodes:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/highlights.css" />
+```css
+@import '@ponchia/ui/css/highlights.css';
 ```
 
 Put `ui-highlights` on the text scope. The host creates `Range` objects and
@@ -395,8 +399,8 @@ Optional source/citation/provenance trust layer — opt-in, CSS only, never in
 the default bundle. The grammar for "where did this come from?" in generated
 reports/AI output:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/sources.css" />
+```css
+@import '@ponchia/ui/css/sources.css';
 ```
 
 `ui-citation` (inline ref on a real `<a>`/`<button>`; `--chip` = named-source
@@ -414,8 +418,8 @@ states; the host owns fetching, numbering, and trust. `ui.citation({chip,state})
 Optional low/high interval — opt-in, CSS only, never in the default bundle. For
 confidence windows, estimates, budget bands, or caveated evidence readings:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/interval.css" />
+```css
+@import '@ponchia/ui/css/interval.css';
 ```
 
 Use `ui-interval` with host-normalised `--lo` and `--hi` (0..1), optional
@@ -428,8 +432,8 @@ Optional bounded excerpt clamp — opt-in, CSS only, never in the default bundle
 For source excerpts, claim basis, and caveats that should scan compactly but
 remain reachable:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/clamp.css" />
+```css
+@import '@ponchia/ui/css/clamp.css';
 ```
 
 Use `ui-clamp` with `--clamp-lines`, `ui-clamp__body`, and optionally a checkbox
@@ -441,8 +445,8 @@ Optional line/row change-review grammar — opt-in, CSS only, never in the
 default bundle. For code review, changelogs, version history, config diffs, and
 generated reports:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/diff.css" />
+```css
+@import '@ponchia/ui/css/diff.css';
 ```
 
 The HOST pre-classifies each row (`add`/`remove`/`context`), computes hunks, and
@@ -457,8 +461,8 @@ the tint drops (never colour alone, WCAG 1.4.1). `ui.diff({ split })` /
 Optional fenced-code evidence chrome — opt-in, CSS only, never in the default
 bundle. For code-as-evidence in changelogs, version history, and reports:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/code.css" />
+```css
+@import '@ponchia/ui/css/code.css';
 ```
 
 It NEVER parses or tokenizes — the host (or Shiki, via the shipped
@@ -474,8 +478,8 @@ Optional inline datawords — opt-in, CSS only, never in the default bundle. A
 word-sized microchart (trend-in-a-sentence) for reports and dense tables, the
 inline counterpart to the scalar `ui-delta`/`ui-num`/`ui-stat`:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/spark.css" />
+```css
+@import '@ponchia/ui/css/spark.css';
 ```
 
 The HOST normalises each point to 0..1 and sets it as `--v` on a
@@ -488,8 +492,8 @@ spark is opaque to AT, so the `ui-spark` container MUST carry a host-written
 Optional Tufte margin notes — opt-in, CSS only, never in the default bundle. For
 evidence, caveats, and provenance asides beside the text:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/sidenote.css" />
+```css
+@import '@ponchia/ui/css/sidenote.css';
 ```
 
 `ui-sidenote` is a numbered margin note (CSS counters; anchored by an inline
@@ -502,8 +506,8 @@ indented inline block. The HOST owns where numbering restarts
 Optional deep-link-to-cited-text — opt-in, CSS only, never in the default
 bundle. For a citation that jumps to the EXACT quoted sentence:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/textref.css" />
+```css
+@import '@ponchia/ui/css/textref.css';
 ```
 
 `ui-textref` is a link whose `href` is a URL Text Fragment (`#…:~:text=`); the
@@ -516,8 +520,8 @@ additive). Details: `docs/textref.md`.
 Optional bullet graph — opt-in, CSS only, never in the default bundle. The
 Stephen-Few measure-vs-target-vs-bands SLO figure `ui-meter` can't encode:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/bullet.css" />
+```css
+@import '@ponchia/ui/css/bullet.css';
 ```
 
 `ui-bullet` is the track + grayscale qualitative bands (`--band-lo`/`--band-hi`);
@@ -531,8 +535,8 @@ bare bullet is opaque to AT, so `ui-bullet` MUST carry a host-written
 Optional inline glossary — opt-in, CSS only, never in the default bundle. The
 accessible upgrade of the broken `abbr[title]`:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/term.css" />
+```css
+@import '@ponchia/ui/css/term.css';
 ```
 
 `ui-term` is the term `<button popovertarget>` (keyboard/touch-reachable);
@@ -544,8 +548,8 @@ don't print — the printed doc leans on the glossary block. Details: `docs/term
 Optional scrollspy table-of-contents — opt-in, CSS only, never in the default
 bundle. A sticky contents rail that highlights the section in view:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/toc.css" />
+```css
+@import '@ponchia/ui/css/toc.css';
 ```
 
 `ui-toc` is the sticky rail (`--toc-top`); `ui-toc__title`/`ui-toc__list`/
@@ -557,8 +561,8 @@ anchored list. Details: `docs/toc.md`.
 Optional hierarchy outline — opt-in, CSS only, never in the default bundle. A
 depth-indented tree on nested native `<details>`:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/tree.css" />
+```css
+@import '@ponchia/ui/css/tree.css';
 ```
 
 `ui-tree` is the outline; `ui-tree__branch` is a `<details>` node (twist
@@ -572,8 +576,8 @@ Optional lifecycle/system-state vocabulary — opt-in, CSS only, never in the
 default bundle. The states apps live in (saving/saved/queued/offline/stale/
 conflict/error/locked/reviewed/needs-review):
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/state.css" />
+```css
+@import '@ponchia/ui/css/state.css';
 ```
 
 `ui-state` (+`__label`/`__detail`) carries a tone dot + the canonical label;
@@ -587,8 +591,8 @@ not a toast. `ui.state({ state, busy })`. Details: `docs/state.md`.
 Optional generated-content / AI-trust surfaces — opt-in, CSS only, never in the
 default bundle. NOT a chat kit; the trust surfaces around generated content:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/generated.css" />
+```css
+@import '@ponchia/ui/css/generated.css';
 ```
 
 `ui-generated` (+`__label`) marks a machine-authored region; `ui-origin-label`
@@ -602,8 +606,8 @@ Details: `docs/generated.md`.
 Optional workbench primitives for tool UIs — opt-in, CSS only, never in the
 default bundle:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/workbench.css" />
+```css
+@import '@ponchia/ui/css/workbench.css';
 ```
 
 `ui-inspector` (+`__head`/`__body`) is a selected-object detail panel;
@@ -616,17 +620,20 @@ optional `initSplitter()` for ARIA resize sync. Details: `docs/workbench.md`.
 Optional command palette — opt-in CSS shell (`css/command.css`) + `initCommand`
 behavior. Filter + keyboard-navigate a DOM-authored command list:
 
-```html
-<link rel="stylesheet" href="@ponchia/ui/css/command.css" />
+```css
+@import '@ponchia/ui/css/command.css';
 ```
 
 `ui-command` (+`__input`/`__list`/`__group`/`__item`/`__shortcut`/`__meta`/
-`__empty`); `initCommand()` owns filtering, roving focus (Down/Up/Home/End),
+`__empty`); `initCommand()` owns filtering and the active row (Down/Up),
 Enter→`bronto:command:select` ({value,label}) and Escape→`bronto:command:close`.
-The HOST owns the action registry + execution; NO global Cmd/Ctrl+K (open it
-yourself, e.g. a <dialog> via initDialog). Pairs with `ui-shortcut`. Binding:
-`useCommand()` (React/Solid/Qwik), `command` / `useCommand` (Svelte), and
-`vCommand` / `brontoVue` (Vue). Details: `docs/command.md`.
+Focus stays in the query input through `aria-activedescendant`; Home/End keep
+the input's native caret behavior. The host owns the action registry and
+execution; there is no global Cmd/Ctrl+K shortcut. Open the palette yourself,
+e.g. in a `<dialog>` via `initDialog()`. Pairs with `ui-shortcut`.
+Initialize `initCommand({ root })` in the host's mount lifecycle and call its
+returned cleanup on unmount. The package ships no framework wrappers.
+Details: `docs/command.md`.
 
 Optional static report layer for LLM-authored HTML reports — opt-in, never in
 the default bundle. Pair it with the normal bundle, and add data-viz only when

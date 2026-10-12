@@ -24,6 +24,12 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const changelog = readFileSync(resolve(root, 'CHANGELOG.md'), 'utf8');
 const releaseWorkflow = readFileSync(resolve(root, '.github/workflows/release.yml'), 'utf8');
+const releaseTooling = JSON.parse(
+  readFileSync(resolve(root, '.github/tooling/npm/package.json'), 'utf8'),
+);
+const releaseToolingLock = JSON.parse(
+  readFileSync(resolve(root, '.github/tooling/npm/package-lock.json'), 'utf8'),
+);
 const errors = [];
 
 const version = pkg.version;
@@ -198,7 +204,7 @@ requireJobIncludes(
   'publish-preflight',
   preflightJob,
   'must dry-run the exact package without lifecycle scripts',
-  'npm pack --dry-run --json --ignore-scripts',
+  'node .github/tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json',
 );
 requireJobIncludes(
   'publish-preflight',
@@ -230,7 +236,7 @@ requireJobIncludes(
   'publish-npm',
   publishJob,
   'must publish with scripts disabled and an explicit dist-tag',
-  'npm publish --ignore-scripts --tag "$dist_tag"',
+  'node .github/tooling/npm/node_modules/npm/bin/npm-cli.js publish --ignore-scripts --tag "$dist_tag"',
 );
 requireJobIncludes(
   'publish-npm',
@@ -253,14 +259,80 @@ requireJobIncludes(
 // Trusted publishing (OIDC) replaced the long-lived NPM_TOKEN. Two things
 // have to stay true for it to work, and both fail *at publish time* — the
 // most expensive moment to find out — so they are gated here instead.
+const lockedInstall = 'npm ci --prefix .github/tooling/npm --ignore-scripts --no-audit --no-fund';
 requireJobIncludes(
   'publish-npm',
   publishJob,
-  'must raise the npm CLI to a version that supports trusted publishing (Node 22 bundles npm 10.x)',
-  'npm install -g npm@^11.5.1',
+  'must install only the integrity-locked release CLI with lifecycle scripts disabled',
+  lockedInstall,
+);
+requireJobIncludes(
+  'validate',
+  validateJob,
+  'must prove the locked release CLI installs before protected approval',
+  lockedInstall,
+);
+requireJobIncludes(
+  'validate',
+  validateJob,
+  'must prove package assembly with the same locked CLI that publishes',
+  'node .github/tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json',
+);
+requireJobIncludes(
+  'publish-preflight',
+  preflightJob,
+  'must install the same locked CLI used to produce the reviewed pack manifest',
+  lockedInstall,
+);
+requireJobIncludes(
+  'publish-npm',
+  publishJob,
+  'must disable automatic package manager caches in the OIDC job',
+  'package-manager-cache: false',
+);
+requireJobIncludes(
+  'publish-npm',
+  publishJob,
+  'must not retain the checkout credential',
+  'persist-credentials: false',
+);
+requireJobNotIncludes(
+  'publish-npm',
+  publishJob,
+  'must not install a floating global npm CLI',
+  'npm install -g',
 );
 
-// A reintroduced token would silently take precedence over OIDC, so the
+function versionAtLeast(value, floor) {
+  const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(value);
+  if (!match) return false;
+  const parts = match.slice(1).map(Number);
+  for (let i = 0; i < floor.length; i++) {
+    if (parts[i] !== floor[i]) return parts[i] > floor[i];
+  }
+  return true;
+}
+
+const cliVersion = releaseTooling.dependencies?.npm ?? '';
+const cliLock = releaseToolingLock.packages?.['node_modules/npm'];
+if (
+  releaseTooling.private !== true ||
+  Object.keys(releaseTooling.dependencies ?? {}).join(',') !== 'npm' ||
+  !versionAtLeast(cliVersion, [11, 5, 1])
+) {
+  errors.push('release tooling must stay private with one exact npm dependency >=11.5.1');
+}
+if (
+  releaseToolingLock.lockfileVersion !== 3 ||
+  releaseToolingLock.packages?.['']?.dependencies?.npm !== cliVersion ||
+  cliLock?.version !== cliVersion ||
+  cliLock?.resolved !== `https://registry.npmjs.org/npm/-/npm-${cliVersion}.tgz` ||
+  !/^sha512-[A-Za-z0-9+/]{86}==$/.test(cliLock?.integrity ?? '')
+) {
+  errors.push('release CLI lock must match its manifest and contain registry SHA-512 integrity');
+}
+
+// A reintroduced token would add a long-lived fallback credential, so the
 // credential-free property is asserted rather than assumed. The 0.10.0
 // release failed here: the stored token had expired and npm reported it
 // as an E404 on an existing package.

@@ -18,6 +18,7 @@ body:
         - Token / theming knob
         - classes recipe
         - behavior (vanilla JS)
+        - glyph / geometry / renderer helper
         - tooling / build / docs
     validations:
       required: true

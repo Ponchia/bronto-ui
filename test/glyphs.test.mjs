@@ -149,6 +149,8 @@ test('glyph and readout HTML keeps hostile labels and sizes inside their intende
   const variants = [
     renderGlyph('check', { label, dot: size, gap: size }),
     renderGlyph('check', { label, render: 'mask', size }),
+    renderReadout('12', { label, dot: size, gap: size }),
+    renderReadout(label, { dot: size, gap: size }),
     renderReadout('12', { label, render: 'mask', size, gap: size }),
     renderReadout(label, { render: 'mask', size, gap: size }),
   ];

@@ -1,14 +1,24 @@
 # Changelog
 
-|> **Versioning:** pre-1.0, breaking changes ship in the _minor_. Pin to the
-|> minor — `~0.4.0` (equivalently `^0.4.0`) resolves to `>=0.4.0 <0.5.0`; a bare
-|> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
-|> the deprecation policy in CONTRIBUTING.md.
+> **Versioning:** pre-1.0, breaking changes ship in the _minor_. Pin to the
+> minor — `~0.4.0` (equivalently `^0.4.0`) resolves to `>=0.4.0 <0.5.0`; a bare
+> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
+> the deprecation policy in CONTRIBUTING.md.
 
 ## Unreleased
 
 ### Fixed
 
+- Glyph renderers explicitly HTML-escape validated CSS at quoted attribute
+  boundaries, preserving valid render output and the existing CSS allowlist.
+- Repeated and out-of-order clipboard requests recover the original copy label;
+  denied clipboard access selects the code for manual copying. Documentation
+  searches require all words, and saved themes restore before styles paint.
+- Documentation recipes reject bare package names in HTML stylesheet URLs.
+  Remaining retired helper references and outdated legend palette guidance are corrected.
+- Scanner execution failures fail the required CI gate while findings stay
+  advisory. Browser failures retain per-example diagnostics, traces, and
+  screenshots even when a retry passes.
 - Renderer color parsing handles CSS angle units, negative HSL hues, and channel
   bounds correctly, and rejects malformed channel lists and unsupported color spaces.
 - Token observation respects an already-aborted signal and releases its abort
@@ -27,6 +37,15 @@
 
 ### Changed
 
+- The publishing CLI is installed from a separate integrity-locked project;
+  Semgrep uses an official image pinned by digest. Privileged publishing disables
+  dependency caching and retained checkout credentials.
+- Reviewed development-tool and GitHub Actions updates from
+  [#243](https://github.com/Ponchia/bronto-ui/pull/243) and
+  [#244](https://github.com/Ponchia/bronto-ui/pull/244). Playwright's browser
+  version and visual baselines remain unchanged.
+- Contributor setup states the actual Node 22 development minimum and browser
+  installation step; issue forms include helper, documentation, and website reports.
 - Reworked onboarding, contribution and compatibility docs around the current
   package; removed references to retired framework adapters and stale roadmap claims.
 - Historical audit dossiers moved out of the current tree, with a permanent

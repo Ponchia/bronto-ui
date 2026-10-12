@@ -22,8 +22,10 @@ chart.
 - Not a chart engine. It does not compute tick positions, "nice" numbers,
   bin thresholds, or bubble radii — you supply the tick/range **text**; the
   CSS positions the slots you give it.
-- Not a colour source. Swatch colour always comes from a `--chart-*` token
-  (enforced by `check:legend`), never a hand-rolled hex.
+- Not a colour source. A swatch mirrors the chart's encoding: use a
+  `--chart-*` token for categorical or continuous data, or the same accent and
+  neutral values as an emphasis encoding. `check:legend` verifies the shipped
+  CSS mappings; the host must keep its own mark and swatch colours in sync.
 
 ## Accessibility: colour is never the only channel
 
@@ -92,22 +94,32 @@ chart mark uses, or with a `--N` index helper for the categorical palette.
 
 A `ui-legend__symbol` chip is an `.ui-icon` mask — it needs a `--icon-mask` or it
 paints a solid square, like any [icon](./reference.md). There is **no `--glyph-*`
-token**: build the mask value with
-[`renderGlyph(name, { render: 'mask' })`](./reference.md) from `@ponchia/ui/glyphs`,
-e.g. `el.style.setProperty('--icon-mask', renderGlyph('circle', { render: 'mask' }).match(/--icon-mask:([^"]+)/)[1])`,
-or render the whole chip with `renderGlyph('circle', { render: 'mask', label })` and
-add the `ui-legend__symbol` class to it. And an **interactive** legend entry must be a real
-`<button>` (as in the example below) — a non-button `ui-legend__item` carrying
-`data-series` is not keyboard-reachable.
+token**. Set the value with the public
+[`glyphMask(name)` helper](./glyphs.md#registry-and-lower-level-helpers):
 
-**Keying the de-emphasised series.** In an accent-rationed chart — one mark
-painted with [`brontoVegaAccent`](./vega.md#spending-the-accent), the rest left
-quiet with `brontoVegaNeutral` — the quiet neutral **is** the last categorical
-series, `--chart-8` (`#4d5358`). So a legend that honestly mirrors that chart
-uses `ui-legend__swatch--1` for the highlighted entry and
-`ui-legend__swatch--8` for the "everything else" entry — both are real palette
-tokens, so the key never drifts from the marks and `check:legend` stays happy.
-Don't hand-roll a grey: `--chart-8` is the neutral by construction.
+```js
+import { glyphMask } from '@ponchia/ui/glyphs';
+// el is an .ui-icon.ui-legend__symbol element, decorative beside its text label.
+el.style.setProperty('--icon-mask', glyphMask('circle'));
+```
+
+Or render the whole chip with `renderGlyph('circle', { render: 'mask' })` and
+add the `ui-legend__symbol` class to it. An **interactive** legend entry must
+be a real `<button>` (as in the example below) — a non-button
+`ui-legend__item` carrying `data-series` is not keyboard-reachable.
+
+**Keying an emphasis encoding.** In a chart with one mark painted by
+[`brontoVegaAccent`](./vega.md#spending-the-accent) and the rest by
+`brontoVegaNeutral`, the colors resolve from `--accent` and `--text-dim`.
+For the default theme, mirror them with
+`style="--chart-color: var(--accent)"` and
+`style="--chart-color: var(--text-dim)"` on the two `ui-legend__swatch` elements.
+The categorical index helpers do not represent these roles: `--chart-1` is
+blue and `--chart-8` is red, and neither follows the accent.
+
+When a page changes skins or overrides tokens, rebuild the chart config from
+[live renderer tokens](./renderer.md) and use the same values in the key.
+A frozen per-theme renderer config can otherwise diverge from a live CSS swatch.
 
 ## Variants
 
@@ -174,16 +186,25 @@ the legend out of chart-engine territory):
 
 ```js
 import { initLegend } from '@ponchia/ui/behaviors';
-const stop = initLegend(); // returns a cleanup fn
-document.addEventListener('bronto:legend:toggle', (e) => {
+const legend = document.querySelector('[data-bronto-legend]');
+const stop = initLegend({ root: legend });
+const onToggle = (e) => {
   const { series, active } = e.detail;
   // hide/show your series, then announce it in your own aria-live region
-});
+};
+legend.addEventListener('bronto:legend:toggle', onToggle);
+
+// Call this when the view is disposed or its legend is replaced.
+function cleanupLegend() {
+  legend.removeEventListener('bronto:legend:toggle', onToggle);
+  stop();
+}
 ```
 
 Convention: `aria-pressed="true"` means the series is **shown** (the default).
 The entry's label never changes on toggle — only `aria-pressed` and
 `.is-inactive` flip, so a screen reader reads a stable name with a clear
-pressed state. React/Solid/Qwik/Svelte consumers can use `useLegend()` (or the
-`legend` Svelte action) instead of calling `initLegend` directly; Vue consumers
-can use `vLegend`.
+pressed state. Framework consumers call `initLegend({ root })` after the
+legend's DOM exists and retain the cleanup for unmount or replacement. Remove
+host event listeners during the same cleanup. No framework adapter is required;
+the [integration guide](https://github.com/Ponchia/bronto-ui/blob/main/docs/integration.md) links to the supported lifecycle recipes.

@@ -62,7 +62,7 @@ jobs:
       # setup-node npm cache never restores (the container's cache path
       # isn't pre-seeded), so it only added a wasted post-step tar. The
       # devDeps install in a few seconds regardless.
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
 
@@ -73,6 +73,7 @@ jobs:
       # chromium runs every spec including the pixel baselines; firefox +
       # webkit (the per-config NON_PIXEL set) only join when cross_engine.
       - name: Run e2e (${{ inputs.cross_engine && 'chromium + firefox + webkit' || 'chromium only' }})
+        id: e2e
         env:
           CROSS_ENGINE: ${{ inputs.cross_engine }}
         run: |
@@ -82,9 +83,28 @@ jobs:
             npx playwright test --project=chromium --shard=${{ matrix.shard }}/3
           fi
 
-      - if: failure()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      # A passing retry is useful failure evidence too. Keep those reports
+      # without uploading the ordinary successful run's empty diagnostics.
+      - name: Determine browser report retention
+        id: reports
+        if: ${{ !cancelled() && steps.e2e.outcome == 'success' }}
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const report = JSON.parse(fs.readFileSync('test-results/results.json', 'utf8'));
+          const flaky = report.stats?.flaky;
+          if (!Number.isInteger(flaky) || flaky < 0) {
+            throw new Error('Playwright JSON report is missing a valid flaky count');
+          }
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `flaky=${flaky > 0}\n`);
+          NODE
+
+      - if: failure() || steps.reports.outputs.flaky == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: playwright-report-${{ matrix.shard }}
-          path: playwright-report/
+          path: |
+            playwright-report/
+            test-results/
           retention-days: 7
+          if-no-files-found: ignore
