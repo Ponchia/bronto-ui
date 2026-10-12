@@ -1,13 +1,15 @@
 # Examples
 
-Runnable consumer apps, each installing `@ponchia/ui` **from a packed
-tarball** (`npm pack`) — exactly how a real consumer gets it, not a
-workspace symlink. CI (`.github/workflows/ci.yml` → `examples` job)
+Runnable integration examples, each installing `@ponchia/ui` **from a packed
+tarball** (`npm pack`). They exercise the package files and exports that an npm
+consumer receives. CI (`.github/workflows/ci.yml` → `examples` job)
 packs the package, installs it into each example, and builds them, so a
 broken consumer surface fails the build before release.
 
-These are **not** part of the published package (`files` allowlist
-excludes them).
+These source projects are available in the repository and are not part of the
+published npm package. The public website's [curated examples](https://ponchia.github.io/bronto-ui/examples/)
+show complete interface compositions; these small apps focus on integration
+and regression checks.
 
 `npm run check:examples` keeps this inventory, the CI matrix, browser-smoke
 list, smoke-script branches, README rows, preview ports, and the cross-browser
@@ -31,17 +33,44 @@ detection) without committing platform-specific PNG baselines.
 | [`tailwind-vite`](tailwind-vite) | Tailwind v4 + Vite | [docs/interop/tailwind.md](../docs/interop/tailwind.md)                 |
 | [`report-static`](report-static) | Static report + Vite | [docs/reporting.md](../docs/reporting.md) |
 
-## Run one locally
+## Verify an example
+
+From a repository checkout with Node.js 22 and `npm ci` already run:
 
 ```bash
-npm pack                                  # from the repo root → ponchia-ui-X.Y.Z.tgz
-cd examples/vanilla-vite
-npm install
-npm install --no-save ../../ponchia-ui-*.tgz
-npm run build && npm run preview
+npm run test:examples -- vanilla-vite
 ```
 
-Each shows the three integration concerns: load the CSS, the no-flash
+The runner creates a fresh tarball, installs and builds the example in a
+temporary directory, and checks it in a browser. Omit the name to run all
+examples. Browser checks need the Playwright browser and system dependencies;
+see [CONTRIBUTING.md](../CONTRIBUTING.md).
+
+## Open an example locally
+
+From the repository root:
+
+```bash
+npm pack
+```
+
+Use the **exact tarball filename** printed by that command in the installation
+below, replacing `X.Y.Z`. Avoid a wildcard: old package versions may still be
+present in the checkout.
+
+```bash
+cd examples/vanilla-vite
+npm install --no-save ../../ponchia-ui-X.Y.Z.tgz
+npm run build
+npm run preview
+```
+
+The installation also installs the example's own dependencies. Open the local
+URL printed by the preview command. To change the example interactively, use
+`npm run dev` instead. The installed tarball is a snapshot: repack and reinstall
+after changing library source.
+
+Each example shows the three integration concerns: load the CSS, the no-flash
 inline theme script, and behavior lifecycle wiring with cleanup. The
 React and Svelte examples exercise scoped vanilla behavior initialization and
 cleanup in their normal framework lifecycle. The Tailwind

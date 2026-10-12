@@ -1,15 +1,15 @@
 # Test tree
 
-`test/` is the regression and contract suite for `@ponchia/ui`. It currently
-contains this README plus 118 suite files:
+`test/` is the regression and contract suite for `@ponchia/ui`. The tree contains:
 
-- 27 Node unit and contract tests in `*.test.mjs` at this directory root.
-- 35 Playwright browser specs in [`e2e/`](./e2e/).
-- One type-only compile test, [`types.test-d.ts`](./types.test-d.ts).
-- Seven Playwright helpers and fixtures in `e2e/_*.mjs` and
-  `e2e/_*.fixture.html`.
-- 48 committed Linux/Chromium screenshot baselines in
-  `e2e/__screenshots__/`.
+- Node unit and contract tests in `*.test.mjs` at this directory root.
+- Playwright browser specs, helpers, and HTML fixtures in [`e2e/`](./e2e/).
+- Public type assertions in [`types.test-d.ts`](./types.test-d.ts) and the
+  related `*.test-d.ts` files included by `tsconfig.json`.
+- Committed Linux/Chromium screenshot baselines in `e2e/__screenshots__/`.
+
+The runners discover their suites from the source tree; the coverage matrices
+and `check:visual-baselines` verify ownership and baseline inventory.
 
 ## Run paths
 
@@ -21,9 +21,10 @@ contains this README plus 118 suite files:
   [`scripts/test-e2e-nonpixel.mjs`](../scripts/test-e2e-nonpixel.mjs), which
   discovers every `test/e2e/*.spec.mjs` except `visual.spec.mjs`.
 - `npm run test:e2e` uses [`playwright.config.mjs`](../playwright.config.mjs).
-  Playwright starts `node scripts/serve.mjs 8124`, uses
+  Playwright builds the public site and starts `node scripts/serve.mjs 8124`, uses
   `http://127.0.0.1:8124` as `baseURL`, and serves the repo root so `/demo/`
-  resolves like the published demo site.
+  resolves like the published demo site. Public-site tests inspect the actual
+  generated output under `/_site/`.
 - Chromium runs every Playwright spec. Firefox and WebKit use
   `NON_PIXEL_E2E_TEST_MATCH`, so they skip only `visual.spec.mjs`.
 - `npm run test:e2e:chromium` still includes pixel screenshots. Use visual

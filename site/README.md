@@ -1,45 +1,65 @@
 # Bronto UI public website
 
-A static documentation and product site built from Bronto UI itself. This
-does not change package exports, introduce a frontend runtime, or replace the
-existing testing fixtures.
+The public site is generated static HTML built with Bronto UI. Its editorial
+shell and technical documentation are maintained separately from the regression
+fixtures, which remain accessible under their original `demo/` URLs.
 
-**Authoring**
+## Authoring map
 
-- `site/pages/*.html`: short editorial pages, linked with `{{root}}` so they
-  can be served from either GitHub Pages' repository path or a custom origin.
-- `site/site.css`, `site/site.js`: shared editorial shell, search, theme,
-  responsive navigation, and HTML-copy enhancement.
-- `site/components.mjs`: deliberately curated copyable specimens. Keep them
-  aligned with their actual `.ui-*` names and link to the canonical docs.
-- `docs/**/*.md`: the **single source** for all technical documents. The
-  builder emits standalone HTML pages and a small client-side search index.
-- `demo/*.html`: existing advanced fixtures / lab specimens; URLs retained.
+| Source | Owns |
+| --- | --- |
+| `site/pages/*.html` | Product pages; use `{{root}}` for paths that work beneath GitHub Pages' repository prefix. |
+| `site/site.css`, `site/site.js` | Website layout, theme control, responsive navigation, search, and code-copy enhancements. |
+| `site/components.mjs` | Curated copyable specimens that use the default package CSS. |
+| `site/examples.mjs` | Shared example descriptions, real demo/source routes, and screenshot filenames. |
+| `docs/**/*.md` | Canonical technical documents, rendered as individual pages with stable heading IDs. |
+| `demo/` | Runnable application/report examples and focused regression specimens. |
 
-`npm run site:build` creates `_site/`. This directory is not committed.
-`npm run check:site` builds a fresh artifact in a temporary directory and
-checks its critical routes and JavaScript import graph. The Pages workflow
-publishes `_site/` only after the protected main CI succeeds.
+## Build and verify
 
-When updating a public example, keep the screenshot in `site/assets/` in sync.
-Screenshots are made from the real example routes, not independent mockups.
+```sh
+npm run site:build
+npm run check:site
+node scripts/serve.mjs 8123
+```
 
+Open `http://127.0.0.1:8123/_site/`. `_site/` is generated and ignored by Git.
+The builder resets that directory on each run. A custom destination must be new,
+empty, or a previously marked Bronto UI site output; it refuses repository source
+and unrelated nonempty folders.
 
-**Browser verification**
+`check:site` creates a fresh temporary build and verifies the published module
+imports, assets, documentation links and section anchors, source links, search
+index, and copyable component contracts. Repository-level Markdown links open
+on GitHub; technical documents have standalone HTML routes. The complete authored
+document content is searchable, including sections near the end of long references.
 
-The Playwright web server assembles the Pages output before starting. Public
-site regression tests use the local `/_site/` path and run in the existing
-pinned Chromium/Firefox/WebKit CI matrix. They cover docs navigation, starter
-and example routes, and the searchable, copyable catalog without querying the
-live GitHub Pages deployment.
+Playwright tests use the generated `/_site/` artifact and exercise desktop/mobile
+navigation, documentation deep links, search recovery, code copying, examples,
+and navigation without JavaScript. Use the repository browser commands in
+[CONTRIBUTING.md](../CONTRIBUTING.md); the Pages workflow publishes only a main
+commit with successful CI, including manual dispatches.
 
+## Refresh example screenshots
 
-**What uses the library versus site-specific CSS**
+```sh
+npm run site:screenshots
+```
 
-The static shell imports the committed default Bronto UI bundle.
-Component specimens and application demos use the real public `ui-*` classes.
-`site/site.css` supplies a separate editorial/navigation layout and
-website-specific spacing and colors, deliberately kept out of the npm package.
-Do not cite the custom site shell as proof that a Bronto UI consumer needs no
-application CSS. Prefer the actual runnable specimens to demonstrate the
-library's reusable component contract.
+This captures the actual routes listed in `site/examples.mjs` in Chromium at
+1200 × 720, waits for fonts, and writes the three JPEG previews in `site/assets/`.
+The capture server uses an ephemeral port and closes along with the browser.
+Review the images before committing them. For a disposable review, pass an output
+directory: `npm run site:screenshots -- /tmp/bronto-ui-previews`.
+
+These are website preview images. The regression PNG baselines under
+`test/e2e/__screenshots__/` follow the pinned-container workflow documented in
+CONTRIBUTING. `social.jpg` is the separately maintained sharing image.
+
+## What the examples prove
+
+The shell imports the committed default Bronto UI bundle. Component specimens
+and application demos use the public `ui-*` classes. `site/site.css` supplies
+website-specific layout, spacing, and colors; it is not part of the npm package.
+Use the runnable specimens to evaluate the reusable contract, and expect an
+application to supply its own content, state, logic, and composition CSS.

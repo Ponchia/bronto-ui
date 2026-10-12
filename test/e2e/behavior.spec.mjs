@@ -564,6 +564,37 @@ test('native popover branch uses the top layer and syncs UA toggles', async ({ p
   await expect(trigger).toHaveAttribute('aria-expanded', 'sentinel');
 });
 
+test('popover focus respects the first legend and enabled links in disabled fieldsets', async ({
+  page,
+}) => {
+  await openBehaviorSandbox(page);
+  await page.evaluate(async () => {
+    document.body.innerHTML = `
+      <button id="fieldset-trigger" data-bronto-popover="fieldset-panel">Details</button>
+      <div id="fieldset-panel" class="ui-popover" aria-label="Fieldset details">
+        <fieldset disabled>
+          <legend><button id="legend-control">Enable fields</button></legend>
+          <input id="disabled-field" aria-label="Disabled field" />
+          <a id="fieldset-help" href="#help">Help</a>
+        </fieldset>
+        <button id="fieldset-outside">Outside fieldset</button>
+      </div>
+    `;
+    const behaviorPath = `/behaviors/${'index.js'}`;
+    const { initPopover } = await import(behaviorPath);
+    window.__fieldsetPopoverStop = initPopover();
+  });
+  const trigger = page.locator('#fieldset-trigger');
+  await trigger.click();
+  await expect(page.locator('#legend-control')).toBeFocused();
+
+  await trigger.click();
+  await page.locator('#legend-control').evaluate((el) => (el.disabled = true));
+  await trigger.click();
+  await expect(page.locator('#fieldset-help')).toBeFocused();
+  await page.evaluate(() => window.__fieldsetPopoverStop());
+});
+
 test('popover cleanup restores generated trigger and panel state in a real browser', async ({
   page,
 }) => {

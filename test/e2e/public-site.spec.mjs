@@ -138,3 +138,74 @@ test('public site — documentation code blocks copy their actual source', async
     "import '@ponchia/ui';",
   );
 });
+
+test('public site — section URLs land on visible documentation headings', async ({ page }) => {
+  await page.goto(publicRoot + 'docs/usage.html#badge-vs-chip-vs-status-dot');
+  const heading = page.getByRole('heading', { name: 'Badge vs chip vs status dot', exact: true });
+  await expect(heading).toHaveAttribute('id', 'badge-vs-chip-vs-status-dot');
+  await expect(heading).toBeInViewport();
+  const top = await heading.evaluate((node) => node.getBoundingClientRect().top);
+  const headerBottom = await page
+    .locator('.site-header')
+    .evaluate((node) => node.getBoundingClientRect().bottom);
+  expect(top).toBeGreaterThanOrEqual(headerBottom);
+});
+
+test('public site — mobile navigation supports focus, Escape and outside dismissal', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(publicRoot);
+  const toggle = page.locator('[data-menu-toggle]');
+  const nav = page.getByRole('navigation', { name: 'Main navigation' });
+  await toggle.click();
+  await expect(nav).toBeVisible();
+  await expect(nav.getByRole('link', { name: 'Overview', exact: true })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(nav).toBeHidden();
+  await expect(toggle).toHaveAttribute('aria-label', 'Open navigation');
+  await expect(toggle).toBeFocused();
+  await toggle.click();
+  await page.locator('.hero-meta').click();
+  await expect(nav).toBeHidden();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+});
+
+test('public site — documentation search retries after a failed index request', async ({
+  page,
+}) => {
+  let attempts = 0;
+  await page.route('**/docs/search-index.json', async (route) => {
+    attempts += 1;
+    if (attempts === 1) await route.fulfill({ status: 503, body: 'Temporarily unavailable' });
+    else await route.continue();
+  });
+  await page.goto(publicRoot + 'docs/');
+  const field = page.getByRole('searchbox', { name: 'Search documentation' });
+  await field.fill('tokens');
+  await expect(page.locator('[data-doc-results]')).toContainText('Search is unavailable');
+  await field.fill('first component');
+  await expect(
+    page.locator('.doc-search-result').filter({ hasText: 'First component' }).first(),
+  ).toBeVisible();
+  expect(attempts).toBe(2);
+});
+
+test.describe('public site without JavaScript', () => {
+  test.use({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+  test('mobile navigation and documentation remain usable', async ({ page }) => {
+    await page.goto(publicRoot);
+    const nav = page.getByRole('navigation', { name: 'Main navigation' });
+    await expect(nav).toBeVisible();
+    await expect(page.locator('[data-menu-toggle]')).toBeHidden();
+    await nav.getByRole('link', { name: 'Docs', exact: true }).click();
+    await expect(page).toHaveURL(/\/_site\/docs\/$/);
+    await expect(
+      page.getByRole('heading', { name: 'Documentation without the detour.' }),
+    ).toBeVisible();
+    await page.goto(publicRoot + 'docs/usage.html#badge-vs-chip-vs-status-dot');
+    await expect(
+      page.getByRole('heading', { name: 'Badge vs chip vs status dot', exact: true }),
+    ).toBeInViewport();
+  });
+});

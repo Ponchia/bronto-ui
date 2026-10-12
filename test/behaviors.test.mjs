@@ -1580,6 +1580,26 @@ test('initPopover resolves text-node trigger clicks', () => {
   stop();
 });
 
+test('initPopover focuses enabled legend controls and links inside a disabled fieldset', () => {
+  const d = mount(
+    '<button id="t" data-bronto-popover="pop">Info</button>' +
+      '<div class="ui-popover" id="pop" aria-label="Details">' +
+      '<fieldset disabled><legend><button id="legend">Enable fields</button></legend>' +
+      '<input id="disabled"><a id="link" href="#help">Help</a></fieldset>' +
+      '<button id="outside">Outside fieldset</button></div>',
+  );
+  const stop = initPopover();
+  const trigger = d.getElementById('t');
+  trigger.click();
+  assert.equal(d.activeElement.id, 'legend', 'the first legend is exempt from fieldset disabling');
+
+  trigger.click();
+  d.getElementById('legend').disabled = true;
+  trigger.click();
+  assert.equal(d.activeElement.id, 'link', 'disabled form controls do not disable sibling links');
+  stop();
+});
+
 test('initPopover re-init closes stale open state before rebinding', () => {
   const d = mount(
     '<button id="t" data-bronto-popover="pop">Info</button>' +

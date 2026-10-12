@@ -24,10 +24,12 @@ new patch/minor and noted in `CHANGELOG.md`.
 
 ## Attack surface
 
-The package ships **zero runtime dependencies** — it is CSS plus
-optional dependency-free, side-effect-free-on-import, SSR-safe vanilla
-JS (`tokens` / `classes` / `behaviors` / `glyphs` / `skins` /
-`charts`). No framework adapters or peer dependencies ship in 0.10.
+The package ships **zero runtime or peer dependencies**. Its public
+surface is CSS, design tokens, class recipes, optional browser behaviors,
+glyph renderers, and static geometry/rendering helpers. The optional
+JavaScript entrypoints are side-effect-free on import and safe to import
+without a DOM. Renderer theme/configuration exports do not bundle the
+renderers they configure.
 
 Behaviors assume trusted application markup. Do not initialize them over
 untrusted user/CMS HTML unless you have sanitized that markup and are
@@ -47,3 +49,17 @@ Releases are published from a gated CI pipeline with npm provenance
 step runs with `--ignore-scripts`. The realistic project surface is
 supply-chain (dev dependencies, Actions, docs-site CDN dependencies) —
 kept current via Dependabot and locked CI.
+
+## Development tooling advisory
+
+As of 12 October 2026, the development lockfile includes `braces@3.0.3`
+through Stylelint's `micromatch` and glob dependencies.
+[GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm)
+reports stack exhaustion from deeply nested brace patterns. Upstream has
+not published a patched release.
+
+In this repository, that dependency is used by maintainer lint tooling;
+the `lint` and `lint:fix` scripts pass the fixed `css/**/*.css` pattern.
+The published package has zero runtime dependencies and does not include
+this tooling stack. The development advisory remains open. Recheck
+upstream releases and the lockfile audit when updating the lint toolchain.

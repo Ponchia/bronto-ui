@@ -128,31 +128,46 @@ const fromLinearRgb = (linear, alpha) => {
   return { r, g, b, alpha: clamp01(alpha) };
 };
 
-/**
- * One channel token: `none`, a number, a percentage (scaled by `pct`), or an
- * angle (degrees, `rad`, `grad`, `turn`).
+// Match the complete CSS number, so malformed tokens never become valid
+// channels through parseFloat's permissive prefix parsing.
+const NUMBER = /^[+-]?(?:\d*\.\d+|\d+)(?:e[+-]?\d+)?$/;
+
+/** A numeric channel or percentage (scaled by `pct`).
  * @param {string} token @param {number} pct
  */
 function channel(token, pct = 1) {
   if (token === 'none') return 0;
-  const n = Number.parseFloat(token);
-  if (!Number.isFinite(n)) return Number.NaN;
-  if (token.endsWith('%')) return (n / 100) * pct;
-  if (token.endsWith('rad')) return (n * 180) / Math.PI;
-  if (token.endsWith('grad')) return n * 0.9;
-  if (token.endsWith('turn')) return n * 360;
-  return n;
+  const text = String(token);
+  const percent = text.endsWith('%');
+  const value = percent ? text.slice(0, -1) : text;
+  if (!NUMBER.test(value)) return Number.NaN;
+  const n = Number(value);
+  return percent ? (n / 100) * pct : n;
+}
+
+/** A hue in degrees; angle units belong only in hue channels.
+ * @param {string} token
+ */
+function hue(token) {
+  if (token === 'none') return 0;
+  const unit = /(?:deg|grad|rad|turn)$/.exec(token)?.[0];
+  const value = unit ? token.slice(0, -unit.length) : token;
+  if (!NUMBER.test(value)) return Number.NaN;
+  const scales = { deg: 1, grad: 0.9, rad: 180 / Math.PI, turn: 360 };
+  return Number(value) * (unit ? scales[unit] : 1);
 }
 
 /** Channels and alpha; a comma list (legacy `rgba()`/`hsla()`) carries alpha
  *  as its fourth item. @param {string} body */
 function split(body) {
-  const [main, alpha] = body.split('/');
+  const segments = body.split('/');
+  if (segments.length > 2) return null;
+  const [main, alpha] = segments;
   const legacy = main.includes(',');
-  const parts = main.replace(/,/g, ' ').trim().split(/\s+/);
-  const legacyAlpha = legacy && alpha === undefined && parts.length === 4 ? parts.pop() : undefined;
-  const a = alpha?.trim() ?? legacyAlpha;
-  return { parts, alpha: a === undefined ? 1 : channel(a, 1) };
+  if (legacy && alpha !== undefined) return null;
+  const parts = legacy ? main.split(',').map((part) => part.trim()) : main.trim().split(/\s+/);
+  const a = legacy && parts.length === 4 ? parts.pop() : alpha?.trim();
+  return { parts, alpha: a === undefined ? 1 : channel(a, 1), legacy };
 }
 
 /** @param {string} h @returns {Rgba | null} */
@@ -165,6 +180,9 @@ function parseHex(h) {
 
 /** @param {number} h @param {number} sat @param {number} light @param {number} alpha */
 function hslToRgba(h, sat, light, alpha) {
+  h = ((h % 360) + 360) % 360;
+  sat = clamp01(sat);
+  light = clamp01(light);
   const f = (n) => {
     const k = (n + h / 30) % 12;
     return light - sat * Math.min(light, 1 - light) * Math.max(-1, Math.min(k - 3, 9 - k, 1));
@@ -175,7 +193,7 @@ function hslToRgba(h, sat, light, alpha) {
 /** Polar (L, C, H°) to rectangular (L, a, b). @param {string[]} p @param {number} lScale @param {number} cScale */
 const polar = (p, lScale, cScale) => {
   const C = channel(p[1], cScale);
-  const H = (channel(p[2]) * Math.PI) / 180;
+  const H = (hue(p[2]) * Math.PI) / 180;
   return [channel(p[0], lScale), C * Math.cos(H), C * Math.sin(H)];
 };
 
@@ -196,7 +214,7 @@ const FUNCTIONS = {
     return { r, g, b, alpha };
   },
   hsl: (p, alpha) =>
-    hslToRgba(channel(p[0]), channel(p[1], 100) / 100, channel(p[2], 100) / 100, alpha),
+    hslToRgba(hue(p[0]), channel(p[1], 100) / 100, channel(p[2], 100) / 100, alpha),
   oklab: (p, alpha) =>
     fromLinearRgb(oklabToLinear(channel(p[0], 1), channel(p[1], 0.4), channel(p[2], 0.4)), alpha),
   oklch: (p, alpha) => {
@@ -210,10 +228,8 @@ const FUNCTIONS = {
     return fromLinearRgb(labToLinear(L, a, b), alpha);
   },
   color: ([space, ...rest], alpha) => {
-    const toLinearRgb = COLOR_SPACES[space];
-    return toLinearRgb
-      ? fromLinearRgb(toLinearRgb(rest.slice(0, 3).map((x) => channel(x, 1))), alpha)
-      : null;
+    const toLinearRgb = Object.hasOwn(COLOR_SPACES, space) ? COLOR_SPACES[space] : null;
+    return toLinearRgb ? fromLinearRgb(toLinearRgb(rest.map((x) => channel(x, 1))), alpha) : null;
   },
 };
 FUNCTIONS.rgba = FUNCTIONS.rgb;
@@ -245,7 +261,11 @@ export function parseColor(value) {
   const fn = /^([a-z-]+)\((.*)\)$/.exec(s);
   const parse = fn && Object.hasOwn(FUNCTIONS, fn[1]) ? FUNCTIONS[fn[1]] : null;
   if (!parse) return null;
-  const { parts, alpha } = split(fn[2]);
+  const tokens = split(fn[2]);
+  if (!tokens) return null;
+  const { parts, alpha, legacy } = tokens;
+  if (parts.length !== (fn[1] === 'color' ? 4 : 3)) return null;
+  if (legacy && !/^(?:rgb|hsl)a?$/.test(fn[1])) return null;
   return finite(parse(parts, alpha));
 }
 
@@ -478,7 +498,7 @@ function fingerprint(target) {
  */
 export function observeTokens(callback, options = {}) {
   const doc = options.element?.ownerDocument ?? globalThis.document;
-  if (!doc?.documentElement) return () => {};
+  if (!doc?.documentElement || options.signal?.aborted) return () => {};
   const view = doc.defaultView ?? globalThis;
   const target = options.element ?? doc.documentElement;
   let seen = fingerprint(target);
@@ -521,6 +541,7 @@ export function observeTokens(callback, options = {}) {
   for (const q of queries) q.addEventListener('change', media);
   const stop = () => {
     stopped = true;
+    options.signal?.removeEventListener('abort', stop);
     observer.disconnect();
     for (const q of queries) q.removeEventListener('change', media);
     if (frame && view.cancelAnimationFrame) view.cancelAnimationFrame(frame);

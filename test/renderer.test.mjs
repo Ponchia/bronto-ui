@@ -35,6 +35,50 @@ test('parseColor agrees with the OKLCH the palette was authored in', () => {
   assert.equal(hex('lch(0 0 0)'), '#000000');
 });
 
+test('parseColor preserves percentage rounding at half-channel boundaries', () => {
+  assert.equal(hex('rgb(50% 0% 0%)'), '#800000');
+  assert.equal(hex('rgb(90% 0% 0%)'), '#e60000');
+});
+
+test('parseColor converts CSS angle units and normalizes negative HSL hues', () => {
+  for (const hue of ['90deg', '100grad', '0.25turn', `${Math.PI / 2}rad`]) {
+    assert.equal(hex(`hsl(${hue} 100% 50%)`), '#80ff00', hue);
+    assert.equal(hex(`oklch(0.62 0.15 ${hue})`), hex('oklch(0.62 0.15 90)'), hue);
+  }
+  for (const hue of ['-120', '-480deg', '-400grad', '-1turn']) {
+    const expected = hue === '-120' || hue === '-480deg' ? '#0000ff' : '#ff0000';
+    assert.equal(hex(`hsl(${hue} 100% 50%)`), expected, hue);
+  }
+});
+
+test('parseColor clamps HSL saturation and lightness before conversion', () => {
+  assert.equal(hex('hsl(30 200% 25%)'), hex('hsl(30 100% 25%)'));
+  assert.equal(hex('hsl(30 -50% 25%)'), hex('hsl(30 0% 25%)'));
+  assert.equal(hex('hsl(30 100% 150%)'), '#ffffff');
+  assert.equal(hex('hsl(30 100% -50%)'), '#000000');
+});
+
+test('parseColor rejects malformed channels and unsupported color spaces without throwing', () => {
+  for (const value of [
+    'rgb(1junk 2 3)',
+    'rgb(1deg 2 3)',
+    'rgb(1, 2, 3,)',
+    'rgb(1, 2, 3 / 0.5)',
+    'oklch(0.62, 0.15, 90)',
+    'rgb(1 2 3 4)',
+    'rgb(1 2 3 / 0.5 / 0.6)',
+    'rgb(1 2 3 /)',
+    'rgb(1 2)',
+    'hsl()',
+    'oklch(0.62 0.15)',
+    'color(srgb 1 0 0 0)',
+    'color(constructor 1 0 0)',
+    'color(__proto__ 1 0 0)',
+  ]) {
+    assert.equal(parseColor(value), null, value);
+  }
+});
+
 test('parseColor declines what only a browser can compute', () => {
   for (const v of [
     'var(--x)',

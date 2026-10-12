@@ -5,6 +5,35 @@
 |> `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 |> the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased
+
+### Fixed
+
+- Renderer color parsing handles CSS angle units, negative HSL hues, and channel
+  bounds correctly, and rejects malformed channel lists and unsupported color spaces.
+- Token observation respects an already-aborted signal and releases its abort
+  listener during manual cleanup.
+- Popover autofocus follows native disabled-fieldset rules, including enabled
+  first-legend controls and links. Unknown severity parts use the documented fallback.
+- Class-checker diagnostics suggest valid modifiers for misspelled public classes.
+- Generated documentation has working section anchors and checks the rendered
+  link graph. Search covers complete documents and can recover from a failed request.
+- Mobile site navigation supports keyboard dismissal and remains usable without
+  JavaScript. Custom site builds refuse source and unrelated nonempty directories.
+- CI rejects unexpected skipped coverage; manual Pages publication requires
+  successful CI for the selected main commit. Public-site changes receive cross-engine tests.
+- Updated the development-only `fast-uri` dependency to its patched release.
+  The separate unpatched `braces` advisory is documented in the security policy.
+
+### Changed
+
+- Reworked onboarding, contribution and compatibility docs around the current
+  package; removed references to retired framework adapters and stale roadmap claims.
+- Historical audit dossiers moved out of the current tree, with a permanent
+  history link. Published tags and release provenance are preserved.
+- Added reproducible screenshots from the real example routes and verified
+  maintenance-funding links in GitHub and npm metadata.
+
 ## 0.16.1 — 2026-10-09
 
 ### Changed

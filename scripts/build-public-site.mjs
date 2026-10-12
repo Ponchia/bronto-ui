@@ -3,18 +3,18 @@
  * no client framework, hosting dependency, server, or runtime package additions.
  * The existing demo and Markdown sources remain the canonical fixtures.
  */
-import { readFile, readdir, mkdir, rm, cp, writeFile } from 'node:fs/promises';
+import { readFile, readdir, mkdir, cp, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { dirname, join, resolve, relative, sep, extname } from 'node:path';
-import { existsSync } from 'node:fs';
-import { marked } from 'marked';
+import { dirname, join, resolve, relative, sep } from 'node:path';
+import { Marked } from 'marked';
+import { headingSlug } from './lib/doc-anchors.mjs';
+import { publicDocHref } from './lib/doc-links.mjs';
+import { prepareSiteOutput } from './lib/site-output.mjs';
 import { components } from '../site/components.mjs';
+import { examples } from '../site/examples.mjs';
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const output = resolve(process.argv[2] || join(repo, '_site'));
-if (output === repo || output === '/' || !output.startsWith('/') || output === dirname(output)) {
-  throw new Error('Refusing unsafe public site output directory');
-}
 const canonicalBase = (
   process.env.BRONTO_SITE_URL || 'https://ponchia.github.io/bronto-ui'
 ).replace(/\/$/, '');
@@ -59,56 +59,7 @@ const files = [
     'Complete specimen fixtures and advanced experiments behind the Bronto UI component system.',
   ],
 ];
-const examples = [
-  {
-    key: 'operations',
-    name: 'Operations dashboard',
-    eyebrow: 'APPLICATION UI',
-    desc: 'A full service shell with navigation, workload status, tables, filters, and operational feedback.',
-    story:
-      'The same interface grammar works across services. This example assembles familiar pieces into a practical control surface without a component runtime.',
-    tech: ['Application shell', 'Metrics & tables', 'Status and feedback'],
-    image: 'operations.jpg',
-    demo: 'service.html',
-    docs: 'usage.html',
-    source: ['demo/service.html', 'demo/service.js'],
-    implementation:
-      'Uses the standard Bronto UI app shell, metric and table classes, plus a short local script that changes demo states. Sample job data belongs to the fixture; the library does not supply an API or backend.',
-    accent: 'A functioning interface, not just a collection of buttons.',
-  },
-  {
-    key: 'reports',
-    name: 'Reliability report',
-    eyebrow: 'STATIC REPORT',
-    desc: 'An evidence-oriented, print-ready platform report, rendered from ordinary HTML and CSS.',
-    story:
-      'A finished decision report with explicit claims, supporting evidence, timelines, and data context. It works without JavaScript and can be printed as a PDF.',
-    tech: ['Readable editorial layout', 'Evidence & provenance', 'Print and PDF'],
-    image: 'report.jpg',
-    demo: 'report-standalone.html',
-    docs: 'reporting.html',
-    source: ['demo/report-standalone.html'],
-    implementation:
-      'Uses semantic headings, report-oriented CSS, tables and evidence sections in a single HTML document. The report content is sample data and remains printable without running JavaScript.',
-    accent: 'One HTML document can be a readable webpage and a report.',
-  },
-  {
-    key: 'theming',
-    name: 'Theme playground',
-    eyebrow: 'DESIGN SYSTEM',
-    desc: 'Change the accent, inspect generated color roles, and validate contrast without rebuilding your components.',
-    story:
-      'Bronto UI makes brand expression a deliberate input instead of a second set of components. The playground shows the actual color derivation and contrast ratios.',
-    tech: ['Single accent control', 'Light and dark', 'Contrast checks'],
-    image: 'theming.jpg',
-    demo: 'theme-playground.html',
-    docs: 'theming.html',
-    source: ['demo/theme-playground.html'],
-    implementation:
-      'A plain HTML page sets the accent token and computes contrast in a local script. The example shows how the Bronto UI theme tokens project into light, dark and accent surfaces.',
-    accent: 'Change a token and understand what changes with it.',
-  },
-];
+
 const categoryFor = (path) => {
   if (
     path.startsWith('getting-started/') ||
@@ -224,7 +175,7 @@ const nav = (current, p) => {
   ];
   return `<nav class="site-nav" id="site-nav" aria-label="Main navigation">
   ${items.map(([label, path, id]) => `<a ${current === id ? 'aria-current="page"' : ''} href="${p}${path}">${label}</a>`).join('\n')}
-  <a class="site-nav__lab" href="${p}lab/">Lab</a>
+  <a class="site-nav__lab" ${current === 'lab' ? 'aria-current="page"' : ''} href="${p}lab/">Lab</a>
   </nav>`;
 };
 const sharedHeader = (current, p) => `<a class="skip-link" href="#main">Skip to content</a>
@@ -233,9 +184,9 @@ const sharedHeader = (current, p) => `<a class="skip-link" href="#main">Skip to 
     <a class="wordmark" href="${p}" aria-label="Bronto UI homepage"><span class="wordmark__symbol" aria-hidden="true">B<span>·</span></span><span>bronto<span class="wordmark__ui">ui</span></span></a>
     ${nav(current, p)}
     <div class="header-actions">
-      <button class="theme-toggle" type="button" aria-label="Switch color theme" aria-pressed="false" data-theme-toggle><span aria-hidden="true">◐</span></button>
+      <button class="theme-toggle" type="button" aria-label="Switch color theme" aria-pressed="false" data-theme-toggle hidden><span aria-hidden="true">◐</span></button>
       <a class="header-github" href="https://github.com/Ponchia/bronto-ui" target="_blank" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
-      <button class="menu-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav" data-menu-toggle type="button">Menu <span aria-hidden="true">☰</span></button>
+      <button class="menu-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav" data-menu-toggle type="button" hidden>Menu <span aria-hidden="true">☰</span></button>
     </div>
   </div>
 </header>`;
@@ -243,7 +194,7 @@ const sharedFooter = (p) => `<footer class="site-footer"><div class="site-footer
   <div><a class="footer-mark" href="${p}">bronto<span>ui</span>.</a><p>Interfaces for work that needs to be understood.</p></div>
   <div class="footer-links"><a href="${p}examples/">Examples</a><a href="${p}components/">Components</a><a href="${p}docs/">Docs</a><a href="${p}lab/">Lab</a></div>
   <div class="footer-links"><a href="https://github.com/Ponchia/bronto-ui">GitHub ↗</a><a href="https://www.npmjs.com/package/@ponchia/ui">npm ↗</a><a href="https://ponchia.github.io/bronto-annotations/">Annotation engine ↗</a><a href="https://brontolotto.observer/projects/bronto-ui/">About the project ↗</a></div>
-  <div class="footer-bottom"><span>MIT licensed · Created by <a href="https://brontolotto.observer/">Zeno Trevisan</a></span><span>Static HTML · Bronto UI CSS · No frontend runtime</span></div>
+  <div class="footer-bottom"><span>MIT licensed · Created by <a href="https://brontolotto.observer/">Zeno Trevisan</a></span><span>Static HTML · Bronto UI CSS · No framework runtime</span></div>
 </div></footer>`;
 const rendered = (outFile, current, title, description, inner) => {
   const p = prefix(outFile);
@@ -281,7 +232,7 @@ const docsSidebar = (current, p) => {
   const activeCategory = docs.find((doc) => doc.stem === current)?.category;
   return `<aside class="docs-sidebar" id="docs-navigation" aria-label="Documentation contents">
   <div class="docs-sidebar__top"><h2 class="docs-sidebar__title">Browse documentation</h2><a href="${p}docs/">Index ↗</a></div>
-  <label class="search-box"><span class="visually-hidden">Search documentation</span><span aria-hidden="true">⌕</span><input type="search" placeholder="Search all documentation" autocomplete="off" data-doc-search /></label>
+  <label class="search-box" hidden><span class="visually-hidden">Search documentation</span><span aria-hidden="true">⌕</span><input type="search" placeholder="Search all documentation" autocomplete="off" data-doc-search /></label>
   <div class="doc-search-results" data-doc-results aria-live="polite" hidden></div>
   <div data-doc-groups>${groupsOrder
     .map((group) => {
@@ -299,7 +250,7 @@ const componentCard = (
 ) => `<article class="component-card" data-component-card data-category="${esc(c.category)}" data-search="${esc((c.name + ' ' + c.category + ' ' + c.summary).toLowerCase())}">
  <div class="component-card__head"><p class="kicker">${esc(c.category.toUpperCase())}</p><h2>${esc(c.name)}</h2><p>${esc(c.summary)}</p></div>
  <div class="component-preview">${c.markup}</div>
- <div class="component-code"><div class="component-code__bar"><span>HTML / CSS</span><button class="copy-button" data-copy type="button">Copy markup</button></div><pre tabindex="0"><code>${esc(c.markup)}</code></pre></div>
+ <div class="component-code"><div class="component-code__bar"><span>HTML / CSS</span><button class="copy-button" data-copy type="button" hidden>Copy markup</button></div><pre tabindex="0"><code>${esc(c.markup)}</code></pre></div>
  <a class="component-more" href="${p}docs/${c.doc}.html">Read usage guide ↗</a>
  </article>`;
 const pageSource = async (filename, p) =>
@@ -359,8 +310,7 @@ const renderExample = (ex, p) => `<section class="page-container example-detail"
   <ul class="tech-list">${ex.tech.map((v) => `<li>${esc(v)}</li>`).join('')}</ul></div>
   ${renderSourceSection(ex)}
 </section>`;
-await rm(output, { recursive: true, force: true });
-await mkdir(output, { recursive: true });
+await prepareSiteOutput(repo, output);
 for (const folder of [
   'demo',
   'docs',
@@ -414,24 +364,29 @@ for (const ex of examples) {
     rendered(outFile, 'examples', `${ex.name} — Bronto UI`, ex.desc, renderExample(ex, p)),
   );
 }
-marked.setOptions({ gfm: true, breaks: false });
 for (const doc of docs) {
+  const seenHeadings = new Set();
+  const markdown = new Marked({
+    gfm: true,
+    breaks: false,
+    renderer: {
+      heading({ text, tokens, depth }) {
+        const id = headingSlug(text, seenHeadings);
+        return `<h${depth} id="${esc(id)}">${this.parser.parseInline(tokens)}</h${depth}>\n`;
+      },
+    },
+  });
   const outFile = `docs/${doc.stem}.html`;
   const p = prefix(outFile);
-  const renderedMd = marked
+  const renderedMd = markdown
     .parse(doc.markdown)
     // Some code fences scroll horizontally on narrow screens. Make them
     // independently keyboard-focusable so all of their text remains reachable.
     .replace(/<pre>/g, '<pre tabindex="0">')
-    .replace(/href="([^"]+?)\.md(#[^"]*)?"/g, (_full, file, hash = '') => {
-      // Only files owned by docs/ become generated HTML. Root README,
-      // CONTRIBUTING and CHANGELOG remain Markdown in the Pages artifact.
-      const source = resolve(join(repo, 'docs'), doc.stem + '.md');
-      const target = resolve(dirname(source), file + '.md');
-      const inside = relative(join(repo, 'docs'), target);
-      const inDocs = inside !== '..' && !inside.startsWith('..' + sep);
-      return 'href="' + file + (inDocs && existsSync(target) ? '.html' : '.md') + hash + '"';
-    })
+    .replace(
+      /href="([^"]+)"/g,
+      (_full, href) => 'href="' + publicDocHref('docs/' + doc.stem + '.md', href) + '"',
+    )
     .replace(
       /href="\.\.\/\.\.\/examples\/([^"]+)"/g,
       (_full, example) =>
@@ -506,7 +461,7 @@ await writeFile(
       category: d.category,
       url: `docs/${d.stem}.html`,
       description: d.excerpt.slice(0, 140),
-      content: d.markdown.replace(/\s+/g, ' ').slice(0, 6500),
+      content: d.markdown.replace(/\s+/g, ' '),
     })),
   ),
 );

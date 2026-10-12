@@ -20,17 +20,18 @@ builds class strings from the typed class registry. `@ponchia/ui/behaviors`
 contains vanilla, dependency-free behavior initializers for the interactions CSS
 cannot own by itself: theme persistence, dialogs, toasts, tabs, comboboxes,
 menus, source backrefs, and similar delegated glue. Those modules are
-side-effect-free on import, SSR-safe, idempotent, and return cleanup functions.
-Framework consumers initialize vanilla behaviors in their own mount/cleanup
-lifecycle. No framework adapters or peers ship in the package.
+side-effect-free on import and SSR-safe. The `init*()` functions are idempotent
+and return cleanup functions; `toast()` returns a dismiss function, while
+`applyStoredTheme()` applies the saved preference and returns nothing.
+Framework consumers initialize behaviors in their own mount/cleanup lifecycle. No framework adapters or peers ship in the package.
 
 Read more: [architecture](./architecture.md#decision),
 [integration](./integration.md), and [stability](./stability.md).
 
 ## The cascade is cooperative
 
-All authored framework CSS is wrapped in one cascade layer, `@layer bronto`.
-That is the override model. Normal, un-layered application CSS wins over
+The default stylesheet and published direct CSS leaf exports use one cascade
+layer, `@layer bronto`. That is the override model. Normal, un-layered application CSS wins over
 framework rules through the ordinary cascade, so consumers should override with
 plain selectors instead of escalating specificity or adding `!important`.
 
@@ -127,9 +128,9 @@ fresh resolved data; the already-rendered output does not live-reskin from later
 CSS.
 
 Read more: [theming](./theming.md#design-token-interop-dtcg),
-[Mermaid](./mermaid.md#why-resolved-colours-not-var-x),
-[D2](./d2.md#why-resolved-colours-not-var-x), and
-[Vega](./vega.md#why-resolved-colours-not-var-x).
+[Mermaid](./mermaid.md#why-resolved-colours-not-var--x),
+[D2](./d2.md#why-resolved-colours-not-var--x), and
+[Vega](./vega.md#why-resolved-colours-not-var--x).
 
 ## Package paths are the contract
 

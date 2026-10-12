@@ -192,6 +192,15 @@ test('severity() bundles the class with the attribute that carries the meaning',
   }
 });
 
+test('severity() uses the chip fallback for unknown parts, including prototype names', () => {
+  for (const part of ['unknown', 'constructor', 'toString', '__proto__', '', null]) {
+    assert.deepEqual(severity('warning', { part }), {
+      class: 'ui-severity',
+      'data-level': 'warning',
+    });
+  }
+});
+
 // Every tier the CSS paints must be a tier the JS knows about, and vice versa —
 // the two halves of the ladder living in different files is exactly how a
 // vocabulary drifts.

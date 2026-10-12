@@ -25,14 +25,14 @@ concurrency:
 
 jobs:
   build:
-    # Manual dispatch always; the CI-completion trigger only when it
-    # actually succeeded (workflow_run fires on failure too). Manual dispatch is
-    # limited to main so Pages cannot publish an arbitrary un-gated ref.
+    # Both entry paths deploy main. Automatic deploys must match the successful
+    # CI event; manual deploys prove successful CI for the checked-out SHA below.
     if: ${{ (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
       contents: read
+      actions: read # verify the selected main commit passed CI
       pages: write # configure-pages enablement
       # no id-token here: OIDC is only minted by deploy-pages in `deploy`.
     steps:
@@ -48,6 +48,22 @@ jobs:
         env:
           CI_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
         run: test "$(git rev-parse HEAD)" = "$CI_HEAD_SHA"
+
+      - name: Require successful CI for manual deployment
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          head_sha="$(git rev-parse HEAD)"
+          ci_passed="$(gh api "repos/$REPO/actions/workflows/ci.yml/runs?branch=main&head_sha=$head_sha&status=completed&per_page=100" \
+            --jq '.workflow_runs | any(.head_branch == "main" and .conclusion == "success" and (.event == "push" or .event == "workflow_dispatch"))')"
+          if [ "$ci_passed" != "true" ]; then
+            echo "::error::main commit $head_sha has no completed successful CI run; run CI before deploying"
+            exit 1
+          fi
+          echo "Verified successful main CI for $head_sha."
 
       # The source-only fixture checkout hid missing imported modules on Pages.
       # Assemble + validate the *actual static artifact* including the entire

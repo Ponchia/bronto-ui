@@ -6,10 +6,10 @@
 > neutral by default, one core accent for UI emphasis, dot-matrix display type,
 > plus separate governed tiers for status, display colorways, and data-viz.
 >
-> This file orients an LLM/agent. The authoritative, always-correct API
-> is the TypeScript declarations shipped in this package (paths below):
-> they are generated from the runtime sources and CI-drift-checked, so
-> they never lie. Read them before guessing class or token names. For the
+> This file orients an LLM/agent. Read the shipped TypeScript declarations
+> for public names, options, and return types (paths below). They are generated
+> from runtime sources and drift-checked in CI; the implementation, documented
+> semantics, and tests remain necessary evidence for behavior. For the
 > manifest-level inventory, use `docs/package-contract.md`: it is generated
 > from package.json and lists every export, shipped path, and provenance gate.
 
@@ -84,8 +84,10 @@ matching `.ui-source-card`, seed lightweight preview metadata, and emit
 `bronto:source:focus`; the host still owns numbering, fetching, trust decisions,
 and any rich preview popover.
 
+Initializers return teardown functions; `toast()` returns a dismiss function,
+and `applyStoredTheme()` returns nothing. Importing a module does not wire the DOM.
 Initialize behaviors in the host framework's mount/cleanup lifecycle. Framework
-adapter subpaths are removed in 0.10. Read `docs/compositions.md` before selecting
+adapter subpaths were removed in 0.10. Read `docs/compositions.md` before selecting
 primitives: tools use sans headings and labels, reports prioritize reading,
 and `ui-display` is an explicit brand treatment. The catalog is a lookup, not a
 checklist of components to place on a page.
@@ -785,7 +787,9 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
 
 ## External web references
 
-- Live kitchen-sink demo (every component, light/dark, RTL): https://ponchia.github.io/bronto-ui/
+- Public website and curated examples: https://ponchia.github.io/bronto-ui/
+- Component laboratory and test specimens: https://ponchia.github.io/bronto-ui/lab/
+- Navigable documentation: https://ponchia.github.io/bronto-ui/docs/
 - Architecture & the CSS-first decision: https://github.com/Ponchia/bronto-ui/blob/main/docs/architecture.md
 - Framework integration guides (Astro / SvelteKit / Vue / React-Solid-Qwik / vanilla):
   https://github.com/Ponchia/bronto-ui/tree/main/docs/getting-started
@@ -823,4 +827,6 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   tokens — re-point `--accent` (or a `data-bronto-skin` colorway), use status
   tokens for status, and `--chart-*` (from `css/dataviz.css`) for charts only.
   Don't add raw hues to components; `check:color-policy` enforces this.
-- Pre-1.0 SemVer: breaking changes ship in the _minor_. Pin `~0.x`.
+- Pre-1.0 SemVer: breaking changes ship in the _minor_. Pin a concrete minor,
+  for example `~0.16.1` (patches below `0.17.0`). A literal `~0.x` is too broad
+  because its wildcard minor admits later pre-1.0 minors.

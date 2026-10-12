@@ -29,6 +29,10 @@
     "url": "git+https://github.com/Ponchia/bronto-ui.git"
   },
   "homepage": "https://ponchia.github.io/bronto-ui/",
+  "funding": {
+    "type": "ko-fi",
+    "url": "https://ko-fi.com/ponchia"
+  },
   "bugs": "https://github.com/Ponchia/bronto-ui/issues",
   "publishConfig": {
     "access": "public",
@@ -216,7 +220,8 @@
     "prepack": "npm run build:artifacts && npm run verify:artifacts",
     "prepublishOnly": "npm run build:artifacts && npm run check",
     "site:build": "node scripts/build-public-site.mjs",
-    "check:site": "node scripts/check-public-site.mjs"
+    "check:site": "node scripts/check-public-site.mjs",
+    "site:screenshots": "node scripts/capture-site-screenshots.mjs"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",

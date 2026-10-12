@@ -1,7 +1,7 @@
 # Integration
 
 `@ponchia/ui` is CSS-first and framework-agnostic. Integrating it into
-any app is three concerns, the same everywhere:
+any app starts with CSS. Theme persistence and JavaScript behavior are optional:
 
 1. **Load the CSS.** `@import '@ponchia/ui';` (the flattened bundle) or
    `@import '@ponchia/ui/css';` (the leaf fan-out, through a bundler).
@@ -10,10 +10,13 @@ any app is three concerns, the same everywhere:
 2. **Apply the theme before paint** to avoid a flash. The persisted
    theme lives in `localStorage['bronto-theme']`; a tiny **inline**
    head script must set `<html data-theme>` _before_ first paint. This
-   is the single most-missed pattern — every guide below shows it.
+   matters only when restoring an explicit user choice. Without persistence,
+   CSS follows the operating-system color preference.
 3. **Wire behaviors in the framework's lifecycle.** Every `init*()` is
    SSR-safe (no-ops without a DOM), idempotent, and returns a cleanup
-   function. Call it on mount, call the cleanup on unmount.
+   function. Call it on mount, call the cleanup on unmount. Scope `root` to the
+   component when possible, and let one owner manage a control's interaction.
+   `toast()` returns a dismiss function; `applyStoredTheme()` returns nothing.
 
 ## The no-flash theme script (framework-agnostic)
 
@@ -35,8 +38,8 @@ render both supported schemes; it does not replace the stored-theme script.
 
 `applyStoredTheme()` from `@ponchia/ui/behaviors` does exactly this
 (default `storageKey: 'bronto-theme'`) and is what `initThemeToggle()`
-persists to — but module code runs after paint, so the **inline** copy
-above is the FOUC fix. Use `applyStoredTheme()` for re-application after
+persists to. Module execution is deferred and does not guarantee application
+before first paint; use the **inline** copy above for that purpose. Use `applyStoredTheme()` for re-application after
 client navigation.
 
 ## Per-framework guides

@@ -2,11 +2,15 @@
 
 `@ponchia/ui` is pre-1.0. Breaking changes ship in the minor (`0.x.0`), and
 patches are non-breaking. In practical terms: **PATCH releases (`0.16.x`) are
-non-breaking bug-fixes and additive changes — safe to upgrade without review;
+non-breaking bug fixes and additive changes;
 MINOR releases (`0.x.0`) may include breaking changes and consumers should
-review the CHANGELOG before upgrading.** Pin `~0.x` (tilde) to accept only
-patches, or `^0.x` for the same compatible pre-1.0 minor. This policy holds
-until `1.0.0` is tagged. This matrix defines what counts as public API.
+review the CHANGELOG before upgrading.** Specify a concrete minor, for example
+`~0.16.1` or `^0.16.1`, to accept patches below `0.17.0`. Do not use literal
+`~0.x` or `^0.x`: the wildcard minor permits upgrades across the `0.x` line.
+See [npm's range syntax](https://github.com/npm/node-semver#advanced-range-syntax).
+This policy holds until `1.0.0` is tagged. Visual tuning and consumer-specific overrides still
+need review on important screens, including patch upgrades. This matrix defines
+what counts as public API.
 For the exhaustive package-manifest inventory — every `exports` key, every
 shipped `files` entry, and the generated artifact provenance map — see
 [package-contract.md](./package-contract.md).
@@ -83,12 +87,12 @@ current public-surface matrix and the release policy above still applies.
 | Class vocabulary as data (`@ponchia/ui/classes.json`, `@ponchia/ui/vscode.css-custom-data.json`) | Stable additive | The JSON shape (`groups`/`classes`/`states`/`customProperties`) and class/custom-property entries are public — for validating markup from a non-JS/non-TS host or editor integration. Generated from `cls` and CSS selectors; `classes.json`, `.d.ts`, reference docs, and VS Code custom data are drift-checked together. New classes/hooks are additive. |
 | Design tokens | Stable names/roles | Token names and documented roles are public. Exact values and generated colour math outputs may change for visual tuning before 1.0. |
 | `--accent-1..6` | Stable names/roles | A subtle-to-bold accent ramp derived from `--accent`. Exact resolved values are visual tuning; algorithm changes require release-note visibility and resolver/browser checks. |
-| Tokens as data (`tokens.json`, `tokens.dtcg.json`, `tokens/resolved.json`, `tokens/figma.variables.json`) | Stable additive from 0.7 | The JSON shapes are public for non-CSS/non-JS consumers and handoff tooling. `tokens.dtcg.json` is a DTCG 2025.10 resolved projection with structured typed values; `tokens.json` preserves authored CSS expressions. `resolved.json` exposes flat `light`/`dark` colours and non-colour `scale`; `figma.variables.json` is the local Figma handoff. Token names/roles are stable; exact resolved values are visual tuning (pin `~0.x`). |
+| Tokens as data (`tokens.json`, `tokens.dtcg.json`, `tokens/resolved.json`, `tokens/figma.variables.json`) | Stable additive from 0.7 | The JSON shapes are public for non-CSS/non-JS consumers and handoff tooling. `tokens.dtcg.json` is a DTCG 2025.10 resolved projection with structured typed values; `tokens.json` preserves authored CSS expressions. `resolved.json` exposes flat `light`/`dark` colours and non-colour `scale`; `figma.variables.json` is the local Figma handoff. Token names/roles are stable; exact resolved values are visual tuning (pin a concrete compatible minor). |
 | Schemas (`schemas/*.schema.json`, `schemas/report-claims.v1.schema.json`) | Stable additive | Declarative JSON Schema contracts for package-adjacent tooling data. Existing schema files and enum values are public within a compatible minor; new optional properties and new schema files are additive. No validator runtime ships. |
 | Theme axes | Mixed | `data-theme` (light/dark) is the **contractual** base. `data-surface="oled"`, `data-density`, and `data-contrast` are **convenience presets** — best-effort visual variants, **not** part of the stability contract; their presence and exact values may change for tuning. Computed-style smoke tests guard that the presets apply to their intended token families. |
 | Tailwind v4 bridge (`@ponchia/ui/tailwind`, `@ponchia/ui/tailwind.css`) | Stable additive | CSS-only token/variant bridge for Tailwind v4. It maps Bronto tokens and variants into Tailwind namespaces; it must not import Bronto component CSS or change the default bundle. |
 | Behavior attributes (`data-bronto-*`) | Stable | Attribute names and documented markup relationships are public. Behavior internals are not. |
-| Behavior functions (`@ponchia/ui/behaviors`) | Stable | Exported function names, option names, custom events, SSR no-op behavior, idempotency, and cleanup-returning contract are public. |
+| Behavior functions (`@ponchia/ui/behaviors`) | Stable | Exported function names, options, custom events, and SSR no-op behavior are public. Initializer idempotency and cleanup functions, the `toast()` dismissal function, and the void return of `applyStoredTheme()` are part of their individual contracts. |
 | Consumer checker (`bronto-ui-check`) | Stable additive | The installed binary lexically validates literal `ui-*` classes and unresolved reserved-token references in supported code, style, and template sources after stripping comments; Markdown prose and generated/vendor directories are excluded. Exit 0 means no findings, exit 1 means contract findings, and exit 2 means invocation/input failure. New checks may be additive; an existing valid literal cannot become an error within a patch unless the corresponding public contract was already invalid. |
 | Glyph registry/renderers (`@ponchia/ui/glyphs`) | Stable additive | Existing glyph names stay valid. New glyphs are additive. Renderer option names and accessibility defaults are public. |
 | `.ui-icon` mask renderer | Stable | Class name, `--icon-size`, currentColor inheritance, and `--icon-mask` contract are public. The internal data URL encoding is not. |
@@ -97,7 +101,7 @@ current public-surface matrix and the release policy above still applies.
 | Charts (`@ponchia/ui/charts`, `charts.json`, `css/dataviz.css`) | Stable additive | Token names (`--chart-*`, `--cat-N`, `--cat-N-tint`, `--cat-N-ink`), `CATEGORICAL_HUES`, the JSON shape, and the 8 categorical slots in fixed hue order are public. `css/dataviz.css` is opt-in, not in the default bundle. Exact palette values may tune if gates and release notes justify it. |
 | Renderer tokens (`@ponchia/ui/renderer`) | Stable additive | Function names, option names and the `RendererTokens` field names are public; new fields are additive. Colours are returned as `#rrggbb` or `rgba()` literals. The exact Vega/xterm mapping may tune with the token model. |
 | External renderer themes (`@ponchia/ui/mermaid`, `@ponchia/ui/mermaid.json`, `@ponchia/ui/d2`, `@ponchia/ui/d2.json`, `@ponchia/ui/vega`, `@ponchia/ui/vega.json`) | Stable additive | Theme helper names, JSON shapes, and supported renderer theme slots are public. Values are resolved colours because Mermaid, D2, and Vega cannot consume Bronto CSS variables directly. Exact colours may tune with token changes, but `check:mermaid`, `check:d2`, and `check:vega` must prove every exported theme resolves with no `var()` leaks. No renderer runtime ships. |
-| Shiki theme data (`@ponchia/ui/shiki/nothing.json`) | Stable additive | The bundled Shiki theme JSON shape and token-derived scope roles are public for syntax-highlighting consumers. Exact colours may tune with the token model and must stay generated from the governed palette. |
+| Shiki theme data (`@ponchia/ui/shiki/nothing.json`) | Stable additive | The bundled Shiki theme JSON shape and token-derived scope roles are public for syntax-highlighting consumers. Exact colours may tune with the token model and must stay validated against the governed palette. |
 | Reports (`css/report.css`, `.ui-report*`, print utilities) | Stable additive | Report class names, BEM part names, and print utility names are public. Report CSS is opt-in and not imported by the default bundle. The data key now lives in the standalone Legends layer (below), not `css/report.css`; charting is via the Vega theme target (`@ponchia/ui/vega`, see [vega](./vega.md)) or a token-themed inline SVG, not a shipped renderer. |
 | Report kit roll-up (`css/report-kit.css`) | Stable additive | A convenience `@import` of the complete static-report vocabulary. The set of leaves it bundles may grow additively; each leaf also stays individually exported. Opt-in, not in the default bundle. |
 | Tool roll-up (`css/tool.css`) | Stable additive | The default bundle without navigation, site, table and app chrome, for a tool that draws its own shell. It follows the default bundle's leaves, minus those four; each leaf also stays individually exported. Opt-in, not in the default bundle. |
@@ -147,9 +151,11 @@ behavior signatures, and exported schema values) is removed on a
 2. **Remove** no earlier than minor _N+1_, with a **BREAKING** changelog entry
    and migration note.
 
-A token/class/attribute that is provably referenced by no shipped CSS,
-component, behavior, or doc may skip that window and be removed with a BREAKING
-entry plus migration note; there is no working call-site to keep alive.
+A provably unused token/class/attribute may skip that window only with an
+explicit BREAKING entry and migration note. Repository-wide absence is not
+proof of absent external callers: record the downstream usage evidence too.
+When downstream absence cannot be established, use the normal window. The
+historical `--orange` removal in 0.4.0 is documented in the changelog.
 
 ## Trust boundary
 

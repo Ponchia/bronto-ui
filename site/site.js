@@ -10,6 +10,7 @@ const dark = (() => {
 })();
 if (dark) html.dataset.theme = 'dark';
 for (const toggle of document.querySelectorAll('[data-theme-toggle]')) {
+  toggle.hidden = false;
   const sync = () => {
     const enabled = html.dataset.theme === 'dark';
     toggle.setAttribute('aria-pressed', String(enabled));
@@ -27,17 +28,27 @@ for (const toggle of document.querySelectorAll('[data-theme-toggle]')) {
 const menu = document.querySelector('[data-menu-toggle]');
 const nav = document.getElementById('site-nav');
 if (menu && nav) {
+  const setNavigation = (open, restoreFocus = false) => {
+    menu.setAttribute('aria-expanded', String(open));
+    menu.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+    nav.dataset.open = String(open);
+    if (open) nav.querySelector('a')?.focus();
+    if (restoreFocus) menu.focus();
+  };
+  nav.dataset.enhanced = 'true';
+  menu.hidden = false;
   menu.addEventListener('click', () => {
-    const on = menu.getAttribute('aria-expanded') !== 'true';
-    menu.setAttribute('aria-expanded', String(on));
-    menu.setAttribute('aria-label', on ? 'Close navigation' : 'Open navigation');
-    nav.dataset.open = String(on);
+    setNavigation(menu.getAttribute('aria-expanded') !== 'true');
   });
   nav.addEventListener('click', (event) => {
-    if (event.target.closest('a')) {
-      menu.setAttribute('aria-expanded', 'false');
-      nav.dataset.open = 'false';
-    }
+    if (event.target.closest('a')) setNavigation(false);
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || menu.getAttribute('aria-expanded') !== 'true') return;
+    setNavigation(false, true);
+  });
+  document.addEventListener('click', (event) => {
+    if (!nav.contains(event.target) && !menu.contains(event.target)) setNavigation(false);
   });
 }
 const copyText = async (value) => {
@@ -63,6 +74,7 @@ for (const pre of document.querySelectorAll('.doc-prose pre')) {
   wrapper.append(copy, pre);
 }
 for (const btn of document.querySelectorAll('[data-copy]')) {
+  btn.hidden = false;
   btn.addEventListener('click', async () => {
     const code =
       btn.closest('.code-header')?.nextElementSibling?.querySelector('code') ||
@@ -87,6 +99,7 @@ for (const btn of document.querySelectorAll('[data-copy]')) {
 }
 const componentCatalog = document.querySelector('[data-component-catalog]');
 if (componentCatalog) {
+  componentCatalog.querySelector('.catalog-controls').hidden = false;
   const input = componentCatalog.querySelector('[data-component-query]');
   const chips = [...componentCatalog.querySelectorAll('[data-component-chip]')];
   const cards = [...componentCatalog.querySelectorAll('[data-component-card]')];
@@ -120,14 +133,20 @@ if (componentCatalog) {
 }
 const docsSearchInput = document.querySelector('[data-doc-search]');
 if (docsSearchInput) {
+  docsSearchInput.closest('label').hidden = false;
   const results = document.querySelector('[data-doc-results]');
   const groups = document.querySelector('[data-doc-groups]');
   let docsPromise;
   const load = () =>
-    (docsPromise ||= fetch(`${root}docs/search-index.json`).then(async (r) => {
-      if (!r.ok) throw Error('Unable to load documentation search');
-      return r.json();
-    }));
+    (docsPromise ||= fetch(`${root}docs/search-index.json`)
+      .then(async (r) => {
+        if (!r.ok) throw Error('Unable to load documentation search');
+        return r.json();
+      })
+      .catch((error) => {
+        docsPromise = undefined;
+        throw error;
+      }));
   let token = 0;
   const search = async () => {
     const query = docsSearchInput.value.trim().toLowerCase();
@@ -177,6 +196,7 @@ if (docsSearchInput) {
       }
       if (!scored.length) results.textContent = 'No matches. Try a different term.';
     } catch {
+      if (myToken !== token) return;
       results.textContent = 'Search is unavailable; browse the sections below.';
       groups.hidden = false;
     }

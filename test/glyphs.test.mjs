@@ -143,6 +143,29 @@ test('renderGlyph() escapes label and sanitizes dot/gap (no CSS/HTML injection)'
   assert.match(ok, /--dotmatrix-gap:0\.25rem/);
 });
 
+test('glyph and readout HTML keeps hostile labels and sizes inside their intended attributes', () => {
+  const label = '"><img src=x onerror=alert(1)><script>alert(1)</script>&quot;';
+  const size = '1px;position:fixed;inset:0" onmouseover=alert(1)';
+  const variants = [
+    renderGlyph('check', { label, dot: size, gap: size }),
+    renderGlyph('check', { label, render: 'mask', size }),
+    renderReadout('12', { label, render: 'mask', size, gap: size }),
+    renderReadout(label, { render: 'mask', size, gap: size }),
+  ];
+  for (const html of variants) {
+    const fragment = JSDOM.fragment(html);
+    assert.equal(fragment.childElementCount, 1, 'one wrapper, with no injected sibling');
+    assert.equal(fragment.firstElementChild.getAttribute('aria-label'), label);
+    for (const element of fragment.querySelectorAll('*')) {
+      assert.equal(element.tagName, 'SPAN', 'only the authored span structure is parsed');
+      assert.equal(element.style.position, '', 'size inputs cannot add CSS declarations');
+      for (const name of element.getAttributeNames()) {
+        assert.ok(!name.startsWith('on'), `no injected ${name} handler`);
+      }
+    }
+  }
+});
+
 // The accent (`*`) tone is a real, intentional capability — a curated set of
 // two-tone glyphs uses it to lift one feature (the check, the bang) onto the
 // `--field-dot-accent` colour. Pin the exact set so a stray `*` in a glyph that

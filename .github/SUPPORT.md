@@ -18,8 +18,9 @@ Before opening an issue:
 ## Expectations
 
 Solo-maintained and pre-1.0. Best-effort response, **no SLA**. Breaking
-changes ship in the **minor** — pin `~0.x` and visual-test your own app
-on upgrade (see README → Versioning).
+changes ship in the **minor**. Pin a concrete minor, for example `~0.16.1`,
+and visual-test your own app on upgrade (see README → Versioning). A broad
+range such as `~0.x` also admits later minors.
 
 ## Security
 
