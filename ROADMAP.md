@@ -26,7 +26,7 @@ Prototype freely. Prefer a recipe when existing classes express the result.
 
 Package examples prove compatibility. Real consumer upgrades prove demand and
 practical value. Before retiring an unused surface, check that consumers could
-find it; an leaf that is not imported does not prove a lack of need.
+find it; a leaf that is not imported does not prove a lack of need.
 
 ## Current direction
 
@@ -38,9 +38,9 @@ find it; an leaf that is not imported does not prove a lack of need.
   every label. See [ADR-0005](docs/adr/0005-productive-tools-and-editorial-reports.md).
 - Compare complete service, inspector, and report compositions using real
   content, narrow containers, keyboard/touch input, and both themes.
-- Remove the unused adapter/modal obligations described in
-  [ADR-0004](docs/adr/0004-prune-unused-adapters.md); do not recreate their
-  matrix under a different API.
+- Keep the framework adapter and controlled-modal removals from 0.10 in place
+  ([ADR-0004](docs/adr/0004-prune-unused-adapters.md)). Improve framework lifecycle
+  recipes and packed examples when a real integration needs them.
 - Keep packed contracts, accessibility, behavior, and print proof. Consolidate
   checks around surviving sources of truth rather than adding parallel lists.
 - Keep reports, analytical, provenance, workbench, and command leaves opt-in.
@@ -55,9 +55,11 @@ return to consumer work.
 
 1.0 is a compatibility promise, not a design milestone. Choose it after the
 new compositions and coordinated upgrades are proven. Do not freeze an awkward
-visual default merely to reach a version number. Not yet: 0.12 to 0.14 still
-reshape public tokens (the categorical palette, renderer tokens, note prose,
-density, layers and zoom).
+visual default merely to reach a version number. Recent releases changed the
+categorical palette, renderer tokens, note prose, density, layers, and zoom.
+The next step is to prove that the resulting contract is useful and predictable
+across real consumer upgrades. The [1.0 readiness ledger](docs/stability.md#10-readiness-ledger)
+defines the evidence required for a candidate.
 
 **Releases follow deletions.** Cut a release when a consumer change is ready to
 delete what it replaces, and land that deletion as the upgrade. A release that

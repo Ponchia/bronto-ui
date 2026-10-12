@@ -14,10 +14,11 @@ import '@ponchia/ui';        // the flattened bundle (dist/bronto.css)
 ```
 
 Importing the package from a `.astro` frontmatter or a global stylesheet
-both work — Vite resolves the `.` export to the CSS bundle. To self-host
-the Doto font, import the `@ponchia/ui/css/<leaf>.css` files you need and
-skip `@ponchia/ui/css/fonts.css`, overriding `--display` / `--dot-font`
-(see README → Browser support).
+both work — Vite resolves the `.` export to the CSS bundle. The default bundle
+already self-hosts Doto from the package's font files using relative URLs.
+If you want to omit Doto, compose the individual CSS leaves without
+`@ponchia/ui/css/fonts.css` and provide your own `--display` / `--dot-font`
+family choices. See the [theming guide](../theming.md).
 
 ## 2. No-flash theme (inline, in `<head>`)
 
@@ -36,7 +37,9 @@ before paint — exactly what the theme needs:
 </head>
 ```
 
-Without `is:inline` Astro would hoist/bundle it and you'd get a flash.
+Astro processes ordinary scripts as modules. Keeping this small script inline
+in the document head lets it restore the saved theme before stylesheet paint;
+a deferred module does not provide that guarantee.
 
 ## 3. Minimal styled markup
 
@@ -50,10 +53,11 @@ Start with the classes and attributes the CSS/behavior contracts expect:
 </button>
 ```
 
-## 4. Behaviors in islands
+## 4. Behaviors in a browser script
 
-Behaviors are DOM glue, so they belong in a client-side island, not in
-server frontmatter. Call the initializer after the markup is in the DOM:
+Behaviors use the DOM, so call them in a browser script rather than server
+frontmatter. A framework island is not required. Call the initializer after the
+markup is in the DOM:
 
 ```astro
 <script>
@@ -62,12 +66,18 @@ server frontmatter. Call the initializer after the markup is in the DOM:
 </script>
 ```
 
-For `initDialog` / `initTabs` / `initMenu` / `initDisclosure`, do the
-same — call once after the markup is in the DOM. Astro `<script>` tags
-run after hydration and only in the browser, so the SSR-safety is
-belt-and-braces here, but it matters if you move the call into a
-framework island (React/Svelte/Solid) that also runs server-side — then
-keep the cleanup (see the React/Solid guide).
+Use the same pattern for `initDialog`, `initTabs`, `initMenu`, or
+`initDisclosure`. Astro's processed scripts run in the browser as modules;
+they do not wait for every framework island to hydrate. If a React/Svelte/Solid
+island creates the markup, initialize within that island's mount lifecycle and
+retain cleanup, as shown in the [framework guide](react-solid.md).
+
+With Astro's `ClientRouter`, a bundled script does not rerun on every navigation.
+Use the router's `astro:page-load` event to initialize replaced markup and
+`astro:before-swap` to clean up the previous behavior instances. A listener in a
+shared layout can own this lifecycle; avoid adding another document listener on
+every route. See Astro's official [script guide](https://docs.astro.build/en/guides/client-side-scripts/)
+and [router lifecycle reference](https://docs.astro.build/en/guides/view-transitions/).
 
 `toast(message, opts)` needs no markup — call it from any event handler;
 it lazily creates a body-anchored, ARIA-live stack.

@@ -1,10 +1,16 @@
 # Demo tree
 
 `demo/` is the hand-authored showcase and fixture surface for `@ponchia/ui`.
-The tree is flat. It contains this README plus 34 demo files: 32 HTML pages
-plus `index.css` and `index.js`.
+Each HTML file is a directly runnable page. Shared gallery layout and
+behavior live in `index.css` and `index.js`; focused examples keep their scripts
+beside the page they serve.
 
 ## Page map
+
+- [`first-steps.html`](./first-steps.html) is the minimal, no-JavaScript starting
+  point linked from the first-component guide.
+- [`discussion.html`](./discussion.html) demonstrates review threads, comment
+  actions, and evidence-linked communication.
 
 - [`index.html`](./index.html) is the kitchen-sink showcase. It loads the core
   bundle, opt-in skins, data-viz, analytical, app-tier, and report leaves, then
@@ -40,7 +46,8 @@ plus `index.css` and `index.js`.
 ## E2E and Pages
 
 - [`playwright.config.mjs`](../playwright.config.mjs) serves the repo root on
-  port 8123, so `/demo/` and `/demo/<name>.html` match the GitHub Pages layout.
+  port 8124 by default (override `BRONTO_UI_TEST_PORT`). The server builds and
+  serves `/_site/` for public-site tests as well as `/demo/` for package fixtures.
 - `test/e2e/a11y.spec.mjs` and `test/e2e/quality.spec.mjs` exercise the
   kitchen sink. `test/e2e/visual.spec.mjs` screenshots `index.html` sections
   marked with `data-shot`.

@@ -8,43 +8,41 @@ machine-checked.
 
 ## Setup
 
+Use **Node.js 22**, matching CI, and npm. The published package's Node engine
+floor is separate from the development toolchain.
+
 ```bash
+git clone https://github.com/Ponchia/bronto-ui.git
+cd bronto-ui
 npm ci
-npm run check   # the full integrity suite: lint, format, exports; the
-                #   consolidated generated-artifact freshness gate (check:fresh
-                #   — tokens.css/json, dtcg, resolved, .d.ts, reference, vscode
-                #   data); class contract; types, shiki, dist budget, pack
-                #   allowlist, packed no-peer/full-peer consumer-surface
-                #   import + behavior no-DOM + asset/doc resolution smoke, packed consumer type-resolution smoke,
-                #   node:test unit + contract suite, complexity budget,
-                #   CSS component docs/demo/spec ownership, behavior
-                #   docs/unit/browser ownership, public hygiene, undefined CSS var refs,
-                #   publint + arethetypeswrong, workflow syntax/shell lint,
-                #   release stamp, migration map, pack-aware shipped-doc links,
-                #   public import snippets, contrast; behaviors /
-                #   glyphs parity; color-policy, skins, charts, visual-baseline
-                #   inventory, report + shipped HTML snippet integrity.
-                #   Every check:* script runs, and the summary names each
-                #   one that failed; add -- --bail to stop at the first
-npm test        # faster unit-only loop; already included in npm run check
-npm run test:e2e:nonpixel
-                # local-safe Playwright: chromium + firefox + webkit for every
-                #   non-screenshot behavior/a11y/structural/print/motion spec
-npm run test:examples
-                # packs the real tarball, builds every example in a temp dir,
-                #   then browser-smokes the runtime examples in Chromium
-npm run test:examples:cross-browser
-                # deeper packed smoke: every example in Chromium, Firefox,
-                #   and WebKit; add `-- react-vite ...` to narrow locally
-npm run test:examples:visual
-                # local-safe desktop + mobile screenshot/layout health smoke
-                #   for packed examples; this is not the committed
-                #   Linux/Chromium baseline gate
+npm run check
 ```
 
-`main` is protected: changes land via PR, squash-merged, with `check`
-and `e2e` green and the branch up to date. Branches auto-delete on
-merge.
+`npm run check` runs all `check:*` scripts, including unit tests, lint and
+format checks, public imports and package exports, generated-artifact freshness,
+consumer contracts, documentation links and recipes, accessibility contrast,
+and the complexity budget. It reports every failed gate; use `-- --bail` to
+stop at the first failure. The detailed gate map is in
+[architecture.md](docs/architecture.md#drift-control).
+
+Choose additional verification for the surface you changed:
+
+| Command | What it checks |
+| --- | --- |
+| `npm test` | Faster unit and contract test loop; also included in `npm run check`. |
+| `npm run test:e2e:nonpixel` | Chromium, Firefox, and WebKit behavior, accessibility, layout, print, and motion checks without platform-sensitive pixel comparisons. |
+| `npm run test:examples` | Builds the packed package in every maintained consumer example, then runs Chromium browser smokes. |
+| `npm run test:examples:cross-browser` | Packed example smokes in Chromium, Firefox, and WebKit; append `-- react-vite` to narrow locally. |
+| `npm run test:examples:visual` | Desktop and mobile screenshot/layout health checks for packed examples; does not update committed baselines. |
+| `npm run site:build` and `npm run check:site` | Builds and validates the published website, documentation, example routes, and browser module graph. |
+
+Browser checks need the Playwright browsers and their system dependencies.
+See **Visual baselines** below before running screenshot comparisons.
+
+`main` is protected. Changes land through a PR, squash-merged with the branch
+up to date and the required **`ci-gate`** status green. That aggregate verifies
+`check`, `e2e`, and `examples`, including the workflow's documented handling of
+docs-only changes. Branches auto-delete on merge.
 
 New to the repo? Start with **[docs/repository-map.md](docs/repository-map.md)**
 for edit points and regeneration targets, then use
@@ -61,7 +59,7 @@ edit; a gate will revert you) and which are **path-frozen published subpaths**
   with a hand-built duplicate is useful evidence, not a prerequisite. Prefer
   an existing recipe to a new primitive. Package examples prove compatibility.
 - **Surface has to pay rent.** A public class, token, behavior, schema,
-  binding, CSS leaf, or docs path is accepted only when it makes the system
+  helper, CSS leaf, or docs path is accepted only when it makes the system
   clearer, safer, smaller, or more stable. Prefer a documented recipe over a
   new primitive until a real consumer proves the pattern repeats.
 - **Default bundle is identity, not inventory.** `dist/bronto.css` owns the
@@ -141,35 +139,31 @@ attributes, `cls`/token keys, behavior signatures) is removed on a
 2. **Remove** no earlier than minor _N+1_, with a **BREAKING** entry
    pointing at the migration.
 
-**Exception — provably-unreferenced surface.** A token/class/attribute that
-is consumed by **no** shipped CSS, component, behavior, or doc (verifiable by
-repo-wide search) may be removed in a single minor with a **BREAKING** entry
-and a one-line migration note, **skipping the deprecation window** — there is
-no internal usage to wind down and the deprecation cycle exists to protect
-working call-sites, of which there are none. This is the path taken for
-`--orange` in 0.4.0 (an orphan hue; see the CHANGELOG and
-`docs/adr/0001-color-system.md`). The `check:color-policy` gate now prevents a
-new untiered hue from being added in the first place.
+**Exception — provably-unreferenced surface.** The policy allows an unused
+token/class/attribute to be removed in a minor with a **BREAKING** entry and
+migration note. `--orange` in 0.4.0 used this exception (see the CHANGELOG and
+`docs/adr/0001-color-system.md`). Before invoking it again, document both the
+repository search and the downstream usage evidence. No references in shipped
+CSS, behaviors, or docs proves only that the package itself does not use the
+surface; it does not prove that external consumers have no working call-sites.
+If downstream absence cannot be established, use the normal deprecation window.
 
-This makes "minor may break" predictable: a consumer who upgrades one
-minor at a time always gets a working deprecation window and a
-machine-readable rename map. The 0.2 → 0.3 cut predates this policy
+A consumer upgrading one minor at a time gets the normal deprecation window;
+any exception must be explicit in the changelog. Machine-actionable renames
+also have a migration-map entry. The 0.2 → 0.3 cut predates this policy
 (documented in `docs/migrations/0.2-to-0.3.md`).
 
 ## Browser floor
 
-Recent-evergreen only — **Chrome/Edge 125+, Safari 18+, Firefox 129+**
-(early–mid 2025). On top of the prior baseline (cascade layers, `:has()`,
-`color-mix()`, logical properties, native `<dialog>`) this floor adds the
-2026 interaction primitives the framework now builds on:
-`@starting-style`, `transition-behavior: allow-discrete` (zero-JS
-enter/exit transitions), `oklch()`/relative color, and `light-dark()`.
-This is a deliberate, greenfield stance (see
-[ADR-0002](docs/adr/0002-scope-and-2026-baseline.md)): the framework targets
-the modern web platform and does **not** ship fallbacks below this floor —
-pin an older tag if you need to. Features that aren't yet cross-engine
-(View Transitions, scroll-driven animations, `interpolate-size`) are used
-only as progressive enhancement and degrade to a static end-state.
+The supported floor is **Chrome/Edge 125+, Safari 18+, Firefox 129+**.
+Core CSS uses cascade layers, `:has()`, `color-mix()`, logical properties,
+and native dialog/popover primitives. Browsers below the floor are unsupported;
+an older package tag is not a general compatibility guarantee.
+
+Features such as View Transitions, scroll-driven animations, intrinsic-size
+transitions, and anchor positioning are progressive enhancements. Keep
+essential content and interactions usable when an enhancement is unavailable.
+See [ADR-0002](docs/adr/0002-scope-and-2026-baseline.md) for the platform policy.
 
 The complete browser suite runs in three CI shards. Every shard remains
 required by `ci-gate`; sharding changes feedback time, not coverage.
@@ -256,5 +250,6 @@ of `release.yml` in the `npm-publish` Environment, so a pushed `vX.Y.Z` tag
 plus your approval is all a release needs
 ([ADR-0006](docs/adr/0006-trusted-publishing.md) has the rationale, and the
 npm-side registration this identity depends on). CI never publishes
-from a `main` push — a push to `main` ships nothing. Rationale and
-pre-publish blockers: [`docs/architecture.md`](docs/architecture.md).
+a package from a `main` push. Successful main CI deploys the website through
+Pages; a package release requires its own version tag and approval. Rationale
+and pre-publish blockers: [`docs/architecture.md`](docs/architecture.md).

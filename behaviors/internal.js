@@ -45,8 +45,8 @@ function isDelegationHost(value) {
 //     instead of hijacking the whole document.
 //   • root is an element    → use it.
 //   • root is anything else → no-op; the public contract is Document | Element.
-// The bindings (@ponchia/ui/{react,solid,qwik}) emit `root: null` for the
-// not-ready case precisely so this distinction survives across the boundary.
+// Framework consumers can pass `root: null` while their element ref is still
+// unmounted without accidentally binding to every control in the document.
 export function resolveHost(root, fallback = document) {
   if (root === null) return null;
   if (root === undefined) return isDelegationHost(fallback) ? fallback : null;
@@ -129,10 +129,6 @@ export function scrollIntoViewSafe(el, opts = { block: 'nearest' }) {
 // panel/modal still receives focus.
 const FOCUSABLE = 'a[href], button, input, select, textarea, [tabindex]';
 
-function isInsideDisabledFieldset(el) {
-  return Boolean(el.closest?.('fieldset[disabled]'));
-}
-
 function isRendered(el) {
   try {
     if (
@@ -165,7 +161,9 @@ function isRendered(el) {
 function isFocusableCandidate(el) {
   if (el.closest?.('[hidden], [inert]')) return false;
   if ('disabled' in el && el.disabled) return false;
-  if (isInsideDisabledFieldset(el)) return false;
+  // Native disabled semantics include fieldset inheritance and its first
+  // legend exception; links and other non-form controls stay focusable.
+  if (el.matches?.(':disabled')) return false;
   if (el.tabIndex < 0) return false;
   return isRendered(el);
 }

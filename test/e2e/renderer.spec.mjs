@@ -95,6 +95,36 @@ test('observeTokens calls back once per token change, not per root style write',
   expect(seen).toEqual(['dark #ff3b41', 'dark #00ff00']);
 });
 
+test('observeTokens honors AbortSignal both before initialization and after observation', async ({
+  page,
+}) => {
+  await openPage(page, { 'data-theme': 'light' });
+  const calls = await page.evaluate(async () => {
+    const rendererPath = `/renderer/${'index.js'}`;
+    const { observeTokens } = await import(rendererPath);
+    const frames = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const expired = new AbortController();
+    expired.abort();
+    const active = new AbortController();
+    const seen = { expired: [], active: [] };
+    const stopExpired = observeTokens((tokens) => seen.expired.push(tokens.scheme), {
+      signal: expired.signal,
+    });
+    const stopActive = observeTokens((tokens) => seen.active.push(tokens.scheme), {
+      signal: active.signal,
+    });
+    document.documentElement.setAttribute('data-theme', 'dark');
+    await frames();
+    active.abort();
+    document.documentElement.setAttribute('data-theme', 'light');
+    await frames();
+    stopExpired();
+    stopActive();
+    return seen;
+  });
+  expect(calls).toEqual({ expired: [], active: ['dark'] });
+});
+
 test('resolveColor computes var() and color-mix() through the page', async ({ page }) => {
   await openPage(page, { 'data-theme': 'light' });
   const out = await page.evaluate(async () => {

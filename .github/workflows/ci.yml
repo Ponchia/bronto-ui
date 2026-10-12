@@ -8,7 +8,8 @@
 # Pages can deploy from a green commit.
 #
 # This workflow NEVER publishes or creates a release — see release.yml,
-# which is gated on `v*` tags. A push to main does not ship anything.
+# which is gated on `v*` tags. Successful main CI can deploy the website
+# through pages.yml; it does not publish a package to npm.
 name: CI
 
 on:
@@ -66,9 +67,9 @@ jobs:
         run: |
           set -euo pipefail
           if [ "$EVENT" = "pull_request" ]; then
-            files="$(git diff --name-only "$BASE_SHA"...HEAD || true)"
+            files="$(git diff --name-only "$BASE_SHA"...HEAD)" || files=""
           elif [ -n "${BEFORE_SHA:-}" ] && [ "$BEFORE_SHA" != "0000000000000000000000000000000000000000" ]; then
-            files="$(git diff --name-only "$BEFORE_SHA" HEAD || true)"
+            files="$(git diff --name-only "$BEFORE_SHA" HEAD)" || files=""
           else
             files=""   # unknown range → fail safe below
           fi
@@ -83,17 +84,14 @@ jobs:
             nondoc="$(printf '%s\n' "$files" | grep -vE '(\.md$|^LICENSE$)' || true)"
             [ -z "$nondoc" ] && heavy=false
           fi
-          # Engine-sensitive = the change touches rendered CSS, behaviors,
-          # fonts, the docs viewer app shell, or the e2e suite itself — the
-          # surfaces where firefox/webkit can break while chromium stays green
-          # (`:has()`, `color-mix()`, `-webkit-` prefixes …). Drives the
-          # cross-engine pass on pushes to main, so an engine-specific defect
-          # is caught at merge time instead of days later at the release tag
-          # (the exact failure mode that burned v0.6.1/v0.6.2). Same fail-safe
-          # stance: unknown diff → true.
+          # Browser coverage follows the rendered product: runtime modules,
+          # site/demo/example sources, docs app code, shared build/server
+          # scripts, and the workflows/dependencies that execute them. Keep
+          # scripts/ broad so a new rendering helper cannot evade this gate.
+          # Unknown diffs still run every engine.
           engine_sensitive=true
           if [ -n "$files" ]; then
-            engine="$(printf '%s\n' "$files" | grep -E '^(css/|dist/|behaviors/|fonts/|tokens/|test/e2e/|docs/index\.html|playwright\.config\.mjs)' || true)"
+            engine="$(printf '%s\n' "$files" | grep -E '^(css/|dist/|behaviors/|fonts/|tokens/|classes/|glyphs/|annotations/|connectors/|renderer/|site/|demo/|examples/|scripts/|test/e2e/|docs/.*\.(html|css|[cm]?js)$|\.github/workflows/|playwright\.config\.mjs$|package(-lock)?\.json$)' || true)"
             [ -z "$engine" ] && engine_sensitive=false
           fi
           echo "Changed files:"; printf '%s\n' "$files"
@@ -130,7 +128,7 @@ jobs:
 
   # Chromium-only for cheap changes. Risky PRs and pushes to main run the
   # full firefox/webkit pass too when the change touches an engine-sensitive
-  # surface (css/dist/behaviors/fonts/tokens/e2e/docs app) — cross-engine-
+  # surface (runtime, site/demo, shared scripts, or browser build inputs) — cross-engine-
   # only-at-tag-time is how a deterministic WebKit defect merged green and
   # then burned two release attempts (v0.6.1/v0.6.2). Manual workflow_dispatch
   # always runs the cross-engine pass as the any-branch escape hatch.
@@ -166,32 +164,43 @@ jobs:
             --metrics=off \
             .
 
-  # Single aggregating gate — the ONLY required status check on `main`.
-  # Requiring individual matrix legs by name (`examples (qwik-vite)` …) is
-  # fragile: every added/renamed leg needs a manual branch-protection
-  # edit, and a forgotten one silently drops coverage (this is exactly how
-  # qwik-vite and report-static ended up NOT required). This job depends on
-  # the whole matrix, so leg changes never touch branch protection again.
-  # `if: always()` so it still reports when an upstream was skipped
-  # (docs-only) or failed; a skip counts as pass, a real failure does not.
+  # The single required status check on main owns the complete job graph.
+  # A failed classifier must not turn skipped browser jobs into a green gate.
+  # Only a successful docs-only classification may skip examples or e2e.
   ci-gate:
     if: always()
-    needs: [check, examples, e2e]
+    needs: [changes, check, examples, e2e]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Require every CI job to have passed (or been skipped)
+      - name: Enforce required CI results
         env:
+          R_CHANGES: ${{ needs.changes.result }}
+          HEAVY: ${{ needs.changes.outputs.heavy }}
           R_CHECK: ${{ needs.check.result }}
           R_EXAMPLES: ${{ needs.examples.result }}
           R_E2E: ${{ needs.e2e.result }}
         run: |
           set -euo pipefail
-          echo "check=$R_CHECK examples=$R_EXAMPLES e2e=$R_E2E"
-          for r in "$R_CHECK" "$R_EXAMPLES" "$R_E2E"; do
-            if [ "$r" != "success" ] && [ "$r" != "skipped" ]; then
-              echo "::error::a required CI job did not pass (got '$r')"
+          echo "changes=$R_CHANGES heavy=$HEAVY check=$R_CHECK examples=$R_EXAMPLES e2e=$R_E2E"
+          for r in "$R_CHANGES" "$R_CHECK"; do
+            if [ "$r" != "success" ]; then
+              echo "::error::change classification and integrity checks must succeed (got '$r')"
               exit 1
             fi
           done
-          echo "All required CI jobs passed (or were skipped on a docs-only change)."
+          if [ "$HEAVY" != "true" ] && [ "$HEAVY" != "false" ]; then
+            echo "::error::change classification did not produce a valid heavy flag"
+            exit 1
+          fi
+          for r in "$R_EXAMPLES" "$R_E2E"; do
+            if [ "$r" = "success" ]; then
+              continue
+            fi
+            if [ "$HEAVY" = "false" ] && [ "$r" = "skipped" ]; then
+              continue
+            fi
+            echo "::error::a required browser or example job did not pass (got '$r', heavy='$HEAVY')"
+            exit 1
+          done
+          echo "All required CI jobs passed; skips are limited to confirmed docs-only changes."

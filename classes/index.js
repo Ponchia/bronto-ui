@@ -1209,7 +1209,7 @@ const SEVERITY_PARTS = {
 };
 
 export const severity = (level, { part = 'chip' } = {}) => ({
-  class: cls[SEVERITY_PARTS[part] ?? 'severity'],
+  class: cls[valueClass(SEVERITY_PARTS, part) || 'severity'],
   'data-level': SEVERITY_LEVELS.includes(level) ? level : 'unknown',
 });
 

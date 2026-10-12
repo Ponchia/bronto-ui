@@ -31,6 +31,9 @@
 html {
   scroll-behavior: smooth;
 }
+.doc-prose [id] {
+  scroll-margin-top: 6rem;
+}
 body {
   margin: 0;
   min-width: 300px;
@@ -1436,7 +1439,7 @@ a[href='#docs-navigation'] {
     min-height: 68px;
   }
   .site-nav {
-    display: none;
+    display: flex;
     position: absolute;
     left: 0;
     top: 68px;
@@ -1449,6 +1452,21 @@ a[href='#docs-navigation'] {
     align-items: stretch;
     gap: 0;
     box-shadow: 0 16px 20px #0001;
+  }
+  .site-header:has(.site-nav:not([data-enhanced])) {
+    position: static;
+  }
+  .site-header__inner:has(.site-nav:not([data-enhanced])) {
+    flex-wrap: wrap;
+  }
+  .site-nav:not([data-enhanced]) {
+    position: static;
+    order: 3;
+    padding-inline: 0;
+    box-shadow: none;
+  }
+  .site-nav[data-enhanced='true'] {
+    display: none;
   }
   .site-nav[data-open='true'] {
     display: flex;

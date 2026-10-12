@@ -101,7 +101,7 @@ on top of the CSS, none of which require a framework commitment**:
   `import '@ponchia/ui'` in Vite/Astro/SvelteKit). There is no runtime JS at
   the package root — Node/runtime JS imports of `.` are not supported. All JS
   entrypoints are explicit subpaths (`/behaviors`, `/classes`, `/tokens`,
-  `/glyphs`, `/annotations`, `/connectors`, `/skins`, `/charts`, `/mermaid`, `/d2`, `/vega`). This is
+  `/glyphs`, `/annotations`, `/connectors`, `/renderer`, `/skins`, `/charts`, `/mermaid`, `/d2`, `/vega`). This is
   a permanent, intentional contract.
 
 ### Surface admission rule
@@ -135,15 +135,16 @@ generator overwrites them and a drift gate fails CI).
 
 | Path | Kind | Edit here? | Notes |
 | --- | --- | --- | --- |
-| `css/` | source | yes | The framework. Most leaves are hand-authored `@layer bronto` CSS. The palette blocks in `css/tokens.css`, plus `css/skins.css` and `css/dataviz.css`, are generated. `css/generated.css` is authored trust-surface CSS despite its name. |
+| `css/` | source | yes | The framework. Most leaf sources are hand-authored; core imports them into `@layer bronto`, while public direct leaf exports resolve to the layered `dist/css/` builds. The palette blocks in `css/tokens.css`, plus `css/skins.css` and `css/dataviz.css`, are generated. `css/generated.css` is authored trust-surface CSS despite its name. |
 | `tokens/index.js` | source | yes | The single source of truth for token **values** (`cssVars`). |
-| `classes/index.js`, `behaviors/`, `annotations/`, `connectors/`, `glyphs/`, `shiki/` | source · published-subpath (path-frozen) | yes — but **do not move** | Authored ESM shipped as-is; the dir name is the public import path. The `.d.ts` beside them are generated/drift-checked: `connectors`/`annotations`/`behaviors` are emitted from JSDoc by `tsc` (`npm run dts:emit`), `classes`/`tokens`/`glyphs` from the runtime. No leaf `.d.ts` is hand-maintained. |
+| `classes/index.js`, `behaviors/`, `annotations/`, `connectors/`, `renderer/`, `glyphs/`, `shiki/` | source · published-subpath (path-frozen) | yes — but **do not move** | Authored ESM shipped as-is; the dir name is the public import path. The `.d.ts` beside them are generated/drift-checked: `connectors`/`annotations`/`renderer`/`behaviors` are emitted from JSDoc by `tsc` (`npm run dts:emit`), `classes`/`tokens`/`glyphs` from the runtime. No leaf `.d.ts` is hand-maintained. |
 | `schemas/*.schema.json` | source · published schema files (path-frozen) | yes — but **do not move exported files** | Declarative JSON Schema contracts for sidecars/tooling data. Each exported schema file path is public; the directory itself is not a wildcard import. No validator runtime ships. |
 | `dist/` | generated | no | Build of `css/` (`npm run dist:build`); byte-checked by `check:dist`. |
 | `tokens/index.json`, `tokens/resolved.json`, `tokens/tokens.dtcg.json`, `tokens/figma.variables.json`, `tokens/charts.json`, `classes/index.d.ts`, `tokens/index.d.ts`, `tokens/{skins,charts}.d.ts`, `glyphs/glyphs.d.ts`, `classes/vscode.css-custom-data.json`, `docs/reference.md` | generated | no | Committed build artifacts; regenerate with `npm run prepack`, never hand-edit. Drift-checked in `npm run check`. |
-| `fonts/` | vendored | — | The Doto webfont (woff2) + its OFL license. |
+| `fonts/` | vendored | — | Doto, Inter, and JetBrains Mono webfonts with separate OFL notices. Inter and JetBrains Mono CSS declarations are opt-in. |
 | `scripts/` | tooling | yes | `gen-*` regenerate artifacts, `check-*` are the drift/contract gates wired into `npm run check`, plus `build-dist`, `serve`, `size-report`. |
-| `docs/` | source (mostly) | yes | Hand-authored docs + ADRs; the curated subset in `package.json` `files` ships in the tarball. `docs/reference.md` is generated. |
+| `docs/` | source (mostly) | yes | Hand-authored docs + ADRs; the curated subset in `package.json` `files` ships in the tarball. `docs/reference.md`, `docs/package-contract.md`, and `docs/contrast.md` are generated. |
+| `site/` | website source | yes | Public landing page, curated examples, CSS, and screenshots. `site:build` assembles `_site/` from these sources, docs, and the browser runtime; `check:site` validates that artifact. |
 | `demo/`, `test/`, `examples/` | fixtures | yes | The self-driving demo/showcase, the unit + Playwright e2e suite, and consumer example apps built against the packed tarball. |
 | `.github/`, `*.config.mjs`, `.prettierrc`, `.stylelintrc.json`, `tsconfig.json`, `.editorconfig` | config | yes | CI workflows and tool config. |
 | `package.json`, `llms.txt`, `CHANGELOG.md`, `MIGRATIONS.json`, `README.md`, `CONTRIBUTING.md`, `ROADMAP.md`, `LICENSE` | meta | yes | Manifest, the agent entrypoint, the curated changelog, the rename map, and project docs. |
@@ -230,7 +231,7 @@ pointer:
   section need only exist (`## Unreleased — x.y.z` is fine) — only a stable
   release must carry a dated heading.
 - `e2e` — `needs: validate`: Playwright (visual + axe a11y, both themes,
-  demo structural integrity, both themes, cross-engine) in the pinned
+  demo structural integrity, cross-engine) in the pinned
   `mcr.microsoft.com/playwright` container. Local cross-engine reproduction
   without screenshot rasterisation is
   `npm run test:e2e:nonpixel`; use `npm run test:e2e` or
@@ -239,7 +240,8 @@ pointer:
   `npm run test:e2e:visual:container` is the local shortcut for the same
   Chromium screenshot environment.
 - `examples` — `needs: validate`: builds the downstream example
-  apps against the **packed tarball**, mirroring CI. Catches a broken
+  apps against the **packed tarball**, with cross-browser runtime smokes and
+  desktop/mobile screenshot health checks. Catches a broken
   published surface (exports map / missing file / unresolved subpath)
   that `check:pack`'s file-allowlist inspection cannot — so the release
   path runs the same consumer smoke as merge-to-main.

@@ -17,8 +17,8 @@ npm i @ponchia/ui
 
 Per-route CSS splitting is safe: every `@ponchia/ui/css/<leaf>.css`
 export is self-wrapped in `@layer bronto`, so mixing the bundle with
-individual leaves never inverts the cascade (README → "Leaf imports are
-layer-safe").
+individual leaves keeps the same framework layer. See
+[cascade-layer interop](../interop/tailwind.md).
 
 ## 2. No-flash theme (inline, in `app.html`)
 
@@ -54,16 +54,23 @@ navigation, so always return it from `onMount`:
 ```svelte
 <script>
   import { onMount } from 'svelte';
-  import { initThemeToggle, initDialog } from '@ponchia/ui/behaviors';
+  import { initThemeToggle } from '@ponchia/ui/behaviors';
+  let root;
 
   onMount(() => {
-    const stop = [initThemeToggle(), initDialog()];
-    return () => stop.forEach((fn) => fn());
+    return initThemeToggle({ root });
   });
 </script>
+
+<main bind:this={root} class="ui-center ui-stack">
+  <button type="button" class="ui-button" data-bronto-theme-toggle>Toggle theme</button>
+</main>
 ```
 
-`toast()` is callable from any handler — no markup or mount needed.
+Use the same scoped mount/cleanup pattern for other initializers. The snippet
+uses Svelte's supported legacy component syntax, as does the maintained example.
+`toast()` is callable from a client-side event handler and creates its own markup;
+it returns a dismiss function.
 
 ## SSR caveats
 

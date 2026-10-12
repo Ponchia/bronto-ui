@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { shippedDocs } from './lib/shipped-docs.mjs';
 import { npmPackFiles } from './lib/shipped-files.mjs';
 import { log } from './lib/stdio.mjs';
+import { headingSlug } from './lib/doc-anchors.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
@@ -134,40 +135,6 @@ function resolveLocal(sourceRel, linkPath) {
   return { abs: target, rel: normalize(rel) };
 }
 
-function stripInlineHtmlTags(text) {
-  let out = '';
-  let inTag = false;
-  for (const char of text) {
-    if (char === '<') {
-      inTag = true;
-      continue;
-    }
-    if (inTag) {
-      if (char === '>') inTag = false;
-      continue;
-    }
-    out += char;
-  }
-  return out;
-}
-
-function slugFor(text, seen) {
-  let base = stripInlineHtmlTags(text)
-    .trim()
-    .replace(/`([^`]+)`/g, '$1')
-    .replace(/[*_~]/g, '')
-    .replace(/&[a-z0-9#]+;/gi, '')
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}\s-]/gu, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
-  if (!base) base = 'section';
-  const count = seen.get(base) ?? 0;
-  seen.set(base, count + 1);
-  return count === 0 ? base : `${base}-${count}`;
-}
-
 function anchorsFor(abs) {
   if (anchorCache.has(abs)) return anchorCache.get(abs);
   const anchors = new Set();
@@ -181,10 +148,10 @@ function anchorsFor(abs) {
   for (const m of text.matchAll(EXPLICIT_ID)) anchors.add(m[1]);
 
   if (ext === '.md') {
-    const seen = new Map();
+    const seen = new Set();
     for (const line of stripCodeBlocks(text).split('\n')) {
       const m = HEADING.exec(line);
-      if (m) anchors.add(slugFor(m[2], seen));
+      if (m) anchors.add(headingSlug(m[2], seen));
     }
   }
 

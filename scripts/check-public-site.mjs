@@ -1,5 +1,5 @@
 /** Verify the *assembled* Pages artifact, not only files in the repo. */
-import { mkdtemp, rm, readFile, readdir, stat } from 'node:fs/promises';
+import { mkdtemp, rm, readFile, stat } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve, join, dirname, extname, relative } from 'node:path';
@@ -61,19 +61,44 @@ async function checkModule(path) {
     await checkModule(rel);
   }
 }
+const anchorCache = new Map();
+let verifiedFragments = 0;
+async function checkFragment(target, hash, path, source) {
+  if (!hash || !/\.html?$/.test(target)) return;
+  let ids = anchorCache.get(target);
+  if (!ids) {
+    const parsed = new JSDOM(await readFile(target, 'utf8'));
+    ids = new Set(
+      [...parsed.window.document.querySelectorAll('[id], a[name]')].map(
+        (element) => element.id || element.getAttribute('name'),
+      ),
+    );
+    parsed.window.close();
+    anchorCache.set(target, ids);
+  }
+  assert(ids.has(decodeURIComponent(hash)), `Broken section link in ${path}: ${source}`);
+  verifiedFragments += 1;
+}
 async function checkLocalResource(path, source) {
-  if (/^(?:https?:|data:|mailto:|tel:|javascript:|#)/i.test(source)) return;
-  const target = source.split(/[?#]/)[0];
-  if (!target || target.startsWith('/')) return; // Origin-absolute URLs are intentionally not used for site navigation.
-  const resolved = resolve(dirname(join(built, path)), decodeURIComponent(target));
+  if (/^(?:https?:|data:|mailto:|tel:)/i.test(source)) return;
+  assert(!/^(?:javascript:|vbscript:)/i.test(source), `Executable URL in ${path}: ${source}`);
+  const [withoutHash, hash] = source.split('#');
+  const target = withoutHash.split('?')[0];
+  assert(
+    !target.startsWith('/'),
+    `Origin-absolute resource breaks Pages subpaths in ${path}: ${source}`,
+  );
+  let resolved = target
+    ? resolve(dirname(join(built, path)), decodeURIComponent(target))
+    : join(built, path);
   const suffix = relative(built, resolved).replaceAll('\\', '/');
   assert(!suffix.startsWith('..'), `Resource escapes Pages root in ${path}: ${source}`);
-  if (suffix.endsWith('/') || (existsSync(resolved) && (await stat(resolved)).isDirectory())) {
-    assert(existsSync(join(resolved, 'index.html')), `Missing index for ${path}: ${source}`);
-  } else {
-    assert(existsSync(resolved), `Broken HTML asset/link in ${path}: ${source}`);
-  }
+  assert(existsSync(resolved), `Broken HTML asset/link in ${path}: ${source}`);
+  if ((await stat(resolved)).isDirectory()) resolved = join(resolved, 'index.html');
+  assert(existsSync(resolved), `Missing index for ${path}: ${source}`);
+  await checkFragment(resolved, hash, path, source);
 }
+
 try {
   const build = spawnSync(process.execPath, ['scripts/build-public-site.mjs', built], {
     cwd: repo,
@@ -201,8 +226,20 @@ try {
     assert(active, 'Current documentation page is not identified in sidebar: ' + doc.url);
     const activeGroup = active.closest('details.docs-nav-group');
     assert(activeGroup?.open, 'Current documentation category is collapsed: ' + doc.url);
-    for (const link of parsed.window.document.querySelectorAll('a[href]')) {
-      await checkLocalResource(doc.url, link.getAttribute('href'));
+    const headings = [
+      ...parsed.window.document.querySelectorAll('.doc-prose :is(h1,h2,h3,h4,h5,h6)'),
+    ];
+    assert(
+      headings.every((heading) => heading.id),
+      'Documentation headings need shareable IDs: ' + doc.url,
+    );
+    assert.equal(
+      new Set(headings.map((heading) => heading.id)).size,
+      headings.length,
+      'Duplicate heading IDs: ' + doc.url,
+    );
+    for (const link of parsed.window.document.querySelectorAll('[href],[src]')) {
+      await checkLocalResource(doc.url, link.getAttribute('href') || link.getAttribute('src'));
       verifiedDocLinks += 1;
     }
     parsed.window.close();
@@ -259,7 +296,7 @@ try {
   );
   assert(sitemap.includes('examples/operations/'), 'Examples missing from sitemap');
   console.log(
-    `✓ Public Pages: ${pages.length} critical HTML pages, ${checked.size} JS modules, ${docs.length} searchable docs, documentation links, component catalog and assets present`,
+    `✓ Public Pages: ${pages.length} critical HTML pages, ${checked.size} JS modules, ${docs.length} searchable docs, ${verifiedFragments} section links, component catalog and assets present`,
   );
 } finally {
   await rm(temp, { recursive: true, force: true });

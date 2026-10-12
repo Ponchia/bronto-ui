@@ -16,7 +16,7 @@
 3. Run `npm run size:report` and call out any intentional payload increase in
    the changelog.
 4. Run `npm run test:examples` to build the packed example matrix from the
-   tarball, not a workspace link. When framework binding, browser behavior, or
+   tarball, not a workspace link. When framework lifecycle, browser behavior, or
    smoke coverage changed, also run `npm run test:examples:cross-browser`.
    When example visual composition changed, run `npm run test:examples:visual`
    as the local-safe packed-example desktop + mobile screenshot/layout health
@@ -24,10 +24,13 @@
 
 ## Publish
 
-1. Land the release commit on `main`.
+1. Land the release commit on `main` through the protected PR workflow, with
+   `ci-gate` green and the branch up to date.
 2. Push a `vX.Y.Z` tag. Stable tags publish to `latest`; prerelease tags publish
    to `next`.
 3. Wait for `validate`, `e2e`, `examples`, and `publish-preflight` to pass.
+   Release examples include Chromium, Firefox, WebKit, and desktop/mobile
+   screenshot health checks.
 4. Review the `publish-preflight` job summary: generated size report and pack
    manifest.
 5. Approve the protected `npm-publish` environment only after the gates and
@@ -45,7 +48,7 @@
    `latest` / `next`.
 3. Confirm the GitHub Release body is the curated changelog section.
 4. Run one clean consumer install if the release touched exports, package files,
-   bindings, glyphs, or docs shipped in the tarball.
+   behavior lifecycles, glyphs, or docs shipped in the tarball.
 
 ## Rollback
 

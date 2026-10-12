@@ -6,8 +6,9 @@ consumer gets it under `node_modules/@ponchia/ui/docs/`. A navigable static docu
 published at [Bronto UI documentation](https://ponchia.github.io/bronto-ui/docs/).
 The original Markdown remains available for offline agents and direct reading.
 
-> New to the repo? Start with **[architecture.md → Repository layout](./architecture.md#repository-layout)**
-> for what each top-level directory is and which files are generated.
+> New to Bronto UI? Start with the [first-component tutorial](./getting-started/first-component.md).
+> Contributing? Use the [repository map](./repository-map.md) to find authored
+> sources, generated artifacts, and the checks for your change.
 
 > Upgrading? Start with [`MIGRATIONS.json`](../MIGRATIONS.json) for
 > machine-readable rename rules, then use [`migrations/`](./migrations/) for
@@ -15,14 +16,18 @@ The original Markdown remains available for offline agents and direct reading.
 
 ## Start here
 
-- **App or service shell** — start with the README quick start, then
-  [usage.md](./usage.md) and the matching framework guide.
-- **Report, audit, or provenance UI** — start with
-  [frontier-primitives.md](./frontier-primitives.md),
-  [reporting.md](./reporting.md), [sources.md](./sources.md), and
-  [generated.md](./generated.md).
+| Goal | Guide |
+| --- | --- |
+| Build a first page | [First component](./getting-started/first-component.md), then [integration](./integration.md) for your framework |
+| Choose classes and patterns | [Usage](./usage.md), [compositions](./compositions.md), and the generated [reference](./reference.md) |
+| Build a report, audit, or provenance view | [Reporting cookbook](./reporting.md), [sources](./sources.md), and [generated content](./generated.md) |
+| Change a theme | [Theming](./theming.md) and [contrast evidence](./contrast.md) |
+| Upgrade a consumer | [Upgrade checklist](./getting-started/upgrade.md) and [stability contract](./stability.md) |
+| Understand project direction | [Frontier primitives](./frontier-primitives.md) and [architecture](./architecture.md) |
 
-- [compositions.md](./compositions.md) — service, inspector, and decision-report recipes.
+The core stylesheet is sufficient for ordinary styled markup. Persistence and
+interactive behaviors need explicit JavaScript initialization; report,
+analytical, workbench, and command styles are separate opt-in imports.
 
 ## Getting started (frameworks)
 
@@ -101,14 +106,14 @@ The original Markdown remains available for offline agents and direct reading.
 - [adr/0001-color-system.md](./adr/0001-color-system.md) — the five-tier color constitution.
 - [adr/0002-scope-and-2026-baseline.md](./adr/0002-scope-and-2026-baseline.md) — scope, the 2026 browser floor, and CSS-native motion.
 - [adr/0003-theme-model.md](./adr/0003-theme-model.md) — the binary base × one-knob × orthogonal-axes theme model.
-- [adr/0004-prune-unused-adapters.md](./adr/0004-prune-unused-adapters.md) — deprecate unadopted framework adapters and the controlled-modal path.
+- [adr/0004-prune-unused-adapters.md](./adr/0004-prune-unused-adapters.md) — the framework adapter and controlled-modal removals implemented in 0.10.
+- [adr/0005-productive-tools-and-editorial-reports.md](./adr/0005-productive-tools-and-editorial-reports.md) — productive tools and editorial reports.
 - [adr/0006-trusted-publishing.md](./adr/0006-trusted-publishing.md) — publish to npm by OIDC, with no stored credential.
 
 ## Migrations
 
 - [migrations/0.2-to-0.3.md](./migrations/0.2-to-0.3.md) · [migrations/0.3-to-0.4.md](./migrations/0.3-to-0.4.md) · [migrations/0.4-to-0.5.md](./migrations/0.4-to-0.5.md) · [migrations/0.5-to-0.6.md](./migrations/0.5-to-0.6.md) · [migrations/0.6-to-0.7.md](./migrations/0.6-to-0.7.md) · [migrations/0.7-to-0.8.md](./migrations/0.7-to-0.8.md) · [migrations/0.8-to-0.9.md](./migrations/0.8-to-0.9.md)
 
-- [ADR-0005](./adr/0005-productive-tools-and-editorial-reports.md) — productive tools and editorial reports.
 - [0.9 to 0.10](./migrations/0.9-to-0.10.md) — coordinated visual and API migration.
 
 - [0.10 to 0.11](./migrations/0.10-to-0.11.md) — narrow-container layouts and consumer typography roles.

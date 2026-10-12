@@ -3,6 +3,14 @@
 Status: accepted · 2026-06-01 · sets the project's category, browser floor, and
 the line between "ours" and "the consumer's framework"
 
+> **Current reading (2026-10-12):** this record preserves the original scope
+> decision. The framework adapters described below were removed in 0.10;
+> current integration uses vanilla behavior lifecycles. APCA is advisory,
+> while declared WCAG contrast floors are enforced. The browser floor remains
+> project policy; it does not imply identical motion support in all engines.
+> See [integration](https://github.com/Ponchia/bronto-ui/blob/main/docs/integration.md),
+> [stability](../stability.md), and [contrast](../contrast.md) for current contracts.
+
 ## Context
 
 The 2026 "UI framework" bar is often framed around **application/runtime**
@@ -68,7 +76,7 @@ because the modern platform makes it declarative:
   OKLCH / `light-dark()` / P3 work flagged in ADR-0001.
 
 ### Browser floor — deliberately modern
-Floor raised to **Chrome/Edge 125+, Safari 18+, Firefox 129+** (early–mid 2025)
+Floor raised to **Chrome/Edge 125+, Safari 18+, Firefox 129+**
 to build on `@starting-style`, `allow-discrete`, `oklch()`/relative color, and
 `light-dark()` natively. Greenfield stance: **no fallbacks below the floor**;
 not-yet-cross-engine features are enhancement-only. (Acceptable precisely because

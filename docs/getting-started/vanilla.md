@@ -23,8 +23,10 @@ subpaths such as `@ponchia/ui/behaviors`.
 
 ## Plain HTML, no bundler
 
-`@ponchia/ui` ships a single flattened stylesheet. Point at it from
-`node_modules` (or your CDN of choice):
+`@ponchia/ui` ships a flattened default stylesheet. Serve the package from a
+local HTTP server and point at its files, or use the CDN recipe below. The local
+recipe assumes your server exposes `/node_modules/@ponchia/ui/`; that path is
+not automatically available on a deployed site.
 
 ```html
 <head>
@@ -106,11 +108,11 @@ release can't shift under you.
 
 ## Theme without the module
 
-If you don't want the behaviors module at all, the inline script above
-is the entire theme story for a fixed theme. To let users toggle it,
-either pull in `initThemeToggle()` or write the 3-line localStorage
-toggle yourself — the contract is just `localStorage['bronto-theme'] =
-'light' | 'dark'` and `<html data-theme>`.
+Without an explicit `data-theme`, CSS follows the operating-system preference.
+A fixed `<html data-theme="light">` or `"dark"` needs no JavaScript. The inline
+script restores a previously stored choice. For a user-facing switch,
+`initThemeToggle()` also persists the choice, reflects `aria-pressed`, and emits
+`bronto:themechange`; retain those behaviors if you implement a custom control.
 
 ## Notes
 
