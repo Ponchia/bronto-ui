@@ -207,22 +207,30 @@ for (const width of [320, 390, 760]) {
   });
 }
 
-test('service works inside the public preview without navigating the outer page', async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.goto('/_site/examples/operations/');
-  const frame = page.frameLocator('.iframe-frame iframe');
-  await expect(frame.locator('html')).toHaveAttribute('data-demo-ready', '1');
-  await frame.locator('.ui-app-nav a[href="#settings"]').click();
-  await expect(frame.locator('h1')).toHaveText('Settings');
-  await expect(page).toHaveURL(/\/examples\/operations\/$/);
-  await frame.locator('.ui-app-nav a[href="#jobs"]').click();
-  await frame.getByRole('button', { name: 'New job', exact: true }).click();
-  await expect(frame.getByRole('dialog')).toBeVisible();
-  await frame.getByRole('button', { name: 'Cancel', exact: true }).click();
-  await expect(frame.getByRole('dialog')).toBeHidden();
-});
+for (const motion of ['no-preference', 'reduce']) {
+  test(`service works inside the public preview without navigating the outer page (${motion})`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: motion });
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('/_site/examples/operations/');
+    const frame = page.frameLocator('.iframe-frame iframe');
+    await expect(frame.locator('html')).toHaveAttribute('data-demo-ready', '1');
+    await frame.locator('.ui-app-nav a[href="#settings"]').click();
+    await expect(frame.locator('h1')).toHaveText('Settings');
+    await expect(page).toHaveURL(/\/examples\/operations\/$/);
+    await frame.locator('.ui-app-nav a[href="#jobs"]').click();
+    await frame.getByRole('button', { name: 'New job', exact: true }).click();
+    await expect(frame.getByRole('dialog')).toBeVisible();
+    const workingFrame = await page.locator('.iframe-frame iframe').boundingBox();
+    const header = await page.locator('.site-header').boundingBox();
+    expect(workingFrame.y).toBeGreaterThanOrEqual(header.y + header.height);
+    expect(workingFrame.y + workingFrame.height).toBeLessThanOrEqual(1000);
+
+    await frame.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expect(frame.getByRole('dialog')).toBeHidden();
+  });
+}
 
 test('service empty-state creation returns focus to a visible control', async ({ page }) => {
   await openService(page);

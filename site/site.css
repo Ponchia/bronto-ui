@@ -1757,3 +1757,11 @@ a[href='#docs-navigation'] {
 .code-showcase__note a:hover {
   color: #fa6d76;
 }
+
+/* A live iframe can move focus without a parent-page click. Animated ancestor
+   scrolling makes its pointer targets move after hit testing in Firefox. Keep
+   the example page's scroll positioning immediate; demo motion stays enabled. */
+html:has(.iframe-frame iframe) {
+  scroll-behavior: auto;
+  scroll-padding-block-start: 6rem;
+}

@@ -14,8 +14,9 @@
   and the documented modal header/body/footer composition. Integrations and
   Settings now have distinct content; the latter applies tab-local theme and
   density preferences. Added interaction and geometric regression coverage for
-  embedded and mobile views. The example viewer keeps interacted-with iframes
-  within the usable viewport so dialog actions do not fall below the outer page.
+  embedded and mobile views. The example viewer reveals a native dialog’s iframe
+  without animated ancestor scrolling, so actions stay visible and pointer targets
+  remain stable in Firefox as well as Chromium and WebKit.
 
 ## 0.16.2 — 2026-10-13
 
