@@ -7,6 +7,8 @@
 
 ## 0.16.2 — 2026-10-13
 
+- Fix public homepage hero headline min-content overflow at 320px by scaling its type only below 340px; add a generated-site responsive test against the usable scrollport and hero bounds. Reproduced by independent Bronto Layout first-party auditing (Ponchia/bronto-ui#248).
+
 ### Fixed
 
 - Comboboxes and command palettes preserve IME composition, native editing

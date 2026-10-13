@@ -1706,6 +1706,13 @@ a[href='#docs-navigation'] {
     min-height: 210px;
   }
 }
+/* On narrow mobile viewports the unbroken hero word otherwise imposes a
+   min-content width wider than the usable scrollport with classic scrollbars. */
+@media (max-width: 340px) {
+  .hero-copy h1 {
+    font-size: clamp(2.85rem, 13.8vw, 3.1rem);
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

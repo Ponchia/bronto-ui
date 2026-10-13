@@ -39,6 +39,41 @@ async function applyLayoutTheme(page, theme) {
   }, theme);
 }
 
+// The product homepage is a separate generated public site, not a /demo/
+// fixture. Its single-word hero headline previously imposed a grid min-content
+// width beyond the usable CSS scrollport at 320px. Using innerWidth alone
+// would miss the 3px overflow when Chromium reserves a 10px vertical scrollbar.
+test('public homepage hero fits the usable narrow viewport', async ({ page }) => {
+  await page.goto('/_site/', { waitUntil: 'networkidle' });
+  await page.evaluate(() => document.fonts.ready);
+  for (const width of [320, 330, 340, 341, 375, 768]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.evaluate(
+      () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+    );
+    const geometry = await page.evaluate(() => {
+      const root = document.documentElement;
+      const hero = document.querySelector('.hero');
+      const title = document.querySelector('#hero-title');
+      if (!hero || !title) throw new Error('Generated public homepage hero is missing');
+      return {
+        documentWidth: Math.max(root.scrollWidth, document.body?.scrollWidth ?? 0),
+        usableWidth: root.clientWidth || window.innerWidth,
+        heroRight: hero.getBoundingClientRect().right,
+        titleRight: title.getBoundingClientRect().right,
+      };
+    });
+    expect(
+      geometry.documentWidth,
+      'homepage ' + width + 'px: document overflow',
+    ).toBeLessThanOrEqual(geometry.usableWidth + 1);
+    expect(
+      geometry.titleRight,
+      'homepage ' + width + 'px: hero heading escapes its container',
+    ).toBeLessThanOrEqual(geometry.heroRight + 1);
+  }
+});
+
 // ---------------------------------------------------------------------------
 // 1. PAGE-OVERFLOW SWEEP — highest-value assertion: a component-heavy page
 //    must not introduce a horizontal page scrollbar on a phone. Each leaf
