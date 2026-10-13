@@ -28,6 +28,10 @@ test('reusable layout workflow only runs once per normal PR/push', () => {
   }
   assert.match(layout, /CHROME_PATH: \/usr\/bin\/google-chrome/);
   assert.match(layout, /doctor --verify-launch --json/);
+  assert.ok(
+    layout.includes('group: bronto-layout-${{ github.event_name }}-${{ github.ref }}'),
+    'Manual dispatch must not cancel a required layout run on the same ref',
+  );
   assert.ok(!layout.includes('BRONTO_CHROME_NO_SANDBOX=1'));
   assert.ok(layout.includes('demo-toolbar-aligns-with-job-panel'));
 });

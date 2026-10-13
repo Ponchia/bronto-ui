@@ -11,7 +11,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: bronto-layout-${{ github.ref }}
+  # Manual dispatch must never cancel a required PR/main layout run.
+  group: bronto-layout-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
