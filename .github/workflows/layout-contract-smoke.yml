@@ -73,13 +73,18 @@ jobs:
           node .bronto-layout-cli/bin/bronto-layout.mjs validate --spec test/layout/operations.json
 
       - name: Verify sandboxed browser and exercise website contracts
-        # No BRONTO_CHROME_NO_SANDBOX, --no-sandbox, untrusted external URLs,
-        # or user-input workflow parameters. A failing sandbox preflight must
-        # fail this experimental check, not silently weaken isolation.
+        # The Ubuntu runner also has a development Chromium binary which
+        # aborted in its ZygoteHost sandbox preflight. Prefer installed stable
+        # Google Chrome before considering *any* browser isolation change.
+        # No BRONTO_CHROME_NO_SANDBOX, --no-sandbox, external target URL,
+        # or untrusted workflow parameter; fail if sandboxed startup fails.
         shell: bash
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
         run: |
           set -euo pipefail
-          command -v google-chrome || command -v chromium
+          test -x "$CHROME_PATH"
+          "$CHROME_PATH" --version
           node .bronto-layout-cli/bin/bronto-layout.mjs doctor --verify-launch --json
 
           python3 -m http.server 18775 --bind 127.0.0.1 --directory _site > "$RUNNER_TEMP/bronto-site-http.log" 2>&1 &

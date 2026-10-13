@@ -29,6 +29,7 @@ test('layout workflow pins toolchain, sandbox and fixed localhost targets', () =
   assert.match(workflow, /ref: 9b39ed8586f5fff3c1d47d0ec1a141fd9790b2fd/);
   assert.match(workflow, /contents: read/);
   assert.match(workflow, /doctor --verify-launch --json/);
+  assert.match(workflow, /CHROME_PATH: \/usr\/bin\/google-chrome/);
   assert.match(workflow, /--spec test\/layout\/home\.json/);
   assert.match(workflow, /--spec test\/layout\/operations\.json/);
   for (const line of workflow.split('\n')) {

@@ -24,7 +24,7 @@ It restores generated CSS afterward; tracked BrontoUI source files are never
 modified. This is a controlled mutation fixture and must not be counted as
 independent real-world accuracy evidence.
 
-CI launches Chrome **with its default sandbox** on a disposable GitHub runner.
+CI explicitly selects the installed **stable Google Chrome** binary rather than\nthe preinstalled development Chromium binary, and attempts startup with its\n**default sandbox** on a disposable GitHub runner.
 It never accepts an arbitrary URL or untrusted workflow parameter, never
 uses `--no-sandbox`, and never uploads raw screenshots. If the sandboxed browser
 cannot start, the check fails and needs investigation rather than bypass.
