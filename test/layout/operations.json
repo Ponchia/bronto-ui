@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "url": "http://127.0.0.1:18775/examples/operations/",
+  "widths": [320, 375, 768, 1280],
+  "selectors": {
+    "header": ".site-header",
+    "main": "#main",
+    "intro": ".page-intro",
+    "frame": ".iframe-frame"
+  },
+  "rules": [
+    {
+      "id": "document-does-not-overflow",
+      "type": "document-overflow",
+      "tolerance": 2
+    },
+    {
+      "id": "site-header-exists",
+      "type": "selector-count",
+      "element": "header",
+      "exactly": 1
+    },
+    {
+      "id": "main-exists",
+      "type": "selector-count",
+      "element": "main",
+      "exactly": 1
+    },
+    {
+      "id": "intro-exists",
+      "type": "selector-count",
+      "element": "intro",
+      "exactly": 1
+    },
+    {
+      "id": "frame-shell-exists",
+      "type": "selector-count",
+      "element": "frame",
+      "exactly": 1
+    },
+    {
+      "id": "frame-shell-fits-horizontally",
+      "type": "contained",
+      "element": "frame",
+      "in": "viewport",
+      "axis": "x",
+      "tolerance": 2
+    },
+    {
+      "id": "header-fits-horizontally",
+      "type": "contained",
+      "element": "header",
+      "in": "viewport",
+      "axis": "x",
+      "tolerance": 2
+    }
+  ]
+}
