@@ -805,6 +805,8 @@ summary:focus-visible {
   height: 680px;
   border: 0;
   background: #fff;
+  /* Reserve room for the sticky site header and frame chrome. */
+  max-height: calc(100svh - 10rem);
 }
 /* A responsive screenshot links to the full demo on narrow screens.
    On desktop the actual interactive embedded fixture remains visible. */

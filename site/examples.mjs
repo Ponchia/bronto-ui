@@ -11,9 +11,9 @@ export const examples = [
     image: 'operations.jpg',
     demo: 'service.html',
     docs: 'usage.html',
-    source: ['demo/service.html', 'demo/service.js'],
+    source: ['demo/service.html', 'demo/service.css', 'demo/service.js'],
     implementation:
-      'Uses the standard Bronto UI app shell, metric and table classes, plus a short local script that changes demo states. Sample job data belongs to the fixture; the library does not supply an API or backend.',
+      'Uses the standard Bronto UI app shell, metric and table classes, with a small host stylesheet and local script for navigation, filters, job creation and appearance settings. Sample job data belongs to the fixture; the library does not supply an API or backend.',
     accent: 'A functioning interface, not just a collection of buttons.',
   },
   {

@@ -4,24 +4,23 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="data:," />
-    <title>@ponchia/ui — service app shell</title>
+    <title>Service overview · Bronto Ops</title>
     <meta
       name="description"
-      content="A cross-service app shell specimen for @ponchia/ui: navigation, metrics, workflow table, filters and account identity."
+      content="A working Bronto UI service dashboard: accessible navigation, aligned filters, job creation, integrations and appearance settings. All data is local sample data."
     />
     <link rel="stylesheet" href="../dist/bronto.css" />
     <link rel="stylesheet" href="../dist/css/state.css" />
-    <style>
-      [data-service-hidden][hidden] {
-        display: none;
-      }
-    </style>
+    <link rel="stylesheet" href="./service.css" />
     <script type="module" src="./service.js"></script>
   </head>
-  <body>
-    <div class="ui-app-shell" data-app-shell>
-      <aside class="ui-app-rail" data-app-rail>
-        <span class="ui-app-rail__brand">Bronto Ops</span>
+  <body class="service-demo">
+    <a class="ui-skiplink" href="#app-main">Skip to content</a>
+    <div class="ui-app-shell" data-app-shell="">
+      <aside class="ui-app-rail" data-app-rail="">
+        <a class="ui-app-rail__brand" href="#overview" aria-label="Bronto Ops overview"
+          >Bronto Ops</a
+        >
         <nav class="ui-app-nav" aria-label="Primary">
           <span class="ui-app-nav__section">Workspace</span>
           <a href="#overview" aria-current="page">Overview</a>
@@ -31,43 +30,75 @@
         </nav>
         <div class="ui-app-rail__account">
           <span class="ui-avatar" aria-hidden="true">P</span>
-          <span>
-            <span class="ui-label" style="text-transform: none">Operator</span>
-            <span class="ui-muted">owner@example.test</span>
+          <span class="service-account-copy">
+            <span class="ui-label">Operator</span>
+            <span class="ui-muted" title="owner@example.test">owner@example.test</span>
           </span>
         </div>
       </aside>
 
-      <main class="ui-app-main" data-app-content>
+      <main class="ui-app-main" id="app-main" tabindex="-1" data-app-content="">
         <header class="ui-app-topbar">
-          <h1 class="ui-app-topbar__title">Service overview</h1>
-          <div class="ui-cluster" style="--cluster-gap: var(--space-xs)">
-            <button class="ui-button ui-button--subtle ui-button--sm" type="button" id="sync-jobs">
+          <div class="service-heading">
+            <h1 class="ui-app-topbar__title" tabindex="-1">Service overview</h1>
+            <p class="service-subtitle" id="page-context">Production workspace · Local demo</p>
+          </div>
+          <div class="ui-cluster service-actions" data-service-view="overview jobs">
+            <button
+              class="ui-button ui-button--subtle"
+              type="button"
+              id="sync-jobs"
+              data-service-action=""
+              disabled=""
+            >
               Sync
             </button>
-            <button class="ui-button ui-button--sm" type="button" data-bronto-open="new-job">
+            <button
+              class="ui-button"
+              type="button"
+              data-bronto-open="new-job"
+              data-service-action=""
+              disabled=""
+            >
               New job
             </button>
           </div>
         </header>
 
         <div class="ui-app-content" id="overview">
-          <section class="ui-app-toolbar" aria-label="Service filters">
-            <div class="ui-app-toolbar__group">
-              <label class="ui-field">
-                <span class="ui-label">Environment</span>
-                <select class="ui-select" id="environment">
-                  <option value="production">Production</option>
-                  <option value="staging">Staging</option>
-                </select>
-              </label>
-              <div class="ui-search">
-                <input type="search" placeholder="Search jobs…" aria-label="Search jobs" />
-              </div>
-            </div>
-            <label class="ui-field"
-              ><span class="ui-label">Demo scenario</span>
-              <select class="ui-select" id="scenario">
+          <noscript
+            ><p class="ui-alert">
+              This is a local demo. Section links work without JavaScript; enable it to try filters,
+              job creation and settings.
+            </p></noscript
+          >
+          <section
+            class="ui-app-toolbar service-toolbar"
+            aria-label="Service filters"
+            data-service-view="overview jobs"
+          >
+            <label class="ui-field">
+              <span class="ui-label" id="environment-label">Environment</span>
+              <select
+                class="ui-select"
+                id="environment"
+                aria-labelledby="environment-label"
+                data-service-action=""
+                disabled=""
+              >
+                <option value="production">Production</option>
+                <option value="staging">Staging</option>
+              </select>
+            </label>
+            <label class="ui-field">
+              <span class="ui-label" id="scenario-label">Demo scenario</span>
+              <select
+                class="ui-select"
+                id="scenario"
+                aria-labelledby="scenario-label"
+                data-service-action=""
+                disabled=""
+              >
                 <option value="ready">Ready</option>
                 <option value="loading">Loading</option>
                 <option value="empty">Empty</option>
@@ -75,58 +106,111 @@
                 <option value="stale">Stale</option>
               </select>
             </label>
-            <span class="ui-state ui-state--reviewed" id="freshness">Reviewed 12 min ago</span>
+            <label class="ui-field service-search">
+              <span class="ui-label" id="search-jobs-label">Search jobs</span>
+              <input
+                class="ui-input"
+                type="search"
+                placeholder="Search by job or owner…"
+                data-service-action=""
+                disabled=""
+                aria-labelledby="search-jobs-label"
+              />
+            </label>
           </section>
+
+          <p
+            class="service-notice"
+            id="service-notice"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          ></p>
 
           <section
             class="ui-app-panel"
             aria-labelledby="health-title"
             id="health"
-            data-service-hidden
+            data-service-view="overview"
           >
             <div class="ui-app-panel__head">
               <div>
-                <h2 class="ui-app-panel__title" id="health-title">Health</h2>
-                <p>Current service posture across jobs, integrations and queue state.</p>
+                <h2 class="ui-app-panel__title" id="health-title">Workspace health</h2>
+                <p>Sample workload for <span data-environment-label="">Production</span>.</p>
               </div>
               <span class="ui-badge ui-badge--success" id="health-state">Operational</span>
             </div>
             <div class="ui-statgrid">
               <div class="ui-stat">
-                <span class="ui-stat__label">Active jobs</span>
-                <span class="ui-stat__value">18</span>
-                <span class="ui-delta ui-delta--up">+3 today</span>
+                <span class="ui-stat__label">Active jobs</span
+                ><span class="ui-stat__value" id="active-count">3</span
+                ><span class="ui-delta ui-delta--up" id="active-delta">+1 since prior sample</span>
               </div>
               <div class="ui-stat">
-                <span class="ui-stat__label">Queue delay</span>
-                <span class="ui-stat__value">42s</span>
-                <span class="ui-delta ui-delta--down ui-delta--invert">-11s</span>
+                <span class="ui-stat__label">Queue delay</span
+                ><span class="ui-stat__value" id="queue-delay">42s</span
+                ><span class="ui-delta ui-delta--down ui-delta--invert" id="queue-delta"
+                  >−11s since prior sample</span
+                >
               </div>
               <div class="ui-stat">
-                <span class="ui-stat__label">Integrations</span>
-                <span class="ui-stat__value">7</span>
-                <span class="ui-delta ui-delta--flat">stable</span>
+                <span class="ui-stat__label">Integrations</span><span class="ui-stat__value">3</span
+                ><span class="ui-hint">Illustrative connections</span>
               </div>
             </div>
           </section>
 
-          <section class="ui-app-panel" aria-labelledby="jobs-title" id="jobs" aria-busy="false">
+          <section
+            class="ui-app-panel"
+            aria-labelledby="jobs-title"
+            id="jobs"
+            aria-busy="false"
+            data-service-view="overview jobs"
+          >
             <div class="ui-app-panel__head">
               <div>
                 <h2 class="ui-app-panel__title" id="jobs-title">Recent jobs</h2>
-                <p>The latest runs and their current state.</p>
+                <p id="jobs-description">Six sample runs in this environment.</p>
               </div>
+              <span class="ui-state ui-state--reviewed" id="freshness">Sample data ready</span>
             </div>
-            <p
-              class="ui-empty-state"
-              id="jobs-message"
-              role="status"
-              aria-live="polite"
-              data-service-hidden
-              hidden
-            ></p>
-            <div class="ui-table-wrap" id="job-results" data-service-hidden>
-              <table class="ui-table ui-table--dense">
+            <div class="service-empty ui-stack" id="jobs-empty" hidden="">
+              <p
+                id="jobs-message"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                hidden=""
+              ></p>
+              <button
+                class="ui-button ui-button--subtle"
+                type="button"
+                id="reset-filters"
+                hidden=""
+              >
+                Clear search
+              </button>
+              <button class="ui-button ui-button--subtle" type="button" id="retry-jobs" hidden="">
+                Retry sample load
+              </button>
+              <button
+                class="ui-button"
+                type="button"
+                data-bronto-open="new-job"
+                id="empty-create"
+                hidden=""
+              >
+                Create a sample job
+              </button>
+            </div>
+            <div
+              class="ui-table-wrap"
+              id="job-results"
+              tabindex="0"
+              role="region"
+              aria-label="Recent service jobs"
+            >
+              <table class="ui-table">
                 <caption class="ui-visually-hidden">
                   Recent service jobs
                 </caption>
@@ -139,69 +223,323 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td class="is-key">sync-daily</td>
+                  <tr data-environment="production" data-status="running">
+                    <td class="is-key">
+                      <span class="service-job-name">sync-daily</span
+                      ><span class="service-job-owner">Platform</span>
+                    </td>
                     <td>Platform</td>
                     <td>
-                      <span class="ui-status"
-                        ><span class="ui-dot ui-dot--live"></span> Running</span
+                      <span class="service-job-status"
+                        ><span class="ui-dot ui-dot--live" aria-hidden="true"></span>Running</span
                       >
                     </td>
                     <td class="is-num">03:18</td>
                   </tr>
-                  <tr>
-                    <td class="is-key">index-refresh</td>
-                    <td>Search</td>
-                    <td>
-                      <span class="ui-status"
-                        ><span class="ui-dot ui-dot--warning"></span> Queued</span
-                      >
+                  <tr data-environment="production" data-status="queued">
+                    <td class="is-key">
+                      <span class="service-job-name">invoice-export</span
+                      ><span class="service-job-owner">Finance</span>
                     </td>
-                    <td class="is-num">00:00</td>
-                  </tr>
-                  <tr>
-                    <td class="is-key">invoice-export</td>
                     <td>Finance</td>
                     <td>
-                      <span class="ui-status"
-                        ><span class="ui-dot ui-dot--success"></span> Complete</span
+                      <span class="service-job-status"
+                        ><span class="ui-dot ui-dot--warning" aria-hidden="true"></span>Queued</span
+                      >
+                    </td>
+                    <td class="is-num">—</td>
+                  </tr>
+                  <tr data-environment="production" data-status="queued">
+                    <td class="is-key">
+                      <span class="service-job-name">usage-rollup</span
+                      ><span class="service-job-owner">Analytics</span>
+                    </td>
+                    <td>Analytics</td>
+                    <td>
+                      <span class="service-job-status"
+                        ><span class="ui-dot ui-dot--warning" aria-hidden="true"></span>Queued</span
+                      >
+                    </td>
+                    <td class="is-num">—</td>
+                  </tr>
+                  <tr data-environment="production" data-status="complete">
+                    <td class="is-key">
+                      <span class="service-job-name">backup-verify</span
+                      ><span class="service-job-owner">Platform</span>
+                    </td>
+                    <td>Platform</td>
+                    <td>
+                      <span class="service-job-status"
+                        ><span class="ui-dot ui-dot--success" aria-hidden="true"></span
+                        >Complete</span
+                      >
+                    </td>
+                    <td class="is-num">02:06</td>
+                  </tr>
+                  <tr data-environment="production" data-status="complete">
+                    <td class="is-key">
+                      <span class="service-job-name">events-archive</span
+                      ><span class="service-job-owner">Data</span>
+                    </td>
+                    <td>Data</td>
+                    <td>
+                      <span class="service-job-status"
+                        ><span class="ui-dot ui-dot--success" aria-hidden="true"></span
+                        >Complete</span
+                      >
+                    </td>
+                    <td class="is-num">00:48</td>
+                  </tr>
+                  <tr data-environment="production" data-status="complete">
+                    <td class="is-key">
+                      <span class="service-job-name">report-build</span
+                      ><span class="service-job-owner">Analytics</span>
+                    </td>
+                    <td>Analytics</td>
+                    <td>
+                      <span class="service-job-status"
+                        ><span class="ui-dot ui-dot--success" aria-hidden="true"></span
+                        >Complete</span
                       >
                     </td>
                     <td class="is-num">01:44</td>
                   </tr>
+                  <tr data-environment="staging" data-status="queued" hidden="">
+                    <td class="is-key">
+                      <span class="service-job-name">index-refresh</span
+                      ><span class="service-job-owner">Search</span>
+                    </td>
+                    <td>Search</td>
+                    <td>
+                      <span class="service-job-status"
+                        ><span class="ui-dot ui-dot--warning" aria-hidden="true"></span>Queued</span
+                      >
+                    </td>
+                    <td class="is-num">—</td>
+                  </tr>
+                  <tr data-environment="staging" data-status="complete" hidden="">
+                    <td class="is-key">
+                      <span class="service-job-name">schema-check</span
+                      ><span class="service-job-owner">Platform</span>
+                    </td>
+                    <td>Platform</td>
+                    <td>
+                      <span class="service-job-status"
+                        ><span class="ui-dot ui-dot--success" aria-hidden="true"></span
+                        >Complete</span
+                      >
+                    </td>
+                    <td class="is-num">00:12</td>
+                  </tr>
+                  <tr data-environment="staging" data-status="complete" hidden="">
+                    <td class="is-key">
+                      <span class="service-job-name">search-smoke</span
+                      ><span class="service-job-owner">Search</span>
+                    </td>
+                    <td>Search</td>
+                    <td>
+                      <span class="service-job-status"
+                        ><span class="ui-dot ui-dot--success" aria-hidden="true"></span
+                        >Complete</span
+                      >
+                    </td>
+                    <td class="is-num">00:36</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
+            <div class="service-jobs-footer">
+              <p class="ui-hint service-table-hint">
+                Local examples. New jobs stay in this tab until reload.
+              </p>
+              <a
+                class="ui-button ui-button--subtle ui-button--sm"
+                href="#jobs"
+                data-service-link=""
+                data-service-view="overview"
+                >View all jobs →</a
+              >
+            </div>
           </section>
-          <section class="ui-app-panel" id="integrations" aria-labelledby="integrations-title">
-            <h2 class="ui-app-panel__title" id="integrations-title">Integrations</h2>
-            <p>This local specimen uses sample jobs. It does not connect to an external service.</p>
+
+          <section
+            class="ui-app-panel"
+            id="integrations"
+            aria-labelledby="integrations-title"
+            data-service-view="integrations"
+          >
+            <div class="ui-app-panel__head">
+              <div>
+                <h2 class="ui-app-panel__title" id="integrations-title">Sample connections</h2>
+                <p>
+                  Three common integration patterns. No credentials or external services are used.
+                </p>
+              </div>
+              <span class="ui-badge">Demo only</span>
+            </div>
+            <div class="ui-grid service-integrations">
+              <article class="ui-card">
+                <span class="ui-label">INGESTION</span>
+                <h3>Event stream</h3>
+                <p>Receives the events used by the sample sync jobs.</p>
+                <dl class="service-definition">
+                  <div>
+                    <dt>Transport</dt>
+                    <dd>Webhook</dd>
+                  </div>
+                  <div>
+                    <dt>Mode</dt>
+                    <dd>Local fixture</dd>
+                  </div>
+                </dl>
+              </article>
+              <article class="ui-card">
+                <span class="ui-label">STORAGE</span>
+                <h3>Object storage</h3>
+                <p>Represents the destination for exports and archived reports.</p>
+                <dl class="service-definition">
+                  <div>
+                    <dt>Resource</dt>
+                    <dd>Sample bucket</dd>
+                  </div>
+                  <div>
+                    <dt>Mode</dt>
+                    <dd>Local fixture</dd>
+                  </div>
+                </dl>
+              </article>
+              <article class="ui-card">
+                <span class="ui-label">NOTIFICATIONS</span>
+                <h3>Team alerts</h3>
+                <p>Illustrates how completed jobs could notify an operator.</p>
+                <dl class="service-definition">
+                  <div>
+                    <dt>Channel</dt>
+                    <dd>Operations</dd>
+                  </div>
+                  <div>
+                    <dt>Mode</dt>
+                    <dd>Nothing sent</dd>
+                  </div>
+                </dl>
+              </article>
+            </div>
           </section>
-          <section class="ui-app-panel" id="settings" aria-labelledby="settings-title">
-            <h2 class="ui-app-panel__title" id="settings-title">Settings</h2>
-            <p>
-              Choose a demo scenario to inspect loading, empty, error and stale states. Sync returns
-              to reviewed sample data. New jobs stay in this tab until reload.
-            </p>
+
+          <section
+            class="ui-app-panel"
+            id="settings"
+            aria-labelledby="settings-title"
+            data-service-view="settings"
+          >
+            <div class="ui-app-panel__head">
+              <div>
+                <h2 class="ui-app-panel__title" id="settings-title">Appearance</h2>
+                <p>Try the same dashboard with different theme and spacing tokens.</p>
+              </div>
+            </div>
+            <form class="ui-card ui-stack service-settings" id="preferences-form">
+              <label class="ui-field"
+                ><span class="ui-label" id="theme-label">Theme</span
+                ><select
+                  class="ui-select"
+                  name="theme"
+                  aria-labelledby="theme-label"
+                  aria-describedby="theme-hint"
+                >
+                  <option value="dark">Dark</option>
+                  <option value="light">Light</option></select
+                ><span class="ui-hint" id="theme-hint"
+                  >Applies to the dashboard, controls and dialogs.</span
+                ></label
+              >
+              <label class="ui-field"
+                ><span class="ui-label" id="density-label">Density</span
+                ><select
+                  class="ui-select"
+                  name="density"
+                  aria-labelledby="density-label"
+                  aria-describedby="density-hint"
+                >
+                  <option value="default">Default</option>
+                  <option value="compact">Compact</option>
+                  <option value="roomy">Roomy</option></select
+                ><span class="ui-hint" id="density-hint"
+                  >Changes the shared spacing tokens, not the text size.</span
+                ></label
+              >
+              <div class="service-settings-footer">
+                <p class="ui-hint">Changes apply only to this tab.</p>
+                <div class="ui-cluster">
+                  <button
+                    class="ui-button ui-button--subtle"
+                    type="button"
+                    id="reset-preferences"
+                    data-service-action=""
+                    disabled=""
+                  >
+                    Reset</button
+                  ><button class="ui-button" type="submit" data-service-action="" disabled="">
+                    Save preferences
+                  </button>
+                </div>
+              </div>
+              <p
+                class="service-notice"
+                id="preferences-notice"
+                role="status"
+                aria-live="polite"
+              ></p>
+            </form>
           </section>
         </div>
       </main>
     </div>
-    <dialog class="ui-modal" id="new-job" aria-labelledby="new-job-title">
-      <form class="ui-modal__body" id="new-job-form">
-        <h2 id="new-job-title">Create a sample job</h2>
-        <p>This changes only this specimen. Nothing is scheduled or sent.</p>
+
+    <dialog
+      class="ui-modal"
+      id="new-job"
+      aria-labelledby="new-job-title"
+      aria-describedby="new-job-description"
+    >
+      <header class="ui-modal__head">
+        <h2 class="ui-modal__title" id="new-job-title">Create a sample job</h2>
+        <button
+          class="ui-modal__close"
+          type="button"
+          aria-label="Close job dialog"
+          data-bronto-close=""
+        >
+          ×
+        </button>
+      </header>
+      <form class="ui-modal__body ui-stack" id="new-job-form">
+        <p id="new-job-description">
+          Add a queued job to <strong data-environment-label="">Production</strong>. Nothing is
+          scheduled or sent.
+        </p>
         <label class="ui-field"
-          ><span class="ui-label">Job name</span
-          ><input class="ui-input" name="job" required maxlength="80"
-        /></label>
-        <div class="ui-cluster">
-          <button class="ui-button" type="submit">Create job</button>
-          <button class="ui-button ui-button--subtle" type="button" data-bronto-close>
-            Cancel
-          </button>
-        </div>
+          ><span class="ui-label" id="job-label">Job name</span
+          ><input
+            class="ui-input"
+            name="job"
+            required=""
+            maxlength="80"
+            autocomplete="off"
+            placeholder="e.g. weekly-report"
+            aria-labelledby="job-label"
+            aria-describedby="job-hint"
+            autofocus=""
+          /><span class="ui-hint" id="job-hint"
+            >A unique name for this environment. Up to 80 characters.</span
+          ></label
+        >
       </form>
+      <footer class="ui-modal__foot">
+        <button class="ui-button ui-button--subtle" type="button" data-bronto-close="">
+          Cancel</button
+        ><button class="ui-button" type="submit" form="new-job-form">Create job</button>
+      </footer>
     </dialog>
   </body>
 </html>

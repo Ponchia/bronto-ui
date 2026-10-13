@@ -221,3 +221,29 @@ function redirectLegacyDocHash() {
 }
 window.addEventListener('hashchange', redirectLegacyDocHash);
 redirectLegacyDocHash();
+
+// Keep a same-origin live example's working viewport visible once the visitor
+// interacts. A dialog lives inside its iframe: centering only in that iframe
+// can leave the dialog's actions below the outer page's viewport. Do not move
+// the page on load, or during pointerdown (which would move a click's target).
+for (const frame of document.querySelectorAll('.iframe-frame iframe')) {
+  const bound = new WeakSet();
+  const bind = () => {
+    const child = frame.contentDocument;
+    if (!child || bound.has(child)) return;
+    bound.add(child);
+    const reveal = () => {
+      const rect = frame.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const top =
+        (document.querySelector('.site-header')?.getBoundingClientRect().bottom || 0) + 16;
+      if (rect.top < top || rect.bottom > innerHeight - 16) {
+        window.scrollBy({ top: rect.top - top, behavior: 'instant' });
+      }
+    };
+    child.addEventListener('click', reveal);
+    child.addEventListener('keyup', reveal);
+  };
+  frame.addEventListener('load', bind);
+  bind();
+}

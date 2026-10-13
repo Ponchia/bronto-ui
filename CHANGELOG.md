@@ -5,6 +5,18 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased
+
+### Fixed
+
+- Rebuilt the service dashboard reference with working current-view navigation,
+  aligned labeled filters, readable account identity, consistent job creation,
+  and the documented modal header/body/footer composition. Integrations and
+  Settings now have distinct content; the latter applies tab-local theme and
+  density preferences. Added interaction and geometric regression coverage for
+  embedded and mobile views. The example viewer keeps interacted-with iframes
+  within the usable viewport so dialog actions do not fall below the outer page.
+
 ## 0.16.2 — 2026-10-13
 
 - Fix public homepage hero headline min-content overflow at 320px by scaling its type only below 340px; add a generated-site responsive test against the usable scrollport and hero bounds. Reproduced by independent Bronto Layout first-party auditing (Ponchia/bronto-ui#248).

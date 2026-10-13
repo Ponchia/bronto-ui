@@ -494,6 +494,37 @@ Service composition checklist:
 - Reach for opt-in `workbench.css` only when the service needs panes,
   inspectors, or selected-object bulk actions.
 
+### Working dashboard composition
+
+The [service dashboard demo](https://ponchia.github.io/bronto-ui/demo/service.html)
+uses these components together. Its Overview, Jobs, Integrations, and Settings
+links change the current view, page title, and `aria-current`; direct links and
+browser history work too. That routing is host code in `demo/service.js`, not
+behavior supplied by the CSS framework. With JavaScript disabled, the same
+links remain ordinary document-section links.
+
+Compose every toolbar control inside a `ui-field`, including search, so labels
+and control edges align. A small host grid owns the toolbar's column proportions
+and its narrow-screen reflow. The account slot uses a shrinkable text column
+with single-line ellipsis instead of breaking an identifier mid-word.
+
+Use the modal's actual parts rather than placing an ordinary page heading and
+unspaced buttons inside its body: `ui-modal__head` with `ui-modal__title`, a
+`ui-modal__body ui-stack` form, then `ui-modal__foot`. The footer's submit button
+can target the body form through the native `form` attribute. This keeps a
+consistent title scale, separates actions from the input's focus ring, and lets
+the body scroll while the actions remain reachable.
+
+On phones, job ownership appears beneath the job name rather than compressing
+four columns into unreadable fragments. The overview shows four recent jobs;
+the Jobs destination shows the full sample list.
+
+The sample script filters by environment and job/owner text, creates consistently
+styled local rows, updates their counts, and applies tab-local appearance
+preferences. It performs no external requests or scheduled work. The accompanying
+`demo/service.css` contains host layout only; component colors, control styles,
+modal parts, and focus behavior still come from the package.
+
 ## Menus: `data-bronto-menu` + `initMenu`
 
 A dropdown menu is a native `<details data-bronto-menu>` styled as
