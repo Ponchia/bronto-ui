@@ -508,6 +508,11 @@ and control edges align. A small host grid owns the toolbar's column proportions
 and its narrow-screen reflow. The account slot uses a shrinkable text column
 with single-line ellipsis instead of breaking an identifier mid-word.
 
+For readable transitions, the modal content stays opaque while its position
+moves subtly and the separate backdrop fades. This prevents a temporary
+foreground/background contrast loss during entrance or exit; the
+`prefers-reduced-motion` preference disables the motion altogether.
+
 Use the modal's actual parts rather than placing an ordinary page heading and
 unspaced buttons inside its body: `ui-modal__head` with `ui-modal__title`, a
 `ui-modal__body ui-stack` form, then `ui-modal__foot`. The footer's submit button
