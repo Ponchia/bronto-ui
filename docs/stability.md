@@ -5,7 +5,7 @@ patches are non-breaking. In practical terms: **PATCH releases (`0.16.x`) are
 non-breaking bug fixes and additive changes;
 MINOR releases (`0.x.0`) may include breaking changes and consumers should
 review the CHANGELOG before upgrading.** Specify a concrete minor, for example
-`~0.16.1` or `^0.16.1`, to accept patches below `0.17.0`. Do not use literal
+`~0.16.2` or `^0.16.2`, to accept patches below `0.17.0`. Do not use literal
 `~0.x` or `^0.x`: the wildcard minor permits upgrades across the `0.x` line.
 See [npm's range syntax](https://github.com/npm/node-semver#advanced-range-syntax).
 This policy holds until `1.0.0` is tagged. Visual tuning and consumer-specific overrides still

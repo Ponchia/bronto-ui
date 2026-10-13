@@ -530,7 +530,7 @@ controlled-modal path is covered by the [0.10 migration](migrations/0.9-to-0.10.
 With `data-bronto-dialog-light`, only clicks outside the dialog's border box
 count as backdrop clicks; its padding stays safe to click. `initDialog()` leaves
 clicks that a host handler has already canceled with `preventDefault()` alone.
-These refinements were added after 0.16.1; see the [changelog](../CHANGELOG.md).
+These refinements are available since 0.16.2; see the [changelog](../CHANGELOG.md).
 
 ## Carousel & lightbox: one primitive, two skins
 
@@ -709,7 +709,7 @@ authoring engine.
   the input while the `bronto:change` event carries the option's `data-value`
   code — so put the human label in the `<li>` text and the code in `data-value`.
   The `.ui-combobox__empty` ("No matches") is hidden until a filter empties the
-  list. The following refinements were added after 0.16.1
+  list. The following refinements are available since 0.16.2
   ([changelog](../CHANGELOG.md)): the empty state hides again when the popup
   closes. Live lists keep unique generated
   option IDs when rows are prepended, replaced, or reused; removed rows regain

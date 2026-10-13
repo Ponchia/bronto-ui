@@ -221,7 +221,8 @@ what it replaces ([roadmap](ROADMAP.md#investment-test)). Releases publish to
 npm and are tag-driven:
 
 ```bash
-# bump version + lock, date the CHANGELOG section, re-pin doc/demo
+# bump version + lock root metadata (no dependency resolution), date CHANGELOG,
+# re-pin doc/demo
 # version literals (check:release / check:versions enforce this):
 npm run release:prep -- X.Y.Z
 # land on main, let CI go green, then:

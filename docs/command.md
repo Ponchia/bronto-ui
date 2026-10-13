@@ -148,9 +148,9 @@ document.querySelector('[data-bronto-command]').addEventListener('bronto:command
 - The input is a `combobox`, the list a `listbox`, items `option`s, with
   `aria-activedescendant` tracking the active row — standard APG listbox semantics.
 - Focus stays in the input while arrows move the active item; Enter selects it.
-- After 0.16.1 ([changelog](../CHANGELOG.md)), composition keys (including IME confirmation) and modified text-editing
+- Since 0.16.2 ([changelog](../CHANGELOG.md)), composition keys (including IME confirmation) and modified text-editing
   shortcuts are not intercepted. Events already canceled by the host are respected.
-- Also added after 0.16.1: mark temporarily unavailable rows `aria-disabled="true"`: arrows can still
+- Also available since 0.16.2: mark temporarily unavailable rows `aria-disabled="true"`: arrows can still
   reach and announce them, but Enter/click does not emit a select event. This
   works without `initDisabledGuard`, because focus stays on the input rather
   than the option. A disabled, inert, or read-only input cannot choose a row.
