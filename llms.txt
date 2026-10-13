@@ -44,7 +44,7 @@ choose one of these ways to add the report layer:
 <!-- installed locally; serve node_modules beside this page -->
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/report.css" />
 <!-- or use a pinned CDN version (pre-1.0, breaking changes ship in the minor) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.16.1/dist/css/report.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.16.2/dist/css/report.css" />
 ```
 
 The flattened default bundle is `dist/bronto.css` (bundler shorthand
@@ -835,5 +835,5 @@ Read these from `node_modules/@ponchia/ui/` — no network needed:
   tokens for status, and `--chart-*` (from `css/dataviz.css`) for charts only.
   Don't add raw hues to components; `check:color-policy` enforces this.
 - Pre-1.0 SemVer: breaking changes ship in the _minor_. Pin a concrete minor,
-  for example `~0.16.1` (patches below `0.17.0`). A literal `~0.x` is too broad
+  for example `~0.16.2` (patches below `0.17.0`). A literal `~0.x` is too broad
   because its wildcard minor admits later pre-1.0 minors.

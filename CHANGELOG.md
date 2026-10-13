@@ -5,7 +5,7 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
-## Unreleased
+## 0.16.2 — 2026-10-13
 
 ### Fixed
 
@@ -17,7 +17,6 @@
   Closing also hides the empty state.
 - Dialog light-dismiss distinguishes padding from the backdrop and respects
   host-canceled clicks.
-
 - Glyph renderers explicitly HTML-escape validated CSS at quoted attribute
   boundaries, preserving valid render output and the existing CSS allowlist.
 - Repeated and out-of-order clipboard requests recover the original copy label;
@@ -46,6 +45,10 @@
 
 ### Changed
 
+- Release preparation supports plain and versioned Unreleased sections, refuses
+  missing/ambiguous input before writing, and updates only the lockfile's root
+  version metadata without resolving dependencies. Repeating a prepared release
+  preserves its existing date and leaves the files unchanged.
 - The publishing CLI is installed from a separate integrity-locked project;
   Semgrep uses an official image pinned by digest. Privileged publishing disables
   dependency caching and retained checkout credentials.
@@ -61,6 +64,18 @@
   history link. Published tags and release provenance are preserved.
 - Added reproducible screenshots from the real example routes and verified
   maintenance-funding links in GitHub and npm metadata.
+
+### Compatibility
+
+- Non-breaking patch: existing public exports, tokens, classes, and behavior
+  signatures are preserved. No runtime or peer dependencies were added.
+- Color parsing now rejects malformed values rather than partially accepting
+  them. Disabled controls no longer emit actions, and native input-editing
+  shortcuts remain owned by the browser.
+- The default CSS bundle grows by 145 raw bytes (19 gzip bytes) for disabled
+  option styling; the existing budget and visual regression baselines are unchanged.
+- Maintenance and publishing toolchains retain documented upstream dependency
+  advisories; this release does not claim to remove those tooling findings.
 
 ## 0.16.1 — 2026-10-09
 
