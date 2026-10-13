@@ -132,6 +132,14 @@ try {
     assert(html.includes('name="description"'), `Missing description in ${path}`);
     assert(html.includes('rel="canonical"'), `Missing canonical in ${path}`);
     assert(
+      html.includes("window.location.hostname === 'ponchia.github.io'") &&
+        html.includes("window.location.pathname.startsWith('/bronto-ui/')") &&
+        html.includes('static.cloudflareinsights.com/beacon.min.js'),
+      `Only the public Bronto UI GitHub Pages hostname/path may load the Cloudflare beacon: ${path}`,
+    );
+    assert.equal((html.match(/static\.cloudflareinsights\.com\/beacon\.min\.js/g) || []).length, 1);
+
+    assert(
       !html.includes('{{root}}') && !html.includes('{{docsSidebar}}'),
       `Unrendered template in ${path}`,
     );

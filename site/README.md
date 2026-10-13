@@ -63,3 +63,11 @@ and application demos use the public `ui-*` classes. `site/site.css` supplies
 website-specific layout, spacing, and colors; it is not part of the npm package.
 Use the runnable specimens to evaluate the reusable contract, and expect an
 application to supply its own content, state, logic, and composition CSS.
+
+
+Web Analytics is an optional, production-only Cloudflare beacon in the
+*published site shell* (not in the npm library). Cloudflare Web Analytics is
+registered manually for `ponchia.github.io` in the personal Cloudflare account.
+The loader only runs on `https://ponchia.github.io/bronto-ui/` pages, and must
+not be enabled via automatic injection or added to the package runtime. It
+reports aggregate site traffic/performance without analytics cookies.
