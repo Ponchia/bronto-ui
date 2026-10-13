@@ -5,6 +5,18 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+
+## Unreleased
+
+### Changed
+
+- Bronto Layout's pinned, sandboxed, loopback-only website contracts now
+  participate in the main CI deployment gate for application changes. The
+  reusable workflow can still run manually, but no longer runs twice for
+  each PR/push. Validated docs-only changes may skip the layout job;
+  unverified or failed classification cannot hide missing checks.
+
+
 ## 0.16.2 — 2026-10-13
 
 - Fix public homepage hero headline min-content overflow at 320px by scaling its type only below 340px; add a generated-site responsive test against the usable scrollport and hero bounds. Reproduced by independent Bronto Layout first-party auditing (Ponchia/bronto-ui#248).

@@ -1,51 +1,18 @@
-# Experimental cross-repository consumer of Bronto Layout. Checks the ACTUAL
-# locally built BrontoUI public site before deployment, without a published
-# npm package, arbitrary target URLs, or privileged tokens.
-#
-# Not yet part of required ci-gate: graduate only after stable PR runs.
+# Required via CI's ci-gate for application changes and callable manually.
+# Checks actual generated BrontoUI pages before Pages deployment with pinned
+# Bronto Layout source, a loopback server and default Chrome sandboxing.
 name: Bronto Layout website contracts
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/layout-contract-smoke.yml'
-      - 'test/layout/**'
-      - 'site/**'
-      - 'css/**'
-      - 'dist/**'
-      - 'demo/**'
-      - 'docs/**'
-      - 'tokens/**'
-      - 'fonts/**'
-      - 'behaviors/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'scripts/build-public-site.mjs'
-      - 'scripts/lib/**'
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/layout-contract-smoke.yml'
-      - 'test/layout/**'
-      - 'site/**'
-      - 'css/**'
-      - 'dist/**'
-      - 'demo/**'
-      - 'docs/**'
-      - 'tokens/**'
-      - 'fonts/**'
-      - 'behaviors/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'scripts/build-public-site.mjs'
-      - 'scripts/lib/**'
+  workflow_call:
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: bronto-layout-${{ github.ref }}
+  # Manual dispatch must never cancel a required PR/main layout run.
+  group: bronto-layout-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

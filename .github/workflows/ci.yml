@@ -145,6 +145,13 @@ jobs:
     with:
       cross_engine: ${{ github.event_name == 'workflow_dispatch' || ((github.event_name == 'pull_request' || github.event_name == 'push') && needs.changes.outputs.engine_sensitive == 'true') }}
 
+  # Fail the deployment gate if approved layout contracts fail.
+  # Reuse the manually-dispatchable workflow; avoid duplicate PR/push runs.
+  layout:
+    needs: changes
+    if: needs.changes.outputs.heavy == 'true'
+    uses: ./.github/workflows/layout-contract-smoke.yml
+
   sast:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -178,10 +185,10 @@ jobs:
 
   # The single required status check on main owns the complete job graph.
   # A failed classifier must not turn skipped browser jobs into a green gate.
-  # Only a successful docs-only classification may skip examples or e2e.
+  # Only a successful docs-only classification may skip examples, e2e, or layout.
   ci-gate:
     if: always()
-    needs: [changes, check, examples, e2e, sast]
+    needs: [changes, check, examples, e2e, layout, sast]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -192,10 +199,11 @@ jobs:
           R_CHECK: ${{ needs.check.result }}
           R_EXAMPLES: ${{ needs.examples.result }}
           R_E2E: ${{ needs.e2e.result }}
+          R_LAYOUT: ${{ needs.layout.result }}
           R_SAST: ${{ needs.sast.result }}
         run: |
           set -euo pipefail
-          echo "changes=$R_CHANGES heavy=$HEAVY check=$R_CHECK examples=$R_EXAMPLES e2e=$R_E2E sast=$R_SAST"
+          echo "changes=$R_CHANGES heavy=$HEAVY check=$R_CHECK examples=$R_EXAMPLES e2e=$R_E2E layout=$R_LAYOUT sast=$R_SAST"
           for r in "$R_CHANGES" "$R_CHECK" "$R_SAST"; do
             if [ "$r" != "success" ]; then
               echo "::error::change classification, integrity checks, and SAST execution must succeed (got '$r')"
@@ -206,14 +214,14 @@ jobs:
             echo "::error::change classification did not produce a valid heavy flag"
             exit 1
           fi
-          for r in "$R_EXAMPLES" "$R_E2E"; do
+          for r in "$R_EXAMPLES" "$R_E2E" "$R_LAYOUT"; do
             if [ "$r" = "success" ]; then
               continue
             fi
             if [ "$HEAVY" = "false" ] && [ "$r" = "skipped" ]; then
               continue
             fi
-            echo "::error::a required browser or example job did not pass (got '$r', heavy='$HEAVY')"
+            echo "::error::a required browser, layout contract or example job did not pass (got '$r', heavy='$HEAVY')"
             exit 1
           done
           echo "All required CI jobs passed; skips are limited to confirmed docs-only changes."
