@@ -36,13 +36,14 @@ const passed = {
   R_CHECK: 'success',
   R_EXAMPLES: 'success',
   R_E2E: 'success',
+  R_LAYOUT: 'success',
   R_SAST: 'success',
 };
 
 test('CI aggregation accepts complete coverage and proven docs-only skips', () => {
   for (const env of [
     passed,
-    { ...passed, HEAVY: 'false', R_EXAMPLES: 'skipped', R_E2E: 'skipped' },
+    { ...passed, HEAVY: 'false', R_EXAMPLES: 'skipped', R_E2E: 'skipped', R_LAYOUT: 'skipped' },
   ]) {
     const result = runShell(gate, env);
     assert.equal(result.status, 0, result.stdout + result.stderr);
@@ -62,6 +63,12 @@ test('CI aggregation rejects classifier failures, missing results, and unexpecte
     { HEAVY: '' },
     { R_EXAMPLES: 'skipped' },
     { R_E2E: 'skipped' },
+    { R_LAYOUT: 'skipped' },
+    { R_LAYOUT: 'failure' },
+    { R_LAYOUT: 'cancelled' },
+    { R_LAYOUT: '' },
+    { HEAVY: 'false', R_LAYOUT: 'failure' },
+    { HEAVY: 'false', R_LAYOUT: 'cancelled' },
     { HEAVY: 'false', R_EXAMPLES: 'failure' },
     { HEAVY: 'false', R_E2E: 'cancelled' },
   ];
