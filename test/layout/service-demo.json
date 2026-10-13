@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "url": "http://127.0.0.1:18775/demo/service.html",
+  "widths": [320, 340, 375, 430, 768, 1280],
+  "selectors": {
+    "shell": ".ui-app-shell",
+    "rail": ".ui-app-rail",
+    "main": ".ui-app-main",
+    "topbar": ".ui-app-topbar",
+    "toolbar": ".ui-app-toolbar",
+    "jobs": "#jobs",
+    "jobResults": "#job-results",
+    "statGrid": ".ui-statgrid"
+  },
+  "rules": [
+    {
+      "id": "demo-document-does-not-overflow",
+      "type": "document-overflow",
+      "tolerance": 2
+    },
+    {
+      "id": "demo-shell-exists",
+      "type": "selector-count",
+      "element": "shell",
+      "exactly": 1
+    },
+    {
+      "id": "demo-rail-exists",
+      "type": "selector-count",
+      "element": "rail",
+      "exactly": 1
+    },
+    {
+      "id": "demo-main-exists",
+      "type": "selector-count",
+      "element": "main",
+      "exactly": 1
+    },
+    {
+      "id": "demo-topbar-exists",
+      "type": "selector-count",
+      "element": "topbar",
+      "exactly": 1
+    },
+    {
+      "id": "demo-toolbar-exists",
+      "type": "selector-count",
+      "element": "toolbar",
+      "exactly": 1
+    },
+    {
+      "id": "demo-jobs-exists",
+      "type": "selector-count",
+      "element": "jobs",
+      "exactly": 1
+    },
+    {
+      "id": "demo-jobResults-exists",
+      "type": "selector-count",
+      "element": "jobResults",
+      "exactly": 1
+    },
+    {
+      "id": "demo-statGrid-exists",
+      "type": "selector-count",
+      "element": "statGrid",
+      "exactly": 1
+    },
+    {
+      "id": "demo-main-fits-viewport",
+      "type": "contained",
+      "element": "main",
+      "in": "viewport",
+      "axis": "x",
+      "tolerance": 2
+    },
+    {
+      "id": "demo-topbar-fits-main",
+      "type": "contained",
+      "element": "topbar",
+      "in": "main",
+      "axis": "x",
+      "tolerance": 2
+    },
+    {
+      "id": "demo-toolbar-fits-main",
+      "type": "contained",
+      "element": "toolbar",
+      "in": "main",
+      "axis": "x",
+      "tolerance": 2
+    },
+    {
+      "id": "demo-job-panel-fits-main",
+      "type": "contained",
+      "element": "jobs",
+      "in": "main",
+      "axis": "x",
+      "tolerance": 2
+    },
+    {
+      "id": "demo-table-fits-jobs",
+      "type": "contained",
+      "element": "jobResults",
+      "in": "jobs",
+      "axis": "x",
+      "tolerance": 2
+    },
+    {
+      "id": "demo-toolbar-aligns-with-job-panel",
+      "type": "align-edge",
+      "a": "toolbar",
+      "b": "jobs",
+      "edgeA": "left",
+      "tolerance": 2
+    },
+    {
+      "id": "demo-rail-does-not-overlap-content",
+      "type": "non-overlapping",
+      "a": "rail",
+      "b": "main",
+      "tolerance": 2
+    }
+  ]
+}

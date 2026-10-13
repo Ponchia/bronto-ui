@@ -1,37 +1,18 @@
-# Experimental cross-repository consumer of Bronto Layout. Checks the ACTUAL
-# locally built BrontoUI public site before deployment, without a published
-# npm package, arbitrary target URLs, or privileged tokens.
-#
-# Not yet part of required ci-gate: graduate only after stable PR runs.
+# Required via CI's ci-gate for application changes and callable manually.
+# Checks actual generated BrontoUI pages before Pages deployment with pinned
+# Bronto Layout source, a loopback server and default Chrome sandboxing.
 name: Bronto Layout website contracts
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/layout-contract-smoke.yml'
-      - 'test/layout/**'
-      - 'site/**'
-      - 'css/**'
-      - 'dist/**'
-      - 'scripts/build-public-site.mjs'
-      - 'scripts/lib/site-*.mjs'
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/layout-contract-smoke.yml'
-      - 'test/layout/**'
-      - 'site/**'
-      - 'css/**'
-      - 'dist/**'
-      - 'scripts/build-public-site.mjs'
-      - 'scripts/lib/site-*.mjs'
+  workflow_call:
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: bronto-layout-${{ github.ref }}
+  # Manual dispatch must never cancel a required PR/main layout run.
+  group: bronto-layout-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -71,6 +52,7 @@ jobs:
           npm --prefix .bronto-layout-cli run build
           node .bronto-layout-cli/bin/bronto-layout.mjs validate --spec test/layout/home.json
           node .bronto-layout-cli/bin/bronto-layout.mjs validate --spec test/layout/operations.json
+          node .bronto-layout-cli/bin/bronto-layout.mjs validate --spec test/layout/service-demo.json
 
       - name: Verify sandboxed browser and exercise website contracts
         # The Ubuntu runner also has a development Chromium binary which
@@ -90,14 +72,19 @@ jobs:
           python3 -m http.server 18775 --bind 127.0.0.1 --directory _site > "$RUNNER_TEMP/bronto-site-http.log" 2>&1 &
           server_pid=$!
           clean_css="$RUNNER_TEMP/brontoui-site-clean.css"
+          app_css="$RUNNER_TEMP/brontoui-app-clean.css"
           cp _site/site/site.css "$clean_css"
-          trap 'cp "$clean_css" _site/site/site.css; kill "$server_pid" 2>/dev/null || true' EXIT
+          cp _site/dist/bronto.css "$app_css"
+          trap 'cp "$clean_css" _site/site/site.css; cp "$app_css" _site/dist/bronto.css; kill "$server_pid" 2>/dev/null || true' EXIT
 
           curl --silent --show-error --fail --retry 20 --retry-connrefused --retry-delay 1 \
             http://127.0.0.1:18775/ > /dev/null
 
           node .bronto-layout-cli/bin/bronto-layout.mjs check --spec test/layout/home.json
           node .bronto-layout-cli/bin/bronto-layout.mjs check --spec test/layout/operations.json
+          # Inspect the dashboard directly: an outer iframe shell can look
+          # correct while its own controls/panels are misaligned.
+          node .bronto-layout-cli/bin/bronto-layout.mjs check --spec test/layout/service-demo.json
 
           # Negative control: reproduce the exact historical 320px title
           # regression in generated site CSS (never source files). The semantic
@@ -128,3 +115,48 @@ jobs:
           console.log('Historical mobile regression correctly rejected by Bronto Layout',
             failed.map(x => ({rule: x.id, deviation: x.deviation})));
           NODE
+
+          # Keep negative controls independent. Restore site CSS before
+          # applying a subtle, non-overflowing dashboard alignment regression.
+          cp "$clean_css" _site/site/site.css
+          cat >> _site/dist/bronto.css <<'CSS'
+          @media (min-width: 1024px) {
+            #jobs { transform: translateX(8px) !important; }
+          }
+          CSS
+
+          # The generic audit stays green, but the approved relationship
+          # between toolbar and job panel MUST fail by approximately 8px.
+          set +e
+          node .bronto-layout-cli/bin/bronto-layout.mjs audit             --url http://127.0.0.1:18775/demo/service.html             --widths 1280 --json --compact             > "$RUNNER_TEMP/brontoui-demo-generic-audit.json"
+          generic_result=$?
+          node .bronto-layout-cli/bin/bronto-layout.mjs check             --spec test/layout/service-demo.json --widths 1280 --json             > "$RUNNER_TEMP/brontoui-demo-alignment-negative-control.json"
+          contract_result=$?
+          set -e
+
+          GENERIC_EXIT="$generic_result" CONTRACT_EXIT="$contract_result" node - <<'NODE'
+          const fs = require('node:fs');
+          const audit = JSON.parse(fs.readFileSync(
+            process.env.RUNNER_TEMP + '/brontoui-demo-generic-audit.json', 'utf8'
+          ));
+          const contract = JSON.parse(fs.readFileSync(
+            process.env.RUNNER_TEMP + '/brontoui-demo-alignment-negative-control.json', 'utf8'
+          ));
+          const failed = contract.reports.flatMap(r =>
+            r.findings.filter(f => f.status === 'fail'));
+          if (process.env.GENERIC_EXIT !== '0' || process.env.CONTRACT_EXIT !== '1' ||
+              audit.summary.measuredIssues !== 0 || audit.summary.incompleteViewports !== 0 ||
+              failed.length !== 1 ||
+              failed[0].id !== 'demo-toolbar-aligns-with-job-panel' ||
+              failed[0].deviation < 6 || failed[0].deviation > 10) {
+            console.error('Semantic alignment mutation failed its independent controls',
+              {genericExit: process.env.GENERIC_EXIT,
+               contractExit: process.env.CONTRACT_EXIT,
+               audit: audit.summary, failed});
+            process.exit(1);
+          }
+          console.log('Dashboard alignment contract detected 8px shift without',
+            'document overflow; generic audit remained green.');
+          NODE
+
+          cp "$app_css" _site/dist/bronto.css

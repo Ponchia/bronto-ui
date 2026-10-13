@@ -14,9 +14,17 @@
   and the documented modal header/body/footer composition. Integrations and
   Settings now have distinct content; the latter applies tab-local theme and
   density preferences. Added interaction and geometric regression coverage for
-  embedded and mobile views. The example viewer reveals a native dialog’s iframe
+  embedded and mobile views. The example viewer reveals a native dialog's iframe
   without animated ancestor scrolling, so actions stay visible and pointer targets
   remain stable in Firefox as well as Chromium and WebKit.
+
+### Changed
+
+- Bronto Layout's pinned, sandboxed, loopback-only website contracts now
+  participate in the main CI deployment gate for application changes. The
+  reusable workflow can still run manually, but no longer runs twice for
+  each PR/push. Validated docs-only changes may skip the layout job;
+  unverified or failed classification cannot hide missing checks.
 
 ## 0.16.2 — 2026-10-13
 
