@@ -57,7 +57,7 @@ Import it from your application stylesheet through a CSS-aware bundler:
 Or use a stylesheet URL in plain HTML, with no installation or build step:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.16.1/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.16.2/dist/bronto.css" />
 ```
 
 These are alternative ways to load the same default bundle
@@ -230,7 +230,7 @@ must remain usable without those effects. See
 ## Versioning
 
 Until `1.0.0`, breaking changes ship in the **minor** (`0.x.0`); patches
-(`0.x.y`) preserve the documented API. A range such as `~0.16.1` or `^0.16.1`
+(`0.x.y`) preserve the documented API. A range such as `~0.16.2` or `^0.16.2`
 accepts compatible patches while holding back `0.17.0`. Review the
 [CHANGELOG](CHANGELOG.md) and
 [upgrade checklist](https://ponchia.github.io/bronto-ui/docs/getting-started/upgrade.html)

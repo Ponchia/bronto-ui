@@ -41,3 +41,12 @@ test('leaves the changelog alone when the heading is already dated or absent', (
   assert.equal(dateChangelogHeading(cl, '0.7.0', '2026-06-11'), cl);
   assert.equal(dateChangelogHeading(cl, '0.8.0', '2026-06-11'), cl);
 });
+
+test('dates a plain Unreleased section without changing old release headings', () => {
+  const source = '# Changelog\n\n## Unreleased\n\n### Fixed\n\nA fix.\n\n## 0.6.5 — 2026-06-09\n';
+  const result = dateChangelogHeading(source, '0.7.0', '2026-06-10');
+  assert.match(result, /^## 0\.7\.0 — 2026-06-10$/m);
+  assert.doesNotMatch(result, /^## Unreleased/m);
+  assert.match(result, /^## 0\.6\.5 — 2026-06-09$/m);
+  assert.equal(dateChangelogHeading(result, '0.7.0', '2026-06-11'), result);
+});

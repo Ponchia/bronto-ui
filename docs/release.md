@@ -2,10 +2,16 @@
 
 ## Before Tagging
 
-0. Run `npm run release:prep -- X.Y.Z` — bumps `package.json` + lock, dates the
+0. Run `npm run release:prep -- X.Y.Z` — bumps `package.json` and only the root
+   version metadata in the lockfile, dates a plain `## Unreleased` or matching
    `## Unreleased — X.Y.Z` CHANGELOG heading, and re-pins every
    `@ponchia/ui@X.Y.Z` literal across the same public docs/demo surfaces that
-   `check:versions` gates.
+   `check:versions` gates. Prereleases name the base version's section without
+   dating it. Missing/ambiguous release headings, mismatched root lock metadata,
+   and missing input files are rejected before any files are written. Preparation
+   does not install, resolve, or update dependencies and is safe to repeat for an
+   already-prepared version. Filesystem write failures are not transactional:
+   always inspect the diff and rerun the checks after an interrupted operation.
 1. Reconcile `README.md`, `CHANGELOG.md`, `ROADMAP.md`, `.github/SECURITY.md`, and
    `docs/adr/*` against the version being released.
 2. Run `npm run check` and `npm run test:e2e:nonpixel` locally. `npm run check`
