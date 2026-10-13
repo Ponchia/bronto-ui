@@ -74,13 +74,22 @@ export function initDialog({ root } = {}) {
     return true;
   };
 
-  const lightDismiss = (dlg) => {
+  const lightDismiss = (dlg, event) => {
     if (
       dlg.tagName === 'DIALOG' &&
       dlg.open &&
       dlg.hasAttribute('data-bronto-dialog-light') &&
       canManageDialog(dlg, dlg)
     ) {
+      const rect = dlg.getBoundingClientRect();
+      // Padding also targets the dialog element. Only a point outside its
+      // border box is a backdrop click.
+      const inside =
+        event.clientX >= rect.left &&
+        event.clientX < rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY < rect.bottom;
+      if (inside) return false;
       dlg.close();
       return true;
     }
@@ -88,6 +97,7 @@ export function initDialog({ root } = {}) {
   };
 
   const onClick = (e) => {
+    if (e.defaultPrevented) return;
     const target = e.target;
     const opener = target?.closest?.('[data-bronto-open]');
     if (opener && host.contains(opener)) {
@@ -99,9 +109,7 @@ export function initDialog({ root } = {}) {
       if (closeFrom(closer)) e.preventDefault();
       return;
     }
-    // Light-dismiss: a click whose target is the <dialog> itself is the
-    // backdrop (content sits in child elements).
-    if (lightDismiss(target)) e.preventDefault();
+    if (lightDismiss(target, e)) e.preventDefault();
   };
   return bindOnce(host, 'dialog', () => {
     doc.addEventListener('click', onClick);

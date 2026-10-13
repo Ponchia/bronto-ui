@@ -8,6 +8,8 @@ import {
   scrollIntoViewSafe,
   wrapIndex,
   closestSafe,
+  ignoreListboxKey,
+  isUnavailable,
 } from './internal.js';
 
 const localeOf = (el) => {
@@ -145,6 +147,7 @@ export function initCommand({ root, match, headless = false } = {}) {
     const list = box.querySelector('.ui-command__list, [role="listbox"]');
     if (!input || !list) continue;
     const locale = localeOf(box);
+    const inputUnavailable = () => input.readOnly || isUnavailable(input);
     const initialItems = [...list.querySelectorAll(ITEM)];
     const initialGroups = [...list.querySelectorAll('.ui-command__group')];
     // Headless reads the host's current rows; otherwise the rows at init.
@@ -191,7 +194,7 @@ export function initCommand({ root, match, headless = false } = {}) {
       for (const it of itemsNow()) {
         prepareItem(it);
         it.classList.toggle('is-active', it === item);
-        it.setAttribute('aria-selected', String(it === item));
+        it.setAttribute('aria-selected', String(it === item && !isUnavailable(it)));
       }
       activeItem = item;
       if (item) {
@@ -264,7 +267,8 @@ export function initCommand({ root, match, headless = false } = {}) {
     };
 
     const choose = (item) => {
-      if (!item || item.hidden) return;
+      if (!item || item.hidden || !list.contains(item)) return;
+      if (inputUnavailable() || isUnavailable(item)) return;
       // Label = the command name only — strip the shortcut/meta hints so the
       // host doesn't get "Open settings G S".
       const clone = item.cloneNode(true);
@@ -279,10 +283,12 @@ export function initCommand({ root, match, headless = false } = {}) {
     };
 
     const onInput = () => {
+      if (inputUnavailable()) return;
       if (headless) queryChanged = true;
       else filter();
     };
     const onKey = (e) => {
+      if (ignoreListboxKey(e) || inputUnavailable()) return;
       switch (e.key) {
         case 'ArrowDown':
           e.preventDefault();
@@ -306,6 +312,7 @@ export function initCommand({ root, match, headless = false } = {}) {
       }
     };
     const onClick = (e) => {
+      if (e.defaultPrevented) return;
       const item = closestSafe(e.target, ITEM);
       if (item && list.contains(item)) choose(item);
     };

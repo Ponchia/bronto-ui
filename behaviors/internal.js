@@ -190,3 +190,28 @@ export function wrapIndex(cur, delta, len) {
   if (next >= len) next = 0;
   return next;
 }
+
+// Leave composition and native editing shortcuts to the text input. The
+// legacy 229 signal also covers IME engines that finish composition early.
+// Shift+Tab still leaves focus and must be allowed to close a combobox.
+/** @param {KeyboardEvent} event */
+export function ignoreListboxKey(event) {
+  return (
+    event.defaultPrevented ||
+    event.isComposing ||
+    event.keyCode === 229 ||
+    event.altKey ||
+    event.ctrlKey ||
+    event.metaKey ||
+    (event.shiftKey && event.key !== 'Tab')
+  );
+}
+
+// ARIA-disabled rows stay discoverable, but are not selectable. Native
+// fieldset inheritance and inert ancestors also prevent selection.
+/** @param {Element} element */
+export function isUnavailable(element) {
+  return (
+    element.matches(':disabled') || Boolean(element.closest('[aria-disabled="true"], [inert]'))
+  );
+}

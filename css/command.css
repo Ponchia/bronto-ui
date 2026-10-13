@@ -99,9 +99,20 @@
   padding: 0.85rem 1rem;
 }
 
+/* Keep unavailable options readable and arrow-reachable without suggesting
+   that they can be chosen. The behavior enforces non-activation. */
+.ui-command__item[aria-disabled='true'] {
+  color: var(--text-dim);
+  cursor: not-allowed;
+}
+
 @media (forced-colors: active) {
   .ui-command__item.is-active {
     background: Highlight;
     color: HighlightText;
+  }
+
+  .ui-command__item[aria-disabled='true'] {
+    color: GrayText;
   }
 }

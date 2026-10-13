@@ -527,6 +527,11 @@ Use a native `<dialog>` with `initDialog()` for focus, stacking, and close
 behavior. Application frameworks own the mount/cleanup lifecycle. The removed
 controlled-modal path is covered by the [0.10 migration](migrations/0.9-to-0.10.md).
 
+With `data-bronto-dialog-light`, only clicks outside the dialog's border box
+count as backdrop clicks; its padding stays safe to click. `initDialog()` leaves
+clicks that a host handler has already canceled with `preventDefault()` alone.
+These refinements were added after 0.16.1; see the [changelog](../CHANGELOG.md).
+
 ## Carousel & lightbox: one primitive, two skins
 
 `ui-carousel` is a scroll-snap track of `__slide`s wired by `initCarousel`
@@ -704,7 +709,18 @@ authoring engine.
   the input while the `bronto:change` event carries the option's `data-value`
   code — so put the human label in the `<li>` text and the code in `data-value`.
   The `.ui-combobox__empty` ("No matches") is hidden until a filter empties the
-  list. Two intentional single-select APG deviations: ArrowDown on a closed list
+  list. The following refinements were added after 0.16.1
+  ([changelog](../CHANGELOG.md)): the empty state hides again when the popup
+  closes. Live lists keep unique generated
+  option IDs when rows are prepended, replaced, or reused; removed rows regain
+  their authored attributes and visibility. `aria-disabled="true"` options stay
+  arrow-reachable for discovery but cannot be committed by Enter or click.
+  A disabled, inert, or read-only input cannot choose a pending option.
+  Composition keys and modified editing shortcuts stay with the native input;
+  Shift+Tab still closes without committing. Events already canceled by your
+  handler are left alone. These are interaction safeguards, not permission
+  checks: omit unauthorized options from the DOM and enforce access in your app.
+  Two intentional single-select APG deviations: ArrowDown on a closed list
   filters rather than preselecting the first option, and Tab closes without
   committing a merely-highlighted option (Enter/click commits).
 - **Validation** is opt-in via `data-bronto-validate` on the form plus

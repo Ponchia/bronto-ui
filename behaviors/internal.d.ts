@@ -8,6 +8,10 @@ export function scrollIntoViewSafe(el: any, opts?: {
 }): void;
 export function focusInto(container: any): void;
 export function wrapIndex(cur: any, delta: any, len: any): any;
+/** @param {KeyboardEvent} event */
+export function ignoreListboxKey(event: KeyboardEvent): boolean;
+/** @param {Element} element */
+export function isUnavailable(element: Element): boolean;
 export function noop(): void;
 export function hasDom(): boolean;
 export function nextFieldUid(): number;
