@@ -238,19 +238,21 @@ jobForm.addEventListener('submit', (event) => {
   search.value = '';
   render();
   notice.textContent = `${name} added to ${environmentLabel()} as a local queued job.`;
+  // Successful submission replaces the empty-state opener. Register this after
+  // the library's opener restoration so the task ends at a known visible action.
+  jobDialog.addEventListener(
+    'close',
+    () => {
+      doc.querySelector('.service-actions [data-bronto-open]').focus();
+    },
+    { once: true },
+  );
   jobDialog.close();
 });
 jobInput.addEventListener('input', () => jobInput.setCustomValidity(''));
 jobDialog.addEventListener('close', () => {
   jobForm.reset();
   jobInput.setCustomValidity('');
-  // The empty-state opener disappears after creating the first sample job.
-  // Let native/library focus restoration run, then use the visible toolbar action.
-  queueMicrotask(() => {
-    if (doc.activeElement === doc.body) {
-      doc.querySelector('.service-actions [data-bronto-open]').focus();
-    }
-  });
 });
 
 function applyPreferences(theme, density) {
