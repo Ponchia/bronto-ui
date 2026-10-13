@@ -14,7 +14,7 @@ async function setup(page, name) {
         <li class="ui-${name}__${item}" data-value="apple">Apple</li>
         <li class="ui-${name}__${item}" data-value="banana">Banana</li>
       </ul><p class="ui-${name}__empty" hidden>No matches</p>
-    </div><button id="after">After widget</button></main></body></html>`);
+    </div><button class="ui-button" id="after">After widget</button></main></body></html>`);
   await page.evaluate(
     async ({ name, modulePath }) => {
       const behaviors = await import(modulePath);
