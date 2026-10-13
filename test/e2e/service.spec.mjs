@@ -176,6 +176,41 @@ test('service appearance preferences apply, survive navigation, and reset', asyn
   await expect(page.locator('html')).toHaveAttribute('data-density', 'default');
 });
 
+// The narrowest supported view must not turn health trends into a stack of
+// isolated syllables while retaining the exact values and their labels.
+for (const theme of ['light', 'dark']) {
+  test(`service health metrics remain readable at 320px (${theme})`, async ({ page }) => {
+    await openService(page, 320);
+    await page.evaluate((theme) => (document.documentElement.dataset.theme = theme), theme);
+    const metrics = await page.locator('#health .ui-stat').evaluateAll((nodes) =>
+      nodes.map((node) => {
+        const rect = (el) => {
+          const { left, right, width, height } = el.getBoundingClientRect();
+          return { left, right, width, height };
+        };
+        const label = rect(node.querySelector('.ui-stat__label'));
+        const value = rect(node.querySelector('.ui-stat__value'));
+        const note = rect(node.lastElementChild);
+        return { top: node.getBoundingClientRect().top, label, value, note };
+      }),
+    );
+    expect(metrics).toHaveLength(3);
+    for (let i = 0; i < metrics.length; i++) {
+      const { label, value, note } = metrics[i];
+      expect(label.width).toBeGreaterThan(145);
+      expect(note.width).toBeGreaterThan(145);
+      expect(note.height).toBeLessThanOrEqual(25);
+      expect(value.left).toBeGreaterThanOrEqual(label.right + 8);
+      expect(value.right).toBeLessThanOrEqual(320);
+      if (i > 0) expect(metrics[i].top).toBeGreaterThan(metrics[i - 1].top + 20);
+    }
+    const axe = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+      .analyze();
+    expect(axe.violations).toEqual([]);
+  });
+}
+
 for (const width of [320, 390, 760]) {
   test(`service controls and job dialog remain usable at ${width}px`, async ({ page }) => {
     await openService(page, width);

@@ -17,6 +17,8 @@
   embedded and mobile views. The example viewer reveals a native dialog's iframe
   without animated ancestor scrolling, so actions stay visible and pointer targets
   remain stable in Firefox as well as Chromium and WebKit.
+  At 320px the health metrics display as readable rows rather than three cramped
+  columns.
 
 ### Changed
 

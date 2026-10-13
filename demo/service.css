@@ -351,6 +351,37 @@
 }
 
 @media (max-width: 380px) {
+  /* On narrow phones, three tiny metric columns force each trend onto
+     three lines. Present the same facts as scannable rows instead. */
+  .service-demo .ui-statgrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .service-demo .ui-app-panel > .ui-statgrid > .ui-stat {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.25rem var(--space-md);
+    align-items: baseline;
+    padding-block: var(--space-sm);
+  }
+
+  .service-demo .ui-stat__label {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .service-demo .ui-stat__value {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    text-align: end;
+  }
+
+  .service-demo .ui-stat > :last-child {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+  }
+
   .service-demo .ui-app-nav {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
