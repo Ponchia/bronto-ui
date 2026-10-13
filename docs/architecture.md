@@ -40,6 +40,7 @@ on top of the CSS, none of which require a framework commitment**:
 ├── tokens/      design tokens as JS/JSON, for JS/canvas/tooling     [optional]
 ├── classes/     typed class-name contract + recipe builders         [optional]
 ├── behaviors/   vanilla, SSR-safe JS for stateful widgets           [optional]
+├── renderer/    live CSS tokens for SVG/canvas/WebGL renderers       [optional]
 ├── connectors/  pure SVG leader-line geometry kernel (no DOM)        [optional]
 ├── annotations/ pure SVG callout geometry (builds on connectors)     [optional]
 ├── glyphs/      dot-matrix glyph registry/renderers                 [optional]
@@ -77,6 +78,11 @@ on top of the CSS, none of which require a framework commitment**:
   `index.js` is a barrel; each behavior lives in its own module
   (`dialog.js`, `combobox.js`, …) over a shared `internal.js` of DOM helpers,
   so the public import surface is unchanged.
+- **renderer/** — resolves the live CSS tokens for SVG, canvas, and WebGL
+  consumers. `readTokens()` reads the current theme, skin, and overrides;
+  `observeTokens()` reports changes, and adapters such as `vegaConfig()` and
+  `xtermTheme()` hand values to the consumer's renderer. Bronto does not own
+  renderer lifecycle, scales, or drawing. See [renderer.md](./renderer.md).
 - **connectors/** and **annotations/** — dependency-free SVG geometry helpers
   for report and analytical figures. `@ponchia/ui/annotations` intentionally
   stays a small static-helper compatibility layer for the Bronto subject /

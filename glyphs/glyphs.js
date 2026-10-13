@@ -1500,6 +1500,8 @@ function isCalcLength(expr) {
 // `dot`, `gap`, and `size` land in an inline-CSS context (`style="…"`), where
 // HTML-escaping a `"` stops attribute breakout but a `;` would still open a
 // second CSS declaration. Accept only concrete CSS lengths or calc() expressions.
+// At each HTML boundary, also escape the validated value for its quoted attribute;
+// the CSS grammar and HTML encoding are independent safeguards.
 function cssLen(v) {
   const value = String(v ?? '').trim();
   if (CSS_LENGTH_RE.test(value)) return value;
@@ -1586,7 +1588,7 @@ export function renderGlyph(name, options = {}) {
   // A `<span>` (not `<div>`): it's phrasing content, so the glyph is valid
   // inline and inside a `<button>` (its content model is phrasing-only) — the
   // inline-icon use. `.ui-dotmatrix`'s `display: grid` works on a span.
-  return `<span class="${cls}" style="${style.join(';')}" ${a11yAttrs(label)}>${inner}</span>`;
+  return `<span class="${cls}" style="${esc(style.join(';'))}" ${a11yAttrs(label)}>${inner}</span>`;
 }
 
 function renderMaskGlyph(rows, { label, size }) {
@@ -1594,7 +1596,7 @@ function renderMaskGlyph(rows, { label, size }) {
   // it scales to any font-size and inherits `currentColor` — for icon-at-scale
   // (e.g. one in every table row) where the GLYPH_SIZE²-cell path is too heavy.
   const iconSize = size && cssLen(size) ? `--icon-size:${cssLen(size)};` : '';
-  return `<span class="ui-icon" style="${iconSize}--icon-mask:${maskUrl(rows)}" ${a11yAttrs(
+  return `<span class="ui-icon" style="${esc(iconSize)}--icon-mask:${maskUrl(rows)}" ${a11yAttrs(
     label,
   )}></span>`;
 }
@@ -1693,6 +1695,6 @@ export function renderReadout(text, options = {}) {
       return renderGlyph(name, glyphOpts);
     })
     .join('');
-  const style = gap && cssLen(gap) ? ` style="--readout-gap:${cssLen(gap)}"` : '';
+  const style = gap && cssLen(gap) ? ` style="--readout-gap:${esc(cssLen(gap))}"` : '';
   return `<span class="ui-readout"${style} ${a11y}>${inner}</span>`;
 }

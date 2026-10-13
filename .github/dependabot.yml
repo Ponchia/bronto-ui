@@ -44,3 +44,13 @@ updates:
       - dependency-name: '@sveltejs/kit'
       - dependency-name: '@sveltejs/adapter-static'
       - dependency-name: '@sveltejs/vite-plugin-svelte'
+
+  # The protected publisher's CLI is isolated from the UI dev toolchain.
+  # Review these updates with the release authority checks before merging.
+  - package-ecosystem: npm
+    directory: /.github/tooling/npm
+    schedule:
+      interval: weekly
+    groups:
+      release-tooling:
+        patterns: ['*']

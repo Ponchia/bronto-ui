@@ -8,8 +8,9 @@ machine-checked.
 
 ## Setup
 
-Use **Node.js 22**, matching CI, and npm. The published package's Node engine
-floor is separate from the development toolchain.
+Use **Node.js 22.22.2 or a newer 22.x release** and npm, matching CI.
+The locked development dependencies require this minimum; the published
+package's Node engine floor is separate from the development toolchain.
 
 ```bash
 git clone https://github.com/Ponchia/bronto-ui.git
@@ -36,13 +37,24 @@ Choose additional verification for the surface you changed:
 | `npm run test:examples:visual` | Desktop and mobile screenshot/layout health checks for packed examples; does not update committed baselines. |
 | `npm run site:build` and `npm run check:site` | Builds and validates the published website, documentation, example routes, and browser module graph. |
 
-Browser checks need the Playwright browsers and their system dependencies.
-See **Visual baselines** below before running screenshot comparisons.
+Install the Playwright browsers and their system dependencies before the
+first local browser run:
+
+```bash
+npx playwright install --with-deps chromium firefox webkit
+```
+
+See **Visual baselines** below before running screenshot comparisons. The
+reusable CI browser workflow retains failed-attempt traces, screenshots, and
+reports when a job fails or a test passes on retry; these remain available in
+the run's artifacts for seven days.
 
 `main` is protected. Changes land through a PR, squash-merged with the branch
 up to date and the required **`ci-gate`** status green. That aggregate verifies
-`check`, `e2e`, and `examples`, including the workflow's documented handling of
-docs-only changes. Branches auto-delete on merge.
+`check`, `e2e`, `examples`, and successful `sast` execution, including the
+workflow's documented handling of docs-only changes. Semgrep findings remain
+advisory; an unavailable or broken scanner fails the required gate. Branches
+auto-delete on merge.
 
 New to the repo? Start with **[docs/repository-map.md](docs/repository-map.md)**
 for edit points and regeneration targets, then use
@@ -196,6 +208,11 @@ Dependabot (grouped, weekly). `@playwright/test` is intentionally
 **not** auto-bumped: it must stay in lockstep with the pinned
 `mcr.microsoft.com/playwright` container image, so bump both together
 in one deliberate PR.
+
+The release CLI has a separate integrity-locked tooling project, and Semgrep
+runs from an image pinned by digest. Their update procedures and the scanner's
+current upstream rule feed are documented in the
+[CI tooling guide](.github/tooling/README.md).
 
 ## Release
 

@@ -41,6 +41,19 @@
    current dist-tags. That observation is best-effort; the irreversible gate is
    the publish itself, not the later `npm view`.
 
+## Release tooling
+
+The publish job uses the npm CLI installed from the separate lockfile under
+`.github/tooling/npm/`. Its installation disables lifecycle scripts, and the
+workflow invokes that CLI explicitly. Keep CLI updates reviewable together
+with their lockfile and the release checks; follow the
+[CI tooling maintenance guide](https://github.com/Ponchia/bronto-ui/blob/main/.github/tooling/README.md).
+
+A dry run validates package assembly without publishing or validating the
+npm-side OIDC exchange. Changes to the registered repository, workflow,
+environment, or allowed publishing operation must also follow
+[ADR-0006](adr/0006-trusted-publishing.md).
+
 ## After Publish
 
 1. Confirm the npm package page shows the new version and provenance.

@@ -28,14 +28,16 @@ export default defineConfig({
   testDir: './test/e2e',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  // Local authoring stays strict (0) so a flake is caught at the source. On CI,
-  // the pinned-container Firefox engine intermittently loses a `:has()` style
-  // recalc or fires a click a tick before a behavior wires up (readiness races,
-  // not product bugs — different specs flake run-to-run, chromium+webkit pass).
-  // Two retries absorb that environmental jitter; a genuine regression still
-  // fails all three attempts.
+  // Keep local runs strict. CI retries remain visible as flaky results, with
+  // evidence from the failed attempt retained even when a retry succeeds.
   retries: process.env.CI ? 2 : 0,
-  reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
+  reporter: process.env.CI
+    ? [
+        ['github'],
+        ['html', { open: 'never' }],
+        ['json', { outputFile: 'test-results/results.json' }],
+      ]
+    : 'list',
   snapshotPathTemplate: '{testDir}/__screenshots__/{arg}{ext}',
   expect: {
     // Flat monochrome UI: tiny tolerance absorbs sub-pixel AA only.
@@ -45,6 +47,8 @@ export default defineConfig({
     baseURL,
     reducedMotion: 'reduce',
     colorScheme: 'no-preference',
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
   },
   projects: [
     // chromium runs everything, including the pixel snapshots + baselines.

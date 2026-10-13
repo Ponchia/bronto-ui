@@ -1,14 +1,6 @@
 // Progressive enhancements only: this site remains navigable with JavaScript off.
 const root = document.body.dataset.siteRoot || './';
 const html = document.documentElement;
-const dark = (() => {
-  try {
-    return localStorage.getItem('bronto-ui-site-theme') === 'dark';
-  } catch {
-    return false;
-  }
-})();
-if (dark) html.dataset.theme = 'dark';
 for (const toggle of document.querySelectorAll('[data-theme-toggle]')) {
   toggle.hidden = false;
   const sync = () => {
@@ -58,6 +50,20 @@ const copyText = async (value) => {
   }
   return false;
 };
+const copySource = (button) =>
+  button.closest('.code-header')?.nextElementSibling?.querySelector('code') ||
+  button.closest('.component-code, .doc-code-example')?.querySelector('pre code');
+
+function selectCode(code) {
+  code.closest('pre')?.focus();
+  const selection = window.getSelection();
+  if (!selection) return;
+  const range = document.createRange();
+  range.selectNodeContents(code);
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
 // Generated Markdown guides contain real code blocks. Make their original
 // source text copyable without changing the canonical Markdown or HTML
 // semantics. The enhancement is optional: plain code still renders without JS.
@@ -74,27 +80,27 @@ for (const pre of document.querySelectorAll('.doc-prose pre')) {
   wrapper.append(copy, pre);
 }
 for (const btn of document.querySelectorAll('[data-copy]')) {
+  const originalLabel = btn.textContent;
+  let resetTimer;
+  let request = 0;
   btn.hidden = false;
   btn.addEventListener('click', async () => {
-    const code =
-      btn.closest('.code-header')?.nextElementSibling?.querySelector('code') ||
-      btn.closest('.component-code, .doc-code-example')?.querySelector('pre code');
+    const code = copySource(btn);
     if (!code) return;
+    const currentRequest = ++request;
+    clearTimeout(resetTimer);
+    let copied = false;
     try {
-      const copied = await copyText(code.textContent);
-      if (!copied) {
-        btn.textContent = 'Select to copy';
-        code.closest('pre')?.focus();
-        return;
-      }
-      const prior = btn.textContent;
-      btn.textContent = 'Copied';
-      setTimeout(() => {
-        btn.textContent = prior;
-      }, 1400);
+      copied = await copyText(code.textContent);
     } catch {
-      btn.textContent = 'Select to copy';
+      // Denied clipboard access uses the same keyboard-reachable fallback.
     }
+    if (currentRequest !== request) return;
+    btn.textContent = copied ? 'Copied' : 'Select to copy';
+    if (!copied) selectCode(code);
+    resetTimer = setTimeout(() => {
+      btn.textContent = originalLabel;
+    }, 1400);
   });
 }
 const componentCatalog = document.querySelector('[data-component-catalog]');
@@ -170,10 +176,13 @@ if (docsSearchInput) {
             body = (d.content || '').toLowerCase();
           return {
             d,
-            score: words.reduce(
-              (sum, w) => sum + (head.includes(w) ? 10 : 0) + (body.includes(w) ? 1 : 0),
-              0,
-            ),
+            score: words.every((word) => head.includes(word) || body.includes(word))
+              ? words.reduce(
+                  (sum, word) =>
+                    sum + (head.includes(word) ? 10 : 0) + (body.includes(word) ? 1 : 0),
+                  0,
+                )
+              : 0,
           };
         })
         .filter((x) => x.score > 0)

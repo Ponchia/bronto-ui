@@ -1,0 +1,11 @@
+{
+  "name": "bronto-release-tooling",
+  "private": true,
+  "description": "Integrity-locked npm CLI for the protected release job only.",
+  "engines": {
+    "node": ">=22.22.2"
+  },
+  "dependencies": {
+    "npm": "11.21.0"
+  }
+}

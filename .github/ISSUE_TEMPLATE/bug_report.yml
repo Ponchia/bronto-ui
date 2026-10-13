@@ -1,11 +1,12 @@
 name: Bug report
-description: A defect in @ponchia/ui (CSS, tokens, classes, or behaviors)
+description: A defect in the package, documentation, website, or examples
 labels: [bug]
 body:
   - type: input
     id: version
     attributes:
       label: '@ponchia/ui version'
+      description: Use the installed version, or main and a commit if reporting a website or documentation issue.
       placeholder: '0.16.1'
     validations:
       required: true
@@ -18,15 +19,18 @@ body:
         - tokens (JS/JSON/DTCG)
         - classes (cls / recipes / .d.ts)
         - behaviors (vanilla JS)
+        - glyphs / icons / readouts
+        - connectors / annotations / renderer helpers
+        - documentation / website / examples
         - build / exports / packaging
     validations:
       required: true
   - type: input
     id: consumer
     attributes:
-      label: Consuming framework
-      description: Astro / SvelteKit / Vue / React / Solid / Qwik / plain HTML, + version. Do not include private project names or secrets in public issues.
-      placeholder: 'Astro 4.x'
+      label: Environment or framework
+      description: Framework and version, plain HTML, Node.js, or the affected documentation/example page. Do not include private project names or secrets.
+      placeholder: 'Plain HTML, Vite, or a documentation URL'
     validations:
       required: true
   - type: input

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -36,6 +36,7 @@ const passed = {
   R_CHECK: 'success',
   R_EXAMPLES: 'success',
   R_E2E: 'success',
+  R_SAST: 'success',
 };
 
 test('CI aggregation accepts complete coverage and proven docs-only skips', () => {
@@ -54,6 +55,10 @@ test('CI aggregation rejects classifier failures, missing results, and unexpecte
     { R_CHANGES: 'cancelled', R_EXAMPLES: 'skipped', R_E2E: 'skipped' },
     { R_CHECK: 'skipped', HEAVY: 'false' },
     { R_CHECK: 'failure' },
+    { R_SAST: 'failure' },
+    { R_SAST: 'skipped', HEAVY: 'false' },
+    { R_SAST: 'cancelled' },
+    { R_SAST: '' },
     { HEAVY: '' },
     { R_EXAMPLES: 'skipped' },
     { R_E2E: 'skipped' },
@@ -143,5 +148,53 @@ test('manual Pages deployment requires successful CI and fails closed on API err
       API_EXIT,
     });
     assert.equal(result.status, status, result.stdout + result.stderr);
+  }
+});
+
+test('Semgrep findings stay advisory while scanner execution errors fail closed', () => {
+  const script = workflowScript('ci.yml', '      - name: Run Semgrep SAST');
+  for (const [SCANNER_EXIT, expected] of [
+    ['0', 0],
+    ['1', 0],
+    ['2', 2],
+    ['7', 7],
+    ['127', 127],
+  ]) {
+    const result = runShell(`semgrep() { return "$SCANNER_EXIT"; }\n${script}`, {
+      SCANNER_EXIT,
+    });
+    assert.equal(result.status, expected, result.stdout + result.stderr);
+  }
+});
+
+test('browser report retention preserves successful retries and rejects malformed reports', () => {
+  const script = workflowScript('e2e.yml', '      - name: Determine browser report retention');
+  const dir = mkdtempSync(join(tmpdir(), 'bronto-browser-report-'));
+  const output = join(dir, 'outputs');
+  mkdirSync(join(dir, 'test-results'));
+  try {
+    for (const [stats, expected] of [
+      [{ flaky: 0 }, 'false'],
+      [{ flaky: 1 }, 'true'],
+      [{ flaky: 3 }, 'true'],
+      [{}, null],
+      [{ flaky: -1 }, null],
+      [{ flaky: '1' }, null],
+    ]) {
+      writeFileSync(join(dir, 'test-results/results.json'), JSON.stringify({ stats }));
+      writeFileSync(output, '');
+      const result = runShell(`cd "$REPORT_DIR"\n${script}`, {
+        REPORT_DIR: dir,
+        GITHUB_OUTPUT: output,
+      });
+      if (expected === null) {
+        assert.notEqual(result.status, 0, `Accepted invalid stats: ${JSON.stringify(stats)}`);
+      } else {
+        assert.equal(result.status, 0, result.stdout + result.stderr);
+        assert.equal(readFileSync(output, 'utf8'), `flaky=${expected}\n`);
+      }
+    }
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
   }
 });
