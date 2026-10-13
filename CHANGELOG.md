@@ -9,6 +9,9 @@
 
 ### Fixed
 
+- Keep native modal contents fully opaque during enter/exit motion: fading the
+  whole dialog briefly reduced label and button contrast below WCAG AA. Retain
+  subtle panel movement, independent backdrop fade, and reduced-motion support.
 - Rebuilt the service dashboard reference with working current-view navigation,
   aligned labeled filters, readable account identity, consistent job creation,
   and the documented modal header/body/footer composition. Integrations and

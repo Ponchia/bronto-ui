@@ -30,30 +30,26 @@
   grid-template-rows: auto 1fr auto;
 }
 
-/* Enter AND exit, zero JS — `@starting-style` + `transition-behavior:
-   allow-discrete` keep the native <dialog> (and its backdrop) in the top
-   layer while it transitions out on close, so it fades/scales both ways
-   instead of only animating in. The native dialog owns top-layer state;
-   an application toggles it through showModal() and close().
-   Needs a 2026-era floor (see CONTRIBUTING → Browser floor). */
+/* Keep dialog content fully opaque throughout enter/exit. Animating its
+   opacity blends normal text and button colors into the dimmed page and can
+   temporarily fail WCAG AA contrast (confirmed in the service demo). Animate
+   only the subtle transform; the independent ::backdrop can still fade.
+   `@starting-style` and `allow-discrete` keep the native dialog in the top
+   layer during closing. Reduced-motion continues to snap to the final state. */
 dialog.ui-modal {
-  opacity: 0;
   transform: translateY(6px) scale(0.98);
   transition:
-    opacity var(--duration-base) var(--ease-spring),
     transform var(--duration-base) var(--ease-spring),
     overlay var(--duration-base) allow-discrete,
     display var(--duration-base) allow-discrete;
 }
 
 dialog.ui-modal[open] {
-  opacity: 1;
   transform: none;
 }
 
 @starting-style {
   dialog.ui-modal[open] {
-    opacity: 0;
     transform: translateY(6px) scale(0.98);
   }
 }
