@@ -19,6 +19,18 @@ const canonicalBase = (
   process.env.BRONTO_SITE_URL || 'https://ponchia.github.io/bronto-ui'
 ).replace(/\/$/, '');
 const url = (path) => `${canonicalBase}/${path}`;
+// Cloudflare Web Analytics is enabled manually for this public documentation
+// website only. Never run on previews, local builds or unrelated GitHub Pages.
+const publicAnalyticsBeacon = `<script>
+  if (window.location.hostname === 'ponchia.github.io' && window.location.pathname.startsWith('/bronto-ui/')) {
+    const beacon = document.createElement('script');
+    beacon.type = 'module';
+    beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+    beacon.setAttribute('data-cf-beacon', '{"token":"a112ce8d5a06497fba89e7c9067f9b6d","spa":false}');
+    document.body.appendChild(beacon);
+  }
+</script>`;
+
 const esc = (text) =>
   String(text)
     .replaceAll('&', '&amp;')
@@ -231,6 +243,7 @@ ${sharedHeader(current, p)}
 ${inner}
 </main>
 ${sharedFooter(p)}
+${publicAnalyticsBeacon}
 </body></html>\n`;
 };
 const docLink = (stem, p, label) => `<a href="${p}docs/${stem}.html">${esc(label)}</a>`;
