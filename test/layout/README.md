@@ -1,10 +1,12 @@
 # Bronto Layout consumer integration
 
 This directory owns three explicit website layout contracts for the **generated
-BrontoUI public site**, not for the BrontoUI library runtime. The separate,
-experimental Bronto Layout website contracts GitHub Actions workflow builds
-BrontoUI's public output and serves it on `127.0.0.1:18775` before running the
-public Bronto Layout CLI pinned to commit
+BrontoUI public site**, not for the BrontoUI library runtime. The reusable
+`Bronto Layout website contracts` workflow is now invoked by the main
+`CI` workflow for application changes and feeds its `ci-gate`, which
+controls whether GitHub Pages may deploy. It also supports manual dispatch.
+The workflow builds BrontoUI's output and serves it on
+`127.0.0.1:18775` before running the Bronto Layout CLI pinned to commit
 `9b39ed8586f5fff3c1d47d0ec1a141fd9790b2fd`.
 
 Because `@ponchia/layout` is **not yet published to npm**, this workflow pins
@@ -44,10 +46,12 @@ It never accepts an arbitrary URL or untrusted workflow parameter, never
 uses `--no-sandbox`, and never uploads raw screenshots. If the sandboxed browser
 cannot start, the check fails and needs investigation rather than bypass.
 
-The workflow is deliberately **not yet a required branch gate**. After it
-passes on real pull requests and main without flakes, consider integrating it
-into `ci-gate` with an explicit release/maintenance decision. It must not
-replace the existing cross-browser Playwright suite.
+After successful PR and main runs, the layout job was promoted into the
+same `ci-gate` as the cross-browser E2E and example matrix for changes
+classified as application-affecting. A docs-only change may skip layout
+checks only after successful classification; an unknown classifier can never
+turn missing checks into success. This does not replace the cross-browser
+Playwright suite or establish complete visual correctness or accessibility.
 
 Local reproduction after building `npm run site:build`: run the same three
 contracts against a locally hosted `_site` and a locally checked out,
