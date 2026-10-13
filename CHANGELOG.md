@@ -5,8 +5,20 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
-
 ## Unreleased
+
+### Fixed
+
+- Rebuilt the service dashboard reference with working current-view navigation,
+  aligned labeled filters, readable account identity, consistent job creation,
+  and the documented modal header/body/footer composition. Integrations and
+  Settings now have distinct content; the latter applies tab-local theme and
+  density preferences. Added interaction and geometric regression coverage for
+  embedded and mobile views. The example viewer reveals a native dialog's iframe
+  without animated ancestor scrolling, so actions stay visible and pointer targets
+  remain stable in Firefox as well as Chromium and WebKit.
+  At 320px the health metrics display as readable rows rather than three cramped
+  columns.
 
 ### Changed
 
@@ -15,7 +27,6 @@
   reusable workflow can still run manually, but no longer runs twice for
   each PR/push. Validated docs-only changes may skip the layout job;
   unverified or failed classification cannot hide missing checks.
-
 
 ## 0.16.2 — 2026-10-13
 

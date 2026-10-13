@@ -1,0 +1,389 @@
+/* Host composition for the service example. The package owns component paint;
+   this file owns this dashboard's layout, table measure and account overflow. */
+.service-demo [hidden] {
+  display: none;
+}
+
+.service-demo .ui-app-rail {
+  gap: var(--space-lg);
+}
+
+.service-demo .ui-app-rail__account {
+  border-block-start: 1px solid var(--line);
+  padding-block-start: var(--space-md);
+}
+
+.service-demo .ui-avatar {
+  flex: 0 0 auto;
+}
+
+.service-account-copy {
+  display: grid;
+  gap: 0.2rem;
+  min-inline-size: 0;
+}
+
+.service-account-copy .ui-muted {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-xs);
+}
+
+.service-demo .ui-app-topbar {
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  padding-block: var(--space-md);
+}
+
+.service-heading {
+  min-inline-size: 0;
+}
+
+.service-subtitle {
+  color: var(--text-dim);
+  font-size: var(--text-xs);
+  margin: 0.35rem 0 0;
+}
+
+.service-actions {
+  flex-shrink: 0;
+}
+
+.service-demo .ui-app-content {
+  align-content: start;
+  gap: var(--space-lg);
+}
+
+.service-toolbar {
+  display: grid;
+  grid-template-columns: 10rem 10rem minmax(12rem, 1fr);
+  align-items: end;
+  gap: var(--space-md);
+}
+
+.service-toolbar .ui-field,
+.service-settings .ui-field {
+  min-inline-size: 0;
+}
+
+.service-toolbar .ui-input,
+.service-toolbar .ui-select {
+  block-size: 2.75rem;
+  min-inline-size: 0;
+}
+
+.service-notice {
+  color: var(--text-soft);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+.service-notice:empty {
+  display: none;
+}
+
+.service-empty {
+  justify-items: start;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  background: var(--panel-soft);
+}
+
+.service-empty p {
+  margin: 0;
+  max-inline-size: 48ch;
+}
+
+.service-demo .ui-statgrid > .ui-stat {
+  padding-block: var(--space-sm) 0;
+}
+
+.service-demo .ui-stat__value {
+  font-variant-numeric: tabular-nums;
+}
+
+.service-demo .ui-stat > :last-child {
+  font-size: var(--text-xs);
+}
+
+.service-demo .ui-table {
+  min-inline-size: 30rem;
+}
+
+.service-demo .ui-table td {
+  vertical-align: middle;
+}
+
+.service-demo .ui-table .is-key {
+  max-inline-size: 22rem;
+  overflow-wrap: anywhere;
+}
+
+.service-job-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  white-space: nowrap;
+  font-size: var(--text-xs);
+}
+
+.service-job-status .ui-dot {
+  flex: 0 0 auto;
+}
+
+.service-jobs-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.service-jobs-footer .ui-button {
+  flex-shrink: 0;
+}
+
+.service-table-hint {
+  margin: 0;
+}
+
+.service-integrations {
+  --grid-min: 14rem;
+  align-items: start;
+}
+
+.service-integrations h3 {
+  font-size: var(--text-lg);
+}
+
+.service-integrations p {
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+.service-definition {
+  display: grid;
+  gap: var(--space-sm);
+  border-block-start: 1px solid var(--line);
+  padding-block-start: var(--space-md);
+  margin: var(--space-xs) 0 0;
+  font-size: var(--text-xs);
+}
+
+.service-definition > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.service-definition dt {
+  color: var(--text-dim);
+}
+
+.service-definition dd {
+  margin: 0;
+}
+
+.service-settings {
+  max-inline-size: 38rem;
+  --stack-gap: var(--space-lg);
+}
+
+.service-settings-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  border-block-start: 1px solid var(--line);
+  padding-block-start: var(--space-md);
+}
+
+.service-settings-footer p,
+.service-demo .ui-modal__body p {
+  margin: 0;
+}
+
+.service-demo .ui-modal__body {
+  font-size: var(--text-sm);
+  padding: var(--space-lg);
+}
+
+.service-demo .ui-modal__head,
+.service-demo .ui-modal__foot {
+  padding: var(--space-md) var(--space-lg);
+}
+
+@media (max-width: 880px) {
+  .service-demo .ui-app-rail {
+    gap: var(--space-sm);
+    align-items: center;
+    border-inline-end: 0;
+    border-block-end: 1px solid var(--line);
+  }
+
+  .service-demo .ui-app-nav {
+    order: 1;
+  }
+
+  .service-demo .ui-app-rail__account {
+    border: 0;
+    padding: 0;
+    max-inline-size: 46%;
+  }
+
+  .service-demo .ui-app-topbar {
+    padding-inline: var(--space-md);
+  }
+}
+
+@media (max-width: 600px) {
+  .service-toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-sm);
+  }
+
+  .service-search {
+    grid-column: 1 / -1;
+  }
+
+  .service-demo .ui-app-rail__brand {
+    font-size: var(--text-sm);
+    padding-inline: 0;
+  }
+
+  .service-account-copy .ui-muted {
+    display: none;
+  }
+
+  .service-demo .ui-avatar {
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    font-size: var(--text-xs);
+  }
+
+  .service-demo .ui-app-topbar {
+    align-items: start;
+  }
+
+  .service-demo .ui-app-nav a {
+    min-block-size: 2.75rem;
+    font-size: var(--text-xs);
+    padding-inline: 0.35rem;
+  }
+
+  .service-demo .ui-table {
+    min-inline-size: 100%;
+  }
+
+  .service-demo .ui-table th,
+  .service-demo .ui-table td {
+    padding: 0.65rem 0.4rem;
+    font-size: var(--text-xs);
+  }
+
+  .service-demo .ui-table .is-key {
+    max-inline-size: 7rem;
+  }
+
+  .service-job-status {
+    gap: 0.35rem;
+  }
+
+  .service-demo .ui-app-topbar__title {
+    font-size: var(--text-lg);
+  }
+
+  .service-actions {
+    inline-size: 100%;
+  }
+
+  .service-demo .ui-app-panel__head p {
+    font-size: var(--text-sm);
+  }
+
+  .service-demo .ui-statgrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-sm);
+  }
+
+  .service-demo .ui-stat__value {
+    font-size: 1.75rem;
+  }
+
+  .service-settings-footer .ui-cluster {
+    inline-size: 100%;
+    justify-content: flex-end;
+  }
+}
+
+.service-job-name {
+  display: block;
+}
+
+.service-job-owner {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  /* Keep ownership visible under the job instead of squeezing four columns
+     into a phone. The native table keeps its name/state/runtime headers. */
+  .service-demo .ui-table th:nth-child(2),
+  .service-demo .ui-table td:nth-child(2) {
+    display: none;
+  }
+
+  .service-demo .ui-table .is-key {
+    max-inline-size: none;
+    inline-size: 48%;
+  }
+
+  .service-job-owner {
+    display: block;
+    color: var(--text-dim);
+    font-size: var(--text-2xs);
+    font-weight: 400;
+    margin-block-start: 0.2rem;
+  }
+}
+
+@media (max-width: 380px) {
+  /* On narrow phones, three tiny metric columns force each trend onto
+     three lines. Present the same facts as scannable rows instead. */
+  .service-demo .ui-statgrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .service-demo .ui-app-panel > .ui-statgrid > .ui-stat {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.25rem var(--space-md);
+    align-items: baseline;
+    padding-block: var(--space-sm);
+  }
+
+  .service-demo .ui-stat__label {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .service-demo .ui-stat__value {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    text-align: end;
+  }
+
+  .service-demo .ui-stat > :last-child {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+  }
+
+  .service-demo .ui-app-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

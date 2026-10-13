@@ -221,3 +221,35 @@ function redirectLegacyDocHash() {
 }
 window.addEventListener('hashchange', redirectLegacyDocHash);
 redirectLegacyDocHash();
+
+// A native dialog is centered inside its iframe, not the outer viewport.
+// Reveal the working frame when a dialog opens; do not shift the parent page
+// after ordinary navigation, typing or pointer events.
+for (const frame of document.querySelectorAll('.iframe-frame iframe')) {
+  const bound = new WeakSet();
+  const bind = () => {
+    const child = frame.contentDocument;
+    if (!child || bound.has(child)) return;
+    bound.add(child);
+    const reveal = () => {
+      const rect = frame.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const top =
+        (document.querySelector('.site-header')?.getBoundingClientRect().bottom || 0) + 16;
+      if (rect.top < top || rect.bottom > innerHeight - 16) {
+        window.scrollBy({ top: rect.top - top, behavior: 'instant' });
+      }
+    };
+    const observer = new MutationObserver((records) => {
+      if (records.some(({ target }) => target.matches('dialog[open]'))) reveal();
+    });
+    observer.observe(child.documentElement, {
+      attributes: true,
+      attributeFilter: ['open'],
+      subtree: true,
+    });
+    child.defaultView.addEventListener('pagehide', () => observer.disconnect(), { once: true });
+  };
+  frame.addEventListener('load', bind);
+  bind();
+}
