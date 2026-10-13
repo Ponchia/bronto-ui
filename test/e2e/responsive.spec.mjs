@@ -48,8 +48,9 @@ test('public homepage hero fits the usable narrow viewport', async ({ page }) =>
   await page.evaluate(() => document.fonts.ready);
   for (const width of [320, 330, 340, 341, 375, 768]) {
     await page.setViewportSize({ width, height: 900 });
-    await page.evaluate(() =>
-      new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    await page.evaluate(
+      () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+    );
     const geometry = await page.evaluate(() => {
       const root = document.documentElement;
       const hero = document.querySelector('.hero');
@@ -59,13 +60,17 @@ test('public homepage hero fits the usable narrow viewport', async ({ page }) =>
         documentWidth: Math.max(root.scrollWidth, document.body?.scrollWidth ?? 0),
         usableWidth: root.clientWidth || window.innerWidth,
         heroRight: hero.getBoundingClientRect().right,
-        titleRight: title.getBoundingClientRect().right
+        titleRight: title.getBoundingClientRect().right,
       };
     });
-    expect(geometry.documentWidth, 'homepage '+width+'px: document overflow')
-      .toBeLessThanOrEqual(geometry.usableWidth + 1);
-    expect(geometry.titleRight, 'homepage '+width+'px: hero heading escapes its container')
-      .toBeLessThanOrEqual(geometry.heroRight + 1);
+    expect(
+      geometry.documentWidth,
+      'homepage ' + width + 'px: document overflow',
+    ).toBeLessThanOrEqual(geometry.usableWidth + 1);
+    expect(
+      geometry.titleRight,
+      'homepage ' + width + 'px: hero heading escapes its container',
+    ).toBeLessThanOrEqual(geometry.heroRight + 1);
   }
 });
 
