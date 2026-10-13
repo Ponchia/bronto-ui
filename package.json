@@ -1,6 +1,6 @@
 {
   "name": "@ponchia/ui",
-  "version": "0.16.2",
+  "version": "0.16.3",
   "type": "module",
   "description": "CSS-first UI building blocks for developer tools, dashboards and reports. Accessible, framework-agnostic, zero runtime dependencies.",
   "keywords": [
