@@ -1,0 +1,130 @@
+# Experimental cross-repository consumer of Bronto Layout. Checks the ACTUAL
+# locally built BrontoUI public site before deployment, without a published
+# npm package, arbitrary target URLs, or privileged tokens.
+#
+# Not yet part of required ci-gate: graduate only after stable PR runs.
+name: Bronto Layout website contracts
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/layout-contract-smoke.yml'
+      - 'test/layout/**'
+      - 'site/**'
+      - 'css/**'
+      - 'dist/**'
+      - 'scripts/build-public-site.mjs'
+      - 'scripts/lib/site-*.mjs'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/layout-contract-smoke.yml'
+      - 'test/layout/**'
+      - 'site/**'
+      - 'css/**'
+      - 'dist/**'
+      - 'scripts/build-public-site.mjs'
+      - 'scripts/lib/site-*.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bronto-layout-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  layout-contracts:
+    name: Built-site semantic layout contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Build and validate the real BrontoUI public site
+        run: |
+          npm ci --ignore-scripts
+          npm run site:build
+          npm run check:site
+
+      # Pin the consumer dependency by immutable commit. Bronto Layout is a
+      # source-only public repo until the separate authorized npm alpha.
+      - name: Checkout immutable Bronto Layout CLI
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: Ponchia/bronto-layout
+          ref: 9b39ed8586f5fff3c1d47d0ec1a141fd9790b2fd
+          path: .bronto-layout-cli
+          persist-credentials: false
+
+      - name: Build and validate pinned layout contracts
+        run: |
+          npm --prefix .bronto-layout-cli ci --ignore-scripts
+          npm --prefix .bronto-layout-cli run build
+          node .bronto-layout-cli/bin/bronto-layout.mjs validate --spec test/layout/home.json
+          node .bronto-layout-cli/bin/bronto-layout.mjs validate --spec test/layout/operations.json
+
+      - name: Verify sandboxed browser and exercise website contracts
+        # The Ubuntu runner also has a development Chromium binary which
+        # aborted in its ZygoteHost sandbox preflight. Prefer installed stable
+        # Google Chrome before considering *any* browser isolation change.
+        # No BRONTO_CHROME_NO_SANDBOX, --no-sandbox, external target URL,
+        # or untrusted workflow parameter; fail if sandboxed startup fails.
+        shell: bash
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+        run: |
+          set -euo pipefail
+          test -x "$CHROME_PATH"
+          "$CHROME_PATH" --version
+          node .bronto-layout-cli/bin/bronto-layout.mjs doctor --verify-launch --json
+
+          python3 -m http.server 18775 --bind 127.0.0.1 --directory _site > "$RUNNER_TEMP/bronto-site-http.log" 2>&1 &
+          server_pid=$!
+          clean_css="$RUNNER_TEMP/brontoui-site-clean.css"
+          cp _site/site/site.css "$clean_css"
+          trap 'cp "$clean_css" _site/site/site.css; kill "$server_pid" 2>/dev/null || true' EXIT
+
+          curl --silent --show-error --fail --retry 20 --retry-connrefused --retry-delay 1 \
+            http://127.0.0.1:18775/ > /dev/null
+
+          node .bronto-layout-cli/bin/bronto-layout.mjs check --spec test/layout/home.json
+          node .bronto-layout-cli/bin/bronto-layout.mjs check --spec test/layout/operations.json
+
+          # Negative control: reproduce the exact historical 320px title
+          # regression in generated site CSS (never source files). The semantic
+          # root document overflow rule MUST fail at 320px.
+          cat >> _site/site/site.css <<'CSS'
+          @media (max-width: 340px) {
+            .hero-copy h1 { font-size: 3.1rem !important; }
+          }
+          CSS
+          set +e
+          node .bronto-layout-cli/bin/bronto-layout.mjs check \
+            --spec test/layout/home.json --widths 320 --json \
+            > "$RUNNER_TEMP/brontoui-layout-negative-control.json"
+          result=$?
+          set -e
+          TEST_EXIT="$result" node - <<'NODE'
+          const fs = require('node:fs');
+          const data = JSON.parse(fs.readFileSync(
+            process.env.RUNNER_TEMP + '/brontoui-layout-negative-control.json', 'utf8'
+          ));
+          const failed = data.reports.flatMap(r => r.findings.filter(x => x.status === 'fail'));
+          if (process.env.TEST_EXIT !== '1' ||
+              !failed.some(x => x.id === 'document-does-not-overflow' && x.deviation > 2)) {
+            console.error('Expected historical 320px website regression was NOT detected',
+              {exit: process.env.TEST_EXIT, failed});
+            process.exit(1);
+          }
+          console.log('Historical mobile regression correctly rejected by Bronto Layout',
+            failed.map(x => ({rule: x.id, deviation: x.deviation})));
+          NODE

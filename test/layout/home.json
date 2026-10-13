@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "url": "http://127.0.0.1:18775/",
+  "widths": [320, 340, 375, 768, 1280],
+  "selectors": {
+    "header": ".site-header",
+    "main": "#main",
+    "hero": ".hero",
+    "title": "#hero-title",
+    "examples": ".example-grid"
+  },
+  "rules": [
+    {
+      "id": "document-does-not-overflow",
+      "type": "document-overflow",
+      "tolerance": 2
+    },
+    {
+      "id": "site-header-exists",
+      "type": "selector-count",
+      "element": "header",
+      "exactly": 1
+    },
+    {
+      "id": "main-exists",
+      "type": "selector-count",
+      "element": "main",
+      "exactly": 1
+    },
+    {
+      "id": "hero-title-exists",
+      "type": "selector-count",
+      "element": "title",
+      "exactly": 1
+    },
+    {
+      "id": "example-grid-exists",
+      "type": "selector-count",
+      "element": "examples",
+      "exactly": 1
+    },
+    {
+      "id": "hero-fits-horizontally",
+      "type": "contained",
+      "element": "hero",
+      "in": "viewport",
+      "axis": "x",
+      "tolerance": 2
+    },
+    {
+      "id": "header-fits-horizontally",
+      "type": "contained",
+      "element": "header",
+      "in": "viewport",
+      "axis": "x",
+      "tolerance": 2
+    }
+  ]
+}
