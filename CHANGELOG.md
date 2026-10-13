@@ -9,6 +9,15 @@
 
 ### Fixed
 
+- Comboboxes and command palettes preserve IME composition, native editing
+  shortcuts, and host-canceled events. Disabled options remain discoverable but
+  cannot be selected; disabled/read-only inputs cannot commit pending choices.
+- Live combobox lists keep generated option IDs unique during prepends and
+  replacements, use their owning document's observer, and restore removed rows.
+  Closing also hides the empty state.
+- Dialog light-dismiss distinguishes padding from the backdrop and respects
+  host-canceled clicks.
+
 - Glyph renderers explicitly HTML-escape validated CSS at quoted attribute
   boundaries, preserving valid render output and the existing CSS allowlist.
 - Repeated and out-of-order clipboard requests recover the original copy label;

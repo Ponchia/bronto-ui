@@ -8,6 +8,8 @@ import {
   wrapIndex,
   collectHosts,
   closestSafe,
+  ignoreListboxKey,
+  isUnavailable,
 } from './internal.js';
 
 const COMBOBOX_OPTION_SELECTOR = '[role="option"], .ui-combobox__option';
@@ -89,8 +91,9 @@ function prepareEmptyState(empty) {
 
 function liveOptionObserver(box, list, relist) {
   if (!box.hasAttribute('data-bronto-combobox-live')) return null;
-  if (typeof MutationObserver !== 'function') return null;
-  const observer = new MutationObserver(relist);
+  const Observer = box.ownerDocument?.defaultView?.MutationObserver;
+  if (!Observer) return null;
+  const observer = new Observer(relist);
   observer.observe(list, { childList: true, subtree: true });
   return observer;
 }
@@ -214,6 +217,8 @@ export function initCombobox({ root } = {}) {
     let listId = '';
     const optionIdBase = `bronto-cb-opt-${nextFieldUid()}`;
     const locale = localeOf(box);
+    let nextOption = 0;
+    const inputUnavailable = () => input.readOnly || isUnavailable(input);
 
     const rememberOptionState = (option) => {
       if (optionStates.has(option)) return;
@@ -243,8 +248,16 @@ export function initCombobox({ root } = {}) {
             attrs: snapshotAttrs(empty, ['role']),
           }
         : null,
-      options: optionStates,
     });
+
+    const restoreOption = (option) => {
+      const saved = optionStates.get(option);
+      if (!saved) return;
+      option.hidden = saved.hidden;
+      option.classList.toggle('is-active', saved.active);
+      restoreAttrs(option, saved.attrs);
+      optionStates.delete(option);
+    };
 
     const restoreState = (state) => {
       restoreAttrs(input, state.input);
@@ -254,13 +267,7 @@ export function initCombobox({ root } = {}) {
         empty.hidden = state.empty.hidden;
         restoreAttrs(empty, state.empty.attrs);
       }
-      for (const option of options) {
-        const optionState = state.options.get(option);
-        if (!optionState) continue;
-        option.hidden = optionState.hidden;
-        option.classList.toggle('is-active', optionState.active);
-        restoreAttrs(option, optionState.attrs);
-      }
+      options.forEach(restoreOption);
     };
 
     // Re-readable so the opt-in MutationObserver (`data-bronto-combobox-live`)
@@ -268,10 +275,15 @@ export function initCombobox({ root } = {}) {
     // `filter`, `move`, etc. close over this binding, so reassigning it is enough.
     let options = [];
     const syncOptions = () => {
-      options = [...list.querySelectorAll(COMBOBOX_OPTION_SELECTOR)];
-      options.forEach((o, i) => {
+      const next = [...list.querySelectorAll(COMBOBOX_OPTION_SELECTOR)];
+      const retained = new Set(next);
+      // Return removed rows to their authored state before forgetting them.
+      // A host can then reuse them without stale filtering or generated IDs.
+      for (const option of options) if (!retained.has(option)) restoreOption(option);
+      options = next;
+      options.forEach((o) => {
         rememberOptionState(o);
-        if (!o.id) o.id = `${optionIdBase}-${i}`;
+        if (!o.id) o.id = `${optionIdBase}-${nextOption++}`;
         o.setAttribute('role', 'option');
       });
     };
@@ -297,6 +309,7 @@ export function initCombobox({ root } = {}) {
     };
     const close = () => {
       list.hidden = true;
+      if (empty) empty.hidden = true;
       input.setAttribute('aria-expanded', 'false');
       active = -1;
       setActive(null);
@@ -321,6 +334,8 @@ export function initCombobox({ root } = {}) {
     };
 
     const select = (opt) => {
+      if (!opt || opt.hidden || !options.includes(opt) || !list.contains(opt)) return;
+      if (inputUnavailable() || isUnavailable(opt)) return;
       // Show the human LABEL in the input; emit the `data-value` CODE in the
       // event. The natural pattern is code in `data-value`, label in the text —
       // putting the code in the visible input silently shows the user a raw code.
@@ -366,8 +381,11 @@ export function initCombobox({ root } = {}) {
       if (!list.hidden) filter();
     };
 
-    const onInput = () => filter();
+    const onInput = () => {
+      if (!inputUnavailable()) filter();
+    };
     const onKey = (e) => {
+      if (ignoreListboxKey(e) || inputUnavailable()) return;
       const handled = keyHandlers[e.key]?.();
       if (handled) e.preventDefault();
     };
@@ -389,6 +407,7 @@ export function initCombobox({ root } = {}) {
       },
     };
     const onOptionClick = (e) => {
+      if (e.defaultPrevented) return;
       const opt = closestSafe(e.target, COMBOBOX_OPTION_SELECTOR);
       if (opt) select(opt);
     };

@@ -393,6 +393,13 @@ html:has(dialog.ui-modal[open]) {
   color: var(--text);
 }
 
+/* Keep unavailable options readable and arrow-reachable without suggesting
+   that they can be chosen. The behavior enforces non-activation. */
+.ui-combobox__option[aria-disabled='true'] {
+  color: var(--text-dim);
+  cursor: not-allowed;
+}
+
 /* The active option is tracked by aria-activedescendant — it is NEVER DOM-focused,
    so it gets no UA focus ring under HCM, and its only cue (--bg-accent) is stripped.
    Re-assert a system Highlight like the command palette does. */
@@ -402,6 +409,10 @@ html:has(dialog.ui-modal[open]) {
     forced-color-adjust: none;
     background: Highlight;
     color: HighlightText;
+  }
+
+  .ui-combobox__option[aria-disabled='true'] {
+    color: GrayText;
   }
 }
 
