@@ -26,7 +26,10 @@ test('local-site contracts preserve loopback target and explicit design rules', 
 test('layout workflow pins toolchain, sandbox and fixed localhost targets', () => {
   const workflow = readText('.github/workflows/layout-contract-smoke.yml');
   assert.match(workflow, /repository: Ponchia\/bronto-layout/);
-  assert.match(workflow, /ref: 9b39ed8586f5fff3c1d47d0ec1a141fd9790b2fd/);
+  assert.match(workflow, /ref: 76d252304ab6fd8f1698fd0136b32091cb19f284/);
+  assert.match(workflow, /--fail-on-skip --interior-probes 1 --refine/);
+  assert.match(workflow, /--widths 375,430/);
+  assert.match(workflow, /report.sampling\?\.interiorWidths/);
   assert.match(workflow, /contents: read/);
   assert.match(workflow, /doctor --verify-launch --json/);
   assert.match(workflow, /CHROME_PATH: \/usr\/bin\/google-chrome/);
