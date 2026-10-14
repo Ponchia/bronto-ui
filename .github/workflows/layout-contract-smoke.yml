@@ -37,12 +37,12 @@ jobs:
           npm run check:site
 
       # Pin the consumer dependency by immutable commit. Bronto Layout is a
-      # source-only public repo until the separate authorized npm alpha.
+      # GitHub v0.5.0-beta.0 prerelease; npm registry publication is separate.
       - name: Checkout immutable Bronto Layout CLI
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: Ponchia/bronto-layout
-          ref: 9b39ed8586f5fff3c1d47d0ec1a141fd9790b2fd
+          ref: 76d252304ab6fd8f1698fd0136b32091cb19f284
           path: .bronto-layout-cli
           persist-credentials: false
 
@@ -80,11 +80,11 @@ jobs:
           curl --silent --show-error --fail --retry 20 --retry-connrefused --retry-delay 1 \
             http://127.0.0.1:18775/ > /dev/null
 
-          node .bronto-layout-cli/bin/bronto-layout.mjs check --spec test/layout/home.json
-          node .bronto-layout-cli/bin/bronto-layout.mjs check --spec test/layout/operations.json
+          node .bronto-layout-cli/bin/bronto-layout.mjs check --spec test/layout/home.json --fail-on-skip --interior-probes 1 --refine
+          node .bronto-layout-cli/bin/bronto-layout.mjs check --spec test/layout/operations.json --fail-on-skip --interior-probes 1 --refine
           # Inspect the dashboard directly: an outer iframe shell can look
           # correct while its own controls/panels are misaligned.
-          node .bronto-layout-cli/bin/bronto-layout.mjs check --spec test/layout/service-demo.json
+          node .bronto-layout-cli/bin/bronto-layout.mjs check --spec test/layout/service-demo.json --fail-on-skip --interior-probes 1 --refine
 
           # Negative control: reproduce the exact historical 320px title
           # regression in generated site CSS (never source files). The semantic
@@ -159,4 +159,39 @@ jobs:
             'document overflow; generic audit remained green.');
           NODE
 
+          cp "$app_css" _site/dist/bronto.css
+
+          # New beta negative control: 375px and 430px can both look healthy,
+          # while a narrow 395–410px breakpoint silently misaligns the jobs
+          # panel. The interior probe (403px) must expose the island without
+          # treating the two passing endpoints as proof of correctness.
+          cat >> _site/dist/bronto.css <<'CSS'
+          @media (min-width: 395px) and (max-width: 410px) {
+            #jobs { transform: translateX(8px) !important; }
+          }
+          CSS
+          set +e
+          node .bronto-layout-cli/bin/bronto-layout.mjs check \
+            --spec test/layout/service-demo.json --widths 375,430 \
+            --interior-probes 1 --fail-on-skip --json --compact \
+            > "$RUNNER_TEMP/brontoui-demo-responsive-island.json"
+          island_status=$?
+          set -e
+          ISLAND_EXIT="$island_status" node - <<'NODE'
+          const fs = require('node:fs');
+          const report = JSON.parse(fs.readFileSync(
+            process.env.RUNNER_TEMP + '/brontoui-demo-responsive-island.json', 'utf8'
+          ));
+          const failures = report.failures || [];
+          if (process.env.ISLAND_EXIT !== '1' ||
+              report.sampledWidths.join(',') !== '375,403,430' ||
+              report.sampling?.interiorWidths?.join(',') !== '403' ||
+              !failures.some(f => f.width === 403 && f.id === 'demo-toolbar-aligns-with-job-panel'
+                && f.deviation >= 6 && f.deviation <= 10) ||
+              failures.some(f => f.width === 375 || f.width === 430)) {
+            console.error('Expected a narrow responsive misalignment caught at the probed 403px width');
+            process.exit(1);
+          }
+          console.log('First-party responsive island caught at 403px; both original endpoints passed.');
+          NODE
           cp "$app_css" _site/dist/bronto.css

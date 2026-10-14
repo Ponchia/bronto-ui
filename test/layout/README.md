@@ -6,10 +6,10 @@ BrontoUI public site**, not for the BrontoUI library runtime. The reusable
 `CI` workflow for application changes and feeds its `ci-gate`, which
 controls whether GitHub Pages may deploy. It also supports manual dispatch.
 The workflow builds BrontoUI's output and serves it on
-`127.0.0.1:18775` before running the Bronto Layout CLI pinned to commit
-`9b39ed8586f5fff3c1d47d0ec1a141fd9790b2fd`.
+`127.0.0.1:18775` before running the Bronto Layout CLI pinned to the GitHub beta `v0.5.0-beta.0` source commit
+`76d252304ab6fd8f1698fd0136b32091cb19f284`.
 
-Because `@ponchia/layout` is **not yet published to npm**, this workflow pins
+Because `@ponchia/layout` is published as a **GitHub prerelease, not on the npm registry**, this workflow pins
 an immutable public Git commit. Updating it requires review, testing and a
 new commit hash; it must not float to `main`.
 
@@ -56,3 +56,7 @@ Playwright suite or establish complete visual correctness or accessibility.
 Local reproduction after building `npm run site:build`: run the same three
 contracts against a locally hosted `_site` and a locally checked out,
 built Bronto Layout source at the pinned commit.
+
+## Beta 0.5.0 responsive field trial
+
+The CI-green GitHub beta is pinned by immutable commit, and the same three existing, approved contracts now run with `--fail-on-skip --interior-probes 1 --refine`. This adds bounded intermediate widths without changing the contracts or claiming unsampled widths were verified. A deliberately narrow 395–410 CSS px, **generated-CSS-only** 8px dashboard jobs translation must fail `demo-toolbar-aligns-with-job-panel` at the 403px probe while both 375 and 430px remain healthy. The final test restores CSS before leaving the runner. This is first-party evidence of a real built dashboard; it is not a naturally occurring defect, independent accuracy estimate or a reason to silently accept suggested CSS rules. Existing browser/visual tests remain separate.
