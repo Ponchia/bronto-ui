@@ -7,6 +7,7 @@ const EXAMPLES = Object.freeze([
   { name: 'react-vite', smoke: true },
   { name: 'tailwind-vite', smoke: true },
   { name: 'report-static', smoke: true },
+  { name: 'annotations-vite', smoke: true },
 ]);
 
 export const EXAMPLE_NAMES = Object.freeze(EXAMPLES.map((example) => example.name));
