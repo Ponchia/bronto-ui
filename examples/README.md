@@ -32,6 +32,7 @@ detection) without committing platform-specific PNG baselines.
 | [`react-vite`](react-vite)       | React + Vite     | [docs/getting-started/react-solid.md](../docs/getting-started/react-solid.md) |
 | [`tailwind-vite`](tailwind-vite) | Tailwind v4 + Vite | [docs/interop/tailwind.md](../docs/interop/tailwind.md)                 |
 | [`report-static`](report-static) | Static report + Vite | [docs/reporting.md](../docs/reporting.md) |
+| [`annotations-vite`](annotations-vite) | UI frame + independent Annotations | [Annotation migration](../docs/migrations/0.16-to-0.17.md) |
 
 ## Verify an example
 

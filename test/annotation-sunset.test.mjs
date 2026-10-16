@@ -70,3 +70,15 @@ test('UI does not depend on or re-export the annotation engine', () => {
   assert.equal(read('annotations/index.js').includes("from '@ponchia/annotations'"), false);
   assert.equal(read('css/annotations.css').includes('@import'), false);
 });
+
+test('independent example consumes annotation-owned APIs without legacy roll-ups', () => {
+  const example = JSON.parse(read('examples/annotations-vite/package.json'));
+  const source = read('examples/annotations-vite/src/main.js');
+  assert.equal(example.dependencies['@ponchia/annotations'], '0.6.10');
+  assert.match(source, /from '@ponchia\/annotations'/);
+  assert.match(source, /@ponchia\/annotations\/bronto\.css/);
+  assert.doesNotMatch(
+    source,
+    /@ponchia\/ui\/(?:annotations|css\/(?:annotations|analytical|report-kit)\.css)/,
+  );
+});

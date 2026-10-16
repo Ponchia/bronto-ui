@@ -5,7 +5,17 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
-## Unreleased — 0.17.0
+## 0.17.0 — 2026-10-16
+
+### Added
+
+- An installed-package consumer combines UI's figure/theme with the published
+  standalone Annotations engine, without importing deprecated UI annotation
+  helpers or CSS roll-ups. Required example checks exercise target movement,
+  visibility, theme changes and responsive coordinates. Release qualification
+  adds all three browser engines and desktop/mobile visual health.
+- Migration guidance now handles indirect annotation styles loaded by
+  `analytical.css` and `report-kit.css`, not only direct leaf imports.
 
 ### Deprecated (migration window, no runtime break)
 

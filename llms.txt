@@ -44,7 +44,7 @@ choose one of these ways to add the report layer:
 <!-- installed locally; serve node_modules beside this page -->
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/report.css" />
 <!-- or use a pinned CDN version (pre-1.0, breaking changes ship in the minor) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.16.3/dist/css/report.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.17.0/dist/css/report.css" />
 ```
 
 The flattened default bundle is `dist/bronto.css` (bundler shorthand

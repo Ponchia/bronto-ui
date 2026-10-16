@@ -1,0 +1,45 @@
+.integration-example {
+  max-inline-size: 720px;
+  margin-inline: auto;
+  padding: 24px 16px;
+}
+.integration-example > p {
+  margin-block: 16px;
+}
+.integration-controls {
+  margin-block: 24px;
+}
+#stage {
+  block-size: 320px;
+  inline-size: 100%;
+}
+#host-chart,
+#annotation-overlay {
+  block-size: 100%;
+  inline-size: 100%;
+}
+.host-axis {
+  stroke: var(--edge);
+  stroke-width: 1;
+}
+.host-target {
+  fill: var(--accent);
+}
+.integration-description {
+  margin-block: 16px;
+}
+.integration-imports {
+  border-block-start: 1px solid var(--line);
+  padding-block: 16px;
+}
+.integration-imports p {
+  margin-block: 12px;
+}
+.integration-imports code {
+  overflow-wrap: anywhere;
+}
+@media print {
+  .integration-controls {
+    display: none;
+  }
+}

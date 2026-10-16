@@ -19,6 +19,7 @@ import { chromium, firefox, webkit } from '@playwright/test';
 import { defaultDistDirFor } from './lib/examples.mjs';
 import { createStaticServer } from './lib/static-server.mjs';
 import { log } from './lib/stdio.mjs';
+import { assertIndependentAnnotations } from './lib/annotation-example-smoke.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -449,6 +450,11 @@ async function assertExample(page, name) {
       .locator('.bg-bronto-surface, .bronto-dark\\:bg-bronto-surface-raised')
       .count();
     if (!hasBridgeCss) throw new Error('Tailwind bridge utilities were not emitted');
+    return;
+  }
+  if (name === 'annotations-vite') {
+    await assertThemeToggle();
+    await assertIndependentAnnotations(page);
     return;
   }
   if (name === 'report-static') {

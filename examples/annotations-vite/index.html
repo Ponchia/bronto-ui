@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:," />
+    <title>Bronto UI + independent Annotations</title>
+  </head>
+  <body>
+    <main class="integration-example">
+      <p class="ui-eyebrow">Two packages, separate ownership</p>
+      <h1>UI + Annotations</h1>
+      <p>
+        UI supplies the theme and figure. Annotations supplies the note, connector and placement.
+        The target below is illustrative host-owned geometry.
+      </p>
+      <div class="ui-cluster integration-controls">
+        <button class="ui-button" type="button" data-bronto-theme-toggle>Toggle theme</button>
+        <button class="ui-button ui-button--subtle" type="button" id="move-target">
+          Move target
+        </button>
+        <button
+          class="ui-button ui-button--subtle"
+          type="button"
+          id="toggle-note"
+          aria-pressed="true"
+        >
+          Hide annotation
+        </button>
+      </div>
+      <figure class="ui-figure" aria-labelledby="figure-title">
+        <figcaption id="figure-title" class="ui-figure__caption">
+          An annotation attached to a host-owned point
+        </figcaption>
+        <div class="ui-figure__stage" id="stage">
+          <svg
+            class="ui-figure__media"
+            id="host-chart"
+            role="img"
+            aria-label="An illustrative point whose position can be changed"
+          ></svg>
+          <div class="ui-figure__overlay" id="annotation-overlay"></div>
+        </div>
+        <p class="integration-description" id="annotation-description" role="status">
+          The host is preparing the annotation.
+        </p>
+      </figure>
+      <details class="integration-imports">
+        <summary>Package boundary</summary>
+        <p>
+          The host imports <code>@ponchia/ui</code> and <code>@ponchia/ui/css/figure.css</code> for
+          its frame, then <code>@ponchia/annotations</code> and
+          <code>@ponchia/annotations/bronto.css</code> for annotations. Neither library imports the
+          other.
+        </p>
+      </details>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
