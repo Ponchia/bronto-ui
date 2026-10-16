@@ -9,6 +9,11 @@ export async function assertIndependentAnnotations(page) {
     throw new Error('new consumer must not emit legacy UI annotations');
   const before = await connector.getAttribute('d');
   if (!before || /NaN|Infinity/.test(before)) throw new Error('connector path must be finite');
+  // A persisted pagehide must not tear down a page which will be restored.
+  await page.evaluate(() => {
+    window.dispatchEvent(new PageTransitionEvent('pagehide', { persisted: true }));
+    window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true }));
+  });
   const move = page.getByRole('button', { name: 'Move target' });
   await move.focus();
   await page.keyboard.press('Enter');

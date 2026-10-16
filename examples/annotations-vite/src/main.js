@@ -74,6 +74,11 @@ function dispose() {
   moveButton.removeEventListener('click', moveTarget);
   toggleButton.removeEventListener('click', toggleNote);
   stopTheme();
+  window.removeEventListener('pagehide', pageHidden);
 }
-window.addEventListener('pagehide', dispose, { once: true });
+function pageHidden(event) {
+  // A back/forward-cache entry resumes with the same handlers and observers.
+  if (!event.persisted) dispose();
+}
+window.addEventListener('pagehide', pageHidden);
 if (import.meta.hot) import.meta.hot.dispose(dispose);
