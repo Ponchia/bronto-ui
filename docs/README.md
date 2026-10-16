@@ -118,3 +118,4 @@ analytical, workbench, and command styles are separate opt-in imports.
 
 - [0.10 to 0.11](./migrations/0.10-to-0.11.md) — narrow-container layouts and consumer typography roles.
 - [0.11 to 0.12](./migrations/0.11-to-0.12.md) — the categorical palette, identity tokens and runtime renderer tokens.
+- [0.16 to 0.17](./migrations/0.16-to-0.17.md) — annotation ownership migration and deprecation before 0.18 removal.

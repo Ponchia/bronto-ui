@@ -73,9 +73,11 @@ fallback table understandable independently of its visual encoding.
 
 ### Annotation grammar and the annotation engine
 
-`@ponchia/ui/annotations` contains small, dependency-free SVG geometry helpers
-for the subject / connector / note grammar. Bronto UI also owns the matching
-CSS classes and token styling.
+`@ponchia/ui/annotations` currently contains deprecated dependency-free SVG
+geometry for the subject / connector / note grammar. The UI-owned annotation
+CSS and classes are likewise deprecated for removal after a full minor window.
+New consumers should use `@ponchia/annotations` and its own `bronto.css`;
+Bronto UI continues to own generic figure styling and token values.
 
 The richer placement, collision handling, editing, and renderer integrations
 live in the separate `@ponchia/annotations` package. Do not recreate that engine

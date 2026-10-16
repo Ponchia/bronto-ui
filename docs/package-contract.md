@@ -237,6 +237,7 @@ semantic versioning contract for the surfaces listed here.
 | `./css/discussion.css` | `./dist/css/discussion.css` | Opt-in layered CSS leaf | Stable additive | Generated layered direct-import leaf. Opt-in and not included in dist/bronto.css. |
 | `./css/unlayered/discussion.css` | `./css/discussion.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
 | `./docs/discussion.md` | `./docs/discussion.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./docs/migrations/0.16-to-0.17.md` | `./docs/migrations/0.16-to-0.17.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 
 ## Shipped Files Allowlist
 
@@ -325,6 +326,7 @@ always includes `package.json`, `README.md`, `LICENSE`, and
 | `docs/adr/0006-trusted-publishing.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/migrations/0.10-to-0.11.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 | `docs/migrations/0.11-to-0.12.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
+| `docs/migrations/0.16-to-0.17.md` | Shipped documentation | Curated Markdown reading asset shipped in the npm tarball. |
 
 ## Artifact Provenance
 

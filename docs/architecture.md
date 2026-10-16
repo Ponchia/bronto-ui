@@ -42,7 +42,7 @@ on top of the CSS, none of which require a framework commitment**:
 ├── behaviors/   vanilla, SSR-safe JS for stateful widgets           [optional]
 ├── renderer/    live CSS tokens for SVG/canvas/WebGL renderers       [optional]
 ├── connectors/  pure SVG leader-line geometry kernel (no DOM)        [optional]
-├── annotations/ pure SVG callout geometry (builds on connectors)     [optional]
+├── annotations/ deprecated legacy SVG callout helpers (sunset >=0.18) [legacy]
 ├── glyphs/      dot-matrix glyph registry/renderers                 [optional]
 ├── schemas/     declarative JSON contracts for report/tooling data   [optional]
 ```
@@ -83,13 +83,13 @@ on top of the CSS, none of which require a framework commitment**:
   `observeTokens()` reports changes, and adapters such as `vegaConfig()` and
   `xtermTheme()` hand values to the consumer's renderer. Bronto does not own
   renderer lifecycle, scales, or drawing. See [renderer.md](./renderer.md).
-- **connectors/** and **annotations/** — dependency-free SVG geometry helpers
+- **connectors/** and **annotations/** — currently shipped dependency-free SVG geometry helpers
   for report and analytical figures. `@ponchia/ui/annotations` intentionally
   stays a small static-helper compatibility layer for the Bronto subject /
   connector / note grammar. The richer annotation engine - placement,
   collision handling, SVG/React renderers, editing, and diagram/chart adapters
   - lives in the sibling `@ponchia/annotations` package and must not be pulled
-  in as a runtime or public type dependency of `@ponchia/ui`.
+  in as a runtime or public type dependency of `@ponchia/ui`. The old `annotations/` and dedicated `css/annotations.css` + `.ui-annotation*` APIs are deprecated in 0.17 and targeted for removal no earlier than 0.18. New annotation CSS and classes are owned by `@ponchia/annotations`; Bronto UI retains only framework-independent tokens and figure stage.
 - **glyphs/** — static bitmap data and SSR-safe render helpers. The
   256-cell DOM renderers are for display and solid inline icons; the `.ui-icon`
   mask renderer is for dense icon-at-scale use.
