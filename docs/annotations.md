@@ -27,6 +27,8 @@ The UI package owns the surrounding figure, typography and theme tokens;
 `@ponchia/annotations` owns annotation models, geometry, routing, editing,
 renderers, classes and CSS. Neither package imports or re-exports the other.
 Bronto tokens may be consumed by Annotations, but are optional.
+Check runtime requirements before upgrading: current published Annotations
+0.6.10 requires Node 20.19+, while published Bronto UI 0.16.3 supports Node 18+.
 
 ## Legacy Bronto UI annotation surface (deprecated)
 
