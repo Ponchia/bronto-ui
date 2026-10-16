@@ -126,7 +126,8 @@
     "docs/migrations/0.9-to-0.10.md",
     "docs/adr/0006-trusted-publishing.md",
     "docs/migrations/0.10-to-0.11.md",
-    "docs/migrations/0.11-to-0.12.md"
+    "docs/migrations/0.11-to-0.12.md",
+    "docs/migrations/0.16-to-0.17.md"
   ],
   "style": "./dist/bronto.css",
   "scripts": {
@@ -556,7 +557,8 @@
     "./docs/migrations/0.11-to-0.12.md": "./docs/migrations/0.11-to-0.12.md",
     "./css/discussion.css": "./dist/css/discussion.css",
     "./css/unlayered/discussion.css": "./css/discussion.css",
-    "./docs/discussion.md": "./docs/discussion.md"
+    "./docs/discussion.md": "./docs/discussion.md",
+    "./docs/migrations/0.16-to-0.17.md": "./docs/migrations/0.16-to-0.17.md"
   },
   "overrides": {
     "adm-zip": "0.6.1",

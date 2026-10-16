@@ -1,3 +1,9 @@
+/* Deprecated in the planned 0.17 minor: this legacy ui-annotation visual grammar
+   is retained for migration only. New annotations should import
+   @ponchia/annotations/bronto.css (pa-annotation classes). This leaf, its
+   unlayered export and the classes/recipes are slated for removal no earlier
+   than the following 0.18 minor, after a released deprecation window. */
+
 /* ==========================================================================
    annotations — opt-in SVG callouts for analytical figures.
 

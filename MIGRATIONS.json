@@ -248,6 +248,30 @@
         }
       ],
       "codemod": "No automatic rewrite: see docs/migrations/0.11-to-0.12.md."
+    },
+    {
+      "from": "0.16",
+      "to": "0.17",
+      "summary": "Deprecate the legacy Bronto UI annotation geometry, styling and class recipe in favor of the independently installable @ponchia/annotations package. Existing UI behavior remains unchanged for the 0.17 minor.",
+      "safe": [],
+      "manual": [
+        {
+          "old": "@ponchia/ui/annotations",
+          "new": "@ponchia/annotations",
+          "note": "Import geometry helpers, placement, editing and rendering from the standalone package. Verify options and output geometry using the parity manifest; types and session models are not necessarily interchangeable in all cases."
+        },
+        {
+          "old": "@ponchia/ui/css/annotations.css / .ui-annotation*",
+          "new": "@ponchia/annotations/bronto.css / .pa-annotation*",
+          "note": "Import the annotation-owned stylesheet alongside Bronto theme CSS. Its legacy ui-annotation selectors let consumers migrate markup incrementally; inspect animation, print and forced-color states."
+        },
+        {
+          "old": "ui.annotation() / cls.annotation*",
+          "new": "annotationClassName() / brontoAnnotationClassName() from @ponchia/annotations",
+          "note": "Use pa-prefixed classes for new markup, or the legacy class generator until converting HTML and SVG. Bronto UI class names and recipes remain until the later breaking removal."
+        }
+      ],
+      "codemod": "No blind automatic rewrite for styling and geometry. Locate imports and ui-annotation classes; follow docs/migrations/0.16-to-0.17.md and validate the rendered outputs and installed package versions."
     }
   ]
 }

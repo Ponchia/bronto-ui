@@ -302,6 +302,7 @@ function linePath(start, end) {
 /**
  * @param {Partial<AnnotationPoint>} [point]
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use annotationTransform from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function annotationTransform({ x = 0, y = 0 } = {}) {
   return `translate(${fmt(finite('x', x))}, ${fmt(finite('y', y))})`;
@@ -310,6 +311,7 @@ export function annotationTransform({ x = 0, y = 0 } = {}) {
 /**
  * @param {NoteTransformOptions} [options]
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use noteTransform from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function noteTransform({
   dx,
@@ -376,6 +378,7 @@ function noteRect(x, y, width, height, placement) {
 /**
  * @param {NotePlacementOptions} options
  * @returns {NotePlacement}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use notePlacement from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function notePlacement(options) {
   const {
@@ -439,6 +442,7 @@ export function notePlacement(options) {
 /**
  * @param {CircleSubjectOptions} options
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use circleSubjectPath from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function circleSubjectPath(options) {
   const { radius } = options ?? {};
@@ -448,6 +452,7 @@ export function circleSubjectPath(options) {
 /**
  * @param {RectSubjectOptions} options
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use rectSubjectPath from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function rectSubjectPath(options) {
   const { width, height, x, y, padding = 0 } = options ?? {};
@@ -465,6 +470,7 @@ export function rectSubjectPath(options) {
 /**
  * @param {ThresholdOptions} options
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use thresholdPath from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function thresholdPath(options) {
   const { x1 = 0, y1 = 0, x2, y2 } = options ?? {};
@@ -476,6 +482,7 @@ export function thresholdPath(options) {
 /**
  * @param {AxisThresholdOptions} options
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use axisThresholdPath from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function axisThresholdPath(options) {
   const { orientation = 'horizontal', value = 0, start = 0, end } = options ?? {};
@@ -490,6 +497,7 @@ export function axisThresholdPath(options) {
 /**
  * @param {BracketSubjectOptions} options
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use bracketSubjectPath from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function bracketSubjectPath(options) {
   const { x1, y1, x2, y2, depth = 12 } = options ?? {};
@@ -506,6 +514,7 @@ export function bracketSubjectPath(options) {
 /**
  * @param {BandSubjectOptions} options
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use bandSubjectPath from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function bandSubjectPath(options) {
   const { x = 0, y = 0, width, height, padding = 0 } = options ?? {};
@@ -515,6 +524,7 @@ export function bandSubjectPath(options) {
 /**
  * @param {SlopeSubjectOptions} options
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use slopeSubjectPath from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function slopeSubjectPath(options) {
   const { x1, y1, x2, y2 } = options ?? {};
@@ -524,6 +534,7 @@ export function slopeSubjectPath(options) {
 /**
  * @param {ComparisonBraceOptions} options
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use comparisonBracePath from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function comparisonBracePath(options) {
   const { x1, y1, x2, y2, depth = 14 } = options ?? {};
@@ -566,6 +577,7 @@ export function comparisonBracePath(options) {
 /**
  * @param {OutlierClusterOptions} options
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use outlierClusterPath from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function outlierClusterPath(options) {
   const { points, radius = 6 } = options ?? {};
@@ -581,6 +593,7 @@ export function outlierClusterPath(options) {
 /**
  * @param {TimelineEventOptions} [options]
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use timelineEventPath from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function timelineEventPath({ size = 10, direction = 'down' } = {}) {
   const s = dimension('size', size);
@@ -595,6 +608,7 @@ export function timelineEventPath({ size = 10, direction = 'down' } = {}) {
 /**
  * @param {EvidenceMarkerOptions} [options]
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use evidenceMarkerPath from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function evidenceMarkerPath({ x = 0, y = 0, width = 36, height = 36, padding = 0 } = {}) {
   const w = dimension('width', width);
@@ -613,6 +627,7 @@ export function evidenceMarkerPath({ x = 0, y = 0, width = 36, height = 36, padd
 /**
  * @param {ConnectorEndDotOptions} options
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use connectorEndDot from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function connectorEndDot(options) {
   const { x, y, radius = 3 } = options ?? {};
@@ -622,6 +637,7 @@ export function connectorEndDot(options) {
 /**
  * @param {ConnectorEndArrowOptions} options
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use connectorEndArrow from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function connectorEndArrow(options) {
   const { x1 = 0, y1 = 0, x2, y2, size = 8, spread = 0.32 } = options ?? {};
@@ -635,6 +651,7 @@ export function connectorEndArrow(options) {
 /**
  * @param {ConnectorOptions} opts
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use connectorLine from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function connectorLine(opts) {
   const options = opts ?? {};
@@ -651,6 +668,7 @@ export function connectorLine(opts) {
 /**
  * @param {ConnectorOptions} opts
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use connectorElbow from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function connectorElbow(opts) {
   const options = opts ?? {};
@@ -671,6 +689,7 @@ export function connectorElbow(opts) {
 /**
  * @param {ConnectorOptions} opts
  * @returns {string}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use connectorCurve from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function connectorCurve(opts) {
   const options = opts ?? {};
@@ -703,6 +722,7 @@ const SUBJECT_BUILDERS = {
 /**
  * @param {AnnotationPartsOptions} [opts]
  * @returns {AnnotationParts}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use annotationParts from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function annotationParts(opts = {}) {
   const type = annotationConnectorType(opts.type);
@@ -746,6 +766,7 @@ export function annotationParts(opts = {}) {
  * @param {DeclutterLabelItem[]} items
  * @param {DeclutterLabelsOptions} [opts]
  * @returns {number[]}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use declutterLabels from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function declutterLabels(items, opts = {}) {
   if (!Array.isArray(items)) throw new TypeError('items must be an array');
@@ -796,6 +817,7 @@ export function declutterLabels(items, opts = {}) {
  * @param {DirectLabelItem[]} items
  * @param {DirectLabelsOptions} [opts]
  * @returns {DirectLabel[]}
+ * @deprecated Since the planned @ponchia/ui 0.17 release. Use directLabels from @ponchia/annotations instead; removal no earlier than 0.18.
  */
 export function directLabels(items, opts = {}) {
   if (!Array.isArray(items)) throw new TypeError('items must be an array');

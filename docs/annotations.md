@@ -1,5 +1,35 @@
 # SVG annotations
 
+> **Migration underway (0.17 deprecation):** for new functionality install
+> `@ponchia/annotations` and import `@ponchia/annotations/bronto.css`.
+> The old `@ponchia/ui/annotations`, `@ponchia/ui/css/annotations.css`,
+> `.ui-annotation*` classes and `ui.annotation()` recipe work during the
+> 0.17 compatibility window, but will be removed no earlier than 0.18.
+> [Migration guide](migrations/0.16-to-0.17.md).
+
+**Preferred composition in a modern bundler:**
+
+```sh
+npm install @ponchia/ui @ponchia/annotations
+```
+
+```ts
+import '@ponchia/ui';
+import '@ponchia/ui/css/figure.css';
+import '@ponchia/annotations/bronto.css';
+import { annotationClassName, annotationParts, resolveAnnotationLayout } from '@ponchia/annotations';
+
+const noteClasses = annotationClassName({ variant: 'callout', tone: 'accent' });
+// Returns a pa-annotation class list. The host supplies geometry and bounds.
+```
+
+The UI package owns the surrounding figure, typography and theme tokens;
+`@ponchia/annotations` owns annotation models, geometry, routing, editing,
+renderers, classes and CSS. Neither package imports or re-exports the other.
+Bronto tokens may be consumed by Annotations, but are optional.
+
+## Legacy Bronto UI annotation surface (deprecated)
+
 `@ponchia/ui/css/annotations.css` is an opt-in SVG annotation layer for charts,
 reports, and analytical figures. It follows the same grammar as
 d3-annotation: a **subject** marks the thing being discussed, a **connector**

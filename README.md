@@ -132,7 +132,7 @@ have explicit imports:
 | Trust and state | `@ponchia/ui/css/sources.css`, `@ponchia/ui/css/generated.css`, `@ponchia/ui/css/state.css` | Citations, provenance, generated-content labels, lifecycle states, and job progress |
 | Data visualization | `@ponchia/ui/css/dataviz.css`, `@ponchia/ui/charts` | Categorical colors, chart palettes, ramps, and pattern fills |
 | JavaScript helpers | `@ponchia/ui/classes`, `@ponchia/ui/tokens`, `@ponchia/ui/behaviors` | Typed class strings, token data, and optional interaction wiring |
-| Geometry and rendering | `@ponchia/ui/annotations`, `@ponchia/ui/connectors`, `@ponchia/ui/renderer` | Small SVG geometry helpers and live theme values for SVG/canvas/WebGL |
+| Geometry and rendering | `@ponchia/ui/connectors`, `@ponchia/ui/renderer` | DOM leader lines and live theme values; the deprecated `@ponchia/ui/annotations` geometry moves to [`@ponchia/annotations`](https://github.com/Ponchia/bronto-annotations) |
 | Display glyphs | `@ponchia/ui/glyphs` | Dot-matrix glyphs, solid inline forms, and one-node CSS-mask icons |
 | Renderer themes | `@ponchia/ui/mermaid`, `@ponchia/ui/d2`, `@ponchia/ui/vega` | Resolved theme data for renderers installed by the consumer |
 
@@ -175,6 +175,11 @@ shipped palette's contrast proof. See the [theming guide](docs/theming.md),
 [theme playground](https://ponchia.github.io/bronto-ui/demo/theme-playground.html).
 Mermaid, D2, and Vega theme exports contain resolved values; a later CSS override
 does not automatically recolor an already-rendered diagram.
+
+**Annotations migration:** all annotation functionality now belongs to the independent
+[`@ponchia/annotations`](https://github.com/Ponchia/bronto-annotations) package;
+UI annotation helpers/styles are deprecated for 0.17 but remain available until a later
+breaking minor. See [migration instructions](docs/migrations/0.16-to-0.17.md).
 
 ## Framework integration
 

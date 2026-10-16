@@ -250,7 +250,15 @@ bundle. This is Bronto's subject / connector / note grammar inspired by
 d3-annotation, not an authoring engine. For placement, collision handling,
 renderers, editing, and chart/diagram adapters, use the sibling
 `@ponchia/annotations` package; `@ponchia/ui/annotations` stays a
-dependency-free Bronto static-helper compatibility surface:
+dependency-free Bronto static-helper compatibility surface **only during
+the 0.17 deprecation window**. Prefer this independent package:
+
+```js
+import { annotationParts, resolveAnnotationLayout } from '@ponchia/annotations';
+import '@ponchia/annotations/bronto.css';
+```
+
+Legacy Bronto UI imports, to be removed no earlier than 0.18:
 
 ```css
 @import '@ponchia/ui/css/annotations.css';

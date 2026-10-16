@@ -5,6 +5,25 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased — 0.17.0
+
+### Deprecated (migration window, no runtime break)
+
+- **Annotation ownership moves to @ponchia/annotations.** All legacy helpers
+  under `@ponchia/ui/annotations` are deprecated, as are the
+  `css/annotations.css` leaf, `.ui-annotation*` styling and the corresponding
+  `cls.annotation*` / `ui.annotation()` helpers. Their current behavior remains
+  intact for the 0.17 minor; remove them no earlier than 0.18 with a separate
+  BREAKING note and after real consumers have migrated.
+- New annotation usage imports `@ponchia/annotations` and its independent
+  `@ponchia/annotations/bronto.css`. This annotation engine is **not** a
+  dependency or re-export of `@ponchia/ui`. Its CSS understands the old
+  `.ui-annotation*` vocabulary during migration and its preferred markup
+  uses `.pa-annotation*`. See
+  [the migration guide](docs/migrations/0.16-to-0.17.md).
+- This deprecation does **not** affect generic DOM connector behaviors and
+  `@ponchia/ui/connectors`, figure frames, tokens or renderer themes.
+
 ## 0.16.3 — 2026-10-13
 
 ### Fixed
