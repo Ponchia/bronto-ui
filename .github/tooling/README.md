@@ -7,8 +7,8 @@ package, which continues to have zero runtime dependencies.
 
 `npm/package.json` and `npm/package-lock.json` lock the release CLI separately
 from the framework's development dependencies. The selected npm version is
-11.21.0; its registry metadata points to the upstream
-[npm/cli release commit](https://github.com/npm/cli/commit/5fd1e17e468d58e7f14dc6cbb5390029ff49a41d).
+11.21.1; its registry metadata points to the upstream
+[npm/cli release commit](https://github.com/npm/cli/commit/8834421d14085fdf6e871e6f3a20f6ae1b3de599).
 The lock records the registry tarball URL and SHA-512 integrity. npm bundles its
 own dependencies inside that integrity-checked tarball, so the bundled package
 entries inherit the tarball's byte-level pin.
@@ -34,7 +34,7 @@ does not retain the checkout credential, and passes `--ignore-scripts` when
 publishing. This tooling project must stay private and separate from the root
 manifest. Trusted publishing requires a supported GitHub-hosted runner,
 [Node.js 22.14.0+ and npm 11.5.1+](https://docs.npmjs.com/trusted-publishers/);
-the repository's development toolchain uses Node.js 22.22.2 or later in the
+the repository's development toolchain uses Node.js 22.23.4 or later in the
 Node.js 22 line.
 
 ### Updating the CLI
@@ -57,55 +57,54 @@ and protected Environment identity remain unchanged.
 
 ## Current npm bundle advisory review
 
-On 2026-10-12, the normal npm audit of this isolated project's committed lock
-reported **five affected bundled packages: three high and two moderate**, across
-12 advisory records. Reproduce it with:
+On 2026-10-23, the committed isolated publisher lock was updated to npm 11.21.1.
+The complete lockfile audit reports **one moderate advisory** (exit 1), affecting
+bundled `ip-address@10.7.2`. Reproduce the publisher audit separately from the
+root development-tool audit:
 
 ```bash
-node .github/tooling/npm/node_modules/npm/bin/npm-cli.js audit --prefix .github/tooling/npm --package-lock-only --json
+npm audit --prefix .github/tooling/npm --package-lock-only --json
+npm audit --package-lock-only --json
 ```
 
+[GHSA-rxp7-6hxx-x8q5](https://github.com/advisories/GHSA-rxp7-6hxx-x8q5)
+affects `ip-address` through 10.7.3 and names 10.7.4 as patched. Both examined
+upstream npm distributions, 11.21.1 and 12.2.1, still bundle 10.7.2. The 11.x
+patch therefore captures the available improvements without an unrelated major
+CLI migration. Keep [issue #234](https://github.com/Ponchia/bronto-ui/issues/234)
+open until an upstream npm distribution ships a fixed bundle; an audit's generic
+`fixAvailable` flag is not proof that updating
+the installed CLI will replace its bundled files.
+
+The reviewed npm 11.21.1 tarball also updates these previously affected bundles:
+
+| Bundled package | Previous | Current | Audit result on 2026-10-23 |
+| --- | --- | --- | --- |
+| brace-expansion | 5.0.9 | 5.0.12 | No current matching advisory |
+| http-cache-semantics | 4.2.0 | 4.3.0 | No current matching advisory |
+| postcss-selector-parser | 7.1.4 | 7.1.6 | No current matching advisory |
+| undici | 6.28.0 | 6.29.0 | No current matching advisory |
+
+The `http-cache-semantics` advisory names no first patched version; its current
+affected range and the audit no longer match 4.3.0. This records the observed
+result, rather than inventing an upstream fix declaration. The newer
+`ip-address` bundle clears the four older findings but retains the advisory above.
+
 This is the release tool's complete dependency graph, including npm's bundled
-packages. It is separate from the root project's development-dependency audit
-and from the published UI package's empty runtime dependency graph. The audit
-exits 1 for the known findings; integrity locking does not remediate them.
+packages. The separate full root lockfile audit, including development
+dependencies, reported **zero vulnerabilities** (exit 0) on 2026-10-23.
+`braces@3.0.3` remains locked, but GitHub withdrew
+[GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm)
+on that date because it is not practically exploitable. See
+[the security policy](../SECURITY.md#lint-dependencies) for the lint context.
+Neither tooling graph is included in the published UI package.
 
-- **brace-expansion 5.0.9 — high aggregate severity.**
-  [GHSA-6j4f-fj2g-mc7p](https://github.com/advisories/GHSA-6j4f-fj2g-mc7p)
-  affects this major below 5.0.10 (high);
-  [GHSA-qhr7-859c-m2p7](https://github.com/advisories/GHSA-qhr7-859c-m2p7)
-  below 5.0.11 (high); and
-  [GHSA-q2hr-2g5m-vwhr](https://github.com/advisories/GHSA-q2hr-2g5m-vwhr)
-  below 5.0.12 (moderate). Version 5.0.12 addresses all three listed ranges.
-- **http-cache-semantics 4.2.0 — high.**
-  [GHSA-ch52-4w7c-c8xp](https://github.com/advisories/GHSA-ch52-4w7c-c8xp)
-  covers versions through 4.2.0. The advisory currently names no first patched
-  version; do not infer remediation merely from a later version number.
-- **ip-address 10.5.0 — moderate.**
-  [GHSA-rpw4-54j3-4h4q](https://github.com/advisories/GHSA-rpw4-54j3-4h4q)
-  and [GHSA-2vr4-cq9g-pvrc](https://github.com/advisories/GHSA-2vr4-cq9g-pvrc)
-  cover 10.5.0 and name 10.5.1 as patched.
-  [GHSA-j6r3-76f7-8jcv](https://github.com/advisories/GHSA-j6r3-76f7-8jcv)
-  and [GHSA-h3mg-xc3c-68pw](https://github.com/advisories/GHSA-h3mg-xc3c-68pw)
-  cover versions through 10.7.0 and name 10.7.1 as patched.
-- **postcss-selector-parser 7.1.4 — moderate.**
-  [GHSA-rj75-hqrm-r3gf](https://github.com/advisories/GHSA-rj75-hqrm-r3gf)
-  affects versions below 7.1.6; 7.1.6 is the listed patch.
-- **undici 6.28.0 — high aggregate severity.**
-  [GHSA-rfgv-xxqx-mfg5](https://github.com/advisories/GHSA-rfgv-xxqx-mfg5)
-  is high,
-  [GHSA-3wwx-pv8p-q78v](https://github.com/advisories/GHSA-3wwx-pv8p-q78v)
-  moderate, and
-  [GHSA-r53p-7pc4-xj5r](https://github.com/advisories/GHSA-r53p-7pc4-xj5r)
-  low. For the installed 6.x line, all three are patched in 6.28.1.
-
-The examined upstream npm 12.2.0 distribution bundles the same affected set, so
-a major CLI upgrade did not improve this audit. A disposable install also
-verified that npm overrides left these bundled files unchanged; no ineffective
-overrides or repacked npm distribution are kept here. Review a future upstream
-CLI release that updates its bundle. The existing approval, short-lived OIDC,
-disabled lifecycle, and cache controls remain in force; these are not a claim
-that every advisory's vulnerable path is unreachable.
+The npm release commit, registry tarball URL and SHA-512 integrity are reviewed
+with the lock. Integrity locking does not remediate a vulnerability. Overrides
+were previously verified not to replace npm's bundled files; do not retain
+ineffective overrides or repack the upstream npm distribution. The existing
+protected approval, short-lived OIDC, disabled lifecycle and cache controls
+remain in force, without claiming every vulnerable path is unreachable.
 
 ## Semgrep
 

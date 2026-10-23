@@ -8,7 +8,7 @@ machine-checked.
 
 ## Setup
 
-Use **Node.js 22.22.2 or a newer 22.x release** and npm, matching CI.
+Use **Node.js 22.23.4 or a newer 22.x release** and npm, matching CI.
 The locked development dependencies require this minimum; the published
 package's Node engine floor is separate from the development toolchain.
 

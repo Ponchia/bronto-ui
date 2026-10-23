@@ -49,7 +49,7 @@ jobs:
     # GitHub default. The suite itself is ~8 min.
     timeout-minutes: 20
     container:
-      image: mcr.microsoft.com/playwright:v1.60.0-jammy
+      image: mcr.microsoft.com/playwright:v1.60.0-jammy@sha256:e1529a04087193966ea15d4a1617345bdaa0791690a24ab2c42b65f9ce5b2cdc
     # The job container runs as root but GitHub sets $HOME=/github/home
     # (uid 1001); Firefox refuses to launch unless $HOME is owned by the
     # current user. Documented Playwright-on-GHA workaround.
@@ -65,6 +65,7 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
+          check-latest: true
 
       - run: npm ci
         env:

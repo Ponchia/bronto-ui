@@ -125,6 +125,17 @@ you change CSS `--accent` later.
 > overriding it in CSS validates but does **not** change any in-DOM component. To
 > change the ink on a re-brand, set `--button-text`.
 
+### Button theme transitions
+
+Buttons switch their foreground and background colours together, including on
+theme and hover changes. Their border and press feedback can still animate.
+Interpolating a white-on-dark pair into a black-on-light pair necessarily passes
+through a low-contrast midpoint, even when both endpoints meet 4.5:1. The same
+atomic colour change applies to custom accents; it does not replace your
+obligation to choose accessible normal and hovered colour pairs in both themes.
+Avoid reintroducing `transition: all`, `color`, or `background-color` transitions
+on `.ui-button` unless every intermediate readable state is verified.
+
 ## Other supported knobs
 
 - **Spacing** — override the `--space-2xs … --space-2xl` scale, or use a

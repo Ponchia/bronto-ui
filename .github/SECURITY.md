@@ -54,27 +54,32 @@ kept current via Dependabot and locked CI.
 
 ### Lint dependencies
 
-As of 12 October 2026, the development lockfile includes `braces@3.0.3`
+As of 23 October 2026, the development lockfile includes `braces@3.0.3`
 through Stylelint's `micromatch` and glob dependencies.
+GitHub withdrew
 [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm)
-reports stack exhaustion from deeply nested brace patterns. Upstream has
-not published a patched release.
+on 23 October 2026 because it is not a practically exploitable vulnerability.
+This is an advisory withdrawal, not a new patched package release.
 
 In this repository, that dependency is used by maintainer lint tooling;
 the `lint` and `lint:fix` scripts pass the fixed `css/**/*.css` pattern.
 The published package has zero runtime dependencies and does not include
-this tooling stack. The development advisory remains open. Recheck
-upstream releases and the lockfile audit when updating the lint toolchain.
+this tooling stack. The 23 October 2026 full root lockfile audit, including
+development dependencies, reports **zero vulnerabilities** (exit 0). Recheck
+the lockfile audit when updating the lint toolchain.
 
 ### Release CLI
 
-The isolated `npm@11.21.0` publisher project was also audited on 12 October
-2026. Its bundled dependencies report **five affected packages** (three high
-and two moderate) across 12 advisory records. This is a separate dependency
-graph from the root development tools and the published UI package.
+The isolated `npm@11.21.1` publisher project was audited on 23 October 2026.
+The patch removes the previously reported high-severity bundled findings. Its
+complete lockfile audit still reports one moderate advisory in
+`ip-address@10.7.2`:
+[GHSA-rxp7-6hxx-x8q5](https://github.com/advisories/GHSA-rxp7-6hxx-x8q5).
+Upstream fixes that package in 10.7.4, but the examined npm 11.21.1 and 12.2.1
+distributions both bundle 10.7.2. The remaining publisher advisory is tracked
+in [issue #234](https://github.com/Ponchia/bronto-ui/issues/234).
 
 The [CI tooling advisory review](tooling/README.md#current-npm-bundle-advisory-review)
-records exact versions, advisory links, the reproducible audit command, and
-why the reviewed npm major update and overrides did not remove these findings.
-Keep this review current when updating the upstream CLI; integrity locking
-and protected publishing controls do not remediate the bundled advisories.
+records the exact bundled versions, reproducible audit commands and upgrade
+limits. Keep it current when updating the upstream CLI; integrity locking and
+protected publishing controls do not remediate the remaining advisory.

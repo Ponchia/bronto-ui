@@ -389,10 +389,12 @@
   min-inline-size: 2.4rem;
   padding: 0.66rem 1rem;
   text-transform: none;
+
+  /* Ink and fill switch together: fading from white-on-dark to black-on-light
+     necessarily crosses a low-contrast midpoint. Keep the border and press
+     feedback animated without interpolating the readable colour pair. */
   transition:
-    background-color var(--duration-fast) var(--ease-standard),
     border-color var(--duration-fast) var(--ease-standard),
-    color var(--duration-fast) var(--ease-standard),
     transform var(--duration-fast) var(--ease-standard);
 }
 
