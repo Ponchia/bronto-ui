@@ -3,9 +3,9 @@
   "private": true,
   "description": "Integrity-locked npm CLI for the protected release job only.",
   "engines": {
-    "node": ">=22.22.2"
+    "node": ">=22.23.4"
   },
   "dependencies": {
-    "npm": "11.21.0"
+    "npm": "11.21.1"
   }
 }
