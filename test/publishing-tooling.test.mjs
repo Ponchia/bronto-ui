@@ -131,6 +131,17 @@ test('rejects package symlinks instead of following dependencies outside the aud
   await symlink(directory, join(directory, 'node_modules/npm/node_modules/linked'));
   await assert.rejects(verifyBundle(directory), /regular directories/);
 });
+for (const file of ['package-lock.json', `${dependencyPath}/package.json`]) {
+  test(`refuses a symlinked ${file} at open rather than checking and reopening its path`, async (t) => {
+    const { directory } = await fixture(t);
+    const path = join(directory, file);
+    const target = join(directory, 'symlink-target.json');
+    await writeFile(target, await readFile(path));
+    await rm(path);
+    await symlink(target, path);
+    await assert.rejects(verifyBundle(directory), { code: 'ELOOP' });
+  });
+}
 test('accepts a complete clean audit and retains moderate findings', () => {
   verifyAudit(report(), 0, inventory);
   assert.equal(verifyAudit(report('moderate'), 0, inventory).moderate, 1);

@@ -61,7 +61,10 @@ execution failures, high/critical findings, and inconsistent installed bytes.
 ### Updating the CLI
 
 The dependency updater proposes patch/minor updates for the isolated `tooling/npm` project.
-Major CLI changes require manual review. All three ecosystem entries use an
+Version-update major CLI changes require manual review. The `allow.update-types`
+selection keeps security updates eligible, including major security updates
+([version-only selection](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#update-types-allow)).
+All three ecosystem entries use an
 explicit seven-day version `cooldown`; GitHub exempts security updates from it
 ([configuration reference](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#cooldown)).
 

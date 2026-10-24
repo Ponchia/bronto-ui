@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
-import { lstat, readdir, readFile, writeFile } from 'node:fs/promises';
+import { constants } from 'node:fs';
+import { lstat, open, readdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
@@ -17,8 +18,18 @@ export const candidate = {
 const exec = promisify(execFile);
 const levels = ['info', 'low', 'moderate', 'high', 'critical'];
 
+async function readJsonFile(path) {
+  const file = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW);
+  try {
+    assert.ok((await file.stat()).isFile(), 'Package manifests and lock must be regular files');
+    return JSON.parse(await file.readFile('utf8'));
+  } finally {
+    await file.close();
+  }
+}
+
 export async function verifyBundle(prefix) {
-  const lock = JSON.parse(await readFile(join(prefix, 'package-lock.json'), 'utf8'));
+  const lock = await readJsonFile(join(prefix, 'package-lock.json'));
   assert.equal(lock.lockfileVersion, 3, 'Expected complete v3 tooling lock');
   assert.deepEqual(
     lock.packages?.['']?.dependencies,
@@ -54,8 +65,7 @@ export async function verifyBundle(prefix) {
   async function visitPackage(name, directory, relative) {
     const path = `${relative}/${name}`;
     const manifestPath = join(directory, name, 'package.json');
-    assert.ok((await lstat(manifestPath)).isFile(), 'Package manifest must be regular');
-    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    const manifest = await readJsonFile(manifestPath);
     assert.equal(manifest.name, name, `${path}: package name mismatch`);
     assert.equal(typeof manifest.version, 'string', `${path}: missing version`);
     assert.equal(

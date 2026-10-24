@@ -63,7 +63,8 @@ updates:
     groups:
       release-tooling:
         patterns: ['*']
-    # Major CLI changes need manual Node/OIDC compatibility review.
-    ignore:
+    # Version-update majors need manual Node/OIDC compatibility review.
+    # allow.update-types does not restrict security updates.
+    allow:
       - dependency-name: npm
-        update-types: ['version-update:semver-major']
+        update-types: ['version-update:semver-patch', 'version-update:semver-minor']
