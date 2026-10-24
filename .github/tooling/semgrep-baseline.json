@@ -1,0 +1,259 @@
+{
+  "scannerVersion": "1.166.0",
+  "reviewedAt": "2026-10-24",
+  "sourceRun": "https://github.com/Ponchia/bronto-ui/actions/runs/40092974432",
+  "exceptions": [
+    {
+      "identity": [
+        "javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp",
+        "scripts/changelog-section.mjs",
+        64,
+        10,
+        64,
+        84,
+        "1a1bf4c500b5fe6cf0204903bb5c8b7c7df3f512d5f211d72a2d4dc1c4d1c230",
+        "defbb38ee55af7cdb98b3fe490bd5b8f45070e54c8bd2f06914773bd38b7eaf1"
+      ],
+      "reason": "The SemVer token is escaped with escapeRegExp before interpolation; only fixed boundary classes are regex syntax. Input is a release tag/package version, not a pattern.",
+      "evidence": "test/security-contexts.test.mjs; test/release-prep-cli.test.mjs; scripts/check-release.mjs"
+    },
+    {
+      "identity": [
+        "javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp",
+        "scripts/check-component-matrix.mjs",
+        353,
+        17,
+        353,
+        36,
+        "f0303157ae91347342bf0c3d93364ffaa1cde76daa47f6c982acb6218c594612",
+        "c152ceb7953589880f428fcb7c92c0c80334a1f388ac87ffe3afcb064d220fd2"
+      ],
+      "reason": "Array names come from checked-in ownership declarations and escapeRegExp quotes every regex metacharacter before fixed array syntax is added.",
+      "evidence": "npm run check:component-matrix"
+    },
+    {
+      "identity": [
+        "javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp",
+        "scripts/check-release.mjs",
+        76,
+        10,
+        76,
+        84,
+        "ed0ee7ef87206b426d5a6d32eb95dc3e722c1d02f5dc4d9248a17689535aec5b",
+        "defbb38ee55af7cdb98b3fe490bd5b8f45070e54c8bd2f06914773bd38b7eaf1"
+      ],
+      "reason": "Version tokens and workflow job names are escaped with escapeRegExp before interpolation into fixed patterns; regex syntax cannot be supplied through either argument.",
+      "evidence": "npm run check:release; test/release-prep-cli.test.mjs"
+    },
+    {
+      "identity": [
+        "javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp",
+        "scripts/check-release.mjs",
+        80,
+        17,
+        82,
+        4,
+        "ed0ee7ef87206b426d5a6d32eb95dc3e722c1d02f5dc4d9248a17689535aec5b",
+        "c152ceb7953589880f428fcb7c92c0c80334a1f388ac87ffe3afcb064d220fd2"
+      ],
+      "reason": "Version tokens and workflow job names are escaped with escapeRegExp before interpolation into fixed patterns; regex syntax cannot be supplied through either argument.",
+      "evidence": "npm run check:release; test/release-prep-cli.test.mjs"
+    },
+    {
+      "identity": [
+        "javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp",
+        "scripts/check-report.mjs",
+        572,
+        10,
+        572,
+        42,
+        "d8bd2c8e9341db6b986b913b72465ee22f51693f119e6c75b4c0d99d7760c930",
+        "b31b0c27ff5842425087b029db7f5e11ce55cc03d3323867607dd4e80ece0bba"
+      ],
+      "reason": "hasWord receives only fixed FINDING_SEVERITIES or CLAIM_STATUSES enumerators; report text is matched data, never a regex pattern. This is a repository gate, not a regex service.",
+      "evidence": "npm run check:report; scripts/lib/reporting-toolbox.mjs"
+    },
+    {
+      "identity": [
+        "javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp",
+        "scripts/check-schemas.mjs",
+        153,
+        24,
+        153,
+        48,
+        "52cba27fba82f0dd62be4c2120eed33e65d81b0c0cb8d4bd1323c2c3f2da9f3c",
+        "8a8ce2badfd6e036ddc6e9fcafaccf52cfa612ca986266d5aba47481d5c3e660"
+      ],
+      "reason": "The node.pattern source is a maintainer-owned checked-in schemas/*.schema.json contract. Untrusted instance values are matched data; external schema definitions are not accepted.",
+      "evidence": "npm run check:schemas; test/report-schema.test.mjs"
+    },
+    {
+      "identity": [
+        "javascript.audit.detect-replaceall-sanitization.detect-replaceall-sanitization",
+        "scripts/lib/html-text.mjs",
+        5,
+        3,
+        6,
+        30,
+        "bea5c38aa03e2c1aa6c2c26c2b0a15c9978482ddc2624889973e936894b4abdf",
+        "6ca4054ec1327054c4e574a1ddc87fcb08a48284aa5ef414228b9476b27cb032"
+      ],
+      "reason": "Context-specific HTML encoding replaces all ampersands first and all angle brackets/double quotes. Reviewed callers use text/double-quoted attributes; this is not a general sanitizer or URL/CSS/script validator.",
+      "evidence": "test/html-text.test.mjs; scripts/build-public-site.mjs"
+    },
+    {
+      "identity": [
+        "javascript.audit.detect-replaceall-sanitization.detect-replaceall-sanitization",
+        "scripts/lib/html-text.mjs",
+        5,
+        3,
+        7,
+        29,
+        "bea5c38aa03e2c1aa6c2c26c2b0a15c9978482ddc2624889973e936894b4abdf",
+        "23de65051196b3a2315f47f2cc4fbd4c145386b270ed261d221d4ec028eb22ed"
+      ],
+      "reason": "Context-specific HTML encoding replaces all ampersands first and all angle brackets/double quotes. Reviewed callers use text/double-quoted attributes; this is not a general sanitizer or URL/CSS/script validator.",
+      "evidence": "test/html-text.test.mjs; scripts/build-public-site.mjs"
+    },
+    {
+      "identity": [
+        "javascript.audit.detect-replaceall-sanitization.detect-replaceall-sanitization",
+        "scripts/lib/html-text.mjs",
+        5,
+        3,
+        8,
+        29,
+        "bea5c38aa03e2c1aa6c2c26c2b0a15c9978482ddc2624889973e936894b4abdf",
+        "519313d0c2b9f16ba4c72b038c14ed7861df0d959d702f609296e560e3a33837"
+      ],
+      "reason": "Context-specific HTML encoding replaces all ampersands first and all angle brackets/double quotes. Reviewed callers use text/double-quoted attributes; this is not a general sanitizer or URL/CSS/script validator.",
+      "evidence": "test/html-text.test.mjs; scripts/build-public-site.mjs"
+    },
+    {
+      "identity": [
+        "javascript.audit.detect-replaceall-sanitization.detect-replaceall-sanitization",
+        "scripts/lib/html-text.mjs",
+        5,
+        3,
+        9,
+        31,
+        "bea5c38aa03e2c1aa6c2c26c2b0a15c9978482ddc2624889973e936894b4abdf",
+        "a07b869d8a5cc2a06bdcce1eb75b884070ea1e235634961ba4de3835e0ebe9ae"
+      ],
+      "reason": "Context-specific HTML encoding replaces all ampersands first and all angle brackets/double quotes. Reviewed callers use text/double-quoted attributes; this is not a general sanitizer or URL/CSS/script validator.",
+      "evidence": "test/html-text.test.mjs; scripts/build-public-site.mjs"
+    },
+    {
+      "identity": [
+        "javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp",
+        "scripts/lib/ownership-proof.mjs",
+        57,
+        10,
+        57,
+        78,
+        "200a7f68b281e8173de210a053af1e95416e6a7ccf495a38a6a5cd5502f2fa1c",
+        "919ec560daa498c5af1a7471fba68f4d02261e0ad6ce4681b37cd9fb05232a6a"
+      ],
+      "reason": "The entire dynamic needle is escaped for regex metacharacters before adding fixed word boundaries; it cannot inject regex structure.",
+      "evidence": "test/security-contexts.test.mjs; npm run check:behavior-matrix; npm run check:helper-matrix"
+    },
+    {
+      "identity": [
+        "javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag",
+        "test/consumer-check.test.mjs",
+        82,
+        15,
+        82,
+        19,
+        "66edd1cc094fee1f0988fe3d4acb862ba13310529472814ce92aae9b685074c9",
+        "91191c113fd657f867265d40cd24679bda592e62810308cc0698cb931bd45019"
+      ],
+      "reason": "root is a mkdtempSync filesystem directory used by resolve/writeFileSync; script content is a fixed Vue source fixture consumed by the static import checker, not HTML execution.",
+      "evidence": "test/consumer-check.test.mjs: ignores conceptual class/token mentions in source comments"
+    },
+    {
+      "identity": [
+        "javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp",
+        "test/font-leaves.test.mjs",
+        13,
+        46,
+        13,
+        81,
+        "ea962fa634e9f0e2a86b92e71e194037ece397ee049a4a20769e12b49fd58343",
+        "17c4b9587a4887d531cd747323ec2362c73a145c4044353a83670a214a3e731d"
+      ],
+      "reason": "token is always --sans or --mono from the two checked-in LEAVES constants, never external input. The regex reads a checked-in CSS declaration.",
+      "evidence": "test/font-leaves.test.mjs"
+    },
+    {
+      "identity": [
+        "javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag",
+        "test/glyphs.test.mjs",
+        160,
+        18,
+        160,
+        26,
+        "6f1cfb75a484955706b667a3edf9340a1ed5c4d19eeb810f903e5a52dc803cca",
+        "509befc8481a7a04a541318e6f5a959813fc3e3c33374a1e535faf606720ca0f"
+      ],
+      "reason": "This inert JSDOM fragment is the XSS regression assertion itself: hostile label text must remain an attribute and every parsed element must be an authored SPAN.",
+      "evidence": "test/glyphs.test.mjs: glyph and readout HTML keeps hostile labels and sizes inside their intended attributes"
+    }
+  ],
+  "parserWarnings": [
+    {
+      "identity": [
+        ".github/workflows/e2e.yml",
+        "51d794f2cac523b5d190759d34e22687673243ee8e62ce2b6693aee5fdd85db0",
+        "2f05af4efac139ab15963c76506ca8d25dd6c92b00faab0ccb44ef6303822fa9"
+      ],
+      "reason": "Semgrep rule embeds the Actions run block in a Bash parser before GitHub expands the fixed matrix.shard integer. The workflow is valid Actions syntax. This limitation applies to this exact diagnostic/source only.",
+      "evidence": "npm run check:workflows; fixed shard matrix in .github/workflows/e2e.yml"
+    },
+    {
+      "identity": [
+        ".github/workflows/e2e.yml",
+        "b11de9002dd4659369daf337e5ef7361bb2b145c7c3d787a191a1f0c63dba115",
+        "2f05af4efac139ab15963c76506ca8d25dd6c92b00faab0ccb44ef6303822fa9"
+      ],
+      "reason": "Semgrep rule embeds the Actions run block in a Bash parser before GitHub expands the fixed matrix.shard integer. The workflow is valid Actions syntax. This limitation applies to this exact diagnostic/source only.",
+      "evidence": "npm run check:workflows; fixed shard matrix in .github/workflows/e2e.yml"
+    },
+    {
+      "identity": [
+        "bin/bronto-ui-check.mjs",
+        "3b9943ffab7e1a0210186d846e32aaf8aa68bf20c605b3a23bdbd104eac6be5b",
+        "02fe0411cbd0e26cbb56aee5f25262a1cd9e2e37d193756564ff17c1e6e763b5"
+      ],
+      "reason": "The JS parser warns on a valid literal regex matching HTML comments (<!-- ... -->), not an executable malformed expression. Keep independent Node syntax checks and existing behavior tests; do not claim this construct was fully parsed by Semgrep.",
+      "evidence": "node --check bin/bronto-ui-check.mjs; test/consumer-check.test.mjs; npm run check:site"
+    },
+    {
+      "identity": [
+        "scripts/build-public-site.mjs",
+        "15b23290969f83bbf8c1cc8301026811858f4dfb62f80938382551fe890cd153",
+        "c95d55d189cba448cb6d52afab67f5e9fe76e8b05431eb4046e473c46cd136da"
+      ],
+      "reason": "The JS parser warns on a valid literal regex matching HTML comments (<!-- ... -->), not an executable malformed expression. Keep independent Node syntax checks and existing behavior tests; do not claim this construct was fully parsed by Semgrep.",
+      "evidence": "node --check scripts/build-public-site.mjs; test/consumer-check.test.mjs; npm run check:site"
+    },
+    {
+      "identity": [
+        "site/pages/docs.html",
+        "51b76b70a13a5cba65741c418ab7ec5802a7b70a5f7f7716ca3eec8f52eb43d3",
+        "56af9b911461c6373c7317aabd6bcfb95de44612f67289c29e12b9a2a66628c3"
+      ],
+      "reason": "The scanner HTML parser rejects literal ampersands in static authored text. HTML parsers render these non-entity ampersands as text; the template has no user-input substitution at these locations. This diagnostic remains visible in full scan evidence.",
+      "evidence": "npm run check:site; test/e2e/public-site.spec.mjs"
+    },
+    {
+      "identity": [
+        "site/pages/lab.html",
+        "49847fd0e93e076060abc52034c645326baf2dfb2c302156d33a607ed1d4b3bd",
+        "5cdb9ff488ee72b8f5f80b0869de089af376a5ad645e424136bc2d9d5d036516"
+      ],
+      "reason": "The scanner HTML parser rejects literal ampersands in static authored text. HTML parsers render these non-entity ampersands as text; the template has no user-input substitution at these locations. This diagnostic remains visible in full scan evidence.",
+      "evidence": "npm run check:site; test/e2e/public-site.spec.mjs"
+    }
+  ]
+}

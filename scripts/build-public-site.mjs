@@ -10,6 +10,7 @@ import { Marked } from 'marked';
 import { headingSlug } from './lib/doc-anchors.mjs';
 import { publicDocHref } from './lib/doc-links.mjs';
 import { prepareSiteOutput } from './lib/site-output.mjs';
+import { escapeHtmlText as esc } from './lib/html-text.mjs';
 import { components } from '../site/components.mjs';
 import { examples } from '../site/examples.mjs';
 
@@ -31,12 +32,6 @@ const publicAnalyticsBeacon = `<script>
   }
 </script>`;
 
-const esc = (text) =>
-  String(text)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;');
 const slash = (p) => p.split(sep).join('/');
 const prefix = (outFile) => '../'.repeat(slash(outFile).split('/').length - 1) || './';
 const files = [

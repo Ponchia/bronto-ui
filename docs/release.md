@@ -50,10 +50,16 @@
 ## Release tooling
 
 The publish job uses the npm CLI installed from the separate lockfile under
-`.github/tooling/npm/`. Its installation disables lifecycle scripts, and the
+`tooling/npm/`. Its installation disables lifecycle scripts, and the
 workflow invokes that CLI explicitly. Keep CLI updates reviewable together
 with their lockfile and the release checks; follow the
 [CI tooling maintenance guide](https://github.com/Ponchia/bronto-ui/blob/main/.github/tooling/README.md).
+
+Both preflight and publication audit the actual installed CLI bundle against
+the public advisory registry. A high/critical finding or unavailable audit blocks
+the release before package execution; the current upstream bundle is blocked.
+Review the retained audit artifact and the tooling guide before approving any
+future release.
 
 A dry run validates package assembly without publishing or validating the
 npm-side OIDC exchange. Changes to the registered repository, workflow,

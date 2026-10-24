@@ -83,6 +83,7 @@ const forbidden = [
   'test/',
   'examples/',
   '.github/',
+  'tooling/',
   '.claude/',
   '.codeql/',
   '.semgrep/',

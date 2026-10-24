@@ -6,6 +6,9 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # Version updates only; GitHub exempts security updates from cooldown.
+    cooldown:
+      default-days: 7
     groups:
       actions:
         patterns: ['*']
@@ -15,6 +18,9 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # Version updates only; GitHub exempts security updates from cooldown.
+    cooldown:
+      default-days: 7
     groups:
       dev:
         patterns: ['*']
@@ -48,9 +54,17 @@ updates:
   # The protected publisher's CLI is isolated from the UI dev toolchain.
   # Review these updates with the release authority checks before merging.
   - package-ecosystem: npm
-    directory: /.github/tooling/npm
+    directory: /tooling/npm
     schedule:
       interval: weekly
+    # Version updates only; GitHub exempts security updates from cooldown.
+    cooldown:
+      default-days: 7
     groups:
       release-tooling:
         patterns: ['*']
+    # Version-update majors need manual Node/OIDC compatibility review.
+    # allow.update-types does not restrict security updates.
+    allow:
+      - dependency-name: npm
+        update-types: ['version-update:semver-patch', 'version-update:semver-minor']

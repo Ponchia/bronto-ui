@@ -158,19 +158,45 @@ test('manual Pages deployment requires successful CI and fails closed on API err
   }
 });
 
-test('Semgrep findings stay advisory while scanner execution errors fail closed', () => {
+test('Semgrep gates findings and preserves scanner execution failures', () => {
   const script = workflowScript('ci.yml', '      - name: Run Semgrep SAST');
-  for (const [SCANNER_EXIT, expected] of [
-    ['0', 0],
-    ['1', 0],
-    ['2', 2],
-    ['7', 7],
-    ['127', 127],
-  ]) {
-    const result = runShell(`semgrep() { return "$SCANNER_EXIT"; }\n${script}`, {
-      SCANNER_EXIT,
+  const dir = mkdtempSync(join(tmpdir(), 'bronto-semgrep-workflow-'));
+  const mock = `semgrep() {
+    printf '{}' > "$RUNNER_TEMP/semgrep-results/semgrep.json"
+    if [ "$SARIF_PRESENT" = true ]; then
+      printf '{}' > "$RUNNER_TEMP/semgrep-results/semgrep.sarif"
+    fi
+    return "$SCANNER_EXIT"
+  }
+  python3() { return "$GATE_EXIT"; }`;
+  try {
+    for (const [SCANNER_EXIT, GATE_EXIT, expected] of [
+      ['0', '0', 0],
+      ['1', '0', 0],
+      ['0', '1', 1],
+      ['1', '1', 1],
+      ['2', '99', 2],
+      ['7', '99', 7],
+      ['127', '99', 127],
+    ]) {
+      const result = runShell(`${mock}\n${script}`, {
+        SCANNER_EXIT,
+        GATE_EXIT,
+        RUNNER_TEMP: dir,
+        SARIF_PRESENT: 'true',
+      });
+      assert.equal(result.status, expected, result.stdout + result.stderr);
+    }
+    rmSync(join(dir, 'semgrep-results/semgrep.sarif'));
+    const missing = runShell(`${mock}\n${script}`, {
+      SCANNER_EXIT: '0',
+      GATE_EXIT: '0',
+      RUNNER_TEMP: dir,
+      SARIF_PRESENT: 'false',
     });
-    assert.equal(result.status, expected, result.stdout + result.stderr);
+    assert.equal(missing.status, 1, 'A missing SARIF report must fail the job');
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
   }
 });
 
