@@ -171,17 +171,23 @@ jobs:
       # The gate accepts only exact reviewed source locations and file bytes.
       - name: Run Semgrep SAST
         run: |
+          set -eu
+          mkdir -p "${RUNNER_TEMP}/semgrep-results"
           status=0
           semgrep scan \
             --config p/default \
             --error \
             --metrics=off \
             --disable-version-check \
-            --json-output "${RUNNER_TEMP}/semgrep.json" \
-            --sarif-output "${RUNNER_TEMP}/semgrep.sarif" \
+            --json-output "${RUNNER_TEMP}/semgrep-results/semgrep.json" \
+            --sarif-output "${RUNNER_TEMP}/semgrep-results/semgrep.sarif" \
             . || status=$?
           case "$status" in
-            0|1) python3 scripts/semgrep-gate.py "${RUNNER_TEMP}/semgrep.json" .github/tooling/semgrep-baseline.json ;;
+            0|1)
+              test -s "${RUNNER_TEMP}/semgrep-results/semgrep.json"
+              test -s "${RUNNER_TEMP}/semgrep-results/semgrep.sarif"
+              python3 scripts/semgrep-gate.py "${RUNNER_TEMP}/semgrep-results/semgrep.json" .github/tooling/semgrep-baseline.json
+              ;;
             *) exit "$status" ;;
           esac
 
@@ -190,9 +196,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: semgrep-results
-          path: |
-            ${{ runner.temp }}/semgrep.json
-            ${{ runner.temp }}/semgrep.sarif
+          path: ${{ runner.temp }}/semgrep-results/
           if-no-files-found: error
           retention-days: 7
 
