@@ -115,9 +115,9 @@ jobs:
 
       - name: Verify the locked release CLI
         run: |
-          npm ci --prefix .github/tooling/npm --ignore-scripts --no-audit --no-fund
-          node .github/tooling/npm/node_modules/npm/bin/npm-cli.js --version
-          node .github/tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json > "${RUNNER_TEMP}/release-tooling-pack.json"
+          npm ci --prefix tooling/npm --ignore-scripts --no-audit --no-fund
+          node tooling/npm/node_modules/npm/bin/npm-cli.js --version
+          node tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json > "${RUNNER_TEMP}/release-tooling-pack.json"
 
       # Stylelint + integrity checks + node:test unit/contract suite.
       - run: npm run check
@@ -167,8 +167,8 @@ jobs:
           persist-credentials: false
 
       # Keep the full, current p/default feed and .semgrepignore behavior.
-      # Findings remain advisory while they are triaged; execution/configuration
-      # errors must fail the job instead of masquerading as a successful scan.
+      # Preserve every finding, including reviewed audit false positives.
+      # The gate accepts only exact reviewed source locations and file bytes.
       - name: Run Semgrep SAST
         run: |
           status=0
@@ -177,12 +177,24 @@ jobs:
             --error \
             --metrics=off \
             --disable-version-check \
+            --json-output "${RUNNER_TEMP}/semgrep.json" \
+            --sarif-output "${RUNNER_TEMP}/semgrep.sarif" \
             . || status=$?
           case "$status" in
-            0) ;;
-            1) echo "::warning::Semgrep reported advisory findings; review the scan output." ;;
+            0|1) python3 scripts/semgrep-gate.py "${RUNNER_TEMP}/semgrep.json" .github/tooling/semgrep-baseline.json ;;
             *) exit "$status" ;;
           esac
+
+      - name: Retain full Semgrep evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: semgrep-results
+          path: |
+            ${{ runner.temp }}/semgrep.json
+            ${{ runner.temp }}/semgrep.sarif
+          if-no-files-found: error
+          retention-days: 7
 
   # The single required status check on main owns the complete job graph.
   # A failed classifier must not turn skipped browser jobs into a green gate.

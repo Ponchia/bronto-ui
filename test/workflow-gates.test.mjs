@@ -158,18 +158,21 @@ test('manual Pages deployment requires successful CI and fails closed on API err
   }
 });
 
-test('Semgrep findings stay advisory while scanner execution errors fail closed', () => {
+test('Semgrep gates findings and preserves scanner execution failures', () => {
   const script = workflowScript('ci.yml', '      - name: Run Semgrep SAST');
-  for (const [SCANNER_EXIT, expected] of [
-    ['0', 0],
-    ['1', 0],
-    ['2', 2],
-    ['7', 7],
-    ['127', 127],
+  for (const [SCANNER_EXIT, GATE_EXIT, expected] of [
+    ['0', '0', 0],
+    ['1', '0', 0],
+    ['0', '1', 1],
+    ['1', '1', 1],
+    ['2', '99', 2],
+    ['7', '99', 7],
+    ['127', '99', 127],
   ]) {
-    const result = runShell(`semgrep() { return "$SCANNER_EXIT"; }\n${script}`, {
-      SCANNER_EXIT,
-    });
+    const result = runShell(
+      `semgrep() { return "$SCANNER_EXIT"; }\npython3() { return "$GATE_EXIT"; }\n${script}`,
+      { SCANNER_EXIT, GATE_EXIT, RUNNER_TEMP: '/tmp' },
+    );
     assert.equal(result.status, expected, result.stdout + result.stderr);
   }
 });

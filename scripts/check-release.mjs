@@ -24,11 +24,9 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const changelog = readFileSync(resolve(root, 'CHANGELOG.md'), 'utf8');
 const releaseWorkflow = readFileSync(resolve(root, '.github/workflows/release.yml'), 'utf8');
-const releaseTooling = JSON.parse(
-  readFileSync(resolve(root, '.github/tooling/npm/package.json'), 'utf8'),
-);
+const releaseTooling = JSON.parse(readFileSync(resolve(root, 'tooling/npm/package.json'), 'utf8'));
 const releaseToolingLock = JSON.parse(
-  readFileSync(resolve(root, '.github/tooling/npm/package-lock.json'), 'utf8'),
+  readFileSync(resolve(root, 'tooling/npm/package-lock.json'), 'utf8'),
 );
 const errors = [];
 
@@ -204,7 +202,7 @@ requireJobIncludes(
   'publish-preflight',
   preflightJob,
   'must dry-run the exact package without lifecycle scripts',
-  'node .github/tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json',
+  'node tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json',
 );
 requireJobIncludes(
   'publish-preflight',
@@ -236,7 +234,7 @@ requireJobIncludes(
   'publish-npm',
   publishJob,
   'must publish with scripts disabled and an explicit dist-tag',
-  'node .github/tooling/npm/node_modules/npm/bin/npm-cli.js publish --ignore-scripts --tag "$dist_tag"',
+  'node tooling/npm/node_modules/npm/bin/npm-cli.js publish --ignore-scripts --tag "$dist_tag"',
 );
 requireJobIncludes(
   'publish-npm',
@@ -259,7 +257,7 @@ requireJobIncludes(
 // Trusted publishing (OIDC) replaced the long-lived NPM_TOKEN. Two things
 // have to stay true for it to work, and both fail *at publish time* — the
 // most expensive moment to find out — so they are gated here instead.
-const lockedInstall = 'npm ci --prefix .github/tooling/npm --ignore-scripts --no-audit --no-fund';
+const lockedInstall = 'npm ci --prefix tooling/npm --ignore-scripts --no-audit --no-fund';
 requireJobIncludes(
   'publish-npm',
   publishJob,
@@ -276,7 +274,7 @@ requireJobIncludes(
   'validate',
   validateJob,
   'must prove package assembly with the same locked CLI that publishes',
-  'node .github/tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json',
+  'node tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json',
 );
 requireJobIncludes(
   'publish-preflight',
@@ -302,6 +300,20 @@ requireJobNotIncludes(
   'must not install a floating global npm CLI',
   'npm install -g',
 );
+
+// Audit the complete installed publishing bundle before approval and again
+// immediately before publication. An unavailable audit must block both jobs.
+for (const [name, body] of [
+  ['publish-preflight', preflightJob],
+  ['publish-npm', publishJob],
+]) {
+  requireJobIncludes(
+    name,
+    body,
+    'must audit actual installed publishing tooling without advisory waivers',
+    'node scripts/audit-publishing-tooling.mjs tooling/npm "${RUNNER_TEMP}/publishing-tooling-audit.json"',
+  );
+}
 
 function versionAtLeast(value, floor) {
   const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(value);

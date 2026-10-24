@@ -5,7 +5,7 @@ package, which continues to have zero runtime dependencies.
 
 ## Protected npm publisher
 
-`npm/package.json` and `npm/package-lock.json` lock the release CLI separately
+`tooling/npm/package.json` and `tooling/npm/package-lock.json` lock the release CLI separately
 from the framework's development dependencies. The selected npm version is
 11.21.1; its registry metadata points to the upstream
 [npm/cli release commit](https://github.com/npm/cli/commit/8834421d14085fdf6e871e6f3a20f6ae1b3de599).
@@ -16,7 +16,7 @@ entries inherit the tarball's byte-level pin.
 The protected `publish-npm` job uses the runner's npm only to execute:
 
 ```bash
-npm ci --prefix .github/tooling/npm --ignore-scripts --no-audit --no-fund
+npm ci --prefix tooling/npm --ignore-scripts --no-audit --no-fund
 ```
 
 CI and release validation prove the installed CLI's version and run a package
@@ -24,8 +24,8 @@ assembly dry run before protected approval. The preflight manifest is produced
 by this same CLI. For local verification:
 
 ```bash
-node .github/tooling/npm/node_modules/npm/bin/npm-cli.js --version
-node .github/tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json
+node tooling/npm/node_modules/npm/bin/npm-cli.js --version
+node tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json
 ```
 
 The actual publish remains inside `release.yml`, after all release gates and
@@ -37,16 +37,55 @@ manifest. Trusted publishing requires a supported GitHub-hosted runner,
 the repository's development toolchain uses Node.js 22.23.4 or later in the
 Node.js 22 line.
 
+### Publication advisory guard
+
+Both `publish-preflight` and `publish-npm` run
+`scripts/audit-publishing-tooling.mjs` after the isolated install. The guard
+inventories the actual installed package manifests, requires an exact match to
+the complete lock, checks the reviewed npm archive URL/integrity, and audits that
+graph with the runner-provided npm against the public registry. It rejects
+high/critical findings, malformed/inconsistent reports, missing packages,
+metadata-only version changes, and unsuccessful or unavailable audits. In these two release stages, the
+candidate CLI does not run until this guard passes. Raw audit results and
+failure details are retained for seven days, including on failure.
+
+The current 11.21.1 bundle fails this guard on its high advisory. This is an
+intentional release blocker pending a genuinely patched upstream distribution;
+it does not prevent deterministic CI tests of the guard or ordinary UI work.
+No advisory scope or package is ignored. Moderate findings remain in the report.
+A future candidate must update the manifest, lock, reviewed version/URL/integrity
+in the guard, and source references together, then prove actual inventory and a
+fresh complete audit before publishing. Offline tests cover malformed reports,
+execution failures, high/critical findings, and inconsistent installed bytes.
+
 ### Updating the CLI
 
-Dependabot proposes updates for this isolated directory. Review the exact npm
+The dependency updater proposes patch/minor updates for the isolated `tooling/npm` project.
+Major CLI changes require manual review. All three ecosystem entries use an
+explicit seven-day version `cooldown`; GitHub exempts security updates from it
+([configuration reference](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#cooldown)).
+
+The old `/.github/tooling/npm` update reached `create_pull_request` before
+GitHub rejected it with HTTP 400, `invalid or unauthorized changes`
+([run 40055277882](https://github.com/Ponchia/bronto-ui/actions/runs/40055277882)).
+This was a PR validation failure after successful resolution, not an npm install
+failure. Moving the unchanged manifest/lock to conventional `tooling/npm` avoids
+the special GitHub configuration subtree while keeping the publisher isolated.
+The backend did not identify the rejected file, so the location is a repair
+candidate, not a proven root cause. Ignoring majors alone cannot repair it.
+Confirm a successful hosted updater PR creation after this configuration
+lands; a local lock update or CI dry run cannot prove the private backend
+accepts an update. If it still fails, retain that run and escalate to GitHub
+Support rather than removing the lock or weakening publisher controls.
+
+Review the exact npm
 release, its Node engine range, registry metadata, and upstream changes. To
 prepare an update manually, substitute the reviewed version below:
 
 ```bash
-npm install --prefix .github/tooling/npm --package-lock-only --ignore-scripts --save-exact npm@VERSION
-npm ci --prefix .github/tooling/npm --ignore-scripts --no-audit --no-fund
-node .github/tooling/npm/node_modules/npm/bin/npm-cli.js --version
+npm install --prefix tooling/npm --package-lock-only --ignore-scripts --save-exact npm@VERSION
+npm ci --prefix tooling/npm --ignore-scripts --no-audit --no-fund
+node tooling/npm/node_modules/npm/bin/npm-cli.js --version
 node scripts/check-release.mjs
 node --test test/workflow-gates.test.mjs
 ```
@@ -79,7 +118,7 @@ bundled `ip-address@10.7.2`. Reproduce the publisher audit separately from the
 root development-tool audit:
 
 ```bash
-npm audit --prefix .github/tooling/npm --package-lock-only --json
+npm audit --prefix tooling/npm --package-lock-only --json
 npm audit --package-lock-only --json
 ```
 
@@ -139,10 +178,45 @@ same source and tool image can therefore produce new findings when the feed
 changes. For a finding under review, retain the scan log and rule identifier;
 do not claim scans are completely reproducible across rule-feed revisions.
 Metrics and version checks are disabled. Existing `.semgrepignore` rules still
-apply. Findings remain advisory; invalid configuration, download failures, and
-other scanner execution errors fail the job. `ci-gate` requires successful SAST
-execution, including on docs-only changes; advisory findings do not bypass or
-weaken any of the other required jobs.
+apply. CI retains full JSON and SARIF for seven days on success or failure.
+`ci-gate` requires SAST on docs-only changes too. New or changed findings fail
+`semgrep-gate.py`; scanner execution/configuration errors always fail.
+
+`semgrep-baseline.json` is an explicit review ledger, not a set of ignored rules
+or files. Every finding exception binds its exact rule, path, start/end location
+and the SHA-256 of the entire source file and rule details (message, severity,
+metadata), plus a rationale and evidence. Editing
+source context invalidates the exception. Duplicates cannot reuse an exception.
+Removed findings are allowed and reported as stale entries for later pruning.
+The scanner still reports every reviewed finding in its JSON/SARIF output.
+
+The pinned scanner has documented partial-parser limitations on HTML comment
+regular expression literals, literal ampersands in static HTML fixtures, and Actions
+expressions parsed as shell. Each known diagnostic is separately bound to the
+complete diagnostic JSON and whole-file hash. Only these exact warning-level
+`PartialParsing` diagnostics may pass; new/changed diagnostics, timeouts, empty
+scans, malformed results and execution errors fail. These limitations mean the
+scan does not prove complete parsing of those constructs. Every scan path and rule remains. See the per-entry parser rationale and independent syntax checks.
+
+### Finding review on 24 October 2026
+
+[Run 40092974432](https://github.com/Ponchia/bronto-ui/actions/runs/40092974432)
+reported 17 findings. Three were missing-cooldown recommendations, resolved by
+setting seven days on each ecosystem. The other 14 are audit false positives
+under the reviewed source and input contracts:
+
+| Locations | Count | Review and regression evidence |
+| --- | --- | --- |
+| Site HTML escaping (now `scripts/lib/html-text.mjs`) | 4 | All occurrences of `&`, `<`, `>` and double quotes are encoded, ampersands first. Call sites use text or double-quoted attributes, never CSS/script or URL validation. `test/html-text.test.mjs` parses hostile values and confirms exact round trips without injected elements/attributes. |
+| Changelog/release token regular expressions, release job name, component array name, ownership word | 5 | Dynamic literals escape every regular expression special character; the remaining regular expression structures are fixed. `test/security-contexts.test.mjs` exercises literal regular expression special characters and release version boundaries; `check:release`, `check:component-matrix` and `check:behavior-matrix` exercise the ownership/array contracts. |
+| Report vocabulary, schema pattern, font token regular expressions | 3 | Report words come from fixed severity/status enumerations; schema patterns are maintainer-owned checked-in JSON, not a user-supplied schema service; font tokens are the two fixed `LEAVES` constants. `check:report`, `check:schemas`, `test/report-schema.test.mjs` and `test/font-leaves.test.mjs` exercise them. |
+| Consumer and glyph test fixtures | 2 | `root` is a temporary filesystem path, not script content. The glyph test uses an inert DOM fragment to assert hostile labels cannot introduce markup. Both original regression tests remain. |
+
+The baseline has no automatic accept/update command. When the feed or a reviewed
+file changes, inspect the complete finding or diagnostic, its input and output contexts,
+and its behavioral regression proof before explicitly updating the relevant
+identity and rationale. Gate tests mutate rule, location, source, multiplicity,
+scanner version and diagnostics to prove changed/new results fail.
 
 To update Semgrep, review the intended upstream release and obtain the official
 image digest (`docker buildx imagetools inspect semgrep/semgrep:VERSION`). Pin

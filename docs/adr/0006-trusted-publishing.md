@@ -37,7 +37,7 @@ The package's `repository.url` must continue to identify this repository.
 
 npm documents a minimum of Node 22.14.0 and npm CLI 11.5.1 for trusted
 publishing. The release workflow uses Node 22 and installs its npm CLI from
-the private, integrity-locked manifest under `.github/tooling/npm/`, with
+the private, integrity-locked manifest under `tooling/npm/`, with
 `npm ci --ignore-scripts`. It invokes that installed CLI directly. The
 [CI tooling maintenance guide](https://github.com/Ponchia/bronto-ui/blob/main/.github/tooling/README.md)
 explains how the executable is updated and verified.
