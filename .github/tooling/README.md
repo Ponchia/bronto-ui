@@ -57,6 +57,22 @@ and protected Environment identity remain unchanged.
 
 ## Current npm bundle advisory review
 
+### Review on 24 October 2026
+
+The result below is historical. The newer reviewed advisory data also flags
+bundled `undici@6.29.0`: GHSA-4qv8-2p9j-2685 (moderate) and
+GHSA-xjj6-f33q-929c (high), both fixed in Undici 6.29.1. The existing
+`ip-address@10.7.2` moderate finding remains. Integrity-verified npm 11.21.1 and
+12.2.1 archives both contain these affected versions, so neither a major CLI
+upgrade nor a lockfile metadata edit resolves the bundled code.
+
+Track all three advisories in
+[issue #234](https://github.com/Ponchia/bronto-ui/issues/234). Keep the complete
+publisher audit and existing security gates intact. The root development graph
+is patched independently; it does not replace npm's embedded packages.
+
+### Historical review on 23 October 2026
+
 On 2026-10-23, the committed isolated publisher lock was updated to npm 11.21.1.
 The complete lockfile audit reports **one moderate advisory** (exit 1), affecting
 bundled `ip-address@10.7.2`. Reproduce the publisher audit separately from the
