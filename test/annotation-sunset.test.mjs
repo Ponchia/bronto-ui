@@ -74,7 +74,7 @@ test('UI does not depend on or re-export the annotation engine', () => {
 test('independent example consumes annotation-owned APIs without legacy roll-ups', () => {
   const example = JSON.parse(read('examples/annotations-vite/package.json'));
   const source = read('examples/annotations-vite/src/main.js');
-  assert.equal(example.dependencies['@ponchia/annotations'], '0.6.10');
+  assert.equal(example.dependencies['@ponchia/annotations'], '0.7.0');
   assert.match(source, /from '@ponchia\/annotations'/);
   assert.match(source, /@ponchia\/annotations\/bronto\.css/);
   assert.doesNotMatch(

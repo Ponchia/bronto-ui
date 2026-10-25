@@ -121,7 +121,7 @@ test('public site — docs search links to the authored first component guide', 
 
 test('public site — component search and categorization are functional', async ({ page }) => {
   await page.goto(publicRoot + 'components/');
-  await expect(page.locator('[data-component-card]')).toHaveCount(20);
+  await expect(page.locator('[data-component-card]')).toHaveCount(25);
 
   await page.locator('[data-component-query]').fill('measured');
   await expect(page.locator('[data-component-card]:visible')).toHaveCount(1);
@@ -131,7 +131,7 @@ test('public site — component search and categorization are functional', async
   await page.locator('[data-component-chip="Data"]').click();
   await expect(page.locator('[data-component-card]:visible')).toHaveCount(4);
   await expect(page.locator('.component-preview nav[aria-label="Breadcrumb"]')).toHaveCount(1);
-  await expect(page.locator('.component-preview table caption')).toContainText('Recent job status');
+  await expect(page.getByRole('table', { name: 'Recent job status' })).toBeVisible();
 });
 
 test('public site — first-component instructions use the actual Vite vanilla entry', async ({

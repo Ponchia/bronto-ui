@@ -70,16 +70,30 @@ the lockfile audit when updating the lint toolchain.
 
 ### Release CLI
 
-The isolated `npm@11.21.1` publisher project was audited on 23 October 2026.
-The patch removes the previously reported high-severity bundled findings. Its
-complete lockfile audit still reports one moderate advisory in
-`ip-address@10.7.2`:
-[GHSA-rxp7-6hxx-x8q5](https://github.com/advisories/GHSA-rxp7-6hxx-x8q5).
-Upstream fixes that package in 10.7.4, but the examined npm 11.21.1 and 12.2.1
-distributions both bundle 10.7.2. The remaining publisher advisory is tracked
-in [issue #234](https://github.com/Ponchia/bronto-ui/issues/234).
+As of 24 October 2026, publication is **blocked** by a high-severity advisory
+in the isolated `npm@11.21.1` publisher bundle. The complete reviewed findings
+are:
+
+| Bundled package | Advisory | Severity | First patched version |
+| --- | --- | --- | --- |
+| `undici@6.29.0` | [GHSA-xjj6-f33q-929c](https://github.com/advisories/GHSA-xjj6-f33q-929c) | High | 6.29.1 |
+| `undici@6.29.0` | [GHSA-4qv8-2p9j-2685](https://github.com/advisories/GHSA-4qv8-2p9j-2685) | Moderate | 6.29.1 |
+| `ip-address@10.7.2` | [GHSA-rxp7-6hxx-x8q5](https://github.com/advisories/GHSA-rxp7-6hxx-x8q5) | Moderate | 10.7.4 |
+
+The examined upstream npm 11.21.1 and 12.2.1 distributions both contain these
+affected bundled versions. The 23 October audit predates the newer Undici
+advisory data; its then-current result is not the current release status.
+These are release-tool dependencies, not dependencies shipped by `@ponchia/ui`.
+
+Both publication preflight and the protected publish job audit the actual
+installed bundle against the complete lockfile. They refuse high/critical
+findings, inconsistent installed bytes, or unavailable audits. Ordinary CI can
+pass while publication remains blocked: deterministic guard tests do not
+substitute for the live publisher audit.
 
 The [CI tooling advisory review](tooling/README.md#current-npm-bundle-advisory-review)
-records the exact bundled versions, reproducible audit commands and upgrade
-limits. Keep it current when updating the upstream CLI; integrity locking and
-protected publishing controls do not remediate the remaining advisory.
+records the reviewed bundle, reproducible commands and criteria for a replacement.
+Keep [issue #234](https://github.com/Ponchia/bronto-ui/issues/234) open until its
+bundled findings are resolved. Integrity locking, OIDC and protected publishing
+controls do not remediate those findings; do not bypass the guard or relabel
+bundled package versions to publish.

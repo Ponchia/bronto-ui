@@ -116,6 +116,26 @@ the small inline script in the
 before first paint. JS subpaths are **ESM-only**; CommonJS consumers can use
 `import('@ponchia/ui/behaviors')` dynamically.
 
+### 4. Check your markup
+
+The installed package includes a consumer validator. Run it against your
+application's source files:
+
+```bash
+npx --no-install bronto-ui-check src index.html
+```
+
+Use paths that exist in your project; add `--json` for machine-readable findings
+or `--help` for options. The command checks literal `ui-*` names and unresolved
+Bronto-like `var(--*)` references against the installed package, and exits
+nonzero when it finds a problem. It skips dependency and build directories.
+
+This is a source check: it does not evaluate dynamically assembled class names,
+confirm that an optional stylesheet is loaded, or verify accessibility and
+behavior. Follow it with the browser checks below. The
+[class reference](docs/reference.md) describes valid classes, required markup,
+and opt-in stylesheets.
+
 ## Choose the surface you need
 
 The default stylesheet covers application structure, forms, tables, feedback,

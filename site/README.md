@@ -10,7 +10,8 @@ fixtures, which remain accessible under their original `demo/` URLs.
 | --- | --- |
 | `site/pages/*.html` | Product pages; use `{{root}}` for paths that work beneath GitHub Pages' repository prefix. |
 | `site/site.css`, `site/site.js` | Website layout, theme control, responsive navigation, search, and code-copy enhancements. |
-| `site/components.mjs` | Curated copyable specimens that use the default package CSS. |
+| `site/components.mjs` | Curated specimens with copyable markup, explicit optional CSS leaves and behavior setup. |
+| `site/catalog.js` | Live splitter and command-palette behavior for those specimens; no application command registry. |
 | `site/examples.mjs` | Shared example descriptions, real demo/source routes, and screenshot filenames. |
 | `docs/**/*.md` | Canonical technical documents, rendered as individual pages with stable heading IDs. |
 | `demo/` | Runnable application/report examples and focused regression specimens. |
@@ -58,8 +59,16 @@ CONTRIBUTING. `social.jpg` is the separately maintained sharing image.
 
 ## What the examples prove
 
-The shell imports the committed default Bronto UI bundle. Component specimens
-and application demos use the public `ui-*` classes. `site/site.css` supplies
+The shell imports the committed default Bronto UI bundle. The component gallery
+also loads the union of the optional `styles` leaves declared in its registry.
+Each card shows its own complete CSS imports; `check:site` validates each card
+against only those imports, so another card cannot accidentally supply a missing
+dependency. Interactive cards include explicit initialization and cleanup
+instructions. The live behavior in `site/catalog.js` is checked through the
+built page, including keyboard selection, focus restoration, non-drag resizing,
+narrow screens, both themes and readable print fallback data.
+
+Component specimens and application demos use the public `ui-*` classes. `site/site.css` supplies
 website-specific layout, spacing, and colors; it is not part of the npm package.
 Use the runnable specimens to evaluate the reusable contract, and expect an
 application to supply its own content, state, logic, and composition CSS.

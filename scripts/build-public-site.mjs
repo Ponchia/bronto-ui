@@ -152,7 +152,7 @@ async function walk(base, path = '') {
         category: categoryFor(stem),
         markdown,
         excerpt: markdown
-          .replace(/<!--[\s\S]*?-->/g, ' ')
+          .replace(/\x3c!--[\s\S]*?--\x3e/g, ' ')
           .replace(/```[\s\S]*?```/g, ' ')
           .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
           .replace(/[#*_`>\[\]()]/g, ' ')
@@ -229,8 +229,10 @@ const rendered = (outFile, current, title, description, inner) => {
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" type="image/svg+xml" href="${p}site/favicon.svg" />
   <link rel="stylesheet" href="${p}dist/bronto.css" />
+  ${current === 'components' ? [...new Set(components.flatMap((c) => c.styles || []))].map((leaf) => `<link rel="stylesheet" href="${p}dist/css/${leaf}.css" />`).join('\n  ') : ''}
   <link rel="stylesheet" href="${p}site/site.css" />
   <script type="module" src="${p}site/site.js"></script>
+  ${current === 'components' ? `<script type="module" src="${p}site/catalog.js"></script>` : ''}
 </head>
 <body data-site-root="${p}">
 ${sharedHeader(current, p)}
@@ -258,15 +260,22 @@ const docsSidebar = (current, p) => {
 </aside>`;
 };
 const categories = ['All', ...new Set(components.map((c) => c.category))];
-const componentCard = (
-  c,
-  p,
-) => `<article class="component-card" data-component-card data-category="${esc(c.category)}" data-search="${esc((c.name + ' ' + c.category + ' ' + c.summary).toLowerCase())}">
+const componentCode = (label, source, action) =>
+  `<div class="component-code"><div class="component-code__bar"><span>${label}</span><button class="copy-button" data-copy type="button" hidden>${action}</button></div><pre tabindex="0"><code>${esc(source)}</code></pre></div>`;
+const componentCard = (c, p) => {
+  const imports = [
+    "@import '@ponchia/ui';",
+    ...(c.styles || []).map((leaf) => `@import '@ponchia/ui/css/${leaf}.css';`),
+  ].join('\n');
+  return `<article class="component-card" data-component-card data-category="${esc(c.category)}" data-search="${esc((c.name + ' ' + c.category + ' ' + c.summary).toLowerCase())}">
  <div class="component-card__head"><p class="kicker">${esc(c.category.toUpperCase())}</p><h2>${esc(c.name)}</h2><p>${esc(c.summary)}</p></div>
  <div class="component-preview">${c.markup}</div>
- <div class="component-code"><div class="component-code__bar"><span>HTML / CSS</span><button class="copy-button" data-copy type="button" hidden>Copy markup</button></div><pre tabindex="0"><code>${esc(c.markup)}</code></pre></div>
+ ${componentCode('CSS imports', imports, 'Copy imports')}
+ ${componentCode('HTML', c.markup, 'Copy markup')}
+ ${c.setup ? componentCode('JavaScript · initialize after rendering', c.setup, 'Copy setup') : ''}
  <a class="component-more" href="${p}docs/${c.doc}.html">Read usage guide ↗</a>
  </article>`;
+};
 const pageSource = async (filename, p) =>
   (await readFile(join(repo, 'site/pages', filename), 'utf8'))
     .replaceAll('{{root}}', p)
@@ -345,7 +354,7 @@ for (const folder of [
 // Publish only the compiled public shell. Hand-authored page templates and
 // component source definitions belong in Git, not at public raw HTML URLs.
 await mkdir(join(output, 'site'), { recursive: true });
-for (const file of ['site.css', 'site.js', 'favicon.svg']) {
+for (const file of ['site.css', 'site.js', 'catalog.js', 'favicon.svg']) {
   await cp(join(repo, 'site', file), join(output, 'site', file));
 }
 await cp(join(repo, 'site/assets'), join(output, 'site/assets'), { recursive: true });

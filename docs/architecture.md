@@ -252,11 +252,16 @@ pointer:
   that `check:pack`'s file-allowlist inspection cannot — so the release
   path runs the same consumer smoke as merge-to-main.
 - `publish-preflight` — `needs: [validate, e2e, examples]`: installs with
-  lifecycle scripts disabled, runs `npm pack --dry-run --ignore-scripts`, and
+  lifecycle scripts disabled, runs `npm pack --dry-run --ignore-scripts`,
+  verifies the isolated publisher's installed bytes and audit result, and
   writes the pack manifest + size report to the job summary for review before
-  the protected publish approval.
+  the protected publish approval. A high/critical publisher advisory blocks
+  release even when ordinary source CI is green; see the
+  [CI tooling guide](https://github.com/Ponchia/bronto-ui/blob/main/.github/tooling/README.md) for the current inventory and
+  remediation procedure.
 - `publish-npm` — `needs: publish-preflight`: `npm publish --ignore-scripts`
-  with provenance. Runs in the `npm-publish` **Environment**
+  with provenance, after repeating the publisher integrity/audit gate in the
+  protected job. Runs in the `npm-publish` **Environment**
   (required-reviewer protection), so after the gates and preflight pass the run
   pauses for a manual approval in the Actions UI before anything reaches npm —
   a guard against an accidental tag push publishing. Authentication is

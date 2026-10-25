@@ -51,10 +51,13 @@ the run's artifacts for seven days.
 
 `main` is protected. Changes land through a PR, squash-merged with the branch
 up to date and the required **`ci-gate`** status green. That aggregate verifies
-`check`, `e2e`, `examples`, and successful `sast` execution, including the
-workflow's documented handling of docs-only changes. Semgrep findings remain
-advisory; an unavailable or broken scanner fails the required gate. Branches
-auto-delete on merge.
+`check`, `e2e`, `examples`, `layout`, and successful `sast` execution, including
+the workflow's documented handling of docs-only changes. Semgrep blocks new or
+changed findings: the only accepted results are the explicitly reviewed,
+source-hash-bound entries in the tooling baseline. An unavailable or broken
+scanner also fails the required gate. See the
+[CI tooling guide](.github/tooling/README.md) before reviewing a baseline
+change. Branches auto-delete on merge.
 
 New to the repo? Start with **[docs/repository-map.md](docs/repository-map.md)**
 for edit points and regeneration targets, then use

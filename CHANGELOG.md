@@ -5,6 +5,32 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased
+
+### Fixed
+
+- Preserve readable button contrast throughout theme and interaction changes by
+  removing transitions between foreground and background color pairs.
+
+### Added
+
+- Five interactive catalog compositions demonstrate claims and evidence, source
+  review, inspector splitters, command palettes, and findings with a readable
+  figure/table fallback. Each includes its explicit optional CSS imports and
+  behavior setup. Keyboard, narrow-viewport, theme, and accessibility checks
+  cover the working examples.
+
+### Changed
+
+- Put the installed markup validator in the quickstart, replace the LLM entry
+  point with a task router, and show a complete React dialog with scoped
+  initialization, unique IDs, focus restoration, and cleanup.
+- Verify legacy annotation geometry against the integrity-checked standalone
+  Annotations 0.7.0 package and update the migration guide and packed consumer
+  example to that stable release. Legacy UI exports remain available in 0.17.
+- Document the current publisher advisory blocker and the actual-bundle audit
+  required to qualify a replacement; ordinary CI does not clear publication.
+
 ## 0.17.0 — 2026-10-16
 
 ### Added

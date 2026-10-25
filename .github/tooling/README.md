@@ -24,8 +24,10 @@ assembly dry run before protected approval. The preflight manifest is produced
 by this same CLI. For local verification:
 
 ```bash
-node tooling/npm/node_modules/npm/bin/npm-cli.js --version
-node tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json
+audit_report="$(mktemp)"
+node scripts/audit-publishing-tooling.mjs tooling/npm "$audit_report" &&
+  node tooling/npm/node_modules/npm/bin/npm-cli.js --version &&
+  node tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json
 ```
 
 The actual publish remains inside `release.yml`, after all release gates and
@@ -87,31 +89,64 @@ prepare an update manually, substitute the reviewed version below:
 
 ```bash
 npm install --prefix tooling/npm --package-lock-only --ignore-scripts --save-exact npm@VERSION
-npm ci --prefix tooling/npm --ignore-scripts --no-audit --no-fund
-node tooling/npm/node_modules/npm/bin/npm-cli.js --version
-node scripts/check-release.mjs
-node --test test/workflow-gates.test.mjs
 ```
 
-Update the version and source reference in these notes too. Review the lock
-diff and run the normal integrity checks before merging; the release workflow
-and protected Environment identity remain unchanged.
+Before running that candidate, review the lock diff and update the exact
+`candidate` version, archive URL and SHA-512 integrity in
+`scripts/audit-publishing-tooling.mjs` from verified registry metadata. Update
+the source reference in these notes too. Then install without lifecycle scripts
+and let the guard compare the installed bundle with the reviewed lock and run
+a fresh complete audit:
+
+```bash
+npm ci --prefix tooling/npm --ignore-scripts --no-audit --no-fund
+audit_report="$(mktemp)"
+node scripts/audit-publishing-tooling.mjs tooling/npm "$audit_report" &&
+  node tooling/npm/node_modules/npm/bin/npm-cli.js --version &&
+  node scripts/check-release.mjs &&
+  node --test test/workflow-gates.test.mjs
+```
+
+Keep the raw audit and any adjacent `.failure.json` with the review evidence.
+A nonzero guard result stops qualification; it is not a reason to remove a
+package from the audit or change the threshold. Run the normal integrity checks
+before merging. The release workflow and protected Environment identity remain
+unchanged.
 
 ## Current npm bundle advisory review
 
 ### Review on 24 October 2026
 
-The result below is historical. The newer reviewed advisory data also flags
-bundled `undici@6.29.0`: GHSA-4qv8-2p9j-2685 (moderate) and
-GHSA-xjj6-f33q-929c (high), both fixed in Undici 6.29.1. The existing
-`ip-address@10.7.2` moderate finding remains. Integrity-verified npm 11.21.1 and
-12.2.1 archives both contain these affected versions, so neither a major CLI
-upgrade nor a lockfile metadata edit resolves the bundled code.
+**Publication remains blocked.** The latest registry distribution, npm 12.2.1,
+and the selected 11.x distribution, npm 11.21.1, both contain these affected
+bundled packages in their integrity-verified archives:
 
-Track all three advisories in
-[issue #234](https://github.com/Ponchia/bronto-ui/issues/234). Keep the complete
-publisher audit and existing security gates intact. The root development graph
-is patched independently; it does not replace npm's embedded packages.
+| Bundled package | Advisory | Severity | First patched version |
+| --- | --- | --- | --- |
+| `undici@6.29.0` | [GHSA-xjj6-f33q-929c](https://github.com/advisories/GHSA-xjj6-f33q-929c) | High | 6.29.1 |
+| `undici@6.29.0` | [GHSA-4qv8-2p9j-2685](https://github.com/advisories/GHSA-4qv8-2p9j-2685) | Moderate | 6.29.1 |
+| `ip-address@10.7.2` | [GHSA-rxp7-6hxx-x8q5](https://github.com/advisories/GHSA-rxp7-6hxx-x8q5) | Moderate | 10.7.4 |
+
+The 23 October result below predates the newer Undici advisory data. It does
+not establish that today's publisher is clear. A major CLI bump to the examined
+12.2.1 archive, a root dependency upgrade, or a lockfile metadata edit cannot
+replace the affected bundled code.
+
+To qualify a replacement, inspect the actual upstream archive and update the
+reviewed manifest, lock and guard metadata together. The installed inventory
+must match that lock, and a fresh complete audit must pass the existing
+high/critical threshold. The replacement must also satisfy the documented
+trusted-publishing Node/npm requirements and the normal release checks. Keep
+any remaining moderate findings visible; clearing the publication threshold
+alone does not close every advisory in
+[issue #234](https://github.com/Ponchia/bronto-ui/issues/234).
+
+Do not push a release tag or seek protected-environment approval while the
+candidate fails this guard. UI fixes and consumer updates to an already
+published version can proceed independently. A successful ordinary CI run
+proves the deterministic guard tests, not the live state of the publisher's
+advisories. Keep the complete publisher audit and existing controls intact;
+do not repack npm, suppress an advisory or relabel its embedded dependencies.
 
 ### Historical review on 23 October 2026
 
