@@ -257,6 +257,8 @@ for (const frame of document.querySelectorAll('.iframe-frame iframe')) {
     if (child.querySelector('dialog[open]')) reveal();
   };
   frame.addEventListener('load', bind);
+  // The first-party demo signals interactive readiness before slow assets load.
+  frame.addEventListener('bronto:preview-ready', bind);
   // Lazy frames can accept input before load. Bind to their current document
   // when a pointer enters or focus crosses into it, not only after resources.
   frame.addEventListener('pointerenter', bind);

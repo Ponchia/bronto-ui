@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 // A lazy iframe can be interactive before its load event. Hold an inert image,
 // not JavaScript, to exercise the gap between usable DOM and completed load.
-async function loadingPreview(page) {
+async function loadingPreview(page, notifyReady = true) {
   let releaseDocument;
   let releaseImage;
   const documentGate = new Promise((resolve) => {
@@ -31,6 +31,14 @@ async function loadingPreview(page) {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/_site/examples/operations/', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('[data-theme-toggle]')).toBeVisible();
+  if (!notifyReady) {
+    // Exercise the load fallback for a host that missed the early notification.
+    await page.locator('.iframe-frame iframe').evaluate((frame) => {
+      frame.addEventListener('bronto:preview-ready', (event) => event.stopImmediatePropagation(), {
+        capture: true,
+      });
+    });
+  }
   releaseDocument();
   const frame = page.frameLocator('.iframe-frame iframe');
   await expect(frame.locator('html')).toHaveAttribute('data-demo-ready', '1');
@@ -75,7 +83,7 @@ for (const input of ['pointer', 'keyboard']) {
 }
 
 test('preview reveals an already-open dialog when its load handler attaches', async ({ page }) => {
-  const { frame, releaseImage } = await loadingPreview(page);
+  const { frame, releaseImage } = await loadingPreview(page, false);
   try {
     await frame.locator('dialog').evaluate((node) => node.setAttribute('open', ''));
     await expect(frame.getByRole('dialog')).toBeVisible();
