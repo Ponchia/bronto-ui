@@ -48,3 +48,26 @@ and `check:visual-baselines` verify ownership and baseline inventory.
 
 Set `BRONTO_UI_TEST_PORT` for an isolated checkout. Playwright refuses to reuse
 an existing server, so tests cannot silently inspect another checkout.
+
+## Motion policy is an observed browser contract
+
+The pinned Playwright 1.60 runner receives reduced motion through
+`use.contextOptions.reducedMotion`. Its top-level `use.reducedMotion` key is
+not forwarded to the browser context. `browser-environment.spec.mjs` checks
+the actual media query and computed scroll behavior in every engine; accepting
+a configuration object is not proof that the policy took effect.
+
+Motion-specific suites use `test.use({ contextOptions: { reducedMotion:
+'no-preference' } })`; individual interaction tests can still call
+`page.emulateMedia`. Keep those normal-motion tests when changing the default.
+The browser/container pins, existing visual baselines, test assertions and
+retry budget are independent and must not be weakened to repair configuration.
+
+The approved pixel baselines retain their historically observed normal-motion
+media (`contextOptions.reducedMotion: 'no-preference'`), asserted at runtime by
+`visual.spec.mjs`. Screenshot capture freezes animation independently. Switching
+that media changes the intentionally static striped indeterminate progress bar;
+it is not a reason to regenerate approved PNGs or increase their tolerance.
+Reduced-motion behavior remains covered by the default suite and explicit
+media/contrast tests. Native tree tests assert both hidden and restored leaves
+in each motion mode, rather than sampling a disappearing leaf mid-transition.

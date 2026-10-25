@@ -10,7 +10,7 @@ import { awaitDemoReady } from './_demo.mjs';
  * `interpolate-size` plumbing engages — and degrades where an engine lacks
  * the feature. No pixels — engine-agnostic, so it runs on all three.
  */
-test.use({ reducedMotion: 'no-preference' });
+test.use({ contextOptions: { reducedMotion: 'no-preference' } });
 
 async function open(page) {
   await page.goto('/demo/', { waitUntil: 'networkidle' });

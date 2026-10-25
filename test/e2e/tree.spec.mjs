@@ -1,23 +1,60 @@
 import { test, expect } from '@playwright/test';
 
+async function receivesPointerAtCenter(locator) {
+  return locator.evaluate((element) => {
+    const box = element.getBoundingClientRect();
+    const hit = element.ownerDocument.elementFromPoint(
+      box.x + box.width / 2,
+      box.y + box.height / 2,
+    );
+    return hit === element || element.contains(hit);
+  });
+}
+
 async function open(page) {
   await page.goto('/demo/tree.html', { waitUntil: 'networkidle' });
 }
 
-test('branches are native <details> that toggle, leaves are static rows', async ({ page }) => {
-  await open(page);
-  const branch = page.locator('.ui-tree__branch').first();
-  await expect(branch).toHaveJSProperty('tagName', 'DETAILS');
+for (const reducedMotion of ['reduce', 'no-preference']) {
+  test(`branches are native disclosures that hide and reveal static leaves (${reducedMotion})`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion });
+    await open(page);
+    const branch = page.locator('.ui-tree__branch').first();
+    const summary = branch.locator('> .ui-tree__summary');
+    const leaf = branch.locator('> .ui-tree__leaf').first();
+    const nestedLeaf = branch.locator('.ui-tree__leaf').first();
+    await expect(branch).toHaveJSProperty('tagName', 'DETAILS');
+    await expect(branch).toHaveJSProperty('open', true);
+    await expect(leaf).toHaveJSProperty('tagName', 'DIV');
+    await expect(leaf).toBeVisible();
+    await expect.poll(() => receivesPointerAtCenter(nestedLeaf)).toBe(true);
 
-  // Native disclosure: toggling the summary flips [open] — no Bronto kernel.
-  const summary = branch.locator('> .ui-tree__summary');
-  const before = await branch.evaluate((el) => el.open);
-  await summary.click();
-  const after = await branch.evaluate((el) => el.open);
-  expect(after).toBe(!before);
-
-  await expect(page.locator('.ui-tree__leaf').first()).toBeVisible();
-});
+    // A static row still belongs to its enclosing disclosure. The old test
+    // expected it visible after closing its ancestor and passed mid-animation.
+    await summary.click();
+    await expect(branch).toHaveJSProperty('open', false);
+    await expect(leaf).toBeHidden();
+    // Playwright 1.60's WebKit visibility fallback checks only the closest
+    // details. An open nested branch can retain a box beneath a closed parent;
+    // assert its actual hit surface and the parent's collapsed geometry too.
+    await expect.poll(() => receivesPointerAtCenter(nestedLeaf)).toBe(false);
+    await expect
+      .poll(() =>
+        branch.evaluate((element) => {
+          const summary = element.querySelector(':scope > summary');
+          return element.getBoundingClientRect().height <= summary.getBoundingClientRect().height;
+        }),
+      )
+      .toBe(true);
+    await expect(summary).toBeVisible();
+    await summary.click();
+    await expect(branch).toHaveJSProperty('open', true);
+    await expect(leaf).toBeVisible();
+    await expect.poll(() => receivesPointerAtCenter(nestedLeaf)).toBe(true);
+  });
+}
 
 test('branch summaries toggle from the keyboard', async ({ page }) => {
   await open(page);

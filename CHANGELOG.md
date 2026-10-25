@@ -22,6 +22,11 @@
 
 ### Added
 
+- Add an opt-in `bronto-ui-check --migration 0.17` source review for legacy
+  annotation imports, indirect CSS roll-ups, markup and class recipes. It
+  reports locations and coverage limits without rewriting source or removing
+  compatibility APIs; ordinary validation keeps its existing behavior.
+
 - Five interactive catalog compositions demonstrate claims and evidence, source
   review, inspector splitters, command palettes, and findings with a readable
   figure/table fallback. Each includes its explicit optional CSS imports and
