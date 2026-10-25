@@ -1,847 +1,117 @@
 # @ponchia/ui
 
-> CSS-first, framework-agnostic UI framework. Zero runtime dependencies.
-> One `@layer bronto` cascade, a typed class vocabulary, design tokens as
-> data, and optional SSR-safe vanilla behaviors. Token-driven restraint:
-> neutral by default, one core accent for UI emphasis, dot-matrix display type,
-> plus separate governed tiers for status, display colorways, and data-viz.
+> CSS building blocks for tools, dashboards, and reports. Framework-agnostic,
+> with zero runtime dependencies, typed class recipes, shared design tokens,
+> and optional vanilla JavaScript behaviors.
 >
-> This file orients an LLM/agent. Read the shipped TypeScript declarations
-> for public names, options, and return types (paths below). They are generated
-> from runtime sources and drift-checked in CI; the implementation, documented
-> semantics, and tests remain necessary evidence for behavior. For the
-> manifest-level inventory, use `docs/package-contract.md`: it is generated
-> from package.json and lists every export, shipped path, and provenance gate.
-
-## Use the framework
-
-CSS (pick one; do not import both):
-
-```css
-@import '@ponchia/ui'; /* dist/bronto.css — flattened, minified, one file (recommended) */
-@import '@ponchia/ui/css'; /* css/core.css — @import fan-out, needs a bundler */
-```
-
-`import '@ponchia/ui'` is supported only as a CSS side-effect import in a
-CSS-aware bundler. Do not import the package root from Node/runtime JS; use the
-explicit JS subpaths below.
-
-JS subpaths are ESM-only. In CommonJS, use dynamic `import()`.
-
-Everything lands in `@layer bronto`. Consumer styles in no layer (or a
-later layer) win ordinary framework styles regardless of selector specificity —
-this is the intended override mechanism. Do not fight normal component styling
-with `!important`; the framework reserves `!important` for print and
-reduced-motion safeguards.
-
-The CSS `@import` recipes below use package specifiers, which resolve inside a
-CSS-aware bundler (Vite/webpack). In standalone HTML, load a real stylesheet
-URL instead: a browser cannot resolve `@ponchia/ui/css/<leaf>.css` as a
-`<link href>`. The built leaf path is `dist/css/<leaf>.css`. For example,
-choose one of these ways to add the report layer:
-
-```html
-<!-- installed locally; serve node_modules beside this page -->
-<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/report.css" />
-<!-- or use a pinned CDN version (pre-1.0, breaking changes ship in the minor) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.17.0/dist/css/report.css" />
-```
-
-The flattened default bundle is `dist/bronto.css` (bundler shorthand
-`@ponchia/ui`). A complete, copy-pasteable CDN report is in `docs/reporting.md`.
-
-Typed class vocabulary (returns plain strings — works in any framework):
-
-```js
-import { cls, ui, cx } from '@ponchia/ui/classes';
-// ui.button({ variant: 'ghost' }) -> "ui-button ui-button--ghost"
-// cx(ui.dot({ tone: 'success' }), 'my-extra') -> joined, falsy-skipped
-// cls is the frozen flat registry of every class the framework defines
-```
-
-Tokens as data (theming + reading the palette):
-
-```js
-import { cssVars, tokens, themeColor } from '@ponchia/ui/tokens';
-```
-
-Optional vanilla behaviors (theme toggle, etc. — SSR-safe, tree-shakeable):
-
-```js
-import { applyStoredTheme } from '@ponchia/ui/behaviors';
-```
-
-Notable behaviors beyond the obvious: `initMenu()` adds close affordances to a
-native `<details data-bronto-menu>` dropdown (outside-click/Escape/select-close);
-Native `<dialog>` with `initDialog()` owns modal interaction. `initDisabledGuard()` makes every `aria-disabled` control
-keyboard-inert (CSS alone is only pointer-inert). For the value-bearing fills,
-`attrs.meter(value)` / `attrs.progress(value)` from `@ponchia/ui/classes` return
-`role`+`aria-valuenow/min/max`+the `--value` style to spread onto the host.
-`initSources()` wires `[data-bronto-sources]` citation/source islands:
-`.ui-citation[href^="#"]` and `[data-bronto-source-ref]` focus/highlight the
-matching `.ui-source-card`, seed lightweight preview metadata, and emit
-`bronto:source:focus`; the host still owns numbering, fetching, trust decisions,
-and any rich preview popover.
-
-Initializers return teardown functions; `toast()` returns a dismiss function,
-and `applyStoredTheme()` returns nothing. Importing a module does not wire the DOM.
-Initialize behaviors in the host framework's mount/cleanup lifecycle. Framework
-adapter subpaths were removed in 0.10. Read `docs/compositions.md` before selecting
-primitives: tools use sans headings and labels, reports prioritize reading,
-and `ui-display` is an explicit brand treatment. The catalog is a lookup, not a
-checklist of components to place on a page.
-
-Optional display glyphs — dot-matrix bitmaps on the `.ui-dotmatrix` primitive
-(decorative by default; `renderGlyph` is SSR-safe, `initDotGlyph` is the DOM form).
-`findGlyphs('delete')` resolves an intent word to real names; `renderReadout`
-composes digits into a big Nothing-style numeric. Details: `docs/glyphs.md`.
-
-```js
-import { renderGlyph, findGlyphs, renderReadout, GLYPH_NAMES } from '@ponchia/ui/glyphs';
-el.innerHTML = renderGlyph('check', { label: 'Done' });
-el.innerHTML = renderReadout('73%', { label: '73 percent of quota' });
-```
-
-The dot family also has data-bound reporting surfaces — `.ui-waffle` (unit
-chart), `.ui-activity` (contribution grid), `.ui-level` (LED meter),
-`.ui-dotgauge` (radial gauge), `.ui-halftone`, `.ui-readout` — same host-sets-
-the-data / leaf-paints boundary as `ui-spark`/`ui-meter`. Details: `docs/dots.md`.
-
-Layout primitives (core bundle, no media queries — intrinsic Every-Layout
-composition that responds to content + available space): `ui-stack` (vertical
-rhythm), `ui-cluster` (wrapping inline row), `ui-grid` (auto-fit columns),
-`ui-sidebar` (sidebar + main that stacks when cramped), `ui-switcher` (row →
-column together), `ui-center` (measure-bounded column), `ui-ratio` (aspect-ratio
-box — one child only), and the `ui-app-shell`/`ui-app-rail`/`ui-app-nav` admin
-shell. `ui-cq` makes descendant layouts respond to THAT box (container queries),
-not the viewport — wrap a `ui-grid`/`ui-statgrid` in it for an island-safe
-collapse in a slim pane. Each is tuned with an inline custom property rather than
-a modifier — set `style="--grid-min: 12rem"`, `--sidebar-width`, `--sidebar-gap`,
-`--switcher-min`, `--switcher-gap`, `--center-max` (the INNER measure; gutters add
-to the total), `--ratio`, `--stack-gap`, `--cluster-gap`, `--app-rail`, etc. The
-full list with defaults is in `classes.json` `customProperties`. App-shell/sitenav
-current page is `aria-current="page"`.
-
-Motion utilities (core bundle, all reduced-motion-safe — they collapse to the
-static end state, not just a zeroed duration): `ui-animate-in`,
-`ui-animate-fade`, `ui-animate-dot`, `ui-animate-matrix` (enter animations),
-`ui-stagger` (+ `--i` per child, or `ui-stagger--auto` to
-derive the delay from `:nth-child`), `ui-reveal` (JS/IntersectionObserver — adds
-`is-visible`), `ui-scroll-reveal` and `ui-scroll-progress` (zero-JS,
-scroll-driven; the recommended reveal for static reports), and `ui-vt` (View
-Transitions — needs the required `--ui-vt-name`, which must be **unique per
-document**: reusing one name across sibling items silently drops the transition).
-Prefer `ui-scroll-reveal` over `ui-reveal` when no JS will run. Details:
-`docs/usage.md`.
-
-Optional display colorways — opt-in, never in the default bundle. Root-level,
-like `data-theme` (the derived accent family only recomputes at `:root`):
-
-```css
-@import '@ponchia/ui/css/skins.css';
-```
-
-```html
-<html data-bronto-skin="amber-crt"></html>
-```
-
-Choose `amber-crt`, `phosphor-green`, or `e-ink`.
-
-Each re-points the one `--accent` (OKLCH, per-theme, contrast-gated); status
-colours and the neutral canvas are untouched. Details in `docs/theming.md`.
-
-Optional data-viz palette for dashboards — opt-in, charts-only (never UI
-chrome), never in the default bundle:
-
-```css
-@import '@ponchia/ui/css/dataviz.css';
-```
-
-```js
-import charts from '@ponchia/ui/charts.json' with { type: 'json' };
-// charts.dark.categorical → ['#3987e5', …] (fixed categorical hues; blue first)
-```
-
-On-brand Mermaid diagrams use the same tokens-as-data path — Mermaid is the
-consumer's renderer, bronto just hands it a resolved `base` theme (Mermaid can't
-read `var(--x)`):
-
-```js
-import { brontoMermaidTheme } from '@ponchia/ui/mermaid';
-mermaid.initialize(brontoMermaidTheme('dark')); // { theme: 'base', themeVariables }
-```
-
-Annotate a rendered diagram with the SVG annotation layer as a build-time
-recipe. Details: `docs/mermaid.md`.
-
-D2 (d2lang.com) is themed the same way — it compiles to a frozen SVG, so the
-slots take resolved hex; the base ramp is monochrome and the accent is opt-in
-per node:
-
-```js
-import { brontoD2Vars } from '@ponchia/ui/d2';
-const source = brontoD2Vars() + 'a -> b'; // prepend the vars block, then render
-```
-
-Details: `docs/d2.md`.
-
-Charting is the same path: bronto does NOT ship a chart component (a chart needs
-scales + data binding, which the analytical layer refuses). For charts, recommend
-Vega-Lite — a declarative JSON spec an external system can emit — themed by the
-on-brand `config` (resolved hex; Vega bakes colours into SVG/canvas, can't read
-`var()`). `range.category` is the `--chart-*` palette (blue first; no slot is the
-accent). For a live page that switches skin or theme, build the same config at
-runtime with `vegaConfig(readTokens())` from `@ponchia/ui/renderer`:
-
-```js
-import { brontoVegaConfig, brontoVegaAccent, brontoVegaNeutral } from '@ponchia/ui/vega';
-vegaEmbed('#chart', spec, { config: brontoVegaConfig('dark'), renderer: 'svg', actions: false });
-```
-
-Pass `renderer: 'svg'` (canvas is the wrong default for print/inspection).
-`brontoVegaAccent(theme)`/`brontoVegaNeutral(theme)` give the exact hexes to spend
-the accent on one mark. From a CDN, pin the `/build/*.min.js` UMD bundles (a bare
-`vega@6` tag has no `window.vega`; keep Vega-Lite 6 / Vega 6 / vega-embed 7
-aligned) and INLINE the config from `vega.json` — a
-`file://` report can't `import`/`fetch` it (CORS). A label on an accent fill in a
-foreign renderer (a themed Vega/D2/Mermaid node or bar) reads the `--on-accent`
-token, never `--accent-text` (that is accent-coloured text for a neutral bg).
-`--on-accent` is a READ-ONLY export for those renderers — no in-DOM `.ui-*` rule
-consumes it, so setting it does not re-ink a component; to colour text on an
-accent-filled DOM control, set `--button-text`. Details: `docs/vega.md`. (Observable
-Plot works too — it inherits the page CSS, so it needs even less theming;
-Vega-Lite is the recommended LLM-emittable path.)
-
-`--chart-1..8` (categorical: blue, orange, aqua, yellow, magenta, green, violet,
-red; adjacent slots gated under simulated protan/deutan), `--cat-N` /
-`--cat-N-tint` / `--cat-N-ink` (the same hues as tag/participant identity),
-`--chart-seq-*` (sequential), `--chart-div-*`
-(diverging), and `--chart-pattern-1..8` (dot-matrix fills — pair colour N with
-pattern N; colour is never the sole signal). Details in `docs/theming.md`.
-
-Building analytical / generated-report UI? Import the roll-up
-`@ponchia/ui/css/analytical.css` (bundles figure + annotations + legend +
-marks + connectors + spotlight + crosshair + selection + highlights) instead
-of the nine leaves; add `css/dataviz.css` for chart colours and `css/report.css`
-for the document grammar. Interval and clamp are report/evidence leaves but are
-NOT in the roll-up; link them individually. The individual layers (each opt-in,
-none in the default bundle):
-
-Optional figure stage for charts, diagrams, screenshots, and annotated media —
-opt-in, never in the default bundle. It composes with `ui-report__figure` but
-does not replace it:
-
-```css
-@import '@ponchia/ui/css/figure.css';
-```
-
-Use `ui-figure` on the `<figure>`, `ui-figure__caption` on the caption,
-`ui-figure__body` and optional `ui-figure__body--key-right` for stage + key
-layout, `ui-figure__stage` for the centered media box, `ui-figure__media` for
-the chart/SVG/img/canvas, `ui-figure__overlay` for pointer-transparent absolute
-overlays, `ui-figure__key` for legends, and `ui-figure__data` for fallback
-tables. Author-set knobs: `--figure-max-inline`, `--figure-min-block`,
-`--figure-key-width`. Bronto owns layout only; the host owns data, scales,
-chart rendering, overlay content, and accessibility text. Details:
-`docs/figure.md`.
-
-Optional SVG annotations for charts/reports — opt-in, never in the default
-bundle. This is Bronto's subject / connector / note grammar inspired by
-d3-annotation, not an authoring engine. For placement, collision handling,
-renderers, editing, and chart/diagram adapters, use the sibling
-`@ponchia/annotations` package; `@ponchia/ui/annotations` stays a
-dependency-free Bronto static-helper compatibility surface **only during
-the 0.17 deprecation window**. Prefer this independent package:
-
-```js
-import { annotationParts, resolveAnnotationLayout } from '@ponchia/annotations';
-import '@ponchia/annotations/bronto.css';
-```
-
-Legacy Bronto UI imports, to be removed no earlier than 0.18:
-
-```css
-@import '@ponchia/ui/css/annotations.css';
-```
-
-```js
-import { annotationParts, connectorLine, circleSubjectPath } from '@ponchia/ui/annotations';
-```
-
-Use `ui-annotation` groups inside SVG with `ui-annotation__subject`,
-`ui-annotation__connector`, `ui-annotation__note`, `ui-annotation__title`, and
-`ui-annotation__label`. `ui.annotation({ variant, tone, motion })` builds the
-base class string. Variants cover labels, callouts, elbow/curve connectors,
-circle/rect/threshold subjects, badges, brackets, bands, slopes, comparisons,
-clusters, axis marks, timeline pins, and evidence markers. Motion is opt-in
-(`draw`, `reveal`, `pulse`, `focus`) and respects reduced-motion preferences.
-Use `notePlacement()` for one-note bounded placement, but do not treat it as a
-whole-chart collision solver. `declutterLabels(items,{gap,min,max})` is a
-deterministic 1-D declutter; `directLabels(items,{axis,cross,gap,min,max,shape})`
-adds the leader line (it declutters labels along an axis and returns each placed
-point plus a leader path `d` for `ui-annotation__connector`) — neither owns
-scales, DOM, or 2-D placement. Status tones are only for status-bearing callouts.
-Keep charts sparse; dense mobile figures need horizontal scrolling, a simplified
-SVG, or complete caption/fallback text. Details: `docs/annotations.md`.
-
-Optional legends / data keys for charts and figures — opt-in, never in the
-default bundle. Reads the `--chart-*` tokens, so a key never drifts from its
-series:
-
-```css
-@import '@ponchia/ui/css/legend.css';
-```
-
-Use a `ui-legend` container with `ui-legend__item` rows, each holding a
-`ui-legend__swatch` (decorative, `aria-hidden`) and a `ui-legend__label` (the
-required non-colour channel — WCAG 1.4.1; colour alone never carries meaning).
-Set the swatch colour inline (`style="--chart-color: var(--chart-3)"`, plus
-`--chart-pattern` to match a patterned mark) or with a `ui-legend__swatch--1..8`
-index helper. Variants: `ui-legend--vertical`/`--compact`/`--with-values`,
-`ui-legend--gradient` (+`--diverging`, with `ui-legend__track`/`__ticks`/`__tick`),
-and `ui-legend--threshold`. `ui.legend()`/`ui.legendItem()`/`ui.legendSwatch()`
-build the class strings. Interactive (series-toggling) legends are opt-in:
-author entries as `<button aria-pressed>` under `[data-bronto-legend]`, run
-`initLegend()`, and listen for `bronto:legend:toggle`
-(`{ series, active }`) — Bronto flips the control state; you hide the series and
-own the `aria-live` announcement. Details: `docs/legends.md`.
-
-Optional text marks / evidence emphasis for running prose — opt-in, never in
-the default bundle. The prose counterpart to annotations (annotations call out a
-figure; marks call out a sentence):
-
-```css
-@import '@ponchia/ui/css/marks.css';
-```
-
-Put `ui-mark` on a `<mark>` for inline emphasis (semantic, not just visual).
-Styles: default highlight, `ui-mark--underline`, `ui-mark--box`,
-`ui-mark--strike`. Tones: `ui-mark--accent` (the rationed accent),
-`--success`/`--warning`/`--danger`/`--info` (status-bearing only), `--muted`.
-`ui-mark--draw` sweeps the highlight in (reduced-motion-safe). `ui-bracket-note`
-(+ `ui-bracket-note__label`, tones `--accent`/`--warning`/`--danger`/`--info`)
-brackets a whole passage — the prose analogue of `ui-annotation--bracket`.
-`ui.mark({ style, tone, motion })` / `ui.bracketNote({ tone })` build the class
-strings. A mark is visual only; if the emphasis carries meaning the words don't,
-state it in the text (WCAG 1.4.1). Details: `docs/marks.md`.
-
-Optional connectors / leader lines between two DOM elements — opt-in, never in
-the default bundle. Pure geometry + an optional draw/track behavior; owns no
-layout:
-
-```css
-@import '@ponchia/ui/css/connectors.css';
-```
-
-Place a `ui-connector` SVG (`data-bronto-connector`, `aria-hidden`) as an
-overlay inside a `position: relative` container holding both endpoints; set
-`data-from`/`data-to` (element ids), optional `data-shape`
-(straight|elbow|curve), `data-from-side`/`data-to-side`, and `data-end`
-(arrow|dot|none). `initConnectors()` draws the path and
-redraws on resize/scroll. Tones `ui-connector--accent`/`--muted`/status,
-`ui-connector--dashed`, `ui-connector--draw`. Pure helpers from
-`@ponchia/ui/connectors` (`connectRects`, `connectorPath`, `arrowHead`,
-`anchorPoint`, …) return SVG strings for SSR/canvas. Details: `docs/connectors.md`.
-
-Optional spotlight / guided-focus overlay — opt-in, never in the default
-bundle. The visual language of a tour, NOT a tour engine (the host owns step
-order/advancing/visibility):
-
-```css
-@import '@ponchia/ui/css/spotlight.css';
-```
-
-A `ui-spotlight` overlay (`data-bronto-spotlight`, `data-target=<element id>`)
-contains a `ui-spotlight__hole` (the box-shadow cutout) and a `ui-tour-note`
-callout (`__step`/`__title`/`__body`/`__actions`). `initSpotlight()` measures
-the target and sets `--spot-x/y/w/h`, re-placing on
-resize/scroll and when `data-target` changes — so advance a tour by updating
-`data-target`. `ui-spotlight--ring` adds a ring. The overlay is non-blocking by
-design; put the real guidance text in the focusable `ui-tour-note`. Details:
-`docs/spotlight.md`.
-
-Optional crosshair / readout for reading a value off a plot — opt-in, never in
-the default bundle. Reports the pointer position; the host maps it to data:
-
-```css
-@import '@ponchia/ui/css/crosshair.css';
-```
-
-Mark the plot `[data-bronto-crosshair]` (position: relative) and put a
-`ui-crosshair` overlay inside it with `ui-crosshair__line ui-crosshair__line--x`
-and/or `--y`, optional `ui-crosshair__badge`, and a `ui-readout` chip.
-`initCrosshair()` sets `--crosshair-x/y` (px) on pointer
-move, toggles `is-active`, and dispatches `bronto:crosshair:move`
-({ x, y, fx, fy } — px + 0..1 fractions) / `bronto:crosshair:leave`. It does NOT
-find the nearest datum or map pixels→data (that needs your scales). `ui.crosshair({ muted })`.
-Details: `docs/crosshair.md`.
-
-Optional selection-state vocabulary — opt-in, cross-cutting, CSS only. The carve
-from brush/lasso: Bronto does not do region selection/hit-testing; it ships only
-the states an item can be in:
-
-```css
-@import '@ponchia/ui/css/selection.css';
-```
-
-Apply `ui-sel` + `ui-sel--on` (selected), `ui-sel--off` (excluded), or
-`ui-sel--maybe` (live-brush candidate) to any data element (chart mark, table
-row, list item, map region) from YOUR selection/brush logic — Bronto only styles
-them. `ui.sel({ state: 'on'|'off'|'maybe' })`. Details: `docs/selection.md`.
-
-Optional Custom Highlight API paint — opt-in, CSS only, never in the default
-bundle. For cited evidence, search hits, and current match ranges without
-wrapping text nodes:
-
-```css
-@import '@ponchia/ui/css/highlights.css';
-```
-
-Put `ui-highlights` on the text scope. The host creates `Range` objects and
-registers `Highlight` sets as `CSS.highlights.set('bronto-evidence', ...)`,
-`bronto-search`, and `bronto-current`; Bronto only paints them. Custom props:
-`--highlight-evidence`, `--highlight-search`, `--highlight-current`. Always
-check `CSS.highlights` before registering. Details: `docs/highlights.md`.
-
-Optional source/citation/provenance trust layer — opt-in, CSS only, never in
-the default bundle. The grammar for "where did this come from?" in generated
-reports/AI output:
-
-```css
-@import '@ponchia/ui/css/sources.css';
-```
-
-`ui-citation` (inline ref on a real `<a>`/`<button>`; `--chip` = named-source
-pill), `ui-source-card` (+`__title`/`__origin`/`__time`/`__excerpt`/`__actions`;
-the body part is `__excerpt`, not `__detail`), `ui-source-list` (+`__item`),
-`ui-provenance` (+`__item`), and `ui-src` (a standalone trust pill). A
-cross-cutting trust state sets the tone: `ui-src--verified`/`--reviewed`/
-`--generated`/`--unverified`/`--stale`/`--conflict` — always paired with an
-author-written label (never colour alone). A tone class **needs a host**:
-`ui-src--verified` on its own renders nothing — put it on `ui-src`,
-`ui-citation`, `ui-source-card`, or `ui-provenance__item`. Bronto styles +
-states; the host owns fetching, numbering, and trust. `ui.citation({chip,state})` / `ui.source({state})` /
-`ui.provenance({state})`. Details: `docs/sources.md`.
-
-Optional low/high interval — opt-in, CSS only, never in the default bundle. For
-confidence windows, estimates, budget bands, or caveated evidence readings:
-
-```css
-@import '@ponchia/ui/css/interval.css';
-```
-
-Use `ui-interval` with host-normalised `--lo` and `--hi` (0..1), optional
-`ui-interval__point` with `--v`, plus `ui-interval__track`,
-`ui-interval__range`, `ui-interval__label`, and `ui-interval__bounds`.
-The container needs host-written text (`role="img"` + `aria-label`, or nearby
-visible prose). Bronto paints geometry only. Details: `docs/interval.md`.
-
-Optional bounded excerpt clamp — opt-in, CSS only, never in the default bundle.
-For source excerpts, claim basis, and caveats that should scan compactly but
-remain reachable:
-
-```css
-@import '@ponchia/ui/css/clamp.css';
-```
-
-Use `ui-clamp` with `--clamp-lines`, `ui-clamp__body`, and optionally a checkbox
-`ui-clamp__toggle` followed by a visible `ui-clamp__control` containing explicit
-`ui-clamp__more` / `ui-clamp__less` text. Host owns IDs and content. Print
-expands the body and hides the control. Details: `docs/clamp.md`.
-
-Optional line/row change-review grammar — opt-in, CSS only, never in the
-default bundle. For code review, changelogs, version history, config diffs, and
-generated reports:
-
-```css
-@import '@ponchia/ui/css/diff.css';
-```
-
-The HOST pre-classifies each row (`add`/`remove`/`context`), computes hunks, and
-aligns split panes; Bronto only paints — it never parses or diffs source.
-Unified: `ui-diff` with `ui-diff__row--add`/`--remove`/`--context` rows of
-`ui-diff__ln` (line-number gutters, keep `aria-hidden`) + `ui-diff__code`.
-Split: `ui-diff--split` holds two `ui-diff__pane` columns. The `+`/`−` gutter
-glyph is generated content, so add/remove survive forced-colors and print where
-the tint drops (never colour alone, WCAG 1.4.1). `ui.diff({ split })` /
-`ui.diffRow({ change })`. Pairs with `ui-compare--2up`. Details: `docs/diff.md`.
-
-Optional fenced-code evidence chrome — opt-in, CSS only, never in the default
-bundle. For code-as-evidence in changelogs, version history, and reports:
-
-```css
-@import '@ponchia/ui/css/code.css';
-```
-
-It NEVER parses or tokenizes — the host (or Shiki, via the shipped
-`shiki/nothing.json` token theme) supplies the coloured spans; Bronto owns only
-the chrome. `ui-code` (+`__head` filename bar, `__body` the `<pre>`); wrap each
-line in `ui-code__line` to opt into the `ui-code--numbered` gutter (CSS
-counters) and the `ui-code__line--add`/`--remove`/`--hl` line states
-(forced-colors + print safe via an inline-start border). Long lines wrap.
-`ui.code({ numbered })` / `ui.codeLine({ change: 'add'|'remove'|'hl' })`.
-Details: `docs/code.md`.
-
-Optional inline datawords — opt-in, CSS only, never in the default bundle. A
-word-sized microchart (trend-in-a-sentence) for reports and dense tables, the
-inline counterpart to the scalar `ui-delta`/`ui-num`/`ui-stat`:
-
-```css
-@import '@ponchia/ui/css/spark.css';
-```
-
-The HOST normalises each point to 0..1 and sets it as `--v` on a
-`ui-spark__bar`; Bronto only paints. Pure CSS, SSR-static, print-safe. A bare
-spark is opaque to AT, so the `ui-spark` container MUST carry a host-written
-`role="img"` + `aria-label` (colour is never the only channel, WCAG 1.4.1).
-`ui-spark__bar--accent`/`--pos`/`--neg` tone a single bar.
-`ui.sparkBar({ tone })`. Details: `docs/spark.md`.
-
-Optional Tufte margin notes — opt-in, CSS only, never in the default bundle. For
-evidence, caveats, and provenance asides beside the text:
-
-```css
-@import '@ponchia/ui/css/sidenote.css';
-```
-
-`ui-sidenote` is a numbered margin note (CSS counters; anchored by an inline
-`ui-sidenote__ref`); `ui-marginnote` is the unnumbered variant. Wide viewports
-float the note into the inline-end margin, narrow viewports collapse it to an
-indented inline block. The HOST owns where numbering restarts
-(`counter-reset: ui-sidenote` on the article) and reserves the margin gutter
-(`padding-inline-end`). Details: `docs/sidenote.md`.
-
-Optional deep-link-to-cited-text — opt-in, CSS only, never in the default
-bundle. For a citation that jumps to the EXACT quoted sentence:
-
-```css
-@import '@ponchia/ui/css/textref.css';
-```
-
-`ui-textref` is a link whose `href` is a URL Text Fragment (`#…:~:text=`); the
-browser scrolls to + highlights the quote and Bronto owns the on-brand
-`::target-text` paint (`--textref-highlight`). The HOST builds the fragment URL
-(a three-line pure encoder, see docs); no kernel ships. Text Fragment nav needs
-a real user activation; unsupported engines just navigate (the highlight is
-additive). Details: `docs/textref.md`.
-
-Optional bullet graph — opt-in, CSS only, never in the default bundle. The
-Stephen-Few measure-vs-target-vs-bands SLO figure `ui-meter` can't encode:
-
-```css
-@import '@ponchia/ui/css/bullet.css';
-```
-
-`ui-bullet` is the track + grayscale qualitative bands (`--band-lo`/`--band-hi`);
-`ui-bullet__measure` is the value bar (REQUIRED `--v` 0..1, `--accent`/`--pos`/
-`--neg` tones); `ui-bullet__target` is the tick at `--t`; `ui-bullet__label` an
-optional caption. Same contract as spark: the HOST normalises, Bronto paints. A
-bare bullet is opaque to AT, so `ui-bullet` MUST carry a host-written
-`role="img"` + `aria-label`. `ui.bulletMeasure({ tone })`. Details:
-`docs/bullet.md`.
-
-Optional inline glossary — opt-in, CSS only, never in the default bundle. The
-accessible upgrade of the broken `abbr[title]`:
-
-```css
-@import '@ponchia/ui/css/term.css';
-```
-
-`ui-term` is the term `<button popovertarget>` (keyboard/touch-reachable);
-`ui-def` is the definition body — a native `[popover]` styled as a raised card;
-`ui-glossary` is the end-of-document `<dl>` (`ui-glossary__term`/`__def`). The
-native popover pairing gives open/Esc/light-dismiss for free, no kernel. Popovers
-don't print — the printed doc leans on the glossary block. Details: `docs/term.md`.
-
-Optional scrollspy table-of-contents — opt-in, CSS only, never in the default
-bundle. A sticky contents rail that highlights the section in view:
-
-```css
-@import '@ponchia/ui/css/toc.css';
-```
-
-`ui-toc` is the sticky rail (`--toc-top`); `ui-toc__title`/`ui-toc__list`/
-`ui-toc__link`. The active entry keys on `aria-current="true"`. CSS can't know
-the in-view section, so the HOST mirrors it — statically, or with a small
-copy-paste IntersectionObserver (no kernel ships). Without it the rail is a plain
-anchored list. Details: `docs/toc.md`.
-
-Optional hierarchy outline — opt-in, CSS only, never in the default bundle. A
-depth-indented tree on nested native `<details>`:
-
-```css
-@import '@ponchia/ui/css/tree.css';
-```
-
-`ui-tree` is the outline; `ui-tree__branch` is a `<details>` node (twist
-chevron; add `name` for an exclusive-accordion group); `ui-tree__leaf` a childless
-row; `ui-tree__summary`/`ui-tree__label`. Open/close + keyboard are native
-`<details>`. A11y honesty: this is a disclosure group, NOT an ARIA `tree` — don't
-add `role="tree"`; the roving-focus kernel is deferred behind a real consumer.
-Details: `docs/tree.md`.
-
-Optional lifecycle/system-state vocabulary — opt-in, CSS only, never in the
-default bundle. The states apps live in (saving/saved/queued/offline/stale/
-conflict/error/locked/reviewed/needs-review):
-
-```css
-@import '@ponchia/ui/css/state.css';
-```
-
-`ui-state` (+`__label`/`__detail`) carries a tone dot + the canonical label;
-the `ui-state--saving`/`--saved`/… modifier bakes the tone, `ui-state--busy`
-pulses the indicator for
-in-progress states (reduced-motion-safe). `ui-syncbar` is a page/document
-save-status strip. The label IS the state (never colour alone); the host owns
-the state machine, retry, and persistence — persistent state gets persistent UI,
-not a toast. `ui.state({ state, busy })`. Details: `docs/state.md`.
-
-Optional generated-content / AI-trust surfaces — opt-in, CSS only, never in the
-default bundle. NOT a chat kit; the trust surfaces around generated content:
-
-```css
-@import '@ponchia/ui/css/generated.css';
-```
-
-`ui-generated` (+`__label`) marks a machine-authored region; `ui-origin-label`
-(+`--ai`) tags origin ("AI generated" / "Human reviewed"); `ui-reasoning`
-(+`__body`) and `ui-tool-log` / `ui-tool-call` (+`__name`/`__status`/`__body`)
-are quiet native-`<details>` collapsibles for reasoning + tool traces. Bronto
-styles disclosure/origin/trace; the host owns model metadata, redaction, and
-safety. No confidence/verdict widget (don't fabricate precision). `ui.originLabel({ ai })`.
-Details: `docs/generated.md`.
-
-Optional workbench primitives for tool UIs — opt-in, CSS only, never in the
-default bundle:
-
-```css
-@import '@ponchia/ui/css/workbench.css';
-```
-
-`ui-inspector` (+`__head`/`__body`) is a selected-object detail panel;
-`ui-property` (+`__label`/`__value`) is a denser key/value row for it;
-`ui-selectionbar` (+`__count`/`__actions`) is a raised action bar for the current
-selection (pair with `ui-sel` states on the items). Layout/affordances only —
-`ui-splitter` (+`--vertical`/`--horizontal`, `__pane`/`__handle`) ships with
-optional `initSplitter()` for ARIA resize sync. Details: `docs/workbench.md`.
-
-Optional command palette — opt-in CSS shell (`css/command.css`) + `initCommand`
-behavior. Filter + keyboard-navigate a DOM-authored command list:
-
-```css
-@import '@ponchia/ui/css/command.css';
-```
-
-`ui-command` (+`__input`/`__list`/`__group`/`__item`/`__shortcut`/`__meta`/
-`__empty`); `initCommand()` owns filtering and the active row (Down/Up),
-Enter→`bronto:command:select` ({value,label}) and Escape→`bronto:command:close`.
-Focus stays in the query input through `aria-activedescendant`; Home/End keep
-the input's native caret behavior. The host owns the action registry and
-execution; there is no global Cmd/Ctrl+K shortcut. Open the palette yourself,
-e.g. in a `<dialog>` via `initDialog()`. Pairs with `ui-shortcut`.
-Initialize `initCommand({ root })` in the host's mount lifecycle and call its
-returned cleanup on unmount. The package ships no framework wrappers.
-Details: `docs/command.md`.
-
-Optional static report layer for LLM-authored HTML reports — opt-in, never in
-the default bundle. Pair it with the normal bundle, and add data-viz only when
-the report contains charts. For standalone browser HTML, use real URLs; package
-specifiers only work after a bundler rewrites them:
-
-```html
-<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/bronto.css" />
-<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/report.css" />
-<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/dataviz.css" />
-<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/figure.css" />
-<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/sources.css" />
-```
-
-In Vite/webpack/etc., import `@ponchia/ui`, `@ponchia/ui/css/report.css`, and
-`@ponchia/ui/css/dataviz.css` instead; add `figure.css`, `interval.css`,
-`clamp.css`, or `highlights.css` only when the report uses them.
-
-Canonical report skeleton:
-
-```html
-<main class="ui-report ui-report--numbered">
-  <header class="ui-report__cover">
-    <p class="ui-eyebrow">Report</p>
-    <h1 class="ui-report__title">System review</h1>
-    <p class="ui-report__subtitle">Static HTML, Chromium PDF-ready.</p>
-    <ul class="ui-report__meta">
-      <li>2026-06-01</li>
-      <li>Generated</li>
-    </ul>
-  </header>
-  <section class="ui-report__section">
-    <h2 class="ui-report__section-head">Executive summary</h2>
-    <div class="ui-report__summary">
-      <div class="ui-prose"><p>Use prose only for narrative body content.</p></div>
-    </div>
-    <aside class="ui-report__decision" aria-labelledby="decision-title">
-      <p class="ui-report__decision-kicker">Decision</p>
-      <h3 class="ui-report__decision-title" id="decision-title">Ship the low-risk path</h3>
-      <p class="ui-report__decision-body">State the operator-facing call before the evidence.</p>
-      <dl class="ui-report__decision-grid">
-        <div class="ui-report__decision-item">
-          <dt class="ui-report__decision-label">Basis</dt>
-          <dd class="ui-report__decision-value">Two verified sources support the call.</dd>
-        </div>
-      </dl>
-      <p class="ui-report__decision-meta">Evidence state: supported · Sources: 4 verified</p>
-    </aside>
-  </section>
-</main>
-```
-
-Report rules for agents:
-
-- Static output by default; do not initialize behaviors over untrusted generated
-  content; sanitize arbitrary LLM/CMS/user HTML before rendering.
-- Use semantic headings; give tables captions and header cells; give charts
-  captions, legends/direct labels, and fallback data.
-- For a chart, theme Vega-Lite with `@ponchia/ui/vega` or hand-author a
-  token-themed inline `<svg>` inside `ui-report__figure ui-figure`, with a
-  `ui-figure__stage`, optional `ui-figure__key`, and fallback `ui-figure__data`.
-  Bronto ships no chart component.
-- Put the above-the-fold call in `ui-report__decision`; use
-  `ui-report__finding--critical|--major|--minor|--resolved` only when the
-  written finding label also states the severity/status.
-- Use `ui-claim` (`--supported|--partial|--disputed|--unsupported|--unknown`)
-  for auditable claims. Pair it with written `ui-claim__status`, source links,
-  scope, basis, limits, and caveats; tone is only a scanning aid.
-- Use `ui-evidence-grid` / `ui-evidence-item` for compact evidence packets and
-  `ui-evidence-ledger` + `ui-table` for claim/evidence/source matrices.
-- Use `ui-report__actions` for follow-up rows. Real workflow actions should
-  include title, owner, due/recheck date, status, criteria, and source/claim
-  link when available.
-- Use `ui-source-card` + `ui-provenance` for source-backed claims; stale,
-  conflicting, unverified, or generated inputs should be surfaced near affected
-  claims, not only in the source appendix.
-- For important reports, emit a sidecar `claims.json` / source archive manifest
-  with `schemaVersion: "bronto-report-claims.v1"` and, when validating,
-  `@ponchia/ui/schemas/report-claims.v1.schema.json`. Include stable claim IDs,
-  source IDs, status, risk, retrieval time, and explicit `relations`
-  (`supports`, `limits`, `contradicts`, or `informs`). The visible HTML remains
-  the primary artifact, but the sidecar lets tools prove IDs and high-risk
-  evidence still resolve.
-- Use `ui-delta` (`--up`/`--down`/`--flat`, `--invert` when up is bad) for a
-  trend figure and `ui-compare` (`--2up`) for an A/B / before-after section.
-- Use `ui-report__section--unnumbered` for appendices in numbered reports.
-  Never use raw chromatic inline colors. Format numbers/dates yourself (the
-  framework aligns figures, it does not format them).
-- To make a PDF, render with `chrome-headless-shell` (or any Chromium) using
-  `printBackground: true` so figure fills survive. Reports are static/zero-JS,
-  so it is just load → print; see "Print and PDF" in `docs/reporting.md`.
-
-Full cookbook: `docs/reporting.md`.
+> This is a task router, not an API catalog. Use the installed package's
+> references below for exact names and contracts; use its version when choosing
+> documentation and CDN URLs.
+
+## Choose a task
+
+| Task | Read first |
+| --- | --- |
+| Build a page or choose a control | [Usage guide](docs/usage.md), then [class reference](docs/reference.md) |
+| Compose an inspector, workbench, or evidence view | [Composition recipes](docs/compositions.md) |
+| Produce an HTML or printed report | [Report cookbook](docs/reporting.md) |
+| Add citations and claim-to-source relationships | [Report cookbook](docs/reporting.md) and `schemas/report-claims.v1.schema.json` |
+| Wire a dialog, theme toggle, or other interaction | `behaviors/index.d.ts` and [integration guide](https://github.com/Ponchia/bronto-ui/blob/main/docs/integration.md) |
+| Customize themes or read tokens in a renderer | [Theming](docs/theming.md) and [renderer guide](docs/renderer.md) |
+| Theme a chart or diagram | [Vega](docs/vega.md), [Mermaid](docs/mermaid.md), or [D2](docs/d2.md) |
+| Migrate annotation helpers or styles | [Annotations guide](docs/annotations.md) and [0.17 migration](docs/migrations/0.16-to-0.17.md) |
+| Check exports, compatibility, or an upgrade | [Package contract](docs/package-contract.md) and [stability contract](docs/stability.md) |
+
+## Loading and ownership
+
+- Load the core once: `@ponchia/ui` is flattened CSS; `@ponchia/ui/css` is
+  the source CSS import fan-out for a bundler. Pick one. The package root is
+  CSS-only; runtime JavaScript must use explicit subpaths such as
+  `@ponchia/ui/classes` or `@ponchia/ui/behaviors`. JS subpaths are ESM-only.
+- In plain HTML, use real stylesheet URLs ending in `dist/bronto.css` or
+  `dist/css/<leaf>.css`, with a pinned package version. Bare package specifiers
+  in `<link href>` do not resolve in a browser. Core CSS does not include every
+  report, analytical, or workbench leaf; follow the selected recipe's imports.
+- Initialize behaviors after the DOM exists, in the host framework's mount
+  lifecycle. Importing does not initialize them. Retain each teardown and call
+  it before replacing the indexed markup or unmounting; `toast()` instead
+  returns a dismiss function. The package ships no framework adapters.
+- Bronto owns styles, tokens, and documented interaction wiring. Applications
+  own state, routing, data fetching, permissions, selection, commands, and
+  persistence. Bronto is not a chart engine or a data grid implementation.
+- Annotation placement, collision handling, editing, and rendering belong to
+  the independent `@ponchia/annotations` package. The UI annotation helpers and
+  styles are deprecated in 0.17; follow the migration guide rather than adding
+  new dependencies on that legacy surface.
+  `@ponchia/ui/annotations` remains a dependency-free Bronto static-helper compatibility surface
+  only during the 0.17 deprecation window.
+
+## Validate generated or handwritten markup
+
+After installing `@ponchia/ui`, run
+`npx --no-install bronto-ui-check src index.html` with the actual source paths
+in your project. Add `--json` for structured findings or `--help` for options.
+The installed CLI checks literal `ui-*` names and unresolved Bronto-like
+`var(--*)` references against that package's vocabulary. It exits nonzero on
+findings and skips dependency and build directories.
+
+This is a lexical source check. It does not evaluate dynamically assembled
+classes, confirm that optional CSS was loaded, or verify semantics, contrast,
+keyboard behavior, or screen-reader output. Review the rendered composition in
+both themes and its important interaction states.
 
 ## Authoritative offline references (shipped in this package)
 
-Read these from `node_modules/@ponchia/ui/` — no network needed:
+Paths are relative to `node_modules/@ponchia/ui/`. Read only the references
+needed for the task; the package contract lists the complete export inventory.
 
-- `classes/index.d.ts` — literal-typed `cls` map (exact class strings),
-  every `ui.*()` recipe signature, every `*Opts` interface. The complete
-  class surface; an agent should read this to know valid class names.
-- `classes/classes.json` — the same vocabulary as language-neutral data, to
-  VALIDATE markup without executing ESM/parsing TS: `groups` (base →
-  modifiers/parts, the BEM structure; `base` is null for a parts-only namespace —
-  do not emit it), `classes` (flat list), `states` (the `is-*` hooks that live
-  outside `cls` by design, with their scope), `customProperties` (the author-set
-  inline-style knobs like `--chart-color` / `--value`), `behaviorAttributes` (the
-  `data-bronto-*` open/close/dismiss hooks the optional behaviors delegate on), and
-  `requiredAria` (the role/aria a generator must emit per component — meter/progress/
-  error-summary paint but are invisible to AT without it).
-- `docs/reference.md` — the full class catalog as prose tables (every
-  class grouped by component, with registry key + kind). Generated from
-  the same source as the types and CI-drift-checked.
-- `docs/theming.md` — the token contract: which tokens to override, the
-  light/dark model, and the rationed-accent rule.
-- `docs/stability.md` — the public API matrix: stable vs internal surfaces,
-  root-import contract, behavior trust boundary, and glyph-mask CSP note.
-- `docs/usage.md` — the decision guide: badge vs chip vs dot, default
-  density, prose-in-card, when to add a behavior. Read this before
-  re-implementing UI the framework already has an opinion about.
-- `docs/reporting.md` — static/PDF-first report cookbook for LLM-authored
-  reports, including report skeletons, decision/finding/evidence patterns,
-  chart rules, print utilities, and safety boundaries.
-- `schemas/report-claims.v1.schema.json` — declarative JSON Schema for
-  `claims.json` sidecars that map report claims to source IDs and relations.
-- `docs/annotations.md` — SVG annotation recipes and helper guidance for
-  analytical figures, plus the boundary with the sibling `@ponchia/annotations`
-  engine package.
-- `docs/mermaid.md` — theme Mermaid diagrams from bronto tokens (resolved
-  `base` themeVariables, gated) and annotate the rendered SVG.
-- `docs/d2.md` — theme D2 diagrams from bronto tokens (theme-override slots,
-  monochrome base + opt-in accent, gated) and annotate the rendered SVG.
-- `docs/vega.md` — theme Vega-Lite charts from bronto tokens (resolved `config`,
-  gated + render-probed) — the recommended path when a report needs a chart,
-  since bronto ships no chart component.
-- `docs/contrast.md` — the published, CI-gated WCAG 2.1 contrast matrix
-  for every contractual token pairing, per theme. Generated from the
-  resolved palette; the build fails below the declared floor.
-- `tokens/index.d.ts` — every design-token name as a literal union.
-- `tokens/index.json` — tokens as plain data (global / light / dark).
-- `tokens/tokens.dtcg.json` — resolved DTCG 2025.10 structured typed values;
-  authored CSS expressions remain in `tokens/index.json` and DTCG extensions.
-- `tokens/resolved.json` — every colour token resolved to a static
-  `#rrggbb` / `rgba(...)` per theme (var() + color-mix() evaluated) in
-  `light`/`dark`, plus a `scale` block of the non-colour scales
-  (spacing/radius/type/z/motion, var() chains flattened). The complete token
-  contract for non-CSS render targets: MapLibre/canvas/WebGL/SVG, or a
-  non-JS host (Python/Go) building a themed report.
-- `behaviors/index.d.ts` — typed signatures for the optional behaviors.
-- `glyphs/glyphs.d.ts` — the `GlyphName` literal union plus `renderGlyph` /
-  `glyphCells` signatures for the display glyphs. (The DOM form,
-  `initDotGlyph`, is declared in `behaviors/index.d.ts`.)
-- `annotations/index.d.ts` — no-dependency SVG path helpers for Bronto
-  annotation geometry. Do not add placement/collision/renderers/adapters here;
-  that belongs in `@ponchia/annotations`; do not import or type-reference that
-  sibling package from `@ponchia/ui` code or declarations.
-- `classes/vscode.css-custom-data.json` — editor autocomplete for tokens.
+- `docs/package-contract.md` — exports, shipped paths, and provenance gates.
+- `classes/classes.json` — exact classes, groups, modifiers, parts, state hooks,
+  author-set custom properties, behavior attributes, and required ARIA. A
+  group's null `base` means it is a parts-only namespace; do not emit that base.
+- `classes/index.d.ts` — literal `cls` names, `ui.*()` signatures, and options.
+- `docs/reference.md` — generated class catalog and markup contracts.
+- `behaviors/index.d.ts` — public initializer options and return types. Consult
+  the implementation and behavior documentation for interaction semantics.
+- `docs/usage.md` and `docs/compositions.md` — control choices and compositions.
+- `docs/reporting.md` and `schemas/report-claims.v1.schema.json` — report recipes
+  and the declarative claim-to-source sidecar contract.
+- `docs/theming.md` and `docs/contrast.md` — theme model and verified shipped
+  token pairings; custom colors require their own contrast checks.
+- `docs/renderer.md` — reading live theme values for non-CSS renderers.
+- `tokens/index.d.ts` and `tokens/index.json` — token names and authored data.
+- `tokens/resolved.json` — resolved per-theme colors and non-color scales.
+- `tokens/tokens.dtcg.json` — resolved DTCG values and authored extensions.
+- `docs/mermaid.md`, `docs/d2.md`, and `docs/vega.md` — renderer theme recipes.
+- `docs/annotations.md` and `docs/migrations/0.16-to-0.17.md` — annotation
+  ownership and migration, including opt-in rollup imports.
+- `glyphs/glyphs.d.ts` — display glyph names and renderer signatures.
+- `classes/vscode.css-custom-data.json` — editor custom-property completion.
+- `docs/stability.md` — versioned API, behavior trust boundary, and CSP notes.
+
+## Authoring rules
+
+- Never invent `ui-*` classes. Check the installed class manifest; prefer
+  `ui.*()` recipes where available. Documented `is-*` state hooks are valid
+  even though they are outside `cls`.
+- Use semantic HTML, accessible names, and documented ARIA relationships.
+  Classes alone do not make a control accessible. Use one interaction owner
+  per control and preserve the host framework's cleanup lifecycle.
+- Override ordinary styles outside `@layer bronto`. Theme with documented
+  tokens: neutral canvas, one rationed accent, status colors for status, and
+  opt-in chart colors for data. Do not substitute raw hues for semantic roles.
+- Accent-derived tokens resolve at the root. A subtree `--accent` override
+  does not recompute every inherited derived token. Static renderer configs
+  also need explicit updates when the theme changes.
+- Pre-1.0 breaking changes ship in minor releases. Pin a concrete version or
+  minor-compatible range and review the migration guide before crossing a
+  minor boundary; visual checks still matter on patch upgrades.
 
 ## External web references
 
-- Public website and curated examples: https://ponchia.github.io/bronto-ui/
-- Component laboratory and test specimens: https://ponchia.github.io/bronto-ui/lab/
-- Navigable documentation: https://ponchia.github.io/bronto-ui/docs/
-- Architecture & the CSS-first decision: https://github.com/Ponchia/bronto-ui/blob/main/docs/architecture.md
-- Framework integration guides (Astro / SvelteKit / Vue / React-Solid-Qwik / vanilla):
-  https://github.com/Ponchia/bronto-ui/tree/main/docs/getting-started
-
-## Rules an agent should respect
-
-- Never invent `ui-*` class names. Every valid `ui-*` class is a member of
-  `cls` in `classes/index.d.ts` (and `classes/classes.json`); if a `ui-*`
-  name is not there, it does not exist. The `is-*` state hooks
-  (`is-num`/`is-pos`/`is-neg`/`is-key` on `.ui-table` cells and `.ui-stat`
-  deltas, `is-open`/`is-active`/`is-inactive` on stateful components) are the
-  one exception — they are real, documented in `docs/reference.md`
-  (§"Table-local state classes" / §"Composition & state") and emitted by the
-  `ui.*()` recipes, but deliberately NOT in `cls`. Do not strip them.
-- Prefer the `ui.*()` recipes over hand-concatenating modifier strings.
-  Report/layout classes are mostly literal (`cls.report*`, `cls.printOnly`,
-  `ui-evidence-grid`, `ui-evidence-ledger`, `ui-evidence-item`,
-  `ui-evidence-item__title`, `ui-evidence-item__meta`, and
-  `ui-evidence-item__body`); use `ui.reportFinding({ severity })` for finding
-  severity, `ui.claim({ status })` for claim status, and
-  `ui.compare({ cols: 2 })` for hard A/B layouts. Bronto still has no chart
-  recipe or component. Annotations do have a `ui.annotation()` recipe for
-  variant/tone selection.
-- For a standalone HTML report, never `<link>` a `@ponchia/ui/css/*.css`
-  package specifier (it does not resolve in a browser) and never assume
-  `dist/bronto.css` carries the report/chart/legend/annotation layers — it
-  does not. Link each opt-in leaf from `dist/css/` via a real URL
-  (`./node_modules/…` or a pinned CDN). See the loading note above.
-- Override ordinary framework styles by writing your own rules outside
-  `@layer bronto`, not with higher specificity. Reserve `!important` for the
-  same kind of media-boundary safeguards the framework uses in print and
-  reduced-motion rules.
-- Color is tiered (ADR-0001): neutral canvas · one rationed accent · locked
-  status · display expression · opt-in data-viz. Theme via the documented
-  tokens — re-point `--accent` (or a `data-bronto-skin` colorway), use status
-  tokens for status, and `--chart-*` (from `css/dataviz.css`) for charts only.
-  Don't add raw hues to components; `check:color-policy` enforces this.
-- Pre-1.0 SemVer: breaking changes ship in the _minor_. Pin a concrete minor,
-  for example `~0.16.2` (patches below `0.17.0`). A literal `~0.x` is too broad
-  because its wildcard minor admits later pre-1.0 minors.
+- [Website and curated examples](https://ponchia.github.io/bronto-ui/)
+- [First-component tutorial](https://ponchia.github.io/bronto-ui/docs/getting-started/first-component.html)
+- [Framework lifecycle guides](https://github.com/Ponchia/bronto-ui/tree/main/docs/getting-started)
+- [Maintained packed examples](https://github.com/Ponchia/bronto-ui/tree/main/examples)
+- [Component laboratory](https://ponchia.github.io/bronto-ui/lab/)
+- [Contribution workflow](https://github.com/Ponchia/bronto-ui/blob/main/CONTRIBUTING.md)

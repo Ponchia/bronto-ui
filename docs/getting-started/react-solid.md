@@ -10,25 +10,68 @@ Initialize after the DOM ref exists. Return every cleanup; React's development
 Strict Mode can mount, clean up, and mount the effect again.
 
 ```jsx
-import { useEffect, useRef } from 'react';
+import '@ponchia/ui';
+import { useEffect, useId, useRef } from 'react';
 import { initDialog, initThemeToggle } from '@ponchia/ui/behaviors';
 
 export function Settings() {
   const root = useRef(null);
+  const dialogId = useId();
+  const titleId = `${dialogId}-title`;
+
   useEffect(() => {
-    const stops = [
-      initDialog({ root: root.current }),
-      initThemeToggle({ root: root.current }),
-    ];
-    return () => stops.forEach((stop) => stop());
+    const host = root.current;
+    if (!host) return;
+    const stopDialog = initDialog({ root: host });
+    const stopTheme = initThemeToggle({ root: host });
+    return () => {
+      stopTheme();
+      stopDialog();
+    };
   }, []);
+
   return (
     <main ref={root} className="ui-stack">
-      <button className="ui-button" data-bronto-theme-toggle>Toggle theme</button>
+      <button
+        type="button"
+        className="ui-button"
+        data-bronto-open={dialogId}
+        aria-haspopup="dialog"
+        aria-controls={dialogId}
+      >
+        Open settings
+      </button>
+      <dialog id={dialogId} className="ui-modal" aria-labelledby={titleId}>
+        <div className="ui-stack">
+          <h2 id={titleId}>Display settings</h2>
+          <p>Choose the theme for this application.</p>
+          <button type="button" className="ui-button" data-bronto-theme-toggle>
+            Dark theme
+          </button>
+          <button type="button" className="ui-button ui-button--ghost" data-bronto-close>
+            Close settings
+          </button>
+        </div>
+      </dialog>
     </main>
   );
 }
 ```
+
+The open button's `data-bronto-open` value matches the native dialog's ID;
+`data-bronto-close` closes its enclosing dialog. `useId()` keeps these IDs
+unique when more than one settings component is mounted. The heading supplies
+the dialog's accessible name.
+
+`initThemeToggle` reflects the dark-theme state through `aria-pressed` and
+changes the theme on `<html>`, even though event handling is scoped to this
+component. Use the before-paint script below if the persisted theme must apply
+before React mounts.
+
+Try the example with the keyboard: open settings, toggle **Dark theme**, and
+press Escape or activate **Close settings**. The dialog should close and return
+focus to **Open settings**. Mount and unmount the component under Strict Mode
+to verify that the returned cleanup removes the behavior listeners.
 
 Do not capture `root.current` during render and pass that initial null value
 to an initializer later. Reinitialize behavior when replacing the markup it

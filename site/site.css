@@ -981,8 +981,13 @@ summary:focus-visible {
 .component-preview > :is(table, .ui-table-wrap, .ui-statgrid, .ui-alert) {
   width: 100%;
 }
-.component-code {
+.component-preview .ui-source-card[id] {
+  scroll-margin-top: 6rem;
+}
+.component-preview + .component-code {
   margin-top: auto;
+}
+.component-code {
   background: #1a1c1e;
   color: #e8e9e7;
 }

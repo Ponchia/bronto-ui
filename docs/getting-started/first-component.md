@@ -55,7 +55,19 @@ Replace the contents of *index.html* with:
 
 Run **npm run dev** and open the local URL Vite prints. The headings, content, and badge still make sense without CSS.
 
-## 4. Check the important states
+## 4. Validate the source
+
+Run `npx --no-install bronto-ui-check index.html src` from the project directory.
+The validator is included in the installed package. It checks literal `ui-*`
+class names and unresolved Bronto-like `var(--*)` references against that
+version's contract. Fix any reported file and line; the command exits nonzero
+when it finds a problem. Add `--json` for machine-readable output.
+
+The validator does not evaluate dynamically assembled class names, confirm that
+optional stylesheets are loaded, or prove that a page is accessible. Keep the
+browser check as a separate step.
+
+## 5. Check the important states
 
 Try switching the root element to **data-theme="dark"**. Resize the browser to a phone width and tab through any links or controls you add.
 Bronto UI owns styling and optional behaviors; your application still owns its state and data.

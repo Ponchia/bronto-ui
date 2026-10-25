@@ -34,6 +34,7 @@ const required = [
   'connectors/index.js',
   'behaviors/index.js',
   'site/site.js',
+  'site/catalog.js',
   'site/site.css',
   'site/assets/operations.jpg',
   'site/assets/report.jpg',
@@ -109,7 +110,13 @@ try {
   for (const file of required)
     assert(existsSync(join(built, file)), `Pages output is missing ${file}`);
 
-  for (const module of ['demo/index.js', 'demo/service.js', 'demo/discussion.js', 'site/site.js'])
+  for (const module of [
+    'demo/index.js',
+    'demo/service.js',
+    'demo/discussion.js',
+    'site/site.js',
+    'site/catalog.js',
+  ])
     await checkModule(module);
 
   const pages = [
@@ -155,17 +162,31 @@ try {
     'Component explorer unexpectedly small',
   );
   assert(catalog.includes('data-component-query'), 'Component search missing');
-  // Curated copyable specimens must use classes present in the default CSS,
-  // rather than silently relying on optional layers loaded by other demos.
-  const bundledCSS = await readFile(join(built, 'dist/bronto.css'), 'utf8');
+  // Each specimen must declare its own optional leaves. Loading a leaf for
+  // another card must never make an incomplete copy/paste recipe pass.
+  const coreCSS = await readFile(join(built, 'dist/bronto.css'), 'utf8');
+  const packageExports = JSON.parse(await readFile(join(repo, 'package.json'), 'utf8')).exports;
   for (const component of components) {
+    let bundledCSS = coreCSS;
+    for (const leaf of component.styles || []) {
+      assert(
+        /^[a-z-]+$/.test(leaf) && packageExports['./css/' + leaf + '.css'],
+        'Unknown optional CSS leaf in ' + component.name + ': ' + leaf,
+      );
+      const href = '../dist/css/' + leaf + '.css';
+      assert(catalog.includes('href="' + href + '"'), 'Unloaded gallery CSS: ' + leaf);
+      bundledCSS += await readFile(join(built, 'dist/css/' + leaf + '.css'), 'utf8');
+    }
+    const availableClasses = new Set(
+      [...bundledCSS.matchAll(/\.(ui-[a-zA-Z0-9_-]+)/g)].map((match) => match[1]),
+    );
     const snippet = new JSDOM(component.markup);
     for (const node of snippet.window.document.querySelectorAll('[class]')) {
       for (const cls of node.classList) {
         if (cls.startsWith('ui-')) {
           assert(
-            bundledCSS.includes('.' + cls),
-            'Copyable component ' + component.name + ' references unbundled class ' + cls,
+            availableClasses.has(cls),
+            'Copyable component ' + component.name + ' references an undeclared CSS class ' + cls,
           );
         }
       }
