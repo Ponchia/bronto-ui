@@ -3,6 +3,7 @@
 import { readFileSync, readdirSync, realpathSync, statSync } from 'node:fs';
 import { extname, resolve, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { migrationAudit, supportedMigrations } from './migration-audit.mjs';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const classesManifest = JSON.parse(
@@ -13,10 +14,13 @@ const tokensManifest = JSON.parse(readFileSync(resolve(packageRoot, 'tokens/inde
 const SOURCE_EXTENSIONS = new Set([
   '.astro',
   '.css',
+  '.cjs',
+  '.cts',
   '.html',
   '.js',
   '.jsx',
   '.mjs',
+  '.mts',
   '.svelte',
   '.ts',
   '.tsx',
@@ -68,6 +72,9 @@ const reservedTokenPrefixes = new Set(
 const LINE_COMMENT_EXTENSIONS = new Set([
   '.astro',
   '.html',
+  '.cjs',
+  '.cts',
+  '.mts',
   '.js',
   '.jsx',
   '.mjs',
@@ -122,7 +129,7 @@ function stripSlashComments(text, lineComments) {
 
 function sourceText(text, extension) {
   const withoutHtml = HTML_COMMENT_EXTENSIONS.has(extension)
-    ? text.replace(/<!--[\s\S]*?-->/g, blankComment)
+    ? text.replace(new RegExp('<!--[\\s\\S]*?-->', 'g'), blankComment)
     : text;
   return stripSlashComments(withoutHtml, LINE_COMMENT_EXTENSIONS.has(extension));
 }
@@ -212,10 +219,38 @@ function suggestClass(name) {
   return closestClass(name, knownClasses);
 }
 
-export function checkPaths(inputs, { allowClasses = [], allowTokens = [] } = {}) {
+function requireAuditCoverage(audit, files) {
+  if (audit && files.length === 0) {
+    throw new Error(
+      'Migration audit found no supported source files; select the consumer source directory',
+    );
+  }
+}
+
+function unknownClassFinding(match, file, text) {
+  const suggestion = suggestClass(match[0]);
+  return {
+    kind: 'class',
+    file,
+    line: lineAt(text, match.index),
+    name: match[0],
+    ...(suggestion ? { suggestion } : {}),
+  };
+}
+
+function appendMigrationFindings({ file, text, scanned }, audit, add) {
+  if (!audit) return;
+  for (const { index, ...finding } of audit.scan(scanned)) {
+    add({ kind: 'migration', file, line: lineAt(text, index), ...finding });
+  }
+}
+
+export function checkPaths(inputs, { allowClasses = [], allowTokens = [], migration } = {}) {
+  const audit = migrationAudit(migration);
   const allowedClasses = new Set([...knownClasses, ...allowClasses]);
   const allowedTokens = new Set([...knownTokens, ...allowTokens]);
   const files = [...new Set(inputs.flatMap(filesUnder))].sort();
+  requireAuditCoverage(audit, files);
   const documents = files.map((file) => {
     const text = readFileSync(file, 'utf8');
     return { file, text, scanned: sourceText(text, extname(file)) };
@@ -237,16 +272,10 @@ export function checkPaths(inputs, { allowClasses = [], allowTokens = [] } = {})
   };
 
   for (const { file, text, scanned } of documents) {
+    appendMigrationFindings({ file, text, scanned }, audit, add);
     for (const match of scanned.matchAll(/(?<![/\w-])ui-[a-z0-9](?:[\w-]*[a-z0-9])?(?![\w/-])/gi)) {
       if (!allowedClasses.has(match[0]) && !nonClassIdentifiers.has(match[0])) {
-        const suggestion = suggestClass(match[0]);
-        add({
-          kind: 'class',
-          file,
-          line: lineAt(text, match.index),
-          name: match[0],
-          ...(suggestion ? { suggestion } : {}),
-        });
+        add(unknownClassFinding(match, file, text));
       }
     }
     for (const match of scanned.matchAll(/var\(\s*(--[a-z][\w-]*)/gi)) {
@@ -261,7 +290,7 @@ export function checkPaths(inputs, { allowClasses = [], allowTokens = [] } = {})
     }
   }
 
-  return { files: files.length, findings };
+  return { files: files.length, findings, ...(audit ? { migration: audit.metadata } : {}) };
 }
 
 function usage() {
@@ -271,9 +300,18 @@ function usage() {
     `Options:\n` +
     `  --allow-class NAME   Allow one consumer-owned ui-* class (repeatable)\n` +
     `  --allow-token NAME   Allow one consumer-owned --* token (repeatable)\n` +
+    `  --migration VERSION  Review literal migration markers (supported: ${supportedMigrations.join(', ')})\n` +
     `  --json               Print machine-readable JSON\n` +
     `  --help               Show this help\n`
   );
+}
+
+function selectMigration(options, value) {
+  if (!value || value.startsWith('--') || options.migration !== undefined) {
+    throw new Error('--migration requires one supported version, supplied once');
+  }
+  migrationAudit(value);
+  options.migration = value;
 }
 
 function parseArgs(args) {
@@ -282,7 +320,9 @@ function parseArgs(args) {
     const arg = args[index];
     if (arg === '--help') return { ...options, help: true };
     if (arg === '--json') options.json = true;
-    else if (arg === '--allow-class') {
+    else if (arg === '--migration') {
+      selectMigration(options, args[++index]);
+    } else if (arg === '--allow-class') {
       const value = args[++index];
       if (!/^ui-[a-z0-9][\w-]*$/i.test(value || '')) {
         throw new Error('--allow-class requires one ui-* class name');
@@ -298,6 +338,19 @@ function parseArgs(args) {
     else options.paths.push(arg);
   }
   return options;
+}
+
+function formatFinding(finding) {
+  if (finding.kind === 'migration') {
+    return `${finding.file}:${finding.line} migration review [${finding.rule}] ${finding.name}: ${finding.message}`;
+  }
+  return `${finding.file}:${finding.line} unknown Bronto ${finding.kind} ${finding.name}${finding.suggestion ? ` (did you mean ${finding.suggestion}?)` : ''}`;
+}
+
+function printMigrationScope(output, json) {
+  if (output.migration && !json) {
+    console.log(`[bronto-ui-check] ${output.migration.scope} Guide: ${output.migration.guide}`);
+  }
 }
 
 function main() {
@@ -326,6 +379,7 @@ function main() {
   const cwd = process.cwd();
   const output = {
     files: result.files,
+    ...(result.migration ? { migration: result.migration } : {}),
     findings: result.findings.map((finding) => ({
       ...finding,
       file: relative(cwd, finding.file) || '.',
@@ -334,9 +388,7 @@ function main() {
   if (options.json) console.log(JSON.stringify(output, null, 2));
   else if (output.findings.length) {
     for (const finding of output.findings) {
-      console.error(
-        `${finding.file}:${finding.line} unknown Bronto ${finding.kind} ${finding.name}${finding.suggestion ? ` (did you mean ${finding.suggestion}?)` : ''}`,
-      );
+      console.error(formatFinding(finding));
     }
     console.error(
       `[bronto-ui-check] ${output.findings.length} finding(s) in ${output.files} source file(s)`,
@@ -344,9 +396,15 @@ function main() {
   } else {
     console.log(`[bronto-ui-check] ${output.files} source file(s) match the shipped contract`);
   }
+  printMigrationScope(output, options.json);
   if (output.findings.length) process.exitCode = 1;
 }
 
 // npm installs bins as symlinks in node_modules/.bin. Compare their real path
 // so the CLI runs both through that public entrypoint and by its package path.
-if (process.argv[1] && realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)) main();
+if (
+  process.argv[1] &&
+  process.argv[1] !== '-' &&
+  realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)
+)
+  main();

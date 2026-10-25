@@ -271,7 +271,54 @@
           "note": "Use pa-prefixed classes for new markup, or the legacy class generator until converting HTML and SVG. Bronto UI class names and recipes remain until the later breaking removal."
         }
       ],
-      "codemod": "No blind automatic rewrite for styling and geometry. Locate imports and ui-annotation classes; follow docs/migrations/0.16-to-0.17.md and validate the rendered outputs and installed package versions."
+      "codemod": "No blind automatic rewrite for styling and geometry. Locate imports and ui-annotation classes; follow docs/migrations/0.16-to-0.17.md and validate the rendered outputs and installed package versions.",
+      "audit": {
+        "guide": "docs/migrations/0.16-to-0.17.md",
+        "scope": "Literal source review only; import aliases, computed names, local stylesheet re-exports and rendered geometry require separate review.",
+        "rules": [
+          {
+            "id": "annotation-import",
+            "type": "specifier",
+            "values": ["@ponchia/ui/annotations"],
+            "message": "Move legacy geometry to a pinned @ponchia/annotations release after verifying the runtime floor and geometry contract."
+          },
+          {
+            "id": "annotation-styles",
+            "type": "specifier",
+            "values": [
+              "@ponchia/ui/css/annotations.css",
+              "@ponchia/ui/css/unlayered/annotations.css"
+            ],
+            "message": "Use @ponchia/annotations/bronto.css; inspect computed styles, print and forced colors rather than loading both owners."
+          },
+          {
+            "id": "annotation-rollup",
+            "type": "specifier",
+            "values": ["@ponchia/ui/css/analytical.css", "@ponchia/ui/css/report-kit.css"],
+            "message": "This roll-up includes legacy annotation CSS. Select the UI leaves actually used before adding the standalone annotation stylesheet."
+          },
+          {
+            "id": "annotation-markup",
+            "type": "class-family",
+            "values": ["ui-annotation"],
+            "message": "Review legacy annotation markup. Standalone bronto.css supports it during migration; its presence alone does not prove UI-owned styles are still loaded."
+          },
+          {
+            "id": "annotation-recipe",
+            "type": "member",
+            "owner": "ui",
+            "values": ["annotation"],
+            "message": "Review the UI recipe and use the standalone annotation class generator; no blind source rewrite is safe."
+          },
+          {
+            "id": "annotation-class-key",
+            "type": "member-family",
+            "owner": "cls",
+            "values": ["annotation"],
+            "message": "Review legacy annotation class keys and their import ownership; prefer the standalone annotation class generators."
+          }
+        ]
+      }
     }
   ]
 }
