@@ -2,6 +2,12 @@
 
 ## Before Tagging
 
+Check the publisher first with `npm run publisher:readiness -- /path/to/evidence-parent`.
+This installs and audits the reviewed CLI in disposable storage without requiring
+an existing `tooling/npm/node_modules`, a version bump, a tag or publication.
+Inspect its retained report and stop on a blocked result; a clean source CI run
+is not a substitute for this live check.
+
 0. Run `npm run release:prep -- X.Y.Z` — bumps `package.json` and only the root
    version metadata in the lockfile, dates a plain `## Unreleased` or matching
    `## Unreleased — X.Y.Z` CHANGELOG heading, and re-pins every

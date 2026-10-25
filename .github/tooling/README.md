@@ -60,6 +60,31 @@ in the guard, and source references together, then prove actual inventory and a
 fresh complete audit before publishing. Offline tests cover malformed reports,
 execution failures, high/critical findings, and inconsistent installed bytes.
 
+### Check readiness without a release tag
+
+Run `npm run publisher:readiness -- /path/to/evidence-parent` from a clean
+checkout. The command installs only the reviewed publisher lock into a fresh,
+private temporary directory, with lifecycle scripts disabled. It runs the same
+complete installed-inventory/advisory guard as publication **before executing
+the candidate CLI**. Only a successful audit permits a version check and package
+assembly dry run. It does not change the checkout, create a tag, approve an
+Environment, request OIDC credentials or publish anything.
+
+Every attempt retains `readiness.json`, input hashes, installation diagnostics,
+and any raw `audit.json`/`pack.json` in its own directory. Failure retains a
+`failure.json`; installed executables are removed on either outcome. Exit 0
+means this publisher passed this observation, not that a release is approved.
+Exit 1 includes the current high-advisory blocker and unavailable audits. The
+normal release gates and their fresh publication-time audit remain required.
+
+The manual **Publisher readiness** GitHub workflow runs the same command on a
+clean hosted runner and retains evidence for seven days, including blocked
+results. It has read-only repository permissions, no publish Environment, no
+OIDC permission, no stored checkout credential and no dependency cache. A
+blocked result is expected while the upstream advisory remains; it is not a
+request to bypass the release guard. Trigger it with
+`gh workflow run publisher-readiness.yml` after the reviewed change reaches main.
+
 ### Updating the CLI
 
 The dependency updater proposes patch/minor updates for the isolated `tooling/npm` project.
