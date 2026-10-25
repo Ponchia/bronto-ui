@@ -4,7 +4,7 @@
 
 Check the publisher first with `npm run publisher:readiness -- /path/to/evidence-parent`.
 This installs and audits the reviewed CLI in disposable storage without requiring
-an existing `tooling/npm/node_modules`, a version bump, a tag or publication.
+an existing publisher installation, a version bump, a tag or publication.
 Inspect its retained report and stop on a blocked result; a clean source CI run
 is not a substitute for this live check.
 
@@ -55,17 +55,21 @@ is not a substitute for this live check.
 
 ## Release tooling
 
-The publish job uses the npm CLI installed from the separate lockfile under
-`tooling/npm/`. Its installation disables lifecycle scripts, and the
-workflow invokes that CLI explicitly. Keep CLI updates reviewable together
-with their lockfile and the release checks; follow the
+The publish job uses unchanged official npm CLI source pinned by archive and
+file hashes, with its complete production dependencies independently locked in
+`tooling/publisher/`. Installation disables lifecycle scripts and prepares the
+runtime outside the checkout in the runner's private temporary directory.
+The workflow invokes that exact CLI explicitly. Keep source and dependency
+updates reviewable together; follow the
 [CI tooling maintenance guide](https://github.com/Ponchia/bronto-ui/blob/main/.github/tooling/README.md).
 
-Both preflight and publication audit the actual installed CLI bundle against
+Validation, preflight and publication verify the source and actual installed
+dependency graph, then audit all components, including the CLI identity, against
 the public advisory registry. A high/critical finding or unavailable audit blocks
-the release before package execution; the current upstream bundle is blocked.
-Review the retained audit artifact and the tooling guide before approving any
-future release.
+candidate execution. The original vulnerable bundled distribution is retained
+only as a historical negative control, not the active publisher.
+Review the retained audit artifact and the tooling guide before approving a
+release. Earlier success does not replace a fresh publication-time audit.
 
 A dry run validates package assembly without publishing or validating the
 npm-side OIDC exchange. Changes to the registered repository, workflow,

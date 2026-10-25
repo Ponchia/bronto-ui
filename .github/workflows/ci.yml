@@ -115,9 +115,10 @@ jobs:
 
       - name: Verify the locked release CLI
         run: |
-          npm ci --prefix tooling/npm --ignore-scripts --no-audit --no-fund
-          node tooling/npm/node_modules/npm/bin/npm-cli.js --version
-          node tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json > "${RUNNER_TEMP}/release-tooling-pack.json"
+          node scripts/source-publisher.mjs prepare "${RUNNER_TEMP}/bronto-publisher"
+          node scripts/source-publisher.mjs audit "${RUNNER_TEMP}/bronto-publisher" "${RUNNER_TEMP}/source-publisher-audit.json"
+          node "${RUNNER_TEMP}/bronto-publisher/source/bin/npm-cli.js" --version
+          node "${RUNNER_TEMP}/bronto-publisher/source/bin/npm-cli.js" pack --dry-run --ignore-scripts --json > "${RUNNER_TEMP}/release-tooling-pack.json"
 
       # Stylelint + integrity checks + node:test unit/contract suite.
       - run: npm run check

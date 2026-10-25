@@ -70,6 +70,15 @@ the lockfile audit when updating the lint toolchain.
 
 ### Release CLI
 
+On 25 October 2026, the replacement publisher was qualified from unchanged,
+commit- and hash-pinned official npm source with separately locked dependencies.
+Its full 147-component audit (CLI included) reports zero findings. It retains the
+high/critical threshold, protected environment, OIDC and disabled lifecycle
+scripts. See the [tooling guide](tooling/README.md#current-publisher-upstream-source-and-locked-dependencies).
+This qualifies the publisher input, not a package release or live authentication.
+
+### Historical bundled-distribution blocker
+
 As of 24 October 2026, publication is **blocked** by a high-severity advisory
 in the isolated `npm@11.21.1` publisher bundle. The complete reviewed findings
 are:

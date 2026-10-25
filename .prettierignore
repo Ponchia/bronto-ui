@@ -33,3 +33,5 @@ fonts
 package-lock.json
 test/e2e/__screenshots__
 node_modules
+/tooling/publisher/source/
+/tooling/publisher/.source-*/
