@@ -54,7 +54,7 @@ updates:
   # The protected publisher's CLI is isolated from the UI dev toolchain.
   # Review these updates with the release authority checks before merging.
   - package-ecosystem: npm
-    directory: /tooling/npm
+    directory: /tooling/publisher
     schedule:
       interval: weekly
     # Version updates only; GitHub exempts security updates from cooldown.

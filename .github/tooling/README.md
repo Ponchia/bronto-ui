@@ -3,7 +3,57 @@
 These files are maintainer tooling. They are excluded from the published UI
 package, which continues to have zero runtime dependencies.
 
-## Protected npm publisher
+## Current publisher: upstream source and locked dependencies
+
+The release now uses **unchanged npm 11.21.1 CLI source** from official
+`npm/cli` commit `1e39046cfae5a28c06e048403199c35458133ff3`, with its full
+production dependency graph installed separately. This replaces the vulnerable
+bundled distribution as an execution input; it does not repack, relabel or
+patch that distribution. The historical `tooling/npm` project and its tests
+remain a negative control and source of the shared fail-closed audit verifier.
+The historical instructions below describe that old input, not the active job.
+
+`tooling/publisher/source.json` pins the official archive URL, exact byte count,
+SHA-512, and SHA-256 of all 153 retained source files. Extraction accepts only
+those regular files and refuses missing, linked, duplicate or changed entries.
+Bundled `node_modules` is never copied. The original npm OIDC and publication
+implementation is included unchanged; no custom authentication protocol is added.
+
+The private `tooling/publisher/package.json` retains every original runtime
+dependency. Its complete registry-integrity lock installs 146 packages, with
+compatible patched `undici@6.29.1` and `ip-address@10.7.4` selected explicitly.
+The guard compares the actual installed manifests, versions, dependency edges
+and complete inventory to this lock. A temporary audit graph additionally
+includes the unchanged npm CLI identity: **147 components**, not just the
+replacement libraries. Nothing is removed from the vulnerability report.
+A fresh full audit found zero advisories on 25 October 2026.
+
+CI, release validation, preflight and protected publication prepare this same
+runtime with lifecycle scripts disabled and audit it before executing the
+candidate CLI. High/critical findings, unavailable or malformed audit responses,
+wrong archive/file hashes and installed-graph drift remain blocking. The
+`release.yml` / `npm-publish` trusted-publishing identity, protected approval,
+no-cache publication job and provenance policy are unchanged. Candidate
+qualification alone does not prove a live OIDC exchange or publish a version.
+
+```bash
+npm run publisher:readiness -- /path/to/evidence-parent
+```
+
+Each observation retains input hashes, its structured verdict, raw audit and
+package-assembly output in a fresh directory. Source and dependency executables
+are removed on both outcomes. The manual **Publisher readiness** workflow is
+read-only and cannot publish. Release jobs repeat the live audit immediately
+before publishing; earlier success is not a permanent exception.
+
+Update the source commit/archive hashes and dependency lock together after
+reviewing an upstream release. Run the complete guard, source-extraction
+regressions, installed CLI package assembly and all normal release checks.
+The source hash inventory is reviewed input, not an automatic accept-baseline.
+When an upstream distribution genuinely fixes its bundled graph, changing back
+is a separately reviewed tooling change, not a reason to weaken this audit.
+
+## Historical bundled publisher (retained negative control)
 
 `tooling/npm/package.json` and `tooling/npm/package-lock.json` lock the release CLI separately
 from the framework's development dependencies. The selected npm version is
@@ -138,7 +188,7 @@ package from the audit or change the threshold. Run the normal integrity checks
 before merging. The release workflow and protected Environment identity remain
 unchanged.
 
-## Current npm bundle advisory review
+## Historical npm bundle advisory review
 
 ### Review on 24 October 2026
 

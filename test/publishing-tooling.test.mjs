@@ -28,10 +28,8 @@ test('both release stages require a successful actual-bundle audit before packag
     ['publish-npm', 'publish --ignore-scripts'],
   ]) {
     const body = workflow.split(`\n  ${name}:\n`)[1].split(/\n  [a-z][\w-]*:\n/)[0];
-    const audit = body.indexOf('node scripts/audit-publishing-tooling.mjs tooling/npm');
-    const install = body.indexOf(
-      'npm ci --prefix tooling/npm --ignore-scripts --no-audit --no-fund',
-    );
+    const audit = body.indexOf('node scripts/source-publisher.mjs audit tooling/publisher');
+    const install = body.indexOf('node scripts/source-publisher.mjs prepare tooling/publisher');
     assert.ok(audit > install && install >= 0);
     assert.ok(body.indexOf(command) > audit);
     assert.ok(!body.slice(0, body.indexOf(command)).includes('continue-on-error'));

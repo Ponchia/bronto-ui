@@ -60,3 +60,5 @@ reports-lab/
 # author baselines in a local container at all: use the "Update visual
 # baselines" workflow (see CONTRIBUTING.md "Visual baselines").
 *.core
+/tooling/publisher/source/
+/tooling/publisher/.source-*/

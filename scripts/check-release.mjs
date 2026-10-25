@@ -24,9 +24,14 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const changelog = readFileSync(resolve(root, 'CHANGELOG.md'), 'utf8');
 const releaseWorkflow = readFileSync(resolve(root, '.github/workflows/release.yml'), 'utf8');
-const releaseTooling = JSON.parse(readFileSync(resolve(root, 'tooling/npm/package.json'), 'utf8'));
+const releaseTooling = JSON.parse(
+  readFileSync(resolve(root, 'tooling/publisher/package.json'), 'utf8'),
+);
 const releaseToolingLock = JSON.parse(
-  readFileSync(resolve(root, 'tooling/npm/package-lock.json'), 'utf8'),
+  readFileSync(resolve(root, 'tooling/publisher/package-lock.json'), 'utf8'),
+);
+const publisherSource = JSON.parse(
+  readFileSync(resolve(root, 'tooling/publisher/source.json'), 'utf8'),
 );
 const errors = [];
 
@@ -202,7 +207,7 @@ requireJobIncludes(
   'publish-preflight',
   preflightJob,
   'must dry-run the exact package without lifecycle scripts',
-  'node tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json',
+  'node tooling/publisher/source/bin/npm-cli.js pack --dry-run --ignore-scripts --json',
 );
 requireJobIncludes(
   'publish-preflight',
@@ -234,7 +239,7 @@ requireJobIncludes(
   'publish-npm',
   publishJob,
   'must publish with scripts disabled and an explicit dist-tag',
-  'node tooling/npm/node_modules/npm/bin/npm-cli.js publish --ignore-scripts --tag "$dist_tag"',
+  'node tooling/publisher/source/bin/npm-cli.js publish --ignore-scripts --tag "$dist_tag"',
 );
 requireJobIncludes(
   'publish-npm',
@@ -257,7 +262,7 @@ requireJobIncludes(
 // Trusted publishing (OIDC) replaced the long-lived NPM_TOKEN. Two things
 // have to stay true for it to work, and both fail *at publish time* — the
 // most expensive moment to find out — so they are gated here instead.
-const lockedInstall = 'npm ci --prefix tooling/npm --ignore-scripts --no-audit --no-fund';
+const lockedInstall = 'node scripts/source-publisher.mjs prepare tooling/publisher';
 requireJobIncludes(
   'publish-npm',
   publishJob,
@@ -274,7 +279,7 @@ requireJobIncludes(
   'validate',
   validateJob,
   'must prove package assembly with the same locked CLI that publishes',
-  'node tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json',
+  'node tooling/publisher/source/bin/npm-cli.js pack --dry-run --ignore-scripts --json',
 );
 requireJobIncludes(
   'publish-preflight',
@@ -311,7 +316,7 @@ for (const [name, body] of [
     name,
     body,
     'must audit actual installed publishing tooling without advisory waivers',
-    'node scripts/audit-publishing-tooling.mjs tooling/npm "${RUNNER_TEMP}/publishing-tooling-audit.json"',
+    'node scripts/source-publisher.mjs audit tooling/publisher "${RUNNER_TEMP}/publishing-tooling-audit.json"',
   );
 }
 
@@ -325,23 +330,23 @@ function versionAtLeast(value, floor) {
   return true;
 }
 
-const cliVersion = releaseTooling.dependencies?.npm ?? '';
-const cliLock = releaseToolingLock.packages?.['node_modules/npm'];
-if (
-  releaseTooling.private !== true ||
-  Object.keys(releaseTooling.dependencies ?? {}).join(',') !== 'npm' ||
-  !versionAtLeast(cliVersion, [11, 5, 1])
-) {
-  errors.push('release tooling must stay private with one exact npm dependency >=11.5.1');
+const cliVersion = publisherSource.version;
+if (releaseTooling.private !== true || !versionAtLeast(cliVersion, [11, 5, 1])) {
+  errors.push('release tooling must stay private with reviewed npm source >=11.5.1');
 }
 if (
   releaseToolingLock.lockfileVersion !== 3 ||
-  releaseToolingLock.packages?.['']?.dependencies?.npm !== cliVersion ||
-  cliLock?.version !== cliVersion ||
-  cliLock?.resolved !== `https://registry.npmjs.org/npm/-/npm-${cliVersion}.tgz` ||
-  !/^sha512-[A-Za-z0-9+/]{86}==$/.test(cliLock?.integrity ?? '')
+  JSON.stringify(releaseToolingLock.packages?.['']?.dependencies) !==
+    JSON.stringify(releaseTooling.dependencies) ||
+  !/^[a-f0-9]{40}$/.test(publisherSource.commit) ||
+  publisherSource.url !== `https://codeload.github.com/npm/cli/tar.gz/${publisherSource.commit}` ||
+  !/^sha512-[A-Za-z0-9+/]{86}==$/.test(publisherSource.integrity ?? '') ||
+  !publisherSource.files?.['lib/utils/oidc.js'] ||
+  !publisherSource.files?.['lib/commands/publish.js']
 ) {
-  errors.push('release CLI lock must match its manifest and contain registry SHA-512 integrity');
+  errors.push(
+    'source publisher must retain the complete dependency lock and reviewed upstream source identity',
+  );
 }
 
 // A reintroduced token would add a long-lived fallback credential, so the

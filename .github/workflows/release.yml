@@ -86,9 +86,10 @@ jobs:
 
       - name: Verify the locked release CLI
         run: |
-          npm ci --prefix tooling/npm --ignore-scripts --no-audit --no-fund
-          node tooling/npm/node_modules/npm/bin/npm-cli.js --version
-          node tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json > "${RUNNER_TEMP}/release-tooling-pack.json"
+          node scripts/source-publisher.mjs prepare tooling/publisher
+          node scripts/source-publisher.mjs audit tooling/publisher "${RUNNER_TEMP}/publisher-validation-audit.json"
+          node tooling/publisher/source/bin/npm-cli.js --version
+          node tooling/publisher/source/bin/npm-cli.js pack --dry-run --ignore-scripts --json > "${RUNNER_TEMP}/release-tooling-pack.json"
 
       - run: npm run check
 
@@ -134,16 +135,16 @@ jobs:
 
       - run: npm ci --ignore-scripts
 
-      - name: Install the integrity-locked npm CLI
-        run: npm ci --prefix tooling/npm --ignore-scripts --no-audit --no-fund
+      - name: Install upstream npm source and locked patched dependencies
+        run: node scripts/source-publisher.mjs prepare tooling/publisher
 
       - name: Audit actual installed publishing tooling
-        run: node scripts/audit-publishing-tooling.mjs tooling/npm "${RUNNER_TEMP}/publishing-tooling-audit.json"
+        run: node scripts/source-publisher.mjs audit tooling/publisher "${RUNNER_TEMP}/publishing-tooling-audit.json"
 
       - name: Capture publish preflight summary
         run: |
           set -euo pipefail
-          node tooling/npm/node_modules/npm/bin/npm-cli.js pack --dry-run --ignore-scripts --json > "${RUNNER_TEMP}/pack.json"
+          node tooling/publisher/source/bin/npm-cli.js pack --dry-run --ignore-scripts --json > "${RUNNER_TEMP}/pack.json"
           npm run size:report > "${RUNNER_TEMP}/size-report.txt"
           node <<'NODE' >> "$GITHUB_STEP_SUMMARY"
           const fs = require('node:fs');
@@ -208,14 +209,14 @@ jobs:
           # Publish must not restore dependency caches into an OIDC-enabled job.
           package-manager-cache: false
 
-      # Install only the private CLI project, using its committed integrity
-      # lock. No global install, project devDependencies, or lifecycle scripts
+      # Install only the private source-publisher project, using its committed integrity
+      # lock and unchanged upstream CLI source. No global install, project devDependencies, or lifecycle scripts
       # execute in this privileged job. See .github/tooling/README.md.
-      - name: Install the integrity-locked npm CLI
-        run: npm ci --prefix tooling/npm --ignore-scripts --no-audit --no-fund
+      - name: Install upstream npm source and locked patched dependencies
+        run: node scripts/source-publisher.mjs prepare tooling/publisher
 
       - name: Audit actual installed publishing tooling
-        run: node scripts/audit-publishing-tooling.mjs tooling/npm "${RUNNER_TEMP}/publishing-tooling-audit.json"
+        run: node scripts/source-publisher.mjs audit tooling/publisher "${RUNNER_TEMP}/publishing-tooling-audit.json"
 
       # Publish with --ignore-scripts so the OIDC credential is never
       # exposed to the prepack/prepublishOnly lifecycle (the whole
@@ -239,7 +240,7 @@ jobs:
             dist_tag=latest
           fi
           echo "Publishing $version to dist-tag '$dist_tag'"
-          node tooling/npm/node_modules/npm/bin/npm-cli.js publish --ignore-scripts --tag "$dist_tag"
+          node tooling/publisher/source/bin/npm-cli.js publish --ignore-scripts --tag "$dist_tag"
 
       - name: Record npm registry state
         continue-on-error: true
@@ -249,7 +250,7 @@ jobs:
           view_ok=false
           attempts_remaining=5
           while [ "$attempts_remaining" -gt 0 ]; do
-            if node tooling/npm/node_modules/npm/bin/npm-cli.js view "@ponchia/ui@$version" version dist.integrity dist.tarball --json > "${RUNNER_TEMP}/npm-view.json"; then
+            if node tooling/publisher/source/bin/npm-cli.js view "@ponchia/ui@$version" version dist.integrity dist.tarball --json > "${RUNNER_TEMP}/npm-view.json"; then
               view_ok=true
               break
             fi
@@ -257,7 +258,7 @@ jobs:
             sleep 5
           done
           tags_ok=false
-          if node tooling/npm/node_modules/npm/bin/npm-cli.js view @ponchia/ui dist-tags --json > "${RUNNER_TEMP}/npm-dist-tags.json"; then
+          if node tooling/publisher/source/bin/npm-cli.js view @ponchia/ui dist-tags --json > "${RUNNER_TEMP}/npm-dist-tags.json"; then
             tags_ok=true
           fi
 

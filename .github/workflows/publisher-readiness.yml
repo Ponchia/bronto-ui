@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   qualify:
-    name: Audit the reviewed distribution without publishing
+    name: Audit upstream source and patched dependencies without publishing
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -29,11 +29,11 @@ jobs:
         with:
           name: publisher-readiness
           path: |
-            ${{ runner.temp }}/publisher-readiness-*/readiness.json
-            ${{ runner.temp }}/publisher-readiness-*/failure.json
-            ${{ runner.temp }}/publisher-readiness-*/audit.json
-            ${{ runner.temp }}/publisher-readiness-*/pack.json
-            ${{ runner.temp }}/publisher-readiness-*/install.log
-            ${{ runner.temp }}/publisher-readiness-*/tooling/package*.json
+            ${{ runner.temp }}/publisher-source-readiness-*/readiness.json
+            ${{ runner.temp }}/publisher-source-readiness-*/failure.json
+            ${{ runner.temp }}/publisher-source-readiness-*/audit.json
+            ${{ runner.temp }}/publisher-source-readiness-*/pack.json
+            ${{ runner.temp }}/publisher-source-readiness-*/install.log
+            ${{ runner.temp }}/publisher-source-readiness-*/runtime/package*.json
           if-no-files-found: error
           retention-days: 7

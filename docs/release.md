@@ -4,7 +4,7 @@
 
 Check the publisher first with `npm run publisher:readiness -- /path/to/evidence-parent`.
 This installs and audits the reviewed CLI in disposable storage without requiring
-an existing `tooling/npm/node_modules`, a version bump, a tag or publication.
+an existing publisher installation, a version bump, a tag or publication.
 Inspect its retained report and stop on a blocked result; a clean source CI run
 is not a substitute for this live check.
 
@@ -56,14 +56,14 @@ is not a substitute for this live check.
 ## Release tooling
 
 The publish job uses the npm CLI installed from the separate lockfile under
-`tooling/npm/`. Its installation disables lifecycle scripts, and the
+`tooling/publisher/`. Its installation disables lifecycle scripts, and the
 workflow invokes that CLI explicitly. Keep CLI updates reviewable together
 with their lockfile and the release checks; follow the
 [CI tooling maintenance guide](https://github.com/Ponchia/bronto-ui/blob/main/.github/tooling/README.md).
 
 Both preflight and publication audit the actual installed CLI bundle against
 the public advisory registry. A high/critical finding or unavailable audit blocks
-the release before package execution; the current upstream bundle is blocked.
+the release before package execution; the current runtime uses reviewed unchanged upstream source with separately locked patched dependencies. The original bundled distribution remains a retained failing control.
 Review the retained audit artifact and the tooling guide before approving any
 future release.
 

@@ -5,7 +5,7 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
-## Unreleased
+## 0.17.1 — 2026-10-25
 
 ### Fixed
 
@@ -34,6 +34,11 @@
   cover the working examples.
 
 ### Changed
+
+- Qualify the protected publisher from unchanged, hash-pinned official npm CLI
+  source and a complete patched dependency lock. Full live audits, trusted
+  publishing, provenance and protected approval remain required; the original
+  vulnerable bundle is retained only as a negative control.
 
 - Put the installed markup validator in the quickstart, replace the LLM entry
   point with a task router, and show a complete React dialog with scoped
