@@ -5,6 +5,12 @@ import { JSDOM } from 'jsdom';
 import { settleVisualState } from './_demo-guards.mjs';
 import { awaitDemoReady } from './_demo.mjs';
 
+// These approved snapshots were authored with normal-motion media: the pinned
+// runner ignored the former top-level reducedMotion setting. Keep that exact
+// scenario explicit; screenshot capture still freezes animation separately.
+// Behavioral/default-media tests prove reduced motion without replacing PNGs.
+test.use({ contextOptions: { reducedMotion: 'no-preference' } });
+
 /**
  * Component-scoped visual regression. Each demo `<section>` carries a
  * stable `data-shot` slug and we screenshot THAT element, not the full
@@ -41,6 +47,9 @@ async function open(page, theme) {
     }
   }, theme);
   await page.goto('/demo/');
+  expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(
+    false,
+  );
   // Wait for the JS-built sections (glyph gallery, …) to finish wiring and for
   // the bundled Doto webfont to load — deterministic, vs the old fixed 150ms
   // that raced the glyphs shot to "element not stable".

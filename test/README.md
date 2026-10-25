@@ -62,3 +62,12 @@ Motion-specific suites use `test.use({ contextOptions: { reducedMotion:
 `page.emulateMedia`. Keep those normal-motion tests when changing the default.
 The browser/container pins, existing visual baselines, test assertions and
 retry budget are independent and must not be weakened to repair configuration.
+
+The approved pixel baselines retain their historically observed normal-motion
+media (`contextOptions.reducedMotion: 'no-preference'`), asserted at runtime by
+`visual.spec.mjs`. Screenshot capture freezes animation independently. Switching
+that media changes the intentionally static striped indeterminate progress bar;
+it is not a reason to regenerate approved PNGs or increase their tolerance.
+Reduced-motion behavior remains covered by the default suite and explicit
+media/contrast tests. Native tree tests assert both hidden and restored leaves
+in each motion mode, rather than sampling a disappearing leaf mid-transition.

@@ -4,20 +4,31 @@ async function open(page) {
   await page.goto('/demo/tree.html', { waitUntil: 'networkidle' });
 }
 
-test('branches are native <details> that toggle, leaves are static rows', async ({ page }) => {
-  await open(page);
-  const branch = page.locator('.ui-tree__branch').first();
-  await expect(branch).toHaveJSProperty('tagName', 'DETAILS');
+for (const reducedMotion of ['reduce', 'no-preference']) {
+  test(`native branches hide and reveal their static leaves (${reducedMotion})`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion });
+    await open(page);
+    const branch = page.locator('.ui-tree__branch').first();
+    const summary = branch.locator('> .ui-tree__summary');
+    const leaf = branch.locator('.ui-tree__leaf').first();
+    await expect(branch).toHaveJSProperty('tagName', 'DETAILS');
+    await expect(branch).toHaveJSProperty('open', true);
+    await expect(leaf).toHaveJSProperty('tagName', 'DIV');
+    await expect(leaf).toBeVisible();
 
-  // Native disclosure: toggling the summary flips [open] — no Bronto kernel.
-  const summary = branch.locator('> .ui-tree__summary');
-  const before = await branch.evaluate((el) => el.open);
-  await summary.click();
-  const after = await branch.evaluate((el) => el.open);
-  expect(after).toBe(!before);
-
-  await expect(page.locator('.ui-tree__leaf').first()).toBeVisible();
-});
+    // A static row still belongs to its enclosing disclosure. The old test
+    // expected it visible after closing its ancestor and passed mid-animation.
+    await summary.click();
+    await expect(branch).toHaveJSProperty('open', false);
+    await expect(leaf).toBeHidden();
+    await expect(summary).toBeVisible();
+    await summary.click();
+    await expect(branch).toHaveJSProperty('open', true);
+    await expect(leaf).toBeVisible();
+  });
+}
 
 test('branch summaries toggle from the keyboard', async ({ page }) => {
   await open(page);
