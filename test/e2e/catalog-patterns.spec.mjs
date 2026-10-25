@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { applyTheme } from './_theme.mjs';
+import { settleVisualState } from './_demo-guards.mjs';
 
 const catalog = '/_site/components/';
 
@@ -102,9 +104,9 @@ test('catalog — optional patterns stay readable on narrow screens and in print
 test('catalog — both themes expose labelled controls and readable evidence', async ({ page }) => {
   await page.goto(catalog);
   for (const theme of ['light', 'dark']) {
-    await page.evaluate((value) => {
-      document.documentElement.dataset.theme = value;
-    }, theme);
+    // Audit the settled theme, not a frame mixing new text with the old surface.
+    await applyTheme(page, theme);
+    await settleVisualState(page);
     const result = await new AxeBuilder({ page })
       .include('[data-component-catalog]')
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
@@ -153,9 +155,9 @@ test('catalog — the open command palette is accessible in both themes', async 
   await page.getByRole('searchbox', { name: 'Search components' }).fill('command palette');
   const trigger = page.getByRole('button', { name: 'Open sample commands' });
   for (const theme of ['light', 'dark']) {
-    await page.evaluate((value) => {
-      document.documentElement.dataset.theme = value;
-    }, theme);
+    // Audit the settled theme, not a frame mixing new text with the old surface.
+    await applyTheme(page, theme);
+    await settleVisualState(page);
     await trigger.click();
     const dialog = page.getByRole('dialog', { name: 'Sample commands' });
     await expect(dialog.getByRole('combobox', { name: 'Find a sample command' })).toBeFocused();
