@@ -5,7 +5,7 @@ async function open(page) {
 }
 
 for (const reducedMotion of ['reduce', 'no-preference']) {
-  test(`native branches hide and reveal their static leaves (${reducedMotion})`, async ({
+  test(`branches are native disclosures that hide and reveal static leaves (${reducedMotion})`, async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion });
