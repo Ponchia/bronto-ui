@@ -45,7 +45,10 @@ export default defineConfig({
   },
   use: {
     baseURL,
-    reducedMotion: 'reduce',
+    // Playwright 1.60 forwards this BrowserContext option only through
+    // contextOptions; a top-level use.reducedMotion is silently ignored.
+    // browser-environment.spec proves the actual media query and scroll mode.
+    contextOptions: { reducedMotion: 'reduce' },
     colorScheme: 'no-preference',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',

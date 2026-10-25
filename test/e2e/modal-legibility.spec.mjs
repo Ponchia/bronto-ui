@@ -5,7 +5,7 @@ import AxeBuilder from '@axe-core/playwright';
 // entire dialog blends its text and button colors with the dimmed page,
 // briefly driving ordinary labels under WCAG AA contrast thresholds.
 // Keep motion enabled here: the rest of the suite normally reduces it.
-test.use({ reducedMotion: 'no-preference' });
+test.use({ contextOptions: { reducedMotion: 'no-preference' } });
 
 for (const [theme, width] of [
   ['dark', 1280],
