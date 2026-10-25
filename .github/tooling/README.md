@@ -29,7 +29,9 @@ replacement libraries. Nothing is removed from the vulnerability report.
 A fresh full audit found zero advisories on 25 October 2026.
 
 CI, release validation, preflight and protected publication prepare this same
-runtime with lifecycle scripts disabled and audit it before executing the
+runtime in the runner-owned temporary directory, outside the source checkout.
+That keeps upstream executable code out of first-party lint/complexity inputs
+without changing those gates. They prepare the with lifecycle scripts disabled and audit it before executing the
 candidate CLI. High/critical findings, unavailable or malformed audit responses,
 wrong archive/file hashes and installed-graph drift remain blocking. The
 `release.yml` / `npm-publish` trusted-publishing identity, protected approval,

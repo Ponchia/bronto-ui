@@ -86,10 +86,10 @@ jobs:
 
       - name: Verify the locked release CLI
         run: |
-          node scripts/source-publisher.mjs prepare tooling/publisher
-          node scripts/source-publisher.mjs audit tooling/publisher "${RUNNER_TEMP}/publisher-validation-audit.json"
-          node tooling/publisher/source/bin/npm-cli.js --version
-          node tooling/publisher/source/bin/npm-cli.js pack --dry-run --ignore-scripts --json > "${RUNNER_TEMP}/release-tooling-pack.json"
+          node scripts/source-publisher.mjs prepare "${RUNNER_TEMP}/bronto-publisher"
+          node scripts/source-publisher.mjs audit "${RUNNER_TEMP}/bronto-publisher" "${RUNNER_TEMP}/publisher-validation-audit.json"
+          node "${RUNNER_TEMP}/bronto-publisher/source/bin/npm-cli.js" --version
+          node "${RUNNER_TEMP}/bronto-publisher/source/bin/npm-cli.js" pack --dry-run --ignore-scripts --json > "${RUNNER_TEMP}/release-tooling-pack.json"
 
       - run: npm run check
 
@@ -136,15 +136,15 @@ jobs:
       - run: npm ci --ignore-scripts
 
       - name: Install upstream npm source and locked patched dependencies
-        run: node scripts/source-publisher.mjs prepare tooling/publisher
+        run: node scripts/source-publisher.mjs prepare "${RUNNER_TEMP}/bronto-publisher"
 
       - name: Audit actual installed publishing tooling
-        run: node scripts/source-publisher.mjs audit tooling/publisher "${RUNNER_TEMP}/publishing-tooling-audit.json"
+        run: node scripts/source-publisher.mjs audit "${RUNNER_TEMP}/bronto-publisher" "${RUNNER_TEMP}/publishing-tooling-audit.json"
 
       - name: Capture publish preflight summary
         run: |
           set -euo pipefail
-          node tooling/publisher/source/bin/npm-cli.js pack --dry-run --ignore-scripts --json > "${RUNNER_TEMP}/pack.json"
+          node "${RUNNER_TEMP}/bronto-publisher/source/bin/npm-cli.js" pack --dry-run --ignore-scripts --json > "${RUNNER_TEMP}/pack.json"
           npm run size:report > "${RUNNER_TEMP}/size-report.txt"
           node <<'NODE' >> "$GITHUB_STEP_SUMMARY"
           const fs = require('node:fs');
@@ -213,10 +213,10 @@ jobs:
       # lock and unchanged upstream CLI source. No global install, project devDependencies, or lifecycle scripts
       # execute in this privileged job. See .github/tooling/README.md.
       - name: Install upstream npm source and locked patched dependencies
-        run: node scripts/source-publisher.mjs prepare tooling/publisher
+        run: node scripts/source-publisher.mjs prepare "${RUNNER_TEMP}/bronto-publisher"
 
       - name: Audit actual installed publishing tooling
-        run: node scripts/source-publisher.mjs audit tooling/publisher "${RUNNER_TEMP}/publishing-tooling-audit.json"
+        run: node scripts/source-publisher.mjs audit "${RUNNER_TEMP}/bronto-publisher" "${RUNNER_TEMP}/publishing-tooling-audit.json"
 
       # Publish with --ignore-scripts so the OIDC credential is never
       # exposed to the prepack/prepublishOnly lifecycle (the whole
@@ -240,7 +240,7 @@ jobs:
             dist_tag=latest
           fi
           echo "Publishing $version to dist-tag '$dist_tag'"
-          node tooling/publisher/source/bin/npm-cli.js publish --ignore-scripts --tag "$dist_tag"
+          node "${RUNNER_TEMP}/bronto-publisher/source/bin/npm-cli.js" publish --ignore-scripts --tag "$dist_tag"
 
       - name: Record npm registry state
         continue-on-error: true
@@ -250,7 +250,7 @@ jobs:
           view_ok=false
           attempts_remaining=5
           while [ "$attempts_remaining" -gt 0 ]; do
-            if node tooling/publisher/source/bin/npm-cli.js view "@ponchia/ui@$version" version dist.integrity dist.tarball --json > "${RUNNER_TEMP}/npm-view.json"; then
+            if node "${RUNNER_TEMP}/bronto-publisher/source/bin/npm-cli.js" view "@ponchia/ui@$version" version dist.integrity dist.tarball --json > "${RUNNER_TEMP}/npm-view.json"; then
               view_ok=true
               break
             fi
@@ -258,7 +258,7 @@ jobs:
             sleep 5
           done
           tags_ok=false
-          if node tooling/publisher/source/bin/npm-cli.js view @ponchia/ui dist-tags --json > "${RUNNER_TEMP}/npm-dist-tags.json"; then
+          if node "${RUNNER_TEMP}/bronto-publisher/source/bin/npm-cli.js" view @ponchia/ui dist-tags --json > "${RUNNER_TEMP}/npm-dist-tags.json"; then
             tags_ok=true
           fi
 

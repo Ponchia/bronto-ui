@@ -207,7 +207,7 @@ requireJobIncludes(
   'publish-preflight',
   preflightJob,
   'must dry-run the exact package without lifecycle scripts',
-  'node tooling/publisher/source/bin/npm-cli.js pack --dry-run --ignore-scripts --json',
+  'node "${RUNNER_TEMP}/bronto-publisher/source/bin/npm-cli.js" pack --dry-run --ignore-scripts --json',
 );
 requireJobIncludes(
   'publish-preflight',
@@ -239,7 +239,7 @@ requireJobIncludes(
   'publish-npm',
   publishJob,
   'must publish with scripts disabled and an explicit dist-tag',
-  'node tooling/publisher/source/bin/npm-cli.js publish --ignore-scripts --tag "$dist_tag"',
+  'node "${RUNNER_TEMP}/bronto-publisher/source/bin/npm-cli.js" publish --ignore-scripts --tag "$dist_tag"',
 );
 requireJobIncludes(
   'publish-npm',
@@ -262,7 +262,7 @@ requireJobIncludes(
 // Trusted publishing (OIDC) replaced the long-lived NPM_TOKEN. Two things
 // have to stay true for it to work, and both fail *at publish time* — the
 // most expensive moment to find out — so they are gated here instead.
-const lockedInstall = 'node scripts/source-publisher.mjs prepare tooling/publisher';
+const lockedInstall = 'node scripts/source-publisher.mjs prepare "${RUNNER_TEMP}/bronto-publisher"';
 requireJobIncludes(
   'publish-npm',
   publishJob,
@@ -279,7 +279,7 @@ requireJobIncludes(
   'validate',
   validateJob,
   'must prove package assembly with the same locked CLI that publishes',
-  'node tooling/publisher/source/bin/npm-cli.js pack --dry-run --ignore-scripts --json',
+  'node "${RUNNER_TEMP}/bronto-publisher/source/bin/npm-cli.js" pack --dry-run --ignore-scripts --json',
 );
 requireJobIncludes(
   'publish-preflight',
@@ -316,7 +316,7 @@ for (const [name, body] of [
     name,
     body,
     'must audit actual installed publishing tooling without advisory waivers',
-    'node scripts/source-publisher.mjs audit tooling/publisher "${RUNNER_TEMP}/publishing-tooling-audit.json"',
+    'node scripts/source-publisher.mjs audit "${RUNNER_TEMP}/bronto-publisher" "${RUNNER_TEMP}/publishing-tooling-audit.json"',
   );
 }
 
