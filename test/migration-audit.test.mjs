@@ -198,3 +198,13 @@ test('an empty source audit is not reported as a clean migration', () =>
     assert.match(result.stderr, /no supported source files/);
     assert.equal(checkPaths([root]).files, 0, 'ordinary scan keeps its existing behavior');
   }));
+
+test('consumer checker can be imported by a stdin-driven ESM caller', () => {
+  const entry = new URL('../bin/bronto-ui-check.mjs', import.meta.url).href;
+  const result = spawnSync(process.execPath, ['--input-type=module', '-'], {
+    encoding: 'utf8',
+    input: `const module = await import(${JSON.stringify(entry)}); console.log(typeof module.checkPaths);`,
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout.trim(), 'function');
+});
