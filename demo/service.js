@@ -278,3 +278,6 @@ doc.querySelectorAll('[data-service-action]').forEach((control) => {
 });
 renderView();
 root.dataset.demoReady = '1';
+// The same-origin preview must observe dialogs before any image/font delays load.
+// Cross-origin embeds expose no frameElement, so they keep their own lifecycle.
+window.frameElement?.dispatchEvent(new Event('bronto:preview-ready'));

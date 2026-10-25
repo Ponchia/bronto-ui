@@ -127,9 +127,10 @@
 }
 
 .ui-card {
+  /* Theme text and its surface switch together; a background-only fade can
+     briefly put dark-theme text on the previous light surface. */
   transition:
     border-color var(--duration-base) var(--ease-standard),
-    background-color var(--duration-base) var(--ease-standard),
     transform var(--duration-base) var(--ease-standard);
 }
 

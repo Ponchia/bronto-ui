@@ -229,7 +229,7 @@ for (const frame of document.querySelectorAll('.iframe-frame iframe')) {
   const bound = new WeakSet();
   const bind = () => {
     const child = frame.contentDocument;
-    if (!child || bound.has(child)) return;
+    if (!child?.documentElement || bound.has(child)) return;
     bound.add(child);
     const reveal = () => {
       const rect = frame.getBoundingClientRect();
@@ -248,8 +248,21 @@ for (const frame of document.querySelectorAll('.iframe-frame iframe')) {
       attributeFilter: ['open'],
       subtree: true,
     });
-    child.defaultView.addEventListener('pagehide', () => observer.disconnect(), { once: true });
+    child.defaultView.addEventListener('pagehide', (event) => {
+      if (event.persisted) return;
+      observer.disconnect();
+      bound.delete(child);
+    });
+    // A dialog may already be open when a slow resource finally fires load.
+    if (child.querySelector('dialog[open]')) reveal();
   };
   frame.addEventListener('load', bind);
+  // The first-party demo signals interactive readiness before slow assets load.
+  frame.addEventListener('bronto:preview-ready', bind);
+  // Lazy frames can accept input before load. Bind to their current document
+  // when a pointer enters or focus crosses into it, not only after resources.
+  frame.addEventListener('pointerenter', bind);
+  frame.addEventListener('focus', bind);
+  window.addEventListener('blur', bind);
   bind();
 }

@@ -26,9 +26,9 @@
   font-family: var(--sans);
   font-size: var(--text-sm);
   padding: 0.6rem 0.7rem;
-  transition:
-    border-color var(--duration-fast) var(--ease-standard),
-    background-color var(--duration-fast) var(--ease-standard);
+
+  /* Keep text and the field surface on the same theme at every frame. */
+  transition: border-color var(--duration-fast) var(--ease-standard);
   inline-size: 100%;
 }
 

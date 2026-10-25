@@ -9,6 +9,14 @@
 
 ### Fixed
 
+- Keep card and form-field text on a matching surface throughout theme changes.
+  Border/transform feedback remains animated; reduced motion uses zero-duration
+  transitions so unstyled descendants cannot acquire incidental color fades.
+
+- Reveal dialogs in an embedded demo even while a lazy frame is still loading,
+  including keyboard entry and dialogs opened before the load listener attaches.
+  Keep observation active when a persisted page is temporarily hidden.
+
 - Preserve readable button contrast throughout theme and interaction changes by
   removing transitions between foreground and background color pairs.
 
