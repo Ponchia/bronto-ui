@@ -1,5 +1,13 @@
 # SvelteKit
 
+The maintained example uses SvelteKit 3, static adapter 4, and Node 22.17 or
+newer. Its adapter and prerender settings live in the `sveltekit({...})` plugin
+in `vite.config.js`; SvelteKit 3 no longer reads `svelte.config.js`. Existing
+SvelteKit 2 applications can keep their framework configuration while using
+the lifecycle pattern below. See the
+[upstream migration guide](https://svelte.dev/docs/kit/migrating-to-sveltekit-3)
+when upgrading the host framework.
+
 ```bash
 npm i @ponchia/ui
 ```
