@@ -27,7 +27,7 @@ function execute(command, args, options) {
 
 export function checkPackedTypes(root = repoRoot, run = execute) {
   run(npm, ['run', 'verify:artifacts'], { cwd: root, stdio: 'inherit' });
-  const scratch = mkdtempSync(join(tmpdir(), 'bronto-types-'));
+  const scratch = realpathSync(mkdtempSync(join(tmpdir(), 'bronto-types-')));
   try {
     const packed = JSON.parse(
       run(npm, ['pack', '--ignore-scripts', '--json', '--pack-destination', scratch], {

@@ -1,6 +1,14 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -79,6 +87,34 @@ test('ambiguous and out-of-directory pack responses never reach the analyzer', (
       }),
     );
     assert.equal(analyzer, false);
+  }
+});
+
+test('a symlinked temporary directory accepts its owned regular tarball', () => {
+  const root = mkdtempSync(join(tmpdir(), 'bronto-types-symlink-'));
+  const temporaryVariable = process.platform === 'win32' ? 'TEMP' : 'TMPDIR';
+  const previous = process.env[temporaryVariable];
+  let scratch;
+  try {
+    const real = join(root, 'real');
+    const linked = join(root, 'linked');
+    mkdirSync(real);
+    symlinkSync(real, linked, process.platform === 'win32' ? 'junction' : 'dir');
+    process.env[temporaryVariable] = linked;
+    const answer = checkPackedTypes('/unused', (_command, args) => {
+      if (args[0] === 'pack') {
+        scratch = args.at(-1);
+        writeFileSync(join(scratch, 'fixture.tgz'), 'fixture bytes');
+        return JSON.stringify([{ filename: 'fixture.tgz' }]);
+      }
+      return '';
+    });
+    assert.equal(answer.filename, 'fixture.tgz');
+    assert.equal(existsSync(scratch), false);
+  } finally {
+    if (previous === undefined) delete process.env[temporaryVariable];
+    else process.env[temporaryVariable] = previous;
+    rmSync(root, { recursive: true, force: true });
   }
 });
 
