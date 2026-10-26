@@ -30,6 +30,12 @@ and is updated as the serial run progresses. It is measurement evidence, not a
 cached success or a different gate selection. The detailed gate map is in
 [architecture.md](docs/architecture.md#drift-control).
 
+`npm run check:attw` checks the existing release artifacts before packaging them
+without lifecycle scripts into a temporary directory. It checks that exact
+tarball and removes it afterward; stale artifacts fail rather than being rebuilt
+during validation. Use `npm run prepack` to regenerate intentionally. The real
+publication lifecycle still runs its full build and artifact verification.
+
 Choose additional verification for the surface you changed:
 
 | Command | What it checks |

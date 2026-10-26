@@ -206,7 +206,7 @@
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:dtcg": "node scripts/check-dtcg.mjs",
     "check:publint": "publint --strict",
-    "check:attw": "attw --pack --ignore-rules no-resolution cjs-resolves-to-esm",
+    "check:attw": "node scripts/check-packed-types.mjs",
     "check:workflows": "github-actionlint .github/workflows/*.yml",
     "check": "node scripts/run-checks.mjs",
     "test": "node --test \"test/*.test.mjs\"",
