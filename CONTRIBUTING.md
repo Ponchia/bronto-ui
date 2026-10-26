@@ -23,7 +23,11 @@ npm run check
 format checks, public imports and package exports, generated-artifact freshness,
 consumer contracts, documentation links and recipes, accessibility contrast,
 and the complexity budget. It reports every failed gate; use `-- --bail` to
-stop at the first failure. The detailed gate map is in
+stop at the first failure. To retain every gate's duration and outcome, use
+`npm run check -- --report=/absolute/path/checks.json`. The parent directory must
+exist. The report records each gate as passed, failed, interrupted or not run,
+and is updated as the serial run progresses. It is measurement evidence, not a
+cached success or a different gate selection. The detailed gate map is in
 [architecture.md](docs/architecture.md#drift-control).
 
 Choose additional verification for the surface you changed:
