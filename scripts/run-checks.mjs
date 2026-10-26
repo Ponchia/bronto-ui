@@ -1,51 +1,92 @@
-// The aggregate gate behind `npm run check`: `lint`, then every `check:*` script
-// in package.json order, each through `npm run` so its output reads as before.
-// Every gate runs and the summary names each one that failed, so one broken
-// gate does not hide the next (a toolchain bump that failed check:exports used
-// to stop the run before anything after it was measured). The list is the
-// scripts themselves: a new `check:*` gate runs the day it is added.
-//
-// Run: npm run check            every gate, then exit 1 if any failed
-//      npm run check -- --bail  stop at the first failure
+// The manifest owns the complete gate list. Keep serial npm lifecycle execution;
+// optional machine-readable timing helps identify expensive gates before changing it.
 import { spawnSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
-import { repoRoot as root } from './lib/emit.mjs';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { isAbsolute, resolve } from 'node:path';
+import { isMain, repoRoot as root } from './lib/emit.mjs';
 import { log } from './lib/stdio.mjs';
 
-const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
-const gates = ['lint', ...Object.keys(pkg.scripts).filter((key) => key.startsWith('check:'))];
-const bail = process.argv.includes('--bail');
-
-const failed = [];
-const seconds = new Map();
-const started = performance.now();
-for (const gate of gates) {
-  const start = performance.now();
-  const run = spawnSync('npm', ['run', gate], { cwd: root, stdio: 'inherit' });
-  seconds.set(gate, (performance.now() - start) / 1000);
-  if (run.signal) {
-    console.error(`✖ check: interrupted by ${run.signal} during ${gate}`);
-    process.exit(130);
+export function checkOptions(args) {
+  const options = { bail: false, report: undefined };
+  for (const argument of args) {
+    if (argument === '--bail') options.bail = true;
+    else if (argument.startsWith('--report=') && isAbsolute(argument.slice(9)))
+      options.report = argument.slice(9);
+    else throw new Error(`Unknown option: ${argument}. Use --bail or --report=/absolute/path.json`);
   }
-  if (run.status !== 0) {
-    failed.push(gate);
-    if (bail) break;
-  }
+  return options;
 }
 
-const total = ((performance.now() - started) / 1000).toFixed(1);
-const slowest = [...seconds]
-  .sort((a, b) => b[1] - a[1])
-  .slice(0, 3)
-  .map(([gate, s]) => `${gate} ${s.toFixed(1)}s`)
-  .join(', ');
-if (failed.length) {
-  const skipped = gates.length - seconds.size;
-  console.error(
-    `\n✖ check: ${failed.length} of ${gates.length} gates failed: ${failed.join(', ')}` +
-      (skipped ? ` (${skipped} not run after --bail)` : ''),
+export function runChecks(scripts, { bail = false, execute, report = () => {} }) {
+  const gates = ['lint', ...Object.keys(scripts).filter((name) => name.startsWith('check:'))];
+  const results = gates.map((name) => ({ name, state: 'not-run' }));
+  const started = performance.now();
+  let state = 'running';
+  const snapshot = () => ({
+    version: 1,
+    state,
+    seconds: (performance.now() - started) / 1000,
+    results: results.map((result) => ({ ...result })),
+  });
+  report(snapshot());
+  for (const result of results) {
+    const start = performance.now();
+    const run = execute(result.name);
+    Object.assign(result, {
+      state: run.signal ? 'interrupted' : run.status === 0 ? 'passed' : 'failed',
+      seconds: (performance.now() - start) / 1000,
+      exitCode: run.status ?? null,
+      signal: run.signal ?? null,
+      ...(run.error ? { error: String(run.error.message ?? run.error) } : {}),
+    });
+    report(snapshot());
+    if (run.signal || (bail && result.state === 'failed')) break;
+  }
+  state = results.some((result) => result.state === 'interrupted')
+    ? 'interrupted'
+    : results.every((result) => result.state === 'passed')
+      ? 'passed'
+      : 'failed';
+  const answer = snapshot();
+  report(answer);
+  return answer;
+}
+
+function printResult(result) {
+  const failures = result.results.filter((gate) => gate.state === 'failed');
+  const skipped = result.results.filter((gate) => gate.state === 'not-run').length;
+  const interrupted = result.results.find((gate) => gate.state === 'interrupted');
+  if (interrupted) {
+    console.error(`✖ check: interrupted by ${interrupted.signal} during ${interrupted.name}`);
+    return 130;
+  }
+  if (failures.length) {
+    console.error(
+      `\n✖ check: ${failures.length} of ${result.results.length} gates failed: ${failures.map((gate) => gate.name).join(', ')}` +
+        (skipped ? ` (${skipped} not run after --bail)` : ''),
+    );
+    return 1;
+  }
+  const slowest = [...result.results]
+    .sort((a, b) => b.seconds - a.seconds)
+    .slice(0, 3)
+    .map((gate) => `${gate.name} ${gate.seconds.toFixed(1)}s`)
+    .join(', ');
+  log(
+    `\n✓ check: all ${result.results.length} gates passed in ${result.seconds.toFixed(1)}s (slowest: ${slowest})`,
   );
-  process.exit(1);
+  return 0;
 }
-log(`\n✓ check: all ${gates.length} gates passed in ${total}s (slowest: ${slowest})`);
+
+if (isMain(import.meta.url)) {
+  const options = checkOptions(process.argv.slice(2));
+  const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
+  const result = runChecks(pkg.scripts, {
+    bail: options.bail,
+    execute: (gate) => spawnSync('npm', ['run', gate], { cwd: root, stdio: 'inherit' }),
+    report: options.report
+      ? (value) => writeFileSync(options.report, `${JSON.stringify(value, null, 2)}\n`)
+      : undefined,
+  });
+  process.exitCode = printResult(result);
+}
