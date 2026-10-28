@@ -93,7 +93,7 @@ function wireActionMenu(menu, options) {
     const onKey = (event) => {
       if (ignoreListboxKey(event) || closed) return;
       if (event.target.closest?.('[role="menu"]') !== menu) return;
-      if (editingControl(event.target)) return;
+      if (editingControl(event.target, menu)) return;
       if (event.key === 'Tab') {
         onTab(event);
         return;

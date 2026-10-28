@@ -115,3 +115,23 @@ test('command sheet keeps desktop framing and adapts at intermediate phone width
   expect(box.width).toBeGreaterThan(690);
   expect(box.x).toBeLessThanOrEqual(1);
 });
+
+test('composites retain keyboard ownership inside an editable surface', async ({ page }) => {
+  await open(page);
+  const toolbar = page.getByRole('toolbar', { name: 'Editing tools' });
+  await toolbar.evaluate((root) => {
+    root.parentElement.setAttribute('contenteditable', 'true');
+    root.setAttribute('contenteditable', 'false');
+  });
+  await toolbar.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(page.getByRole('button', { name: 'Move', exact: true })).toBeFocused();
+  await page.getByRole('button', { name: 'Open actions' }).click();
+  const menu = page.getByRole('menu', { name: 'Document actions' });
+  await menu.evaluate((root) => {
+    root.parentElement.setAttribute('contenteditable', 'true');
+    root.setAttribute('contenteditable', 'false');
+  });
+  await page.keyboard.press('ArrowDown');
+  await expect(menu.getByRole('menuitem', { name: 'Unavailable action' })).toBeFocused();
+});

@@ -73,7 +73,7 @@ function wireToolbar(root, { ownsKey, exclude }) {
         fieldTab(event, target, items);
         return;
       }
-      if (editingControl(target)) return;
+      if (editingControl(target, root)) return;
       const index = items.indexOf(target);
       if (index < 0) return;
       const vertical = root.getAttribute('aria-orientation') === 'vertical';
