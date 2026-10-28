@@ -14,7 +14,7 @@
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-md);
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   max-block-size: min(28rem, 70vh);
   overflow: hidden;
 }
@@ -114,5 +114,66 @@
 
   .ui-command__item[aria-disabled='true'] {
     color: GrayText;
+  }
+}
+
+/* An adaptive native dialog: the command leaf owns framing; the host owns
+   opening, placement relative to other windows, and keyboard observation. */
+.ui-command-dialog {
+  background: transparent;
+  border: 0;
+  inline-size: min(var(--command-dialog-width, 35rem), calc(100vw - 32px));
+  max-inline-size: none;
+  overflow: visible;
+  padding: 0;
+}
+
+.ui-command-dialog[open] {
+  display: block;
+}
+
+.ui-command-dialog .ui-command {
+  box-shadow: var(--shadow-raised);
+  inline-size: 100%;
+  max-block-size: var(--command-max-block-size, min(70vh, 36rem));
+  position: relative;
+}
+
+/* Applied to the native dialog wrapper, not only to its result list. Host
+   viewport observation may set --command-viewport-inset (CSS pixels). */
+@media (max-width: 45rem) {
+  .ui-command-dialog {
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    inline-size: 100%;
+    margin: auto 0 0;
+    max-block-size: min(82dvh, calc(100dvh - var(--command-viewport-inset, 0px) - 16px));
+    max-inline-size: 100%;
+  }
+
+  .ui-command-dialog .ui-command {
+    border-radius: inherit;
+    border-width: 1px 0 0;
+    inline-size: 100%;
+    max-block-size: inherit;
+    padding-block-end: var(--safe-area-bottom);
+  }
+
+  .ui-command-dialog .ui-command__item {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    min-block-size: 48px;
+    padding: 10px var(--space-sm);
+  }
+
+  .ui-command-dialog .ui-command__item > span:first-child {
+    inline-size: 100%;
+  }
+
+  .ui-command-dialog .ui-command__meta {
+    inline-size: 100%;
+    margin-inline-start: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }

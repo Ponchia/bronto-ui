@@ -1,8 +1,16 @@
 import '@ponchia/ui';
+import '@ponchia/ui/css/workbench.css';
 import { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { cls } from '@ponchia/ui/classes';
-import { initDialog, initDotGlyph, initTabs, initThemeToggle, toast } from '@ponchia/ui/behaviors';
+import {
+  initDialog,
+  initDotGlyph,
+  initTabs,
+  initThemeToggle,
+  initToolbar,
+  toast,
+} from '@ponchia/ui/behaviors';
 import { renderGlyph } from '@ponchia/ui/glyphs';
 import { charts } from '@ponchia/ui/charts';
 import { skins } from '@ponchia/ui/skins';
@@ -18,6 +26,7 @@ function App() {
       initDialog({ root }),
       initTabs({ root }),
       initDotGlyph({ root }),
+      initToolbar({ root }),
     ];
     return () => stops.forEach((stop) => stop());
   }, [bindingsEnabled]);
@@ -45,6 +54,15 @@ function App() {
         </button>
         <button className="ui-button ui-button--ghost" type="button" data-bronto-open="reactDlg">
           Open dialog
+        </button>
+      </div>
+
+      <div className="ui-toolstrip" data-bronto-toolbar aria-label="Example tools">
+        <button className="ui-button" type="button">
+          Select item
+        </button>
+        <button className="ui-button" type="button">
+          Inspect item
         </button>
       </div>
 

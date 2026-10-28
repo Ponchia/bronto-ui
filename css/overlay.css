@@ -492,3 +492,8 @@ html:has(dialog.ui-modal[open]) {
     forced-color-adjust: none;
   }
 }
+
+/* Authored display rules must not reveal a closed action-menu surface. */
+.ui-menu[data-bronto-action-menu][hidden] {
+  display: none;
+}

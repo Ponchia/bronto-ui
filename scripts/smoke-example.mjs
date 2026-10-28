@@ -323,6 +323,17 @@ async function assertVisualSmoke(page, name, browserName, viewportName) {
   }
 }
 
+async function assertWorkspaceToolbar(page, bound = true) {
+  const first = page.getByRole('button', { name: 'Select item', exact: true });
+  const second = page.getByRole('button', { name: 'Inspect item', exact: true });
+  await first.focus();
+  await page.keyboard.press('ArrowRight');
+  const expected = bound ? second : first;
+  if (!(await expected.evaluate((element) => element === document.activeElement))) {
+    throw new Error(`toolbar ${bound ? 'binding' : 'cleanup'} did not preserve its focus contract`);
+  }
+}
+
 async function assertExample(page, name) {
   const assertThemeToggle = async () => {
     const toggle = page.getByRole('button', { name: 'Toggle theme' });
@@ -429,7 +440,9 @@ async function assertExample(page, name) {
     await assertToast();
     await assertDialog();
     await assertTabsAndGlyphs();
+    await assertWorkspaceToolbar(page);
     await assertLifecycleCleanup();
+    await assertWorkspaceToolbar(page, false);
     return;
   }
   if (name === 'sveltekit') {
@@ -439,7 +452,9 @@ async function assertExample(page, name) {
     await assertToast();
     await assertDialog();
     await assertTabsAndGlyphs();
+    await assertWorkspaceToolbar(page);
     await assertLifecycleCleanup();
+    await assertWorkspaceToolbar(page, false);
     return;
   }
   if (name === 'tailwind-vite') {

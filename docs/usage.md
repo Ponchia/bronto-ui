@@ -925,3 +925,12 @@ Use `ui-chip--dense` for a static label in a short pane header.
 retain pointer target floors; use an actual button for an action.
 
 For complete tool/report layouts, use [composition recipes](compositions.md).
+
+
+## Workspace interaction recipes
+
+Use `initToolbar` for one keyboard entry into a toolstrip and `initActionMenu`
+for a flat, arrow-navigated action menu. `initMenu` remains a native disclosure,
+with a different interaction contract. See [workbench](workbench.md#toolbar-keyboard-ownership)
+for lifecycle, focus-return, pixel splitter and scroll-region recipes, and
+[command sheets](command.md#narrow-command-sheets) for the opt-in mobile layout.

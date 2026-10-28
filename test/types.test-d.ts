@@ -612,3 +612,28 @@ const liveTerm: Record<string, string> = xtermTheme(live);
 // @ts-expect-error — a scheme is light or dark.
 readTokens(undefined, { scheme: 'sepia' });
 void [liveScheme, liveHues, parsed, formatted, resolvedLiteral, stopObserving, liveVega, liveTerm];
+
+// Optional workspace behaviors stay framework-free and return disposable bindings.
+import { initToolbar, initActionMenu, type ActionMenuCloseDetail } from '../behaviors/index.js';
+import { initToolbar as toolbarLeaf } from '../behaviors/toolbar.js';
+import { initActionMenu as menuLeaf } from '../behaviors/action-menu.js';
+const toolbarCleanup: Cleanup = initToolbar({
+  root: null,
+  ownsKey: (event, root) => event.defaultPrevented && Boolean(root.hidden),
+});
+const menuCleanup: Cleanup = initActionMenu({
+  root: document.body,
+  invoker: document.body,
+  onClose: (detail: ActionMenuCloseDetail) => {
+    const backwards: boolean = detail.backwards;
+    void backwards;
+  },
+  tabTarget: (_backwards) => document.body,
+  closeOnSelect: false,
+});
+toolbarCleanup();
+menuCleanup();
+toolbarLeaf()();
+menuLeaf()();
+// @ts-expect-error menu close is a callback, not application state
+initActionMenu({ onClose: true });

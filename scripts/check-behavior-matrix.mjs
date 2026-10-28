@@ -16,6 +16,24 @@ const text = createTextReader(root);
 const nonPixelE2eSpecs = new Set(discoverNonPixelE2eSpecs(root));
 
 const BEHAVIORS = [
+  behavior('initToolbar', {
+    docs: [{ file: 'docs/workbench.md', includes: ['initToolbar'] }],
+    unit: [{ file: 'test/workspace-behaviors.test.mjs', includes: ['initToolbar:'] }],
+    browser: [
+      { file: 'test/e2e/workspace-primitives.spec.mjs', includes: ['toolbar keyboard contract'] },
+    ],
+  }),
+  behavior('initActionMenu', {
+    docs: [{ file: 'docs/workbench.md', includes: ['initActionMenu'] }],
+    unit: [{ file: 'test/workspace-behaviors.test.mjs', includes: ['initActionMenu:'] }],
+    browser: [
+      {
+        file: 'test/e2e/workspace-primitives.spec.mjs',
+        includes: ['action menu preserves focus handoff'],
+      },
+    ],
+  }),
+
   behavior('applyStoredTheme', {
     docs: [{ file: 'docs/usage.md', includes: ['applyStoredTheme'] }],
     unit: [{ file: 'test/behaviors.test.mjs', includes: ['applyStoredTheme applies'] }],

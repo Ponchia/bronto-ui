@@ -1,4 +1,12 @@
-import { hasDom, resolveHost, noop, bindOnce, collectHosts, closestSafe } from './internal.js';
+import {
+  hasDom,
+  resolveHost,
+  noop,
+  bindOnce,
+  collectHosts,
+  closestSafe,
+  isUnavailable,
+} from './internal.js';
 
 const SELECTOR = '[data-bronto-splitter]';
 const HANDLE_SELECTOR = '.ui-splitter__handle';
@@ -13,6 +21,7 @@ const LARGE_STEP = 10;
  * @typedef {object} SplitterResizeDetail
  * @property {number} value The first pane size as a 0..100 percentage.
  * @property {'vertical' | 'horizontal'} orientation Splitter orientation.
+ * @property {'px'} [unit] Present for pixel-valued hosts; absent for legacy percentages.
  */
 
 const NUMBER_RE = /^[-+]?(?:(?:\d+\.?\d*)|\.\d+)(?:e[-+]?\d+)?$/i;
@@ -47,7 +56,7 @@ const getView = (el) => el.ownerDocument?.defaultView || null;
 
 const dispatchResize = (splitter, detail) => {
   splitter.dispatchEvent(
-    new CustomEvent('bronto:splitter:resize', {
+    new splitter.ownerDocument.defaultView.CustomEvent('bronto:splitter:resize', {
       bubbles: true,
       detail,
     }),
@@ -82,6 +91,33 @@ const restoreStyleProp = (el, name, prop) => {
   else el.style.removeProperty(name);
 };
 
+function readRange(handle) {
+  const min = num(handle.getAttribute('aria-valuemin'), DEFAULT_MIN);
+  return { min, max: Math.max(min, num(handle.getAttribute('aria-valuemax'), DEFAULT_MAX)) };
+}
+
+const horizontalKeySign = (orientation, rtl) => (orientation === 'vertical' && rtl ? -1 : 1);
+
+function positionForKey(event, value, bounds, orientation, rtl, step, largeStep) {
+  if (event.key === 'Home') return bounds.min;
+  if (event.key === 'End') return bounds.max;
+  if (event.key === 'PageUp') return value + largeStep;
+  if (event.key === 'PageDown') return value - largeStep;
+  const backwards = orientation === 'horizontal' ? 'ArrowUp' : 'ArrowLeft';
+  const forwards = orientation === 'horizontal' ? 'ArrowDown' : 'ArrowRight';
+  if (event.key !== backwards && event.key !== forwards) return null;
+  const sign = horizontalKeySign(orientation, rtl);
+  return value + (event.key === forwards ? 1 : -1) * sign * (event.shiftKey ? largeStep : step);
+}
+
+const keyIgnored = (event) =>
+  event.defaultPrevented ||
+  event.isComposing ||
+  event.keyCode === 229 ||
+  event.altKey ||
+  event.ctrlKey ||
+  event.metaKey;
+
 function wireSplitter(splitter) {
   const handle = splitter.querySelector(HANDLE_SELECTOR);
   if (!handle) return noop;
@@ -97,6 +133,12 @@ function wireSplitter(splitter) {
     ]);
     const splitterPos = snapshotStyleProp(splitter, '--splitter-pos');
     const orientation = readOrientation(splitter, handle);
+    const pixels = splitter.getAttribute('data-bronto-splitter-unit') === 'px';
+    const step = Math.max(0, num(splitter.getAttribute('data-bronto-splitter-step'), STEP));
+    const largeStep = Math.max(
+      step,
+      num(splitter.getAttribute('data-bronto-splitter-large-step'), LARGE_STEP),
+    );
     const minAttr = handle.getAttribute('aria-valuemin');
     const maxAttr = handle.getAttribute('aria-valuemax');
     const min = num(minAttr, DEFAULT_MIN);
@@ -119,11 +161,12 @@ function wireSplitter(splitter) {
     let activePointer = null;
 
     const apply = (next, { emit = true } = {}) => {
-      value = clamp(next, min, max);
+      const bounds = readRange(handle);
+      value = clamp(next, bounds.min, bounds.max);
       const label = fmt(value);
-      splitter.style.setProperty('--splitter-pos', `${label}%`);
+      splitter.style.setProperty('--splitter-pos', `${label}${pixels ? 'px' : '%'}`);
       handle.setAttribute('aria-valuenow', label);
-      if (emit) dispatchResize(splitter, { value, orientation });
+      if (emit) dispatchResize(splitter, { value, orientation, ...(pixels ? { unit: 'px' } : {}) });
     };
 
     if (!handle.hasAttribute('role')) handle.setAttribute('role', 'separator');
@@ -139,12 +182,12 @@ function wireSplitter(splitter) {
       const size = orientation === 'horizontal' ? rect.height : rect.width;
       if (!size) return value;
       if (orientation === 'horizontal') {
-        return ((event.clientY - rect.top) / size) * 100;
+        return pixels ? event.clientY - rect.top : ((event.clientY - rect.top) / size) * 100;
       }
       const view = getView(splitter);
       const dir = view?.getComputedStyle?.(splitter).direction;
       const x = dir === 'rtl' ? rect.right - event.clientX : event.clientX - rect.left;
-      return (x / size) * 100;
+      return pixels ? x : (x / size) * 100;
     };
 
     const capturePointer = (pointerId) => {
@@ -168,21 +211,28 @@ function wireSplitter(splitter) {
     };
 
     const onKeydown = (event) => {
-      let next = value;
-      if (event.key === 'Home') next = min;
-      else if (event.key === 'End') next = max;
-      else if (event.key === 'PageUp') next += LARGE_STEP;
-      else if (event.key === 'PageDown') next -= LARGE_STEP;
-      else if (event.key === 'ArrowRight' || event.key === 'ArrowDown')
-        next += event.shiftKey ? LARGE_STEP : STEP;
-      else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp')
-        next -= event.shiftKey ? LARGE_STEP : STEP;
-      else return;
+      if (keyIgnored(event) || isUnavailable(handle)) return;
+      const current = num(handle.getAttribute('aria-valuenow'), value);
+      const rtl = getView(splitter)?.getComputedStyle(splitter).direction === 'rtl';
+      const next = positionForKey(
+        event,
+        current,
+        readRange(handle),
+        orientation,
+        rtl,
+        step,
+        largeStep,
+      );
+      if (next === null) return;
       event.preventDefault();
       apply(next);
     };
 
     const onPointerMove = (event) => {
+      if (isUnavailable(handle)) {
+        onPointerUp(event);
+        return;
+      }
       if (
         activePointer !== null &&
         event.pointerId !== undefined &&
@@ -199,8 +249,9 @@ function wireSplitter(splitter) {
         event.pointerId !== activePointer
       )
         return;
-      releasePointer(event.pointerId);
+      const pointer = activePointer;
       activePointer = null;
+      if (event.type !== 'lostpointercapture') releasePointer(pointer);
       handle.classList.remove('is-active');
       splitter.ownerDocument.removeEventListener('pointermove', onPointerMove);
       splitter.ownerDocument.removeEventListener('pointerup', onPointerUp);
@@ -208,6 +259,8 @@ function wireSplitter(splitter) {
     };
 
     const onPointerDown = (event) => {
+      if (activePointer !== null || event.defaultPrevented || isUnavailable(handle)) return;
+      if (event.isPrimary === false) return;
       if (event.button !== undefined && event.button !== 0) return;
       event.preventDefault();
       activePointer = event.pointerId ?? null;
@@ -220,20 +273,24 @@ function wireSplitter(splitter) {
     };
 
     const onClick = (event) => {
+      if (event.defaultPrevented || isUnavailable(handle)) return;
       const control = closestSafe(event.target, ADJUST_SELECTOR);
       if (!control || control.closest(SELECTOR) !== splitter) return;
       const delta = num(control.getAttribute('data-bronto-splitter-adjust'), Number.NaN);
       if (!Number.isFinite(delta) || delta === 0) return;
       event.preventDefault();
-      apply(value + delta);
+      if (isUnavailable(control)) return;
+      apply(num(handle.getAttribute('aria-valuenow'), value) + delta);
     };
 
     handle.addEventListener('keydown', onKeydown);
     handle.addEventListener('pointerdown', onPointerDown);
+    handle.addEventListener('lostpointercapture', onPointerUp);
     splitter.addEventListener('click', onClick);
     return () => {
       handle.removeEventListener('keydown', onKeydown);
       handle.removeEventListener('pointerdown', onPointerDown);
+      handle.removeEventListener('lostpointercapture', onPointerUp);
       splitter.removeEventListener('click', onClick);
       splitter.ownerDocument.removeEventListener('pointermove', onPointerMove);
       splitter.ownerDocument.removeEventListener('pointerup', onPointerUp);
@@ -256,6 +313,10 @@ function wireSplitter(splitter) {
  * Buttons inside the splitter may set `data-bronto-splitter-adjust="-10"` or
  * `"10"` to provide the required single-pointer, non-drag resize path.
  *
+ * Set `data-bronto-splitter-unit="px"` for pixel values and optionally
+ * `data-bronto-splitter-step` / `data-bronto-splitter-large-step` for key steps.
+ * ARIA bounds and current values are read live so a controlled host can resize
+ * its containing viewport or select another pane without stale limits.
  * Bronto owns the control affordance only. The host owns pane content,
  * persistence, min/max policy, collapse behavior, and any saved layout state.
  * SSR-safe and idempotent per splitter; returns a cleanup function.

@@ -1,6 +1,7 @@
 <script>
+  import '@ponchia/ui/css/workbench.css';
   import { onMount } from 'svelte';
-  import { initDialog, initDotGlyph, initTabs, initThemeToggle, toast } from '@ponchia/ui/behaviors';
+  import { initDialog, initDotGlyph, initTabs, initThemeToggle, initToolbar, toast } from '@ponchia/ui/behaviors';
   let root;
   let bindingsEnabled = true;
   let stops = [];
@@ -10,7 +11,7 @@
     bindingsEnabled = false;
   }
   onMount(() => {
-    stops = [initThemeToggle({ root }), initDialog({ root }), initTabs({ root }), initDotGlyph({ root })];
+    stops = [initThemeToggle({ root }), initDialog({ root }), initTabs({ root }), initDotGlyph({ root }), initToolbar({ root })];
     return disableBindings;
   });
   function notify() {
@@ -41,6 +42,11 @@
     <button class="ui-button ui-button--ghost" type="button" data-bronto-open="svelteDlg">
       Open dialog
     </button>
+  </div>
+
+  <div class="ui-toolstrip" data-bronto-toolbar aria-label="Example tools">
+    <button class="ui-button" type="button">Select item</button>
+    <button class="ui-button" type="button">Inspect item</button>
   </div>
 
   <div data-bronto-tabs class="ui-tabs">

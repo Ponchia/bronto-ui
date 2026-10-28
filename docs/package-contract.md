@@ -238,6 +238,8 @@ semantic versioning contract for the surfaces listed here.
 | `./css/unlayered/discussion.css` | `./css/discussion.css` | Unlayered CSS leaf | Stable path | Raw authored CSS leaf for consumers that deliberately opt out of @layer bronto on that leaf. |
 | `./docs/discussion.md` | `./docs/discussion.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
 | `./docs/migrations/0.16-to-0.17.md` | `./docs/migrations/0.16-to-0.17.md` | Shipped documentation | Stable path | Markdown documentation shipped in the tarball. Paths are public reading assets within a compatible minor. |
+| `./behaviors/toolbar` | types: `./behaviors/toolbar.d.ts`<br>default: `./behaviors/toolbar.js` | Package subpath | Public | Exported package subpath. See docs/stability.md for semantic stability. |
+| `./behaviors/action-menu` | types: `./behaviors/action-menu.d.ts`<br>default: `./behaviors/action-menu.js` | Package subpath | Public | Exported package subpath. See docs/stability.md for semantic stability. |
 
 ## Shipped Files Allowlist
 

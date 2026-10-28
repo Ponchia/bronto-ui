@@ -17,6 +17,9 @@
  * re-exported here by name; the shipped `index.d.ts` is generated from this
  * source by `tsc --emitDeclarationOnly` (so the declarations cannot drift).
  *
+ * @typedef {import('./toolbar.js').ToolbarOpts} ToolbarOpts
+ * @typedef {import('./action-menu.js').ActionMenuOpts} ActionMenuOpts
+ * @typedef {import('./action-menu.js').ActionMenuCloseDetail} ActionMenuCloseDetail
  * @typedef {import('./internal.js').Cleanup} Cleanup
  * @typedef {import('./internal.js').DelegateOpts} DelegateOpts
  * @typedef {import('./theme.js').ThemeStorageOpts} ThemeStorageOpts
@@ -50,3 +53,5 @@ export { initCrosshair } from './crosshair.js';
 export { initCommand } from './command.js';
 export { initSources } from './sources.js';
 export { initSplitter } from './splitter.js';
+export { initToolbar } from './toolbar.js';
+export { initActionMenu } from './action-menu.js';

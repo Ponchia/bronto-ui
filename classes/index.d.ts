@@ -14,6 +14,8 @@ export type ClassValue =
 
 /** The flat registry of every class @ponchia/ui defines (literal). */
 export declare const cls: {
+  readonly scrollRegion: 'ui-scroll-region';
+  readonly commandDialog: 'ui-command-dialog';
   readonly button: 'ui-button';
   readonly buttonGhost: 'ui-button--ghost';
   readonly buttonSubtle: 'ui-button--subtle';
