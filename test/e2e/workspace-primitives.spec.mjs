@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { scan, blocking, settleVisualState } from './_demo-guards.mjs';
 
 const open = (page) => page.goto('/demo/workspace-primitives.html', { waitUntil: 'networkidle' });
 
@@ -115,3 +116,36 @@ test('command sheet keeps desktop framing and adapts at intermediate phone width
   expect(box.width).toBeGreaterThan(690);
   expect(box.x).toBeLessThanOrEqual(1);
 });
+
+for (const theme of ['light', 'dark']) {
+  test(`active command metadata remains readable in the sheet (${theme})`, async ({
+    page,
+  }, info) => {
+    await page.setViewportSize({ width: 320, height: 640 });
+    await open(page);
+    await page.locator('html').evaluate((element, value) => {
+      element.dataset.theme = value;
+    }, theme);
+    await page.getByRole('button', { name: 'Open commands' }).click();
+    const row = page.locator('.ui-command__item.is-active').first();
+    await expect(row).toBeVisible();
+    // Exercise both supported secondary-text parts in the selected row.
+    await row.evaluate((element) => {
+      const shortcut = element.ownerDocument.createElement('kbd');
+      shortcut.className = 'ui-command__shortcut';
+      shortcut.textContent = 'Ctrl+H';
+      element.append(shortcut);
+    });
+    await settleVisualState(page);
+    await page.screenshot({ path: info.outputPath(`command-metadata-${theme}.png`) });
+    const findings = blocking(await scan(page).include('#commands').analyze());
+    expect(findings, JSON.stringify(findings)).toEqual([]);
+    // System selection colors must also reach metadata, not leave dim ink
+    // over Highlight. This uses the browser's colors rather than literals.
+    await page.emulateMedia({ forcedColors: 'active' });
+    await settleVisualState(page);
+    const foreground = await row.evaluate((element) => getComputedStyle(element).color);
+    await expect(row.locator('.ui-command__meta')).toHaveCSS('color', foreground);
+    await expect(row.locator('.ui-command__shortcut')).toHaveCSS('color', foreground);
+  });
+}

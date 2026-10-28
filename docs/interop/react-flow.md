@@ -56,13 +56,14 @@ to the canvas.
 ## HTML edge labels
 
 If you use React Flow's `EdgeLabelRenderer`, remember that labels are HTML
-overlays, not SVG text. Container/group nodes can paint over them. Lift the label
-overlay only inside the graph surface, and keep labels pointer-transparent unless
-they are deliberately interactive:
+overlays, not SVG text. When individual labels follow their edge layers, keep
+the label container out of a new stacking context. A fixed container z-index
+can trap labels below elevated SVGs, especially inside nested groups. Keep
+labels pointer-transparent unless they are deliberately interactive:
 
 ```css
 .flow-surface .react-flow__edgelabel-renderer {
-  z-index: var(--z-raised, 10);
+  z-index: auto;
 }
 
 .flow-surface .flow-edge-label {

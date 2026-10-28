@@ -94,6 +94,12 @@
   margin-inline-start: auto;
 }
 
+/* Selected metadata uses the selected ink: dim text on the selection tint
+   can fall below text contrast. In forced colors this inherits HighlightText. */
+.ui-command__item.is-active :is(.ui-command__shortcut, .ui-command__meta) {
+  color: inherit;
+}
+
 .ui-command__empty {
   color: var(--text-dim);
   padding: 0.85rem 1rem;

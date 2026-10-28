@@ -23,6 +23,13 @@
 
 ### Fixed
 
+- Keep selected command metadata and shortcut text on the selected foreground,
+  including system selection colors. Browser tests cover the narrow-screen
+  light/dark composition and forced colors.
+- Correct the React Flow label-layer recipe: a fixed container z-index can
+  trap individually elevated edge labels inside a stacking context.
+
+
 - Keep card and form-field text on a matching surface throughout theme changes.
   Border/transform feedback remains animated; reduced motion uses zero-duration
   transitions so unstyled descendants cannot acquire incidental color fades.
