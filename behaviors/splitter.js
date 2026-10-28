@@ -19,7 +19,7 @@ const LARGE_STEP = 10;
 
 /**
  * @typedef {object} SplitterResizeDetail
- * @property {number} value The first pane size as a 0..100 percentage.
+ * @property {number} value The first pane size in percentage points, or CSS pixels for a pixel host.
  * @property {'vertical' | 'horizontal'} orientation Splitter orientation.
  * @property {'px'} [unit] Present for pixel-valued hosts; absent for legacy percentages.
  */

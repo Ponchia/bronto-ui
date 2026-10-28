@@ -334,3 +334,29 @@ test('initActionMenu: an immediate Escape after opening has no animation-frame g
   assert.deepEqual(reasons, ['escape']);
   assert.equal(d.activeElement, invoker);
 });
+
+test('initToolbar: controls own keys inside an outer editor while nested editable fields keep theirs', () => {
+  const d = mount(`<div contenteditable="true">${toolbar}</div>`);
+  const root = d.querySelector('[data-bronto-toolbar]');
+  root.contentEditable = 'false';
+  const field = d.createElement('div');
+  field.setAttribute('contenteditable', 'true');
+  field.setAttribute('data-bronto-toolbar-item', '');
+  root.append(field);
+  cleanups.push(initToolbar());
+  d.querySelector('#first').focus();
+  key(d.activeElement, 'ArrowRight');
+  assert.equal(d.activeElement.id, 'last');
+  field.focus();
+  assert.equal(key(field, 'ArrowLeft').defaultPrevented, false);
+  assert.equal(d.activeElement, field);
+});
+
+test('initActionMenu: surrounding editable content cannot suppress menu navigation', () => {
+  const d = mount(`<div contenteditable="true">${menu}</div>`);
+  const root = d.querySelector('[data-bronto-action-menu]');
+  root.setAttribute('contenteditable', 'false');
+  cleanups.push(initActionMenu({ root, invoker: d.querySelector('#origin') }));
+  key(d.activeElement, 'ArrowDown');
+  assert.equal(d.activeElement.id, 'disabled');
+});

@@ -57,12 +57,14 @@ export function compositeIndex(key, current, count, vertical, rtl = false) {
   return (current + delta + count) % count;
 }
 
-export const editingControl = (element) =>
-  Boolean(
-    element.closest(
-      'input, select, textarea, [contenteditable]:not([contenteditable="false"]), [role="combobox"], [role="slider"], [role="spinbutton"], [role="textbox"], [role="tree"], [role="grid"]',
-    ),
+/** A surrounding editor does not own the composite's controls. */
+export function editingControl(element, root) {
+  const owner = element.closest(
+    'input, select, textarea, [contenteditable], [role="combobox"], [role="slider"], [role="spinbutton"], [role="textbox"], [role="tree"], [role="grid"]',
   );
+  if (!owner || owner === root || !root.contains(owner)) return false;
+  return owner.getAttribute('contenteditable')?.toLowerCase() !== 'false';
+}
 
 /** DOM ownership matters before a framework's delegated key handler runs. */
 export function nestedComposite(element, root) {

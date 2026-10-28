@@ -21,7 +21,7 @@
 export function initSplitter({ root }?: import("./internal.js").DelegateOpts): import("./internal.js").Cleanup;
 export type SplitterResizeDetail = {
     /**
-     * The first pane size as a 0..100 percentage.
+     * The first pane size in percentage points, or CSS pixels for a pixel host.
      */
     value: number;
     /**
