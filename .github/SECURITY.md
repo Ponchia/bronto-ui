@@ -68,20 +68,37 @@ this tooling stack. The 23 October 2026 full root lockfile audit, including
 development dependencies, reports **zero vulnerabilities** (exit 0). Recheck
 the lockfile audit when updating the lint toolchain.
 
-### Release CLI
+### Current protected npm publisher
 
-On 25 October 2026, the replacement publisher was qualified from unchanged,
-commit- and hash-pinned official npm source with separately locked dependencies.
-Its full 147-component audit (CLI included) reports zero findings. It retains the
-high/critical threshold, protected environment, OIDC and disabled lifecycle
-scripts. See the [tooling guide](tooling/README.md#current-publisher-upstream-source-and-locked-dependencies).
-This qualifies the publisher input, not a package release or live authentication.
+As of **29 October 2026**, `@ponchia/ui@0.18.1` is successfully published on
+npm through the protected GitHub Actions trusted-publishing workflow. The
+registry exposes its [SLSA provenance attestation](https://registry.npmjs.org/-/npm/v1/attestations/@ponchia%2fui@0.18.1).
+A green workflow or source-only preparation is not itself a publication;
+the package and attestation were independently verified after the release.
 
-### Historical bundled-distribution blocker
+The executed publisher uses unchanged official npm CLI source, pinned by commit
+and reviewed source-file hashes, with a separately integrity-locked complete
+dependency graph. The installed graph includes patched
+`undici@6.29.1` and `ip-address@10.7.4`; the complete audit includes the
+unchanged CLI (147 total components). On 25 October the qualified graph had
+**zero reported findings**. Before every future execution, the pipeline
+checks source and dependency identities, installed manifests and a fresh
+complete advisory report. High/critical findings and unavailable or
+inconsistent reports block publication. The protected environment, short-lived
+OIDC, disabled lifecycle scripts and provenance remain required.
 
-As of 24 October 2026, publication is **blocked** by a high-severity advisory
-in the isolated `npm@11.21.1` publisher bundle. The complete reviewed findings
-are:
+The authoritative execution and qualification instructions are in the
+[active publisher guide](tooling/README.md#active-publishing-inputs), alongside
+[read-only qualification](tooling/README.md#read-only-qualification).
+A historical clean audit is not a permanent waiver: new advisories must be
+reviewed against the actual source and installed graph.
+
+### Historical bundled-distribution blocker — resolved as an execution input
+
+On **24 October 2026**, the examined *official bundled distributions* of
+`npm@11.21.1` and `npm@12.2.1` still contained the following vulnerable
+dependencies. Publishing through the bundled CLI was correctly **blocked at
+that time**:
 
 | Bundled package | Advisory | Severity | First patched version |
 | --- | --- | --- | --- |
@@ -89,20 +106,19 @@ are:
 | `undici@6.29.0` | [GHSA-4qv8-2p9j-2685](https://github.com/advisories/GHSA-4qv8-2p9j-2685) | Moderate | 6.29.1 |
 | `ip-address@10.7.2` | [GHSA-rxp7-6hxx-x8q5](https://github.com/advisories/GHSA-rxp7-6hxx-x8q5) | Moderate | 10.7.4 |
 
-The examined upstream npm 11.21.1 and 12.2.1 distributions both contain these
-affected bundled versions. The 23 October audit predates the newer Undici
-advisory data; its then-current result is not the current release status.
-These are release-tool dependencies, not dependencies shipped by `@ponchia/ui`.
+The executable publisher changed in
+[PR #281](https://github.com/Ponchia/bronto-ui/pull/281): it uses hash-pinned
+upstream *source* with a separately locked patched graph rather than the
+affected bundled npm distribution. The obsolete, installable bundled npm
+dependency graph was removed in
+[PR #288](https://github.com/Ponchia/bronto-ui/pull/288). Its adversarial
+negative tests remain without retaining a vulnerable executable input.
+No advisory exception, bundle relabeling or weaker audit threshold was used.
 
-Both publication preflight and the protected publish job audit the actual
-installed bundle against the complete lockfile. They refuse high/critical
-findings, inconsistent installed bytes, or unavailable audits. Ordinary CI can
-pass while publication remains blocked: deterministic guard tests do not
-substitute for the live publisher audit.
-
-The [CI tooling advisory review](tooling/README.md#current-npm-bundle-advisory-review)
-records the reviewed bundle, reproducible commands and criteria for a replacement.
-Keep [issue #234](https://github.com/Ponchia/bronto-ui/issues/234) open until its
-bundled findings are resolved. Integrity locking, OIDC and protected publishing
-controls do not remediate those findings; do not bypass the guard or relabel
-bundled package versions to publish.
+[Issue #234](https://github.com/Ponchia/bronto-ui/issues/234) was **closed on
+29 October 2026**, after a protected 0.18.1 publication with provenance and
+GitHub's dependency-alert list returned zero open records. The official
+historical bundled artifacts remain affected; they are *not* the published
+library's dependencies or the current release job's executed source. Continue
+to report any new findings through the private vulnerability-reporting link
+above rather than treating the historical closure as future approval.
