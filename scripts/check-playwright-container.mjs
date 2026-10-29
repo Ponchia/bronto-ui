@@ -54,6 +54,50 @@ for (const rel of [
   }
 }
 
+// Non-pixel WebKit has its own Ubuntu Noble image, pinned to the *same*
+// Playwright version. Chromium snapshots and the local visual runner must
+// remain tied to the original Jammy digest above.
+try {
+  const noble = playwrightImageFrom(
+    read('.github/workflows/e2e-webkit-noble.yml'),
+    playwrightVersion,
+    'noble',
+  );
+  if (!noble.includes('@sha256:')) errors.push('WebKit Noble image must be digest-pinned');
+} catch (error) {
+  errors.push(`WebKit Noble browser workflow: ${error.message}`);
+}
+requireIncludes(
+  '.github/workflows/e2e.yml',
+  'uses: ./.github/workflows/e2e-webkit-noble.yml',
+  'required WebKit reusable workflow',
+);
+requireIncludes(
+  '.github/workflows/e2e.yml',
+  'if: inputs.cross_engine',
+  'WebKit conditional coverage',
+);
+requireIncludes(
+  '.github/workflows/e2e.yml',
+  '--project=chromium --project=firefox',
+  'explicit Jammy browser project selection',
+);
+requireIncludes(
+  '.github/workflows/e2e-webkit-noble.yml',
+  '--project=webkit',
+  'Noble nonpixel WebKit project selection',
+);
+requireIncludes(
+  '.github/workflows/e2e-webkit-noble.yml',
+  'shard: [1, 2, 3]',
+  'Noble parity shard matrix',
+);
+requireIncludes(
+  '.github/workflows/e2e-webkit-noble.yml',
+  'PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD',
+  'Noble uses the image browser binaries',
+);
+
 // Example consumers run against the same preinstalled browser binaries.
 // Reintroducing npx playwright install on hosted runners burns minutes and
 // previously cancelled an otherwise green tagged release.

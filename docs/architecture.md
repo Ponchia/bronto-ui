@@ -237,9 +237,13 @@ pointer:
   section need only exist (`## Unreleased — x.y.z` is fine) — only a stable
   release must carry a dated heading.
 - `e2e` — `needs: validate`: Playwright (visual + axe a11y, both themes,
-  demo structural integrity, cross-engine) in the pinned
-  `mcr.microsoft.com/playwright` container. Local cross-engine reproduction
-  without screenshot rasterisation is
+  demo structural integrity, cross-engine) in pinned
+  `mcr.microsoft.com/playwright` containers. Chromium pixel baselines and
+  Firefox stay on Jammy, while the complete non-pixel WebKit project is a
+  separately required nested reusable workflow on pinned Noble. The cross-engine
+  caller fails if either browser job fails; Chromium-only PRs intentionally
+  skip the Noble job. Jammy screenshots never run on Noble. Local cross-engine
+  reproduction without screenshot rasterisation is
   `npm run test:e2e:nonpixel`; use `npm run test:e2e` or
   `npm run test:e2e:chromium` only in the pinned container when the pixel
   baseline gate itself is in scope. With Docker running,

@@ -14,7 +14,10 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 /** Read the executable image entry, rejecting mutable or mismatched identities. */
-export function playwrightImageFrom(workflow, version) {
+export function playwrightImageFrom(workflow, version, distro = 'jammy') {
+  if (distro !== 'jammy' && distro !== 'noble') {
+    throw new Error('Playwright container distro must be jammy or noble');
+  }
   if (!/^\d+\.\d+\.\d+$/.test(version ?? '')) {
     throw new Error('@playwright/test must use an exact x.y.z version');
   }
@@ -24,7 +27,7 @@ export function playwrightImageFrom(workflow, version) {
     .replace(/\s+#.*$/, '')
     .trim()
     .replace(/^(['"])(.*)\1$/, '$2');
-  const prefix = `mcr.microsoft.com/playwright:v${version}-jammy@sha256:`;
+  const prefix = `mcr.microsoft.com/playwright:v${version}-${distro}@sha256:`;
   if (!image.startsWith(prefix) || !/^[a-f0-9]{64}$/.test(image.slice(prefix.length))) {
     throw new Error(`Playwright image must be ${prefix}<64 hex characters>, got ${image}`);
   }

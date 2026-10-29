@@ -33,6 +33,14 @@
 
 ### Maintenance
 
+- Keep Chromium's existing Jammy screenshot baseline and Firefox checks while
+  moving only the full WebKit non-pixel matrix to pinned Noble. Exact Playwright
+  1.60.0, 3 shards, retry/trace policy, required release coverage and browser
+  assertions are preserved. A read-only 30-repeat A/B reproduced Jammy's
+  parallel page crash twice and passed on Noble; native cause remains tracked
+  in issue #250. The separate Noble lane must pass hosted CI before release.
+
+
 - Extend the manual, read-only WebKit crash probe with a pinned Jammy/Noble
   OS comparison at one and three workers. Preserve Playwright 1.60.0,
   unchanged browser assertions, zero retries and retained crash diagnostics.
