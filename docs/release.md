@@ -66,8 +66,11 @@ updates reviewable together; follow the
 Validation, preflight and publication verify the source and actual installed
 dependency graph, then audit all components, including the CLI identity, against
 the public advisory registry. A high/critical finding or unavailable audit blocks
-candidate execution. The original vulnerable bundled distribution is retained
-only as a historical negative control, not the active publisher.
+candidate execution. The original vulnerable bundled distribution was retired as an executable
+release input and removed from the committed tooling graph in PR #288.
+Adversarial negative controls use synthetic audit and integrity fixtures,
+not a retained vulnerable installable dependency; the historical review is in
+issue #234. This does not weaken the live publisher's fail-closed audit.
 Review the retained audit artifact and the tooling guide before approving a
 release. Earlier success does not replace a fresh publication-time audit.
 
