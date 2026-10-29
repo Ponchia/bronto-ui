@@ -74,8 +74,7 @@ not arrange a graph or replace rendering and accessibility tests. Bronto UI
 provides their optional presentation vocabulary without taking ownership of
 these separate domains. None requires a particular canvas application.
 
-Outside the browser libraries, [Bronto TUI](https://github.com/Ponchia/bronto-tui)
-uses the design tokens in Python/Textual.
+Outside the browser libraries,
 [Bronto Pulse](https://github.com/Ponchia/bronto-pulse) is a separate project
 analytics application with private data and deployment; it is not a UI
 dependency or an analytics service enabled by installing Bronto UI.
