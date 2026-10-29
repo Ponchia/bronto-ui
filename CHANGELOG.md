@@ -15,6 +15,15 @@
   deprecated runtime compatibility remain unchanged; indirect dataflow and
   deployed rendering acceptance remain manual migration prerequisites.
 
+### Changed
+
+- Compact only parsed CSS declaration separators with PostCSS. The earlier
+  Lightning CSS candidate rewrote public custom-property values and folded
+  scroll-animation timeline longhands into invalid browser syntax; the
+  original browser checks correctly blocked it. Keep token strings,
+  animation syntax and every exported leaf stable, without raising the
+  100,000 B raw / 18,000 B gzip budget. Full cross-engine CI is required.
+
 ### Maintenance
 
 - Retire the unused vulnerable bundled npm CLI lock and its obsolete readiness
