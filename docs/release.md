@@ -2,6 +2,16 @@
 
 ## Before Tagging
 
+**Public install contract:** Version preparation belongs in an isolated release
+branch until the maintainer is ready to complete the tag-driven publication
+and protected environment approval. Do not merge a version-only metadata
+change early: it updates the pinned CDN copy-paste URLs and package name/version
+before that version exists on npm. If publication cannot proceed after merging,
+restore the last *published* version in the default-branch package metadata,
+public version snippets and issue template, keeping the next version's changelog
+under `Unreleased`. Do not remove accepted source fixes or weaken checks to
+work around an unpublished CDN URL.
+
 Check the publisher first with `npm run publisher:readiness -- /path/to/evidence-parent`.
 This installs and audits the reviewed CLI in disposable storage without requiring
 an existing publisher installation, a version bump, a tag or publication.

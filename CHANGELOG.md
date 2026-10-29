@@ -5,7 +5,7 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
-## 0.18.2 — 2026-10-29
+## Unreleased — 0.18.2
 
 ### Fixed
 
