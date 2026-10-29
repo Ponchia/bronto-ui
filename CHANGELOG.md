@@ -33,6 +33,11 @@
 
 ### Maintenance
 
+- Extend the manual, read-only WebKit crash probe with a pinned Jammy/Noble
+  OS comparison at one and three workers. Preserve Playwright 1.60.0,
+  unchanged browser assertions, zero retries and retained crash diagnostics.
+  This is investigation evidence, not a normal CI/browser-image upgrade.
+
 - Retire the unused vulnerable bundled npm CLI lock and its obsolete readiness
   harness after successful source-locked protected publishing. Keep complete,
   fail-closed vulnerability-report verification and source/dependency-integrity
