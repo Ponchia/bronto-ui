@@ -57,12 +57,15 @@ Import it from your application stylesheet through a CSS-aware bundler:
 Or use a stylesheet URL in plain HTML, with no installation or build step:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.18.2/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.18.1/dist/bronto.css" />
 ```
 
-These are alternative ways to load the same default bundle
-(~94 kB raw / ~17 kB gzip). That size covers `dist/bronto.css`; fonts, optional
-stylesheets, JavaScript, and the complete package tarball are separate.
+Both routes load the default stylesheet for the **version selected**.
+The CDN URL deliberately pins a published release; this repository can contain
+unreleased changes between npm publications. The source-built `dist/bronto.css` currently measures
+(~94 kB raw / ~17 kB gzip), as the badge states; it may differ from the
+CDN-pinned release. Fonts, optional stylesheets, JavaScript and the complete
+tarball are separate.
 
 The package root is **CSS-only**. A side-effect `import '@ponchia/ui'` also works
 in a CSS-aware bundler such as Vite, Astro, or SvelteKit. Node/runtime JavaScript

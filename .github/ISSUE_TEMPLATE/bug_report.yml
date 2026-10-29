@@ -7,7 +7,7 @@ body:
     attributes:
       label: '@ponchia/ui version'
       description: Use the installed version, or main and a commit if reporting a website or documentation issue.
-      placeholder: '0.18.2'
+      placeholder: '0.18.1'
     validations:
       required: true
   - type: dropdown
