@@ -207,3 +207,24 @@ print('six archive cases passed')
   );
   assert.match(output, /six archive cases passed/);
 });
+
+test('manual hosted readiness has no publishing identity and retains blocked evidence', async () => {
+  const workflow = await readFile('.github/workflows/publisher-readiness.yml', 'utf8');
+  assert.match(workflow, /on:\s*\n  workflow_dispatch:/);
+  assert.match(workflow, /permissions:\s*\n  contents: read/);
+  assert.match(workflow, /persist-credentials: false/);
+  assert.match(workflow, /package-manager-cache: false/);
+  assert.match(workflow, /npm run publisher:readiness -- "\$RUNNER_TEMP"/);
+  assert.match(workflow, /if: always\(\)/);
+  assert.match(workflow, /readiness\.json/);
+  assert.match(workflow, /audit\.json/);
+  for (const forbidden of [
+    'id-token:',
+    'environment:',
+    'continue-on-error:',
+    'npm publish',
+    'git tag',
+  ]) {
+    assert.ok(!workflow.includes(forbidden), forbidden);
+  }
+});

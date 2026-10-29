@@ -5,6 +5,18 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased — 0.18.2
+
+### Maintenance
+
+- Retire the unused vulnerable bundled npm CLI lock and its obsolete readiness
+  harness after successful source-locked protected publishing. Keep complete,
+  fail-closed vulnerability-report verification and source/dependency-integrity
+  negative tests against the active publisher. The published package and
+  release approval/provenance policies do not change.
+- Update publisher documentation to describe the executable used by current
+  CI, not the superseded candidate.
+
 ## 0.18.1 — 2026-10-29
 
 The first published 0.18 release. The `v0.18.0` tag was cut but never
