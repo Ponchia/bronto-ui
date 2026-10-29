@@ -8,7 +8,13 @@ test('manual WebKit crash probe uses the exact original test without weakening C
     'workflow_dispatch:',
     'contents: read',
     'mcr.microsoft.com/playwright:v1.60.0-jammy@sha256:',
-    'workers: [1, 3]',
+    'distro: jammy',
+    'distro: noble',
+    'workers: 1',
+    'workers: 3',
+    'image: ${{ matrix.image }}',
+    'mcr.microsoft.com/playwright:v1.60.0-noble@sha256:9bd26ad900bb5e0f4dee75839e957a89ae89c2b7ab1e76050e559790e946b948',
+    'webkit-crash-${{ matrix.distro }}-workers-${{ matrix.workers }}',
     '--project=webkit',
     '--repeat-each=30',
     '--retries=0',
@@ -22,4 +28,19 @@ test('manual WebKit crash probe uses the exact original test without weakening C
   for (const forbidden of ['id-token:', 'contents: write', 'pull-requests: write', 'npm publish']) {
     assert.ok(!workflow.includes(forbidden), forbidden);
   }
+});
+
+test('manual WebKit A/B keeps two pinned OS variants and worker counts paired', async () => {
+  const workflow = await readFile('.github/workflows/webkit-crash-diagnostics.yml', 'utf8');
+  for (const distro of ['jammy', 'noble']) {
+    const matches = [
+      ...workflow.matchAll(new RegExp(`- distro: ${distro}\\n\\s+workers: (\\d+)`, 'g')),
+    ];
+    assert.deepEqual(
+      matches.map((x) => Number(x[1])).sort(),
+      [1, 3],
+      `${distro} must have 1 and 3 workers`,
+    );
+  }
+  assert.equal((workflow.match(/--retries=0/g) ?? []).length, 1);
 });
