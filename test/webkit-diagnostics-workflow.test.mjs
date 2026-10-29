@@ -32,12 +32,16 @@ test('manual WebKit crash probe uses the exact original test without weakening C
 
 test('manual WebKit A/B keeps two pinned OS variants and worker counts paired', async () => {
   const workflow = await readFile('.github/workflows/webkit-crash-diagnostics.yml', 'utf8');
+  // Match fixed, reviewed matrix syntax. No non-literal regular expressions
+  // are needed in the security-gated public test source.
+  const rows = [...workflow.matchAll(/- distro: (jammy|noble)\n\s+workers: (\d+)/g)];
+  assert.equal(rows.length, 4, 'four independent A/B cells, no hidden extra runs');
   for (const distro of ['jammy', 'noble']) {
-    const matches = [
-      ...workflow.matchAll(new RegExp(`- distro: ${distro}\\n\\s+workers: (\\d+)`, 'g')),
-    ];
     assert.deepEqual(
-      matches.map((x) => Number(x[1])).sort(),
+      rows
+        .filter((match) => match[1] === distro)
+        .map((match) => Number(match[2]))
+        .sort(),
       [1, 3],
       `${distro} must have 1 and 3 workers`,
     );
