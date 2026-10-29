@@ -5,19 +5,32 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
-## Unreleased
+## 0.18.0 — 2026-10-29
+
+### Added
 
 - Add optional, framework-free `initToolbar` and `initActionMenu` behaviors for
   keyboard navigation, dynamic controls and deliberate-focus-safe lifecycle.
   Native disclosure menus retain their existing `initMenu` contract.
-- Harden splitter pointer ownership and lost-capture cleanup. Support live,
-  host-controlled pixel values and keyboard steps. Keep the second pane in its
-  grid track when a handle is hidden.
+- Support live, host-controlled pixel values and keyboard steps on splitters
+  (`data-bronto-splitter-unit="px"`, `data-bronto-splitter-step`,
+  `data-bronto-splitter-large-step`). Resize events from a pixel host carry
+  `unit: 'px'`.
 - Add opt-in `ui-scroll-region` and narrow `ui-command-dialog` compositions,
   with keyboard, direction, touch-target and constrained-height proof.
 - Document activity transcripts, operation receipts and retained-source
   comparisons using existing discussion, state and source classes. Application
   truth, permissions, persistence and retry policy remain with the host.
+
+### Changed
+
+- Splitter arrow keys now follow the splitter's axis: Left/Right move a
+  vertical splitter (mirrored in right-to-left documents) and Up/Down move a
+  horizontal one. Arrows on the other axis, and arrows with Alt, Control or
+  Meta, or during IME composition, are left to the page. An unavailable handle
+  ignores keys and ends an active drag.
+- Harden splitter pointer ownership and lost-capture cleanup. Keep the second
+  pane in its grid track when a handle is hidden.
 
 ## 0.17.1 — 2026-10-25
 
