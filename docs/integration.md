@@ -53,3 +53,36 @@ client navigation.
 
 All behaviors and their attributes are typed in `@ponchia/ui/behaviors`
 (`behaviors/index.d.ts`); the README quick-start shows the common ones.
+
+## Related Bronto projects
+
+Choose a project for the job it owns. These repositories share a maintainer
+and some visual conventions, not a required installation or a common release
+number. Bronto UI keeps zero runtime dependencies; linking to another project
+does not add it to the stylesheet or package.
+
+| Need | Project | What your application still owns |
+| --- | --- | --- |
+| Style an interface or report | Bronto UI: the styles, tokens and optional behaviors described here | Content, application state, data access and routing |
+| Position explanatory notes around an existing visual | [Bronto Annotations](https://github.com/Ponchia/bronto-annotations) | The chart or diagram, measured anchors, saved annotations and editing policy |
+| Test alignment, spacing and containment | [Bronto Layout](https://github.com/Ponchia/bronto-layout) | Approved relationships, intentional browser state and the decision to change a layout |
+| Keep editable visual content separate from its views | [Bronto Visual Models](https://github.com/Ponchia/bronto-visual-models) | Persistence, authorization, data sources and placement in the application |
+
+Annotations explains an existing visual; Visual Models owns authored visual
+content and its guarded edits. Layout checks measured relationships; it does
+not arrange a graph or replace rendering and accessibility tests. Bronto UI
+provides their optional presentation vocabulary without taking ownership of
+these separate domains. None requires a particular canvas application.
+
+Outside the browser libraries, [Bronto TUI](https://github.com/Ponchia/bronto-tui)
+uses the design tokens in Python/Textual.
+[Bronto Pulse](https://github.com/Ponchia/bronto-pulse) is a separate project
+analytics application with private data and deployment; it is not a UI
+dependency or an analytics service enabled by installing Bronto UI.
+
+Each repository owns its installation instructions, maturity statement and
+release evidence. Follow those instructions: source versions and GitHub beta
+archives are not proof that an npm version exists. Install only the projects
+and renderer adapters your application needs. Qualify their published artifacts
+together in your own application, including their peer requirements; a shared
+name does not promise compatibility across every version.

@@ -222,6 +222,10 @@ have integration recipes, but are not separate packed examples in the current
 test matrix. The maintained examples build against the actual npm tarball;
 see [how to run them](https://github.com/Ponchia/bronto-ui/blob/main/examples/README.md).
 
+Need callout placement, layout checks or persistent visual models? The
+[related-projects guide](https://ponchia.github.io/bronto-ui/docs/integration.html#related-bronto-projects) explains
+which Bronto project owns each job and what stays in your application.
+
 ## Accessibility and verification
 
 The repository checks declared token contrast pairings in both themes and
