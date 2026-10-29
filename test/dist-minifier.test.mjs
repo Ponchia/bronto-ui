@@ -56,3 +56,30 @@ test('token serialization and scroll-timeline longhands remain browser-compatibl
   assert.match(css, /animation:uiScrollReveal linear both;animation-timeline:view\(\)/);
   assert.doesNotMatch(css, /animation:[^;}]*uiScrollGrow scroll\(/);
 });
+
+test('CSS build parser uses a patched, integrity-locked PostCSS version', () => {
+  // GHSA-6g55-p6wh-862q, GHSA-qx2v-qp2m-jg93,
+  // GHSA-fxqj-rqcc-2cmp, GHSA-r28c-9q8g-f849 are fixed by 8.5.23.
+  // A previous generated lock reintroduced vulnerable 8.5.6 despite green
+  // CSS checks; require the actual lock, not merely a declared range.
+  const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+  const lock = JSON.parse(readFileSync('package-lock.json', 'utf8'));
+  const versions = Object.entries(lock.packages)
+    .filter(([name]) => name === 'node_modules/postcss' || name.endsWith('/node_modules/postcss'))
+    .map(([name, entry]) => ({ name, version: entry.version, integrity: entry.integrity }));
+  assert.ok(versions.length >= 1, 'PostCSS build parser must be installed');
+  assert.equal(pkg.devDependencies.postcss, lock.packages['node_modules/postcss'].version);
+  for (const entry of versions) {
+    assert.match(
+      entry.integrity,
+      /^sha512-[A-Za-z0-9+/]+=*$/,
+      `${entry.name}: missing registry integrity`,
+    );
+    const parts = entry.version.split('.').map(Number);
+    assert.ok(
+      parts.length === 3 &&
+        (parts[0] > 8 || (parts[0] === 8 && (parts[1] > 5 || (parts[1] === 5 && parts[2] >= 23)))),
+      `${entry.name}: known vulnerable PostCSS ${entry.version} (requires >=8.5.23)`,
+    );
+  }
+});
