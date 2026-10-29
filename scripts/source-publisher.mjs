@@ -18,7 +18,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
-import { verifyAudit } from './audit-publishing-tooling.mjs';
+import { verifyAudit } from './lib/publisher-audit.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const template = join(root, 'tooling/publisher');
@@ -283,7 +283,7 @@ async function inputHashes() {
     'tooling/publisher/package-lock.json',
     'scripts/source-publisher.mjs',
     'scripts/extract-publisher-source.py',
-    'scripts/audit-publishing-tooling.mjs',
+    'scripts/lib/publisher-audit.mjs',
     'package.json',
   ];
   return Object.fromEntries(
