@@ -9,22 +9,20 @@
 
 ### Changed
 
-- Use pinned Lightning CSS to minify the generated CSS only, preserving the
-  authored style layer, exported CSS leaves and public class contract. No
-  downlevel browser target is selected. The default CSS shrinks from 99,513
-  to 94,822 raw bytes and from 17,260 to 16,874 gzip bytes, without raising
-  either bundle-size ceiling. Require complete browser, visual, accessibility
-  and packed-consumer verification before releasing this change.
+- Compact only parsed CSS declaration separators with PostCSS. The earlier
+  Lightning CSS candidate rewrote public custom-property values and folded
+  scroll-animation timeline longhands into invalid browser syntax; the
+  original browser checks correctly blocked it. Keep token strings,
+  animation syntax and every exported leaf stable, without raising the
+  100,000 B raw / 18,000 B gzip budget. Full cross-engine CI is required.
 
 ### Maintenance
 
-- Retire the unused vulnerable bundled npm CLI lock and its obsolete readiness
-  harness after successful source-locked protected publishing. Keep complete,
-  fail-closed vulnerability-report verification and source/dependency-integrity
-  negative tests against the active publisher. The published package and
-  release approval/provenance policies do not change.
-- Update publisher documentation to describe the executable used by current
-  CI, not the superseded candidate.
+- Retire the obsolete vulnerable bundled npm CLI lock and readiness harness
+  after successful patched source-locked publishing (PR #288). Keep the complete
+  fail-closed source/dependency audit and adversarial regression suite.
+- Update publisher documentation to describe the executed, verified toolchain
+  rather than the superseded candidate.
 
 ## 0.18.1 — 2026-10-29
 

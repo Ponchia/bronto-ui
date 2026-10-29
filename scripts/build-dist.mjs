@@ -8,10 +8,11 @@
  * a single `@layer bronto { … }`, reproducing the cascade-layer
  * behaviour the entrypoints get from `@import … layer(bronto)`.
  *
- * Minification uses pinned Lightning CSS with no browser target specified:
- * optimize the authored modern syntax without retrofitting prefixes or
- * transpiling unsupported features. All cross-engine behavior, forced-color,
- * print and visual contracts still gate changes to emitted CSS.
+ * Minification retains the conservative, proven whitespace pass and uses
+ * PostCSS only to remove unnecessary whitespace after parsed declaration
+ * colons. Public custom-property values and CSS animation longhands must
+ * retain their exact serialized meaning: aggressive shorthand/color
+ * optimizers can change both (see the 0.18.2 browser regression).
  *
  * `buildBundles()` is pure (returns name → content) so check-dist can
  * diff it against the committed files without writing. Run directly to
@@ -21,7 +22,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
-import { transform } from 'lightningcss';
+import postcss from 'postcss';
 import { cssImports, stripCssComments } from './lib/patterns.mjs';
 import { log } from './lib/stdio.mjs';
 
@@ -44,14 +45,18 @@ function leaves(entry, acc = []) {
 }
 
 function minify(css) {
-  // Keep the parser in control of selectors, quoted strings, :has(), calc()
-  // and custom properties; regex-based whitespace rewrites are unsafe there.
-  const { code } = transform({
-    filename: 'bronto.css',
-    code: Buffer.from(stripCssComments(css)),
-    minify: true,
+  const compact = stripCssComments(css)
+    .replace(/\s+/g, ' ') // Keep combinator and value spacing.
+    .replace(/\s*([{};,])\s*/g, '$1') // Structural tokens only.
+    .replace(/;}/g, '}')
+    .trim();
+  // Parse declaration boundaries instead of regex-rewriting ':' in selectors,
+  // @supports, strings, function arguments or custom-property payloads.
+  const root = postcss.parse(compact, { from: 'bronto.css' });
+  root.walkDecls((decl) => {
+    decl.raws.between = ':';
   });
-  return code.toString('utf8').trim();
+  return root.toString();
 }
 
 /** Depth fix: source leaves live at `css/` and reference assets as
@@ -216,10 +221,10 @@ export function buildBundles() {
  *  selected state, the hover, the ellipsis and the coarse floor. The gzip cost is
  *  small precisely because the new rules compress against the menu rules they
  *  replaced. 95,600 B / 16,400 B leaves ~370 B raw / ~120 B gzip of headroom.
- *  0.18.1 follow-through: pinned Lightning CSS minification reduces the
- *  published default payload from 99,513 to 94,822 B raw, and 17,260 to
- *  16,874 B gzip, without dropping a component or changing authored CSS.
- *  The 100k/18k ceilings remain unchanged to preserve the earned margin. */
+ *  0.18.2 maintenance: grammar-aware declaration-colon whitespace
+ *  compaction restores raw headroom while preserving custom-property
+ *  serialization, animation timeline longhands, authored selectors, and
+ *  existing browser behavior. The raw and gzip ceilings remain unchanged. */
 export const BUDGET = { raw: 100_000, gzip: 18_000 };
 
 export function sizes(content) {

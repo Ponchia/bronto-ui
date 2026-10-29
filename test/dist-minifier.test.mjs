@@ -27,15 +27,32 @@ test('default minification preserves modern browser/media feature vocabulary', (
   const css = buildBundles()['dist/bronto.css'];
   assert.ok(css.startsWith('@layer bronto{'));
   assert.ok(css.endsWith('}\n'));
-  for (const token of [
-    '@starting-style',
-    '@property',
-    'forced-colors:active',
-    'prefers-reduced-motion:reduce',
-    '@media print',
-    ':has(',
-    '::selection',
-  ]) {
-    assert.ok(css.includes(token), `Optimizer lost ${token}`);
+  const browserFeatures = {
+    '@starting-style': /@starting-style\b/,
+    '@property': /@property\b/,
+    'forced-colors media query': /forced-colors:\s*active/,
+    'reduced-motion media query': /prefers-reduced-motion:\s*reduce/,
+    'print media query': /@media\s+print\b/,
+    ':has selector': /:has\(/,
+    'selection pseudo-element': /::selection\b/,
+  };
+  for (const [name, pattern] of Object.entries(browserFeatures)) {
+    assert.match(css, pattern, `Optimizer lost ${name}`);
   }
+});
+
+test('token serialization and scroll-timeline longhands remain browser-compatible', () => {
+  const css = buildBundles()['dist/bronto.css'];
+  // Values are public to consumers reading computed custom properties.
+  for (const declaration of ['--bg:#000000', '--space-xs:0.5rem']) {
+    assert.ok(css.includes(declaration), `Custom property changed bytes: ${declaration}`);
+  }
+  assert.ok(
+    css.includes('--btn-ink:#ffffff') || css.includes('--button-text:#ffffff'),
+    'Keep the light-safe print ink token',
+  );
+  // Browsers do not accept the optimizer's shorthand 'animation:... scroll(root)'.
+  assert.match(css, /animation:uiScrollGrow linear;animation-timeline:scroll\(root block\)/);
+  assert.match(css, /animation:uiScrollReveal linear both;animation-timeline:view\(\)/);
+  assert.doesNotMatch(css, /animation:[^;}]*uiScrollGrow scroll\(/);
 });
