@@ -16,6 +16,16 @@
   either bundle-size ceiling. Require complete browser, visual, accessibility
   and packed-consumer verification before releasing this change.
 
+### Maintenance
+
+- Retire the unused vulnerable bundled npm CLI lock and its obsolete readiness
+  harness after successful source-locked protected publishing. Keep complete,
+  fail-closed vulnerability-report verification and source/dependency-integrity
+  negative tests against the active publisher. The published package and
+  release approval/provenance policies do not change.
+- Update publisher documentation to describe the executable used by current
+  CI, not the superseded candidate.
+
 ## 0.18.1 — 2026-10-29
 
 The first published 0.18 release. The `v0.18.0` tag was cut but never
