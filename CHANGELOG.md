@@ -7,6 +7,14 @@
 
 ## Unreleased — 0.18.2
 
+### Added
+
+- Extend the opt-in 0.17 annotation migration source review to recognize
+  named ESM/CJS aliases, quoted bracket access, simple constant-key members,
+  and two-part static package specifiers. Ordinary markup validation and
+  deprecated runtime compatibility remain unchanged; indirect dataflow and
+  deployed rendering acceptance remain manual migration prerequisites.
+
 ### Changed
 
 - Compact only parsed CSS declaration separators with PostCSS. The earlier
@@ -18,11 +26,13 @@
 
 ### Maintenance
 
-- Retire the obsolete vulnerable bundled npm CLI lock and readiness harness
-  after successful patched source-locked publishing (PR #288). Keep the complete
-  fail-closed source/dependency audit and adversarial regression suite.
-- Update publisher documentation to describe the executed, verified toolchain
-  rather than the superseded candidate.
+- Retire the unused vulnerable bundled npm CLI lock and its obsolete readiness
+  harness after successful source-locked protected publishing. Keep complete,
+  fail-closed vulnerability-report verification and source/dependency-integrity
+  negative tests against the active publisher. The published package and
+  release approval/provenance policies do not change.
+- Update publisher documentation to describe the executable used by current
+  CI, not the superseded candidate.
 
 ## 0.18.1 — 2026-10-29
 
