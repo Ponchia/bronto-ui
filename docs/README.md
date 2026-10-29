@@ -22,6 +22,7 @@ The original Markdown remains available for offline agents and direct reading.
 | Choose classes and patterns | [Usage](./usage.md), [compositions](./compositions.md), and the generated [reference](./reference.md) |
 | Build a report, audit, or provenance view | [Reporting cookbook](./reporting.md), [sources](./sources.md), and [generated content](./generated.md) |
 | Change a theme | [Theming](./theming.md) and [contrast evidence](./contrast.md) |
+| Choose between Bronto projects | [Related projects](./integration.md#related-bronto-projects): UI, annotations, layout checks and visual models |
 | Upgrade a consumer | [Upgrade checklist](./getting-started/upgrade.md) and [stability contract](./stability.md) |
 | Understand project direction | [Frontier primitives](./frontier-primitives.md) and [architecture](./architecture.md) |
 
