@@ -39,6 +39,9 @@
     "behaviors/crosshair.js",
     "behaviors/command.js",
     "behaviors/sources.js",
-    "behaviors/splitter.js"
+    "behaviors/splitter.js",
+    "behaviors/composite.js",
+    "behaviors/toolbar.js",
+    "behaviors/action-menu.js"
   ]
 }

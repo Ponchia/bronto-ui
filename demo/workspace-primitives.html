@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Workspace interactions · Bronto UI</title>
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/workbench.css" />
+    <link rel="stylesheet" href="../dist/css/command.css" />
+    <link rel="stylesheet" href="../dist/css/discussion.css" />
+    <link rel="stylesheet" href="../dist/css/state.css" />
+    <link rel="stylesheet" href="../dist/css/sources.css" />
+    <style>
+      main {
+        max-inline-size: 60rem;
+        margin-inline: auto;
+        padding: 1rem;
+      }
+      section {
+        margin-block: 1.5rem;
+      }
+      #actions {
+        inline-size: min(20rem, 100%);
+      }
+      #scroll-body {
+        block-size: 8rem;
+      }
+      #commands {
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Workspace interactions</h1>
+      <p>
+        Keyboard controls, resizable panes and readable evidence. Commands and application state
+        stay with the host.
+      </p>
+      <section aria-labelledby="toolbar-heading">
+        <h2 id="toolbar-heading">One toolbar entry</h2>
+        <div class="ui-toolstrip" data-bronto-toolbar aria-label="Editing tools">
+          <button type="button" class="ui-button" id="select">Select</button>
+          <button type="button" class="ui-button" disabled>Locked action</button>
+          <button type="button" class="ui-button" id="move">Move</button>
+          <input class="ui-input" aria-label="Filter items" placeholder="Filter items" />
+        </div>
+      </section>
+      <section aria-labelledby="menu-heading">
+        <h2 id="menu-heading">Action menu</h2>
+        <button
+          type="button"
+          id="menu-trigger"
+          class="ui-button"
+          aria-haspopup="menu"
+          aria-controls="actions"
+          aria-expanded="false"
+        >
+          Open actions
+        </button>
+        <div
+          id="actions"
+          class="ui-menu"
+          data-bronto-action-menu
+          role="menu"
+          aria-label="Document actions"
+          hidden
+        >
+          <button type="button" role="menuitem" tabindex="-1" class="ui-menu__item" id="inspect">
+            Inspect document
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            tabindex="-1"
+            class="ui-menu__item"
+            aria-disabled="true"
+          >
+            Unavailable action
+          </button>
+          <button type="button" role="menuitem" tabindex="-1" class="ui-menu__item" id="edit">
+            Focus editor
+          </button>
+        </div>
+        <label class="ui-field">Editor<input id="editor" class="ui-input" /></label>
+        <output id="menu-result" aria-live="polite"></output>
+      </section>
+      <section aria-labelledby="splitter-heading">
+        <h2 id="splitter-heading">Resizable pane</h2>
+        <div class="ui-splitter" data-bronto-splitter style="--splitter-pos: 40%">
+          <div id="files" class="ui-splitter__pane">
+            <p>Files</p>
+            <button type="button" class="ui-button" data-bronto-splitter-adjust="-10">
+              Narrow
+            </button>
+            <button type="button" class="ui-button" data-bronto-splitter-adjust="10">Widen</button>
+          </div>
+          <div
+            class="ui-splitter__handle"
+            aria-label="Files"
+            aria-controls="files"
+            aria-valuenow="40"
+          ></div>
+          <div id="document" class="ui-splitter__pane">
+            Document content remains in its own grid track when a pane is collapsed.
+          </div>
+        </div>
+      </section>
+      <section aria-labelledby="scroll-heading">
+        <h2 id="scroll-heading">Keyboard-readable history</h2>
+        <div
+          id="scroll-body"
+          class="ui-scroll-region"
+          tabindex="0"
+          role="region"
+          aria-label="History"
+        >
+          <p>First observation: the request was accepted.</p>
+          <p>Acceptance does not establish execution.</p>
+          <p>The operation is waiting for capacity.</p>
+          <p>Its original request identity is retained.</p>
+          <p>A later observation will supply a result.</p>
+          <p>No automatic retry is implied.</p>
+          <p>Use the evidence below to inspect the observed state.</p>
+        </div>
+      </section>
+      <button type="button" class="ui-button" data-bronto-open="commands">Open commands</button>
+      <dialog id="commands" class="ui-modal ui-command-dialog" aria-label="Commands">
+        <div class="ui-command" data-bronto-command>
+          <input
+            class="ui-command__input"
+            aria-label="Find a command"
+            placeholder="Find a command"
+          />
+          <ul class="ui-command__list">
+            <li class="ui-command__item" data-value="history">
+              <span>Open operation history</span
+              ><small class="ui-command__meta">Inspect observations and retained evidence</small>
+            </li>
+            <li class="ui-command__item" data-value="sources">
+              <span>Compare captured source</span
+              ><small class="ui-command__meta">Original capture and current observation</small>
+            </li>
+          </ul>
+          <p class="ui-command__empty" hidden>No commands match</p>
+          <button type="button" class="ui-button" data-bronto-close>Close commands</button>
+        </div>
+      </dialog>
+      <section class="ui-discussion" aria-labelledby="evidence-heading">
+        <h2 id="evidence-heading">Activity with evidence</h2>
+        <ol class="ui-discussion__messages">
+          <li class="ui-discussion__message">
+            <p class="ui-discussion__meta">Operator request · 09:00</p>
+            <p>Verify the build before release.</p>
+          </li>
+          <li class="ui-discussion__message">
+            <details>
+              <summary>Coordination · waiting for capacity</summary>
+              <p class="ui-state ui-state--queued"><span class="ui-state__label">Queued</span></p>
+              <p>
+                Execution has not started. A completed conversation is not verification evidence.
+              </p>
+            </details>
+          </li>
+        </ol>
+        <article class="ui-source-card">
+          <h3 class="ui-source-card__title">Captured source</h3>
+          <p class="ui-source-card__time">
+            Captured at 09:00 · current source has not been re-read
+          </p>
+          <blockquote class="ui-source-card__excerpt">Build revision 7a2c</blockquote>
+          <p>The original capture remains available when a newer observation differs.</p>
+        </article>
+      </section>
+    </main>
+    <script type="module" src="./workspace-primitives.mjs"></script>
+  </body>
+</html>

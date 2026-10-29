@@ -1,8 +1,8 @@
 {
   "$comment": "@ponchia/ui class vocabulary as language-neutral data — validate emitted markup without executing the ESM cls map or parsing the .d.ts. Generated from classes/index.js — do not edit by hand; run `npm run classes:json:build`. Drift-checked in CI. `groups[].base` is null for a parts-only namespace (no standalone base class — do NOT emit it). A modifier whose name contains `__` (e.g. `ui-spark__bar--pos`) attaches to THAT part, not the base host. `states` is the author-applied `is-*` hooks (runtime/behavior-managed hooks are excluded); `behaviorAttributes` are the `data-bronto-*` wiring hooks the optional behaviors delegate on; `requiredAria` is the role/aria a generator must emit per component. `states` + `customProperties` are documented in docs/reference.md and ship outside `cls` by design.",
   "counts": {
-    "classes": 702,
-    "groups": 188
+    "classes": 704,
+    "groups": 190
   },
   "groups": {
     "ui-accordion": {
@@ -389,6 +389,11 @@
         "ui-command__meta",
         "ui-command__shortcut"
       ]
+    },
+    "ui-command-dialog": {
+      "base": "ui-command-dialog",
+      "modifiers": [],
+      "parts": []
     },
     "ui-compare": {
       "base": "ui-compare",
@@ -1129,6 +1134,11 @@
       "modifiers": [],
       "parts": []
     },
+    "ui-scroll-region": {
+      "base": "ui-scroll-region",
+      "modifiers": [],
+      "parts": []
+    },
     "ui-scroll-reveal": {
       "base": "ui-scroll-reveal",
       "modifiers": [],
@@ -1783,6 +1793,7 @@
     "ui-combobox__list",
     "ui-combobox__option",
     "ui-command",
+    "ui-command-dialog",
     "ui-command__empty",
     "ui-command__group",
     "ui-command__input",
@@ -2128,6 +2139,7 @@
     "ui-row__title",
     "ui-screen-only",
     "ui-scroll-progress",
+    "ui-scroll-region",
     "ui-scroll-reveal",
     "ui-search",
     "ui-segmented",
@@ -2875,6 +2887,48 @@
   ],
   "behaviorAttributes": [
     {
+      "name": "data-bronto-toolbar",
+      "on": "a labelled toolbar root",
+      "behavior": "initToolbar",
+      "value": "presence",
+      "note": "One Tab entry with orientation-aware roving focus; the host owns commands and nested editors."
+    },
+    {
+      "name": "data-bronto-toolbar-item",
+      "on": "a custom focusable control inside a toolbar",
+      "behavior": "initToolbar",
+      "value": "presence",
+      "note": "Includes a custom control in toolbar discovery; author its role, name and activation semantics."
+    },
+    {
+      "name": "data-bronto-action-menu",
+      "on": "an open labelled flat action-menu surface",
+      "behavior": "initActionMenu",
+      "value": "presence",
+      "note": "Arrow navigation and close requests; host owns visibility, placement and command completion."
+    },
+    {
+      "name": "data-bronto-splitter-unit",
+      "on": "a .ui-splitter host",
+      "behavior": "initSplitter",
+      "value": "px (otherwise percentage)",
+      "note": "Read ARIA bounds and emit resize values in pixels rather than percentage points."
+    },
+    {
+      "name": "data-bronto-splitter-step",
+      "on": "a .ui-splitter host",
+      "behavior": "initSplitter",
+      "value": "nonnegative number",
+      "note": "Arrow-key increment in the selected unit; default 2."
+    },
+    {
+      "name": "data-bronto-splitter-large-step",
+      "on": "a .ui-splitter host",
+      "behavior": "initSplitter",
+      "value": "nonnegative number",
+      "note": "Shift+Arrow or PageUp/PageDown increment; at least the normal step; default 10."
+    },
+    {
       "name": "data-bronto-open",
       "on": "a trigger (button/link)",
       "value": "id of the target <dialog>",
@@ -2952,7 +3006,7 @@
     {
       "name": "data-bronto-splitter-adjust",
       "on": "a button inside a .ui-splitter host",
-      "value": "signed percentage-point delta, for example -10 or 10",
+      "value": "signed delta in the selected unit, for example -10 or 10",
       "behavior": "initSplitter",
       "note": "single-pointer non-drag alternative to moving the separator; activation clamps to aria-valuemin/aria-valuemax and emits bronto:splitter:resize."
     },

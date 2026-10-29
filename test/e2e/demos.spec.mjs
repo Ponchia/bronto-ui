@@ -41,6 +41,7 @@ const SHOWCASE = [
   'state',
   'generated',
   'workbench',
+  'workspace-primitives',
   'command',
   'service',
   'dots',

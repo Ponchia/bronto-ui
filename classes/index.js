@@ -18,6 +18,8 @@
 /** Every class @ponchia/ui defines. The single source the recipes draw from. */
 export const cls = Object.freeze({
   // primitives
+  scrollRegion: 'ui-scroll-region',
+  commandDialog: 'ui-command-dialog',
   button: 'ui-button',
   buttonGhost: 'ui-button--ghost',
   buttonSubtle: 'ui-button--subtle',

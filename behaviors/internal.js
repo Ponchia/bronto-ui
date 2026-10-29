@@ -129,7 +129,7 @@ export function scrollIntoViewSafe(el, opts = { block: 'nearest' }) {
 // panel/modal still receives focus.
 const FOCUSABLE = 'a[href], button, input, select, textarea, [tabindex]';
 
-function isRendered(el) {
+export function isRendered(el) {
   try {
     if (
       typeof el.checkVisibility === 'function' &&

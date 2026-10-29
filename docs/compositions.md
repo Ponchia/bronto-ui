@@ -134,3 +134,57 @@ uses document flow instead of size containment.
 For an existing application, review explicit typography overrides with the
 [0.11 migration recipe](migrations/0.10-to-0.11.md). A dependency pin does not
 remove consumer CSS that overrides the shared layer.
+
+
+## Activity, operation receipts and captured sources
+
+Prefer the existing discussion, state and source vocabulary to a second
+activity-component system. Import `css/discussion.css`, `css/state.css` and
+`css/sources.css` explicitly alongside the tool or default entry.
+
+A read-only activity transcript uses `ui-discussion__messages` and
+`ui-discussion__message`. Keep ordinary user-visible messages expanded. Use a
+native disclosure for details classified by the application as coordination;
+failures and unresolved questions should remain visible. A visual tone does
+not establish the origin of a message.
+
+```html
+<section class="ui-discussion" aria-label="Observed activity">
+  <ol class="ui-discussion__messages">
+    <li class="ui-discussion__message">
+      <p class="ui-discussion__meta">Operator · 09:00</p>
+      <p>Verify the build before release.</p>
+    </li>
+    <li class="ui-discussion__message">
+      <details>
+        <summary>Coordination · waiting for capacity</summary>
+        <p class="ui-state ui-state--queued"><span class="ui-state__label">Queued</span></p>
+        <p>Execution has not started.</p>
+      </details>
+    </li>
+  </ol>
+</section>
+```
+
+An operation receipt should name the observed stage, observation time and a
+link to evidence. Keep acceptance, execution and verification separate. A task
+ending does not make a result verified. Use explicit words for unknown or
+unavailable observations rather than a success tone or a busy animation.
+
+For captured sources, `ui-source-card__excerpt` holds the original capture;
+`ui-source-card__time` identifies its timestamp and revision. Show a newer
+observation separately. A failed re-read must not overwrite the capture, and
+an observation must not automatically replay the original operation.
+
+```html
+<article class="ui-source-card">
+  <h3 class="ui-source-card__title">Captured build input</h3>
+  <p class="ui-source-card__time">09:00 · revision 7a2c · current source not re-read</p>
+  <blockquote class="ui-source-card__excerpt">Verify this build.</blockquote>
+  <p>The original capture is retained independently of later observations.</p>
+</article>
+```
+
+Identity, freshness thresholds, verification, retries and disclosure decisions
+remain application policy. The [workspace interactions example](https://ponchia.github.io/bronto-ui/demo/workspace-primitives.html)
+shows the compositions with the keyboard, splitter and command-sheet contracts.

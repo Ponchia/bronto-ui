@@ -1,0 +1,1 @@
+{"version":3,"file":"action-menu.d.ts","sourceRoot":"","sources":["action-menu.js"],"names":[],"mappings":"AAuLA;;;;;;;;;;GAUG;AACH,sDAHW,cAAc,GACZ,OAAO,eAAe,EAAE,OAAO,CAU3C;oCA/La,QAAQ,GAAG,KAAK,GAAG,SAAS,GAAG,QAAQ;oCACvC;IAAE,MAAM,EAAE,qBAAqB,CAAC;IAAC,SAAS,EAAE,OAAO,CAAA;CAAE;;;;;;;;;;;;;wBAK5C,qBAAqB,KAAK,IAAI;;;;6BAC3B,OAAO,KAAK,WAAW,GAAG,IAAI"}

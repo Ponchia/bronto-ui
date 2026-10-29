@@ -5,6 +5,20 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased
+
+- Add optional, framework-free `initToolbar` and `initActionMenu` behaviors for
+  keyboard navigation, dynamic controls and deliberate-focus-safe lifecycle.
+  Native disclosure menus retain their existing `initMenu` contract.
+- Harden splitter pointer ownership and lost-capture cleanup. Support live,
+  host-controlled pixel values and keyboard steps. Keep the second pane in its
+  grid track when a handle is hidden.
+- Add opt-in `ui-scroll-region` and narrow `ui-command-dialog` compositions,
+  with keyboard, direction, touch-target and constrained-height proof.
+- Document activity transcripts, operation receipts and retained-source
+  comparisons using existing discussion, state and source classes. Application
+  truth, permissions, persistence and retry policy remain with the host.
+
 ## 0.17.1 — 2026-10-25
 
 ### Fixed

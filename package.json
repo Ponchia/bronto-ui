@@ -559,7 +559,15 @@
     "./css/discussion.css": "./dist/css/discussion.css",
     "./css/unlayered/discussion.css": "./css/discussion.css",
     "./docs/discussion.md": "./docs/discussion.md",
-    "./docs/migrations/0.16-to-0.17.md": "./docs/migrations/0.16-to-0.17.md"
+    "./docs/migrations/0.16-to-0.17.md": "./docs/migrations/0.16-to-0.17.md",
+    "./behaviors/toolbar": {
+      "types": "./behaviors/toolbar.d.ts",
+      "default": "./behaviors/toolbar.js"
+    },
+    "./behaviors/action-menu": {
+      "types": "./behaviors/action-menu.d.ts",
+      "default": "./behaviors/action-menu.js"
+    }
   },
   "overrides": {
     "adm-zip": "0.6.1",

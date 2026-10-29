@@ -115,3 +115,8 @@ needed for the task; the package contract lists the complete export inventory.
 - [Maintained packed examples](https://github.com/Ponchia/bronto-ui/tree/main/examples)
 - [Component laboratory](https://ponchia.github.io/bronto-ui/lab/)
 - [Contribution workflow](https://github.com/Ponchia/bronto-ui/blob/main/CONTRIBUTING.md)
+
+For keyboard toolbars and flat action menus, use docs/workbench.md and the
+optional behaviors/toolbar and behaviors/action-menu exports. Narrow command
+dialogs use docs/command.md. Activity and retained-source presentations compose
+existing discussion/state/source leaves: docs/compositions.md.

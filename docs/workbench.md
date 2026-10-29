@@ -257,3 +257,132 @@ cross-cutting
 [`ui-sel`](./selection.md) states on the selected items themselves. Bronto styles
 the chrome and wires the splitter affordance; the host owns hit-testing,
 persistence, pane contents, viewport semantics, and commands.
+
+
+## Toolbar keyboard ownership
+
+`initToolbar()` adds one Tab entry and arrow navigation to
+`[data-bronto-toolbar]`. Keep a visible or accessible label. Horizontal
+navigation follows `dir`; set `aria-orientation="vertical"` for Up/Down.
+Home and End navigate controls, while native fields retain their editing keys.
+Tab can leave a field for its adjacent toolbar control; it never traps the user.
+
+```html
+<div class="ui-toolstrip" data-bronto-toolbar aria-label="Document tools">
+  <button type="button" class="ui-button">Select</button>
+  <button type="button" class="ui-button">Move</button>
+  <input class="ui-input" aria-label="Filter objects" />
+</div>
+```
+
+```js
+import { initToolbar } from '@ponchia/ui/behaviors/toolbar';
+const stop = initToolbar({ root: document.querySelector('[data-bronto-toolbar]') });
+// Retain stop and invoke it on view disposal. A null root is a no-op.
+```
+
+Nested toolbars, menus and native editing controls own their keys. An application
+with additional editors can supply `ownsKey(event, toolbar)` and
+`exclude(element, toolbar)`. The callbacks extend the boundary rather than
+installing document-wide shortcuts. The initializer discovers late DOM children
+and restores author tab stops when items leave or the binding is disposed.
+Framework wrappers may initialize in a layout effect; keep commands, state,
+portal placement and application-specific input ownership in the wrapper.
+
+## Action menus are different from disclosure menus
+
+`initMenu` keeps its existing native-details contract. Use `initActionMenu`
+for a **flat action menu** with authored `role="menuitem"` buttons, arrow-key
+navigation and focus handoff. This does not implement a menubar or submenus.
+
+```html
+<button type="button" id="document-actions" aria-haspopup="menu"
+  aria-expanded="false" aria-controls="document-menu">Actions</button>
+<div id="document-menu" class="ui-menu" data-bronto-action-menu
+  role="menu" aria-label="Document actions" hidden>
+  <button type="button" role="menuitem" tabindex="-1" class="ui-menu__item">Inspect</button>
+  <button type="button" role="menuitem" tabindex="-1" class="ui-menu__item"
+    aria-disabled="true">Unavailable action</button>
+</div>
+```
+
+```js
+import { initActionMenu } from '@ponchia/ui/behaviors/action-menu';
+const trigger = document.querySelector('#document-actions');
+const menu = document.querySelector('#document-menu');
+let stop;
+const close = () => {
+  menu.hidden = true;
+  trigger.setAttribute('aria-expanded', 'false');
+  stop?.();
+  stop = undefined;
+};
+trigger.addEventListener('click', () => {
+  if (!menu.hidden) { close(); return; }
+  menu.hidden = false;
+  trigger.setAttribute('aria-expanded', 'true');
+  stop = initActionMenu({ root: menu, invoker: trigger, onClose: close });
+});
+```
+
+The host opens, positions and closes the surface. The initializer requests a
+close through `onClose(detail)` and the cancelable `bronto:action-menu:close`
+event. Its detail is `{ reason, backwards }`, where the reason is `escape`,
+`tab`, `outside` or `select`. `aria-disabled` actions stay discoverable and
+cannot activate; native disabled buttons remain skipped. Native button/link
+activation remains native. Checkbox/radio state and submenus are host-owned.
+
+Tab normally continues in the browser's order from the explicit invoker. A
+portal host that already uses a specialist focus-order resolver can supply
+`tabTarget(backwards)`; the library does not bring its own document-wide
+focus-order engine. Escape returns to the invoker. Closing after an action
+preserves focus deliberately moved into another editor or dialog. Set
+`closeOnSelect: false` when the host owns selection completion or repeated
+commands must leave the menu open. Retain and dispose the binding on every close.
+
+Keyboard behavior follows the [toolbar pattern](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/)
+and the relevant flat-menu parts of the [menu pattern](https://www.w3.org/WAI/ARIA/apg/patterns/menubar/).
+The runnable fixture is [workspace interactions](https://ponchia.github.io/bronto-ui/demo/workspace-primitives.html).
+
+## Controlled pixel splitters and collapsed panes
+
+A host with pixel-based widths may use `data-bronto-splitter-unit="px"`.
+Set `aria-valuemin`, `aria-valuemax` and `aria-valuenow` in pixels; provide an
+`aria-valuetext` that explains the measurement to readers. The resize detail
+adds `unit: 'px'`; legacy percentage events keep their existing shape.
+`data-bronto-splitter-step` and `data-bronto-splitter-large-step` customize
+keyboard increments. Bounds and current values are read live on interaction,
+so viewport resizing and host-controlled changes do not retain stale limits.
+
+The host still owns measured bounds, persistence, per-panel widths and collapse.
+Dispose the binding while a pane is closed; reinitialize when it opens.
+Cleanup restores the authored DOM snapshot. A controlled framework wrapper must
+seed the latest ARIA bounds/value and `--splitter-pos` from its own state before
+reinitializing: an unchanged virtual-DOM prop may otherwise leave the restored
+initial value in place.
+Only the initiating pointer can resize or finish a gesture. Pointer cancellation,
+lost capture and cleanup release the gesture. Native input composition and
+host-cancelled key events remain untouched. Horizontal splitters use Up/Down;
+vertical splitters use Left/Right and respect direction.
+
+The two panes and handle have explicit grid tracks. A hidden handle cannot
+accidentally move the second pane into the handle's column. For a collapsed
+first pane, set `--splitter-pos: 0px` and `--splitter-handle: 0px`, and make
+its content inert and its handle unreachable. Keep pane placement explicit;
+`visibility: hidden` can retain the pane's grid item while `display: none`
+removes it. Opening/closing is application state, not an inferred resize action.
+
+## Keyboard-accessible scrolling
+
+`ui-scroll-region` supplies scroll containment, a shrinkable body and a
+focus-visible ring. CSS cannot provide a keyboard tab stop or accessible name:
+those belong in markup. Use a named region only when it helps document navigation.
+
+```html
+<div class="ui-scroll-region" tabindex="0" role="region" aria-label="Operation history">
+  <p>Retained observations appear here.</p>
+</div>
+```
+
+The host bounds the region's height. Keep keyboard events native and avoid
+adding a focusable scroll container around every non-scrolling paragraph.

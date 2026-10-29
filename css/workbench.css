@@ -465,3 +465,49 @@
     background: CanvasText;
   }
 }
+
+/* Scrollable bodies need an authored tab stop and an accessible name when
+   exposed as a region. Focus is visible without moving the content's geometry. */
+.ui-scroll-region {
+  min-block-size: 0;
+  min-inline-size: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.ui-scroll-region:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: calc(-1 * var(--focus-ring-width));
+}
+
+/* Explicit tracks survive a temporarily hidden handle. The host controls
+   collapsed content's inert/hidden state and keeps its placement in the grid. */
+.ui-splitter > .ui-splitter__pane:first-child {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.ui-splitter > .ui-splitter__handle {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.ui-splitter > .ui-splitter__pane:last-child {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.ui-splitter--horizontal > .ui-splitter__pane:first-child {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.ui-splitter--horizontal > .ui-splitter__handle {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.ui-splitter--horizontal > .ui-splitter__pane:last-child {
+  grid-column: 1;
+  grid-row: 3;
+}

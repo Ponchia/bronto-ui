@@ -157,3 +157,37 @@ document.querySelector('[data-bronto-command]').addEventListener('bronto:command
   Keep authorization in your action handler; disabled state is not access control.
 - Open the palette in a focus-trapping `<dialog>` (Bronto's `initDialog`) so focus
   returns to the trigger on close.
+
+
+## Narrow command sheets
+
+Add `ui-command-dialog` to the **native dialog wrapper** around `ui-command`.
+At viewport widths up to 45rem it becomes a full-width bottom sheet. Result rows
+have touch-sized targets; metadata can occupy its own line without pushing the
+command label outside the viewport. The desktop wrapper defaults to 35rem;
+set `--command-dialog-width` and `--command-max-block-size` to adjust its
+width and result-height ceiling. Other window placement remains the host's.
+
+```html
+<dialog class="ui-modal ui-command-dialog" aria-label="Commands">
+  <div class="ui-command" data-bronto-command>
+    <input class="ui-command__input" aria-label="Find a command" />
+    <ul class="ui-command__list">
+      <li class="ui-command__item" data-value="history">
+        <span>Open history</span><small class="ui-command__meta">Retained observations</small>
+      </li>
+    </ul>
+  </div>
+</dialog>
+```
+
+The host owns opening and closing through the native dialog or `initDialog`.
+When a host observes the visual viewport, it can pass the obscured size through
+`--command-viewport-inset` in CSS pixels to bound the sheet. Detecting keyboard
+visibility, focus policy and moving other application panels stay outside the
+package. In particular, a pointer-opened browse list need not focus its filter
+and raise a touch keyboard; the command workflow should choose that explicitly.
+
+Keep IME composition and native editing shortcuts intact. The existing
+`initCommand({ headless: true })` supports application-rendered result sets;
+a command registry, query execution and permissions stay in the application.

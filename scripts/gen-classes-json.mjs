@@ -639,6 +639,49 @@ const rootAttributes = [
 // a tool reading the manifest could emit a `.ui-modal` but had no way to open it.
 const behaviorAttributes = [
   {
+    name: 'data-bronto-toolbar',
+    on: 'a labelled toolbar root',
+    behavior: 'initToolbar',
+    value: 'presence',
+    note: 'One Tab entry with orientation-aware roving focus; the host owns commands and nested editors.',
+  },
+  {
+    name: 'data-bronto-toolbar-item',
+    on: 'a custom focusable control inside a toolbar',
+    behavior: 'initToolbar',
+    value: 'presence',
+    note: 'Includes a custom control in toolbar discovery; author its role, name and activation semantics.',
+  },
+  {
+    name: 'data-bronto-action-menu',
+    on: 'an open labelled flat action-menu surface',
+    behavior: 'initActionMenu',
+    value: 'presence',
+    note: 'Arrow navigation and close requests; host owns visibility, placement and command completion.',
+  },
+  {
+    name: 'data-bronto-splitter-unit',
+    on: 'a .ui-splitter host',
+    behavior: 'initSplitter',
+    value: 'px (otherwise percentage)',
+    note: 'Read ARIA bounds and emit resize values in pixels rather than percentage points.',
+  },
+  {
+    name: 'data-bronto-splitter-step',
+    on: 'a .ui-splitter host',
+    behavior: 'initSplitter',
+    value: 'nonnegative number',
+    note: 'Arrow-key increment in the selected unit; default 2.',
+  },
+  {
+    name: 'data-bronto-splitter-large-step',
+    on: 'a .ui-splitter host',
+    behavior: 'initSplitter',
+    value: 'nonnegative number',
+    note: 'Shift+Arrow or PageUp/PageDown increment; at least the normal step; default 10.',
+  },
+
+  {
     name: 'data-bronto-open',
     on: 'a trigger (button/link)',
     value: 'id of the target <dialog>',
@@ -717,7 +760,7 @@ const behaviorAttributes = [
   {
     name: 'data-bronto-splitter-adjust',
     on: 'a button inside a .ui-splitter host',
-    value: 'signed percentage-point delta, for example -10 or 10',
+    value: 'signed delta in the selected unit, for example -10 or 10',
     behavior: 'initSplitter',
     note: 'single-pointer non-drag alternative to moving the separator; activation clamps to aria-valuemin/aria-valuemax and emits bronto:splitter:resize.',
   },
