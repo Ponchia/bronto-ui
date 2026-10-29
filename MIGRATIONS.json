@@ -274,7 +274,7 @@
       "codemod": "No blind automatic rewrite for styling and geometry. Locate imports and ui-annotation classes; follow docs/migrations/0.16-to-0.17.md and validate the rendered outputs and installed package versions.",
       "audit": {
         "guide": "docs/migrations/0.16-to-0.17.md",
-        "scope": "Literal source review only; import aliases, computed names, local stylesheet re-exports and rendered geometry require separate review.",
+        "scope": "Literal source review with named ESM/CJS import aliases, simple computed const members, and two-part static package specifier concatenations; indirect variable dataflow, local stylesheet re-exports, generated output and rendered geometry require separate inspection.",
         "rules": [
           {
             "id": "annotation-import",
