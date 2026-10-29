@@ -20,16 +20,16 @@ function namedOwners(source, name) {
   const esm = /\bimport\s*\{([^}]*)\}\s*from\s*(['"])@ponchia\/ui\/classes\2/g;
   for (const match of source.matchAll(esm)) {
     for (const item of match[1].split(',')) {
-      const alias = item.trim().match(new RegExp(`^${name}\\s+as\\s+([A-Za-z_$][\\w$]*)$`));
-      if (alias) owners.add(alias[1]);
+      const alias = item.trim().match(/^(ui|cls)\s+as\s+([A-Za-z_$][\w$]*)$/);
+      if (alias?.[1] === name) owners.add(alias[2]);
     }
   }
   const cjs =
     /\b(?:const|let|var)\s*\{([^}]*)\}\s*=\s*require\(\s*(['"])@ponchia\/ui\/classes\2\s*\)/g;
   for (const match of source.matchAll(cjs)) {
     for (const item of match[1].split(',')) {
-      const alias = item.trim().match(new RegExp(`^${name}\\s*:\\s*([A-Za-z_$][\\w$]*)$`));
-      if (alias) owners.add(alias[1]);
+      const alias = item.trim().match(/^(ui|cls)\s*:\s*([A-Za-z_$][\w$]*)$/);
+      if (alias?.[1] === name) owners.add(alias[2]);
     }
   }
   return owners;
