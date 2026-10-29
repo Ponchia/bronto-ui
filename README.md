@@ -5,7 +5,7 @@
 [![npm](https://img.shields.io/npm/v/@ponchia/ui?logo=npm)](https://www.npmjs.com/package/@ponchia/ui)
 [![npm provenance](https://img.shields.io/badge/npm-provenance-blue?logo=npm)](https://www.npmjs.com/package/@ponchia/ui#provenance)
 [![runtime deps](https://img.shields.io/badge/runtime%20deps-0-brightgreen)](https://github.com/Ponchia/bronto-ui/blob/main/package.json)
-[![default CSS](https://img.shields.io/badge/default%20CSS-~97kB%20%2F%20~17kB%20gzip-informational)](https://github.com/Ponchia/bronto-ui/blob/main/scripts/check-dist.mjs)
+[![default CSS](https://img.shields.io/badge/default%20CSS-~94kB%20%2F%20~17kB%20gzip-informational)](https://github.com/Ponchia/bronto-ui/blob/main/scripts/check-dist.mjs)
 [![CI](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/Ponchia/bronto-ui/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Ponchia/bronto-ui/badge)](https://scorecard.dev/viewer/?uri=github.com/Ponchia/bronto-ui)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Ponchia/bronto-ui/blob/main/LICENSE)
@@ -61,7 +61,7 @@ Or use a stylesheet URL in plain HTML, with no installation or build step:
 ```
 
 These are alternative ways to load the same default bundle
-(~97 kB raw / ~17 kB gzip). That size covers `dist/bronto.css`; fonts, optional
+(~94 kB raw / ~17 kB gzip). That size covers `dist/bronto.css`; fonts, optional
 stylesheets, JavaScript, and the complete package tarball are separate.
 
 The package root is **CSS-only**. A side-effect `import '@ponchia/ui'` also works

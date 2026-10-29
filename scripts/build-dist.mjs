@@ -8,10 +8,11 @@
  * a single `@layer bronto { … }`, reproducing the cascade-layer
  * behaviour the entrypoints get from `@import … layer(bronto)`.
  *
- * The minifier is deliberately conservative — strip comments, collapse
- * whitespace, tidy around `{ } ; ,` only. It never touches combinators,
- * `:` or parens, so it cannot change selector meaning; gzip (which every
- * server does) reclaims the rest. Correctness over a few extra bytes.
+ * Minification retains the conservative, proven whitespace pass and uses
+ * PostCSS only to remove unnecessary whitespace after parsed declaration
+ * colons. Public custom-property values and CSS animation longhands must
+ * retain their exact serialized meaning: aggressive shorthand/color
+ * optimizers can change both (see the 0.18.2 browser regression).
  *
  * `buildBundles()` is pure (returns name → content) so check-dist can
  * diff it against the committed files without writing. Run directly to
@@ -21,6 +22,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
+import postcss from 'postcss';
 import { cssImports, stripCssComments } from './lib/patterns.mjs';
 import { log } from './lib/stdio.mjs';
 
@@ -43,11 +45,18 @@ function leaves(entry, acc = []) {
 }
 
 function minify(css) {
-  return stripCssComments(css)
-    .replace(/\s+/g, ' ') // collapse whitespace (keeps combinator spaces)
-    .replace(/\s*([{};,])\s*/g, '$1') // tidy only around structural chars
-    .replace(/;}/g, '}') // drop redundant final semicolons
+  const compact = stripCssComments(css)
+    .replace(/\s+/g, ' ') // Keep combinator and value spacing.
+    .replace(/\s*([{};,])\s*/g, '$1') // Structural tokens only.
+    .replace(/;}/g, '}')
     .trim();
+  // Parse declaration boundaries instead of regex-rewriting ':' in selectors,
+  // @supports, strings, function arguments or custom-property payloads.
+  const root = postcss.parse(compact, { from: 'bronto.css' });
+  root.walkDecls((decl) => {
+    decl.raws.between = ':';
+  });
+  return root.toString();
 }
 
 /** Depth fix: source leaves live at `css/` and reference assets as
@@ -211,7 +220,11 @@ export function buildBundles() {
  *  SIXTY-THREE families of the same row, about 1,200 lines, each re-deciding the
  *  selected state, the hover, the ellipsis and the coarse floor. The gzip cost is
  *  small precisely because the new rules compress against the menu rules they
- *  replaced. 95,600 B / 16,400 B leaves ~370 B raw / ~120 B gzip of headroom. */
+ *  replaced. 95,600 B / 16,400 B leaves ~370 B raw / ~120 B gzip of headroom.
+ *  0.18.2 maintenance: grammar-aware declaration-colon whitespace
+ *  compaction restores raw headroom while preserving custom-property
+ *  serialization, animation timeline longhands, authored selectors, and
+ *  existing browser behavior. The raw and gzip ceilings remain unchanged. */
 export const BUDGET = { raw: 100_000, gzip: 18_000 };
 
 export function sizes(content) {
