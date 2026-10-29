@@ -19,6 +19,7 @@ import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { reportAndExit } from './lib/gate-report.mjs';
+import { distTagFor } from './release-dist-tag.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
@@ -247,18 +248,40 @@ requireJobIncludes(
   'must derive the npm version from the v-prefixed tag',
   'version="${GITHUB_REF_NAME#v}"',
 );
+// Dist-tag routing lives in scripts/release-dist-tag.mjs, fed the registry's
+// current `latest`, so an older stable never takes `latest` (backports and
+// re-runs go to maint-<major>.<minor>).
 requireJobIncludes(
   'publish-npm',
   publishJob,
-  'must route prereleases to the next dist-tag',
-  'dist_tag=next',
+  'must read the registry latest before routing the dist-tag',
+  'node "${RUNNER_TEMP}/bronto-publisher/source/bin/npm-cli.js" view @ponchia/ui dist-tags.latest',
 );
 requireJobIncludes(
   'publish-npm',
   publishJob,
-  'must route stable releases to the latest dist-tag',
-  'dist_tag=latest',
+  'must route the dist-tag through scripts/release-dist-tag.mjs',
+  'node scripts/release-dist-tag.mjs "$version" "$current_latest"',
 );
+requireJobIncludes(
+  'publish-npm',
+  publishJob,
+  'must expose the routed dist-tag to release-notes',
+  'dist_tag: ${{ steps.dist-tag.outputs.dist_tag }}',
+);
+for (const [label, release, latest, expected] of [
+  ['must route prereleases to the next dist-tag', '0.4.0-rc.1', '0.3.0', 'next'],
+  ['must route a newer stable to the latest dist-tag', '0.4.0', '0.3.0', 'latest'],
+  ['must route an older stable to its maintenance dist-tag', '0.2.9', '0.3.0', 'maint-0.2'],
+]) {
+  let actual;
+  try {
+    actual = distTagFor(release, latest);
+  } catch (error) {
+    actual = error.message;
+  }
+  if (actual !== expected) errors.push(`release dist-tag router ${label} (got ${actual})`);
+}
 // Trusted publishing (OIDC) replaced the long-lived NPM_TOKEN. Two things
 // have to stay true for it to work, and both fail *at publish time* — the
 // most expensive moment to find out — so they are gated here instead.
@@ -367,6 +390,12 @@ requireJobNotIncludes(
 );
 
 const releaseNotesJob = jobBlock('release-notes');
+requireJobIncludes(
+  'release-notes',
+  releaseNotesJob,
+  'must mark the GitHub Release Latest only when npm latest moved',
+  "make_latest: ${{ needs.publish-npm.outputs.dist_tag == 'latest' }}",
+);
 requireJobIncludes(
   'release-notes',
   releaseNotesJob,

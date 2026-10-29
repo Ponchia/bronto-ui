@@ -35,28 +35,28 @@
       "identity": [
         "javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp",
         "scripts/check-release.mjs",
-        81,
+        82,
         10,
-        81,
+        82,
         84,
-        "2c1c485f8e924db07b030c340c17ff875ffbcb0b23eae1ec3b117fa3c2881d13",
+        "c7820a4f4fbfe5d18607f9b5d05e407583f228272e1ca891e5a72504f636d33f",
         "defbb38ee55af7cdb98b3fe490bd5b8f45070e54c8bd2f06914773bd38b7eaf1"
       ],
-      "reason": "Version tokens and workflow job names are escaped with escapeRegExp before interpolation into fixed patterns; regex syntax cannot be supplied through either argument. Re-reviewed 25 October: only publisher contract paths/metadata changed; the escaping functions and fixed regex structure are unchanged.",
+      "reason": "Version tokens and workflow job names are escaped with escapeRegExp before interpolation into fixed patterns; regex syntax cannot be supplied through either argument. Re-reviewed 29 October: one added import (the dist-tag router) shifted this finding by one line; the escaping functions and fixed regex structure are unchanged.",
       "evidence": "npm run check:release; test/release-prep-cli.test.mjs"
     },
     {
       "identity": [
         "javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp",
         "scripts/check-release.mjs",
-        85,
+        86,
         17,
-        87,
+        88,
         4,
-        "2c1c485f8e924db07b030c340c17ff875ffbcb0b23eae1ec3b117fa3c2881d13",
+        "c7820a4f4fbfe5d18607f9b5d05e407583f228272e1ca891e5a72504f636d33f",
         "c152ceb7953589880f428fcb7c92c0c80334a1f388ac87ffe3afcb064d220fd2"
       ],
-      "reason": "Version tokens and workflow job names are escaped with escapeRegExp before interpolation into fixed patterns; regex syntax cannot be supplied through either argument. Re-reviewed 25 October: only publisher contract paths/metadata changed; the escaping functions and fixed regex structure are unchanged.",
+      "reason": "Version tokens and workflow job names are escaped with escapeRegExp before interpolation into fixed patterns; regex syntax cannot be supplied through either argument. Re-reviewed 29 October: one added import (the dist-tag router) shifted this finding by one line; the escaping functions and fixed regex structure are unchanged.",
       "evidence": "npm run check:release; test/release-prep-cli.test.mjs"
     },
     {
