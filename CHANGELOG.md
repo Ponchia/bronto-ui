@@ -7,6 +7,13 @@
 
 ## Unreleased — 0.18.2
 
+### Fixed
+
+- Pin the PostCSS build parser to patched 8.5.32, deduplicating the vulnerable
+  8.5.6 lock entry that appeared after the CSS optimization. Guard the
+  complete installed PostCSS lock graph against its known advisories;
+  generated CSS bytes and the zero-runtime-dependency package remain unchanged.
+
 ### Added
 
 - Extend the opt-in 0.17 annotation migration source review to recognize
