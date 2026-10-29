@@ -5,6 +5,17 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased — 0.18.2
+
+### Changed
+
+- Use pinned Lightning CSS to minify the generated CSS only, preserving the
+  authored style layer, exported CSS leaves and public class contract. No
+  downlevel browser target is selected. The default CSS shrinks from 99,513
+  to 94,822 raw bytes and from 17,260 to 16,874 gzip bytes, without raising
+  either bundle-size ceiling. Require complete browser, visual, accessibility
+  and packed-consumer verification before releasing this change.
+
 ## 0.18.1 — 2026-10-29
 
 The first published 0.18 release. The `v0.18.0` tag was cut but never

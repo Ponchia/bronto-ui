@@ -8,10 +8,10 @@
  * a single `@layer bronto { … }`, reproducing the cascade-layer
  * behaviour the entrypoints get from `@import … layer(bronto)`.
  *
- * The minifier is deliberately conservative — strip comments, collapse
- * whitespace, tidy around `{ } ; ,` only. It never touches combinators,
- * `:` or parens, so it cannot change selector meaning; gzip (which every
- * server does) reclaims the rest. Correctness over a few extra bytes.
+ * Minification uses pinned Lightning CSS with no browser target specified:
+ * optimize the authored modern syntax without retrofitting prefixes or
+ * transpiling unsupported features. All cross-engine behavior, forced-color,
+ * print and visual contracts still gate changes to emitted CSS.
  *
  * `buildBundles()` is pure (returns name → content) so check-dist can
  * diff it against the committed files without writing. Run directly to
@@ -21,6 +21,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
+import { transform } from 'lightningcss';
 import { cssImports, stripCssComments } from './lib/patterns.mjs';
 import { log } from './lib/stdio.mjs';
 
@@ -43,11 +44,14 @@ function leaves(entry, acc = []) {
 }
 
 function minify(css) {
-  return stripCssComments(css)
-    .replace(/\s+/g, ' ') // collapse whitespace (keeps combinator spaces)
-    .replace(/\s*([{};,])\s*/g, '$1') // tidy only around structural chars
-    .replace(/;}/g, '}') // drop redundant final semicolons
-    .trim();
+  // Keep the parser in control of selectors, quoted strings, :has(), calc()
+  // and custom properties; regex-based whitespace rewrites are unsafe there.
+  const { code } = transform({
+    filename: 'bronto.css',
+    code: Buffer.from(stripCssComments(css)),
+    minify: true,
+  });
+  return code.toString('utf8').trim();
 }
 
 /** Depth fix: source leaves live at `css/` and reference assets as
@@ -211,7 +215,11 @@ export function buildBundles() {
  *  SIXTY-THREE families of the same row, about 1,200 lines, each re-deciding the
  *  selected state, the hover, the ellipsis and the coarse floor. The gzip cost is
  *  small precisely because the new rules compress against the menu rules they
- *  replaced. 95,600 B / 16,400 B leaves ~370 B raw / ~120 B gzip of headroom. */
+ *  replaced. 95,600 B / 16,400 B leaves ~370 B raw / ~120 B gzip of headroom.
+ *  0.18.1 follow-through: pinned Lightning CSS minification reduces the
+ *  published default payload from 99,513 to 94,822 B raw, and 17,260 to
+ *  16,874 B gzip, without dropping a component or changing authored CSS.
+ *  The 100k/18k ceilings remain unchanged to preserve the earned margin. */
 export const BUDGET = { raw: 100_000, gzip: 18_000 };
 
 export function sizes(content) {

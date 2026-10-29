@@ -232,6 +232,7 @@
     "github-actionlint": "^1.7.12",
     "jsdom": "^30.1.1",
     "knip": "^6.39.0",
+    "lightningcss": "1.33.0",
     "marked": "18.1.1",
     "pdfjs-dist": "^6.3.289",
     "prettier": "^3.9.9",
