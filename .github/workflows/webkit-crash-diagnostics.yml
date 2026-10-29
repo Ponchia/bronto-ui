@@ -1,4 +1,5 @@
 # Manual, read-only reproduction of the WebKit navigation/resize crash (#250).
+# Compare identical pinned Playwright/WebKit 1.60.0 on Jammy and Noble.
 # The original e2e assertions remain untouched; 0 retries makes each crash visible.
 name: WebKit crash diagnostics
 
@@ -15,9 +16,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        workers: [1, 3]
+        include:
+          - distro: jammy
+            workers: 1
+            image: mcr.microsoft.com/playwright:v1.60.0-jammy@sha256:e1529a04087193966ea15d4a1617345bdaa0791690a24ab2c42b65f9ce5b2cdc
+          - distro: jammy
+            workers: 3
+            image: mcr.microsoft.com/playwright:v1.60.0-jammy@sha256:e1529a04087193966ea15d4a1617345bdaa0791690a24ab2c42b65f9ce5b2cdc
+          - distro: noble
+            workers: 1
+            image: mcr.microsoft.com/playwright:v1.60.0-noble@sha256:9bd26ad900bb5e0f4dee75839e957a89ae89c2b7ab1e76050e559790e946b948
+          - distro: noble
+            workers: 3
+            image: mcr.microsoft.com/playwright:v1.60.0-noble@sha256:9bd26ad900bb5e0f4dee75839e957a89ae89c2b7ab1e76050e559790e946b948
     container:
-      image: mcr.microsoft.com/playwright:v1.60.0-jammy@sha256:e1529a04087193966ea15d4a1617345bdaa0791690a24ab2c42b65f9ce5b2cdc
+      image: ${{ matrix.image }}
     env:
       HOME: /root
       DEBUG: 'pw:browser*'
@@ -68,7 +81,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: webkit-crash-workers-${{ matrix.workers }}
+          name: webkit-crash-${{ matrix.distro }}-workers-${{ matrix.workers }}
           path: |
             ${{ runner.temp }}/webkit-processes.log
             test-results/
