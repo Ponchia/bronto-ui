@@ -231,3 +231,48 @@ test('browser report retention preserves successful retries and rejects malforme
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test('WebKit Noble is an independent required non-pixel workflow and Jammy retains Chromium snapshots', () => {
+  const caller = readFileSync(new URL('../.github/workflows/e2e.yml', import.meta.url), 'utf8');
+  const webkit = readFileSync(
+    new URL('../.github/workflows/e2e-webkit-noble.yml', import.meta.url),
+    'utf8',
+  );
+  const config = readFileSync(new URL('../playwright.config.mjs', import.meta.url), 'utf8');
+
+  assert.match(
+    caller,
+    /  webkit:\n    if: inputs\.cross_engine\n    uses: \.\/\.github\/workflows\/e2e-webkit-noble\.yml/,
+  );
+  assert.match(caller, /mcr\.microsoft\.com\/playwright:v1\.60\.0-jammy@sha256:[a-f0-9]{64}/);
+  assert.match(webkit, /mcr\.microsoft\.com\/playwright:v1\.60\.0-noble@sha256:[a-f0-9]{64}/);
+  assert.match(webkit, /shard: \[1, 2, 3\]/);
+  assert.match(webkit, /name: playwright-report-webkit-/);
+  assert.match(webkit, /steps\.reports\.outputs\.flaky == 'true'/);
+  assert.match(config, /testMatch: NON_PIXEL_E2E_TEST_MATCH/);
+  assert.match(config, /retries: process\.env\.CI \? 2 : 0/);
+  assert.match(config, /trace: 'retain-on-failure'/);
+  assert.doesNotMatch(webkit, /--project=chromium|--project=firefox|--update-snapshots/);
+
+  const jammyShell = workflowScript(
+    'e2e.yml',
+    '      - name: Run e2e (Chromium and optional Firefox)',
+  );
+  const nobleShell = workflowScript(
+    'e2e-webkit-noble.yml',
+    '      - name: Run WebKit non-pixel e2e',
+  );
+  const mock = String.raw`npx() { printf '%s\n' "$*"; }` + '\n';
+  for (const [crossEngine, expected] of [
+    ['true', 'playwright test --project=chromium --project=firefox --shard=2/3'],
+    ['false', 'playwright test --project=chromium --shard=2/3'],
+  ]) {
+    const result = runShell(mock + jammyShell, { CROSS_ENGINE: crossEngine, SHARD: '2' });
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.stdout.trim(), expected);
+    assert.doesNotMatch(result.stdout, /webkit/, 'Jammy must never include WebKit');
+  }
+  const webkitRun = runShell(mock + nobleShell, { SHARD: '2' });
+  assert.equal(webkitRun.status, 0, webkitRun.stderr);
+  assert.equal(webkitRun.stdout.trim(), 'playwright test --project=webkit --shard=2/3');
+});
