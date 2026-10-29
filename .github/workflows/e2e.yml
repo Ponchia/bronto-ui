@@ -1,8 +1,9 @@
 # Reusable end-to-end gate: visual snapshots + axe a11y both themes +
 # behavioural + forced-colors/reduced-motion/print + no-console-error/404,
-# optionally across firefox/webkit (see `cross_engine`). Pinned to the
-# container the committed baselines were authored in, so screenshots are
-# byte-stable across machines (no cross-OS font flake).
+# optionally across Firefox/WebKit (see `cross_engine`). Chromium and Firefox
+# retain the pinned Jammy baseline container. WebKit's non-pixel suite uses a
+# separately pinned Noble image through the nested reusable workflow to avoid
+# intermittent Jammy browser-process crashes without touching pixel baselines.
 #
 # Called by BOTH ci.yml and release.yml via `workflow_call` — one
 # definition, no drift. (These used to be two near-identical copies that
@@ -71,17 +72,19 @@ jobs:
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
 
-      # chromium runs every spec including the pixel baselines; firefox +
-      # webkit (the per-config NON_PIXEL set) only join when cross_engine.
-      - name: Run e2e (${{ inputs.cross_engine && 'chromium + firefox + webkit' || 'chromium only' }})
+      # Chromium retains every spec (including pixel baselines); Firefox runs
+      # its non-pixel project here only when cross_engine. The separately
+      # required Noble workflow owns all WebKit non-pixel tests in that case.
+      - name: Run e2e (Chromium and optional Firefox)
         id: e2e
         env:
           CROSS_ENGINE: ${{ inputs.cross_engine }}
+          SHARD: ${{ matrix.shard }}
         run: |
           if [ "$CROSS_ENGINE" = "true" ]; then
-            npx playwright test --shard=${{ matrix.shard }}/3
+            npx playwright test --project=chromium --project=firefox --shard="$SHARD"/3
           else
-            npx playwright test --project=chromium --shard=${{ matrix.shard }}/3
+            npx playwright test --project=chromium --shard="$SHARD"/3
           fi
 
       # A passing retry is useful failure evidence too. Keep those reports
@@ -109,3 +112,10 @@ jobs:
             test-results/
           retention-days: 7
           if-no-files-found: ignore
+
+  # The caller workflow succeeds only if both required browser jobs succeed.
+  # On Chromium-only PRs this job is intentionally skipped; release and all
+  # engine-sensitive changes still require WebKit's full non-pixel matrix.
+  webkit:
+    if: inputs.cross_engine
+    uses: ./.github/workflows/e2e-webkit-noble.yml
