@@ -9,6 +9,11 @@
 
 ### Fixed
 
+- The release workflow no longer lets an older stable version take the npm
+  `latest` dist-tag. A stable tag below the registry's current `latest`
+  publishes to `maint-<major>.<minor>` and is not marked as the Latest
+  GitHub Release; the publish fails rather than guesses when the registry
+  lookup does not answer.
 - Pin the PostCSS build parser to patched 8.5.32, deduplicating the vulnerable
   8.5.6 lock entry that appeared after the CSS optimization. Guard the
   complete installed PostCSS lock graph against its known advisories;

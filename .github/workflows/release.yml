@@ -24,7 +24,11 @@
 # anything with a hyphenated identifier) publishes to `next` instead —
 # consumers opt in with `@ponchia/ui@next` and `latest` never silently
 # moves onto an unstable build. The GitHub Release is flagged prerelease
-# to match. publish-npm derives this from the tag; nothing else to set.
+# to match. A stable tag OLDER than the registry's current `latest` (a
+# backport, or an older release re-run after a newer one published)
+# publishes to `maint-<major>.<minor>` and is not marked GitHub "Latest",
+# so `latest` only ever moves forward. publish-npm derives all of this from
+# the tag and the registry (scripts/release-dist-tag.mjs); nothing to set.
 #
 # CREDENTIALS: there are none. Publishing uses npm TRUSTED PUBLISHING
 # (OIDC) — GitHub mints a short-lived, workflow-scoped token that npm
@@ -191,6 +195,8 @@ jobs:
     # npm trusted-publisher identity (see below), so no other job — or
     # future workflow — can mint a publish credential for this package.
     environment: npm-publish
+    outputs:
+      dist_tag: ${{ steps.dist-tag.outputs.dist_tag }}
     permissions:
       contents: read
       # OIDC. This is what npm exchanges for a short-lived publish
@@ -226,20 +232,38 @@ jobs:
       # was validated, not a re-build. prepublishOnly stays the intrinsic
       # guard for any non-CI/manual publish.
       #
-      # --tag is explicit on both paths: a bare `npm publish` defaults to
+      # --tag is explicit on every path: a bare `npm publish` defaults to
       # `latest`, so a prerelease would otherwise hijack the default
-      # install. We route prereleases to `next` instead (see header).
-      - name: Publish to npm
+      # install. scripts/release-dist-tag.mjs routes prereleases to `next`
+      # and a stable older than the registry's `latest` to
+      # `maint-<major>.<minor>` (see header). Fails closed: no registry
+      # answer, no publish.
+      - name: Choose the dist-tag
+        id: dist-tag
         run: |
+          set -uo pipefail
           version="${GITHUB_REF_NAME#v}"
-          # A hyphen marks a SemVer prerelease identifier (0.4.0-rc.1);
-          # ${version%%-*} strips it, so an unchanged value means stable.
-          if [ "$version" != "${version%%-*}" ]; then
-            dist_tag=next
-          else
-            dist_tag=latest
-          fi
-          echo "Publishing $version to dist-tag '$dist_tag'"
+          current_latest=""
+          for _ in 1 2 3 4 5; do
+            if current_latest="$(node "${RUNNER_TEMP}/bronto-publisher/source/bin/npm-cli.js" view @ponchia/ui dist-tags.latest)"; then
+              break
+            fi
+            current_latest=""
+            sleep 5
+          done
+          dist_tag="$(node scripts/release-dist-tag.mjs "$version" "$current_latest")" || {
+            echo "::error::cannot route $version: registry latest is '${current_latest}'"
+            exit 1
+          }
+          echo "Registry latest is '$current_latest'; $version goes to dist-tag '$dist_tag'"
+          echo "dist_tag=$dist_tag" >> "$GITHUB_OUTPUT"
+
+      - name: Publish to npm
+        env:
+          DIST_TAG: ${{ steps.dist-tag.outputs.dist_tag }}
+        run: |
+          dist_tag="$DIST_TAG"
+          echo "Publishing ${GITHUB_REF_NAME#v} to dist-tag '$dist_tag'"
           node "${RUNNER_TEMP}/bronto-publisher/source/bin/npm-cli.js" publish --ignore-scripts --tag "$dist_tag"
 
       - name: Record npm registry state
@@ -331,3 +355,6 @@ jobs:
           # Flag prerelease tags (hyphenated SemVer) so the GitHub Release
           # matches the `next` dist-tag and is not surfaced as "Latest".
           prerelease: ${{ contains(github.ref_name, '-') }}
+          # GitHub marks a new Release "Latest" by default; only the run that
+          # moved npm's `latest` may, so a maint-* backport never does.
+          make_latest: ${{ needs.publish-npm.outputs.dist_tag == 'latest' }}

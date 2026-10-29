@@ -264,6 +264,14 @@ get it via `npm i @ponchia/ui@next`:
 git tag v0.4.0-rc.1 && git push origin v0.4.0-rc.1
 ```
 
+**Older stable releases.** `latest` only moves forward. A stable tag below
+the registry's current `latest`, such as a backport or an older release
+re-run after a newer one published, goes to `maint-<major>.<minor>` (for
+example `npm i @ponchia/ui@maint-0.17`) and is not marked as the Latest
+GitHub Release. `scripts/release-dist-tag.mjs` makes that choice in
+`publish-npm`, which fails rather than publishes when the registry lookup
+does not answer.
+
 The tag triggers `.github/workflows/release.yml`: `validate` (read-only
 checks + tag↔version match), `e2e` (Playwright visual + a11y), **and**
 `examples` (consumer build against the packed tarball) must all pass →
