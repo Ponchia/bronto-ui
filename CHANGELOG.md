@@ -7,6 +7,14 @@
 
 ## Unreleased — 0.18.2
 
+### Added
+
+- Extend the opt-in 0.17 annotation migration source review to recognize
+  named ESM/CJS aliases, quoted bracket access, simple constant-key members,
+  and two-part static package specifiers. Ordinary markup validation and
+  deprecated runtime compatibility remain unchanged; indirect dataflow and
+  deployed rendering acceptance remain manual migration prerequisites.
+
 ### Maintenance
 
 - Retire the unused vulnerable bundled npm CLI lock and its obsolete readiness

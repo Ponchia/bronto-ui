@@ -76,6 +76,71 @@ test('direct and indirect CSS imports are both reported, including unlayered exp
     );
   }));
 
+test('named ESM and CJS aliases, bracket names and simple const keys are reviewable', () =>
+  fixture((root) => {
+    const file = resolve(root, 'aliased.tsx');
+    writeFileSync(
+      file,
+      [
+        "import { ui as kit, cls as classes } from '@ponchia/ui/classes';",
+        'kit.annotation();',
+        "classes['annotationNote'];",
+        "const legacyMethod = 'annotation'; kit[legacyMethod]();",
+        "const { ui: uiCjs, cls: clsCjs } = require('@ponchia/ui/classes');",
+        'uiCjs[`annotation`]();',
+        'clsCjs.annotationEntry;',
+      ].join('\n'),
+    );
+    const result = checkPaths([file], { migration: '0.17' });
+    assert.deepEqual(
+      result.findings.map(({ rule, line }) => [rule, line]),
+      [
+        ['annotation-recipe', 2],
+        ['annotation-class-key', 3],
+        ['annotation-recipe', 4],
+        ['annotation-recipe', 6],
+        ['annotation-class-key', 7],
+      ],
+    );
+  }));
+
+test('static two-part import specifiers flag otherwise invisible legacy modules', () =>
+  fixture((root) => {
+    const file = resolve(root, 'dynamic.ts');
+    writeFileSync(
+      file,
+      [
+        "const lazy = import('@ponchia/ui/' + 'annotations');",
+        "const stylesheet = '@ponchia/ui/css/' + 'report-kit.css';",
+        "const direct = require('@ponchia/ui/css/' + 'annotations.css');",
+      ].join('\n'),
+    );
+    assert.deepEqual(
+      checkPaths([file], { migration: '0.17' }).findings.map(({ rule, line }) => [rule, line]),
+      [
+        ['annotation-import', 1],
+        ['annotation-rollup', 2],
+        ['annotation-styles', 3],
+      ],
+    );
+  }));
+
+test('unrelated alias owners and computed names remain outside the migration report', () => {
+  const audit = migrationAudit('0.17');
+  assert.deepEqual(
+    audit.scan(
+      [
+        "import { ui as external } from '@other/ui';",
+        "const { cls: externalCls } = require('@other/ui/classes');",
+        "const key = 'annotation'; external[key](); externalCls.annotationNote;",
+        "const allowed = '@ponchia/annotations/bronto.css';",
+        "const uiClass = '@ponchia/ui/css/' + 'figure.css';",
+      ].join('\n'),
+    ),
+    [],
+  );
+});
+
 test('standalone annotation ownership and unrelated connectors remain clean', () =>
   fixture((root) => {
     const file = resolve(root, 'app.js');
