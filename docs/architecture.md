@@ -14,6 +14,8 @@ Status: accepted · 2026-05-15 · applies from v0.2.0
 >   (implemented in 0.10) — remove unadopted adapters and the controlled modal.
 > - [ADR-0005 — Productive tools and editorial reports](./adr/0005-productive-tools-and-editorial-reports.md)
 >   (accepted; 0.10) — readable defaults, selective display identity, and task-led composition.
+> - [ADR-0007 — Scope identity is its own colour tier, legal in chrome](./adr/0007-scope-identity.md)
+>   (accepted) — Tier 5, the opt-in `css/identity.css` leaf; amends ADR-0001 rule 4.
 
 ## Context
 

@@ -125,6 +125,7 @@
     "docs/adr/0005-productive-tools-and-editorial-reports.md",
     "docs/migrations/0.9-to-0.10.md",
     "docs/adr/0006-trusted-publishing.md",
+    "docs/adr/0007-scope-identity.md",
     "docs/migrations/0.10-to-0.11.md",
     "docs/migrations/0.11-to-0.12.md",
     "docs/migrations/0.16-to-0.17.md"
@@ -272,6 +273,7 @@
     "./css/app.css": "./dist/css/app.css",
     "./css/skins.css": "./dist/css/skins.css",
     "./css/dataviz.css": "./dist/css/dataviz.css",
+    "./css/identity.css": "./dist/css/identity.css",
     "./css/blocknote.css": "./dist/css/blocknote.css",
     "./css/fonts-inter.css": "./dist/css/fonts-inter.css",
     "./css/fonts-jetbrains-mono.css": "./dist/css/fonts-jetbrains-mono.css",
@@ -322,6 +324,7 @@
     "./css/unlayered/app.css": "./css/app.css",
     "./css/unlayered/skins.css": "./css/skins.css",
     "./css/unlayered/dataviz.css": "./css/dataviz.css",
+    "./css/unlayered/identity.css": "./css/identity.css",
     "./css/unlayered/blocknote.css": "./css/blocknote.css",
     "./css/unlayered/fonts-inter.css": "./css/fonts-inter.css",
     "./css/unlayered/fonts-jetbrains-mono.css": "./css/fonts-jetbrains-mono.css",

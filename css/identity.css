@@ -1,0 +1,103 @@
+/* @ponchia/ui — GENERATED from tokens/charts.js by scripts/gen-charts.mjs.
+ *  Do not edit by hand; run `npm run charts:build`. Drift-checked in CI.
+ *
+ *  Tier-5 scope identity (ADR-0007). OPT-IN: import
+ *  `@ponchia/ui/css/identity.css`; never in the default bundle. A hue marks
+ *  which scope a thing belongs to: a ring, chip, underline or band in chrome.
+ *  It is never the accent, a status or a series, and never travels alone:
+ *  pair it with a glyph or label (ADR-0001 rule 6).
+ *    --identity-<hue>       the swatch, for fills and pickers;
+ *    --identity-<hue>-ink   lines and text: 4.5:1 on panel, page and tint;
+ *    --identity-<hue>-tint  a wash over --panel, for a disc or chip.
+ *  Hues: blue, orange, aqua, yellow, magenta, green, violet, red. */
+
+:root {
+  --identity-blue: #2a78d6;
+  --identity-orange: #eb6834;
+  --identity-aqua: #1baf7a;
+  --identity-yellow: #eda100;
+  --identity-magenta: #e87ba4;
+  --identity-green: #008300;
+  --identity-violet: #4a3aa7;
+  --identity-red: #e34948;
+  --identity-blue-ink: #1467c3;
+  --identity-orange-ink: #bf3f00;
+  --identity-aqua-ink: #007d4c;
+  --identity-yellow-ink: #a45d00;
+  --identity-magenta-ink: #b04972;
+  --identity-green-ink: #007800;
+  --identity-violet-ink: #4a3aa7;
+  --identity-red-ink: #c62b30;
+
+  /* Theme-independent: each tint follows its hue and whichever --panel the
+     page, a skin or the OLED preset set. */
+  --identity-blue-tint: color-mix(in oklch, var(--identity-blue) 16%, var(--panel));
+  --identity-orange-tint: color-mix(in oklch, var(--identity-orange) 16%, var(--panel));
+  --identity-aqua-tint: color-mix(in oklch, var(--identity-aqua) 16%, var(--panel));
+  --identity-yellow-tint: color-mix(in oklch, var(--identity-yellow) 16%, var(--panel));
+  --identity-magenta-tint: color-mix(in oklch, var(--identity-magenta) 16%, var(--panel));
+  --identity-green-tint: color-mix(in oklch, var(--identity-green) 16%, var(--panel));
+  --identity-violet-tint: color-mix(in oklch, var(--identity-violet) 16%, var(--panel));
+  --identity-red-tint: color-mix(in oklch, var(--identity-red) 16%, var(--panel));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --identity-blue: #3987e5;
+    --identity-orange: #d95926;
+    --identity-aqua: #199e70;
+    --identity-yellow: #c98500;
+    --identity-magenta: #d55181;
+    --identity-green: #008300;
+    --identity-violet: #9085e9;
+    --identity-red: #e66767;
+    --identity-blue-ink: #4694f3;
+    --identity-orange-ink: #e86f42;
+    --identity-aqua-ink: #27a677;
+    --identity-yellow-ink: #cb8705;
+    --identity-magenta-ink: #e46792;
+    --identity-green-ink: #38a433;
+    --identity-violet-ink: #9187eb;
+    --identity-red-ink: #eb6c6c;
+  }
+}
+
+:root[data-theme='dark'] {
+  --identity-blue: #3987e5;
+  --identity-orange: #d95926;
+  --identity-aqua: #199e70;
+  --identity-yellow: #c98500;
+  --identity-magenta: #d55181;
+  --identity-green: #008300;
+  --identity-violet: #9085e9;
+  --identity-red: #e66767;
+  --identity-blue-ink: #4694f3;
+  --identity-orange-ink: #e86f42;
+  --identity-aqua-ink: #27a677;
+  --identity-yellow-ink: #cb8705;
+  --identity-magenta-ink: #e46792;
+  --identity-green-ink: #38a433;
+  --identity-violet-ink: #9187eb;
+  --identity-red-ink: #eb6c6c;
+}
+
+@media print {
+  :root:not([data-theme='light']) {
+    --identity-blue: #2a78d6;
+    --identity-orange: #eb6834;
+    --identity-aqua: #1baf7a;
+    --identity-yellow: #eda100;
+    --identity-magenta: #e87ba4;
+    --identity-green: #008300;
+    --identity-violet: #4a3aa7;
+    --identity-red: #e34948;
+    --identity-blue-ink: #1467c3;
+    --identity-orange-ink: #bf3f00;
+    --identity-aqua-ink: #007d4c;
+    --identity-yellow-ink: #a45d00;
+    --identity-magenta-ink: #b04972;
+    --identity-green-ink: #007800;
+    --identity-violet-ink: #4a3aa7;
+    --identity-red-ink: #c62b30;
+  }
+}

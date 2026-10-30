@@ -421,6 +421,51 @@ static JSON.
   [contrast.md](contrast.md) (a fill is not body text) — for thin lines or
   points use the slot's `--cat-N-ink`, or lean on the pattern.
 
+## Scope identity
+
+Opt-in Tier-5 colour that **is** legal in UI chrome
+([ADR-0007](adr/0007-scope-identity.md)). It marks which scope a thing belongs
+to, such as a workspace, an estate, a project or a canvas, so a person can tell
+the scopes apart at a glance. It is never the accent, a status or a series, and
+never in the default bundle.
+
+```css
+@import '@ponchia/ui/css/identity.css';
+```
+
+Each of the eight categorical hues has three names. `<hue>` is `blue`,
+`orange`, `aqua`, `yellow`, `magenta`, `green`, `violet` or `red`.
+
+| Token | Use |
+| --- | --- |
+| `--identity-<hue>` | The swatch, for a picker or a filled chip. |
+| `--identity-<hue>-ink` | Rings, underlines, bands and text: 4.5:1 on the panel, the page and its own tint, in both themes and on the OLED surfaces. |
+| `--identity-<hue>-tint` | A 16% wash over `--panel` (it follows a skin's or OLED's panel), for a disc or a chip background. |
+
+The values are the measured categorical set, so the gates that hold the data-viz
+palette (`check:charts`) hold these too. A scope's mark is a line or a chip,
+not a repaint:
+
+```css
+/* The consumer stores the hue name per scope and sets two local knobs. */
+.scope-mark {
+  --scope-ink: var(--identity-aqua-ink);
+  --scope-tint: var(--identity-aqua-tint);
+  background: var(--scope-tint);
+  box-shadow: inset 0 0 0 2px var(--scope-ink);
+}
+```
+
+- **Meaning never by colour alone.** Pair every mark with the scope's glyph or
+  label (ADR-0001 rule 6). Eight hues is a governed set, not a limit on scopes:
+  the glyph keeps two scopes that share a hue apart.
+- **Never on semantic surfaces.** Focus rings, selection, attention and status
+  keep their own tokens. Re-pointing `--accent` to a scope's hue is a re-brand,
+  which a subtree cannot do cleanly (see the skin notes above).
+- **A custom hue is the consumer's obligation.** An application that lets a
+  person choose a hex must derive its ink and tint to the same floors: 4.5:1
+  for the ink on the panel, the page and the tint.
+
 ## Accessibility markup contracts
 
 A few components are styled but need the consumer to author the right

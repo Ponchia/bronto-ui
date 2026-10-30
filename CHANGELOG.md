@@ -21,6 +21,14 @@
 
 ### Added
 
+- Add the opt-in scope-identity leaf `@ponchia/ui/css/identity.css`
+  (Tier 5, [ADR-0007](docs/adr/0007-scope-identity.md)). It names the eight
+  measured categorical hues for UI chrome as `--identity-<hue>`,
+  `--identity-<hue>-ink` and `--identity-<hue>-tint`. Each ink holds 4.5:1 on
+  the panel, the page and its own tint in both themes. Consumers use it to mark
+  which scope a thing belongs to, paired with a glyph or label.
+  `check:color-policy` reserves the `--identity-*` namespace from the token
+  model. The default bundle is unchanged.
 - Extend the opt-in 0.17 annotation migration source review to recognize
   named ESM/CJS aliases, quoted bracket access, simple constant-key members,
   and two-part static package specifiers. Ordinary markup validation and

@@ -2,7 +2,8 @@
 
 Status: accepted (all steps 1–8 implemented in 0.4.0) · 2026-05-31 ·
 supersedes the informal "monochrome + one accent" framing in `README.md` /
-`package.json`
+`package.json` · amended 2026-10-30 by [ADR-0007](0007-scope-identity.md)
+(Tier 5, scope identity, and rule 4)
 
 > This is the **color constitution** for `@ponchia/ui`. It is forward-looking:
 > nothing here changes the default build. It defines the tiers color is
@@ -73,6 +74,7 @@ color" to "color is tiered, token-only, contrast-gated, and off-by-default."
 | **2** | Functional status | `success` / `warning` / `danger` / `info` — signal only | Always on |
 | **3** | Display expression | Luminance, dot density/intensity, scan cadence, pulse, reveal timing — the dot-matrix substrate | Opt-in tokens |
 | **4** | Categorical / data-viz | A 6–8 color colorblind-safe scale + sequential/diverging ramps — **charts only** | Opt-in module, never bundled |
+| **5** | Scope identity | The categorical hues, named by hue, as a mark of which scope a thing belongs to — **chrome, as a mark only** ([ADR-0007](0007-scope-identity.md)) | Opt-in module, never bundled |
 
 ### The six rules (the constitution)
 
@@ -93,10 +95,12 @@ read "rule" as "all six are CI-enforced" — only what's tagged **[gate]** is.
    system; everything new is opt-in. **[other gate]** — `check:dist`
    byte-equality + visual baselines.
 4. **Semantic tier names.** A token's name declares its tier. **Status is never
-   decorative**; **chart color is never UI chrome.** No `primary/secondary`.
+   decorative**; **chart color is never UI chrome**; **scope identity is
+   chrome only as a mark** (ADR-0007). No `primary/secondary`.
    **[gate]** for "every color token is tiered" + the reserved `--chart/--cat/
-   --data-*` namespace (invariants 1–2); **[norm]** for "status never
-   decorative" (needs usage context a static gate can't see).
+   --data-*` and `--identity-*` namespaces (invariants 1–2); **[norm]** for
+   "status never decorative" and "identity only as a mark" (needs usage
+   context a static gate can't see).
 5. **One active UI accent per scope.** No second brand accent. "Duotone" lives
    in Tier 3 (dots/display ornament), not as a second interactive accent.
    **[norm]**.
