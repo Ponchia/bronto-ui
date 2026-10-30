@@ -57,7 +57,7 @@ Import it from your application stylesheet through a CSS-aware bundler:
 Or use a stylesheet URL in plain HTML, with no installation or build step:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.18.1/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.0/dist/bronto.css" />
 ```
 
 Both routes load the default stylesheet for the **version selected**.

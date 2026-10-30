@@ -1,7 +1,7 @@
 # Public API stability
 
 `@ponchia/ui` is pre-1.0. Breaking changes ship in the minor (`0.x.0`), and
-patches are non-breaking. In practical terms: **PATCH releases (`0.18.x`) are
+patches are non-breaking. In practical terms: **PATCH releases (`0.19.x`) are
 non-breaking bug fixes and additive changes;
 MINOR releases (`0.x.0`) may include breaking changes and consumers should
 review the CHANGELOG before upgrading.** Specify a concrete minor, for example
