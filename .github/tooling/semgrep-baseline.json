@@ -21,11 +21,11 @@
       "identity": [
         "javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp",
         "scripts/check-component-matrix.mjs",
-        353,
+        360,
         17,
-        353,
+        360,
         36,
-        "f0303157ae91347342bf0c3d93364ffaa1cde76daa47f6c982acb6218c594612",
+        "7e470308104f455df99b1ba9223c6381e5177c09773dc735dff6a046750ee4aa",
         "c152ceb7953589880f428fcb7c92c0c80334a1f388ac87ffe3afcb064d220fd2"
       ],
       "reason": "Array names come from checked-in ownership declarations and escapeRegExp quotes every regex metacharacter before fixed array syntax is added.",
