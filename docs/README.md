@@ -110,6 +110,7 @@ analytical, workbench, and command styles are separate opt-in imports.
 - [adr/0004-prune-unused-adapters.md](./adr/0004-prune-unused-adapters.md) — the framework adapter and controlled-modal removals implemented in 0.10.
 - [adr/0005-productive-tools-and-editorial-reports.md](./adr/0005-productive-tools-and-editorial-reports.md) — productive tools and editorial reports.
 - [adr/0006-trusted-publishing.md](./adr/0006-trusted-publishing.md) — publish to npm by OIDC, with no stored credential.
+- [adr/0007-scope-identity.md](./adr/0007-scope-identity.md) — scope identity, a fifth colour tier legal in chrome as a mark.
 
 ## Migrations
 

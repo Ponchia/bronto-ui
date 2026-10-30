@@ -23,7 +23,8 @@
  *     slots can meet; it is not a gate, because no eight-hue set clears it.
  *  4. IDENTITY — every --cat-N-ink holds 4.5:1 on each surface and on its own
  *     tint; every tint is visibly off the panel.
- *  5. OPT-IN — css/dataviz.css is not imported by css/core.css.
+ *  5. OPT-IN — css/dataviz.css and css/identity.css (the same hues as Tier-5
+ *     scope identity, ADR-0007) are not imported by css/core.css.
  *
  * Run: node scripts/check-charts.mjs
  */
@@ -193,9 +194,14 @@ for (const theme of ['light', 'dark']) {
 }
 
 // --- 5. Opt-in ----------------------------------------------------------------
-if (/dataviz\.css/.test(readFileSync(resolve(root, 'css/core.css'), 'utf8')))
+const core = readFileSync(resolve(root, 'css/core.css'), 'utf8');
+if (/dataviz\.css/.test(core))
   errors.push(
     'css/core.css imports dataviz.css — the categorical palette must stay opt-in, out of the default bundle',
+  );
+if (/identity\.css/.test(core))
+  errors.push(
+    'css/core.css imports identity.css — scope identity must stay opt-in, out of the default bundle (ADR-0007)',
   );
 
 if (!errors.length) for (const n of notes) console.log(`  · ${n}`);

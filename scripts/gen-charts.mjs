@@ -6,10 +6,12 @@
  *                         --chart-* series/ramps (theme-aware) + dot-matrix patterns
  *   tokens/charts.json  ← resolved hex per theme (JS/canvas/SVG/charting libs)
  *   tokens/charts.d.ts  ← ChartTheme + ChartTokenName types
+ *   css/identity.css    ← the same hues as Tier-5 scope identity, named by hue
+ *                         (--identity-<hue>, -ink, -tint; ADR-0007)
  *
  * Generated, committed, drift-checked by scripts/check-charts.mjs. Same model
- * as gen-skins / gen-glyphs. Opt-in: dataviz.css is a separate entrypoint,
- * never imported by core.css, never in the default bundle.
+ * as gen-skins / gen-glyphs. Opt-in: dataviz.css and identity.css are separate
+ * entrypoints, never imported by core.css, never in the default bundle.
  *
  * Run: node scripts/gen-charts.mjs   (or: npm run charts:build)
  */
@@ -182,6 +184,57 @@ export function buildDatavizCss() {
   );
 }
 
+/** The identity tier's per-theme values: each hue by name, solid and ink. */
+function identityVars(theme, indent) {
+  const c = charts[theme].categorical;
+  const lines = [];
+  CATEGORICAL_HUES.forEach((hue, i) => lines.push(decl(`--identity-${hue}`, c[i], indent)));
+  CATEGORICAL_HUES.forEach((hue, i) =>
+    lines.push(decl(`--identity-${hue}-ink`, inkHex(c[i], theme), indent)),
+  );
+  return lines.join('\n');
+}
+
+/**
+ * Tier-5 scope identity (ADR-0007): the same measured hues as the categorical
+ * set, named by hue and legal in UI chrome, so a consumer can mark which scope
+ * (a workspace, an estate, a canvas) a thing belongs to. Standalone: it shares
+ * values with dataviz.css, not tokens, so chrome never imports the chart leaf.
+ */
+export function buildIdentityCss() {
+  const banner =
+    `/* @ponchia/ui — GENERATED from tokens/charts.js by scripts/gen-charts.mjs.\n` +
+    ` *  Do not edit by hand; run \`npm run charts:build\`. Drift-checked in CI.\n` +
+    ` *\n` +
+    ` *  Tier-5 scope identity (ADR-0007). OPT-IN: import\n` +
+    ` *  \`@ponchia/ui/css/identity.css\`; never in the default bundle. A hue marks\n` +
+    ` *  which scope a thing belongs to: a ring, chip, underline or band in chrome.\n` +
+    ` *  It is never the accent, a status or a series, and never travels alone:\n` +
+    ` *  pair it with a glyph or label (ADR-0001 rule 6).\n` +
+    ` *    --identity-<hue>       the swatch, for fills and pickers;\n` +
+    ` *    --identity-<hue>-ink   lines and text: 4.5:1 on panel, page and tint;\n` +
+    ` *    --identity-<hue>-tint  a wash over --panel, for a disc or chip.\n` +
+    ` *  Hues: ${CATEGORICAL_HUES.join(', ')}. */\n`;
+  const tints = CATEGORICAL_HUES.map((hue) =>
+    decl(
+      `--identity-${hue}-tint`,
+      `color-mix(in oklch, var(--identity-${hue}) ${Math.round(TINT_SHARE * 100)}%, var(--panel))`,
+      '  ',
+    ),
+  ).join('\n');
+  return (
+    `${banner}\n` +
+    `:root {\n${identityVars('light', '  ')}\n\n` +
+    `  /* Theme-independent: each tint follows its hue and whichever --panel the\n` +
+    `     page, a skin or the OLED preset set. */\n${tints}\n}\n\n` +
+    `@media (prefers-color-scheme: dark) {\n` +
+    `  :root:not([data-theme='light']) {\n${identityVars('dark', '    ')}\n  }\n}\n\n` +
+    `:root[data-theme='dark'] {\n${identityVars('dark', '  ')}\n}\n\n` +
+    `@media print {\n` +
+    `  :root:not([data-theme='light']) {\n${identityVars('light', '    ')}\n  }\n}\n`
+  );
+}
+
 export function buildChartsJson() {
   const forTheme = (theme) => {
     const categorical = charts[theme].categorical.map((v) => resolveColor(v, theme));
@@ -248,6 +301,7 @@ export default _default;
 
 export const generated = {
   'css/dataviz.css': buildDatavizCss(),
+  'css/identity.css': buildIdentityCss(),
   'tokens/charts.json': buildChartsJson(),
   'tokens/charts.d.ts': buildChartsDts(),
 };
