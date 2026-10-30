@@ -83,6 +83,13 @@ const FOUNDATIONS = [
     ],
     specs: [{ file: 'test/e2e/behavior.spec.mjs', includes: ['OKLCH accent ramp resolves'] }],
   }),
+  foundation('identity', {
+    docs: [doc('docs/theming.md', ['@ponchia/ui/css/identity.css'])],
+    proofs: [
+      { file: 'scripts/check-charts.mjs', includes: ['identity.css'] },
+      { file: 'test/identity.test.mjs', includes: ['every identity ink holds 4.5:1'] },
+    ],
+  }),
   foundation('disclosure', {
     docs: ['docs/package-contract.md'],
     specs: [{ file: 'test/e2e/a11y.spec.mjs', includes: ['disclosure toggles'] }],

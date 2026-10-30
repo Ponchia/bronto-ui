@@ -16,11 +16,14 @@
  *     tiering it fails CI — exactly what would have caught the orphan
  *     `--orange`. The check is bidirectional (no stale registry entries).
  *
- *  2. RESERVED DATA-VIZ NAMESPACE. Tier-4 categorical/chart tokens
- *     (`--chart-*`, `--cat-*`, `--data-*`) are reserved: they must not appear
- *     in the token model, and (invariant 3) must never be referenced from core
- *     component CSS — they belong to an opt-in data-viz module, never UI
- *     chrome. A forward guard; there are none today.
+ *  2. RESERVED NAMESPACES. Tier-4 categorical/chart tokens (`--chart-*`,
+ *     `--cat-*`, `--data-*`) are reserved: they must not appear in the token
+ *     model, and (invariant 3) must never be referenced from core component
+ *     CSS — they belong to an opt-in data-viz module, never UI chrome. Tier-5
+ *     scope-identity tokens (`--identity-*`, ADR-0007) are reserved the same
+ *     way from the token model: they live only in the opt-in css/identity.css,
+ *     generated from the categorical source. Unlike Tier 4 they are legal in
+ *     chrome, where a consumer marks which scope a thing belongs to.
  *
  *  3. NO RAW CHROMATIC COLOR in component CSS. Every color in a component must
  *     come from a token (rule 1 of the ADR). Allowed as neutral primitives /
@@ -35,8 +38,9 @@
  *
  * tokens.css is the tier-definition file, so it is exempt from the raw-color
  * scan (it is where the literals legitimately live); it is still covered by
- * invariant 1 via tokens/index.js. Future skin/data-viz definition files
- * (css/skins/*, css/dataviz.css) are exempt from the raw-color scan the same way.
+ * invariant 1 via tokens/index.js. Skin, data-viz and identity definition files
+ * (css/skins*, css/dataviz.css, css/identity.css) are exempt from the raw-color
+ * scan the same way.
  *
  * Run: node scripts/check-color-policy.mjs
  */
@@ -97,7 +101,8 @@ const TIERS = {
   ],
   // Tier 3 (display expression: luminance/density/motion) lives in css/dots.css
   // as --dotmatrix-* knobs, not as palette color tokens — nothing to list here.
-  // Tier 4 (categorical/data-viz) is reserved (see RESERVED below), not shipped.
+  // Tier 4 (categorical/data-viz) and Tier 5 (scope identity) are reserved from
+  // the token model (see RESERVED below); each ships in its own opt-in leaf.
 };
 
 // A value "defines color" if it can introduce a hue: a hex, a color function
@@ -139,8 +144,9 @@ for (const k of lightKeys)
 for (const k of darkKeys)
   if (!lightSet.has(k)) errors.push(`token "${k}" is in dark but not light palette`);
 
-// --- 2. Reserved data-viz namespace ----------------------------------------
+// --- 2. Reserved namespaces --------------------------------------------------
 const RESERVED = /^--(chart|cat|data)-/;
+const RESERVED_IDENTITY = /^--identity-/;
 for (const block of ['global', 'light', 'dark']) {
   for (const name of Object.keys(cssVars[block] ?? {})) {
     if (RESERVED.test(name)) {
@@ -149,13 +155,20 @@ for (const block of ['global', 'light', 'dark']) {
           `but data-viz tokens are a separate opt-in module — see ADR-0001 step 7`,
       );
     }
+    if (RESERVED_IDENTITY.test(name)) {
+      errors.push(
+        `token "${name}" uses the reserved scope-identity namespace (--identity-*) ` +
+          `but identity tokens are generated into the opt-in css/identity.css — see ADR-0007`,
+      );
+    }
   }
 }
 
 // --- 3. No raw chromatic color in component CSS -----------------------------
 const cssDir = resolve(root, 'css');
 // Definition files where color literals legitimately live (tier sources).
-const isDefinitionFile = (f) => f === 'tokens.css' || f === 'dataviz.css' || f.startsWith('skins');
+const isDefinitionFile = (f) =>
+  f === 'tokens.css' || f === 'dataviz.css' || f === 'identity.css' || f.startsWith('skins');
 // Files that legitimately CONSUME Tier-4 chart tokens because they ship chart
 // helpers (legend.css's .ui-legend swatches/ramps — the data key). It is exempt
 // from the charts-only leak check below, but stays under the raw-color scans —
