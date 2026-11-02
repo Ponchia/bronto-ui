@@ -276,7 +276,8 @@ Release candidates use the `next` npm dist-tag; a plain installation uses
 
 ## Contributing and support
 
-Created and maintained by [Zeno Trevisan (@Ponchia)](https://github.com/Ponchia).
+Created and maintained by [Zeno Trevisan](https://brontolotto.observer/)
+([@Ponchia on GitHub](https://github.com/Ponchia)).
 
 Read [CONTRIBUTING.md](https://github.com/Ponchia/bronto-ui/blob/main/CONTRIBUTING.md)
 for setup and review gates, and the
