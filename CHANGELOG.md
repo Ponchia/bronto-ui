@@ -5,6 +5,17 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## Unreleased
+
+### Changed
+
+- The release workflow now owns the npm dist-tags. A separately approved
+  `sync-dist-tags` job runs after publication, through the trusted publisher's
+  new "Allow npm dist-tag" permission and the same audited publisher. A `next`,
+  `beta`, `rc`, `alpha` or `canary` tag below `latest` is removed; `latest` never
+  moves backwards or to a prerelease once a stable version exists; `maint-*`
+  tags are untouched. Rerunning the job reapplies the policy.
+
 ## 0.19.0 — 2026-10-30
 
 ### Fixed

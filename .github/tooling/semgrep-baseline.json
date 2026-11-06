@@ -39,10 +39,10 @@
         10,
         82,
         84,
-        "c7820a4f4fbfe5d18607f9b5d05e407583f228272e1ca891e5a72504f636d33f",
+        "c91b660597aa438787ccc0ab8a8cb5ac5fe9b0ff46c71e1e2d066b4b28f71eed",
         "defbb38ee55af7cdb98b3fe490bd5b8f45070e54c8bd2f06914773bd38b7eaf1"
       ],
-      "reason": "Version tokens and workflow job names are escaped with escapeRegExp before interpolation into fixed patterns; regex syntax cannot be supplied through either argument. Re-reviewed 29 October: one added import (the dist-tag router) shifted this finding by one line; the escaping functions and fixed regex structure are unchanged.",
+      "reason": "Version tokens and workflow job names are escaped with escapeRegExp before interpolation into fixed patterns; regex syntax cannot be supplied through either argument. Re-reviewed 29 October: one added import (the dist-tag router) shifted this finding by one line; the escaping functions and fixed regex structure are unchanged. Re-reviewed 6 November: the sync-dist-tags assertions were appended at the end of the file; these helpers, their lines, the escaping and the fixed regex structure are unchanged.",
       "evidence": "npm run check:release; test/release-prep-cli.test.mjs"
     },
     {
@@ -53,10 +53,10 @@
         17,
         88,
         4,
-        "c7820a4f4fbfe5d18607f9b5d05e407583f228272e1ca891e5a72504f636d33f",
+        "c91b660597aa438787ccc0ab8a8cb5ac5fe9b0ff46c71e1e2d066b4b28f71eed",
         "c152ceb7953589880f428fcb7c92c0c80334a1f388ac87ffe3afcb064d220fd2"
       ],
-      "reason": "Version tokens and workflow job names are escaped with escapeRegExp before interpolation into fixed patterns; regex syntax cannot be supplied through either argument. Re-reviewed 29 October: one added import (the dist-tag router) shifted this finding by one line; the escaping functions and fixed regex structure are unchanged.",
+      "reason": "Version tokens and workflow job names are escaped with escapeRegExp before interpolation into fixed patterns; regex syntax cannot be supplied through either argument. Re-reviewed 29 October: one added import (the dist-tag router) shifted this finding by one line; the escaping functions and fixed regex structure are unchanged. Re-reviewed 6 November: the sync-dist-tags assertions were appended at the end of the file; these helpers, their lines, the escaping and the fixed regex structure are unchanged.",
       "evidence": "npm run check:release; test/release-prep-cli.test.mjs"
     },
     {

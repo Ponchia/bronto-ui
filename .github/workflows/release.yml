@@ -358,3 +358,53 @@ jobs:
           # GitHub marks a new Release "Latest" by default; only the run that
           # moved npm's `latest` may, so a maint-* backport never does.
           make_latest: ${{ needs.publish-npm.outputs.dist_tag == 'latest' }}
+
+  # Owns the dist-tags once npm accepted the publication: a `next` (or `beta`,
+  # `rc`, `alpha`, `canary`) tag left below `latest` is removed, and `latest`
+  # never moves backwards or to a prerelease once a stable version exists
+  # (scripts/sync-dist-tags.mjs). `maint-*` tags are never touched. The trusted
+  # publisher allows npm dist-tag for release.yml and npm-publish. It is a
+  # separate approval so a tag failure never hides the publication; rerun this
+  # job alone to reapply the policy. It never publishes, and it checks out only
+  # the publisher tooling and the policy script, never package code.
+  sync-dist-tags:
+    needs: publish-npm
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: npm-publish
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /scripts/source-publisher.mjs
+            /scripts/lib/publisher-audit.mjs
+            /scripts/extract-publisher-source.py
+            /tooling/publisher/
+            /scripts/sync-dist-tags.mjs
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          check-latest: true
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Install upstream npm source and locked patched dependencies
+        run: node scripts/source-publisher.mjs prepare "${RUNNER_TEMP}/bronto-publisher"
+
+      - name: Audit actual installed publishing tooling
+        run: node scripts/source-publisher.mjs audit "${RUNNER_TEMP}/bronto-publisher" "${RUNNER_TEMP}/publishing-tooling-audit.json"
+
+      - name: Apply the dist-tag policy (npm OIDC)
+        env:
+          npm_config_cache: ${{ runner.temp }}/dist-tag-cache
+        run: |
+          set -euo pipefail
+          node scripts/sync-dist-tags.mjs --package @ponchia/ui --version "${GITHUB_REF_NAME#v}" \
+            --npm-cli "${RUNNER_TEMP}/bronto-publisher/source/bin/npm-cli.js" | tee "${RUNNER_TEMP}/dist-tags.txt"
+          { echo '## npm dist-tags'; echo '```'; cat "${RUNNER_TEMP}/dist-tags.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
