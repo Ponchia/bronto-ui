@@ -62,6 +62,12 @@ is not a substitute for this live check.
    record the npm registry view: published version, tarball, integrity, and
    current dist-tags. That observation is best-effort; the irreversible gate is
    the publish itself, not the later `npm view`.
+6. Approve the `sync-dist-tags` job in the same environment. It applies the
+   dist-tag policy through the trusted publisher's **Allow npm dist-tag**
+   permission and reports the tags before and after. A `next` tag left below
+   `latest` is removed; `latest` never moves backwards; `maint-*` tags are
+   untouched. It never publishes; rerun it alone to reapply the policy. See
+   [ADR-0006](adr/0006-trusted-publishing.md).
 
 ## Release tooling
 

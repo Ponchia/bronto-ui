@@ -421,6 +421,43 @@ requireJobIncludes(
   "prerelease: ${{ contains(github.ref_name, '-') }}",
 );
 
+// The dist-tag job has OIDC but never publishes and checks out no package code.
+const syncJob = jobBlock('sync-dist-tags');
+for (const [label, needle] of [
+  ['must follow the accepted publication', 'needs: publish-npm'],
+  ['must use the protected npm-publish environment', 'environment: npm-publish'],
+  ['must exchange OIDC only for the policy', 'id-token: write'],
+  [
+    'must check out only publisher tooling and the policy script',
+    'sparse-checkout-cone-mode: false',
+  ],
+  [
+    'must audit the publisher it runs',
+    'node scripts/source-publisher.mjs audit "${RUNNER_TEMP}/bronto-publisher"',
+  ],
+  [
+    'must apply the dist-tag policy with the audited publisher',
+    'node scripts/sync-dist-tags.mjs --package @ponchia/ui --version "${GITHUB_REF_NAME#v}"',
+  ],
+]) {
+  requireJobIncludes('sync-dist-tags', syncJob, label, needle);
+}
+for (const needle of [
+  'npm-cli.js" publish',
+  'npm ci',
+  'npm install',
+  'continue-on-error',
+  'contents: write',
+  'secrets.',
+]) {
+  requireJobNotIncludes('sync-dist-tags', syncJob, `must not run ${needle}`, needle);
+}
+if (
+  syncJob.indexOf('source-publisher.mjs audit') > syncJob.indexOf('sync-dist-tags.mjs --package')
+) {
+  errors.push('sync-dist-tags must audit the publisher before OIDC');
+}
+
 reportAndExit(errors, {
   label: 'release-hygiene',
   ok: prerelease

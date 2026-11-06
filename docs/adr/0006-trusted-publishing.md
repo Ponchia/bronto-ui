@@ -1,6 +1,7 @@
 # 0006. Publish to npm without a stored credential
 
-Status: accepted; applies from 0.10.0. CLI installation refined in October 2026.
+Status: accepted; applies from 0.10.0. CLI installation refined in October 2026;
+dist-tag permission added in November 2026.
 
 ## Context
 
@@ -29,11 +30,20 @@ The registered publisher identifies these repository settings:
 | Repository | `bronto-ui` |
 | Workflow filename | `release.yml` |
 | Environment | `npm-publish` |
-| Publishing operation | Direct `npm publish` |
+| Allowed operations | Direct `npm publish`; `npm dist-tag` (since 6 November 2026) |
 
 Changing the owner, repository, workflow filename, environment, or allowed
 operation requires reviewing the npm-side registration before releasing.
 The package's `repository.url` must continue to identify this repository.
+
+On 30 September 2026 npm added an opt-in **Allow npm dist-tag** permission to
+trusted publishers. The maintainer enabled it on 6 November 2026 so that the
+release workflow, not a person, owns the dist-tags. The separately approved
+`sync-dist-tags` job runs `scripts/sync-dist-tags.mjs` with the same audited
+CLI. It checks out only the publisher tooling and that script, and never
+publishes. Its policy: a `next`, `beta`, `rc`, `alpha` or `canary` tag left
+below `latest` is removed; `latest` never moves backwards or to a prerelease
+once a stable version exists; `maint-*` and other tags are never touched.
 
 npm documents a minimum of Node 22.14.0 and npm CLI 11.5.1 for trusted
 publishing. The release workflow uses Node 22 and prepares the unchanged,
