@@ -4,7 +4,11 @@ import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promis
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { verifyDependencies, verifySource } from '../scripts/source-publisher.mjs';
+import {
+  verifyDependencies,
+  verifySource,
+  verifyReviewedPublisherDependencies,
+} from '../scripts/source-publisher.mjs';
 
 async function fixture(t) {
   const dir = await mkdtemp(join(tmpdir(), 'source-publisher-test-'));
@@ -99,10 +103,101 @@ test('the reviewed policy retains original npm identity and patched dependency v
   assert.equal(policy.version, '11.21.1');
   assert.match(policy.commit, /^[a-f0-9]{40}$/);
   assert.equal(policy.url, `https://codeload.github.com/npm/cli/tar.gz/${policy.commit}`);
-  assert.deepEqual(manifest.overrides, { undici: '6.29.1', 'ip-address': '10.7.4' });
+  assert.deepEqual(manifest.overrides, {
+    undici: '6.29.1',
+    'ip-address': '10.7.4',
+    glob: '14.0.2',
+    minimatch: '11.0.1',
+  });
   assert.deepEqual(manifest.overrides, policy.overrides);
   for (const path of ['bin/npm-cli.js', 'lib/commands/publish.js', 'lib/utils/oidc.js', 'LICENSE'])
     assert.ok(policy.files[path]);
+});
+
+test('the policy pins fixed direct and nested glob/minimatch in the complete lock', async () => {
+  const manifest = JSON.parse(await readFile('tooling/publisher/package.json'));
+  const policy = JSON.parse(await readFile('tooling/publisher/source.json'));
+  const lock = JSON.parse(await readFile('tooling/publisher/package-lock.json'));
+  assert.deepEqual(policy.reviewedDirectReplacements, {
+    glob: { sourceRange: '^13.0.6', version: '14.0.2', advisory: 'GHSA-3g3m-2fjr-6pw4' },
+    minimatch: { sourceRange: '^10.2.5', version: '11.0.1', advisory: 'GHSA-g3hv-75wg-m249' },
+  });
+  assert.equal(manifest.dependencies.glob, '14.0.2');
+  assert.equal(manifest.dependencies.minimatch, '11.0.1');
+  for (const [name, replacement] of Object.entries(policy.reviewedDirectReplacements)) {
+    const installed = Object.entries(lock.packages).filter(
+      ([path]) => path === `node_modules/${name}` || path.endsWith(`/node_modules/${name}`),
+    );
+    assert.ok(installed.length > 0, `Missing ${name} from the reviewed complete graph`);
+    for (const [path, pkg] of installed)
+      assert.equal(pkg.version, replacement.version, `Nested vulnerable ${path}`);
+  }
+});
+
+test('source dependency upgrades require exact reviewed security replacements', async () => {
+  const source = { dependencies: { glob: '^13.0.6', minimatch: '^10.2.5', other: '^1.0.0' } };
+  const policy = {
+    overrides: { undici: '6.29.1', glob: '14.0.2', minimatch: '11.0.1' },
+    reviewedDirectReplacements: {
+      glob: { sourceRange: '^13.0.6', version: '14.0.2', advisory: 'GHSA-3g3m-2fjr-6pw4' },
+      minimatch: { sourceRange: '^10.2.5', version: '11.0.1', advisory: 'GHSA-g3hv-75wg-m249' },
+    },
+  };
+  const manifest = {
+    dependencies: { glob: '14.0.2', minimatch: '11.0.1', other: '^1.0.0' },
+    overrides: { ...policy.overrides },
+  };
+  assert.doesNotThrow(() => verifyReviewedPublisherDependencies(source, manifest, policy));
+  assert.throws(() =>
+    verifyReviewedPublisherDependencies(
+      source,
+      { ...manifest, dependencies: { ...manifest.dependencies, other: '^2.0.0' } },
+      policy,
+    ),
+  );
+  assert.throws(() =>
+    verifyReviewedPublisherDependencies(source, manifest, {
+      ...policy,
+      reviewedDirectReplacements: {
+        ...policy.reviewedDirectReplacements,
+        other: { sourceRange: '^1.0.0', version: '2.0.0', advisory: 'GHSA-aaaa-bbbb-cccc' },
+      },
+    }),
+  );
+  assert.throws(() =>
+    verifyReviewedPublisherDependencies(source, manifest, {
+      ...policy,
+      reviewedDirectReplacements: {
+        ...policy.reviewedDirectReplacements,
+        bad: { sourceRange: '^1.0.0', version: '2.0.0', advisory: 'GHSA-aaaa-bbbb-cccc' },
+      },
+    }),
+  );
+  assert.throws(() =>
+    verifyReviewedPublisherDependencies(source, manifest, {
+      ...policy,
+      overrides: { undici: '6.29.1', glob: '14.0.2' },
+    }),
+  );
+  assert.throws(() =>
+    verifyReviewedPublisherDependencies(source, manifest, {
+      ...policy,
+      reviewedDirectReplacements: {
+        ...policy.reviewedDirectReplacements,
+        minimatch: { sourceRange: '^10.2.4', version: '11.0.1', advisory: 'GHSA-g3hv-75wg-m249' },
+      },
+    }),
+  );
+  assert.throws(() =>
+    verifyReviewedPublisherDependencies(source, manifest, {
+      ...policy,
+      reviewedDirectReplacements: {
+        ...policy.reviewedDirectReplacements,
+        minimatch: { sourceRange: '^10.2.5', version: '^11.0.1', advisory: 'GHSA-g3hv-75wg-m249' },
+      },
+    }),
+  );
+  assert.deepEqual(source.dependencies, { glob: '^13.0.6', minimatch: '^10.2.5', other: '^1.0.0' });
 });
 
 test('audit graph includes unchanged CLI identity plus every dependency', async (t) => {

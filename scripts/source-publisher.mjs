@@ -152,17 +152,65 @@ export function createAuditGraph(manifest, lock, source, policy) {
   return { manifest: auditManifest, lock: { ...lock, packages } };
 }
 
+/**
+ * Preserve the byte-pinned upstream npm source while allowing only separately
+ * reviewed, exact security replacements in its installed dependency graph.
+ * The original upstream source dependency ranges remain visible in source.json
+ * and in the audit-only npm node: this does not pretend npm shipped new code.
+ */
+export function verifyReviewedPublisherDependencies(source, manifest, policy) {
+  const replacements = policy.reviewedDirectReplacements ?? {};
+  assert.ok(
+    replacements && typeof replacements === 'object' && !Array.isArray(replacements),
+    'Invalid reviewed replacement policy',
+  );
+  const expected = { ...source.dependencies };
+  for (const [name, replacement] of Object.entries(replacements)) {
+    assert.ok(
+      Object.hasOwn(source.dependencies, name),
+      `Unrecognized upstream dependency: ${name}`,
+    );
+    assert.ok(
+      replacement && typeof replacement === 'object' && !Array.isArray(replacement),
+      `Invalid security replacement: ${name}`,
+    );
+    assert.deepEqual(
+      Object.keys(replacement).sort(),
+      ['advisory', 'sourceRange', 'version'],
+      `Incomplete security replacement: ${name}`,
+    );
+    assert.equal(
+      source.dependencies[name],
+      replacement.sourceRange,
+      `Upstream source dependency range changed: ${name}`,
+    );
+    assert.match(replacement.version, /^[0-9]+\.[0-9]+\.[0-9]+$/, `Unpinned replacement: ${name}`);
+    assert.match(
+      replacement.advisory,
+      /^GHSA-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}$/,
+      `Missing security rationale: ${name}`,
+    );
+    assert.equal(
+      policy.overrides?.[name],
+      replacement.version,
+      `Missing graph-wide override: ${name}`,
+    );
+    expected[name] = replacement.version;
+  }
+  assert.deepEqual(
+    manifest.dependencies,
+    expected,
+    'Publisher runtime differs from original npm source plus reviewed exact replacements',
+  );
+  assert.deepEqual(manifest.overrides, policy.overrides, 'Unexpected dependency substitutions');
+}
+
 export async function auditSourcePublisher(prefix, reportPath) {
   const policy = await json(join(template, 'source.json'));
   const source = await verifySource(join(prefix, 'source'), policy);
   const manifest = await json(join(prefix, 'package.json'));
   assert.equal(manifest.private, true, 'Publisher tooling must remain private');
-  assert.deepEqual(
-    manifest.dependencies,
-    source.dependencies,
-    'Runtime must include every upstream dependency',
-  );
-  assert.deepEqual(manifest.overrides, policy.overrides, 'Unexpected dependency substitutions');
+  verifyReviewedPublisherDependencies(source, manifest, policy);
   const installed = await verifyDependencies(
     prefix,
     manifest,

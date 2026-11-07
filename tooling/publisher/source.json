@@ -5,7 +5,9 @@
   "integrity": "sha512-Arm3TGqYvsAUWjnS2Fhhs0g69DP0usClrOT5EcofaWYYed/47wU02Ms/QhHX+qJgC14oft+sZKeuTyHB6VtOSw==",
   "overrides": {
     "undici": "6.29.1",
-    "ip-address": "10.7.4"
+    "ip-address": "10.7.4",
+    "glob": "14.0.2",
+    "minimatch": "11.0.1"
   },
   "files": {
     "LICENSE": "7610d223851f421d315df5e77974f1c68a04b97e02060e5bbbcf13d95e3ca257",
@@ -162,5 +164,17 @@
     "lib/utils/warn-workspace-allow-scripts.js": "b024c112ec6752985b304a83a29907bf7b1cfaeb4dac0814ff0c954c29c61496",
     "package.json": "7b9dd464a74df2a96e608a36f6e6213ebe7a869659019083786ef685bf1908c2"
   },
-  "bytes": 93644315
+  "bytes": 93644315,
+  "reviewedDirectReplacements": {
+    "glob": {
+      "sourceRange": "^13.0.6",
+      "version": "14.0.2",
+      "advisory": "GHSA-3g3m-2fjr-6pw4"
+    },
+    "minimatch": {
+      "sourceRange": "^10.2.5",
+      "version": "11.0.1",
+      "advisory": "GHSA-g3hv-75wg-m249"
+    }
+  }
 }

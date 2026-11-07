@@ -14,9 +14,16 @@ URL, byte size, SHA-512 and SHA-256 of all retained source files are reviewed in
 rejects extra, missing, modified, duplicate and linked files.
 
 A separate `tooling/publisher/package-lock.json` pins the complete production
-dependency graph from the original source. Compatible patched `undici@6.29.1`
-and `ip-address@10.7.4` are selected with their actual registry-integrity
-bytes. `scripts/source-publisher.mjs` verifies the installed graph, includes
+dependency graph. Patched `undici@6.29.1` and `ip-address@10.7.4` remain
+integrity-locked; `glob@14.0.2` and `minimatch@11.0.1` are intentionally
+substituted for vulnerable direct and nested dependencies. The original npm
+11.21.1 source still declares `glob@^13.0.6` and `minimatch@^10.2.5`.
+`source.json` records both original ranges, the fixed exact versions and the
+grounded GHSA IDs as reviewed direct replacements. The runtime verifies each
+exception, requires graph-wide pinned overrides, retains unchanged source-file
+hashes and refuses any other dependency-manifest drift. This is a deliberate
+compatibility substitution, not a claim that npm upstream shipped those changes.
+`scripts/source-publisher.mjs` verifies the installed graph, includes
 the unchanged CLI in the audit inventory, writes the raw npm audit output and
 applies the shared fail-closed `scripts/lib/publisher-audit.mjs` validator
 **before executing any publisher CLI code**. High/critical advisories, missing
@@ -51,8 +58,11 @@ The `release.yml` job uses the existing `npm-publish` protected environment,
 short-lived OIDC, provenance and `--ignore-scripts`. Validation, all browser
 engines, packed examples and live publisher preflight must pass before that
 job. The publish stage independently repeats the complete audit. Changing
-publisher identity, the upstream source or the dependency lock requires a
-separate reviewed change with full CI and a new live publisher observation.
+publisher identity, the upstream source, reviewed compatibility substitutions,
+or the dependency lock requires a separate reviewed change with full CI and a
+new live publisher observation. The reviewed replacement major versions require
+regression coverage of npm pack/publish dry-run and read-only registry commands;
+fail-closed provenance and audit guards remain prerequisites for execution.
 
 Version 0.18.1 was published successfully on 29 October 2026 with trusted
 provenance. The registry reports the attestation at
