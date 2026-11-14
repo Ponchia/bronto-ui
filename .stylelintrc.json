@@ -1,8 +1,18 @@
 {
   "extends": "stylelint-config-standard",
-  "plugins": ["stylelint-use-logical"],
   "rules": {
-    "csstools/use-logical": "always",
+    "property-layout-mappings": [
+      "flow-relative",
+      {
+        "ignoreProperties": ["margin", "padding", "border-width", "overflow-x", "overflow-y"]
+      }
+    ],
+    "value-keyword-layout-mappings": [
+      "flow-relative",
+      {
+        "ignoreProperties": ["resize"]
+      }
+    ],
     "selector-class-pattern": null,
     "custom-property-pattern": null,
     "keyframes-name-pattern": null,

@@ -22,7 +22,10 @@ updates:
     cooldown:
       default-days: 7
     groups:
+      # Keep breaking toolchain migrations reviewable instead of bundling them
+      # with routine lockfile refreshes. Security updates remain independent.
       dev:
+        update-types: [minor, patch]
         patterns: ['*']
     ignore:
       # @playwright/test must stay in lockstep with the pinned

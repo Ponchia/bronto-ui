@@ -7,9 +7,10 @@ only carries maintainer doctrine that fits nowhere else.
 
 ## Doctrine
 
-- Single consumer (the maintainer). When an audit/review surfaces a
-  worthwhile fix, default to fixing it now — do not propose deferring to
-  post-release backlogs unless asked.
+- This is a standalone public library. Qualify its documented imports and
+  clean consumer examples without requiring a private application or a
+  maintainer-specific runtime. When an audit/review surfaces a worthwhile
+  fix, default to fixing it now rather than creating a speculative backlog.
 
 - Maintainer-directed coding-agent commits use the configured Zeno
   Trevisan / @Ponchia Git identity. Do not add AI-assistant
