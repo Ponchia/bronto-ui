@@ -70,6 +70,6 @@
   .bn-block:not(:has(.bn-toggle-wrapper))
   .bn-block-group
   .bn-block-outer:not([data-prev-depth-changed])::before {
-  /* stylelint-disable-next-line csstools/use-logical -- BlockNote draws a physical border-left; a logical override would miss it in RTL. */
+  /* stylelint-disable-next-line property-layout-mappings -- BlockNote draws a physical border-left; a logical override would miss it in RTL. */
   border-left-color: var(--line);
 }

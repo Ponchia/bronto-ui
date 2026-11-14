@@ -222,6 +222,21 @@ Dependabot (grouped, weekly). `@playwright/test` is intentionally
 `mcr.microsoft.com/playwright` container image, so bump both together
 in one deliberate PR.
 
+Stylelint uses its native `property-layout-mappings` and
+`value-keyword-layout-mappings` rules. The former `stylelint-use-logical`
+plugin is in maintenance mode and does not support Stylelint 18. Physical
+longhands, dimensions, corner radii, text alignment and floats remain checked;
+`test/stylelint-policy.test.mjs` protects that boundary.
+
+This tooling migration preserves the existing CSS policy rather than rewriting
+published styles. Margin/padding/border-width shorthands, physical overflow axes
+and resize direction were outside the previous plugin's checks and remain
+explicitly allowed. In particular, replacing overflow axes or resize values
+requires a separate review against the supported browser floor. A documented
+BlockNote border override has one declaration-local exception; physical
+longhands remain errors everywhere else. New conventions need their own CSS and
+browser evidence, not an unrestricted lint suppression.
+
 The release CLI has a separate integrity-locked tooling project, and Semgrep
 runs from an image pinned by digest. Their update procedures and the scanner's
 current upstream rule feed are documented in the
