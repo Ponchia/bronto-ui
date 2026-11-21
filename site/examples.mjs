@@ -15,10 +15,11 @@ export const examples = [
     image: 'workspace.jpg',
     demo: 'workspace-evidence.html',
     docs: 'compositions.html#workspace-evidence-review',
+    starter: { directory: 'examples/vanilla-vite', entry: 'workspace.html' },
     source: [
-      'demo/workspace-evidence.html',
-      'demo/workspace-evidence.css',
-      'demo/workspace-evidence.mjs',
+      'examples/vanilla-vite/workspace.html',
+      'examples/vanilla-vite/src/workspace-evidence.css',
+      'examples/vanilla-vite/src/workspace-evidence.mjs',
     ],
     implementation:
       'Uses Bronto controls, a workbench inspector, source and figure styles, a toolbar, action menu, dialog, combobox and native popover. The small host script owns synthetic observations, in-memory review decisions and SVG geometry. Bronto supplies the shared interaction contracts and resolved theme colors. No backend, framework, production claim or persistent review is implied.',
@@ -73,3 +74,8 @@ export const examples = [
     accent: 'Change a token and understand what changes with it.',
   },
 ];
+
+/** Starter-owned compositions are emitted into the built site for local previews. */
+export function localDemoPath(example) {
+  return `${example.starter ? '/_site' : ''}/demo/${example.demo}`;
+}

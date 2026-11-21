@@ -1,8 +1,8 @@
 /**
  * Browser-smoke a built consumer example. This is intentionally much smaller
  * than the full Playwright suite: serve examples/<name>/dist, open it in one
- * or more Playwright engines, fail on runtime/asset errors, and check one
- * expected UI marker.
+ * or more Playwright engines, fail on runtime/asset errors, and check the
+ * consumer's essential interaction path.
  *
  * Run: node scripts/smoke-example.mjs <example-name> [dist-dir]
  *      node scripts/smoke-example.mjs <example-name> [dist-dir] --browsers=chromium,firefox,webkit
@@ -20,6 +20,10 @@ import { defaultDistDirFor } from './lib/examples.mjs';
 import { createStaticServer } from './lib/static-server.mjs';
 import { log } from './lib/stdio.mjs';
 import { assertIndependentAnnotations } from './lib/annotation-example-smoke.mjs';
+import {
+  assertEvidenceWorkspace,
+  assertEvidenceWorkspaceReady,
+} from './lib/workspace-example-smoke.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -425,6 +429,8 @@ async function assertExample(page, name) {
     await page.getByRole('heading', { name: 'Vanilla + Vite' }).waitFor();
     await assertThemeToggle();
     await assertToast();
+    await page.goto(new URL('workspace.html', page.url()).href, { waitUntil: 'networkidle' });
+    await assertEvidenceWorkspace(page);
     return;
   }
   if (name === 'astro') {
@@ -514,6 +520,16 @@ async function smokeBrowser(url, browserName) {
         observePage(page, errors);
         await openExample(page, url, errors, `${browserName}/${viewport.name}`);
         await assertVisualSmoke(page, example, browserName, viewport.name);
+        if (example === 'vanilla-vite') {
+          await openExample(
+            page,
+            new URL('workspace.html', url).href,
+            errors,
+            `${browserName}/${viewport.name}/workspace`,
+          );
+          await assertEvidenceWorkspaceReady(page);
+          await assertVisualSmoke(page, `${example}/workspace.html`, browserName, viewport.name);
+        }
         await page.close();
       }
     }

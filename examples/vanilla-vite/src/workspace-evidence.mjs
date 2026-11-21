@@ -5,8 +5,8 @@ import {
   initPopover,
   initThemeToggle,
   initToolbar,
-} from '../behaviors/index.js';
-import { readTokens, observeTokens } from '../renderer/index.js';
+} from '@ponchia/ui/behaviors';
+import { readTokens, observeTokens } from '@ponchia/ui/renderer';
 
 // Fixture-owned observations and decisions. The library owns no application data.
 const observations = {

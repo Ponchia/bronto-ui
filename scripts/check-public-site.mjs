@@ -17,6 +17,7 @@ const required = [
   'index.html',
   'examples/index.html',
   ...examples.map((example) => `examples/${example.key}/index.html`),
+  ...examples.map((example) => `demo/${example.demo}`),
   'components/index.html',
   'docs/index.html',
   'docs/getting-started/vanilla.html',
@@ -97,6 +98,41 @@ async function checkLocalResource(path, source) {
   await checkFragment(resolved, hash, path, source);
 }
 
+async function checkStarterDemo(example) {
+  const path = `demo/${example.demo}`;
+  const page = new JSDOM(await readFile(join(built, path), 'utf8'));
+  const doc = page.window.document;
+  const styles = [...doc.querySelectorAll('head link[rel="stylesheet"]')];
+  const scripts = [...doc.querySelectorAll('script[type="module"][src]')];
+  assert(styles.length && scripts.length, `Starter demo needs CSS and a module: ${path}`);
+  for (const style of styles) {
+    assert(
+      style.compareDocumentPosition(scripts[0]) & page.window.Node.DOCUMENT_POSITION_FOLLOWING,
+      `Starter demo must load its CSS before JavaScript: ${path}`,
+    );
+  }
+  for (const el of doc.querySelectorAll('[href],[src]')) {
+    await checkLocalResource(path, el.getAttribute('href') || el.getAttribute('src'));
+  }
+  const assetPath = (source) =>
+    relative(built, resolve(dirname(join(built, path)), source)).replaceAll('\\', '/');
+  for (const script of scripts) {
+    const module = assetPath(script.getAttribute('src'));
+    const src = await readFile(join(built, module), 'utf8');
+    assert(!src.includes('@ponchia/ui'), `Unresolved package import in starter demo: ${module}`);
+    await checkModule(module);
+  }
+  for (const style of styles) {
+    const cssPath = assetPath(style.getAttribute('href'));
+    const css = await readFile(join(built, cssPath), 'utf8');
+    assert(!css.includes('@ponchia/ui'), `Unresolved package CSS in ${cssPath}`);
+    const imports = [...css.matchAll(/@import ['"]([^'"]+)['"]/g)];
+    assert(imports.length, `Starter demo must load its public CSS exports: ${cssPath}`);
+    for (const [, source] of imports) await checkLocalResource(cssPath, source);
+  }
+  page.window.close();
+}
+
 try {
   const build = spawnSync(process.execPath, ['scripts/build-public-site.mjs', built], {
     cwd: repo,
@@ -111,11 +147,13 @@ try {
     'demo/index.js',
     'demo/service.js',
     'demo/discussion.js',
-    'demo/workspace-evidence.mjs',
     'site/site.js',
     'site/catalog.js',
   ])
     await checkModule(module);
+  for (const example of examples.filter((entry) => entry.starter)) {
+    await checkStarterDemo(example);
+  }
 
   const pages = [
     'index.html',
@@ -211,26 +249,46 @@ try {
     snippet.window.close();
   }
 
-  for (const { key: example } of examples) {
-    const path = `examples/${example}/index.html`;
+  for (const example of examples) {
+    const path = `examples/${example.key}/index.html`;
     const html = new JSDOM(await readFile(join(built, path), 'utf8'));
+    if (example.starter) {
+      const { directory, entry } = example.starter;
+      assert(
+        example.source.includes(`${directory}/${entry}`),
+        'Starter entry must be canonical example source: ' + example.key,
+      );
+      assert(existsSync(join(repo, directory, 'README.md')), 'Missing starter run instructions');
+      assert(
+        html.window.document.querySelector(
+          `a[href="https://github.com/Ponchia/bronto-ui/blob/main/${directory}/README.md"]`,
+        ),
+        'Example must link to its starter run instructions: ' + example.key,
+      );
+    }
     const sourceLinks = [
       ...html.window.document.querySelectorAll(
-        'a[href^="https://github.com/Ponchia/bronto-ui/blob/main/demo/"]',
+        '.example-source li a[href^="https://github.com/Ponchia/bronto-ui/blob/main/"]',
       ),
     ];
-    assert(sourceLinks.length >= 1, 'Example ' + example + ' must link to actual source');
+    assert.deepEqual(
+      sourceLinks.map((link) => link.href.split('/blob/main/')[1]),
+      example.source,
+      'Example ' + example.key + ' must link to every canonical source file',
+    );
     for (const link of sourceLinks) {
       const rel = link.href.split('/blob/main/')[1];
       assert(
-        rel.startsWith('demo/') && !rel.includes('..') && existsSync(join(repo, rel)),
-        'Example ' + example + ' has missing/unsafe source file ' + rel,
+        !rel.startsWith('/') && !rel.includes('..') && existsSync(join(repo, rel)),
+        'Example ' + example.key + ' has missing/unsafe source file ' + rel,
       );
     }
     const preview = html.window.document.querySelector('.example-mobile-preview');
     assert(
       preview?.querySelector('img[alt]') && preview.getAttribute('href')?.includes('demo/'),
-      'Mobile example ' + example + ' requires a real screenshot linked to its interactive demo',
+      'Mobile example ' +
+        example.key +
+        ' requires a real screenshot linked to its interactive demo',
     );
     html.window.close();
   }

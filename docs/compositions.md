@@ -11,6 +11,30 @@ baseline and trial, switch to an unobserved run, inspect the retained source,
 and record a local next step. The figure, fallback table, source and review
 receipt refer to the same selected observation, including when printed.
 
+### Run this workspace
+
+The [Vanilla Vite starter](https://github.com/Ponchia/bronto-ui/tree/main/examples/vanilla-vite)
+contains the complete workspace as `workspace.html`. Follow its
+[copy-and-run instructions](https://github.com/Ponchia/bronto-ui/blob/main/examples/vanilla-vite/README.md)
+to put the project in an independent directory. From that copied directory:
+
+```bash
+npm install
+npm run dev
+```
+
+Open `/workspace.html` at the local URL Vite prints. The root `/` page is a
+small theme-and-toast example. The starter's declared `@ponchia/ui` dependency
+installs the published package; Vite resolves its CSS and JavaScript through
+public package exports. `npm run build` builds both pages, and `npm run preview`
+serves the result with the same routes.
+
+### Styles and initialization
+
+`workspace.html` loads `src/workspace-evidence.css` before the module script.
+That stylesheet starts with these public imports, followed by the host's
+layout and print rules:
+
 ```css
 @import '@ponchia/ui';
 @import '@ponchia/ui/css/workbench.css';
@@ -19,27 +43,57 @@ receipt refer to the same selected observation, including when printed.
 @import '@ponchia/ui/css/state.css';
 ```
 
+`src/workspace-evidence.mjs` imports its behaviors and renderer tokens from
+the installed package:
+
+```js
+import {
+  initActionMenu,
+  initCombobox,
+  initDialog,
+  initPopover,
+  initThemeToggle,
+  initToolbar,
+} from '@ponchia/ui/behaviors';
+import { readTokens, observeTokens } from '@ponchia/ui/renderer';
+```
+
+The module runs after the workspace markup exists. Importing a behavior does
+not initialize it: the supplied controller calls the initializers, binds the
+host's selection and review actions, and retains their cleanup functions.
+
 The host owns the radio selection, synthetic measurements, SVG geometry and
-in-memory review decisions. `observeTokens()` supplies resolved colors to the
-SVG renderer and returns a cleanup. The ordinary HTML table preserves the
-values without a renderer or JavaScript. Print uses readable ink and keeps the
-source and uncertainty beside the result.
+in-memory review decisions. It paints the SVG immediately with `readTokens()`,
+then uses `observeTokens()` for later appearance changes. The observer does not
+perform the initial paint. In the supplied controller, `paintChart` is the
+host's SVG renderer:
+
+```js
+paintChart(readTokens());
+const stopTokens = observeTokens(paintChart);
+```
+
+Retain `stopTokens` with the behavior cleanups and call them when the view is
+disposed. The starter also removes its own listeners, disposes on Vite hot
+replacement, and preserves them during a persisted `pagehide` so browser
+back/forward-cache restoration resumes a working view. The ordinary HTML table
+preserves the values without a renderer or JavaScript. Print uses readable ink
+and keeps the source and uncertainty beside the result.
 
 `initToolbar()` supplies one keyboard entry into the action strip.
 `initActionMenu()` returns focus deliberately when the evidence menu closes.
 The review uses `initDialog()`, with `initCombobox()` for the next-step field
 and `initPopover()` for the evidence scope. Escape dismisses the active inner
-control before the surrounding dialog. The page retains every initializer's
-cleanup and unwinds its own listeners when the view is disposed.
+control before the surrounding dialog.
 
 A recorded review is a decision about evidence, not new measurement evidence.
 An unobserved run therefore stays unknown after review. Each selection retains
 its own local decision; reloading resets these sample decisions. No operation
 is executed or saved to a service.
 
-Inspect the [HTML](https://github.com/Ponchia/bronto-ui/blob/main/demo/workspace-evidence.html),
-[host CSS](https://github.com/Ponchia/bronto-ui/blob/main/demo/workspace-evidence.css),
-and [host script](https://github.com/Ponchia/bronto-ui/blob/main/demo/workspace-evidence.mjs).
+Inspect the [HTML](https://github.com/Ponchia/bronto-ui/blob/main/examples/vanilla-vite/workspace.html),
+[host CSS](https://github.com/Ponchia/bronto-ui/blob/main/examples/vanilla-vite/src/workspace-evidence.css),
+and [host script](https://github.com/Ponchia/bronto-ui/blob/main/examples/vanilla-vite/src/workspace-evidence.mjs).
 Check the complete task at a narrow width, with keyboard input, in both themes
 and in print. Focused primitives remain in the
 [workspace interaction specimen](https://ponchia.github.io/bronto-ui/demo/workspace-primitives.html).
@@ -120,8 +174,8 @@ Use the core stylesheet plus `report-kit.css` for a standalone HTML report.
 Use real asset URLs in HTML; package specifiers resolve only in build tools.
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.1/dist/bronto.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.1/dist/css/report-kit.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.2/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.2/dist/css/report-kit.css" />
 <article class="ui-report">
   <header class="ui-report__cover ui-report__cover--compact">
     <h1 class="ui-report__title">Keep the current configuration</h1>
