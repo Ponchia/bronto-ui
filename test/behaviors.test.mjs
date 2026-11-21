@@ -1565,6 +1565,53 @@ test('initPopover: toggles panel, manages aria, Escape + outside close', () => {
   assert.equal(panel.classList.contains('is-open'), false, 'no-op after cleanup');
 });
 
+for (const kind of ['popover', 'menu']) {
+  test(`Escape dismisses a nested combobox before its enclosing ${kind}`, () => {
+    const combobox = `<div data-bronto-combobox>
+      <label for="nested-input">Choose</label>
+      <input id="nested-input" class="ui-combobox__input">
+      <ul class="ui-combobox__list"><li class="ui-combobox__option">Alpha</li></ul>
+    </div>`;
+    const d = mount(
+      kind === 'popover'
+        ? `<button id="outer-trigger" data-bronto-popover="outer">Open</button>
+           <div id="outer" class="ui-popover" aria-label="Choices">${combobox}</div>`
+        : `<details id="outer" data-bronto-menu open>
+           <summary id="outer-trigger">Open</summary>${combobox}</details>`,
+    );
+    const stopOuter = kind === 'popover' ? initPopover() : initMenu();
+    const stopCombobox = initCombobox();
+    const outer = d.getElementById('outer');
+    const trigger = d.getElementById('outer-trigger');
+    const input = d.getElementById('nested-input');
+    const outerOpen = () => (kind === 'popover' ? outer.classList.contains('is-open') : outer.open);
+    if (kind === 'popover') trigger.click();
+    input.focus();
+    const press = (key) =>
+      input.dispatchEvent(
+        new dom.window.KeyboardEvent('keydown', {
+          key,
+          bubbles: true,
+          cancelable: true,
+        }),
+      );
+    press('ArrowDown');
+    assert.equal(outerOpen(), true);
+    assert.equal(input.getAttribute('aria-expanded'), 'true');
+
+    press('Escape');
+    assert.equal(input.getAttribute('aria-expanded'), 'false');
+    assert.equal(outerOpen(), true, 'the inner list owns the first Escape');
+    assert.equal(d.activeElement, input);
+
+    press('Escape');
+    assert.equal(outerOpen(), false, 'the outer surface owns the next Escape');
+    assert.equal(d.activeElement, trigger);
+    stopCombobox();
+    stopOuter();
+  });
+}
+
 test('initPopover resolves text-node trigger clicks', () => {
   const d = mount(
     '<button id="t" data-bronto-popover="pop">Info</button>' +

@@ -1,6 +1,30 @@
 /** Public examples and their real screenshot/source routes. */
 export const examples = [
   {
+    key: 'workspace',
+    name: 'Evidence workspace',
+    eyebrow: 'INSPECTABLE TOOLS',
+    desc: 'Compare observations, inspect a captured source, record a review, and print the evidence in one coherent interface.',
+    story:
+      'Follow a result from measurement to decision. Select a captured or unobserved run, inspect its provenance, and choose the next step. The chart follows the theme and the same evidence stays readable in print.',
+    tech: [
+      'Selection and inspection',
+      'Keyboard-safe nested controls',
+      'Source and print continuity',
+    ],
+    image: 'workspace.jpg',
+    demo: 'workspace-evidence.html',
+    docs: 'compositions.html#workspace-evidence-review',
+    source: [
+      'demo/workspace-evidence.html',
+      'demo/workspace-evidence.css',
+      'demo/workspace-evidence.mjs',
+    ],
+    implementation:
+      'Uses Bronto controls, a workbench inspector, source and figure styles, a toolbar, action menu, dialog, combobox and native popover. The small host script owns synthetic observations, in-memory review decisions and SVG geometry. Bronto supplies the shared interaction contracts and resolved theme colors. No backend, framework, production claim or persistent review is implied.',
+    accent: 'The result, its source, and the next decision stay together.',
+  },
+  {
     key: 'operations',
     name: 'Operations dashboard',
     eyebrow: 'APPLICATION UI',

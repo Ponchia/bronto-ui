@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Evidence workspace · Bronto UI</title>
+    <link rel="stylesheet" href="../dist/bronto.css" />
+    <link rel="stylesheet" href="../dist/css/workbench.css" />
+    <link rel="stylesheet" href="../dist/css/figure.css" />
+    <link rel="stylesheet" href="../dist/css/sources.css" />
+    <link rel="stylesheet" href="../dist/css/state.css" />
+    <link rel="stylesheet" href="./workspace-evidence.css" />
+  </head>
+  <body>
+    <main class="evidence-workspace">
+      <header class="workspace-heading">
+        <div>
+          <p class="ui-eyebrow">BRONTO UI / EVIDENCE WORKSPACE</p>
+          <h1>Review the evidence.</h1>
+          <p class="ui-muted">
+            Compare a result, inspect its source, and record what should happen next.
+          </p>
+        </div>
+        <span class="ui-badge">Synthetic data · local sample</span>
+      </header>
+
+      <div
+        class="ui-toolstrip workspace-controls"
+        data-bronto-toolbar
+        aria-label="Workspace actions"
+        data-workspace-enhance
+        hidden
+      >
+        <div class="ui-toolstrip__brand">
+          <strong>Batch latency review</strong>
+          <span class="ui-toolstrip__context">Staging / 3 observations</span>
+        </div>
+        <div class="ui-toolstrip__actions">
+          <button
+            class="ui-button ui-button--ghost ui-button--sm"
+            type="button"
+            data-bronto-theme-toggle
+          >
+            Dark theme
+          </button>
+          <button class="ui-button ui-button--subtle ui-button--sm" type="button" data-print-brief>
+            Print brief
+          </button>
+          <button
+            class="ui-button ui-button--sm"
+            type="button"
+            data-bronto-open="review-dialog"
+            id="open-review"
+          >
+            Review decision
+          </button>
+        </div>
+      </div>
+
+      <noscript
+        ><p class="ui-muted">
+          This static view preserves the sample result and source. Enable JavaScript to compare
+          observations and record a local review.
+        </p></noscript
+      >
+
+      <fieldset class="workspace-observations" disabled data-workspace-enable>
+        <legend>Choose an observation</legend>
+        <label class="observation-choice">
+          <input type="radio" name="observation" value="baseline" />
+          <span><strong>Baseline</strong><span>120 ms · captured</span></span>
+          <span class="observation-number" aria-hidden="true">01</span>
+        </label>
+        <label class="observation-choice">
+          <input type="radio" name="observation" value="trial" checked />
+          <span><strong>Smaller batch</strong><span>96 ms · captured</span></span>
+          <span class="observation-number" aria-hidden="true">02</span>
+        </label>
+        <label class="observation-choice">
+          <input type="radio" name="observation" value="repeat" />
+          <span><strong>Repeat run</strong><span>Awaiting result</span></span>
+          <span class="observation-number" aria-hidden="true">03</span>
+        </label>
+      </fieldset>
+
+      <div class="workspace-body">
+        <section class="workspace-evidence" aria-labelledby="result-heading">
+          <div class="workspace-result-heading">
+            <div>
+              <p class="ui-eyebrow">CURRENT OBSERVATION</p>
+              <h2 id="result-heading">Smaller batch</h2>
+            </div>
+            <span class="ui-badge" id="result-state">Captured · provisional</span>
+          </div>
+          <p class="workspace-conclusion" id="result-conclusion">
+            The sample is 20% faster. Repeat it before a production change.
+          </p>
+          <figure class="ui-figure" aria-labelledby="chart-caption">
+            <figcaption class="ui-figure__caption" id="chart-caption">
+              p95 latency · milliseconds · lower is better
+            </figcaption>
+            <div class="ui-figure__stage">
+              <svg
+                class="ui-figure__media evidence-chart"
+                viewBox="0 0 460 190"
+                role="img"
+                aria-labelledby="latency-title latency-description"
+              >
+                <title id="latency-title">Baseline and selected observation latency</title>
+                <desc id="latency-description">
+                  Baseline: 120 milliseconds. Smaller batch: 96 milliseconds. Target: 100
+                  milliseconds. Synthetic sample data.
+                </desc>
+                <line x1="112" y1="25" x2="112" y2="165" data-chart-axis />
+                <line x1="312" y1="25" x2="312" y2="165" stroke-dasharray="5 5" data-chart-target />
+                <text x="312" y="15" text-anchor="middle" data-chart-ink>100 ms target</text>
+                <text x="0" y="65" data-chart-ink>Baseline</text>
+                <rect x="112" y="45" width="240" height="30" rx="3" data-chart-baseline />
+                <text x="362" y="65" data-chart-ink>120</text>
+                <text x="0" y="132" id="chart-selected-label" data-chart-ink>Selected</text>
+                <rect
+                  x="112"
+                  y="112"
+                  width="192"
+                  height="30"
+                  rx="3"
+                  id="chart-selected-bar"
+                  data-chart-selected
+                />
+                <text x="314" y="132" id="chart-selected-value" data-chart-ink>96</text>
+              </svg>
+            </div>
+            <div
+              class="ui-figure__data ui-table-wrap ui-scroll-region"
+              tabindex="0"
+              role="region"
+              aria-label="Latency evidence data"
+            >
+              <table class="ui-table ui-table--dense">
+                <caption>
+                  Values behind the figure
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Observation</th>
+                    <th scope="col">p95 latency</th>
+                    <th scope="col">Evidence</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Baseline</th>
+                    <td>120 ms</td>
+                    <td>Captured sample</td>
+                  </tr>
+                  <tr>
+                    <th scope="row" id="table-selected-name">Smaller batch</th>
+                    <td id="table-selected-value">96 ms</td>
+                    <td id="table-selected-state">One captured run</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </figure>
+          <section class="workspace-next-step" aria-labelledby="next-step-heading">
+            <h3 id="next-step-heading">What this supports</h3>
+            <p id="result-basis">
+              A smaller batch is worth another staging run. This single sample does not establish
+              production reliability.
+            </p>
+            <p class="ui-muted" id="review-receipt" role="status">
+              No decision recorded in this session.
+            </p>
+          </section>
+        </section>
+
+        <aside class="ui-inspector workspace-inspector" aria-labelledby="inspector-heading">
+          <header class="ui-inspector__head">
+            <h2 id="inspector-heading">Inspect the source</h2>
+            <div class="workspace-menu-anchor" data-workspace-enhance hidden>
+              <button
+                type="button"
+                class="ui-button ui-button--ghost ui-button--sm"
+                id="evidence-actions-trigger"
+                aria-controls="evidence-actions"
+                aria-haspopup="menu"
+                aria-expanded="false"
+              >
+                Actions
+              </button>
+              <div
+                class="ui-menu workspace-action-menu"
+                id="evidence-actions"
+                data-bronto-action-menu
+                role="menu"
+                aria-label="Evidence actions"
+                hidden
+              >
+                <button
+                  class="ui-menu__item"
+                  type="button"
+                  role="menuitem"
+                  tabindex="-1"
+                  id="focus-source"
+                >
+                  Focus captured source
+                </button>
+                <button
+                  class="ui-menu__item"
+                  type="button"
+                  role="menuitem"
+                  tabindex="-1"
+                  data-print-brief
+                >
+                  Print evidence brief
+                </button>
+              </div>
+            </div>
+          </header>
+          <div class="ui-inspector__body">
+            <dl class="workspace-properties">
+              <div>
+                <dt>Environment</dt>
+                <dd>Staging sample</dd>
+              </div>
+              <div>
+                <dt>Capture</dt>
+                <dd id="capture-time">20 Nov 2026, 09:15 UTC</dd>
+              </div>
+              <div>
+                <dt>Revision</dt>
+                <dd><code id="capture-revision">sample-batch-02</code></dd>
+              </div>
+              <div>
+                <dt>Freshness</dt>
+                <dd id="capture-freshness">Historical capture; not re-read</dd>
+              </div>
+            </dl>
+            <article
+              class="ui-source-card"
+              id="captured-source"
+              tabindex="-1"
+              aria-labelledby="source-heading"
+            >
+              <h3 class="ui-source-card__title" id="source-heading">Captured run / batch-02</h3>
+              <p class="ui-source-card__origin">Authored fixture · synthetic values</p>
+              <blockquote class="ui-source-card__excerpt" id="source-excerpt">
+                p95_ms=96; batch_size=50; requests=1000; environment=staging
+              </blockquote>
+              <p class="ui-source-card__time" id="source-note">
+                One run captured at 09:15 UTC. No production measurement is included.
+              </p>
+            </article>
+            <p class="workspace-caveat">
+              Review status describes your reading of this sample. It never turns missing or
+              provisional evidence into a verified result.
+            </p>
+          </div>
+        </aside>
+      </div>
+      <footer class="workspace-footer">
+        <p>
+          Built from Bronto UI controls, workbench, figure, source, and state styles. All sample
+          data and review decisions belong to this page.
+        </p>
+        <a href="../examples/workspace/">Example and source files ↗</a>
+      </footer>
+
+      <dialog class="ui-modal workspace-review" id="review-dialog" aria-labelledby="review-heading">
+        <form id="review-form" method="dialog">
+          <header>
+            <p class="ui-eyebrow">LOCAL REVIEW</p>
+            <h2 id="review-heading">Choose the next step</h2>
+          </header>
+          <p>
+            Reviewing <strong id="review-observation">Smaller batch</strong>. This records a
+            decision in this tab; it does not run a job or save to a server.
+          </p>
+          <div class="ui-combobox" data-bronto-combobox>
+            <label class="ui-label" for="review-next-step">Next step</label>
+            <input
+              class="ui-combobox__input ui-input"
+              id="review-next-step"
+              role="combobox"
+              autocomplete="off"
+              aria-describedby="review-help"
+              required
+            />
+            <ul class="ui-combobox__list" role="listbox">
+              <li class="ui-combobox__option" role="option" data-value="repeat">
+                Repeat in staging
+              </li>
+              <li class="ui-combobox__option" role="option" data-value="investigate">
+                Investigate the baseline
+              </li>
+              <li class="ui-combobox__option" role="option" data-value="wait">
+                Wait for an observed result
+              </li>
+            </ul>
+            <p class="ui-combobox__empty" hidden>No matching next step</p>
+          </div>
+          <p class="ui-muted" id="review-help">
+            Choose a listed step. Escape closes the choices first, then the review.
+          </p>
+          <p id="review-error" role="alert" hidden>Choose one of the listed next steps.</p>
+          <button
+            class="ui-button ui-button--ghost ui-button--sm"
+            type="button"
+            data-bronto-popover="evidence-scope"
+          >
+            Why is this provisional?
+          </button>
+          <div class="ui-popover" id="evidence-scope" popover aria-labelledby="scope-heading">
+            <h3 id="scope-heading">Scope of the evidence</h3>
+            <p>
+              These are synthetic staging observations. A single captured result and a review
+              decision do not prove a production outcome. The repeat run has no measurement yet.
+            </p>
+          </div>
+          <div class="workspace-review-actions">
+            <button class="ui-button" type="submit">Record review</button>
+            <button class="ui-button ui-button--subtle" type="button" data-bronto-close>
+              Cancel
+            </button>
+          </div>
+        </form>
+      </dialog>
+    </main>
+    <script type="module" src="./workspace-evidence.mjs"></script>
+  </body>
+</html>

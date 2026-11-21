@@ -44,7 +44,7 @@ on top of the CSS, none of which require a framework commitment**:
 ├── behaviors/   vanilla, SSR-safe JS for stateful widgets           [optional]
 ├── renderer/    live CSS tokens for SVG/canvas/WebGL renderers       [optional]
 ├── connectors/  pure SVG leader-line geometry kernel (no DOM)        [optional]
-├── annotations/ deprecated legacy SVG callout helpers (sunset >=0.18) [legacy]
+├── annotations/ deprecated SVG callout helpers (removal >=0.20)      [legacy]
 ├── glyphs/      dot-matrix glyph registry/renderers                 [optional]
 ├── schemas/     declarative JSON contracts for report/tooling data   [optional]
 ```
@@ -91,7 +91,14 @@ on top of the CSS, none of which require a framework commitment**:
   connector / note grammar. The richer annotation engine - placement,
   collision handling, SVG/React renderers, editing, and diagram/chart adapters
   - lives in the sibling `@ponchia/annotations` package and must not be pulled
-  in as a runtime or public type dependency of `@ponchia/ui`. The old `annotations/` and dedicated `css/annotations.css` + `.ui-annotation*` APIs are deprecated in 0.17 and targeted for removal no earlier than 0.18. New annotation CSS and classes are owned by `@ponchia/annotations`; Bronto UI retains only framework-independent tokens and figure stage.
+  in as a runtime or public type dependency of `@ponchia/ui`. The old
+  `annotations/`, dedicated `css/annotations.css` and `.ui-annotation*` APIs
+  were deprecated in 0.17 and remain available in 0.19 for existing consumers.
+  Removal requires a separate breaking minor, 0.20 or later, after consumer
+  acceptance. New annotation CSS and classes are owned by
+  `@ponchia/annotations`; Bronto UI retains generic tokens, figure stages and
+  independent DOM leader lines. See the
+  [migration guide](migrations/0.16-to-0.17.md).
 - **glyphs/** — static bitmap data and SSR-safe render helpers. The
   256-cell DOM renderers are for display and solid inline icons; the `.ui-icon`
   mask renderer is for dense icon-at-scale use.
@@ -102,7 +109,10 @@ on top of the CSS, none of which require a framework commitment**:
   `interval`, `clamp`, `state`, `generated`, `workbench`, and `command` — are
   report/tooling/trust surfaces that are intentionally **not** part of the
   analytical roll-up and must be imported individually. Importing
-  `analytical.css` does not pull in any of those seven.
+  `analytical.css` does not pull in any of those seven. This roll-up and
+  `report-kit.css` retain the deprecated annotation leaf for existing
+  consumers. New annotation compositions select UI leaves explicitly and
+  load the standalone annotation stylesheet.
 - **Root export (`.`) is CSS-only.** `exports["."]` resolves to the CSS
   bundle (`dist/bronto.css`). It is a CSS side-effect import for CSS-aware
   bundlers (`@import '@ponchia/ui'` in CSS, or a side-effect
@@ -125,9 +135,12 @@ catalog. A new public surface must choose one lane before it ships:
 - **recipe/docs only** — a pattern that can be taught without creating a new
   class, token, behavior, export, or package path.
 
-When the answer is unclear, choose recipe/docs first. Promote to an opt-in leaf
-only after a real consumer repeats the pattern; promote to core only when it is
-clearly shared application identity. Bronto owns visual grammar, token handoff,
+When the answer is unclear, choose recipe/docs first. Follow the evidence rule
+in [CONTRIBUTING.md](https://github.com/Ponchia/bronto-ui/blob/main/CONTRIBUTING.md):
+demonstrate the task and how the proposed composition improves it. Existing
+consumer code is useful evidence, not a prerequisite to building a better
+composition. Promote to core only when the result is clearly shared
+application identity. Bronto owns visual grammar, token handoff,
 pure geometry, and delegated accessibility behavior. It does not own chart
 scales, data fetching, persistence, routing, workflow execution, action
 registries, virtualized grids, or framework component APIs.
@@ -228,7 +241,7 @@ internal declaration references are proven through consumer resolution.
 
 ## Release gating
 
-`release.yml` (on a pushed `v*` tag) is a six-job DAG, serialized by a
+`release.yml` (on a pushed `v*` tag) is serialized by a
 `concurrency: release-publish` group so two tags can't race the dist-tag
 pointer:
 
@@ -276,18 +289,27 @@ pointer:
   workflow filename, and this environment
   ([ADR-0006](./adr/0006-trusted-publishing.md)). Renaming `release.yml` or
   moving the publish to another environment breaks publishing until the
-  npm-side registration is updated. Dist-tag is derived from
-  the tag: stable (`v0.4.0`) → `latest`; SemVer prerelease (`v0.4.0-rc.1`, any
-  hyphenated identifier) → `next`, so the default `npm i @ponchia/ui` never
-  moves onto an unstable build (opt in with `@ponchia/ui@next`). Post-publish
+  npm-side registration is updated. Dist-tag routing compares the version to
+  the registry's current `latest`: a newer or equal stable goes to `latest`,
+  an older stable goes to `maint-<major>.<minor>`, and a SemVer prerelease goes
+  to `next`. A failed registry lookup blocks publication rather than guessing.
+  The default `npm i @ponchia/ui` therefore does not move backward or onto a
+  prerelease after a stable exists. Post-publish
   `npm view` registry observation is best-effort only: a registry read flake must
   not fail the job after the immutable publish already succeeded.
 - `release-notes` — `needs: publish-npm`: a GitHub Release for visibility
   (transitively gated on a successful publish, hence on the gates above);
-  prerelease tags are flagged so they aren't surfaced as "Latest". The Release
+  prerelease tags are flagged, and only a release routed to npm `latest` can
+  become the GitHub Latest Release. The Release
   **body is the curated `CHANGELOG.md` section** for the tag
   (`scripts/changelog-section.mjs`), not GitHub's auto-generated PR list — one
   source of truth, surfaced where readers look.
+- `sync-dist-tags` — `needs: publish-npm`: separately approved in the protected
+  `npm-publish` environment. It removes stale channel tags below `latest`,
+  never moves `latest` backward or to a prerelease once a stable exists, and
+  leaves `maint-*` tags alone. It uses the same audited publisher with its
+  trusted dist-tag permission. The job never republishes package bytes; a
+  tagging failure can be retried independently of the successful publication.
 
 Because the documented install path is the npm package, **the npm publish
 is a real gate**: if `validate`, `e2e`, `examples`, or `publish-preflight` fails,
@@ -295,8 +317,8 @@ is a real gate**: if `validate`, `e2e`, `examples`, or `publish-preflight` fails
 consumers never resolve it.
 (Corollary: a flaky `e2e` blocks releases — that is deliberate; fix the
 flake, don't bypass the gate.) Permissions are least-privilege per job
-(only `release-notes` gets `contents: write`; only `publish-npm` gets
-`id-token: write` for provenance).
+(only `release-notes` gets `contents: write`; the protected `publish-npm` and
+`sync-dist-tags` jobs get `id-token: write` for their npm OIDC operations).
 
 GitHub still serves the raw tag tarball `archive/refs/tags/vX.Y.Z.tar.gz`
 for any tag, ungated — that path is legacy/fallback, deliberately *not* the

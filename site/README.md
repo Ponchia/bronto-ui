@@ -48,7 +48,7 @@ npm run site:screenshots
 ```
 
 This captures the actual routes listed in `site/examples.mjs` in Chromium at
-1200 × 720, waits for fonts, and writes the three JPEG previews in `site/assets/`.
+1200 × 720, waits for fonts, and writes each example's JPEG preview in `site/assets/`.
 The capture server uses an ephemeral port and closes along with the browser.
 Review the images before committing them. For a disposable review, pass an output
 directory: `npm run site:screenshots -- /tmp/bronto-ui-previews`.

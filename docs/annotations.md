@@ -1,88 +1,98 @@
 # SVG annotations
 
-> **Migration underway (0.17 deprecation):** for new functionality install
-> `@ponchia/annotations` and import `@ponchia/annotations/bronto.css`.
-> The old `@ponchia/ui/annotations`, `@ponchia/ui/css/annotations.css`,
-> `.ui-annotation*` classes and `ui.annotation()` recipe work during the
-> 0.17 compatibility window, but will be removed no earlier than 0.18.
-> [Migration guide](migrations/0.16-to-0.17.md).
+New annotations use `@ponchia/annotations` and its
+`@ponchia/annotations/bronto.css` stylesheet. Bronto UI owns the surrounding
+figure, typography and theme tokens. The independent package owns annotation
+models, geometry, routing, editing, renderers, classes and CSS. Neither package
+imports or re-exports the other; Annotations can use Bronto tokens when present.
 
-**Preferred composition in a modern bundler:**
+## New annotation compositions
+
+The following API example uses published **Annotations 0.9.2**. Its Node floor
+is **20.19+**; Bronto UI's Node floor remains 18+. Check the runtime used for
+author-time SVG generation as well as the application's build runtime.
 
 ```sh
-npm install @ponchia/ui @ponchia/annotations
+npm install @ponchia/ui @ponchia/annotations@0.9.2
 ```
 
-```ts
+For a bundled page, load each package's own styles:
+
+```js
 import '@ponchia/ui';
 import '@ponchia/ui/css/figure.css';
 import '@ponchia/annotations/bronto.css';
-import { annotationClassName, annotationParts, resolveAnnotationLayout } from '@ponchia/annotations';
-
-const noteClasses = annotationClassName({ variant: 'callout', tone: 'accent' });
-// Returns a pa-annotation class list. The host supplies geometry and bounds.
 ```
 
-The UI package owns the surrounding figure, typography and theme tokens;
-`@ponchia/annotations` owns annotation models, geometry, routing, editing,
-renderers, classes and CSS. Neither package imports or re-exports the other.
-Bronto tokens may be consumed by Annotations, but are optional.
-Check runtime requirements before upgrading: published Annotations
-0.7.0 requires Node 20.19+, while Bronto UI 0.17 supports Node 18+.
-The migration guide records the stable tarball's legacy-helper parity proof.
+The host supplies anchors and bounds in the same coordinate system as its
+chart. This module produces a complete annotation SVG string and can also run
+once at author/build time for a static report:
 
-## Legacy Bronto UI annotation surface (deprecated)
+```js
+import { resolveAnnotationLayout, renderAnnotationsSvg } from '@ponchia/annotations';
 
-`@ponchia/ui/css/annotations.css` is an opt-in SVG annotation layer for charts,
-reports, and analytical figures. It follows the same grammar as
-d3-annotation: a **subject** marks the thing being discussed, a **connector**
-points away from it, and a **note** carries the visible explanation.
+const layout = resolveAnnotationLayout({
+  annotations: [{
+    id: 'report-peak',
+    anchor: { type: 'point', point: { x: 180, y: 100 } },
+    note: { title: 'Peak', body: '18 research hours' },
+    placement: { side: 'top' },
+    variant: 'callout',
+    tone: 'accent',
+  }],
+  bounds: { x: 0, y: 0, width: 360, height: 180 },
+  padding: 20,
+});
 
-```css
-@import '@ponchia/ui';
-@import '@ponchia/ui/css/annotations.css';
+const svg = renderAnnotationsSvg(layout, {
+  title: 'Research peak',
+  markerIdPrefix: 'report-peak',
+});
+console.log(svg);
 ```
 
-Use it with any SVG renderer. Bronto supplies classes and tiny geometry helpers;
-it does not own chart scales, mutate the DOM, or provide draggable edit mode.
+The emitted SVG uses `.pa-annotation*` classes. For a full page with a
+host-rendered chart, target movement, hide/show, resizing, theme changes and
+lifecycle cleanup, start with the
+[maintained installed-package example](https://github.com/Ponchia/bronto-ui/tree/main/examples/annotations-vite).
+For a static report, retain the generated SVG and the standalone stylesheet;
+the installed browser path is
+`./node_modules/@ponchia/annotations/dist/bronto.css`.
 
-For new annotation-engine work, use the independent
-[`@ponchia/annotations`](https://ponchia.github.io/bronto-annotations/) package.
-Its [interactive playground](https://ponchia.github.io/bronto-annotations/#playground)
-and [real examples](https://ponchia.github.io/bronto-annotations/#examples) show
-placement, collision handling, SVG/React renderers, edit helpers, and the
-Mermaid/D2/Vega/React Flow adapters in action. This `@ponchia/ui/annotations` subpath
-stays a dependency-free compatibility surface for static Bronto SVG helpers, so
-installing the UI package never pulls in the annotation engine and public
-declarations never type-reference it. Combine the two by using Bronto's
-`css/annotations.css` for the visual grammar, or the annotation package's Bronto
-CSS bridge when the engine emits its own layer.
-
-When an annotation engine overlays a rendered chart, screenshot, canvas, or
-diagram, put the rendered media in `.ui-figure__media` and the emitted annotation
-layer in `.ui-figure__overlay`. The figure stage supplies the stable positioning
-context; the annotation package owns anchors, placement, collision handling, and
-SVG/React rendering. Keep the same annotation text available through a caption,
-`<desc>`, fallback table, or surrounding prose when it carries data.
+Put the chart, screenshot or diagram in `.ui-figure__media` and its annotation
+layer in `.ui-figure__overlay` inside the same `.ui-figure__stage`. Preserve the
+finding in the figure caption, SVG description, fallback table or surrounding
+prose. Review print, narrow layouts, both themes and any interaction states the
+consumer enables. Automated SVG generation does not establish human
+screen-reader or physical-device acceptance.
 
 For inspector-driven selection, keep selection state in the host application:
 the selected item can render details in `.ui-inspector`, while the annotation
 engine receives the focused anchor and emits the matching overlay. Bronto UI
-styles the inspector, figure stage, and annotation visual grammar; it does not
-own hit-testing, selected IDs, camera/chart state, or focus policy.
+styles the inspector and figure stage. The host owns hit-testing, selected IDs,
+camera/chart state, persistence and focus policy. See the standalone package's
+[documentation and examples](https://ponchia.github.io/bronto-annotations/)
+for renderer adapters and editing.
 
-```html
-<figure class="ui-figure" role="group" aria-labelledby="annotated-title">
-  <figcaption id="annotated-title" class="ui-figure__caption">
-    Annotated service latency
-  </figcaption>
-  <div class="ui-figure__stage">
-    <canvas class="ui-figure__media" aria-label="Latency chart"></canvas>
-    <svg class="ui-figure__overlay pa-annotation-layer" viewBox="0 0 640 360">
-      <!-- emitted by @ponchia/annotations -->
-    </svg>
-  </div>
-</figure>
+## Legacy Bronto UI annotation surface (deprecated)
+
+**The remainder of this page is a reference for existing consumers only.**
+`@ponchia/ui/annotations`, `@ponchia/ui/css/annotations.css`, `.ui-annotation*`
+and `ui.annotation()` were deprecated in 0.17 and remain available in 0.19.
+Removal requires a separate breaking minor, **0.20 or later**, after consumer
+acceptance. Follow the [migration guide](migrations/0.16-to-0.17.md) before
+changing imports; its roll-up guidance covers indirect legacy CSS too.
+
+The legacy SVG grammar uses a **subject** to mark the thing being discussed,
+a **connector** to point away from it, and a **note** for the explanation.
+Its stylesheet and small geometry helpers form a dependency-free compatibility
+surface: installing the UI package never pulls in the annotation engine, and
+UI's public declarations never type-reference it. Existing markup may continue
+to use these imports while migration is qualified:
+
+```css
+@import '@ponchia/ui';
+@import '@ponchia/ui/css/annotations.css';
 ```
 
 ```js

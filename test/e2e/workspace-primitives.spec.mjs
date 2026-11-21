@@ -3,6 +3,71 @@ import { scan, blocking, settleVisualState } from './_demo-guards.mjs';
 
 const open = (page) => page.goto('/demo/workspace-primitives.html', { waitUntil: 'networkidle' });
 
+test('anchored workbench bars center and fit with semantic or CSS direction', async ({ page }) => {
+  await open(page);
+  await page.evaluate(() => {
+    const host = document.createElement('div');
+    host.id = 'anchor-probe';
+    host.style.cssText = 'position:relative;block-size:400px';
+    document.body.append(host);
+  });
+  const host = page.locator('#anchor-probe');
+  for (const width of [300, 600]) {
+    for (const content of ['short', 'wide']) {
+      await host.evaluate(
+        (el, { width, content }) => {
+          el.style.inlineSize = `${width}px`;
+          const labels =
+            content === 'short'
+              ? ['Archive']
+              : ['Archive selected items', 'Restore selected items', 'Export selection', 'Delete'];
+          const buttons = labels
+            .map((label) => `<button class="ui-button ui-button--sm">${label}</button>`)
+            .join('');
+          el.innerHTML = `<div class="ui-selectionbar ui-selectionbar--anchored">
+            ${content === 'wide' ? '<span class="ui-selectionbar__count">12 selected items</span>' : ''}
+            <div class="ui-selectionbar__actions">${buttons}</div>
+          </div><div class="ui-toolstrip ui-toolstrip--anchored ui-toolstrip--anchor-block-start">
+            ${buttons}
+          </div>`;
+        },
+        { width, content },
+      );
+      const ltrSizes = new Map();
+      for (const [dir, direction] of [
+        ['ltr', ''],
+        ['rtl', ''],
+        ['ltr', 'rtl'],
+        ['rtl', 'ltr'],
+      ]) {
+        await host.evaluate(
+          (el, { dir, direction }) => {
+            el.dir = dir;
+            el.style.direction = direction;
+          },
+          { dir, direction },
+        );
+        const bounds = await host.boundingBox();
+        for (const selector of ['.ui-selectionbar--anchored', '.ui-toolstrip--anchored']) {
+          const bar = await host.locator(selector).boundingBox();
+          expect(Math.abs(bar.x + bar.width / 2 - bounds.x - bounds.width / 2)).toBeLessThan(1);
+          expect(bar.x).toBeGreaterThan(bounds.x);
+          expect(bar.x + bar.width).toBeLessThan(bounds.x + bounds.width);
+          if (content === 'short') expect(bar.width).toBeLessThan(bounds.width / 2);
+          if (!ltrSizes.has(selector)) ltrSizes.set(selector, bar);
+          expect(Math.abs(bar.width - ltrSizes.get(selector).width)).toBeLessThan(1);
+          expect(Math.abs(bar.height - ltrSizes.get(selector).height)).toBeLessThan(1);
+          for (const button of await host.locator(`${selector} button`).all()) {
+            const control = await button.boundingBox();
+            expect(control.x).toBeGreaterThanOrEqual(bar.x);
+            expect(control.x + control.width).toBeLessThanOrEqual(bar.x + bar.width);
+          }
+        }
+      }
+    }
+  }
+});
+
 test('toolbar keyboard contract keeps editing keys native and supports direction changes', async ({
   page,
 }) => {

@@ -55,7 +55,7 @@ every component carries every tone. The status tones
 (`--success`/`--warning`/`--danger`) plus `--info` ride the status families —
 `ui-alert`, `ui-toast`, `ui-meter`, `ui-dot`, and `ui-badge` all carry `--info`.
 The neutral `--muted` is **not** a status tone: it rides several *neutral*
-bases (`ui-badge`, `ui-num`, `ui-eyebrow`, `ui-mark`, `ui-annotation`,
+bases (`ui-badge`, `ui-num`, `ui-eyebrow`, `ui-mark`,
 `ui-connector`, `ui-crosshair`) but is deliberately absent from the status
 families `ui-dot`/`ui-alert`/`ui-toast`/`ui-meter`. Because the CSS is a
 plain class list, a hand-written unknown modifier (e.g. `ui-dot--muted`,
@@ -681,8 +681,10 @@ phosphor-green | e-ink"` — a **root-level** colorway (apply on `<html>`, like
 `@ponchia/ui/css/dataviz.css` (opt-in) adds a Tier-4 chart palette for
 dashboards: `--chart-1..8` (categorical), `--chart-seq-*` (sequential),
 `--chart-div-*` (diverging), and `--chart-pattern-1..8` (dot-matrix fills), plus
-the same eight hues as categorical identity: `--cat-N`, `--cat-N-tint` and
-`--cat-N-ink` for tags, participants and user-chosen tints.
+the same eight hues as categorical chart tokens: `--cat-N`, `--cat-N-tint` and
+`--cat-N-ink`. To identify a workspace, canvas or other scope in application
+chrome, import `css/identity.css` and use the `--identity-<hue>` family with a
+label or glyph instead; see [the scope-identity decision](adr/0007-scope-identity.md).
 
 - **Use it for categories, never for chrome or status.** A build gate fails if
   `var(--chart-*)` or `var(--cat-*)` appears in component CSS. Style buttons
@@ -701,25 +703,35 @@ the same eight hues as categorical identity: `--cat-N`, `--cat-N-tint` and
 
 ## SVG annotations: subject, connector, note
 
-`@ponchia/ui/css/annotations.css` (opt-in) adds Bronto-styled SVG annotations
-for reports and chart figures. It is a visual grammar, not a charting or
-authoring engine.
+New annotation compositions use the independent `@ponchia/annotations`
+package. Import its `bronto.css` alongside UI's figure stage:
 
-- Compose each callout from `ui-annotation` plus a subject
-  (`ui-annotation__subject`), connector (`ui-annotation__connector`), and note
-  (`ui-annotation__note`, `ui-annotation__title`, `ui-annotation__label`).
-- Use `ui.annotation({ variant, tone, motion })` when building class strings in
-  JS. The default is a callout in the accent tone; motion is always opt-in.
-- Use `@ponchia/ui/annotations` when you want deterministic SVG path strings
-  for circle, rect, threshold, bracket, band, slope, comparison, cluster, axis,
-  timeline, line, elbow, or curve annotations. Use `notePlacement()` for a
-  single bounded note when you need a conservative first placement pass.
+```js
+import '@ponchia/ui';
+import '@ponchia/ui/css/figure.css';
+import '@ponchia/annotations/bronto.css';
+```
+
+The [standalone composition guide](annotations.md#new-annotation-compositions)
+provides a verified SVG example and links to the complete maintained example,
+including target movement, resizing and theme changes. The annotation package
+owns the subject, connector, note, placement and rendering; the host owns chart
+coordinates, selection and persistence. Bronto UI supplies the surrounding
+figure, typography and theme tokens.
+
 - Status tones are only for status-bearing callouts; otherwise use `accent` for
   the main insight and `muted` for secondary labels.
 - Keep annotated charts sparse. Dense figures need a scrollable SVG, a
   simplified mobile SVG, or complete caption/fallback text.
 - Annotation text must be visible or represented in the figure caption, SVG
-  `<desc>`, or fallback table. Full detail in [annotations.md](annotations.md).
+  `<desc>`, or fallback table.
+
+**Existing consumers only:** `@ponchia/ui/annotations`, the UI annotation
+stylesheet and `ui.annotation()` remain deprecated compatibility APIs. They
+were deprecated in 0.17 and remain available in 0.19; removal requires a
+separate breaking minor, 0.20 or later, after consumer acceptance. Follow the
+[migration guide](migrations/0.16-to-0.17.md), including the indirect imports in
+`analytical.css` and `report-kit.css`.
 
 ## Forms: the contracts the markup alone won't tell you
 

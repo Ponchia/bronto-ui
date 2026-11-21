@@ -5,10 +5,39 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
-## Unreleased
+## 0.19.1 — 2026-11-21
+
+### Fixed
+
+- Let an inner combobox own the first Escape inside a popover or disclosure
+  menu. The outer surface now honors a prevented event, stays open while the
+  combobox closes, and restores focus only when its own dismissal is requested.
+- Use contrast-adjusted categorical text inks in the renderer's packaged and
+  missing-stylesheet fallback. Server rendering and clients without the optional
+  data-viz CSS now use the same ink derivation as the stylesheet, meeting the
+  4.5:1 text floor on the packaged page, panel and category tint in both themes.
+- Center anchored selection bars and toolstrips with logical insets and automatic
+  margins, including when CSS sets the writing direction. Short bars keep their
+  intrinsic width; wider bars wrap within the available width and side gutters.
+
+### Added
+
+- Add a complete evidence-workspace example: select an observation, inspect its
+  source, use nested review controls, record a local decision, switch renderer
+  colors with the theme and print the result with its evidence. Synthetic data,
+  unknown results and session-only decisions stay explicit. Promote the runnable
+  composition on the public homepage without adding library APIs.
 
 ### Changed
 
+- Route new annotation recipes to the independent `@ponchia/annotations`
+  package and update its maintained Vite example to 0.9.2. Clearly mark UI's
+  old helpers, stylesheet and report roll-ups as existing-consumer compatibility;
+  they remain available in 0.19, with removal reserved for a separate 0.20-or-later
+  breaking release after consumer acceptance.
+- Align the primitive-authoring guide with the task-evidence admission policy
+  and zero-runtime-dependency contract. Document the complete workspace recipe
+  and clarify chart colors versus scope-identity colors.
 - The release workflow now owns the npm dist-tags. A separately approved
   `sync-dist-tags` job runs after publication, through the trusted publisher's
   new "Allow npm dist-tag" permission and the same audited publisher. A `next`,

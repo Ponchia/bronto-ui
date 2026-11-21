@@ -228,7 +228,8 @@ export function initPopover({ root } = {}) {
   };
   const onKey = (e) => {
     // close() returns focus to the trigger because focus is inside the panel.
-    if (e.key !== 'Escape' || !openPanel) return;
+    // An inner widget (for example an open combobox) owns its first Escape.
+    if (e.defaultPrevented || e.key !== 'Escape' || !openPanel) return;
     // A popover open *inside* a <dialog>/modal owns this Escape. Without this,
     // the same keypress closed BOTH: we hidePopover() the panel synchronously,
     // the browser's close-request then finds the dialog as the new topmost

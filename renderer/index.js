@@ -18,6 +18,7 @@
  * SSR-safe: nothing touches the DOM until a function that needs it is called.
  */
 import { charts } from '../tokens/charts.js';
+import { chartInks } from '../tokens/chart-inks.js';
 import { cssVars } from '../tokens/index.js';
 
 /**
@@ -396,7 +397,9 @@ export function readTokens(element, options = {}) {
     const live = color(`--cat-${i + 1}-tint`, '');
     return live || formatColor(mixOklch(/** @type {Rgba} */ (parseColor(hue)), panelRgba, 0.16));
   });
-  const inks = categorical.map((hue, i) => color(`--cat-${i + 1}-ink`, '') || hue);
+  // Category fills are not text inks. Without the opt-in CSS (including SSR),
+  // use the same contrast-adjusted palette that generates --cat-N-ink.
+  const inks = categorical.map((_, i) => color(`--cat-${i + 1}-ink`, chartInks[scheme][i]));
   const sequentialCount = Math.max(palette.sequential.length, countDeclared(raw, '--chart-seq-'));
   const divergingCount = Math.max(palette.diverging.length, countDeclared(raw, '--chart-div-'));
   return {

@@ -523,6 +523,36 @@ test('Escape on a popover nested in a <dialog> closes only the popover, not the 
   await expect(page.locator('#c3-dlg')).toBeVisible(); // …dialog stays open
 });
 
+test('Escape dismisses a nested combobox before its native popover', async ({ page }) => {
+  await page.goto('/package.json');
+  await page.setContent(`
+    <button id="outer-trigger" data-bronto-popover="outer">Choose</button>
+    <div id="outer" class="ui-popover" popover aria-label="Choices">
+      <div data-bronto-combobox>
+        <label for="nested-input">Item</label><input id="nested-input" class="ui-combobox__input">
+        <ul class="ui-combobox__list"><li class="ui-combobox__option">Alpha</li></ul>
+      </div>
+    </div>`);
+  await page.evaluate(async () => {
+    const behaviorPath = `/behaviors/${'index.js'}`;
+    const { initPopover, initCombobox } = await import(behaviorPath);
+    initPopover();
+    initCombobox();
+  });
+  const panel = page.locator('#outer');
+  const input = page.locator('#nested-input');
+  await page.locator('#outer-trigger').click();
+  await input.press('ArrowDown');
+  await expect(input).toHaveAttribute('aria-expanded', 'true');
+  await page.keyboard.press('Escape');
+  await expect(input).toHaveAttribute('aria-expanded', 'false');
+  await expect.poll(() => panel.evaluate((el) => el.matches(':popover-open'))).toBe(true);
+  await expect(input).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect.poll(() => panel.evaluate((el) => el.matches(':popover-open'))).toBe(false);
+  await expect(page.locator('#outer-trigger')).toBeFocused();
+});
+
 test('native popover branch uses the top layer and syncs UA toggles', async ({ page }) => {
   await page.goto('/package.json');
   await page.setContent(`
