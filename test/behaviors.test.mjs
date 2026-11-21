@@ -1566,7 +1566,7 @@ test('initPopover: toggles panel, manages aria, Escape + outside close', () => {
 });
 
 for (const kind of ['popover', 'menu']) {
-  test(`Escape dismisses a nested combobox before its enclosing ${kind}`, () => {
+  test(`Escape respects composition and dismisses a nested combobox before its enclosing ${kind}`, () => {
     const combobox = `<div data-bronto-combobox>
       <label for="nested-input">Choose</label>
       <input id="nested-input" class="ui-combobox__input">
@@ -1587,17 +1587,31 @@ for (const kind of ['popover', 'menu']) {
     const outerOpen = () => (kind === 'popover' ? outer.classList.contains('is-open') : outer.open);
     if (kind === 'popover') trigger.click();
     input.focus();
-    const press = (key) =>
-      input.dispatchEvent(
-        new dom.window.KeyboardEvent('keydown', {
-          key,
-          bubbles: true,
-          cancelable: true,
-        }),
-      );
+    const bubbled = [];
+    const recordKey = (event) => bubbled.push(event);
+    dom.window.addEventListener('keydown', recordKey);
+    const press = (key, options = {}) => {
+      const event = new dom.window.KeyboardEvent('keydown', {
+        key,
+        bubbles: true,
+        cancelable: true,
+        ...options,
+      });
+      input.dispatchEvent(event);
+      return event;
+    };
     press('ArrowDown');
     assert.equal(outerOpen(), true);
     assert.equal(input.getAttribute('aria-expanded'), 'true');
+
+    for (const signal of [{ isComposing: true }, { keyCode: 229 }]) {
+      const event = press('Escape', signal);
+      assert.equal(event.defaultPrevented, false, 'the input method owns composing Escape');
+      assert.equal(bubbled.at(-1), event, 'composing Escape still propagates');
+      assert.equal(input.getAttribute('aria-expanded'), 'true');
+      assert.equal(outerOpen(), true, 'composition must not dismiss the outer surface');
+      assert.equal(d.activeElement, input, 'composition retains input focus');
+    }
 
     press('Escape');
     assert.equal(input.getAttribute('aria-expanded'), 'false');
@@ -1607,6 +1621,7 @@ for (const kind of ['popover', 'menu']) {
     press('Escape');
     assert.equal(outerOpen(), false, 'the outer surface owns the next Escape');
     assert.equal(d.activeElement, trigger);
+    dom.window.removeEventListener('keydown', recordKey);
     stopCombobox();
     stopOuter();
   });

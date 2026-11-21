@@ -61,7 +61,7 @@ test('public site — small screens put the guide before its navigation tree', a
 test('public site — each example points to real source and has a mobile fallback', async ({
   page,
 }, testInfo) => {
-  for (const { key } of examples) {
+  for (const { key, source, starter } of examples) {
     let phase = 'mobile';
     let beforeResize;
     try {
@@ -70,8 +70,18 @@ test('public site — each example points to real source and has a mobile fallba
         await page.goto(publicRoot + 'examples/' + key + '/');
         await expect(page.getByRole('link', { name: 'View HTML source' })).toHaveAttribute(
           'href',
-          /github\.com\/Ponchia\/bronto-ui\/blob\/main\/demo\//,
+          `https://github.com/Ponchia/bronto-ui/blob/main/${source[0]}`,
         );
+        if (starter) {
+          const buildLink = page
+            .locator('.example-controls')
+            .getByRole('link', { name: 'Build this workspace' });
+          await expect(buildLink).toBeVisible();
+          await expect(buildLink).toHaveAttribute(
+            'href',
+            `https://github.com/Ponchia/bronto-ui/blob/main/${starter.directory}/README.md`,
+          );
+        }
         await expect(page.locator('.example-mobile-preview')).toBeVisible();
         await expect(page.locator('.iframe-frame iframe')).toBeHidden();
         await expect(page.locator('.example-mobile-preview img')).toHaveJSProperty(

@@ -7,6 +7,9 @@
     "build": "vite build",
     "preview": "vite preview --port 4173"
   },
+  "dependencies": {
+    "@ponchia/ui": "^0.19.1"
+  },
   "devDependencies": {
     "vite": "^8.0.0"
   }

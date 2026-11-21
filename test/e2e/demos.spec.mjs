@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { readdirSync } from 'node:fs';
+import { examples, localDemoPath } from '../../site/examples.mjs';
 import { attachGuards, blocking, scan, settle, structuralIssues } from './_demo-guards.mjs';
 
 /**
@@ -13,6 +14,12 @@ import { attachGuards, blocking, scan, settle, structuralIssues } from './_demo-
  */
 
 // Pages that are component/figure showcases — full console + axe sweep.
+const generatedDemos = examples.filter((example) => example.starter);
+const generatedNames = generatedDemos.map((example) => example.demo.replace(/\.html$/, ''));
+const demoPaths = new Map(
+  generatedDemos.map((example) => [example.demo.replace(/\.html$/, ''), localDemoPath(example)]),
+);
+const demoPath = (name) => demoPaths.get(name) || `/demo/${name}.html`;
 const SHOWCASE = [
   'first-steps',
   'theme-playground',
@@ -42,7 +49,7 @@ const SHOWCASE = [
   'generated',
   'workbench',
   'workspace-primitives',
-  'workspace-evidence',
+  ...generatedNames,
   'command',
   'service',
   'dots',
@@ -55,10 +62,14 @@ const SHOWCASE = [
 // The theme playground now computes actual swatch text contrast and can be
 // held to the same full accessibility gate as the rest of the demos.
 const GUARD_ONLY = [];
-const ALL_DEMOS = readdirSync(new URL('../../demo/', import.meta.url))
-  .filter((name) => name.endsWith('.html'))
-  .map((name) => name.replace(/\.html$/, ''))
-  .sort();
+const ALL_DEMOS = [
+  ...new Set([
+    ...readdirSync(new URL('../../demo/', import.meta.url))
+      .filter((name) => name.endsWith('.html'))
+      .map((name) => name.replace(/\.html$/, '')),
+    ...generatedNames,
+  ]),
+].sort();
 
 for (const theme of ['dark', 'light']) {
   for (const demo of SHOWCASE) {
@@ -71,7 +82,7 @@ for (const theme of ['dark', 'light']) {
           /* ignore */
         }
       }, theme);
-      await page.goto(`/demo/${demo}.html`, { waitUntil: 'networkidle' });
+      await page.goto(demoPath(demo), { waitUntil: 'networkidle' });
       // The standalone demo pages hard-code data-theme="light" and do not
       // restore from localStorage, so the seed above is a no-op for them —
       // force the attribute to genuinely exercise both themes (otherwise the
@@ -100,7 +111,7 @@ for (const theme of ['dark', 'light']) {
           /* ignore */
         }
       }, theme);
-      await page.goto(`/demo/${demo}.html`, { waitUntil: 'networkidle' });
+      await page.goto(demoPath(demo), { waitUntil: 'networkidle' });
       await page.evaluate((t) => document.documentElement.setAttribute('data-theme', t), theme);
 
       const { consoleErrors, pageErrors, badResponses } = guards;
@@ -120,7 +131,7 @@ for (const viewport of [
     const failures = [];
 
     for (const demo of ALL_DEMOS) {
-      await page.goto(`/demo/${demo}.html`, { waitUntil: 'networkidle' });
+      await page.goto(demoPath(demo), { waitUntil: 'networkidle' });
       await settle(page);
       const issues = await structuralIssues(page);
       if (issues.length) failures.push(`${demo}.html:\n- ${issues.join('\n- ')}`);

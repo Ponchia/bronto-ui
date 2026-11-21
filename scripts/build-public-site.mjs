@@ -1,7 +1,7 @@
 /**
  * BrontoUI public website. All routes are generated into a static directory:
  * no client framework, hosting dependency, server, or runtime package additions.
- * The existing demo and Markdown sources remain the canonical fixtures.
+ * The demo, starter and Markdown sources remain the canonical fixtures.
  */
 import { readFile, readdir, mkdir, cp, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -11,6 +11,7 @@ import { headingSlug } from './lib/doc-anchors.mjs';
 import { publicDocHref } from './lib/doc-links.mjs';
 import { prepareSiteOutput } from './lib/site-output.mjs';
 import { escapeHtmlText as esc } from './lib/html-text.mjs';
+import { emitWorkspaceDemo } from './lib/workspace-example.mjs';
 import { components } from '../site/components.mjs';
 import { examples } from '../site/examples.mjs';
 
@@ -297,6 +298,10 @@ const exampleCard = (ex, p) => `<article class="example-card">
 <div class="example-card__body"><span class="kicker">${ex.eyebrow}</span><h3><a href="${p}examples/${ex.key}/">${esc(ex.name)} <span aria-hidden="true">↗</span></a></h3><p>${esc(ex.desc)}</p></div>
 </article>`;
 const sourceUrl = (file) => 'https://github.com/Ponchia/bronto-ui/blob/main/' + file;
+const starterLink = (ex) =>
+  ex.starter
+    ? `<a href="${sourceUrl(ex.starter.directory + '/README.md')}">Build this workspace</a> from the standalone Vanilla Vite starter. It runs this same source at <code>/${esc(ex.starter.entry)}</code>.`
+    : 'Use the <a href="https://github.com/Ponchia/bronto-ui/tree/main/examples/vanilla-vite">Vanilla Vite starter</a> to begin an npm-based project.';
 const renderSourceSection = (ex) =>
   '<section class="example-source" aria-label="Example implementation">' +
   '<div><p class="kicker">READ THE SOURCE</p><h2>Reuse the pattern, not the sample data.</h2></div>' +
@@ -313,13 +318,16 @@ const renderSourceSection = (ex) =>
         ' ↗</a></li>',
     )
     .join('') +
-  '</ul><p>Use the <a href="https://github.com/Ponchia/bronto-ui/tree/main/examples/vanilla-vite">packed Vanilla Vite starter</a> for a runnable npm-based project.</p></div>' +
+  '</ul><p>' +
+  starterLink(ex) +
+  '</p></div>' +
   '</section>';
 const renderExample = (ex, p) => `<section class="page-container example-detail">
   <a class="back-link" href="${p}examples/">← All examples</a>
   <div class="page-intro"><p class="kicker">${ex.eyebrow} / EXAMPLE</p><h1>${esc(ex.name)}</h1><p class="page-lede">${esc(ex.story)}</p></div>
   <div class="example-controls"><span class="specimen-pill"><span class="signal" aria-hidden="true"></span> Live specimen</span>
     <a class="button button--primary" href="${p}demo/${ex.demo}" target="_blank" rel="noopener">Open full demo ↗</a>
+    ${ex.starter ? `<a class="button button--outline" href="${sourceUrl(ex.starter.directory + '/README.md')}">Build this workspace ↗</a>` : ''}
     <a class="button button--outline" href="${p}docs/${ex.docs}">Read related docs ↗</a>
     <a class="button button--outline" href="${sourceUrl(ex.source[0])}"
        target="_blank" rel="noopener">View HTML source ↗</a>
@@ -352,6 +360,11 @@ for (const folder of [
 ]) {
   await cp(join(repo, folder), join(output, folder), { recursive: true });
 }
+await emitWorkspaceDemo(
+  repo,
+  output,
+  examples.find((example) => example.key === 'workspace'),
+);
 // Publish only the compiled public shell. Hand-authored page templates and
 // component source definitions belong in Git, not at public raw HTML URLs.
 await mkdir(join(output, 'site'), { recursive: true });

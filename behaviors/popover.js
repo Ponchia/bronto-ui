@@ -229,6 +229,8 @@ export function initPopover({ root } = {}) {
   const onKey = (e) => {
     // close() returns focus to the trigger because focus is inside the panel.
     // An inner widget (for example an open combobox) owns its first Escape.
+    // Escape belongs to the input method while composition is active.
+    if (e.isComposing || e.keyCode === 229) return;
     if (e.defaultPrevented || e.key !== 'Escape' || !openPanel) return;
     // A popover open *inside* a <dialog>/modal owns this Escape. Without this,
     // the same keypress closed BOTH: we hidePopover() the panel synchronously,

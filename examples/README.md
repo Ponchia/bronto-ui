@@ -1,15 +1,26 @@
 # Examples
 
-Runnable integration examples, each installing `@ponchia/ui` **from a packed
-tarball** (`npm pack`). They exercise the package files and exports that an npm
-consumer receives. CI (`.github/workflows/ci.yml` → `examples` job)
-packs the package, installs it into each example, and builds them, so a
-broken consumer surface fails the build before release.
+Runnable integration examples for `@ponchia/ui`. CI
+(`.github/workflows/ci.yml` → `examples` job) installs the library **from a packed
+tarball** (`npm pack`) into each example and builds it. This exercises the files
+and exports an npm consumer receives, so a broken consumer surface fails the
+build before release.
 
 These source projects are available in the repository and are not part of the
 published npm package. The public website's [curated examples](https://ponchia.github.io/bronto-ui/examples/)
-show complete interface compositions; these small apps focus on integration
-and regression checks.
+show complete interface compositions. The [Vanilla Vite starter](vanilla-vite/README.md)
+includes the same evidence workspace as a second entry, alongside its small
+theme-and-toast page.
+
+## Build the evidence workspace
+
+Follow the [copy-and-run instructions](vanilla-vite/README.md) to create an
+independent project. The copied starter declares a published `@ponchia/ui`
+dependency; run `npm install` and `npm run dev`, then open `/workspace.html` at
+the local URL Vite prints. The root `/` page remains the small theme-and-toast
+example. Both pages use public package imports.
+
+## Maintained integrations
 
 `npm run check:examples` keeps this inventory, the CI matrix, browser-smoke
 list, smoke-script branches, README rows, preview ports, and the cross-browser
@@ -26,7 +37,7 @@ detection) without committing platform-specific PNG baselines.
 
 | Example                          | Stack            | Guide                                     |
 | -------------------------------- | ---------------- | ----------------------------------------- |
-| [`vanilla-vite`](vanilla-vite)   | Vite, no framework | [docs/getting-started/vanilla.md](../docs/getting-started/vanilla.md)   |
+| [`vanilla-vite`](vanilla-vite)   | Vite, no framework | [Workspace starter](vanilla-vite/README.md) · [Vanilla integration](../docs/getting-started/vanilla.md) |
 | [`astro`](astro)                 | Astro            | [docs/getting-started/astro.md](../docs/getting-started/astro.md)       |
 | [`sveltekit`](sveltekit)         | SvelteKit (static) | [docs/getting-started/sveltekit.md](../docs/getting-started/sveltekit.md) |
 | [`react-vite`](react-vite)       | React + Vite     | [docs/getting-started/react-solid.md](../docs/getting-started/react-solid.md) |
@@ -48,6 +59,10 @@ examples. Browser checks need the Playwright browser and system dependencies;
 see [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ## Open an example locally
+
+This flow tests the current library checkout as a packed candidate. For a
+workspace that installs the published package directly, use the
+[independent starter instructions](vanilla-vite/README.md).
 
 From the repository root:
 

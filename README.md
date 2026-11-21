@@ -33,7 +33,8 @@ and [stability contract](docs/stability.md) explain what to review.
 | --- | --- |
 | Try Bronto UI | [One-file example](https://ponchia.github.io/bronto-ui/demo/first-steps.html) and [first-component tutorial](https://ponchia.github.io/bronto-ui/docs/getting-started/first-component.html) |
 | Build an application | The quick start below, then the [usage guide](docs/usage.md) and a framework guide |
-| Build a report or evidence view | [Report cookbook](docs/reporting.md) and [composition recipes](docs/compositions.md) |
+| Build an evidence workspace | [Try the workspace](https://ponchia.github.io/bronto-ui/examples/workspace/), then [copy and run its starter](https://github.com/Ponchia/bronto-ui/blob/main/examples/vanilla-vite/README.md) |
+| Produce a report or evidence document | [Report cookbook](docs/reporting.md) and [composition recipes](docs/compositions.md) |
 | Customize the visual identity | [Theming](docs/theming.md) and the [theme playground](https://ponchia.github.io/bronto-ui/demo/theme-playground.html) |
 | Contribute | [Contributing](https://github.com/Ponchia/bronto-ui/blob/main/CONTRIBUTING.md) and [repository map](https://github.com/Ponchia/bronto-ui/blob/main/docs/repository-map.md) |
 | Integrate with an agent or generator | [llms.txt](llms.txt), [class reference](docs/reference.md), and [package contract](docs/package-contract.md) |
@@ -57,7 +58,7 @@ Import it from your application stylesheet through a CSS-aware bundler:
 Or use a stylesheet URL in plain HTML, with no installation or build step:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.1/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.2/dist/bronto.css" />
 ```
 
 Both routes load the default stylesheet for the **version selected**.

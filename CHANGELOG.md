@@ -5,6 +5,26 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## 0.19.2 — 2026-11-21
+
+### Fixed
+
+- Keep popovers and disclosure menus open when Escape belongs to an input
+  method, including the legacy composition signal. The event stays available
+  to the input method and focus remains in the text input. Ordinary Escape
+  still dismisses an inner combobox before its enclosing surface.
+
+### Changed
+
+- Make the evidence workspace a runnable second entry in the maintained
+  Vanilla Vite consumer. Its HTML, host stylesheet and controller use the
+  published package exports; the public demo is emitted from those same
+  sources. The existing small theme-and-toast entry remains available.
+- Connect the workspace's public example page to complete copy, install and
+  run instructions, with explicit file ownership, initial renderer painting
+  and cleanup. The starter keeps its own data, review state and geometry;
+  no library API or runtime dependency is added.
+
 ## 0.19.1 — 2026-11-21
 
 ### Fixed

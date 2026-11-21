@@ -38,6 +38,8 @@ export function initMenu({ root } = {}) {
     for (const m of openMenus()) if (!m.contains(target)) m.open = false;
   };
   const onKey = (e) => {
+    // Escape belongs to the input method while composition is active.
+    if (e.isComposing || e.keyCode === 229) return;
     if (e.defaultPrevented || e.key !== 'Escape') return;
     const menu = closestSafe(e.target, '[data-bronto-menu][open]') || openMenus()[0];
     if (!menu) return;

@@ -1,3 +1,9 @@
+@import '@ponchia/ui';
+@import '@ponchia/ui/css/workbench.css';
+@import '@ponchia/ui/css/figure.css';
+@import '@ponchia/ui/css/sources.css';
+@import '@ponchia/ui/css/state.css';
+
 /* Host composition only. Reusable controls and interaction belong to Bronto. */
 .evidence-workspace {
   max-inline-size: 78rem;
