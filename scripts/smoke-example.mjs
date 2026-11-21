@@ -429,8 +429,9 @@ async function assertExample(page, name) {
     await page.getByRole('heading', { name: 'Vanilla + Vite' }).waitFor();
     await assertThemeToggle();
     await assertToast();
+    const expectedScheme = await page.locator('html').getAttribute('data-theme');
     await page.goto(new URL('workspace.html', page.url()).href, { waitUntil: 'networkidle' });
-    await assertEvidenceWorkspace(page);
+    await assertEvidenceWorkspace(page, expectedScheme);
     return;
   }
   if (name === 'astro') {

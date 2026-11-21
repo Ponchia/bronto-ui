@@ -3,11 +3,12 @@ import { expect as playwrightExpect } from '@playwright/test';
 
 const expect = playwrightExpect.configure({ timeout: 5_000 });
 
-export async function assertEvidenceWorkspaceReady(page) {
+export async function assertEvidenceWorkspaceReady(page, expectedScheme = 'light') {
   await expect(
     page.getByRole('heading', { name: 'Review the evidence.', exact: true }),
   ).toBeVisible();
-  await expect(page.locator('.evidence-chart')).toHaveAttribute('data-scheme', 'light');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', expectedScheme);
+  await expect(page.locator('.evidence-chart')).toHaveAttribute('data-scheme', expectedScheme);
   await expect(page.locator('#chart-selected-bar')).toBeVisible();
   await expect(page.locator('#chart-selected-bar')).toHaveAttribute(
     'fill',
@@ -15,12 +16,16 @@ export async function assertEvidenceWorkspaceReady(page) {
   );
 }
 
-export async function assertEvidenceWorkspace(page) {
-  await assertEvidenceWorkspaceReady(page);
+export async function assertEvidenceWorkspace(page, expectedScheme = 'light') {
+  await assertEvidenceWorkspaceReady(page, expectedScheme);
   const bar = page.locator('#chart-selected-bar');
   const initialInk = await bar.getAttribute('fill');
-  await page.getByRole('button', { name: 'Dark theme', exact: true }).click();
-  await expect(page.locator('.evidence-chart')).toHaveAttribute('data-scheme', 'dark');
+  const nextScheme = expectedScheme === 'dark' ? 'light' : 'dark';
+  const toggle = page.getByRole('button', { name: 'Dark theme', exact: true });
+  await toggle.click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', nextScheme);
+  await expect(page.locator('.evidence-chart')).toHaveAttribute('data-scheme', nextScheme);
+  await expect(toggle).toHaveAttribute('aria-pressed', String(nextScheme === 'dark'));
   await expect(bar).not.toHaveAttribute('fill', initialInk);
 
   await page.getByRole('radio', { name: /Repeat run/ }).check();
