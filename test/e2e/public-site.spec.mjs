@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { attachExampleFailure, readExampleState } from './helpers/public-example-state.mjs';
+import { examples } from '../../site/examples.mjs';
 
 // Exercises the exact generated Pages artifact through the repository's
 // zero-dependency static server. These checks join the normal cross-engine
@@ -60,7 +61,7 @@ test('public site — small screens put the guide before its navigation tree', a
 test('public site — each example points to real source and has a mobile fallback', async ({
   page,
 }, testInfo) => {
-  for (const key of ['operations', 'reports', 'theming']) {
+  for (const { key } of examples) {
     let phase = 'mobile';
     let beforeResize;
     try {

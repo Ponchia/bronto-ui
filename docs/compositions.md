@@ -3,6 +3,47 @@
 Start with the task and its important state. Use the catalog to find a part,
 not to decide how many parts a page should contain.
 
+## Workspace evidence review
+
+The [evidence workspace](https://ponchia.github.io/bronto-ui/examples/workspace/)
+is a complete selection → inspection → decision composition. Compare a captured
+baseline and trial, switch to an unobserved run, inspect the retained source,
+and record a local next step. The figure, fallback table, source and review
+receipt refer to the same selected observation, including when printed.
+
+```css
+@import '@ponchia/ui';
+@import '@ponchia/ui/css/workbench.css';
+@import '@ponchia/ui/css/figure.css';
+@import '@ponchia/ui/css/sources.css';
+@import '@ponchia/ui/css/state.css';
+```
+
+The host owns the radio selection, synthetic measurements, SVG geometry and
+in-memory review decisions. `observeTokens()` supplies resolved colors to the
+SVG renderer and returns a cleanup. The ordinary HTML table preserves the
+values without a renderer or JavaScript. Print uses readable ink and keeps the
+source and uncertainty beside the result.
+
+`initToolbar()` supplies one keyboard entry into the action strip.
+`initActionMenu()` returns focus deliberately when the evidence menu closes.
+The review uses `initDialog()`, with `initCombobox()` for the next-step field
+and `initPopover()` for the evidence scope. Escape dismisses the active inner
+control before the surrounding dialog. The page retains every initializer's
+cleanup and unwinds its own listeners when the view is disposed.
+
+A recorded review is a decision about evidence, not new measurement evidence.
+An unobserved run therefore stays unknown after review. Each selection retains
+its own local decision; reloading resets these sample decisions. No operation
+is executed or saved to a service.
+
+Inspect the [HTML](https://github.com/Ponchia/bronto-ui/blob/main/demo/workspace-evidence.html),
+[host CSS](https://github.com/Ponchia/bronto-ui/blob/main/demo/workspace-evidence.css),
+and [host script](https://github.com/Ponchia/bronto-ui/blob/main/demo/workspace-evidence.mjs).
+Check the complete task at a narrow width, with keyboard input, in both themes
+and in print. Focused primitives remain in the
+[workspace interaction specimen](https://ponchia.github.io/bronto-ui/demo/workspace-primitives.html).
+
 ## Service overview
 
 Load the core CSS and the opt-in state leaf. Use `ui-app-shell` for navigation,
@@ -79,8 +120,8 @@ Use the core stylesheet plus `report-kit.css` for a standalone HTML report.
 Use real asset URLs in HTML; package specifiers resolve only in build tools.
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.0/dist/bronto.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.0/dist/css/report-kit.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.1/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.1/dist/css/report-kit.css" />
 <article class="ui-report">
   <header class="ui-report__cover ui-report__cover--compact">
     <h1 class="ui-report__title">Keep the current configuration</h1>

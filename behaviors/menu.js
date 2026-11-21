@@ -38,7 +38,7 @@ export function initMenu({ root } = {}) {
     for (const m of openMenus()) if (!m.contains(target)) m.open = false;
   };
   const onKey = (e) => {
-    if (e.key !== 'Escape') return;
+    if (e.defaultPrevented || e.key !== 'Escape') return;
     const menu = closestSafe(e.target, '[data-bronto-menu][open]') || openMenus()[0];
     if (!menu) return;
     e.preventDefault();

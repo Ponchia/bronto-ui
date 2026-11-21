@@ -468,7 +468,7 @@ summary:focus-visible {
 .example-grid,
 .examples-page-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 19px;
 }
 .example-card {
@@ -1576,7 +1576,7 @@ a[href='#docs-navigation'] {
     width: calc(100% - 36px);
   }
   .hero {
-    padding-block: 57px 62px;
+    padding-block: 30px 48px;
   }
   .hero-copy h1 {
     font-size: clamp(3.1rem, 11vw, 4.9rem);
@@ -1587,7 +1587,7 @@ a[href='#docs-navigation'] {
   }
   .hero-meta {
     gap: 11px 14px;
-    margin-top: 30px;
+    margin-top: 24px;
   }
   .browser-badge {
     display: none;

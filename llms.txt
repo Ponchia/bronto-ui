@@ -13,13 +13,15 @@
 | Task | Read first |
 | --- | --- |
 | Build a page or choose a control | [Usage guide](docs/usage.md), then [class reference](docs/reference.md) |
-| Compose an inspector, workbench, or evidence view | [Composition recipes](docs/compositions.md) |
+| Review an object, its activity and retained evidence | [Workspace evidence review](docs/compositions.md#workspace-evidence-review) |
+| Compose an inspector or workbench | [Composition recipes](docs/compositions.md) |
 | Produce an HTML or printed report | [Report cookbook](docs/reporting.md) |
 | Add citations and claim-to-source relationships | [Report cookbook](docs/reporting.md) and `schemas/report-claims.v1.schema.json` |
 | Wire a dialog, theme toggle, or other interaction | `behaviors/index.d.ts` and [integration guide](https://github.com/Ponchia/bronto-ui/blob/main/docs/integration.md) |
 | Customize themes or read tokens in a renderer | [Theming](docs/theming.md) and [renderer guide](docs/renderer.md) |
 | Theme a chart or diagram | [Vega](docs/vega.md), [Mermaid](docs/mermaid.md), or [D2](docs/d2.md) |
-| Migrate annotation helpers or styles | [Annotations guide](docs/annotations.md) and [0.17 migration](docs/migrations/0.16-to-0.17.md) |
+| Add annotations to a figure | [Standalone annotation composition](docs/annotations.md#new-annotation-compositions) |
+| Migrate legacy UI annotation helpers or styles | [0.17 migration](docs/migrations/0.16-to-0.17.md) |
 | Check exports, compatibility, or an upgrade | [Package contract](docs/package-contract.md) and [stability contract](docs/stability.md) |
 
 ## Loading and ownership
@@ -39,12 +41,15 @@
 - Bronto owns styles, tokens, and documented interaction wiring. Applications
   own state, routing, data fetching, permissions, selection, commands, and
   persistence. Bronto is not a chart engine or a data grid implementation.
-- Annotation placement, collision handling, editing, and rendering belong to
-  the independent `@ponchia/annotations` package. The UI annotation helpers and
-  styles are deprecated in 0.17; follow the migration guide rather than adding
-  new dependencies on that legacy surface.
-  `@ponchia/ui/annotations` remains a dependency-free Bronto static-helper compatibility surface
-  only during the 0.17 deprecation window.
+- Annotation placement, collision handling, editing, rendering, classes and CSS
+  belong to the independent `@ponchia/annotations` package. New compositions use
+  its `bronto.css` with UI's figure stage and explicit UI leaves. The
+  dependency-free Bronto static-helper compatibility surface and UI-owned
+  annotation styles were deprecated in 0.17 and remain for existing consumers
+  in 0.19. Removal is reserved for 0.20 or later, after consumer acceptance.
+  The legacy `analytical.css` and `report-kit.css` roll-ups still import those
+  styles; follow the migration guide before combining an old roll-up with the
+  standalone package.
 
 ## Validate generated or handwritten markup
 

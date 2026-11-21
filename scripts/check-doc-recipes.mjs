@@ -69,12 +69,39 @@ for (const rel of shipped) {
 }
 
 const reporting = readFileSync(resolve(root, 'docs/reporting.md'), 'utf8');
-for (const required of [
-  `https://cdn.jsdelivr.net/npm/@ponchia/ui@${pkg.version}/dist/bronto.css`,
-  `https://cdn.jsdelivr.net/npm/@ponchia/ui@${pkg.version}/dist/css/report-kit.css`,
+const cdnBase = `https://cdn.jsdelivr.net/npm/@ponchia/ui@${pkg.version}/dist/`;
+const cdnStarter = [...reporting.matchAll(/```html\n([\s\S]*?)\n```/g)]
+  .map((match) => match[1])
+  .find((recipe) => recipe.includes('https://cdn.jsdelivr.net/npm/@ponchia/ui@'));
+// New reports use explicit leaves so adding standalone Annotations does not
+// also load UI's deprecated annotation styles through a roll-up.
+for (const asset of [
+  'bronto.css',
+  'css/report.css',
+  'css/figure.css',
+  'css/dataviz.css',
+  'css/legend.css',
 ]) {
-  if (!reporting.includes(required)) {
+  const required = `${cdnBase}${asset}`;
+  if (!cdnStarter?.includes(required)) {
     problems.push(`docs/reporting.md: CDN starter is missing ${required}`);
+  }
+}
+if (/\/dist\/css\/(?:report-kit|analytical|annotations)\.css/.test(cdnStarter ?? '')) {
+  problems.push(`docs/reporting.md: new-report CDN starter loads deprecated UI annotation styles`);
+}
+
+// Preserve the working roll-up recipe for existing consumers, with an explicit
+// compatibility label rather than making it the default for new reports.
+const reportKitCompatibility = reporting
+  .split('### Existing report-kit imports')[1]
+  ?.split('\n## ')[0];
+for (const asset of ['bronto.css', 'css/report-kit.css']) {
+  const required = `${cdnBase}${asset}`;
+  if (!reportKitCompatibility?.includes(required)) {
+    problems.push(
+      `docs/reporting.md: existing report-kit compatibility recipe is missing ${required}`,
+    );
   }
 }
 

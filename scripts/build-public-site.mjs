@@ -39,13 +39,13 @@ const files = [
     'index.html',
     'home',
     'Bronto UI — CSS-first UI for tools and reports',
-    'Framework-agnostic, accessible CSS for developer tools, operational dashboards and evidence-rich reports. Zero runtime dependencies.',
+    'Shared CSS and accessible interactions for inspectable tools, operational dashboards and evidence-rich reports. Zero runtime dependencies.',
   ],
   [
     'examples/index.html',
     'examples',
     'Examples — Bronto UI',
-    'See Bronto UI in complete operational dashboards, static reports, and theme explorations.',
+    'See Bronto UI in an evidence workspace, operational dashboard, static report, and theme playground.',
   ],
   [
     'components/index.html',
@@ -280,6 +280,7 @@ const pageSource = async (filename, p) =>
   (await readFile(join(repo, 'site/pages', filename), 'utf8'))
     .replaceAll('{{root}}', p)
     .replaceAll('{{examples}}', examples.map((ex) => exampleCard(ex, p)).join('\n'))
+    .replaceAll('{{exampleCount}}', String(examples.length).padStart(2, '0'))
     .replaceAll('{{components}}', components.map((c) => componentCard(c, p)).join('\n'))
     .replaceAll(
       '{{componentChips}}',

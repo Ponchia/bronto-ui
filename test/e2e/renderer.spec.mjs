@@ -50,6 +50,22 @@ test('readTokens resolves the light page to literals, including derived tints', 
   expect(t.selection).toMatch(/^rgba\(\d+, \d+, \d+, 0\.27\)$/);
 });
 
+test('renderer text inks do not depend on importing the optional data-viz stylesheet', async ({
+  page,
+}) => {
+  for (const theme of ['light', 'dark']) {
+    await openPage(page, { 'data-theme': theme });
+    const withCss = await read(page);
+    await page.locator('link[href="/dist/css/dataviz.css"]').evaluate((link) => link.remove());
+    await page.waitForFunction(
+      () =>
+        getComputedStyle(document.documentElement).getPropertyValue('--cat-1-ink').trim() === '',
+    );
+    const withoutCss = await read(page);
+    expect(withoutCss.categoricalInk).toEqual(withCss.categoricalInk);
+  }
+});
+
 test('readTokens follows dark, the OLED surface and a skin without a snapshot', async ({
   page,
 }) => {

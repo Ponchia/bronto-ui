@@ -210,6 +210,10 @@ ancestor and clears the safe area:
 
 `--anchored` alone means bottom. Override the gap with `--anchor-offset`. The
 host still owns `z-index`, because only it knows what else is on the canvas.
+Anchored bars fit their content and wrap within the available width and side
+gutters, in either HTML or CSS writing direction. If a host intentionally
+stretches a bar between its own two inline insets, set `inline-size: auto` in
+that override instead of inheriting the anchored bar's intrinsic width.
 
 ## Pane — `.ui-pane`
 

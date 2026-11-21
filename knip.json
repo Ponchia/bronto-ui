@@ -8,6 +8,7 @@
     "demo/service.js",
     "demo/discussion.js",
     "demo/workspace-primitives.mjs",
+    "demo/workspace-evidence.mjs",
     "site/site.js",
     "site/catalog.js",
     "scripts/smoke-example.mjs"

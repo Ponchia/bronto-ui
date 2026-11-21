@@ -10,6 +10,7 @@ import {
   xtermTheme,
 } from '../renderer/index.js';
 import { charts } from '../tokens/charts.js';
+import { contrastRatio, hexToRgb } from '../scripts/lib/oklch.mjs';
 
 const hex = (v) => formatColor(parseColor(v));
 
@@ -106,6 +107,18 @@ test('readTokens without a DOM returns the packaged palette for the scheme', () 
     // A line that carries meaning rides the dim-text ink, never a hairline.
     assert.equal(t.edge, t.textDim);
     assert.notEqual(t.edge, t.lineStrong);
+  }
+});
+
+test('renderer fallback inks stay readable without the optional data-viz CSS', () => {
+  for (const scheme of ['light', 'dark']) {
+    const tokens = readTokens(undefined, { scheme });
+    tokens.categoricalInk.forEach((ink, i) => {
+      for (const surface of [tokens.bg, tokens.panel, tokens.categoricalTint[i]]) {
+        const ratio = contrastRatio(hexToRgb(ink), hexToRgb(surface));
+        assert.ok(ratio >= 4.5, `${scheme} slot ${i + 1}: ${ink} on ${surface} is ${ratio}:1`);
+      }
+    });
   }
 });
 

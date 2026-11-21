@@ -5,54 +5,43 @@ an independent print treatment. Put the decision before navigation. Use
 `details.ui-report__toc` for collapsed contents and `nav.ui-report__toc` for
 always-visible contents. See [composition recipes](compositions.md).
 
-
 `@ponchia/ui` can dress static, LLM-authored HTML reports without a component
-runtime. Load the normal bundle, then either opt in to the complete report kit
-or import only the leaves a narrow report actually uses.
+runtime. For a new report, load the normal bundle and the leaves its content
+uses. This example includes the document layer, a figure stage, chart colors
+and a legend:
 
 In a bundled app, package specifiers are fine because Vite or another bundler
 rewrites them:
 
 ```css
 @import '@ponchia/ui';
-@import '@ponchia/ui/css/report-kit.css';
-```
-
-For tighter payload control, import leaves one by one:
-
-```css
-@import '@ponchia/ui';
 @import '@ponchia/ui/css/report.css';
+@import '@ponchia/ui/css/figure.css';
 @import '@ponchia/ui/css/dataviz.css';
-@import '@ponchia/ui/css/annotations.css';
 @import '@ponchia/ui/css/legend.css';
 ```
 
-**`dist/bronto.css` is the standard component set only — it does NOT contain
-the report, chart, annotation, source, trust, or code/diff layers.**
-`report-kit.css` is the one-file opt-in path for complete static reports; the
-individual leaves remain available under `dist/css/` when a report uses only a
-small subset. Forgetting the opt-in CSS is the most common way an LLM-emitted
-report renders unstyled.
+**Report, chart, source, trust and code/diff styles are opt-in.** Add the
+corresponding leaves from the toolbox below when a recipe uses them. For
+annotations, add the independent `@ponchia/annotations/bronto.css` stylesheet
+and follow the [annotation recipe](#annotation-recipe).
+
+**Existing report-kit consumers:** `css/report-kit.css` and
+`css/analytical.css` remain available, but both still include UI's deprecated
+annotation stylesheet. Keep that compatibility path for an existing report;
+use explicit UI leaves for a new composition or when migrating annotations.
+Do not combine either roll-up with the standalone annotation stylesheet before
+following the [migration guide](migrations/0.16-to-0.17.md#avoid-indirect-duplicate-styles).
 
 For standalone browser HTML, use real stylesheet URLs. Package specifiers like
 `@ponchia/ui/css/report.css` do not resolve in a saved `.html` file — and note
 the path is `dist/css/`, the built leaf, not the source `css/`:
 
 ```html
-<!-- installed locally -->
-<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/bronto.css" />
-<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/report-kit.css" />
-```
-
-Or, if you are intentionally keeping a report minimal, link only the leaves it
-uses:
-
-```html
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/bronto.css" />
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/report.css" />
+<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/figure.css" />
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/dataviz.css" />
-<link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/annotations.css" />
 <link rel="stylesheet" href="./node_modules/@ponchia/ui/dist/css/legend.css" />
 ```
 
@@ -60,18 +49,11 @@ No install? Link the same files from a CDN. Pin the version — pre-1.0, breakin
 changes ship in the minor (see [stability.md](./stability.md)):
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.0/dist/bronto.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.0/dist/css/report-kit.css" />
-```
-
-Leaf-by-leaf CDN imports use the same `dist/css/` paths:
-
-```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.0/dist/bronto.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.0/dist/css/report.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.0/dist/css/dataviz.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.0/dist/css/annotations.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.0/dist/css/legend.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.1/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.1/dist/css/report.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.1/dist/css/figure.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.1/dist/css/dataviz.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.1/dist/css/legend.css" />
 ```
 
 The CDN serves the package's own `fonts/` next to the CSS, so font URLs resolve
@@ -84,17 +66,32 @@ does not sanitize content. If a report includes arbitrary LLM, CMS, or user HTML
 sanitize that content before rendering it and do not initialize
 `data-bronto-*` behaviors on the generated region.
 
+### Existing report-kit imports
+
+An existing report that uses UI's legacy annotation grammar may keep this
+roll-up while its migration is qualified:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.1/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.1/dist/css/report-kit.css" />
+```
+
+This is a compatibility recipe. When adding the independent annotation
+package, replace the roll-up with the UI leaves the report uses so only one
+package supplies annotation styles. The [migration guide](migrations/0.16-to-0.17.md)
+describes the transition and acceptance requirements.
+
 ## The analytical toolbox in a report
 
 `css/report.css` gives you the document grammar (covers, sections, findings,
 evidence). The _content_ inside those sections is where the rest of the
 analytical layer earns its place. Each one is an opt-in import that stays out of
 the default bundle — add the leaves a given report actually needs.
-`@ponchia/ui/css/analytical.css` is a convenience roll-up of the **nine
-figure/evidence-layer leaves only** (figure, annotations, legends, marks,
-connectors, spotlight, crosshair, selection, highlights) — sources, generated,
-state, interval, clamp, workbench, command, and the prose/evidence leaves below
-are NOT in it and must be linked individually. Reach for:
+For existing consumers, `@ponchia/ui/css/analytical.css` still combines nine
+figure/evidence leaves, including the deprecated annotation stylesheet. New
+compositions select the individual leaves below and use the standalone package
+for annotations. Sources, generated, state, interval, clamp, workbench, command,
+and the prose/evidence leaves are separate imports in either case. Reach for:
 
 | Layer | Import | Reach for it when… |
 | --- | --- | --- |
@@ -105,7 +102,8 @@ are NOT in it and must be linked individually. Reach for:
 | **Clamp** (`.ui-clamp*`) | `css/clamp.css` | A source excerpt, claim basis, or caveat should scan as a bounded text block but remain reachable through explicit "Show more" / "Show less" labels and print expansion. See [clamp.md](./clamp.md). |
 | **Highlights** (`.ui-highlights`) | `css/highlights.css` | The host registers CSS Custom Highlight API ranges for cited evidence, search hits, or the current match without wrapping DOM text nodes. See [highlights.md](./highlights.md). |
 | **Chart palette** (`--chart-*`) | `css/dataviz.css` | A figure needs categorical, sequential, or diverging chart colours. The palette is opt-in, CVD-gated, and never UI chrome. See [theming.md](./theming.md#data-viz-palette). |
-| **Annotations** (`.ui-annotation*`) | `css/annotations.css` | A figure needs an explicit callout — a peak, a limit, a watched region — or a small decorative margin mark. SVG only. See [annotations.md](./annotations.md) and the [off-chart + scaling notes](./annotations.md#using-annotations-off-chart) before you size one. |
+| **Annotations** (`.pa-annotation*`, separate package) | `@ponchia/annotations/bronto.css` | A figure needs a callout on a point, limit or region. The standalone package owns annotation geometry, rendering and styles; UI owns the figure frame. Start with the [standalone composition](./annotations.md#new-annotation-compositions). |
+| **Legacy UI annotations — existing consumers only** (`.ui-annotation*`) | `css/annotations.css` | Maintain an existing report while migrating. Deprecated in 0.17 and retained in 0.19; new callouts use the standalone package above. See the [migration guide](migrations/0.16-to-0.17.md). |
 | **Connectors** (`.ui-connector*`) | `css/connectors.css` | A note, card, or region needs a leader line to another DOM element. Bronto supplies overlay styling plus pure SVG path geometry; the host owns layout and meaning. See [connectors.md](./connectors.md). |
 | **Legends / data keys** (`.ui-legend*`) | `css/legend.css` | A chart figure needs a colour key. WCAG 1.4.1 by construction. See [legends.md](./legends.md). |
 | **Spotlight** (`.ui-spotlight*`, `.ui-tour-note*`) | `css/spotlight.css` | A screen report or guided workflow needs a visual focus cutout and callout note. It is not a tour engine; the host owns step order, persistence, and focus movement. See [spotlight.md](./spotlight.md). |
@@ -663,31 +661,35 @@ onto the cells. Pair the figure with a stepped legend and the fallback table.
 
 ## Annotation recipe
 
-When a report chart needs an explicit callout, import
-`@ponchia/ui/css/annotations.css` and layer SVG annotations inside the same
-`ui-report__figure`. Keep the subject/connector/note text visible in the SVG or
-represented by the figure caption/fallback data.
+Use `@ponchia/annotations` with the UI figure stage. The standalone package
+owns the annotation markup and stylesheet:
 
-```html
-<svg viewBox="0 0 360 160" role="img" aria-labelledby="annotated-title annotated-desc">
-  <title id="annotated-title">Weekly focus chart with peak callout</title>
-  <desc id="annotated-desc">The annotation marks the research peak.</desc>
-  <g class="ui-annotation ui-annotation--circle ui-annotation--accent" transform="translate(210, 58)">
-    <path class="ui-annotation__subject" d="M0,-18A18,18 0 1 1 0,18A18,18 0 1 1 0,-18Z" />
-    <path class="ui-annotation__connector" d="M15.556,-7.424L84,-40" />
-    <g class="ui-annotation__note" transform="translate(84, -40)">
-      <path class="ui-annotation__note-line" d="M0,0H92" />
-      <text class="ui-annotation__title" y="-8">Peak</text>
-      <text class="ui-annotation__label" y="12">18 research hours</text>
-    </g>
-  </g>
-</svg>
+```css
+@import '@ponchia/ui';
+@import '@ponchia/ui/css/report.css';
+@import '@ponchia/ui/css/figure.css';
+@import '@ponchia/annotations/bronto.css';
 ```
 
-For generated SVG, use `@ponchia/ui/annotations` to compute connector and
-subject path strings. Full annotation recipes and the complete variant list are
-in `docs/annotations.md`; the shipped `demo/annotations.html` page is the
-visual specimen.
+For a saved HTML report, the installed standalone stylesheet is
+`./node_modules/@ponchia/annotations/dist/bronto.css`; a bundler resolves the
+package subpath above. The [standalone annotation composition](annotations.md#new-annotation-compositions)
+shows `resolveAnnotationLayout()` and `renderAnnotationsSvg()` against a pinned
+published package. Generate SVG once at author/build time for a static report,
+then retain the SVG and stylesheet alongside the report. Browser JavaScript is
+optional for this path.
+
+Keep the rendered chart and annotation overlay in the same coordinate space.
+Include the finding in the caption, SVG description or fallback table so it
+remains available in print and without the visual overlay. The
+[maintained installed-package example](https://github.com/Ponchia/bronto-ui/tree/main/examples/annotations-vite)
+demonstrates a complete figure with target movement, hide/show, responsive
+coordinates and theme changes.
+
+The historical UI helper and `.ui-annotation*` recipes are retained for
+**existing consumers only** in [the legacy reference](annotations.md#legacy-bronto-ui-annotation-surface-deprecated).
+Their removal requires consumer acceptance and a separate breaking minor,
+0.20 or later; they are not the starting point for a new report.
 
 ## Timeline recipe
 
@@ -885,7 +887,7 @@ or validation runtime.
 
 ```json
 {
-  "$schema": "https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.0/schemas/report-claims.v1.schema.json",
+  "$schema": "https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.1/schemas/report-claims.v1.schema.json",
   "schemaVersion": "bronto-report-claims.v1",
   "report": { "title": "Decision readiness", "type": "decision" },
   "claims": [

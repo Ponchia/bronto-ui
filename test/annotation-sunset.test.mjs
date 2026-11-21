@@ -1,10 +1,11 @@
 /**
  * Freeze the deprecated Bronto UI annotation surface.
  *
- * During the 0.17 deprecation window, none of the existing exports disappear,
+ * Deprecated in 0.17 and retained in 0.19, none of the existing exports disappear,
  * no new annotation engine functionality should be added to UI, and the
  * independent package must never become a UI runtime/peer dependency.
- * Remove this gate alongside the API in the 0.18 breaking change.
+ * Remove this gate alongside the API only in a separate breaking minor,
+ * 0.20 or later, after consumer acceptance. A 0.19 patch keeps compatibility.
  */
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -56,8 +57,11 @@ test('old public annotation functions are frozen and individually deprecated', (
 test('CSS remains compatible but marked for removal', () => {
   const css = read('css/annotations.css');
   const migration = read('docs/migrations/0.16-to-0.17.md');
-  assert.match(css, /Deprecated in the planned 0\.17 minor/);
-  assert.match(migration, /0\.18/);
+  assert.match(css, /Deprecated in 0\.17 and retained in 0\.19/);
+  assert.match(css, /0\.20 or later, after consumer acceptance/);
+  assert.match(migration, /0\.20 or later/);
+  assert.match(migration, /after consumer\s+acceptance/);
+  assert.match(migration, /A patch release cannot remove this surface/);
   assert.match(migration, /@ponchia\/annotations\/bronto\.css/);
   assert.ok(pkg.exports['./annotations'], 'do not remove the legacy export before the next minor');
   assert.ok(pkg.exports['./css/annotations.css']);
@@ -74,7 +78,7 @@ test('UI does not depend on or re-export the annotation engine', () => {
 test('independent example consumes annotation-owned APIs without legacy roll-ups', () => {
   const example = JSON.parse(read('examples/annotations-vite/package.json'));
   const source = read('examples/annotations-vite/src/main.js');
-  assert.equal(example.dependencies['@ponchia/annotations'], '0.7.0');
+  assert.equal(example.dependencies['@ponchia/annotations'], '0.9.2');
   assert.match(source, /from '@ponchia\/annotations'/);
   assert.match(source, /@ponchia\/annotations\/bronto\.css/);
   assert.doesNotMatch(

@@ -339,10 +339,13 @@
 .ui-toolstrip--anchored {
   --anchor-offset: var(--space-sm);
 
-  inset-inline-start: 50%;
+  /* Equal logical insets keep centering independent of how direction is set.
+     Fit the contents, then wrap within the available width and side gutters. */
+  inline-size: fit-content;
+  inset-inline: 0;
+  margin-inline: auto;
   max-inline-size: calc(100% - 2 * var(--space-md));
   position: absolute;
-  transform: translateX(-50%);
 }
 
 .ui-selectionbar--anchored,

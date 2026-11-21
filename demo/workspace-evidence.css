@@ -1,0 +1,292 @@
+/* Host composition only. Reusable controls and interaction belong to Bronto. */
+.evidence-workspace {
+  max-inline-size: 78rem;
+  margin-inline: auto;
+  padding: clamp(1rem, 3vw, 2.5rem);
+}
+.workspace-heading,
+.workspace-result-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.workspace-heading h1 {
+  margin-block: 0.35rem;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  letter-spacing: -0.045em;
+}
+.workspace-heading p,
+.workspace-result-heading p {
+  margin-block: 0.5rem;
+}
+.workspace-heading > .ui-badge {
+  flex-shrink: 0;
+  margin-block-start: 0.5rem;
+}
+.workspace-controls {
+  margin-block: 1.5rem;
+}
+.evidence-workspace [data-workspace-enhance][hidden] {
+  display: none;
+}
+.workspace-observations {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  padding: 0;
+  border: 0;
+  margin: 1.25rem 0;
+}
+.workspace-observations legend {
+  margin-block-end: 0.6rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.observation-choice {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-inline-size: 0;
+  padding: 0.85rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  cursor: pointer;
+}
+.observation-choice:has(:checked) {
+  border-color: var(--accent-text);
+  box-shadow: inset 0 0 0 1px var(--accent-text);
+}
+.observation-choice:focus-within {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+.observation-choice > span:first-of-type {
+  display: grid;
+  gap: 0.2rem;
+}
+.observation-choice span span,
+.observation-number {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+.observation-number {
+  margin-inline-start: auto;
+  font-family: var(--mono);
+}
+.workspace-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(17rem, 1fr);
+  align-items: start;
+  gap: 1.25rem;
+}
+.workspace-evidence {
+  min-inline-size: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: clamp(1rem, 2vw, 1.5rem);
+  background: var(--panel);
+}
+.workspace-result-heading h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+.workspace-result-heading .ui-badge {
+  margin-block-start: 0.5rem;
+}
+.workspace-conclusion {
+  color: var(--text-soft);
+  max-inline-size: 60ch;
+}
+.evidence-chart {
+  inline-size: 100%;
+  font-family: var(--sans);
+  font-size: 14px;
+}
+[data-chart-ink]:not([fill]) {
+  fill: var(--text);
+}
+[data-chart-axis]:not([stroke]) {
+  stroke: var(--line-strong);
+}
+[data-chart-target]:not([stroke]) {
+  stroke: var(--text-dim);
+}
+[data-chart-baseline]:not([fill]) {
+  fill: var(--text-dim);
+}
+[data-chart-selected]:not([fill]) {
+  fill: var(--text);
+}
+.workspace-next-step {
+  border-block-start: 1px solid var(--line);
+  padding-block-start: 0.75rem;
+  margin-block-start: 1rem;
+}
+.workspace-next-step h3 {
+  font-size: 0.95rem;
+  margin-block: 0.35rem;
+}
+.workspace-next-step p,
+.workspace-caveat,
+.workspace-footer {
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.workspace-inspector {
+  inline-size: 100%;
+}
+.workspace-inspector .ui-inspector__head h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+.workspace-properties {
+  display: grid;
+  gap: 0.8rem;
+  margin-block: 0 1.25rem;
+}
+.workspace-properties div {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  gap: 0.75rem;
+  font-size: 0.8rem;
+}
+.workspace-properties dt {
+  color: var(--text-dim);
+}
+.workspace-properties dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.workspace-caveat {
+  color: var(--text-dim);
+  margin-block-end: 0;
+}
+.workspace-menu-anchor {
+  position: relative;
+}
+.workspace-action-menu {
+  position: absolute;
+  z-index: 2;
+  inset-inline-end: 0;
+  inset-block-start: calc(100% + 0.25rem);
+  inline-size: max-content;
+  max-inline-size: min(18rem, 80vw);
+}
+.workspace-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  color: var(--text-dim);
+  margin-block-start: 1.5rem;
+}
+.workspace-footer p {
+  max-inline-size: 75ch;
+}
+.workspace-footer a {
+  flex-shrink: 0;
+}
+.workspace-review {
+  inline-size: min(32rem, calc(100% - 2rem));
+  max-block-size: calc(100dvh - 2rem);
+  overflow-y: auto;
+  padding: 1.25rem;
+}
+.workspace-review h2 {
+  margin-block: 0.5rem;
+}
+.workspace-review .ui-combobox {
+  inline-size: 100%;
+}
+.workspace-review .ui-popover {
+  inline-size: min(24rem, calc(100vw - 2rem));
+}
+.workspace-review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-block-start: 1.5rem;
+}
+#review-error {
+  color: var(--danger);
+}
+#captured-source:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+@media (min-width: 761px) {
+  .evidence-workspace {
+    padding-block: 1.5rem;
+  }
+  .workspace-heading h1 {
+    font-size: 2rem;
+    margin-block: 0.25rem;
+  }
+  .workspace-heading p {
+    margin-block: 0.25rem;
+  }
+  .workspace-controls,
+  .workspace-observations {
+    margin-block: 0.75rem;
+  }
+  .workspace-observations legend {
+    margin-block-end: 0.4rem;
+  }
+  .observation-choice {
+    padding-block: 0.65rem;
+  }
+}
+@media (max-width: 760px) {
+  .workspace-heading,
+  .workspace-result-heading,
+  .workspace-footer {
+    flex-wrap: wrap;
+  }
+  .workspace-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace-observations {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace-controls .ui-toolstrip__actions {
+    flex-wrap: wrap;
+  }
+  .workspace-result-heading .ui-badge {
+    margin-block-start: 0;
+  }
+}
+@media print {
+  .evidence-workspace {
+    max-inline-size: none;
+    padding: 0;
+  }
+  .workspace-controls,
+  .workspace-observations,
+  .workspace-menu-anchor,
+  .workspace-review,
+  .workspace-footer a {
+    display: none !important;
+  }
+  .workspace-body {
+    display: block;
+  }
+  .workspace-evidence,
+  .workspace-inspector {
+    break-inside: avoid;
+    margin-block: 1rem;
+  }
+  .evidence-chart [data-chart-ink] {
+    fill: black;
+  }
+  .evidence-chart [data-chart-baseline] {
+    fill: dimgray;
+  }
+  .evidence-chart [data-chart-selected] {
+    fill: black;
+  }
+  .evidence-chart line {
+    stroke: black;
+  }
+}

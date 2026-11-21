@@ -5,10 +5,11 @@ small behavior-backed widget. It follows the contracts in
 [CONTRIBUTING.md](../CONTRIBUTING.md) and
 [architecture.md](./architecture.md#surface-admission-rule).
 
-> **Bring the evidence first.** New public surface is admitted when a named
-> non-example consumer has already built it by hand, and the PR says who and
-> where. Fixes to existing surface need no such argument. Package examples are
-> compatibility proof, not downstream adoption — see
+> **Bring the evidence first.** Show the task, the current difficulty, and how
+> the proposed composition improves it. An existing consumer implementation is
+> useful evidence; it is not a requirement to build a duplicate first. Prefer
+> a recipe when existing surface expresses the result. Package examples prove
+> compatibility; real consumer upgrades prove practical value — see
 > [ROADMAP.md](../ROADMAP.md#surface-is-admitted-by-evidence).
 
 ## 1. Choose the layer
@@ -80,9 +81,11 @@ Public behavior exports must have:
 Verify the vanilla lifecycle in the maintained React and Svelte examples when
 the behavior contract changes. The package has no framework adapter matrix.
 
-If the new public surface is a helper in `classes/`, `annotations/`,
-`connectors/`, or `glyphs/`, add it to `scripts/check-helper-matrix.mjs` with
-docs, unit, and type-test owners.
+If the new public surface is a helper in `classes/`, `connectors/`, `renderer/`,
+or `glyphs/`, add it to `scripts/check-helper-matrix.mjs` with docs, unit, and
+type-test owners. The deprecated `annotations/` module is maintained for
+existing consumers; new annotation-specific APIs belong to
+`@ponchia/annotations`.
 
 ## 5. Declare published surface
 
@@ -90,8 +93,8 @@ Public paths are declared in `package.json`:
 
 - Add `exports` entries for new CSS, JS, JSON, schema, or doc subpaths.
 - Keep exported files covered by `files`.
-- Keep runtime dependencies empty. Only the documented optional framework peers
-  belong in `peerDependencies`.
+- Keep runtime dependencies and framework peer dependencies empty. Framework
+  integration is taught through lifecycle recipes and packed consumer examples.
 
 `scripts/check-exports.mjs` validates export targets, CSS layered/unlayered
 pairs, package metadata, and dependency policy. `scripts/check-pack.mjs` proves
@@ -139,7 +142,6 @@ targeted gates to be relevant:
 - `npm run check:pack`
 - `npm run check:component-matrix`
 - `npm run check:behavior-matrix` when public behavior is involved
-- `npm run check:behavior-matrix` when a delegated public behavior is involved
 - `npm run check:helper-matrix` when a public helper is involved
 - `npm run check:schemas` when public schemas change
 - `npm run check:variables`

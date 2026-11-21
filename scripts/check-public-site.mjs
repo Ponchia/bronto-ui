@@ -7,6 +7,7 @@ import { spawnSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
 import { components } from '../site/components.mjs';
+import { examples } from '../site/examples.mjs';
 
 const repo = resolve(import.meta.dirname, '..');
 const temp = await mkdtemp(join(tmpdir(), 'brontoui-pages-check-'));
@@ -15,9 +16,7 @@ const checked = new Set();
 const required = [
   'index.html',
   'examples/index.html',
-  'examples/operations/index.html',
-  'examples/reports/index.html',
-  'examples/theming/index.html',
+  ...examples.map((example) => `examples/${example.key}/index.html`),
   'components/index.html',
   'docs/index.html',
   'docs/getting-started/vanilla.html',
@@ -36,9 +35,7 @@ const required = [
   'site/site.js',
   'site/catalog.js',
   'site/site.css',
-  'site/assets/operations.jpg',
-  'site/assets/report.jpg',
-  'site/assets/theming.jpg',
+  ...examples.map((example) => `site/assets/${example.image}`),
   'site/assets/social.jpg',
   'docs/search-index.json',
   'robots.txt',
@@ -114,6 +111,7 @@ try {
     'demo/index.js',
     'demo/service.js',
     'demo/discussion.js',
+    'demo/workspace-evidence.mjs',
     'site/site.js',
     'site/catalog.js',
   ])
@@ -125,9 +123,7 @@ try {
     'components/index.html',
     'docs/index.html',
     'lab/index.html',
-    'examples/operations/index.html',
-    'examples/reports/index.html',
-    'examples/theming/index.html',
+    ...examples.map((example) => `examples/${example.key}/index.html`),
     'docs/getting-started/vanilla.html',
     'docs/getting-started/first-component.html',
     'docs/getting-started/upgrade.html',
@@ -215,7 +211,7 @@ try {
     snippet.window.close();
   }
 
-  for (const example of ['operations', 'reports', 'theming']) {
+  for (const { key: example } of examples) {
     const path = `examples/${example}/index.html`;
     const html = new JSDOM(await readFile(join(built, path), 'utf8'));
     const sourceLinks = [

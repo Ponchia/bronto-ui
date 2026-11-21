@@ -384,10 +384,10 @@ function provenanceRows() {
     [
       'Chart palette',
       'tokens/charts.js',
-      'css/dataviz.css; tokens/charts.json; tokens/charts.d.ts',
+      'css/dataviz.css; css/identity.css; tokens/charts.json; tokens/charts.d.ts; tokens/chart-inks.{js,d.ts}',
       'charts:build',
       'check:charts',
-      'Data-viz colors are opt-in, CVD-gated, and never UI chrome.',
+      'Chart colors are opt-in and CVD-gated; scope identity reuses them in chrome. Renderer fallback inks share the CSS derivation.',
     ],
     [
       'External renderer themes',
