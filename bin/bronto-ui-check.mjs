@@ -273,7 +273,10 @@ export function checkPaths(inputs, { allowClasses = [], allowTokens = [], migrat
 
   for (const { file, text, scanned } of documents) {
     appendMigrationFindings({ file, text, scanned }, audit, add);
-    for (const match of scanned.matchAll(/(?<![/\w-])ui-[a-z0-9](?:[\w-]*[a-z0-9])?(?![\w/-])/gi)) {
+    // The ui- namespace is case-sensitive. Keep mixed-case suffix typos detectable.
+    for (const match of scanned.matchAll(
+      /(?<![/\w-])ui-[A-Za-z0-9](?:[\w-]*[A-Za-z0-9])?(?![\w/-])/g,
+    )) {
       if (!allowedClasses.has(match[0]) && !nonClassIdentifiers.has(match[0])) {
         add(unknownClassFinding(match, file, text));
       }
