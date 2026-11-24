@@ -353,8 +353,10 @@ explained, not surprising.
 
 - Confirm npm `latest` points at the tagged version and the package page shows
   provenance.
-- Run `npm pack --dry-run --json` locally or from CI logs and confirm the
-  intended file count/payload.
+- Confirm the intended files and payload size from the CI pack receipt. For a
+  local check, run `npm run prepack`, then
+  `npm pack --dry-run --ignore-scripts --json`. The second command skips
+  lifecycle hooks so stdout contains the JSON inventory.
 - Build the packed examples matrix from the tarball, not a workspace link:
   `npm run test:examples` covers vanilla, Astro, SvelteKit, React, Tailwind, and report-static, with Chromium browser smokes for runtime
   examples. For a deeper consumer pass, `npm run test:examples:cross-browser`
