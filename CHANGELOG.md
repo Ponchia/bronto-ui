@@ -5,6 +5,14 @@
 > `^0` / `*` wildcard does **not** protect you. See README → Versioning, and
 > the deprecation policy in CONTRIBUTING.md.
 
+## 0.19.3 — 2026-11-24
+
+### Fixed
+
+- Respect the lowercase `ui-` class prefix in the consumer checker. Uppercase
+  `UI-` prose stays out of class diagnostics, and invalid class names with the
+  lowercase prefix still fail validation.
+
 ## 0.19.2 — 2026-11-21
 
 ### Fixed

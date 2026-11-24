@@ -49,11 +49,11 @@ No install? Link the same files from a CDN. Pin the version — pre-1.0, breakin
 changes ship in the minor (see [stability.md](./stability.md)):
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.2/dist/bronto.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.2/dist/css/report.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.2/dist/css/figure.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.2/dist/css/dataviz.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.2/dist/css/legend.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.3/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.3/dist/css/report.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.3/dist/css/figure.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.3/dist/css/dataviz.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.3/dist/css/legend.css" />
 ```
 
 The CDN serves the package's own `fonts/` next to the CSS, so font URLs resolve
@@ -72,8 +72,8 @@ An existing report that uses UI's legacy annotation grammar may keep this
 roll-up while its migration is qualified:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.2/dist/bronto.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.2/dist/css/report-kit.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.3/dist/bronto.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.3/dist/css/report-kit.css" />
 ```
 
 This is a compatibility recipe. When adding the independent annotation
@@ -887,7 +887,7 @@ or validation runtime.
 
 ```json
 {
-  "$schema": "https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.2/schemas/report-claims.v1.schema.json",
+  "$schema": "https://cdn.jsdelivr.net/npm/@ponchia/ui@0.19.3/schemas/report-claims.v1.schema.json",
   "schemaVersion": "bronto-report-claims.v1",
   "report": { "title": "Decision readiness", "type": "decision" },
   "claims": [
